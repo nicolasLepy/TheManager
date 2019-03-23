@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheManager;
 
 namespace TheManager_Console
 {
@@ -10,6 +11,9 @@ namespace TheManager_Console
     {
         static void Main(string[] args)
         {
+            
+            Console.ReadLine();
+
         }
     }
 }
