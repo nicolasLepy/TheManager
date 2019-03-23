@@ -13,5 +13,6 @@ namespace TheManager
         private DateTime _naissance;
         private int _niveau;
         private int _potentiel;
+
     }
 }
