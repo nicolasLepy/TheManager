@@ -8,13 +8,19 @@ namespace TheManager
 {
     public class Stade
     {
-        public string Nom { get; set; }
-        public int Capacite { get; set; }
 
-        public Stade(string nom, int capacite)
+        private string _nom;
+        private Ville _ville;
+
+        public int Capacite { get; set; }
+        public string Nom { get => _nom; }
+        public Ville Ville { get => _ville; }
+
+        public Stade(string nom, int capacite, Ville ville)
         {
-            Nom = nom;
+            _nom = nom;
             Capacite = capacite;
+            _ville = ville;
         }
     }
 }

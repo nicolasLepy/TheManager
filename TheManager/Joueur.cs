@@ -32,10 +32,4 @@ namespace TheManager
         //appelé en sélection
     }
 
-    public class Contrat
-    {
-        private float _salaire;
-        private bool _transferable;
-        private DateTime _fin;
-    }
 }
