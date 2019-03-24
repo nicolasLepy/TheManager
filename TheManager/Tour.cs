@@ -60,5 +60,14 @@ namespace TheManager
         /// Concerne la programmation générale des matchs du tour (TV, heure, jours)
         /// </summary>
         protected ProgrammationTour _programmation;
+
+        public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, bool allerRetour)
+        {
+            _nom = nom;
+            _clubs = new List<Club>();
+            _matchs = new List<Match>();
+            _programmation = new ProgrammationTour(heure, dates, decalages);
+            _allerRetour = allerRetour;
+        }
     }
 }

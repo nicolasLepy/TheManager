@@ -41,12 +41,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Calendrier.cs" />
     <Compile Include="Club.cs" />
+    <Compile Include="Club_Ville.cs" />
+    <Compile Include="Competition.cs" />
+    <Compile Include="Contrat.cs" />
+    <Compile Include="EvenementMatch.cs" />
+    <Compile Include="Match.cs" />
+    <Compile Include="Partie.cs" />
     <Compile Include="Pays.cs" />
     <Compile Include="Continent.cs" />
     <Compile Include="Joueur.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectionNationale.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Stade.cs" />
+    <Compile Include="Tour.cs" />
+    <Compile Include="TourChampionnat.cs" />
+    <Compile Include="TourElimination.cs" />
+    <Compile Include="TourPoules.cs" />
     <Compile Include="Ville.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

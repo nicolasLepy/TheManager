@@ -119,7 +119,8 @@ namespace TheManager
         private static void ProgrammeTV(List<Match> matchs, List<DecalagesTV> decalages)
         {
             int indice = 0;
-            matchs.Sort(new MatchNiveau_Comparator());
+            //Commentaire à enlever une fois le comparator implémenté
+            //matchs.Sort(new MatchNiveau_Comparator());
             foreach (DecalagesTV d in decalages)
             {
                 TimeSpan ts = new TimeSpan(d.Heure.Heures, d.Heure.Minutes, 0);
@@ -129,7 +130,7 @@ namespace TheManager
                 
             }
         }
-
+        /*
         public static List<Match> TirageAuSort(TourElimination tour)
         {
             List<Match> res = new List<Match>();
@@ -154,6 +155,6 @@ namespace TheManager
             Club res = pot[Session.Instance.Random(0, pot.Count)];
             pot.Remove(res);
             return res;
-        }
+        }*/
     }
 }
