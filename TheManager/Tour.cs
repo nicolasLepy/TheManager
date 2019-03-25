@@ -76,6 +76,57 @@ namespace TheManager
             _allerRetour = allerRetour;
         }
 
+        /// <summary>
+        /// Joue les matchs du jour
+        /// </summary>
+        /// <returns>Vrai si au moins un match a été joué, faux sinon</returns>
+        public bool JouerMatchs()
+        {
+            bool res = false;
+            foreach (Match m in _matchs)
+            {
+                if (Session.Instance.Partie.Date.Date == m.Jour.Date)
+                {
+                    m.Jouer();
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Renvoi la liste des prochains matchs à se jouer selon la date
+        /// </summary>
+        /// <returns></returns>
+        public List<Match> ProchainsMatchs()
+        {
+            List<Match> res = new List<Match>();
+            bool continuer = true;
+            DateTime date = new DateTime(2000, 1, 1);
+            int i = 0;
+            if (_matchs.Count == 0) continuer = false;
+            while (continuer)
+            {
+                Match m = _matchs[i];
+                if (!m.Joue)
+                {
+                    if (date.Year == 2000)
+                    {
+                        date = m.Jour;
+                        res.Add(m);
+                    }
+                    else if (date.Date == m.Jour.Date)
+                        res.Add(m);
+                    else continuer = false;
+                }
+                if (i == _matchs.Count - 1) continuer = false;
+                i++;
+            }
+
+
+            return res;
+        }
+
         public abstract void Initialiser();
         public abstract List<Club> Qualifies();
     }

@@ -13,12 +13,9 @@ namespace TheManager
 
         }
 
-        public override void Initialiser(List<Club> clubs)
+        public override void Initialiser()
         {
-            foreach (Club c in clubs)
-                _clubs.Add(c);
-
-            _matchs = GestionCalendrier.TirageAuSort(this);
+            _matchs = Calendrier.TirageAuSort(this);
         }
 
         public override List<Club> Qualifies()

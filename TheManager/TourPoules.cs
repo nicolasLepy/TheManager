@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -15,7 +16,7 @@ namespace TheManager
         public int NombrePoules { get { return _nombrePoules; } }
         public int QualifiesParPoule { get { return _qualifiesParPoule; } }
 
-        public TourPoules(string nom, DateTime heure, List<DateTime> dates, List<Decalage> decalages, int nombrePoules, bool allerRetour, int qualifiesParPoule) : base(nom, heure, dates, decalages, allerRetour)
+        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, int qualifiesParPoule) : base(nom, heure, dates, decalages, allerRetour)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
@@ -26,15 +27,13 @@ namespace TheManager
             _qualifiesParPoule = qualifiesParPoule;
         }
 
-        public override void Initialiser(List<Club> clubs)
+        public override void Initialiser()
         {
-            foreach (Club c in clubs)
-                _clubs.Add(c);
 
             DefinirPoules();
             for (int i = 0; i < _nombrePoules; i++)
             {
-                _matchs.AddRange(GestionCalendrier.GenererCalendrier(_poules[i], _dateMatchs, _heure, _decalages));
+                _matchs.AddRange(Calendrier.GenererCalendrier(_poules[i], _programmation.JoursDeMatchs, _programmation.HeureParDefaut, _programmation.DecalagesTV));
             }
 
         }
@@ -90,7 +89,7 @@ namespace TheManager
         public List<Club> Classement(int poule)
         {
             List<Club> res = new List<Club>(_poules[poule]);
-            ClubComparator comparator = new ClubComparator(this);
+            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this);
             res.Sort(comparator);
             return res;
         }
@@ -99,7 +98,7 @@ namespace TheManager
         private void DefinirPoules()
         {
             List<Club> pot = new List<Club>(_clubs);
-            pot.Sort(new ClubNiveauComparator());
+            pot.Sort(new Club_Niveau_Comparator());
             int equipeParPoule = _clubs.Count / _nombrePoules;
             List<Club>[] pots = new List<Club>[equipeParPoule];
             int ind = 0;
@@ -117,7 +116,7 @@ namespace TheManager
             {
                 for (int j = 0; j < _clubs.Count / _nombrePoules; j++)
                 {
-                    Club c = pots[i][UnityEngine.Random.Range(0, pots[i].Count)];
+                    Club c = pots[i][Session.Instance.Random(0, pots[i].Count)];
                     pots[i].Remove(c);
                     _poules[i].Add(c);
                 }
@@ -130,8 +129,8 @@ namespace TheManager
 
             foreach (Match m in _matchs)
             {
-                if (m.Equipe1 == c) res += m.Score1;
-                else if (m.Equipe2 == c) res += m.Score2;
+                if (m.Domicile == c) res += m.Score1;
+                else if (m.Exterieur == c) res += m.Score2;
             }
             return res;
         }
@@ -141,11 +140,12 @@ namespace TheManager
             int res = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Termine && (m.Equipe1 == c || m.Equipe2 == c))
+                if (m.Joue && (m.Domicile == c || m.Exterieur == c))
                     res++;
             }
 
             return res;
         }
+        
     }
 }

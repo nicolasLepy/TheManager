@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -119,8 +120,7 @@ namespace TheManager
         private static void ProgrammeTV(List<Match> matchs, List<DecalagesTV> decalages)
         {
             int indice = 0;
-            //Commentaire à enlever une fois le comparator implémenté
-            //matchs.Sort(new MatchNiveau_Comparator());
+            matchs.Sort(new Match_Niveau_Comparator());
             foreach (DecalagesTV d in decalages)
             {
                 TimeSpan ts = new TimeSpan(d.Heure.Heures, d.Heure.Minutes, 0);
@@ -130,7 +130,7 @@ namespace TheManager
                 
             }
         }
-        /*
+        
         public static List<Match> TirageAuSort(TourElimination tour)
         {
             List<Match> res = new List<Match>();
@@ -139,22 +139,22 @@ namespace TheManager
             {
                 Club dom = TirerClub(pot);
                 Club ext = TirerClub(pot);
-                DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, tour.DateMatchs[0].Month, tour.DateMatchs[0].Day, tour.Heure.Hour, tour.Heure.Minute, 0);
+                DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, tour.Programmation.JoursDeMatchs[0].Month, tour.Programmation.JoursDeMatchs[0].Day, tour.Programmation.HeureParDefaut.Heures, tour.Programmation.HeureParDefaut.Minutes, 0);
                 if (jour.Month < 7) jour = jour.AddYears(1);
 
                 res.Add(new Match(dom, ext, jour));
             }
 
-            Programme(res, tour.Decalages);
+            ProgrammeTV(res, tour.Programmation.DecalagesTV);
 
             return res;
         }
-
+        
         private static Club TirerClub(List<Club> pot)
         {
             Club res = pot[Session.Instance.Random(0, pot.Count)];
             pot.Remove(res);
             return res;
-        }*/
+        }
     }
 }

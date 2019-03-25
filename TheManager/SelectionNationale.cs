@@ -22,7 +22,17 @@ namespace TheManager
 
         public override List<Joueur> Joueurs()
         {
-            return new List<Joueur>();
+            return new List<Joueur>(_selectionnes);
+        }
+
+        public override float Niveau()
+        {
+            float res = 0;
+            foreach(Joueur j in _selectionnes)
+            {
+                res += j.Niveau;
+            }
+            return res / (_selectionnes.Count + 0.0f);
         }
     }
 }

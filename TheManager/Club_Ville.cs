@@ -29,11 +29,20 @@ namespace TheManager
 
         public override List<Joueur> Joueurs()
         {
-           
+            List<Joueur> joueurs = new List<Joueur>();
+            foreach (Contrat c in _joueurs)
+                joueurs.Add(c.Joueur);
+            return joueurs;
         }
 
         public override float Niveau()
         {
+            float niveau = 0;
+            foreach(Contrat c in _joueurs)
+            {
+                niveau += c.Joueur.Niveau;
+            }
+            return niveau / (_joueurs.Count+0.0f);
         }
     }
 }

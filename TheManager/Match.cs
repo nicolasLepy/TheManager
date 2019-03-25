@@ -23,7 +23,7 @@ namespace TheManager
         public List<EvenementMatch> Evenements { get => _evenements; }
         public List<Joueur> Compo1 { get => _compo1; }
         public List<Joueur> Compo2 { get => _compo2; }
-
+        
         /// <summary>
         /// Si un match a été joué ou non
         /// </summary>
@@ -38,6 +38,26 @@ namespace TheManager
                     res = true;
                 }
                 return res;
+            }
+        }
+
+       /// <summary>
+       /// Donne le vainqueur du match (propriété utile pour les confrontations à élimination directes)
+       /// </summary>
+        public Club Vainqueur
+        {
+            get
+            {
+                Club c = null;
+                if(Score1>Score2)
+                {
+                    c = Domicile;
+                }
+                else
+                {
+                    c = Exterieur;
+                }
+                return c;
             }
         }
 
