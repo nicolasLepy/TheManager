@@ -17,6 +17,7 @@ namespace TheManager
         private string _nomCourt;
 
         public abstract List<Joueur> Joueurs();
+        public abstract float Niveau();
 
         public Club(string nom, string nomCourt, int reputation, float supporters, int centreFormation, string logo, Stade stade)
         {

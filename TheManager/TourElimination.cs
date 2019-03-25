@@ -12,5 +12,25 @@ namespace TheManager
         {
 
         }
+
+        public override void Initialiser(List<Club> clubs)
+        {
+            foreach (Club c in clubs)
+                _clubs.Add(c);
+
+            _matchs = GestionCalendrier.TirageAuSort(this);
+        }
+
+        public override List<Club> Qualifies()
+        {
+            List<Club> res = new List<Club>();
+
+            foreach (Match m in _matchs)
+            {
+                res.Add(m.Vainqueur);
+            }
+
+            return res;
+        }
     }
 }

@@ -61,6 +61,12 @@ namespace TheManager
         /// </summary>
         protected ProgrammationTour _programmation;
 
+        public string Nom { get => _nom; }
+        public List<Club> Clubs { get => _clubs; }
+        public List<Match> Matchs { get => _matchs; }
+        public bool AllerRetour { get => _allerRetour; }
+        public ProgrammationTour Programmation { get => _programmation; }
+
         public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, bool allerRetour)
         {
             _nom = nom;
@@ -69,5 +75,8 @@ namespace TheManager
             _programmation = new ProgrammationTour(heure, dates, decalages);
             _allerRetour = allerRetour;
         }
+
+        public abstract void Initialiser();
+        public abstract List<Club> Qualifies();
     }
 }

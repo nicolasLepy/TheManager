@@ -29,7 +29,11 @@ namespace TheManager
 
         public override List<Joueur> Joueurs()
         {
-            throw new NotImplementedException();
+           
+        }
+
+        public override float Niveau()
+        {
         }
     }
 }
