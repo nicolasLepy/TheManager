@@ -24,6 +24,7 @@ namespace TheManager
         private Pays _nationalite;
         private Poste _poste;
         private bool _suspendu;
+        private int _energie;
 
         public string Nom { get => _nom; }
         public string Prenom { get => _prenom;  }
@@ -33,6 +34,20 @@ namespace TheManager
         public Pays Nationalite { get => _nationalite;}
         public Poste Poste { get => _poste;}
         public bool Suspendu { get => _suspendu; set => _suspendu = value; }
+        public int Energie { get => _energie; }
+
+        public Joueur(string prenom, string nom, DateTime naissance, int niveau, int potentiel, Pays nationalite, Poste poste)
+        {
+            _prenom = prenom;
+            _nom = nom;
+            _naissance = naissance;
+            _niveau = niveau;
+            _potentiel = potentiel;
+            _poste = poste;
+            _nationalite = nationalite;
+            Suspendu = false;
+            _energie = 100;
+        }
 
         //Propriétés
         //nb de jaunes cette saison
@@ -40,5 +55,4 @@ namespace TheManager
         //nb de buts cette saison
         //appelé en sélection
     }
-
 }

@@ -25,6 +25,12 @@ namespace TheManager
         private Joueur _joueur;
         private Club _club;
 
+        public Evenement Type { get => _type; }
+        public int Minute { get => _minute; }
+        public int MiTemps { get => _miTemps; }
+        public Joueur Joueur { get => _joueur; }
+        public Club Club { get => _club; }
+
         public EvenementMatch(Evenement type, Club club, Joueur joueur, int minute, int mitemps)
         {
             _type = type;

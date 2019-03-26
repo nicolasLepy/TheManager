@@ -27,6 +27,11 @@ namespace TheManager
             _joueurs = new List<Contrat>();
         }
 
+        public void AjouterJoueur(Contrat c)
+        {
+            _joueurs.Add(c);
+        }
+
         public override List<Joueur> Joueurs()
         {
             List<Joueur> joueurs = new List<Joueur>();
@@ -44,5 +49,6 @@ namespace TheManager
             }
             return niveau / (_joueurs.Count+0.0f);
         }
+
     }
 }

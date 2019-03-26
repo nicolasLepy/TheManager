@@ -9,11 +9,15 @@ namespace TheManager
     public class Partie
     {
         private DateTime _date;
+        private Gestionnaire _gestionnaire;
+
         public DateTime Date { get { return _date; } }
+        public Gestionnaire Gestionnaire { get => _gestionnaire; }
 
         public Partie()
         {
             _date = new DateTime(2018, 07, 01);
+            _gestionnaire = new Gestionnaire();
         }
 
         public void Avancer()

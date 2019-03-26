@@ -130,8 +130,15 @@ namespace TheManager
             _compo2 = new List<Joueur>();
         }
 
+        private void DefinirCompo()
+        {
+            _compo1 = new List<Joueur>(Domicile.Composition());
+            _compo2 = new List<Joueur>(Exterieur.Composition());
+        }
+
         public void Jouer()
         {
+            DefinirCompo();
             Club a;
             Club b;
             float diffF = Math.Abs(NiveauCompo(Compo1) - NiveauCompo(Compo2));
@@ -174,12 +181,14 @@ namespace TheManager
             int hasard = Session.Instance.Random(0, 100);
             if (hasard >= min_a && hasard <= max_a)
             {
-                _score1++;
+                if (a == Domicile) _score1++;
+                else _score2++;
                 But(a);
             }
             else if (hasard >= min_b && hasard <= max_b)
             {
-                _score2++;
+                if (a == Domicile) _score2++;
+                else _score1++;
                 But(b);
             }
             else if (hasard >= 71 && hasard <= 75) CartonJaune(a);
@@ -194,6 +203,7 @@ namespace TheManager
             int minute = Session.Instance.Random(1, 50);
             int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, minute, miTemps);
+            _evenements.Add(em);
         }
 
         private void CartonJaune(Club c)
@@ -202,6 +212,7 @@ namespace TheManager
             int minute = Session.Instance.Random(1, 50);
             int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.CARTON_JAUNE, c, j, minute, miTemps);
+            _evenements.Add(em);
         }
 
         private void CartonRouge(Club c)
@@ -210,6 +221,7 @@ namespace TheManager
             int minute = Session.Instance.Random(1, 50);
             int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, minute, miTemps);
+            _evenements.Add(em);
         }
     }
 }

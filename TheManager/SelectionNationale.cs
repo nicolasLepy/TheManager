@@ -22,7 +22,7 @@ namespace TheManager
 
         public override List<Joueur> Joueurs()
         {
-            return new List<Joueur>(_selectionnes);
+           return new List<Joueur>(_selectionnes);
         }
 
         public override float Niveau()
