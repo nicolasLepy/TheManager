@@ -57,5 +57,23 @@ namespace TheManager
             return res;
         }
 
+        public Stade String2Stade(string stade)
+        {
+            Stade res = null;
+
+            foreach (Continent c in _continents)
+            {
+                foreach(Pays p in c.Pays)
+                {
+                    foreach(Stade s in p.Stades)
+                    {
+                        if (s.Nom == stade) res = s;
+                    }
+                }
+            }
+
+            return res;
+        }
+
     }
 }
