@@ -61,6 +61,19 @@ namespace TheManager
             }
         }
 
+        public Club Perdant
+        {
+            get
+            {
+                Club c;
+                if (Vainqueur == Domicile)
+                    c = Exterieur;
+                else
+                    c = Domicile;
+                return c;
+            }
+        }
+
         private float NiveauCompo(List<Joueur> compo)
         {
             float res = 0;

@@ -18,16 +18,22 @@ namespace TheManager
             _matchs = Calendrier.TirageAuSort(this);
         }
 
-        public override List<Club> Qualifies()
+        public override void QualifierClubs()
         {
-            List<Club> res = new List<Club>();
 
-            foreach (Match m in _matchs)
+            foreach (Qualification q in _qualifications)
             {
-                res.Add(m.Vainqueur);
+                foreach (Match m in _matchs)
+                {
+                    //Vainqueurs
+                    if(q.Classement == 1)
+                    {
+                        q.Competition.Tours[q.IDTour].Clubs.Add(m.Vainqueur);
+                    }
+                    else
+                        q.Competition.Tours[q.IDTour].Clubs.Add(m.Perdant);
+                }
             }
-
-            return res;
         }
     }
 }

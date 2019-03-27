@@ -11,12 +11,10 @@ namespace TheManager
     {
         private int _nombrePoules;
         private List<Club>[] _poules;
-        private int _qualifiesParPoule;
 
         public int NombrePoules { get { return _nombrePoules; } }
-        public int QualifiesParPoule { get { return _qualifiesParPoule; } }
 
-        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, int qualifiesParPoule) : base(nom, heure, dates, decalages, allerRetour)
+        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour) : base(nom, heure, dates, decalages, allerRetour)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
@@ -24,7 +22,6 @@ namespace TheManager
             {
                 _poules[i] = new List<Club>();
             }
-            _qualifiesParPoule = qualifiesParPoule;
         }
 
         public override void Initialiser()
@@ -38,9 +35,8 @@ namespace TheManager
 
         }
 
-        public override List<Club> Qualifies()
+        public override void QualifierClubs()
         {
-            List<Club> res = new List<Club>();
             List<Club>[] poules = new List<Club>[_nombrePoules];
             for (int i = 0; i < _nombrePoules; i++)
             {
@@ -48,12 +44,12 @@ namespace TheManager
             }
             for (int i = 0; i < _nombrePoules; i++)
             {
-                for (int j = 0; j < _qualifiesParPoule; j++)
+                foreach(Qualification q in _qualifications)
                 {
-                    res.Add(poules[i][j]);
+                    Club c = poules[i][q.Classement - 1];
+                    q.Competition.Tours[q.IDTour].Clubs.Add(c);
                 }
             }
-            return res;
         }
 
         public List<Match> ProchaineJournee()

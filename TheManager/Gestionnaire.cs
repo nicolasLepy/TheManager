@@ -15,7 +15,7 @@ namespace TheManager
         private List<Continent> _continents;
 
         public List<Club> Clubs { get => _clubs; }
-        public List<Competition> Competition { get => _competitions; }
+        public List<Competition> Competitions { get => _competitions; }
         public List<Joueur> Joueurs { get => _joueurs; }
         public List<Continent> Continents { get => _continents; }
 
@@ -70,6 +70,27 @@ namespace TheManager
                         if (s.Nom == stade) res = s;
                     }
                 }
+            }
+
+            return res;
+        }
+
+        public Competition String2Competition(string nom)
+        {
+            Competition res = null;
+            foreach(Competition competition in _competitions)
+            {
+                if (competition.Nom == nom) res = competition;
+            }
+            return res;
+        }
+
+        public Club String2Club(string nom)
+        {
+            Club res = null;
+            foreach(Club c in _clubs)
+            {
+                if (c.Nom == nom) res = c;
             }
 
             return res;

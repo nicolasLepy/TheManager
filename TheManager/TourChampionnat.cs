@@ -9,11 +9,9 @@ namespace TheManager
 {
     public class TourChampionnat : Tour, ITourAvecClassement
     {
-        private int _nombreQualifies;
 
-        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, int qualifies) : base(nom, heure, jours, decalages, allerRetour)
+        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages) : base(nom, heure, jours, decalages, allerRetour)
         {
-            _nombreQualifies = qualifies;
         }
 
         public override void Initialiser()
@@ -21,15 +19,15 @@ namespace TheManager
             _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation.JoursDeMatchs, this.Programmation.HeureParDefaut, this.Programmation.DecalagesTV);
         }
 
-        public override List<Club> Qualifies()
+        public override void QualifierClubs()
         {
             List<Club> classement = Classement();
             List<Club> qualifies = new List<Club>();
-            for (int i = 0; i < _nombreQualifies; i++)
+            foreach(Qualification q in Qualifications)
             {
-                qualifies.Add(classement[i]);
+                Club c = classement[q.Classement-1];
+                q.Competition.Tours[q.IDTour].Clubs.Add(c);
             }
-            return classement;
         }
 
         public List<Club> Classement()

@@ -37,6 +37,20 @@ namespace TheManager
         }
     }
 
+    public struct Qualification
+    {
+        public int Classement { get; set; }
+        public int IDTour { get; set; }
+        public Competition Competition { get; set; }
+
+        public Qualification(int classement, int idtour, Competition competition)
+        {
+            Classement = classement;
+            IDTour = idtour;
+            Competition = competition;
+        }
+    }
+
     public abstract class Tour
     {
         /// <summary>
@@ -61,11 +75,35 @@ namespace TheManager
         /// </summary>
         protected ProgrammationTour _programmation;
 
+        protected List<Qualification> _qualifications;
+
         public string Nom { get => _nom; }
         public List<Club> Clubs { get => _clubs; }
         public List<Match> Matchs { get => _matchs; }
         public bool AllerRetour { get => _allerRetour; }
         public ProgrammationTour Programmation { get => _programmation; }
+        public List<Qualification> Qualifications { get => _qualifications; }
+
+        /*public Competition Competition
+        {
+            get
+            {
+                Competition competition = null;
+
+                foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                {
+                    foreach(Tour t in c.Tours)
+                    {
+                        if(t == this)
+                        {
+                            competition = c;
+                        }
+                    }
+                }
+
+                return competition;
+            }
+        }*/
 
         public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, bool allerRetour)
         {
@@ -74,6 +112,7 @@ namespace TheManager
             _matchs = new List<Match>();
             _programmation = new ProgrammationTour(heure, dates, decalages);
             _allerRetour = allerRetour;
+            _qualifications = new List<Qualification>();
         }
 
         /// <summary>
@@ -128,6 +167,6 @@ namespace TheManager
         }
 
         public abstract void Initialiser();
-        public abstract List<Club> Qualifies();
+        public abstract void QualifierClubs();
     }
 }
