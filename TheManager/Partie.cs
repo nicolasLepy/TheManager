@@ -23,6 +23,14 @@ namespace TheManager
         public void Avancer()
         {
             _date.AddDays(1);
+            foreach(Competition c in _gestionnaire.Competitions)
+            {
+                foreach(Match m in c.Tours[c.TourActuel].Matchs)
+                {
+                    if (Utils.ComparerDates(m.Jour, _date))
+                        m.Jouer();
+                }
+            }
         }
     }
 }
