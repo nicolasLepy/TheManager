@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Exportation;
 
 namespace TheManager
 {
@@ -47,6 +48,7 @@ namespace TheManager
         /// </summary>
         public void RAZ()
         {
+            Exporteur.Exporter(this);
             Competition copieArchive = new Competition(_nom, _logo, _debutSaison, _nomCourt);
             foreach (Tour t in Tours) copieArchive.Tours.Add(t);
             Session.Instance.Partie.Gestionnaire.CompetitionsArchives.Add(copieArchive);

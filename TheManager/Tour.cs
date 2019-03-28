@@ -141,6 +141,16 @@ namespace TheManager
             return res;
         }
 
+        public float MoyenneButs()
+        {
+            float res = 0;
+            foreach(Match m in _matchs)
+            {
+                res += m.Score1 + m.Score2;
+            }
+            return res / ( _matchs.Count+0.0f);
+        }
+
         /// <summary>
         /// Renvoi la liste des prochains matchs à se jouer selon la date
         /// </summary>
