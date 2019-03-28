@@ -31,8 +31,18 @@ namespace TheManager
             _nom = nom;
             _logo = logo;
             _debutSaison = debutSaison;
-            TourActuel = 0;
+            TourActuel = -1;
             _nomCourt = nomCourt;
+        }
+
+        public void TourSuivant()
+        {
+            if (_tours.Count > TourActuel + 1)
+            {
+                TourActuel++;
+                if(TourActuel > 0) _tours[TourActuel - 1].QualifierClubs();
+                _tours[TourActuel].Initialiser();
+            }
         }
 
     }

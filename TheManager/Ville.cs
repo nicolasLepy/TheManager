@@ -10,17 +10,21 @@ namespace TheManager
     {
         public string Nom { get; set; }
         public int Population { get; set; }
+        public float Latitude { get; set; }
+        public float Longitude { get; set; }
 
-        public Ville(string nom, int population)
+        public Ville(string nom, int population, float latitude, float longitude)
         {
             Nom = nom;
             Population = population;
+            Latitude = latitude;
+            Longitude = longitude;
         }
 
-        public Pays Pays(Gestionnaire gestionnaire)
+        public Pays Pays()
         {
             Pays res = null;
-            foreach(Continent c in gestionnaire.Continents)
+            foreach(Continent c in Session.Instance.Partie.Gestionnaire.Continents)
             {
                 foreach(Pays p in c.Pays)
                 {

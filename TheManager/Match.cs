@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -73,6 +74,20 @@ namespace TheManager
                 return c;
             }
         }
+        
+        public int CartonsJaunes
+        {
+            get
+            {
+                int res = 0;
+                foreach(EvenementMatch em in _evenements)
+                {
+                    if (em.Type == Evenement.CARTON_JAUNE)
+                        res++;
+                }
+                return res;
+            }
+        }
 
         private float NiveauCompo(List<Joueur> compo)
         {
@@ -129,6 +144,7 @@ namespace TheManager
                 }
             }
             return joueurs[Session.Instance.Random(0, joueurs.Count)];
+
         }
 
         public Match(Club domicile, Club exterieur, DateTime jour)
@@ -187,6 +203,16 @@ namespace TheManager
                 if (diff >= 80 && diff <= 89) IterationMatch(a, b, 1, 39, 40, 40);
                 if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);
             }
+            Console.WriteLine(Jour.Date.ToString() + " : " +  Domicile.Nom + " " + _score1 + " - " + _score2 + " " + Exterieur.Nom);
+            List<EvenementMatch> evenements = new List<EvenementMatch>(_evenements);
+            evenements.Sort(new EvenementMatch_Temps_Comparator());
+            Console.WriteLine("");
+            foreach (EvenementMatch ev in evenements)
+            {
+                if(ev.Type == Evenement.BUT || ev.Type == Evenement.BUT_PENALTY || ev.Type == Evenement.BUT_CSC)
+                Console.WriteLine(ev.MinuteEv + "min :  " + ev.Type + "(" + ev.Joueur.Nom + ") pour " + ev.Club.Nom);
+            }
+            Console.WriteLine("");
         }
 
         private void IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)

@@ -50,5 +50,20 @@ namespace TheManager
             return niveau / (_joueurs.Count+0.0f);
         }
 
+        public void GenererJoueur(Poste p)
+        {
+            Joueur j = new Joueur(Session.Instance.Partie.Gestionnaire.Langues[0].ObtenirPrenom(), Session.Instance.Partie.Gestionnaire.Langues[0].ObtenirNom(), new DateTime(1990, 1, 1), CentreFormation, CentreFormation + 2, this.Ville.Pays(), p);
+            Contrats.Add(new Contrat(j, 100, new DateTime(2023, 1, 1)));
+        }
+
+        public void GenererJoueur()
+        {
+            Poste p = Poste.GARDIEN;
+            int random = Session.Instance.Random(1, 12);
+            if(random >= 2 && random <= 5) p = Poste.DEFENSEUR;
+            if (random >= 6 && random <= 9) p = Poste.MILIEU;
+            if (random >= 10) p = Poste.ATTAQUANT;
+            GenererJoueur(p);
+        }
     }
 }

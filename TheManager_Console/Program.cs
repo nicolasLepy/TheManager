@@ -32,6 +32,8 @@ namespace TheManager_Console
                 Console.WriteLine("(" + em.MiTemps + ") " + minutes + " min, " + em.Type + ", pour " + em.Club.Nom + " de " + em.Joueur.Nom);
             }
             */
+            for (int i = 0; i < 350; i++)
+                partie.Avancer();
             Console.ReadLine();
 
         }

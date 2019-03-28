@@ -22,13 +22,24 @@ namespace TheManager
 
         public void Avancer()
         {
-            _date.AddDays(1);
+            _date = _date.AddDays(1);
             foreach(Competition c in _gestionnaire.Competitions)
             {
-                foreach(Match m in c.Tours[c.TourActuel].Matchs)
+                if(c.TourActuel > -1)
                 {
-                    if (Utils.ComparerDates(m.Jour, _date))
-                        m.Jouer();
+                    Tour enCours = c.Tours[c.TourActuel];
+                    foreach (Match m in enCours.Matchs)
+                    {
+                        if (Utils.ComparerDates(m.Jour, _date))
+                            m.Jouer();
+                    }
+                }
+                foreach(Tour t in c.Tours)
+                {
+                    if (Utils.ComparerDatesSansAnnee (t.Programmation.Initialisation, _date))
+                    {
+                        c.TourSuivant();
+                    }
                 }
             }
         }

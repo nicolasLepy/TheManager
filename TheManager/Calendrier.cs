@@ -16,7 +16,7 @@ namespace TheManager
 
     public class Calendrier
     {
-        public static List<Match> GenererCalendrier(List<Club> clubs, List<DateTime> dates, Heure heure, List<DecalagesTV> decalages)
+        public static List<Match> GenererCalendrier(List<Club> clubs, List<DateTime> dates, Heure heure, List<DecalagesTV> decalages, bool allerRetour)
         {
             List<Match> res = new List<Match>();
             bool ghost = false;
@@ -107,6 +107,38 @@ namespace TheManager
                 }
                 ProgrammeTV(matchs, decalages);
             }
+            if(allerRetour)
+            {
+                //Partie 1 : gestion des journées 2-fin
+                int nbJourneesAller = res.Count / matchsPerRound;
+                List<Match> matchs = new List<Match>();
+                for (int i = 1; i< nbJourneesAller; i++)
+                {
+                    matchs = new List<Match>();
+                    for(int j = 0; j< matchsPerRound; j++)
+                    {
+                        Match mbase = res[matchsPerRound * i + j];
+                        DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, dates[nbJourneesAller+i-1].Month, dates[nbJourneesAller + i-1].Day, heure.Heures, heure.Minutes, 0);
+                        if (jour.Month < 7) jour = jour.AddYears(1);
+                        Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour);
+                        matchs.Add(retour);
+                        res.Add(retour);
+                    }
+                    ProgrammeTV(matchs, decalages);
+                }
+                //Dernière journée : première journée inversée
+                matchs = new List<Match>();
+                for (int i = 0; i<matchsPerRound; i++)
+                {
+                    Match mbase = res[i];
+                    DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, dates[dates.Count-1].Month, dates[dates.Count - 1].Day, heure.Heures, heure.Minutes, 0);
+                    if (jour.Month < 7) jour = jour.AddYears(1);
+                    Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour);
+                    matchs.Add(retour);
+                    res.Add(retour);
+                }
+                ProgrammeTV(matchs, decalages);
+            }
 
             return res;
         }
@@ -123,11 +155,14 @@ namespace TheManager
             matchs.Sort(new Match_Niveau_Comparator());
             foreach (DecalagesTV d in decalages)
             {
-                TimeSpan ts = new TimeSpan(d.Heure.Heures, d.Heure.Minutes, 0);
-                matchs[indice].Jour = matchs[indice].Jour.Date + ts;
                 matchs[indice].Jour = matchs[indice].Jour.AddDays(d.DecalageJours);
+                //Remise des heures à 0
+                matchs[indice].Jour = matchs[indice].Jour.AddHours(-matchs[indice].Jour.Hour);
+                matchs[indice].Jour = matchs[indice].Jour.AddMinutes(-matchs[indice].Jour.Minute);
+                //Affectation de la nouvelle heure
+                matchs[indice].Jour = matchs[indice].Jour.AddHours(d.Heure.Heures);
+                matchs[indice].Jour = matchs[indice].Jour.AddMinutes(d.Heure.Minutes);
                 indice++;
-                
             }
         }
         

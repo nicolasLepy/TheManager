@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace TheManager
 {
@@ -17,10 +18,57 @@ namespace TheManager
 
         public void Charger()
         {
+            ChargerLangues();
             ChargerGeographie();
+            ChargerVilles();
             ChargerClubs();
             ChargerCompetitions();
             ChargerStades();
+            ChargerJoueurs();
+            InitialiserEquipes();
+        }
+
+        public void ChargerJoueurs()
+        {
+            XDocument doc = XDocument.Load("Donnees/joueurs.xml");
+            foreach (XElement e in doc.Descendants("Joueurs"))
+            {
+                foreach (XElement e2 in e.Descendants("Joueur"))
+                {
+                    string nom = e2.Attribute("nom").Value;
+                    string prenom = e2.Attribute("prenom").Value;
+                    int niveau = int.Parse(e2.Attribute("niveau").Value);
+                    string nomClub = e2.Attribute("club").Value;
+                    Club_Ville club = _gestionnaire.String2Club(nomClub) as Club_Ville;
+                    Poste poste = Poste.GARDIEN;
+                    string nomPoste = e2.Attribute("poste").Value;
+                    switch(nomPoste)
+                    {
+                        case "DEFENSEUR": poste = Poste.DEFENSEUR; break;
+                        case "MILIEU": poste = Poste.MILIEU; break;
+                        case "ATTAQUANT": poste = Poste.ATTAQUANT; break;
+                    }
+                    Joueur j = new Joueur(prenom, nom, new DateTime(1990, 1, 1), niveau, niveau + 5, _gestionnaire.String2Pays("France"), poste);
+                    club.AjouterJoueur(new Contrat(j, 12500, new DateTime(2022, 1, 1)));
+                }
+            }
+        }
+
+            public void ChargerVilles()
+        {
+            XDocument doc = XDocument.Load("Donnees/villes.xml");
+            foreach (XElement e in doc.Descendants("Villes"))
+            {
+                foreach (XElement e2 in e.Descendants("Ville"))
+                {
+                    string nom = e2.Element("Nom").Value;
+                    int population = int.Parse(e2.Element("Population").Value);
+                    float lat = float.Parse(e2.Element("Latitute").Value, CultureInfo.InvariantCulture);
+                    float lon = float.Parse(e2.Element("Longitude").Value, CultureInfo.InvariantCulture);
+                    _gestionnaire.String2Pays("France").Villes.Add(new Ville(nom, population, lat, lon));
+
+                }
+            }
         }
 
         public void ChargerGeographie()
@@ -40,7 +88,10 @@ namespace TheManager
                         {
                             string nom_ville = e4.Attribute("nom").Value;
                             int population = int.Parse(e4.Attribute("population").Value);
-                            Ville v = new Ville(nom_ville, population);
+                            float lat = float.Parse(e4.Attribute("Latitute").Value);
+                            float lon = float.Parse(e4.Attribute("Longitude").Value);
+
+                            Ville v = new Ville(nom_ville, population, lat, lon);
                             p.Villes.Add(v);
                         }
                         c.Pays.Add(p);
@@ -62,7 +113,7 @@ namespace TheManager
                     string nom_ville = e2.Attribute("ville").Value;
                     Ville v = _gestionnaire.String2Ville(nom_ville);
                     Stade s = new Stade(nom, capacite, v);
-                    v.Pays(_gestionnaire).Stades.Add(s);
+                    v.Pays().Stades.Add(s);
                 }
             }
         }
@@ -80,10 +131,19 @@ namespace TheManager
                     int reputation = int.Parse(e2.Attribute("reputation").Value);
                     int budget = int.Parse(e2.Attribute("budget").Value);
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
-                    string nom_stade = e2.Attribute("stade").Value;
-                    Stade stade = _gestionnaire.String2Stade(nom_stade);
+
                     string nom_ville = e2.Attribute("ville").Value;
                     Ville ville = _gestionnaire.String2Ville(nom_ville);
+
+                    Stade stade = null;
+                    if (e2.Attribute("stade") != null)
+                    {
+                        string nom_stade = e2.Attribute("stade").Value;
+                        stade = _gestionnaire.String2Stade(nom_stade);
+                    }
+                    if (stade == null)
+                        stade = new Stade("Stade de " + nomCourt, ville.Population / 10, ville);
+
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
                     Club c = new Club_Ville(nom, nomCourt, reputation, budget, supporters, centreFormation, ville, 0, logo, stade);
@@ -126,6 +186,7 @@ namespace TheManager
                         string nomTour = e3.Attribute("nom").Value;
                         bool allerRetour = e3.Attribute("allerRetour").Value == "oui" ? true : false;
                         string heureParDefaut = e3.Attribute("heureParDefaut").Value;
+                        DateTime date_initialisation = String2Date(e3.Attribute("initialisation").Value);
                         List<DateTime> dates = new List<DateTime>();
                         bool onPeut = true;
                         int i = 1;
@@ -146,16 +207,16 @@ namespace TheManager
 
                         if (type == "championnat")
                         {
-                            tour = new TourChampionnat(nom, String2Heure(heureParDefaut), dates, allerRetour,new List<DecalagesTV>());
+                            tour = new TourChampionnat(nomTour, String2Heure(heureParDefaut), dates, allerRetour,new List<DecalagesTV>(), date_initialisation);
                         }
                         else if(type=="elimination")
                         {
-                            tour = new TourElimination(nom, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), allerRetour);
+                            tour = new TourElimination(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), allerRetour, date_initialisation);
                         }
                         else if(type =="poules")
                         {
                             int nbpoules = int.Parse(e3.Attribute("nombrePoules").Value);
-                            tour = new TourPoules(nom, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), nbpoules, allerRetour);
+                            tour = new TourPoules(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), nbpoules, allerRetour, date_initialisation);
                         }
                         c.Tours.Add(tour);
                         foreach (XElement e4 in e3.Descendants("Club"))
@@ -188,6 +249,44 @@ namespace TheManager
                         }
                     }
                     _gestionnaire.Competitions.Add(c);
+                }
+            }
+        }
+
+        public void ChargerLangues()
+        {
+            ChargerLangue("Francais", "fr");
+        }
+
+        private void ChargerLangue(string nomLangue, string nomFichier)
+        {
+            Langue langue = new Langue(nomLangue);
+            string[] text = System.IO.File.ReadAllLines("Donnees/" + nomFichier + "_p.txt");
+            foreach(string line in text)
+            {
+                langue.AjouterPrenom(line);
+            }
+            text = System.IO.File.ReadAllLines("Donnees/" + nomFichier + "_n.txt");
+            foreach (string line in text)
+            {
+                langue.AjouterNom(line);
+            }
+            _gestionnaire.Langues.Add(langue);
+        }
+
+        public void InitialiserEquipes()
+        {
+            foreach(Club c in _gestionnaire.Clubs)
+            {
+                Club_Ville cv = c as Club_Ville;
+                if(cv != null)
+                {
+                    int nbContratsManquants = 19 - cv.Contrats.Count;
+
+                    for (int i = 0; i < nbContratsManquants; i++)
+                    {
+                        cv.GenererJoueur();
+                    }
                 }
             }
         }

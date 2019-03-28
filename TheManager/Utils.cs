@@ -16,6 +16,14 @@ namespace TheManager
             if (a.Year == b.Year && a.Month == b.Month && a.Day == b.Day) res = true;
             return res;
         }
+        
+        public static bool ComparerDatesSansAnnee(DateTime a, DateTime b)
+        {
+            bool res = false;
+
+            if (a.Month == b.Month && a.Day == b.Day) res = true;
+            return res;
+        }
 
     }
 }

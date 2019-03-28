@@ -10,18 +10,24 @@ namespace TheManager
     public class TourChampionnat : Tour, ITourAvecClassement
     {
 
-        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages) : base(nom, heure, jours, decalages, allerRetour)
+        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation) : base(nom, heure, jours, decalages, initialisation, allerRetour)
         {
         }
 
         public override void Initialiser()
         {
-            _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation.JoursDeMatchs, this.Programmation.HeureParDefaut, this.Programmation.DecalagesTV);
+            _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation.JoursDeMatchs, this.Programmation.HeureParDefaut, this.Programmation.DecalagesTV, AllerRetour);
         }
 
         public override void QualifierClubs()
         {
             List<Club> classement = Classement();
+
+            foreach(Club c in classement)
+            {
+                Console.WriteLine(c.Nom + " : " + Points(c) + ", " + Joues(c));
+            }
+
             List<Club> qualifies = new List<Club>();
             foreach(Qualification q in Qualifications)
             {

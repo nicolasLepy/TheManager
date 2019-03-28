@@ -27,6 +27,15 @@ namespace TheManager
 
         public Evenement Type { get => _type; }
         public int Minute { get => _minute; }
+        public int MinuteEv
+        {
+            get
+            {
+                int minutes = _minute;
+                if (_miTemps == 2) minutes = minutes + 45;
+                return minutes;
+            }
+        }
         public int MiTemps { get => _miTemps; }
         public Joueur Joueur { get => _joueur; }
         public Club Club { get => _club; }
