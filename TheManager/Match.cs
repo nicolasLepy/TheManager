@@ -203,8 +203,12 @@ namespace TheManager
                 if (diff >= 80 && diff <= 89) IterationMatch(a, b, 1, 39, 40, 40);
                 if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);
             }
-            Console.WriteLine(Jour.ToString() + " : " +  Domicile.Nom + " " + _score1 + " - " + _score2 + " " + Exterieur.Nom);
-            List<EvenementMatch> evenements = new List<EvenementMatch>(_evenements);
+            string afficher = Jour.ToString() + " : " + Domicile.Nom + " - " + Exterieur.Nom;
+            int ecart = 70 - afficher.Length;
+            for (int i = 0; i < ecart; i++) afficher += " ";
+            afficher += _score1 + "-" + _score2;
+            Console.WriteLine(afficher);
+            /*List<EvenementMatch> evenements = new List<EvenementMatch>(_evenements);
             evenements.Sort(new EvenementMatch_Temps_Comparator());
             Console.WriteLine("");
             foreach (EvenementMatch ev in evenements)
@@ -212,7 +216,7 @@ namespace TheManager
                 if(ev.Type == Evenement.BUT || ev.Type == Evenement.BUT_PENALTY || ev.Type == Evenement.BUT_CSC)
                 Console.WriteLine(ev.MinuteEv + "min :  " + ev.Type + "(" + ev.Joueur.Nom + ") pour " + ev.Club.Nom);
             }
-            Console.WriteLine("");
+            Console.WriteLine("");*/
         }
 
         private void IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)

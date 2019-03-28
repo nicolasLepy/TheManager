@@ -7,7 +7,7 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
-    public class TourChampionnat : Tour, ITourAvecClassement
+    public class TourChampionnat : Tour
     {
 
         public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation) : base(nom, heure, jours, decalages, initialisation, allerRetour)
@@ -47,42 +47,7 @@ namespace TheManager
 
 
 
-        public int Points(Club c)
-        {
-            int points = 0;
-            foreach (Match m in _matchs)
-            {
-                if (m.Joue)
-                {
-                    if (m.Domicile == c)
-                    {
-                        if (m.Score1 > m.Score2)
-                            points += 3;
-                        else if (m.Score2 == m.Score1)
-                            points++;
-                    }
-                    else if (m.Exterieur == c)
-                    {
-                        if (m.Score2 > m.Score1)
-                            points += 3;
-                        else if (m.Score2 == m.Score1)
-                            points++;
-                    }
-                }
-            }
-
-            return points;
-        }
-
-        public int Joues(Club c)
-        {
-            int joues = 0;
-            foreach (Match m in _matchs)
-            {
-                if (m.Joue && (m.Domicile == c || m.Exterieur == c)) joues++;
-            }
-            return joues;
-        }
+        
 
         public List<Match> ProchaineJournee()
         {
@@ -146,5 +111,6 @@ namespace TheManager
             }
             return res;
         }
+
     }
 }

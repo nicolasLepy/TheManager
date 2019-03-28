@@ -7,7 +7,7 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
-    public class TourPoules : Tour, ITourAvecClassement
+    public class TourPoules : Tour
     {
         private int _nombrePoules;
         private List<Club>[] _poules;
@@ -117,30 +117,6 @@ namespace TheManager
                     _poules[i].Add(c);
                 }
             }
-        }
-
-        public int Points(Club c)
-        {
-            int res = 0;
-
-            foreach (Match m in _matchs)
-            {
-                if (m.Domicile == c) res += m.Score1;
-                else if (m.Exterieur == c) res += m.Score2;
-            }
-            return res;
-        }
-
-        public int Joues(Club c)
-        {
-            int res = 0;
-            foreach (Match m in _matchs)
-            {
-                if (m.Joue && (m.Domicile == c || m.Exterieur == c))
-                    res++;
-            }
-
-            return res;
         }
         
     }

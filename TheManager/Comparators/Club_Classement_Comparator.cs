@@ -8,9 +8,9 @@ namespace TheManager.Comparators
 {
     public class Club_Classement_Comparator : IComparer<Club>
     {
-        private ITourAvecClassement _tour;
+        private Tour _tour;
 
-        public Club_Classement_Comparator(ITourAvecClassement t)
+        public Club_Classement_Comparator(Tour t)
         {
             _tour = t;
         }

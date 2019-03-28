@@ -14,12 +14,14 @@ namespace TheManager
         private List<Joueur> _joueurs;
         private List<Continent> _continents;
         private List<Langue> _langues;
+        private List<Competition> _competitionsArchives;
 
         public List<Club> Clubs { get => _clubs; }
         public List<Competition> Competitions { get => _competitions; }
         public List<Joueur> Joueurs { get => _joueurs; }
         public List<Continent> Continents { get => _continents; }
         public List<Langue> Langues { get => _langues; }
+        public List<Competition> CompetitionsArchives { get => _competitionsArchives; }
 
         public Gestionnaire()
         {
@@ -28,6 +30,7 @@ namespace TheManager
             _joueurs = new List<Joueur>();
             _continents = new List<Continent>();
             _langues = new List<Langue>();
+            _competitionsArchives = new List<Competition>();
         }
 
         public Ville String2Ville(string nom)

@@ -8,10 +8,7 @@ namespace TheManager
 {
     public class Competition
     {
-
-
         
-
         private string _nom;
         private List<Tour> _tours;
         private string _logo;

@@ -169,6 +169,130 @@ namespace TheManager
             return res;
         }
 
+        public int Points(Club c)
+        {
+            int points = 0;
+            foreach (Match m in _matchs)
+            {
+                if (m.Joue)
+                {
+                    if (m.Domicile == c)
+                    {
+                        if (m.Score1 > m.Score2)
+                            points += 3;
+                        else if (m.Score2 == m.Score1)
+                            points++;
+                    }
+                    else if (m.Exterieur == c)
+                    {
+                        if (m.Score2 > m.Score1)
+                            points += 3;
+                        else if (m.Score2 == m.Score1)
+                            points++;
+                    }
+                }
+            }
+
+            return points;
+        }
+
+
+        public int Joues(Club c)
+        {
+            int joues = 0;
+            foreach (Match m in _matchs)
+            {
+                if (m.Joue && (m.Domicile == c || m.Exterieur == c)) joues++;
+            }
+            return joues;
+        }
+
+        public int Gagnes(Club c)
+        {
+            int res = 0;
+            foreach (Match m in _matchs)
+            {
+                if (m.Domicile == c)
+                {
+                    if (m.Score1 > m.Score2) res++;
+                }
+                else if (m.Exterieur == c)
+                {
+                    if (m.Score2 > m.Score1) res++;
+                }
+            }
+            return res;
+        }
+
+        public int Nuls(Club c)
+        {
+            int res = 0;
+            foreach (Match m in _matchs)
+            {
+                if (m.Domicile == c || m.Exterieur == c)
+                {
+                    if (m.Score1 == m.Score2) res++;
+                }
+            }
+            return res;
+        }
+
+        public int Perdus(Club c)
+        {
+            int res = 0;
+            foreach (Match m in _matchs)
+            {
+                if (m.Domicile == c)
+                {
+                    if (m.Score1 < m.Score2) res++;
+                }
+                else if (m.Exterieur == c)
+                {
+                    if (m.Score2 < m.Score1) res++;
+                }
+            }
+            return res;
+        }
+
+        public int ButsPour(Club c)
+        {
+            int res = 0;
+            foreach (Match m in _matchs)
+            {
+                if (m.Domicile == c)
+                {
+                    res += m.Score1;
+                }
+                else if (m.Exterieur == c)
+                {
+                    res += m.Score2;
+                }
+            }
+            return res;
+        }
+
+        public int ButsContre(Club c)
+        {
+            int res = 0;
+            foreach (Match m in _matchs)
+            {
+                if (m.Domicile == c)
+                {
+                    res += m.Score2;
+                }
+                else if (m.Exterieur == c)
+                {
+                    res += m.Score1;
+                }
+            }
+            return res;
+        }
+
+        public int Difference(Club c)
+        {
+            return ButsPour(c) - ButsContre(c);
+        }
+
         public abstract void Initialiser();
         public abstract void QualifierClubs();
     }

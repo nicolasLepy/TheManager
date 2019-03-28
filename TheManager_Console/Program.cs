@@ -10,6 +10,7 @@ namespace TheManager_Console
 {
     class Program
     {
+
         static void Main(string[] args)
         {
             Partie partie = new Partie();
@@ -22,6 +23,11 @@ namespace TheManager_Console
             for (int i = 0; i < 350; i++)
                 partie.Avancer();
             Console.WriteLine(partie.Date.ToShortDateString());
+            bool fini = false;
+            while(!fini)
+            {
+
+            }
             Console.ReadLine();
 
         }
