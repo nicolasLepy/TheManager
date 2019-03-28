@@ -203,7 +203,7 @@ namespace TheManager
                 if (diff >= 80 && diff <= 89) IterationMatch(a, b, 1, 39, 40, 40);
                 if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);
             }
-            Console.WriteLine(Jour.Date.ToString() + " : " +  Domicile.Nom + " " + _score1 + " - " + _score2 + " " + Exterieur.Nom);
+            Console.WriteLine(Jour.ToString() + " : " +  Domicile.Nom + " " + _score1 + " - " + _score2 + " " + Exterieur.Nom);
             List<EvenementMatch> evenements = new List<EvenementMatch>(_evenements);
             evenements.Sort(new EvenementMatch_Temps_Comparator());
             Console.WriteLine("");

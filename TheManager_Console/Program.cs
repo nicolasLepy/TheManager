@@ -18,22 +18,10 @@ namespace TheManager_Console
             ChargeurBaseDeDonnees cbdd = new ChargeurBaseDeDonnees(g);
             cbdd.Charger();
 
-            /*
-            Match m = new Match(null, null, new DateTime(2018, 8, 3));
-            m.Jouer();
-            Console.WriteLine(m.Score1 + " - " + m.Score2);
-            
-            
-            List<EvenementMatch> evenements = new List<EvenementMatch>(m.Evenements);
-            evenements.Sort(new EvenementMatch_Temps_Comparator());
-            foreach(EvenementMatch em in evenements)
-            {
-                int minutes = 45 * (em.MiTemps - 1) + em.Minute;
-                Console.WriteLine("(" + em.MiTemps + ") " + minutes + " min, " + em.Type + ", pour " + em.Club.Nom + " de " + em.Joueur.Nom);
-            }
-            */
+           
             for (int i = 0; i < 350; i++)
                 partie.Avancer();
+            Console.WriteLine(partie.Date.ToShortDateString());
             Console.ReadLine();
 
         }

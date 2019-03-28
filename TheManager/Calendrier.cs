@@ -139,7 +139,6 @@ namespace TheManager
                 }
                 ProgrammeTV(matchs, decalages);
             }
-
             return res;
         }
 
