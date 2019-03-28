@@ -36,6 +36,10 @@ namespace TheManager
                 }
                 foreach(Tour t in c.Tours)
                 {
+                    if(Utils.ComparerDatesSansAnnee(t.Programmation.Fin, _date))
+                    {
+                        t.QualifierClubs();
+                    }
                     if (Utils.ComparerDatesSansAnnee (t.Programmation.Initialisation, _date))
                     {
                         c.TourSuivant();

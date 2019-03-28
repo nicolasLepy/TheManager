@@ -187,6 +187,7 @@ namespace TheManager
                         bool allerRetour = e3.Attribute("allerRetour").Value == "oui" ? true : false;
                         string heureParDefaut = e3.Attribute("heureParDefaut").Value;
                         DateTime date_initialisation = String2Date(e3.Attribute("initialisation").Value);
+                        DateTime date_fin = String2Date(e3.Attribute("fin").Value);
                         List<DateTime> dates = new List<DateTime>();
                         bool onPeut = true;
                         int i = 1;
@@ -207,16 +208,16 @@ namespace TheManager
 
                         if (type == "championnat")
                         {
-                            tour = new TourChampionnat(nomTour, String2Heure(heureParDefaut), dates, allerRetour,new List<DecalagesTV>(), date_initialisation);
+                            tour = new TourChampionnat(nomTour, String2Heure(heureParDefaut), dates, allerRetour,new List<DecalagesTV>(), date_initialisation, date_fin);
                         }
                         else if(type=="elimination")
                         {
-                            tour = new TourElimination(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), allerRetour, date_initialisation);
+                            tour = new TourElimination(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), allerRetour, date_initialisation, date_fin);
                         }
                         else if(type =="poules")
                         {
                             int nbpoules = int.Parse(e3.Attribute("nombrePoules").Value);
-                            tour = new TourPoules(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), nbpoules, allerRetour, date_initialisation);
+                            tour = new TourPoules(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), nbpoules, allerRetour, date_initialisation, date_fin);
                         }
                         c.Tours.Add(tour);
                         foreach (XElement e4 in e3.Descendants("Club"))

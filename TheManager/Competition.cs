@@ -37,7 +37,7 @@ namespace TheManager
             if (_tours.Count > TourActuel + 1)
             {
                 TourActuel++;
-                if(TourActuel > 0) _tours[TourActuel - 1].QualifierClubs();
+                //if(TourActuel > 0) _tours[TourActuel - 1].QualifierClubs();
                 _tours[TourActuel].Initialiser();
             }
         }

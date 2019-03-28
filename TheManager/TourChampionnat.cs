@@ -10,7 +10,7 @@ namespace TheManager
     public class TourChampionnat : Tour
     {
 
-        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation) : base(nom, heure, jours, decalages, initialisation, allerRetour)
+        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin) : base(nom, heure, jours, decalages, initialisation,fin, allerRetour)
         {
         }
 
@@ -25,7 +25,11 @@ namespace TheManager
 
             foreach(Club c in classement)
             {
-                Console.WriteLine(c.Nom + " : " + Points(c) + ", " + Joues(c));
+                string affiche = c.Nom;
+                int ecart = 30 - affiche.Length;
+                for (int i = 0; i < ecart; i++) affiche += " ";
+                affiche += Points(c) + "  " + Joues(c) + "  " + Gagnes(c) + "  " + Nuls(c) + "  " + Perdus(c) + "  " + ButsPour(c) + "  " + ButsContre(c) + "  " + Difference(c);
+                Console.WriteLine(affiche);
             }
 
             List<Club> qualifies = new List<Club>();

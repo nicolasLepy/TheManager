@@ -13,18 +13,21 @@ namespace TheManager
         private List<DateTime> _joursDeMatchs;
         private List<DecalagesTV> _decalagesTV;
         private DateTime _initialisation;
+        private DateTime _fin;
 
         public Heure HeureParDefaut { get => _heureParDefaut; }
         public List<DateTime> JoursDeMatchs { get => _joursDeMatchs; }
         public List<DecalagesTV> DecalagesTV { get => _decalagesTV; }
         public DateTime Initialisation { get => _initialisation; }
+        public DateTime Fin { get => _fin; }
 
-        public ProgrammationTour(Heure heure, List<DateTime> jours, List<DecalagesTV> decalages, DateTime initialisation)
+        public ProgrammationTour(Heure heure, List<DateTime> jours, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin)
         {
             _heureParDefaut = heure;
             _joursDeMatchs = new List<DateTime>(jours);
             _decalagesTV = decalages;
             _initialisation = initialisation;
+            _fin = fin;
         }
     }
 
@@ -108,12 +111,12 @@ namespace TheManager
             }
         }*/
 
-        public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, DateTime initialisation, bool allerRetour)
+        public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, bool allerRetour)
         {
             _nom = nom;
             _clubs = new List<Club>();
             _matchs = new List<Match>();
-            _programmation = new ProgrammationTour(heure, dates, decalages, initialisation);
+            _programmation = new ProgrammationTour(heure, dates, decalages, initialisation, fin);
             _allerRetour = allerRetour;
             _qualifications = new List<Qualification>();
         }

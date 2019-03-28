@@ -55,7 +55,6 @@
     <Compile Include="Contrat.cs" />
     <Compile Include="EvenementMatch.cs" />
     <Compile Include="Gestionnaire.cs" />
-    <Compile Include="ITourAvecClassement.cs" />
     <Compile Include="Langue.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="Partie.cs" />
