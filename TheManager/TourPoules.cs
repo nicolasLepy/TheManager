@@ -30,7 +30,7 @@ namespace TheManager
             DefinirPoules();
             for (int i = 0; i < _nombrePoules; i++)
             {
-                _matchs.AddRange(Calendrier.GenererCalendrier(_poules[i], _programmation.JoursDeMatchs, _programmation.HeureParDefaut, _programmation.DecalagesTV, AllerRetour));
+                _matchs.AddRange(Calendrier.GenererCalendrier(_poules[i], _programmation, AllerRetour));
             }
 
         }

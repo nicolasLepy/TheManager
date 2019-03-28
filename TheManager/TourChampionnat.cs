@@ -16,7 +16,7 @@ namespace TheManager
 
         public override void Initialiser()
         {
-            _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation.JoursDeMatchs, this.Programmation.HeureParDefaut, this.Programmation.DecalagesTV, AllerRetour);
+            _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation, AllerRetour);
         }
 
         public override void QualifierClubs()

@@ -25,5 +25,15 @@ namespace TheManager
             return res;
         }
 
+        public static bool EstAvantSansAnnee(DateTime a, DateTime b)
+        {
+            bool res = false;
+
+            if (a.Month < b.Month) res = true;
+            else if (a.Month == b.Month && a.Day < b.Day) res = true;
+
+            return res;
+        }
+
     }
 }
