@@ -45,6 +45,11 @@ namespace TheManager
                         c.TourSuivant();
                     }
                 }
+
+                if(Utils.ComparerDatesSansAnnee(c.DebutSaison,_date))
+                {
+                    c.RAZ();
+                }
             }
         }
     }

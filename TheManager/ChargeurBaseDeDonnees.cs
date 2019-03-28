@@ -169,9 +169,11 @@ namespace TheManager
         public void ChargerCompetitions()
         {
             XDocument doc = XDocument.Load("Donnees/competitions.xml");
+
+            //Chargement préliminaire de toutes les compétitons pour les référancer
             foreach (XElement e in doc.Descendants("Competitions"))
             {
-                foreach(XElement e2 in e.Descendants("Competition"))
+                foreach (XElement e2 in e.Descendants("Competition"))
                 {
                     string nom = e2.Attribute("nom").Value;
                     string nomCourt = e2.Attribute("nomCourt").Value;
@@ -179,6 +181,17 @@ namespace TheManager
                     string debutSaison = e2.Attribute("debut_saison").Value;
                     DateTime debut = String2Date(debutSaison);
                     Competition c = new Competition(nom, logo, debut, logo);
+                    _gestionnaire.Competitions.Add(c);
+                }
+            }
+
+            //Chargement détaillé de toutes les compétitions
+            foreach (XElement e in doc.Descendants("Competitions"))
+            {
+                foreach(XElement e2 in e.Descendants("Competition"))
+                {
+                    string nom = e2.Attribute("nom").Value;
+                    Competition c = _gestionnaire.String2Competition(nom);
                     foreach(XElement e3 in e2.Descendants("Tour"))
                     {
                         Tour tour = null;
@@ -234,23 +247,41 @@ namespace TheManager
                         }
                         foreach (XElement e4 in e3.Descendants("Qualification"))
                         {
-                            int classement = int.Parse(e4.Attribute("classement").Value);
                             int id_tour = int.Parse(e4.Attribute("id_tour").Value);
+                            bool anneeSuivante = false;
+                            if (e4.Attribute("anneeSuivante") != null) anneeSuivante = e4.Attribute("anneeSuivante").Value == "oui" ? true : false;
                             Competition competitionCible = null;
-                            if (e4.Attribute("competition") != null)
+                            if (e4.Attribute("competition") != null) competitionCible = _gestionnaire.String2Competition(e4.Attribute("competition").Value);
+                            else competitionCible = c;
+
+                            //Deux cas
+                            //1- On a un attribut "classement", avec un classement précis
+                            //2- On a deux attributs "de", "a", qui concerne une plage de classement
+                            if (e4.Attribute("classement") != null)
                             {
-                                competitionCible = _gestionnaire.String2Competition(e4.Attribute("competition").Value);
+                                int classement = int.Parse(e4.Attribute("classement").Value);
+
+                                Qualification qu = new Qualification(classement, id_tour, competitionCible, anneeSuivante);
+                                tour.Qualifications.Add(qu);
                             }
                             else
                             {
-                                competitionCible = c;
+                                int de = int.Parse(e4.Attribute("de").Value);
+                                int a = int.Parse(e4.Attribute("a").Value);
+                                for(int j = de; j<= a; j++)
+                                {
+                                    Qualification qu = new Qualification(j, id_tour, competitionCible, anneeSuivante);
+                                    tour.Qualifications.Add(qu);
+                                }
                             }
-                            Qualification qu = new Qualification(classement, id_tour, competitionCible);
-                            tour.Qualifications.Add(qu);
                         }
                     }
-                    _gestionnaire.Competitions.Add(c);
                 }
+            }
+
+            foreach(Competition c in _gestionnaire.Competitions)
+            {
+                c.InitialiserQualificationsAnneesSuivantes();
             }
         }
 

@@ -48,12 +48,14 @@ namespace TheManager
         public int Classement { get; set; }
         public int IDTour { get; set; }
         public Competition Competition { get; set; }
+        public bool AnneeSuivante { get; set; }
 
-        public Qualification(int classement, int idtour, Competition competition)
+        public Qualification(int classement, int idtour, Competition competition, bool anneeSuivante)
         {
             Classement = classement;
             IDTour = idtour;
             Competition = competition;
+            AnneeSuivante = anneeSuivante;
         }
     }
 
@@ -296,7 +298,15 @@ namespace TheManager
             return ButsPour(c) - ButsContre(c);
         }
 
+        public void RAZ()
+        {
+            _matchs = new List<Match>();
+            _clubs = new List<Club>();
+        }
+
         public abstract void Initialiser();
         public abstract void QualifierClubs();
+        public abstract Tour Copie();
+
     }
 }

@@ -14,6 +14,14 @@ namespace TheManager
         {
         }
 
+        public override Tour Copie()
+        {
+            Tour t = new TourChampionnat(Nom, this.Programmation.HeureParDefaut, new List<DateTime>(Programmation.JoursDeMatchs), AllerRetour, new List<DecalagesTV>(Programmation.DecalagesTV), Programmation.Initialisation, Programmation.Fin);
+            foreach (Match m in this.Matchs) t.Matchs.Add(m);
+            foreach (Club c in this.Clubs) t.Clubs.Add(c);
+            return t;
+        }
+
         public override void Initialiser()
         {
             _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation, AllerRetour);
@@ -36,7 +44,8 @@ namespace TheManager
             foreach(Qualification q in Qualifications)
             {
                 Club c = classement[q.Classement-1];
-                q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
             }
         }
 
@@ -115,6 +124,8 @@ namespace TheManager
             }
             return res;
         }
+
+        
 
     }
 }

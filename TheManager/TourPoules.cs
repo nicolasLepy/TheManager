@@ -24,6 +24,20 @@ namespace TheManager
             }
         }
 
+        public override Tour Copie()
+        {
+            TourPoules t = new TourPoules(Nom, this.Programmation.HeureParDefaut, new List<DateTime>(Programmation.JoursDeMatchs), new List<DecalagesTV>(Programmation.DecalagesTV), NombrePoules, AllerRetour, Programmation.Initialisation, Programmation.Fin);
+            foreach (Match m in this.Matchs) t.Matchs.Add(m);
+            foreach (Club c in this.Clubs) t.Clubs.Add(c);
+            int i = 0;
+            foreach (List<Club> c in _poules)
+            {
+                t._poules[i] = new List<Club>(c);
+                i++;
+            }
+            return t;
+        }
+
         public override void Initialiser()
         {
 
@@ -47,7 +61,8 @@ namespace TheManager
                 foreach(Qualification q in _qualifications)
                 {
                     Club c = poules[i][q.Classement - 1];
-                    q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                    if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                    else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
                 }
             }
         }

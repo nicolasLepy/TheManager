@@ -13,6 +13,14 @@ namespace TheManager
 
         }
 
+        public override Tour Copie()
+        {
+            Tour t = new TourElimination(Nom, this.Programmation.HeureParDefaut, new List<DateTime>(Programmation.JoursDeMatchs), new List<DecalagesTV>(Programmation.DecalagesTV), AllerRetour, Programmation.Initialisation, Programmation.Fin);
+            foreach (Match m in this.Matchs) t.Matchs.Add(m);
+            foreach (Club c in this.Clubs) t.Clubs.Add(c);
+            return t;
+        }
+
         public override void Initialiser()
         {
             _matchs = Calendrier.TirageAuSort(this);
@@ -28,10 +36,17 @@ namespace TheManager
                     //Vainqueurs
                     if(q.Classement == 1)
                     {
-                        q.Competition.Tours[q.IDTour].Clubs.Add(m.Vainqueur);
+                        Club c = m.Vainqueur;
+                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
                     }
-                    else
-                        q.Competition.Tours[q.IDTour].Clubs.Add(m.Perdant);
+                    //Perdants
+                    else if (q.Classement == 2)
+                    {
+                        Club c = m.Perdant;
+                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                    }
                 }
             }
         }
