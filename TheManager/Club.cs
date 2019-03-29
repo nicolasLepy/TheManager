@@ -41,15 +41,7 @@ namespace TheManager
 
         public List<Joueur> ListerJoueurPoste(Poste poste)
         {
-            List<Joueur> res = new List<Joueur>();
-            foreach(Joueur j in Joueurs())
-            {
-                if(j.Poste == poste)
-                {
-                    res.Add(j);
-                }
-            }
-            return res;
+            return Utils.JoueursPoste(Joueurs(), poste);
         }
 
         private List<Joueur> ListerJoueursPosteComposition(Poste poste)

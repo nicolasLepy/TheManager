@@ -49,6 +49,7 @@
     <Compile Include="Comparators\Club_Niveau_Comparator.cs" />
     <Compile Include="Comparators\EvenementMatch_Temps_Comparator.cs" />
     <Compile Include="Comparators\Joueur_Composition_Comparator.cs" />
+    <Compile Include="Comparators\Joueur_Niveau_Comparator.cs" />
     <Compile Include="Comparators\Match_Date_Comparator.cs" />
     <Compile Include="Comparators\Match_Niveau_Comparator.cs" />
     <Compile Include="Competition.cs" />

@@ -26,6 +26,7 @@ namespace TheManager
             ChargerStades();
             ChargerJoueurs();
             InitialiserEquipes();
+            InitialiserJoueurs();
         }
 
         public void ChargerJoueurs()
@@ -83,7 +84,9 @@ namespace TheManager
                     foreach(XElement e3 in e2.Descendants("Pays"))
                     {
                         string nom_pays = e3.Attribute("nom").Value;
-                        Pays p = new Pays(nom_pays);
+                        string langue = e3.Attribute("langue").Value;
+                        Langue l = _gestionnaire.String2Langue(langue);
+                        Pays p = new Pays(nom_pays,l);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
                             string nom_ville = e4.Attribute("nom").Value;
@@ -152,15 +155,23 @@ namespace TheManager
                 foreach (XElement e2 in e.Descendants("Selection"))
                 {
                     string nom = e2.Attribute("nom").Value;
-                    string nomCourt = e2.Attribute("nomCourt").Value;
+                    string nomCourt = nom;
                     int reputation = int.Parse(e2.Attribute("reputation").Value);
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
-                    string nom_stade = e2.Attribute("stade").Value;
-                    Stade stade = _gestionnaire.String2Stade(nom_stade);
+                    Pays pays = _gestionnaire.String2Pays(e2.Attribute("pays").Value);
+
+                    Stade stade = null;
+                    if (e2.Attribute("stade") != null)
+                    {
+                        string nom_stade = e2.Attribute("stade").Value;
+                        stade = _gestionnaire.String2Stade(nom_stade);
+                    }
+                    if (stade == null)
+                        stade = new Stade("Stade de " + nomCourt, 15000, null);
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
                     float coefficient = float.Parse(e2.Attribute("coefficient").Value);
-                    Club c = new SelectionNationale(nom, nomCourt, reputation, supporters, centreFormation, logo, stade, coefficient);
+                    Club c = new SelectionNationale(nom, nomCourt, reputation, supporters, centreFormation, logo, stade, coefficient,pays);
                     _gestionnaire.Clubs.Add(c);
                 }
             }
@@ -288,6 +299,7 @@ namespace TheManager
         public void ChargerLangues()
         {
             ChargerLangue("Francais", "fr");
+            ChargerLangue("Anglais", "en");
         }
 
         private void ChargerLangue(string nomLangue, string nomFichier)
@@ -321,6 +333,37 @@ namespace TheManager
                     }
                 }
             }
+        }
+
+        public void InitialiserJoueurs()
+        {
+            foreach(Club c in _gestionnaire.Clubs)
+            {
+                SelectionNationale sn = c as SelectionNationale;
+                if(sn != null)
+                {
+                    int ecart = 30 - _gestionnaire.NombreJoueursPays(sn.Pays); 
+                    if(ecart > 0)
+                    {
+                        for(int i =0; i<ecart; i++)
+                        {
+                            string prenom = sn.Pays.Langue.ObtenirPrenom();
+                            string nom = sn.Pays.Langue.ObtenirNom();
+                            DateTime naissance = new DateTime(1990, 1, 1);
+                            Poste p = Poste.GARDIEN;
+                            switch(Session.Instance.Random(1,10))
+                            {
+                                case 1: case 2: case 3: p = Poste.DEFENSEUR;  break;
+                                case 4: case 5: case 6: p = Poste.MILIEU;  break;
+                                case 7: case 8: p = Poste.ATTAQUANT;  break;
+                            }
+                            Joueur j = new Joueur(prenom, nom, naissance, sn.CentreFormation, sn.CentreFormation + 2, sn.Pays, p);
+                            _gestionnaire.JoueursLibres.Add(j);
+                        }
+                    }
+                }
+            }
+            _gestionnaire.AppelsSelection();
         }
 
         private DateTime String2Date(string date)

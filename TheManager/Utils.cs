@@ -35,5 +35,13 @@ namespace TheManager
             return res;
         }
 
+        public static List<Joueur> JoueursPoste(List<Joueur> joueurs, Poste p)
+        {
+            List<Joueur> res = new List<Joueur>();
+
+            foreach (Joueur j in joueurs) if (j.Poste == p) res.Add(j);
+        
+            return res;
+        }
     }
 }
