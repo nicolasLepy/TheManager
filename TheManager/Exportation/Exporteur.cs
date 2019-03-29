@@ -57,8 +57,9 @@ namespace TheManager.Exportation
                         output += "<p>Moyenne de buts : " + tc.MoyenneButs() + "</p>";
                     }
                 }
-                File.WriteAllText(dir + "\\" + t.Nom + ".html", output);
+                
             }
+
         }
 
         public static void EcrireMatch(Match m, string nomFichier)

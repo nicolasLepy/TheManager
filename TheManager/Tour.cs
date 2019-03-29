@@ -152,6 +152,32 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Liste des buteurs par ordre décroissant
+        /// </summary>
+        /// <returns>Une liste de KeyValuePair avec le joueur en clé et son nombre de buts en valeur</returns>
+        public List<KeyValuePair<Joueur, int>> Buteurs()
+        {
+            Dictionary<Joueur, int> buteurs = new Dictionary<Joueur, int>();
+            foreach(Match m in _matchs)
+            {
+                foreach(EvenementMatch em in m.Evenements)
+                {
+                    if(em.Type == Evenement.BUT || em.Type == Evenement.BUT_PENALTY)
+                    {
+                        if (buteurs.ContainsKey(em.Joueur)) buteurs[em.Joueur]++;
+                        else buteurs[em.Joueur] = 1;
+                    }
+                }
+            }
+
+            List<KeyValuePair<Joueur, int>> liste = buteurs.ToList();
+
+            liste.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+
+            return liste;
+        }
+
+        /// <summary>
         /// Renvoi la liste des prochains matchs à se jouer selon la date
         /// </summary>
         /// <returns></returns>
