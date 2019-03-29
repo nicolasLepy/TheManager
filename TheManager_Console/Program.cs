@@ -20,7 +20,7 @@ namespace TheManager_Console
             cbdd.Charger();
 
            
-            for (int i = 0; i < 440; i++)
+            for (int i = 0; i < 840; i++)
                 partie.Avancer();
             Console.WriteLine(partie.Date.ToShortDateString());
             

@@ -23,11 +23,11 @@ namespace TheManager.Exportation
                 {
                     Directory.CreateDirectory(dir + "\\" + t.Nom);
                 }
-                string output = "";
+                string output = "<p>" + t.Nom + "</p>";
                 if(t as TourChampionnat != null)
                 {
                     TourChampionnat tc = t as TourChampionnat;
-                    output = "<p>" + tc.Nom + "</p><table>";
+                    output += "<table>";
                     
                     foreach (Club club in tc.Classement())
                     {
@@ -54,10 +54,30 @@ namespace TheManager.Exportation
                             k++;
                         }
                         output += "</table>";
-                        output += "<p>Moyenne de buts : " + tc.MoyenneButs() + "</p>";
                     }
                 }
-                
+                if(t as TourElimination != null)
+                {
+                    TourElimination te = t as TourElimination;
+                    output += "<table>";
+                    int k = 0;
+                    List<Match> matchs = new List<Match>(te.Matchs);
+                    matchs.Sort(new Match_Date_Comparator());
+                    foreach (Match m in matchs)
+                    {
+                        output += "<tr><td>" + m.Jour.ToString() + "</td><td>" + m.Domicile.Nom + "</td><td><a href=\"" + te.Nom + "\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.Nom + "</td></tr>";
+                        EcrireMatch(m, dir + "\\" + te.Nom + "\\" + k + ".html");
+                        k++;
+                    }
+                }
+                output += "<p>Moyenne de buts : " + t.MoyenneButs() + "</p><p>Buteurs</p><table>";
+                foreach (KeyValuePair<Joueur, int> j in t.Buteurs())
+                {
+                    output += "<tr><td>" + j.Key.Prenom + " " + j.Key.Nom + "</td><td>" + j.Value + "</td></tr>";
+                }
+                output += "</table>";
+                File.WriteAllText(dir + "\\" + t.Nom + ".html", output);
+
             }
 
         }

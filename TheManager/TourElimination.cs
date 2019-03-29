@@ -28,24 +28,75 @@ namespace TheManager
 
         public override void QualifierClubs()
         {
-
-            foreach (Qualification q in _qualifications)
+            if(AllerRetour)
             {
-                foreach (Match m in _matchs)
+                foreach (Qualification q in _qualifications)
                 {
-                    //Vainqueurs
-                    if(q.Classement == 1)
+                    for(int i = 0; i<_matchs.Count/2; i++)
                     {
-                        Club c = m.Vainqueur;
-                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                        Match aller = _matchs[i];
+                        Match retour = _matchs[i+_matchs.Count/2];
+                        int score1 = aller.Score1 + retour.Score2;
+                        int score2 = aller.Score2 + retour.Score1;
+                        if(score1 == score2)
+                        {
+                            score1 = aller.Score1 + 2 * retour.Score2;
+                            score2 = 2* aller.Score2 + retour.Score1;
+                        }
+                        if(q.Classement == 1)
+                        {
+                            if (score1 > score2)
+                            {
+                                Club c = aller.Domicile;
+                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                            }
+                            else
+                            {
+                                Club c = aller.Exterieur;
+                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                            }
+                        }
+                        else
+                        {
+                            if (score1 < score2)
+                            {
+                                Club c = aller.Domicile;
+                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                            }
+                            else
+                            {
+                                Club c = aller.Exterieur;
+                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                            }
+                        }
+                        
                     }
-                    //Perdants
-                    else if (q.Classement == 2)
+                }
+            }
+            else
+            {
+                foreach (Qualification q in _qualifications)
+                {
+                    foreach (Match m in _matchs)
                     {
-                        Club c = m.Perdant;
-                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                        //Vainqueurs
+                        if (q.Classement == 1)
+                        {
+                            Club c = m.Vainqueur;
+                            if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                            else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                        }
+                        //Perdants
+                        else if (q.Classement == 2)
+                        {
+                            Club c = m.Perdant;
+                            if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                            else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                        }
                     }
                 }
             }
