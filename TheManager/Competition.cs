@@ -7,6 +7,7 @@ using TheManager.Exportation;
 
 namespace TheManager
 {
+
     public class Competition
     {
         

@@ -3,9 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
+
+    public struct RecuperationEquipes
+    {
+        public IEquipesRecuperables Source { get; set; }
+        public int Nombre { get; set; }
+        public RecuperationEquipes(IEquipesRecuperables source, int nombre)
+        {
+            Source = source;
+            Nombre = nombre;
+        }
+    }
+
 
     public class ProgrammationTour
     {
@@ -59,7 +72,7 @@ namespace TheManager
         }
     }
 
-    public abstract class Tour
+    public abstract class Tour : IEquipesRecuperables
     {
         /// <summary>
         /// Nom du tour
@@ -85,12 +98,20 @@ namespace TheManager
 
         protected List<Qualification> _qualifications;
 
+        /// <summary>
+        /// Liste des équipes récupérées d'autres compétitions en cours
+        /// </summary>
+        protected List<RecuperationEquipes> _recuperationsEquipes;
+
+
+
         public string Nom { get => _nom; }
         public List<Club> Clubs { get => _clubs; }
         public List<Match> Matchs { get => _matchs; }
         public bool AllerRetour { get => _allerRetour; }
         public ProgrammationTour Programmation { get => _programmation; }
         public List<Qualification> Qualifications { get => _qualifications; }
+        public List<RecuperationEquipes> RecuperationEquipes { get => _recuperationsEquipes; }
 
         /*public Competition Competition
         {
@@ -121,6 +142,7 @@ namespace TheManager
             _programmation = new ProgrammationTour(heure, dates, decalages, initialisation, fin);
             _allerRetour = allerRetour;
             _qualifications = new List<Qualification>();
+            _recuperationsEquipes = new List<RecuperationEquipes>();
         }
 
         /// <summary>
@@ -340,9 +362,35 @@ namespace TheManager
             _clubs = new List<Club>();
         }
 
+        /// <summary>
+        /// Ajoute les équipes à récupérer d'autres compétitions
+        /// Ex : 32ème CDF -> L1
+        /// Ex : Euro -> Equipes européennes
+        /// </summary>
+        public void AjouterEquipesARecuperer()
+        {
+            foreach(RecuperationEquipes re in _recuperationsEquipes)
+            {
+                foreach(Club c in re.Source.RecupererEquipes(re.Nombre))
+                {
+                    _clubs.Add(c);
+                }
+            }
+        }
+
         public abstract void Initialiser();
         public abstract void QualifierClubs();
         public abstract Tour Copie();
 
+        
+
+        public List<Club> RecupererEquipes(int nombre)
+        {
+            List<Club> clubs = new List<Club>(_clubs);
+            clubs.Sort(new Club_Niveau_Comparator());
+            List<Club> res = new List<Club>();
+            for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
+            return res;
+        }
     }
 }

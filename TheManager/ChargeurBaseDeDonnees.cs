@@ -249,6 +249,25 @@ namespace TheManager
                             string nomClub = e4.Attribute("nom").Value;
                             tour.Clubs.Add(_gestionnaire.String2Club(nomClub));
                         }
+                        foreach(XElement e4 in e3.Descendants("Participants"))
+                        {
+                            int nombre = int.Parse(e4.Attribute("nombre").Value);
+                            IEquipesRecuperables source = null;
+                            XAttribute continent = e4.Attribute("continent");
+                            if(continent != null)
+                            {
+                                source = _gestionnaire.String2Continent(continent.Value);
+                            }
+                            else
+                            {
+                                string nomCompetition = e4.Attribute("competition").Value;
+                                int indexTour = int.Parse(e4.Attribute("idTour").Value);
+                                Competition comp = _gestionnaire.String2Competition(nomCompetition);
+                                Tour t = comp.Tours[indexTour];
+                                source = t;
+                            }
+                            tour.RecuperationEquipes.Add(new RecuperationEquipes(source, nombre));
+                        }
                         foreach (XElement e4 in e3.Descendants("Decalage"))
                         {
                             int jour = int.Parse(e4.Attribute("jour").Value);

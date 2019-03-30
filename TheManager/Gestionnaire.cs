@@ -111,6 +111,13 @@ namespace TheManager
             return res;
         }
 
+        public Continent String2Continent(string nom)
+        {
+            Continent res = null;
+            foreach (Continent c in _continents) if (c.Nom == nom) res = c;
+            return res;
+        }
+
         public int NombreJoueursPays(Pays p)
         {
             int res = 0;

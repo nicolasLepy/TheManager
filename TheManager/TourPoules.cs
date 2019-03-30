@@ -12,16 +12,15 @@ namespace TheManager
         private int _nombrePoules;
         private List<Club>[] _poules;
 
+        public List<Club>[] Poules { get => _poules; }
+
         public int NombrePoules { get { return _nombrePoules; } }
 
         public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
-            for (int i = 0; i < _nombrePoules; i++)
-            {
-                _poules[i] = new List<Club>();
-            }
+            for (int i = 0; i < _nombrePoules; i++) _poules[i] = new List<Club>();
         }
 
         public override Tour Copie()
@@ -40,7 +39,9 @@ namespace TheManager
 
         public override void Initialiser()
         {
-
+            _poules = new List<Club>[_nombrePoules];
+            for (int i = 0; i < _nombrePoules; i++) _poules[i] = new List<Club>();
+            AjouterEquipesARecuperer();
             DefinirPoules();
             for (int i = 0; i < _nombrePoules; i++)
             {
@@ -110,25 +111,27 @@ namespace TheManager
         {
             List<Club> pot = new List<Club>(_clubs);
             pot.Sort(new Club_Niveau_Comparator());
-            int equipeParPoule = _clubs.Count / _nombrePoules;
-            List<Club>[] pots = new List<Club>[equipeParPoule];
+            int equipesParPoule = _clubs.Count / _nombrePoules;
+            List<Club>[] pots = new List<Club>[equipesParPoule];
             int ind = 0;
-            for (int i = 0; i < _nombrePoules; i++)
+            for (int i = 0; i < equipesParPoule; i++)
             {
                 pots[i] = new List<Club>();
-                for (int j = 0; j < equipeParPoule; j++)
+                for (int j = 0; j < _nombrePoules; j++)
                 {
                     pots[i].Add(pot[ind]);
                     ind++;
                 }
 
             }
+            //Pour chaque poule
             for (int i = 0; i < _nombrePoules; i++)
             {
-                for (int j = 0; j < _clubs.Count / _nombrePoules; j++)
+                //Pour chaque pot
+                for (int j = 0; j < equipesParPoule; j++)
                 {
-                    Club c = pots[i][Session.Instance.Random(0, pots[i].Count)];
-                    pots[i].Remove(c);
+                    Club c = pots[j][Session.Instance.Random(0, pots[j].Count)];
+                    pots[j].Remove(c);
                     _poules[i].Add(c);
                 }
             }

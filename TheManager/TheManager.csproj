@@ -57,6 +57,7 @@
     <Compile Include="EvenementMatch.cs" />
     <Compile Include="Exportation\Exporteur.cs" />
     <Compile Include="Gestionnaire.cs" />
+    <Compile Include="IEquipesRecuperables.cs" />
     <Compile Include="Langue.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="Partie.cs" />

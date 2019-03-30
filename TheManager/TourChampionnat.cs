@@ -24,6 +24,7 @@ namespace TheManager
 
         public override void Initialiser()
         {
+            AjouterEquipesARecuperer();
             _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation, AllerRetour);
         }
 

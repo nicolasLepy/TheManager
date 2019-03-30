@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TheManager
 {
-    public class Continent
+    public class Continent : IEquipesRecuperables
     {
         private List<Pays> _pays;
 
@@ -17,6 +17,22 @@ namespace TheManager
         {
             Nom = nom;
             _pays = new List<Pays>();
+        }
+
+        public List<Club> RecupererEquipes(int nombre)
+        {
+            List<Club> clubs = new List<Club>();
+            foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
+            {
+                SelectionNationale sn = c as SelectionNationale;
+                if(sn != null)
+                {
+                    if (_pays.Contains(sn.Pays)) clubs.Add(sn);
+                }
+            }
+            List<Club> res = new List<Club>();
+            for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
+            return res;
         }
     }
 }
