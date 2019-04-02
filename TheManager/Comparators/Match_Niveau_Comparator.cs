@@ -10,7 +10,7 @@ namespace TheManager.Comparators
     {
         public int Compare(Match x, Match y)
         {
-            return (int)((x.Domicile.Niveau() + x.Exterieur.Niveau()) - ((y.Domicile.Niveau() + y.Exterieur.Niveau())));
+            return (int)(((y.Domicile.Niveau() + y.Exterieur.Niveau())) - (x.Domicile.Niveau() + x.Exterieur.Niveau()));
         }
     }
 }

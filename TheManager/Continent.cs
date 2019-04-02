@@ -19,7 +19,7 @@ namespace TheManager
             _pays = new List<Pays>();
         }
 
-        public List<Club> RecupererEquipes(int nombre)
+        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode)
         {
             List<Club> clubs = new List<Club>();
             foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)

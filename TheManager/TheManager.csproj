@@ -46,6 +46,7 @@
     <Compile Include="Club.cs" />
     <Compile Include="Club_Ville.cs" />
     <Compile Include="Comparators\Club_Classement_Comparator.cs" />
+    <Compile Include="Comparators\Club_Classement_Random_Comparator.cs" />
     <Compile Include="Comparators\Club_Niveau_Comparator.cs" />
     <Compile Include="Comparators\EvenementMatch_Temps_Comparator.cs" />
     <Compile Include="Comparators\Joueur_Composition_Comparator.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Tour.cs" />
     <Compile Include="TourChampionnat.cs" />
     <Compile Include="TourElimination.cs" />
+    <Compile Include="TourInactif.cs" />
     <Compile Include="TourPoules.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Ville.cs" />

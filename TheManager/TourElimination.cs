@@ -25,11 +25,40 @@ namespace TheManager
         {
             AjouterEquipesARecuperer();
             _matchs = Calendrier.TirageAuSort(this);
+            Console.WriteLine(Session.Instance.Partie.Date.ToShortDateString() + " - " + Nom + " - " + _matchs.Count);
         }
 
         public override void QualifierClubs()
         {
-            if(AllerRetour)
+            List<Match> matchs = new List<Match>();
+            if (!AllerRetour) matchs = new List<Match>(_matchs);
+            else
+            {
+                for (int i = 0; i < _matchs.Count / 2; i++) matchs.Add(_matchs[_matchs.Count / 2 + i]);
+            }
+
+            foreach (Qualification q in _qualifications)
+            {
+                foreach (Match m in matchs)
+                {
+                    //Vainqueurs
+                    if (q.Classement == 1)
+                    {
+                        Club c = m.Vainqueur;
+                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                    }
+                    //Perdants
+                    else if (q.Classement == 2)
+                    {
+                        Club c = m.Perdant;
+                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
+                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                    }
+                }
+            }
+
+            /*if(AllerRetour)
             {
                 foreach (Qualification q in _qualifications)
                 {
@@ -100,7 +129,7 @@ namespace TheManager
                         }
                     }
                 }
-            }
+            }*/
         }
     }
 }

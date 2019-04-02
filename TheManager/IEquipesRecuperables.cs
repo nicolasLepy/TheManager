@@ -8,6 +8,6 @@ namespace TheManager
 {
     public interface IEquipesRecuperables
     {
-        List<Club> RecupererEquipes(int nombre);
+        List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode);
     }
 }

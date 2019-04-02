@@ -8,9 +8,20 @@ namespace TheManager.Comparators
 {
     public class Club_Niveau_Comparator : IComparer<Club>
     {
+
+        private bool _envers;
+
+        public Club_Niveau_Comparator(bool aLEnvers = false)
+        {
+            _envers = aLEnvers;
+        }
+
         public int Compare(Club x, Club y)
         {
-            return (int)(y.Niveau() - x.Niveau());
+            int res = (int)(y.Niveau() - x.Niveau());
+            if (_envers)
+                res = -res;
+            return res;
         }
     }
 }

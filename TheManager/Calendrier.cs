@@ -100,7 +100,7 @@ namespace TheManager
                         //Date du match
                         DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, programmation.JoursDeMatchs[i].Month, programmation.JoursDeMatchs[i].Day, programmation.HeureParDefaut.Heures, programmation.HeureParDefaut.Minutes, 0);
                         if (Utils.EstAvantSansAnnee(jour, programmation.Initialisation)) jour = jour.AddYears(1);
-                        Match m = new Match(e1, e2, jour);
+                        Match m = new Match(e1, e2, jour, false);
                         res.Add(m);
                         matchs.Add(m);
                     }
@@ -120,7 +120,7 @@ namespace TheManager
                         Match mbase = res[matchsPerRound * i + j];
                         DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, programmation.JoursDeMatchs[nbJourneesAller+i-1].Month, programmation.JoursDeMatchs[nbJourneesAller + i-1].Day, programmation.HeureParDefaut.Heures, programmation.HeureParDefaut.Minutes, 0);
                         if (Utils.EstAvantSansAnnee(jour, programmation.Initialisation)) jour = jour.AddYears(1);
-                        Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour);
+                        Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour, false);
                         matchs.Add(retour);
                         res.Add(retour);
                     }
@@ -133,7 +133,7 @@ namespace TheManager
                     Match mbase = res[i];
                     DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count-1].Month, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count - 1].Day, programmation.HeureParDefaut.Heures, programmation.HeureParDefaut.Minutes, 0);
                     if (Utils.EstAvantSansAnnee(jour, programmation.Initialisation)) jour = jour.AddYears(1);
-                    Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour);
+                    Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour, false);
                     matchs.Add(retour);
                     res.Add(retour);
                 }
@@ -176,7 +176,7 @@ namespace TheManager
                 DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, tour.Programmation.JoursDeMatchs[0].Month, tour.Programmation.JoursDeMatchs[0].Day, tour.Programmation.HeureParDefaut.Heures, tour.Programmation.HeureParDefaut.Minutes, 0);
                 if (Utils.EstAvantSansAnnee(jour, tour.Programmation.Initialisation)) jour = jour.AddYears(1);
 
-                res.Add(new Match(dom, ext, jour));
+                res.Add(new Match(dom, ext, jour, !tour.AllerRetour));
             }
 
             ProgrammeTV(res, tour.Programmation.DecalagesTV);
@@ -188,7 +188,7 @@ namespace TheManager
                 {
                     DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, tour.Programmation.JoursDeMatchs[0].Month, tour.Programmation.JoursDeMatchs[0].Day, tour.Programmation.HeureParDefaut.Heures, tour.Programmation.HeureParDefaut.Minutes, 0);
                     if (Utils.EstAvantSansAnnee(jour, tour.Programmation.Initialisation)) jour = jour.AddYears(1);
-                    Match retour = new Match(m.Exterieur, m.Domicile, jour);
+                    Match retour = new Match(m.Exterieur, m.Domicile, jour, !tour.AllerRetour, m);
                     matchs.Add(retour);
                     res.Add(retour);
                 }

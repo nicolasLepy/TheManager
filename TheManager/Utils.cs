@@ -43,5 +43,20 @@ namespace TheManager
         
             return res;
         }
+
+        public static List<E> MelangerListe<E>(List<E> liste)
+        {
+            List<E> res = new List<E>();
+
+            int random = 0;
+            while (liste.Count > 0)
+            {
+                random = Session.Instance.Random(0, liste.Count);
+                res.Add(liste[random]);
+                liste.RemoveAt(random);
+            }
+
+            return res;
+        }
     }
 }

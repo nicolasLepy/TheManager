@@ -25,6 +25,24 @@ namespace TheManager
         public string Logo { get => _logo; }
         public string NomCourt { get => _nomCourt; }
 
+        public Competition Championnat
+        {
+            get
+            {
+                Competition res = null;
+
+                foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                {
+                    if(c.Championnat)
+                    {
+                        foreach (Club cl in c.Tours[0].Clubs) if (cl == this) res = c;
+                    }
+                }
+
+                return res;
+            }
+        }
+
         public abstract List<Joueur> Joueurs();
         public abstract float Niveau();
 

@@ -21,9 +21,9 @@ namespace TheManager
             ChargerLangues();
             ChargerGeographie();
             ChargerVilles();
+            ChargerStades();
             ChargerClubs();
             ChargerCompetitions();
-            ChargerStades();
             ChargerJoueurs();
             InitialiserEquipes();
             InitialiserJoueurs();
@@ -143,6 +143,20 @@ namespace TheManager
                     {
                         string nom_stade = e2.Attribute("stade").Value;
                         stade = _gestionnaire.String2Stade(nom_stade);
+                        if(stade == null)
+                        {
+                            int capacite = 1000;
+                            if (ville != null) capacite = ville.Population / 10;
+                            stade = new Stade(nom_stade, capacite, ville);
+                            if (ville != null)
+                            {
+                                ville.Pays().Stades.Add(stade);
+                            }
+                            else
+                            {
+                                Console.WriteLine("La ville " + nom_ville + " n'existe pas.");
+                            }
+                        }
                     }
                     if (stade == null)
                         stade = new Stade("Stade de " + nomCourt, ville.Population / 10, ville);
@@ -190,8 +204,10 @@ namespace TheManager
                     string nomCourt = e2.Attribute("nomCourt").Value;
                     string logo = e2.Attribute("logo").Value;
                     string debutSaison = e2.Attribute("debut_saison").Value;
+                    bool championnat = e2.Attribute("championnat").Value == "oui" ? true : false;
+                    int niveau = int.Parse(e2.Attribute("niveau").Value);
                     DateTime debut = String2Date(debutSaison);
-                    Competition c = new Competition(nom, logo, debut, logo);
+                    Competition c = new Competition(nom, nomCourt, debut, logo, championnat, niveau);
                     _gestionnaire.Competitions.Add(c);
                 }
             }
@@ -243,6 +259,10 @@ namespace TheManager
                             int nbpoules = int.Parse(e3.Attribute("nombrePoules").Value);
                             tour = new TourPoules(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), nbpoules, allerRetour, date_initialisation, date_fin);
                         }
+                        else if (type == "inactif")
+                        {
+                            tour = new TourInactif(nomTour, String2Heure(heureParDefaut), date_initialisation, date_fin);
+                        }
                         c.Tours.Add(tour);
                         foreach (XElement e4 in e3.Descendants("Club"))
                         {
@@ -266,7 +286,14 @@ namespace TheManager
                                 Tour t = comp.Tours[indexTour];
                                 source = t;
                             }
-                            tour.RecuperationEquipes.Add(new RecuperationEquipes(source, nombre));
+                            MethodeRecuperation methode = MethodeRecuperation.ALEATOIRE;
+                            switch(e4.Attribute("methode").Value)
+                            {
+                                case "meilleurs": methode = MethodeRecuperation.MEILLEURS; break;
+                                case "pires": methode = MethodeRecuperation.PIRES; break;
+                                case "aleatoire": methode = MethodeRecuperation.ALEATOIRE; break;
+                            }
+                            tour.RecuperationEquipes.Add(new RecuperationEquipes(source, nombre,methode));
                         }
                         foreach (XElement e4 in e3.Descendants("Decalage"))
                         {

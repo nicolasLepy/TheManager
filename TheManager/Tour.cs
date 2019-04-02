@@ -8,14 +8,23 @@ using TheManager.Comparators;
 namespace TheManager
 {
 
+    public enum MethodeRecuperation
+    {
+        ALEATOIRE,
+        MEILLEURS,
+        PIRES
+    }
+
     public struct RecuperationEquipes
     {
         public IEquipesRecuperables Source { get; set; }
         public int Nombre { get; set; }
-        public RecuperationEquipes(IEquipesRecuperables source, int nombre)
+        public MethodeRecuperation Methode { get; set; }
+        public RecuperationEquipes(IEquipesRecuperables source, int nombre, MethodeRecuperation methode)
         {
             Source = source;
             Nombre = nombre;
+            Methode = methode;
         }
     }
 
@@ -371,7 +380,7 @@ namespace TheManager
         {
             foreach(RecuperationEquipes re in _recuperationsEquipes)
             {
-                foreach(Club c in re.Source.RecupererEquipes(re.Nombre))
+                foreach(Club c in re.Source.RecupererEquipes(re.Nombre, re.Methode))
                 {
                     _clubs.Add(c);
                 }
@@ -384,10 +393,21 @@ namespace TheManager
 
         
 
-        public List<Club> RecupererEquipes(int nombre)
+        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode)
         {
             List<Club> clubs = new List<Club>(_clubs);
-            clubs.Sort(new Club_Niveau_Comparator());
+            switch (methode)
+            {
+                case MethodeRecuperation.ALEATOIRE:
+                    clubs = Utils.MelangerListe<Club>(clubs);
+                    break;
+                case MethodeRecuperation.MEILLEURS:
+                    clubs.Sort(new Club_Niveau_Comparator());
+                    break;
+                case MethodeRecuperation.PIRES:
+                    clubs.Sort(new Club_Niveau_Comparator(true));
+                    break;
+            }
             List<Club> res = new List<Club>();
             for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
             return res;

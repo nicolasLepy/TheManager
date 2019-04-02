@@ -33,6 +33,9 @@ namespace TheManager
             {
                 int minutes = _minute;
                 if (_miTemps == 2) minutes = minutes + 45;
+                else if (_miTemps == 3) minutes = minutes + 90;
+                else if (_miTemps == 4) minutes = minutes + 105;
+
                 return minutes;
             }
         }

@@ -65,12 +65,31 @@ namespace TheManager.Exportation
                     matchs.Sort(new Match_Date_Comparator());
                     foreach (Match m in matchs)
                     {
-                        output += "<tr><td>" + m.Jour.ToString() + "</td><td>" + m.Domicile.Nom + "</td><td><a href=\"" + te.Nom + "\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.Nom + "</td></tr>";
+                        Competition compDom = m.Domicile.Championnat;
+                        Competition compExt = m.Exterieur.Championnat;
+                        string sCompDom = "";
+                        string sCompExt = "";
+                        if (compDom != null) sCompDom = " (" + compDom.NomCourt + ")";
+                        if (compExt != null) sCompExt = " (" + compExt.NomCourt + ")";
+                        string score = m.Score1 + " - " + m.Score2;
+                        if (m.Prolongations) score += " ap";
+                        if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
+                        output += "<tr><td>" + m.Jour.ToString() + "</td><td>" + m.Domicile.Nom + sCompDom + "</td><td><a href=\"" + te.Nom + "\\" + k + ".html\">" + score + "</a></td><td>" + m.Exterieur.Nom + sCompExt + "</td></tr>";
                         EcrireMatch(m, dir + "\\" + te.Nom + "\\" + k + ".html");
                         k++;
                     }
                 }
-                if(t as TourPoules != null)
+                if (t as TourInactif != null)
+                {
+                    TourInactif ti = t as TourInactif;
+                    output += "<p><b>Clubs participants</b></p>";
+                    List<Club> clubs = new List<Club>(ti.Clubs);                    
+                    foreach(Club club in clubs)
+                    {
+                        output += "<p>" + club.Nom + "</p>";
+                    }
+                }
+                if (t as TourPoules != null)
                 {
                     TourPoules tp = t as TourPoules;
                     int nbEquipesParPoules = 0;
