@@ -169,23 +169,6 @@ namespace TheManager
             _regles = new List<Regle>();
         }
 
-        /// <summary>
-        /// Joue les matchs du jour
-        /// </summary>
-        /// <returns>Vrai si au moins un match a été joué, faux sinon</returns>
-        public bool JouerMatchs()
-        {
-            bool res = false;
-            foreach (Match m in _matchs)
-            {
-                if (Session.Instance.Partie.Date.Date == m.Jour.Date)
-                {
-                    m.Jouer();
-                }
-            }
-
-            return res;
-        }
 
         public float MoyenneButs()
         {

@@ -35,7 +35,16 @@ namespace TheManager
                 {
                     if(c.Championnat)
                     {
-                        foreach (Club cl in c.Tours[0].Clubs) if (cl == this) res = c;
+                        
+                        foreach (Club cl in c.Tours[0].Clubs)
+                        {
+                            if (cl == this)
+                            {
+                                res = c;
+                            }
+                        }
+                            
+                                
                     }
                 }
 

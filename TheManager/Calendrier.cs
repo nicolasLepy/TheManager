@@ -178,12 +178,10 @@ namespace TheManager
 
                 if(tour.Regles.Contains(Regle.RECOIT_SI_DEUX_DIVISION_ECART))
                 {
-                    Console.WriteLine("CONTINENT LA REGLE " + tour.Nom);
                     Competition champD = dom.Championnat;
                     Competition champE = ext.Championnat;
                     if((champD != null && champE != null) && champE.Niveau - champD.Niveau >= 2)
                     {
-                        Console.WriteLine("avec " + champE.Niveau + "(" + champE.Nom + ") - " + champD.Niveau + "(" + champD.Nom + ")");
                         Club temp = dom;
                         dom = ext;
                         ext = temp;
