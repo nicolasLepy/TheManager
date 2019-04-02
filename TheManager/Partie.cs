@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Exportation;
 
 namespace TheManager
 {
@@ -49,6 +50,11 @@ namespace TheManager
                 if(Utils.ComparerDatesSansAnnee(c.DebutSaison,_date))
                 {
                     c.RAZ();
+                }
+
+                if(Utils.ComparerDatesSansAnnee(c.DebutSaison.AddDays(-7),_date))
+                {
+                    Exporteur.Exporter(c);
                 }
             }
         }

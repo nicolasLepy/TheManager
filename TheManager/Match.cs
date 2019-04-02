@@ -289,8 +289,19 @@ namespace TheManager
 
         private void JouerTAB()
         {
-            _tab1 = Session.Instance.Random(1, 6);
-            _tab2 = Session.Instance.Random(1, 6);
+            _tab1 = 0;
+            _tab2 = 0;
+
+            for(int i = 0; i<5; i++)
+            {
+                if (Session.Instance.Random(1, 4) == 1) _tab1++;
+                if (Session.Instance.Random(1, 4) == 1) _tab2++;
+            }
+            while(_tab1 == _tab2)
+            {
+                if (Session.Instance.Random(1, 4) == 1) _tab1++;
+                if (Session.Instance.Random(1, 4) == 1) _tab2++;
+            }
         }
 
         private void JouerMinute(Club a, Club b, int diff)

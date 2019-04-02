@@ -61,7 +61,6 @@ namespace TheManager
         /// </summary>
         public void RAZ()
         {
-            Exporteur.Exporter(this);
             Competition copieArchive = new Competition(_nom, _logo, _debutSaison, _nomCourt, _championnat, _niveau);
             foreach (Tour t in Tours) copieArchive.Tours.Add(t);
             Session.Instance.Partie.Gestionnaire.CompetitionsArchives.Add(copieArchive);
