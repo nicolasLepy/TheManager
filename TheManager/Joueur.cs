@@ -34,7 +34,16 @@ namespace TheManager
         public Pays Nationalite { get => _nationalite;}
         public Poste Poste { get => _poste;}
         public bool Suspendu { get => _suspendu; set => _suspendu = value; }
-        public int Energie { get => _energie; }
+        public int Energie
+        {
+            get { return _energie; }
+            set
+            {
+                _energie = value;
+                if (_energie > 100) _energie = 100;
+                if (_energie < 0) _energie = 0;
+            }
+        }
 
         public Joueur(string prenom, string nom, DateTime naissance, int niveau, int potentiel, Pays nationalite, Poste poste)
         {
@@ -54,5 +63,11 @@ namespace TheManager
         //nb de rouges cette saison
         //nb de buts cette saison
         //appelé en sélection
+
+        public void Recuperer()
+        {
+            if(Energie < 100)
+                Energie += Session.Instance.Random(2, 6);
+        }
     }
 }

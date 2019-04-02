@@ -57,6 +57,22 @@ namespace TheManager
                     Exporteur.Exporter(c);
                 }
             }
+
+            //Récupération des joueurs
+            foreach(Club c in _gestionnaire.Clubs)
+            {
+                if(c as Club_Ville != null)
+                {
+                    foreach (Joueur j in c.Joueurs())
+                    {
+                        j.Recuperer();
+                    }
+                }
+            }
+            foreach(Joueur j in _gestionnaire.JoueursLibres)
+            {
+                j.Recuperer();
+            }
         }
     }
 }

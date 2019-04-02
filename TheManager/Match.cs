@@ -218,6 +218,8 @@ namespace TheManager
         {
             _compo1 = new List<Joueur>(Domicile.Composition());
             _compo2 = new List<Joueur>(Exterieur.Composition());
+            foreach (Joueur j in _compo1) j.Energie -= Session.Instance.Random(13, 33);
+            foreach (Joueur j in _compo2) j.Energie -= Session.Instance.Random(13, 33);
         }
 
         public void Jouer()
@@ -294,13 +296,13 @@ namespace TheManager
 
             for(int i = 0; i<5; i++)
             {
-                if (Session.Instance.Random(1, 4) == 1) _tab1++;
-                if (Session.Instance.Random(1, 4) == 1) _tab2++;
+                if (Session.Instance.Random(1, 4) != 1) _tab1++;
+                if (Session.Instance.Random(1, 4) != 1) _tab2++;
             }
             while(_tab1 == _tab2)
             {
-                if (Session.Instance.Random(1, 4) == 1) _tab1++;
-                if (Session.Instance.Random(1, 4) == 1) _tab2++;
+                if (Session.Instance.Random(1, 4) != 1) _tab1++;
+                if (Session.Instance.Random(1, 4) != 1) _tab2++;
             }
         }
 
