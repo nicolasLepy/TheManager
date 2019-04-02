@@ -8,6 +8,14 @@ using TheManager.Comparators;
 namespace TheManager
 {
 
+
+    public enum Regle
+    {
+        RECOIT_SI_DEUX_DIVISION_ECART
+    }
+
+ 
+
     public enum MethodeRecuperation
     {
         ALEATOIRE,
@@ -112,6 +120,11 @@ namespace TheManager
         /// </summary>
         protected List<RecuperationEquipes> _recuperationsEquipes;
 
+        /// <summary>
+        /// Règles concernant le tour
+        /// Exemple : l'équipe reçoit si elle évolue deux division en moins
+        /// </summary>
+        protected List<Regle> _regles;
 
 
         public string Nom { get => _nom; }
@@ -121,6 +134,7 @@ namespace TheManager
         public ProgrammationTour Programmation { get => _programmation; }
         public List<Qualification> Qualifications { get => _qualifications; }
         public List<RecuperationEquipes> RecuperationEquipes { get => _recuperationsEquipes; }
+        public List<Regle> Regles { get => _regles; }
 
         /*public Competition Competition
         {
@@ -152,6 +166,7 @@ namespace TheManager
             _allerRetour = allerRetour;
             _qualifications = new List<Qualification>();
             _recuperationsEquipes = new List<RecuperationEquipes>();
+            _regles = new List<Regle>();
         }
 
         /// <summary>

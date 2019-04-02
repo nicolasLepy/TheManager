@@ -176,6 +176,20 @@ namespace TheManager
                 DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, tour.Programmation.JoursDeMatchs[0].Month, tour.Programmation.JoursDeMatchs[0].Day, tour.Programmation.HeureParDefaut.Heures, tour.Programmation.HeureParDefaut.Minutes, 0);
                 if (Utils.EstAvantSansAnnee(jour, tour.Programmation.Initialisation)) jour = jour.AddYears(1);
 
+                if(tour.Regles.Contains(Regle.RECOIT_SI_DEUX_DIVISION_ECART))
+                {
+                    Console.WriteLine("CONTINENT LA REGLE " + tour.Nom);
+                    Competition champD = dom.Championnat;
+                    Competition champE = ext.Championnat;
+                    if((champD != null && champE != null) && champE.Niveau - champD.Niveau >= 2)
+                    {
+                        Console.WriteLine("avec " + champE.Niveau + "(" + champE.Nom + ") - " + champD.Niveau + "(" + champD.Nom + ")");
+                        Club temp = dom;
+                        dom = ext;
+                        ext = temp;
+                    }
+                }
+
                 res.Add(new Match(dom, ext, jour, !tour.AllerRetour));
             }
 

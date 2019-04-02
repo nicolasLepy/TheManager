@@ -207,7 +207,7 @@ namespace TheManager
                     bool championnat = e2.Attribute("championnat").Value == "oui" ? true : false;
                     int niveau = int.Parse(e2.Attribute("niveau").Value);
                     DateTime debut = String2Date(debutSaison);
-                    Competition c = new Competition(nom, nomCourt, debut, logo, championnat, niveau);
+                    Competition c = new Competition(nom, logo, debut, nomCourt, championnat, niveau);
                     _gestionnaire.Competitions.Add(c);
                 }
             }
@@ -301,6 +301,15 @@ namespace TheManager
                             Heure heure = String2Heure(e4.Attribute("heure").Value);
                             DecalagesTV dtv = new DecalagesTV(jour, heure);
                             tour.Programmation.DecalagesTV.Add(dtv);
+                        }
+                        foreach (XElement e4 in e3.Descendants("Regle"))
+                        {
+                            Regle regle = Regle.RECOIT_SI_DEUX_DIVISION_ECART;
+                            switch(e4.Attribute("nom").Value)
+                            {
+                                case "RECOIT_SI_DEUX_DIVISION_ECART": regle = Regle.RECOIT_SI_DEUX_DIVISION_ECART; break;
+                            }
+                            tour.Regles.Add(regle);
                         }
                         foreach (XElement e4 in e3.Descendants("Qualification"))
                         {

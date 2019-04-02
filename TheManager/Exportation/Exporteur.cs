@@ -63,8 +63,14 @@ namespace TheManager.Exportation
                     int k = 0;
                     List<Match> matchs = new List<Match>(te.Matchs);
                     matchs.Sort(new Match_Date_Comparator());
+                    DateTime last = new DateTime(2000, 1, 1);
                     foreach (Match m in matchs)
                     {
+                        if(m.Jour.Date != last.Date)
+                        {
+                            output += "<tr><td colspan=\"3\">"+m.Jour.Date.ToShortDateString()+"</td></tr>";
+                        }
+                        last = m.Jour;
                         Competition compDom = m.Domicile.Championnat;
                         Competition compExt = m.Exterieur.Championnat;
                         string sCompDom = "";
@@ -74,7 +80,7 @@ namespace TheManager.Exportation
                         string score = m.Score1 + " - " + m.Score2;
                         if (m.Prolongations) score += " ap";
                         if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
-                        output += "<tr><td>" + m.Jour.ToString() + "</td><td>" + m.Domicile.Nom + sCompDom + "</td><td><a href=\"" + te.Nom + "\\" + k + ".html\">" + score + "</a></td><td>" + m.Exterieur.Nom + sCompExt + "</td></tr>";
+                        output += "<tr><td>" + m.Jour.ToShortTimeString() + "</td><td>" + m.Domicile.Nom + sCompDom + "</td><td><a href=\"" + te.Nom + "\\" + k + ".html\">" + score + "</a></td><td>" + m.Exterieur.Nom + sCompExt + "</td></tr>";
                         EcrireMatch(m, dir + "\\" + te.Nom + "\\" + k + ".html");
                         k++;
                     }

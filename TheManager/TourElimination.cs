@@ -6,11 +6,15 @@ using System.Text;
 
 namespace TheManager
 {
+
+
     public class TourElimination : Tour
     {
+
+        
+
         public TourElimination(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, bool allerRetour,DateTime initialisation, DateTime fin) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour)
         {
-
         }
 
         public override Tour Copie()
