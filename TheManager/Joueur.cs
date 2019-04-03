@@ -58,6 +58,24 @@ namespace TheManager
             _energie = 100;
         }
 
+        public int Age
+        {
+            get
+            {
+                DateTime date = Session.Instance.Partie.Date;
+                int age = date.Year - Naissance.Year;
+                if(date.Month < Naissance.Month)
+                {
+                    age--;
+                }
+                else if(date.Month == Naissance.Month && date.Day < Naissance.Day)
+                {
+                    age--;
+                }
+                return age;
+            }
+        }
+
         //Propriétés
         //nb de jaunes cette saison
         //nb de rouges cette saison
@@ -68,6 +86,35 @@ namespace TheManager
         {
             if(Energie < 100)
                 Energie += Session.Instance.Random(2, 6);
+        }
+
+        public int EstimerSalaire()
+        {
+            int salaire = 0;
+            if (Niveau < 30) salaire = 40 * Niveau;
+            else if (Niveau < 40) salaire = 120 * Niveau;
+            else if (Niveau < 50) salaire = 270 * Niveau;
+            else if (Niveau < 60) salaire = 360 * Niveau;
+            else if (Niveau < 70) salaire = 490 * Niveau;
+            else if (Niveau < 80) salaire = 590 * Niveau;
+            else if (Niveau < 90) salaire = 850 * Niveau;
+            else salaire = 1300 * Niveau;
+            return salaire;
+        }
+
+        public void MiseAJourNiveau()
+        {
+            int age = Age;
+
+            if(age < 24)
+            {
+                _niveau += Session.Instance.Random(1, 5);
+            }
+
+            if(age > 29)
+            {
+                _niveau -= Session.Instance.Random(1, 5);
+            }
         }
     }
 }

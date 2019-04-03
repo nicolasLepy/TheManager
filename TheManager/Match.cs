@@ -159,7 +159,13 @@ namespace TheManager
                         break;
                 }
             }
-            return joueurs[Session.Instance.Random(0, joueurs.Count)];
+            Joueur res = null;
+            if(joueurs.Count > 0)
+            {
+                res = joueurs[Session.Instance.Random(0, joueurs.Count)];
+            }
+            return res;
+            
         }
 
         private Joueur Buteur(List<Joueur> compo)
@@ -181,7 +187,10 @@ namespace TheManager
                         break;
                 }
             }
-            return joueurs[Session.Instance.Random(0, joueurs.Count)];
+            Joueur res = null;
+            if(joueurs.Count > 0)
+                res = joueurs[Session.Instance.Random(0, joueurs.Count)];
+            return res;
 
         }
 

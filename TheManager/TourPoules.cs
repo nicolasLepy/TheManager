@@ -136,6 +136,9 @@ namespace TheManager
                 }
             }
         }
-        
+
+        public override void DistribuerDotations()
+        {
+        }
     }
 }

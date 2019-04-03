@@ -22,6 +22,10 @@ namespace TheManager
 
         }
 
+        public override void DistribuerDotations()
+        {
+        }
+
         public override void Initialiser()
         {
             

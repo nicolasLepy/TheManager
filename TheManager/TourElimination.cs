@@ -25,6 +25,49 @@ namespace TheManager
             return t;
         }
 
+        public override void DistribuerDotations()
+        {
+            List<Match> matchs;
+            if(AllerRetour)
+            {
+                matchs = new List<Match>(_matchs);
+            }
+            else
+            {
+                matchs = new List<Match>();
+                int nbMatchs = _matchs.Count;
+                for(int i = 0; i<nbMatchs; i++)
+                {
+                    matchs.Add(_matchs[i]);
+                }
+            }
+            foreach(Dotation d in _dotations)
+            {
+                if(d.Classement == 1)
+                {
+                    foreach(Match m in matchs)
+                    {
+                        Club_Ville cv = m.Vainqueur as Club_Ville;
+                        if(cv != null)
+                        {
+                            cv.ModifierBudget(d.Somme);
+                        }
+                    }
+                }
+                if(d.Classement == 2)
+                {
+                    foreach (Match m in matchs)
+                    {
+                        Club_Ville cv = m.Perdant as Club_Ville;
+                        if (cv != null)
+                        {
+                            cv.ModifierBudget(d.Somme);
+                        }
+                    }
+                }
+            }
+        }
+
         public override void Initialiser()
         {
             AjouterEquipesARecuperer();
@@ -62,78 +105,7 @@ namespace TheManager
                 }
             }
 
-            /*if(AllerRetour)
-            {
-                foreach (Qualification q in _qualifications)
-                {
-                    for(int i = 0; i<_matchs.Count/2; i++)
-                    {
-                        Match aller = _matchs[i];
-                        Match retour = _matchs[i+_matchs.Count/2];
-                        int score1 = aller.Score1 + retour.Score2;
-                        int score2 = aller.Score2 + retour.Score1;
-                        if(score1 == score2)
-                        {
-                            score1 = aller.Score1 + 2 * retour.Score2;
-                            score2 = 2* aller.Score2 + retour.Score1;
-                        }
-                        if(q.Classement == 1)
-                        {
-                            if (score1 > score2)
-                            {
-                                Club c = aller.Domicile;
-                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
-                            }
-                            else
-                            {
-                                Club c = aller.Exterieur;
-                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
-                            }
-                        }
-                        else
-                        {
-                            if (score1 < score2)
-                            {
-                                Club c = aller.Domicile;
-                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
-                            }
-                            else
-                            {
-                                Club c = aller.Exterieur;
-                                if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                                else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
-                            }
-                        }
-                        
-                    }
-                }
-            }
-            else
-            {
-                foreach (Qualification q in _qualifications)
-                {
-                    foreach (Match m in _matchs)
-                    {
-                        //Vainqueurs
-                        if (q.Classement == 1)
-                        {
-                            Club c = m.Vainqueur;
-                            if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                            else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
-                        }
-                        //Perdants
-                        else if (q.Classement == 2)
-                        {
-                            Club c = m.Perdant;
-                            if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                            else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
-                        }
-                    }
-                }
-            }*/
+            
         }
     }
 }

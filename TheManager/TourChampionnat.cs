@@ -126,7 +126,20 @@ namespace TheManager
             return res;
         }
 
-        
-
+        public override void DistribuerDotations()
+        {
+            List<Club> classement = new List<Club>(_clubs);
+            classement.Sort(new Club_Classement_Comparator(this));
+            foreach(Dotation d in _dotations)
+            {
+                Club_Ville cv = classement[d.Classement-1] as Club_Ville;
+                if (cv != null)
+                {
+                    cv.ModifierBudget(d.Somme);
+                    Console.WriteLine(cv.Nom + " reçoit " + d.Somme);
+                }
+                    
+            }
+        }
     }
 }

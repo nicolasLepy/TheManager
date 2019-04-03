@@ -89,6 +89,18 @@ namespace TheManager
         }
     }
 
+    public struct Dotation
+    {
+        public int Classement { get; set; }
+        public float Somme { get; set; }
+
+        public Dotation(int classement, float somme)
+        {
+            Classement = classement;
+            Somme = somme;
+        }
+    }
+
     public abstract class Tour : IEquipesRecuperables
     {
         /// <summary>
@@ -126,6 +138,11 @@ namespace TheManager
         /// </summary>
         protected List<Regle> _regles;
 
+        /// <summary>
+        /// Liste des dotations données aux clubs à la fin du tour
+        /// </summary>
+        protected List<Dotation> _dotations;
+
 
         public string Nom { get => _nom; }
         public List<Club> Clubs { get => _clubs; }
@@ -135,6 +152,7 @@ namespace TheManager
         public List<Qualification> Qualifications { get => _qualifications; }
         public List<RecuperationEquipes> RecuperationEquipes { get => _recuperationsEquipes; }
         public List<Regle> Regles { get => _regles; }
+        public List<Dotation> Dotations { get => _dotations; }
 
         /*public Competition Competition
         {
@@ -167,6 +185,7 @@ namespace TheManager
             _qualifications = new List<Qualification>();
             _recuperationsEquipes = new List<RecuperationEquipes>();
             _regles = new List<Regle>();
+            _dotations = new List<Dotation>();
         }
 
 
@@ -388,8 +407,9 @@ namespace TheManager
         public abstract void Initialiser();
         public abstract void QualifierClubs();
         public abstract Tour Copie();
-
+        public abstract void DistribuerDotations();
         
+
 
         public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode)
         {

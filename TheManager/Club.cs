@@ -12,7 +12,7 @@ namespace TheManager
         private string _nom;
         private int _reputation;
         private float _supporters;
-        private int _centreFormation;
+        protected int _centreFormation;
         private Stade _stade;
         private string _logo;
         private string _nomCourt;
@@ -20,7 +20,7 @@ namespace TheManager
         public string Nom { get => _nom; }
         public int Reputation { get => _reputation; }
         public float Supporters { get => _supporters; }
-        public int CentreFormation { get => _centreFormation; }
+        public int CentreFormation { get => _centreFormation;}
         public Stade Stade { get => _stade; }
         public string Logo { get => _logo; }
         public string NomCourt { get => _nomCourt; }
