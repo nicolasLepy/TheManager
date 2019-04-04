@@ -125,7 +125,23 @@ namespace TheManager
             return res;
         }
 
+        public int PrixBillet()
+        {
+            int niveau = (int)Niveau();
+            int prix = 0;
+
+            if (niveau < 20) prix = 1;
+            else if (niveau < 30) prix = 2;
+            else if (niveau < 40) prix = 3;
+            else if (niveau < 50) prix = 5;
+            else if (niveau < 60) prix = 10;
+            else if (niveau < 70) prix = 20;
+            else if (niveau < 80) prix = 30;
+            else prix = 45;
+            return prix;
+        }
+
+
         //BUDGET TRANSFERT / SALAIRE
-        //CHAMPIONNAT PARTICIPATION
     }
 }

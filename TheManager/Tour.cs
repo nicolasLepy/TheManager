@@ -44,20 +44,23 @@ namespace TheManager
         private List<DecalagesTV> _decalagesTV;
         private DateTime _initialisation;
         private DateTime _fin;
+        private int _dernieresJourneesMemeJour;
 
         public Heure HeureParDefaut { get => _heureParDefaut; }
         public List<DateTime> JoursDeMatchs { get => _joursDeMatchs; }
         public List<DecalagesTV> DecalagesTV { get => _decalagesTV; }
         public DateTime Initialisation { get => _initialisation; }
         public DateTime Fin { get => _fin; }
+        public int DernieresJourneesMemeJour { get => _dernieresJourneesMemeJour; }
 
-        public ProgrammationTour(Heure heure, List<DateTime> jours, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin)
+        public ProgrammationTour(Heure heure, List<DateTime> jours, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, int dernieresJourneesMemeJour)
         {
             _heureParDefaut = heure;
             _joursDeMatchs = new List<DateTime>(jours);
             _decalagesTV = decalages;
             _initialisation = initialisation;
             _fin = fin;
+            _dernieresJourneesMemeJour = dernieresJourneesMemeJour;
         }
     }
 
@@ -175,12 +178,12 @@ namespace TheManager
             }
         }*/
 
-        public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, bool allerRetour)
+        public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, bool allerRetour, int dernieresJourneesMemeJour)
         {
             _nom = nom;
             _clubs = new List<Club>();
             _matchs = new List<Match>();
-            _programmation = new ProgrammationTour(heure, dates, decalages, initialisation, fin);
+            _programmation = new ProgrammationTour(heure, dates, decalages, initialisation, fin, dernieresJourneesMemeJour);
             _allerRetour = allerRetour;
             _qualifications = new List<Qualification>();
             _recuperationsEquipes = new List<RecuperationEquipes>();

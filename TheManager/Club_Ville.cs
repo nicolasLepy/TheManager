@@ -50,21 +50,36 @@ namespace TheManager
             return niveau / (_joueurs.Count+0.0f);
         }
 
-        public void GenererJoueur(Poste p)
+        public void GenererJoueur(Poste p, int ageMin, int ageMax)
         {
-            Joueur j = new Joueur(Session.Instance.Partie.Gestionnaire.Langues[0].ObtenirPrenom(), Session.Instance.Partie.Gestionnaire.Langues[0].ObtenirNom(), new DateTime(1990, 1, 1), CentreFormation, CentreFormation + 2, this.Ville.Pays(), p);
+            string prenom = _ville.Pays().Langue.ObtenirPrenom();
+            string nom = _ville.Pays().Langue.ObtenirNom();
+            int anneeNaissance = Session.Instance.Random(Session.Instance.Partie.Date.Year - ageMax, Session.Instance.Partie.Date.Year - ageMin+1);
+
+            //Potentiel
+            int potentiel = Session.Instance.Random(CentreFormation - 18, CentreFormation + 18);
+            if (potentiel < 1) potentiel = 1;
+            if (potentiel > 99) potentiel = 99;
+
+            //Niveau
+            int age = Session.Instance.Partie.Date.Year - anneeNaissance;
+            int diff = 24 - age;
+            int niveau = potentiel;
+            if (diff > 0) niveau -= 3 * diff;
+            
+            Joueur j = new Joueur(prenom, nom, new DateTime(anneeNaissance, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), niveau, potentiel, this.Ville.Pays(), p);
             int annee = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
             Contrats.Add(new Contrat(j, j.EstimerSalaire(), new DateTime(annee, 7, 1)));
         }
 
-        public void GenererJoueur()
+        public void GenererJoueur(int ageMin, int ageMax)
         {
             Poste p = Poste.GARDIEN;
             int random = Session.Instance.Random(1, 12);
             if(random >= 2 && random <= 5) p = Poste.DEFENSEUR;
             if (random >= 6 && random <= 9) p = Poste.MILIEU;
             if (random >= 10) p = Poste.ATTAQUANT;
-            GenererJoueur(p);
+            GenererJoueur(p,ageMin,ageMax);
         }
 
         public void ModifierBudget(float somme)
@@ -122,6 +137,25 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Génère quelques juniors chaque début d'année pour le club
+        /// </summary>
+        public void GenererJeunes()
+        {
+
+            int nb = Session.Instance.Random(1, 3);
+
+            int nbJoueursClub = Contrats.Count;
+            if(nbJoueursClub < 13)
+            {
+                nb = 13 - nbJoueursClub;
+            }
+            for(int i = 0; i<nb; i++)
+            {
+                GenererJoueur(17, 19);
+            }
+        }
+
+        /// <summary>
         /// Tente de prolonger un contrat
         /// </summary>
         /// <param name="ct">Le contrat à prolonger</param>
@@ -133,7 +167,17 @@ namespace TheManager
             if (salaire < ct.Salaire) salaire = ct.Salaire;
             salaire = (int)(salaire * (Session.Instance.Random(10, 14) / (10.0f)));
 
-            if(_budget > 12*salaire)
+            bool ageValide = true;
+            if (ct.Joueur.Age > 32)
+                if (Session.Instance.Random(1, 3) == 1) ageValide = false;
+
+            bool assezBon = true;
+            if (ct.Joueur.Age < 25 && ct.Joueur.Potentiel < Niveau() - 12)
+                assezBon = false;
+            else if (ct.Joueur.Age >= 25 && ct.Joueur.Niveau < Niveau() - 12)
+                assezBon = false;
+
+            if(_budget > 12*salaire && ageValide && assezBon)
             {
                 res = true;
                 int annee = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
@@ -142,5 +186,6 @@ namespace TheManager
 
             return res;
         }
+
     }
 }

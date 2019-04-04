@@ -10,13 +10,13 @@ namespace TheManager
     public class TourChampionnat : Tour
     {
 
-        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin) : base(nom, heure, jours, decalages, initialisation,fin, allerRetour)
+        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, int dernieresJourneesMemeJour) : base(nom, heure, jours, decalages, initialisation,fin, allerRetour, dernieresJourneesMemeJour)
         {
         }
 
         public override Tour Copie()
         {
-            Tour t = new TourChampionnat(Nom, this.Programmation.HeureParDefaut, new List<DateTime>(Programmation.JoursDeMatchs), AllerRetour, new List<DecalagesTV>(Programmation.DecalagesTV), Programmation.Initialisation, Programmation.Fin);
+            Tour t = new TourChampionnat(Nom, this.Programmation.HeureParDefaut, new List<DateTime>(Programmation.JoursDeMatchs), AllerRetour, new List<DecalagesTV>(Programmation.DecalagesTV), Programmation.Initialisation, Programmation.Fin, Programmation.DernieresJourneesMemeJour);
             foreach (Match m in this.Matchs) t.Matchs.Add(m);
             foreach (Club c in this.Clubs) t.Clubs.Add(c);
             return t;
@@ -136,7 +136,6 @@ namespace TheManager
                 if (cv != null)
                 {
                     cv.ModifierBudget(d.Somme);
-                    Console.WriteLine(cv.Nom + " reçoit " + d.Somme);
                 }
                     
             }

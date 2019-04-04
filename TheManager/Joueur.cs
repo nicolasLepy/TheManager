@@ -116,5 +116,6 @@ namespace TheManager
                 _niveau -= Session.Instance.Random(1, 5);
             }
         }
+
     }
 }

@@ -13,6 +13,9 @@ namespace TheManager
         //Attributs propres à la gestion du match
         private int _minute;
         private int _miTemps;
+        private int _diffNiveau;
+        private List<Joueur> _compo1Terrain;
+        private List<Joueur> _compo2Terrain;
 
         private int _score1;
         private int _score2;
@@ -24,7 +27,9 @@ namespace TheManager
         private int _tab2;
         private bool _prolongationSiNul;
         private Match _matchAller;
+        private int _affluence;
 
+        public int Affluence { get => _affluence; }
         public DateTime Jour { get; set; }
         public Club Domicile { get; set; }
         public Club Exterieur { get; set; }
@@ -134,7 +139,7 @@ namespace TheManager
             {
                 res += j.Niveau;
             }
-            return res / (compo.Count+0.0f);
+            return res / (11.0f);
         }
 
         private Joueur Carton(List<Joueur> compo)
@@ -221,14 +226,35 @@ namespace TheManager
             _matchAller = matchAller;
             _minute = 0;
             _miTemps = 1;
+            _compo1Terrain = new List<Joueur>();
+            _compo2Terrain = new List<Joueur>();
+            _affluence = 0;
+        }
+
+        private void EtablirAffluence()
+        {
+            _affluence = (int)(Domicile.Supporters * (Session.Instance.Random(6, 14) / 10.0f));
+            if(Domicile as Club_Ville != null)
+            {
+                (Domicile as Club_Ville).ModifierBudget(_affluence * Domicile.PrixBillet());
+            }
         }
 
         private void DefinirCompo()
         {
             _compo1 = new List<Joueur>(Domicile.Composition());
             _compo2 = new List<Joueur>(Exterieur.Composition());
+            _compo1Terrain = new List<Joueur>(_compo1);
+            _compo2Terrain = new List<Joueur>(_compo2);
             foreach (Joueur j in _compo1) j.Energie -= Session.Instance.Random(13, 33);
             foreach (Joueur j in _compo2) j.Energie -= Session.Instance.Random(13, 33);
+        }
+
+        public void CalculerDifferenceNiveau()
+        {
+            float diffF = Math.Abs(NiveauCompo(_compo1Terrain)*1.05f - NiveauCompo(_compo2Terrain));
+            this._diffNiveau = (int)diffF;
+
         }
 
         public void Jouer()
@@ -236,8 +262,8 @@ namespace TheManager
             DefinirCompo();
             Club a;
             Club b;
-            float diffF = Math.Abs(NiveauCompo(Compo1) - NiveauCompo(Compo2));
-            int diff = (int)diffF;
+            CalculerDifferenceNiveau();
+            EtablirAffluence();
             if(NiveauCompo(Compo1) > NiveauCompo(Compo2))
             {
                 a = Domicile;
@@ -253,7 +279,7 @@ namespace TheManager
             {
                 for (_minute = 1; _minute < 50; _minute++)
                 {
-                    JouerMinute(a, b, diff);
+                    JouerMinute(a, b);
                 }
             }
 
@@ -264,7 +290,7 @@ namespace TheManager
                 {
                     for(_minute = 1; _minute<16; _minute++)
                     {
-                        JouerMinute(a, b, diff);
+                        JouerMinute(a, b);
                     }
                 }
                 if((_prolongationSiNul && _score1 == _score2) || MatchRetourNul())
@@ -315,8 +341,9 @@ namespace TheManager
             }
         }
 
-        private void JouerMinute(Club a, Club b, int diff)
+        private void JouerMinute(Club a, Club b)
         {
+            int diff = _diffNiveau;
             if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
             if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
             if (diff >= 3 && diff <= 4) IterationMatch(a, b, 1, 8, 9, 14);
@@ -382,7 +409,10 @@ namespace TheManager
 
         private void CartonRouge(Club c)
         {
-            Joueur j = Carton(c == Domicile ? Compo1 : Compo2);
+            List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
+            Joueur j = Carton(compo);
+            compo.Remove(j);
+            CalculerDifferenceNiveau();
             //int minute = Session.Instance.Random(1, 50);
             //int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);

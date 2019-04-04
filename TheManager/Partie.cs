@@ -70,6 +70,7 @@ namespace TheManager
                     Club_Ville cv = c as Club_Ville;
                     if (cv != null)
                     {
+                        //Prolonger les joueurs
                         List<Contrat> joueursALiberer = new List<Contrat>();
                         foreach (Contrat ct in cv.Contrats)
                         {
@@ -80,19 +81,33 @@ namespace TheManager
 
                             }
                         }
+                        //Libérer les joueurs non prolongés
                         foreach(Contrat ct in joueursALiberer)
                         {
                             cv.Contrats.Remove(ct);
                             _gestionnaire.JoueursLibres.Add(ct.Joueur);
-                            Console.WriteLine(ct.Joueur.Prenom + " " + ct.Joueur.Nom + " libéré par " + cv.Nom);
                         }
+
                         cv.ObtenirSponsor();
                         cv.MiseAJourCentreFormation();
+                        cv.GenererJeunes();
 
                         //Affichage budget
                         Console.WriteLine(c.Nom + " - " + cv.Budget.ToString("F20"));
                     }
                 }
+            }
+
+            //Période des transferts
+            if(Date.Month == 7 || Date.Month == 8)
+            {
+
+            }
+
+            //Les joueurs libres peuvent partir en retraite
+            if(Date.Day == 2 && Date.Month == 7)
+            {
+                _gestionnaire.RetraiteJoueursLibres();
             }
 
             //Salaires des clubs && récupération sponsor

@@ -47,9 +47,15 @@ namespace TheManager.Exportation
                         journee.Sort(new Match_Date_Comparator());
                         
                         output += "<p>Journée " + (int)(i + 1) + "</p><table>";
-                        foreach(Match m in journee)
+                        DateTime last = new DateTime(2000, 1, 1);
+                        foreach (Match m in journee)
                         {
-                            output += "<tr><td>" + m.Jour.ToString() + "</td><td>" + m.Domicile.Nom + "</td><td><a href=\""+tc.Nom+"\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.Nom + "</td></tr>";
+                            if (m.Jour.Date != last.Date)
+                            {
+                                output += "<tr><td colspan=\"3\">" + m.Jour.Date.ToShortDateString() + "</td></tr>";
+                            }
+                            last = m.Jour;
+                            output += "<tr><td>" + m.Jour.ToShortTimeString() + "</td><td>" + m.Domicile.Nom + "</td><td><a href=\""+tc.Nom+"\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.Nom + "</td></tr>";
                             EcrireMatch(m, dir + "\\" + tc.Nom + "\\" + k + ".html");
                             k++;
                         }
@@ -149,6 +155,7 @@ namespace TheManager.Exportation
         public static void EcrireMatch(Match m, string nomFichier)
         {
             string output = "<p>" + m.Domicile.Nom + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.Nom + "</p><table>";
+            output += "<p>" + m.Affluence + " spectateurs.</p>";
             List<EvenementMatch> evenements = new List<EvenementMatch>();
             List<EvenementMatch> cartons = new List<EvenementMatch>();
             foreach (EvenementMatch em in m.Evenements)

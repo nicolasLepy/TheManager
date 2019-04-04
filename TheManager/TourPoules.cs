@@ -16,7 +16,7 @@ namespace TheManager
 
         public int NombrePoules { get { return _nombrePoules; } }
 
-        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour)
+        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];

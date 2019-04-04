@@ -248,7 +248,9 @@ namespace TheManager
 
                         if (type == "championnat")
                         {
-                            tour = new TourChampionnat(nomTour, String2Heure(heureParDefaut), dates, allerRetour,new List<DecalagesTV>(), date_initialisation, date_fin);
+                            int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
+
+                            tour = new TourChampionnat(nomTour, String2Heure(heureParDefaut), dates, allerRetour,new List<DecalagesTV>(), date_initialisation, date_fin, dernieresJourneesMemeJour);
                         }
                         else if(type=="elimination")
                         {
@@ -390,7 +392,7 @@ namespace TheManager
 
                     for (int i = 0; i < nbContratsManquants; i++)
                     {
-                        cv.GenererJoueur();
+                        cv.GenererJoueur(18,32);
                     }
                 }
             }

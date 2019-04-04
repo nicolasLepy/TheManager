@@ -155,5 +155,25 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Fait partir en retraite les joueurs libres trop vieux
+        /// </summary>
+        public void RetraiteJoueursLibres()
+        {
+            List<Joueur> partentEnRetraite = new List<Joueur>();
+            foreach(Joueur j in _joueursLibres)
+            {
+                if (j.Age > 33)
+                    if (Session.Instance.Random(1, 3) == 1)
+                        partentEnRetraite.Add(j);
+            }
+
+            foreach (Joueur j in partentEnRetraite)
+            {
+                _joueursLibres.Remove(j);
+                //Console.WriteLine(j.Prenom + " " + j.Nom + " (" + j.Age + " ans) part en retraite");
+            }
+        }
+
     }
 }
