@@ -35,10 +35,23 @@ namespace TheManager
         {
             List<Club> classement = new List<Club>(_clubs);
             classement.Sort(new Club_Classement_Random_Comparator());
-            Console.WriteLine("Tour inactif : " + _nom);
-            foreach(Club c in classement)
+
+            //Simuler des gains d'argent de matchs pour les clubs (affluence)
+
+
+            DateTime fin = new DateTime(Programmation.Fin.Year, Programmation.Fin.Month, Programmation.Fin.Day);
+            if (fin.Month < Programmation.Initialisation.Month)
+                fin = fin.AddYears(1);
+            else if (fin.Month == Programmation.Initialisation.Month && fin.Day < Programmation.Initialisation.Day)
+                fin = fin.AddYears(1);
+            int nbMatchs = (int)((fin - Programmation.Initialisation).TotalDays) / 14;
+            foreach (Club c in classement)
             {
-                Console.WriteLine(c.Nom + " - " + c.Niveau());
+                Club_Ville cv = c as Club_Ville;
+                if(cv != null)
+                {
+                    cv.ModifierBudget(nbMatchs * cv.Supporters * cv.PrixBillet());
+                }
             }
             foreach(Qualification q in _qualifications)
             {

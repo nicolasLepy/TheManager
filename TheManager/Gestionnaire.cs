@@ -15,6 +15,7 @@ namespace TheManager
         private List<Continent> _continents;
         private List<Langue> _langues;
         private List<Competition> _competitionsArchives;
+        private List<Media> _medias;
 
         public List<Club> Clubs { get => _clubs; }
         public List<Competition> Competitions { get => _competitions; }
@@ -22,6 +23,7 @@ namespace TheManager
         public List<Continent> Continents { get => _continents; }
         public List<Langue> Langues { get => _langues; }
         public List<Competition> CompetitionsArchives { get => _competitionsArchives; }
+        public List<Media> Medias { get => _medias; }
 
         public Gestionnaire()
         {
@@ -31,6 +33,7 @@ namespace TheManager
             _continents = new List<Continent>();
             _langues = new List<Langue>();
             _competitionsArchives = new List<Competition>();
+            _medias = new List<Media>();
         }
 
         public Ville String2Ville(string nom)

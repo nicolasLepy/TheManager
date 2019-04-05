@@ -51,6 +51,7 @@
     <Compile Include="Comparators\EvenementMatch_Temps_Comparator.cs" />
     <Compile Include="Comparators\Joueur_Composition_Comparator.cs" />
     <Compile Include="Comparators\Joueur_Niveau_Comparator.cs" />
+    <Compile Include="Comparators\Journalistes_Comparator.cs" />
     <Compile Include="Comparators\Match_Date_Comparator.cs" />
     <Compile Include="Comparators\Match_Niveau_Comparator.cs" />
     <Compile Include="Competition.cs" />
@@ -58,9 +59,12 @@
     <Compile Include="EvenementMatch.cs" />
     <Compile Include="Exportation\Exporteur.cs" />
     <Compile Include="Gestionnaire.cs" />
+    <Compile Include="Historique.cs" />
     <Compile Include="IEquipesRecuperables.cs" />
+    <Compile Include="Journaliste.cs" />
     <Compile Include="Langue.cs" />
     <Compile Include="Match.cs" />
+    <Compile Include="Media.cs" />
     <Compile Include="Partie.cs" />
     <Compile Include="Pays.cs" />
     <Compile Include="Continent.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Comparators;
 using TheManager.Exportation;
 
 namespace TheManager
@@ -24,7 +25,10 @@ namespace TheManager
         public void Avancer()
         {
             _date = _date.AddDays(1);
-            foreach(Competition c in _gestionnaire.Competitions)
+
+            foreach (Media m in _gestionnaire.Medias) m.LibererJournalistes();
+
+            foreach (Competition c in _gestionnaire.Competitions)
             {
                 if(c.TourActuel > -1)
                 {
@@ -32,7 +36,46 @@ namespace TheManager
                     foreach (Match m in enCours.Matchs)
                     {
                         if (Utils.ComparerDates(m.Jour, _date))
+                        {
                             m.Jouer();
+                            Club_Ville cv = m.Domicile as Club_Ville;
+                            if(cv != null)
+                            {
+                                foreach (Media media in _gestionnaire.Medias)
+                                {
+                                    if (media.Couvre(c, c.TourActuel))
+                                    {
+                                        List<Journaliste> j = new List<Journaliste>();
+                                        foreach (Journaliste j1 in media.Journalistes) if (!j1.EstPris) j.Add(j1);
+
+                                        Journaliste commentateur = null;
+                                        if(j.Count > 0)
+                                        {
+                                            j.Sort(new Journalistes_Comparator(cv.Ville));
+                                            
+                                            if(Math.Abs(Utils.Distance(j[0].Base,cv.Ville)) < 300)
+                                            {
+                                                commentateur = j[0];
+                                            }
+                                        }
+                                        if(commentateur == null)
+                                        {
+                                            Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), cv.Ville, 80);
+                                            media.Journalistes.Add(nouveau);
+                                            commentateur = nouveau;
+                                            //Console.WriteLine("Pas de journalistes disponibles pour " + m.Domicile.Nom + "-" + m.Exterieur.Nom);
+                                        }
+
+                                        commentateur.EstPris = true;
+                                        m.Journalistes.Add(commentateur);
+
+
+                                    }
+                                }
+                            }
+                            
+                        }
+                            
                     }
                 }
                 foreach(Tour t in c.Tours)
@@ -58,9 +101,40 @@ namespace TheManager
                 }
             }
             
+            if(Date.Day == 10 && Date.Month == 6)
+            {
+                foreach (Media m in _gestionnaire.Medias)
+                {
+                    foreach (Journaliste j in m.Journalistes)
+                    {
+                        int score = 0;
+                        foreach (Competition comp in _gestionnaire.Competitions)
+                        {
+                            foreach (Tour t in comp.Tours)
+                            {
+                                foreach (Match mtc in t.Matchs)
+                                {
+                                    if (mtc.Journalistes.Contains(j)) score++;
+                                }
+                            }
+                        }
+                        Console.WriteLine(j.Prenom + " " + j.Nom + " : " + score + " matchs commentés");
+                    }
+                }
+            }
+
             //Mise à jour annuelle des clubs (sponsors, centre de formation, contrats)
             if(Date.Day == 1 && Date.Month == 7)
             {
+
+                foreach(Media m in _gestionnaire.Medias)
+                {
+                    foreach(Journaliste j in m.Journalistes)
+                    {
+                        j.Age++;
+                    }
+                }
+
                 //Mise à jour du niveau des joueurs sans clubs
                 foreach (Joueur j in _gestionnaire.JoueursLibres) j.MiseAJourNiveau();
 

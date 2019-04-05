@@ -124,7 +124,8 @@ namespace TheManager
                         matchs.Add(retour);
                         res.Add(retour);
                     }
-                    ProgrammeTV(matchs, programmation.DecalagesTV);
+                    if(nbJourneesAller-i >= programmation.DernieresJourneesMemeJour)
+                        ProgrammeTV(matchs, programmation.DecalagesTV);
                 }
                 //Dernière journée : première journée inversée
                 matchs = new List<Match>();
@@ -137,7 +138,8 @@ namespace TheManager
                     matchs.Add(retour);
                     res.Add(retour);
                 }
-                ProgrammeTV(matchs, programmation.DecalagesTV);
+                if(programmation.DernieresJourneesMemeJour < 1)
+                    ProgrammeTV(matchs, programmation.DecalagesTV);
             }
             return res;
         }

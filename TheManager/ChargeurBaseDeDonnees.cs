@@ -27,6 +27,44 @@ namespace TheManager
             ChargerJoueurs();
             InitialiserEquipes();
             InitialiserJoueurs();
+            ChargerMedias();
+        }
+
+        public void ChargerMedias()
+        {
+            XDocument doc = XDocument.Load("Donnees/medias.xml");
+            foreach (XElement e in doc.Descendants("Medias"))
+            {
+                foreach (XElement e2 in e.Descendants("Media"))
+                {
+                    string nom = e2.Attribute("nom").Value;
+                    Pays pays = _gestionnaire.String2Pays(e2.Attribute("pays").Value);
+                    Media m = new Media(nom, pays);
+                    _gestionnaire.Medias.Add(m);
+
+                    foreach (XElement e3 in e2.Descendants("Journaliste"))
+                    {
+                        string prenom = e3.Attribute("prenom").Value;
+                        string nomJ = e3.Attribute("nom").Value;
+                        int age = int.Parse(e3.Attribute("age").Value);
+                        Ville ville = _gestionnaire.String2Ville(e3.Attribute("ville").Value);
+                        int retrait = 0;
+                        if(e3.Attribute("retrait") != null)
+                            retrait = int.Parse(e3.Attribute("retrait").Value);
+                        if (ville == null)
+                            Console.WriteLine(e3.Attribute("ville").Value + " n'est pas une ville.");
+                        Journaliste j = new Journaliste(prenom, nomJ, age, ville, retrait);
+                        m.Journalistes.Add(j);
+                    }
+
+                    foreach (XElement e3 in e2.Descendants("Couvre"))
+                    {
+                        int index = int.Parse(e3.Attribute("aPartir").Value);
+                        Competition competition = _gestionnaire.String2Competition(e3.Attribute("competition").Value);
+                        m.Couvertures.Add(new CouvertureCompetition(competition, index));
+                    }
+                }
+            }
         }
 
         public void ChargerJoueurs()

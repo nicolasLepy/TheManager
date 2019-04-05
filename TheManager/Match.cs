@@ -9,7 +9,6 @@ namespace TheManager
 {
     public class Match
     {
-
         //Attributs propres à la gestion du match
         private int _minute;
         private int _miTemps;
@@ -28,6 +27,7 @@ namespace TheManager
         private bool _prolongationSiNul;
         private Match _matchAller;
         private int _affluence;
+        private List<Journaliste> _journalistes;
 
         public int Affluence { get => _affluence; }
         public DateTime Jour { get; set; }
@@ -41,6 +41,7 @@ namespace TheManager
         public bool Prolongations { get => _prolongations; }
         public int Tab1 { get => _tab1; }
         public int Tab2 { get => _tab2; }
+        public List<Journaliste> Journalistes { get => _journalistes; }
 
         /// <summary>
         /// Si un match a été joué ou non
@@ -229,6 +230,7 @@ namespace TheManager
             _compo1Terrain = new List<Joueur>();
             _compo2Terrain = new List<Joueur>();
             _affluence = 0;
+            _journalistes = new List<Journaliste>();
         }
 
         private void EtablirAffluence()
@@ -366,10 +368,6 @@ namespace TheManager
 
         private void IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)
         {
-            /*min_a = (int)(min_a * 2.5f);
-            max_a = (int)(max_a * 2.5f);
-            min_b = (int)(min_b * 2.5f);
-            max_b = (int)(max_b * 2.5f);*/
             int hasard = Session.Instance.Random(0, 500);
             if (hasard >= min_a && hasard <= max_a)
             {
@@ -401,8 +399,6 @@ namespace TheManager
         private void CartonJaune(Club c)
         {
             Joueur j = Carton(c == Domicile ? Compo1 : Compo2);
-            //int minute = Session.Instance.Random(1, 50);
-            //int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.CARTON_JAUNE, c, j, _minute, _miTemps);
             _evenements.Add(em);
         }
@@ -413,10 +409,10 @@ namespace TheManager
             Joueur j = Carton(compo);
             compo.Remove(j);
             CalculerDifferenceNiveau();
-            //int minute = Session.Instance.Random(1, 50);
-            //int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
             _evenements.Add(em);
         }
+
+        
     }
 }

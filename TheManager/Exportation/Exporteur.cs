@@ -24,6 +24,12 @@ namespace TheManager.Exportation
                     Directory.CreateDirectory(dir + "\\" + t.Nom);
                 }
                 string output = "<p>" + t.Nom + "</p>";
+                foreach(Club cl in t.Clubs)
+                {
+                    Club_Ville cv = cl as Club_Ville;
+                    if (cv != null)
+                        output += "<p>" + cl.Nom + " - " + cl.CentreFormation + " - " + cv.Budget.ToString("F20") + "</p>";
+                }
                 if(t as TourChampionnat != null)
                 {
                     TourChampionnat tc = t as TourChampionnat;
@@ -178,6 +184,11 @@ namespace TheManager.Exportation
                 output += "<tr><td>" + em.MinuteEv + "°</td><td>" + em.Joueur.Prenom + " " + em.Joueur.Nom + "</td><td>" + em.Type + "</td><td>" + em.Club.Nom + "</td></tr>";
             }
             output += "</table>";
+
+            foreach(Journaliste j in m.Journalistes)
+            {
+                output += "<p>" + j.Prenom + " " + j.Nom + " (" + j.Media.Nom + ")";
+            }
             File.WriteAllText(nomFichier,output);
         }
     }

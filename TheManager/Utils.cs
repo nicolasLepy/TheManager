@@ -58,5 +58,26 @@ namespace TheManager
 
             return res;
         }
+
+        public static double Deg2Rad(float deg)
+        {
+            return (float)(deg * (Math.PI / 180.0f));
+        }
+
+        public static float Distance(Ville a, Ville b)
+        {
+            float lat1 = a.Latitude;
+            float lon1 = a.Longitude;
+            float lat2 = b.Latitude;
+            float lon2 = b.Longitude;
+
+            int R = 6371;
+            double dLat = Deg2Rad(lat2 - lat1);
+            double dLon = Deg2Rad(lon2 - lon1);
+            double va = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(Deg2Rad(lat1)) * Math.Cos(Deg2Rad(lat2)) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(va), Math.Sqrt(1 - va));
+            double d = R * c;
+            return (float)d;
+        }
     }
 }
