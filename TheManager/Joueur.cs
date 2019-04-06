@@ -90,15 +90,16 @@ namespace TheManager
 
         public int EstimerSalaire()
         {
-            int salaire = 0;
-            if (Niveau < 30) salaire = 40 * Niveau;
+            int salaire = (int)(0.292188*Math.Pow(1.1859960,Niveau));
+            /*if (Niveau < 30) salaire = 40 * Niveau;
             else if (Niveau < 40) salaire = 120 * Niveau;
             else if (Niveau < 50) salaire = 270 * Niveau;
             else if (Niveau < 60) salaire = 360 * Niveau;
             else if (Niveau < 70) salaire = 490 * Niveau;
             else if (Niveau < 80) salaire = 590 * Niveau;
             else if (Niveau < 90) salaire = 850 * Niveau;
-            else salaire = 1300 * Niveau;
+            else salaire = 1300 * Niveau;*/
+            //Console.WriteLine("Niveau : " + Niveau + " : " + salaire);
             return salaire;
         }
 

@@ -11,7 +11,7 @@ namespace TheManager
     {
         private string _nom;
         private int _reputation;
-        private float _supporters;
+        private int _supporters;
         protected int _centreFormation;
         private Stade _stade;
         private string _logo;
@@ -19,7 +19,7 @@ namespace TheManager
 
         public string Nom { get => _nom; }
         public int Reputation { get => _reputation; }
-        public float Supporters { get => _supporters; }
+        public int Supporters { get => _supporters; }
         public int CentreFormation { get => _centreFormation;}
         public Stade Stade { get => _stade; }
         public string Logo { get => _logo; }
@@ -55,7 +55,7 @@ namespace TheManager
         public abstract List<Joueur> Joueurs();
         public abstract float Niveau();
 
-        public Club(string nom, string nomCourt, int reputation, float supporters, int centreFormation, string logo, Stade stade)
+        public Club(string nom, string nomCourt, int reputation, int supporters, int centreFormation, string logo, Stade stade)
         {
             _nom = nom;
             _nomCourt = nomCourt;

@@ -101,28 +101,7 @@ namespace TheManager
                 }
             }
             
-            if(Date.Day == 10 && Date.Month == 6)
-            {
-                foreach (Media m in _gestionnaire.Medias)
-                {
-                    foreach (Journaliste j in m.Journalistes)
-                    {
-                        int score = 0;
-                        foreach (Competition comp in _gestionnaire.Competitions)
-                        {
-                            foreach (Tour t in comp.Tours)
-                            {
-                                foreach (Match mtc in t.Matchs)
-                                {
-                                    if (mtc.Journalistes.Contains(j)) score++;
-                                }
-                            }
-                        }
-                        Console.WriteLine(j.Prenom + " " + j.Nom + " : " + score + " matchs commentés");
-                    }
-                }
-            }
-
+            
             //Mise à jour annuelle des clubs (sponsors, centre de formation, contrats)
             if(Date.Day == 1 && Date.Month == 7)
             {
@@ -144,6 +123,7 @@ namespace TheManager
                     Club_Ville cv = c as Club_Ville;
                     if (cv != null)
                     {
+                        cv.Historique.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.Budget, cv.CentreFormation));
                         //Prolonger les joueurs
                         List<Contrat> joueursALiberer = new List<Contrat>();
                         foreach (Contrat ct in cv.Contrats)

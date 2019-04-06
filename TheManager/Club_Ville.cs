@@ -9,22 +9,25 @@ namespace TheManager
     public class Club_Ville : Club
     {
 
-        private float _budget;
+        private int _budget;
         private Ville _ville;
         private float _sponsor;
         private List<Contrat> _joueurs;
+        private HistoriqueClub _historique;
 
-        public float Budget { get => _budget; }
+        public int Budget { get => _budget; }
         public Ville Ville { get => _ville; }
         public float Sponsor { get => _sponsor; }
         public List<Contrat> Contrats { get => _joueurs; }
+        public HistoriqueClub Historique { get => _historique; }
 
-        public Club_Ville(string nom, string nomCourt, int reputation, float budget, float supporters, int centreFormation, Ville ville, string logo, Stade stade) : base(nom,nomCourt,reputation,supporters,centreFormation,logo,stade)
+        public Club_Ville(string nom, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade) : base(nom,nomCourt,reputation,supporters,centreFormation,logo,stade)
         {
             _budget = budget;
             _ville = ville;
             _sponsor = 0;
             _joueurs = new List<Contrat>();
+            _historique = new HistoriqueClub();
         }
 
         public void AjouterJoueur(Contrat c)
@@ -82,7 +85,7 @@ namespace TheManager
             GenererJoueur(p,ageMin,ageMax);
         }
 
-        public void ModifierBudget(float somme)
+        public void ModifierBudget(int somme)
         {
             _budget += somme;
         }
@@ -97,7 +100,7 @@ namespace TheManager
 
         public void SubvensionSponsor()
         {
-            ModifierBudget(Sponsor / 12);
+            ModifierBudget((int)(Sponsor / 12));
         }
 
         public void ObtenirSponsor()
@@ -126,11 +129,13 @@ namespace TheManager
             _centreFormation -= Session.Instance.Random(1, 3);
             if (_centreFormation < 1)
                 _centreFormation = 1;
-            for(int i = 0; i<5; i++)
+            for (int i = 0; i<5; i++)
             {
-                if(_budget > 800*(CentreFormation*CentreFormation) && CentreFormation<99)
+                int prix = (int)(967.50471* Math.Pow(1.12867,CentreFormation));
+                Console.WriteLine(Nom + " doit payer " + prix + " euros pour ameliorer son centre.");
+                if (_budget/3 > prix && CentreFormation<99)
                 {
-                    ModifierBudget(-800 * CentreFormation * CentreFormation);
+                    ModifierBudget(-prix);
                     _centreFormation++;
                 }
             }

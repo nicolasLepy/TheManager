@@ -95,9 +95,9 @@ namespace TheManager
     public struct Dotation
     {
         public int Classement { get; set; }
-        public float Somme { get; set; }
+        public int Somme { get; set; }
 
-        public Dotation(int classement, float somme)
+        public Dotation(int classement, int somme)
         {
             Classement = classement;
             Somme = somme;

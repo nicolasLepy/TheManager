@@ -9,8 +9,32 @@ namespace TheManager.Exportation
 {
     public class Exporteur
     {
+
+
+
+        public static void ExporterClubs()
+        {
+            string output = "<p>Clubs</p>";
+
+            foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
+            {
+                Club_Ville cv = c as Club_Ville;
+                if(cv != null)
+                {
+                    output += "<h2>" + cv.Nom + "</h2>";
+                    foreach(EntreeHistorique eh in cv.Historique.Elements)
+                    {
+                        output += "<p><b>" + eh.Date.ToShortDateString() + "</b><br>Budget : " + eh.Budget + "<br>Centre de formation : " + eh.CentreFormation + "</p>";
+                    }
+                }
+            }
+            File.WriteAllText("Output\\Clubs.html", output);
+
+        }
+
         public static void Exporter(Competition c)
         {
+            ExporterClubs();
             string dir = "Output\\" + c.Nom + " " + Session.Instance.Partie.Date.Year;
             if (!Directory.Exists(dir))
             {
@@ -23,13 +47,14 @@ namespace TheManager.Exportation
                 {
                     Directory.CreateDirectory(dir + "\\" + t.Nom);
                 }
-                string output = "<p>" + t.Nom + "</p>";
+                string output = "<p>" + t.Nom + "</p><p>";
                 foreach(Club cl in t.Clubs)
                 {
                     Club_Ville cv = cl as Club_Ville;
                     if (cv != null)
-                        output += "<p>" + cl.Nom + " - " + cl.CentreFormation + " - " + cv.Budget.ToString("F20") + "</p>";
+                        output += "" + cl.Nom + " - " + cl.CentreFormation + " - " + cv.Budget + " €<br>";
                 }
+                output += "</p>";
                 if(t as TourChampionnat != null)
                 {
                     TourChampionnat tc = t as TourChampionnat;
@@ -76,6 +101,7 @@ namespace TheManager.Exportation
                     List<Match> matchs = new List<Match>(te.Matchs);
                     matchs.Sort(new Match_Date_Comparator());
                     DateTime last = new DateTime(2000, 1, 1);
+                    Exporteurs2.ExporterD(matchs, dir + "\\" + te.Nom + "\\");
                     foreach (Match m in matchs)
                     {
                         if(m.Jour.Date != last.Date)
@@ -152,6 +178,7 @@ namespace TheManager.Exportation
                     output += "<tr><td>" + j.Key.Prenom + " " + j.Key.Nom + "</td><td>" + j.Value + "</td></tr>";
                 }
                 output += "</table>";
+
                 File.WriteAllText(dir + "\\" + t.Nom + ".html", output);
 
             }
@@ -185,6 +212,13 @@ namespace TheManager.Exportation
             }
             output += "</table>";
 
+            output += "<p><b>Compo Domicile</b></p>";
+            foreach (Joueur j in m.Compo1) output += "<br>" + j.Prenom + " " + j.Nom + "(" + j.Poste + ")";
+
+            output += "<p><b>Compo Extérieur</b></p>";
+            foreach (Joueur j in m.Compo2) output += "<br>" + j.Prenom + " " + j.Nom + "(" + j.Poste + ")";
+
+            output += "<p><b>Médias</b></p>";
             foreach(Journaliste j in m.Journalistes)
             {
                 output += "<p>" + j.Prenom + " " + j.Nom + " (" + j.Media.Nom + ")";

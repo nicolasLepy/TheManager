@@ -15,20 +15,19 @@ namespace TheManager.Comparators
             if (diff < 0) res = -1;
             else if(diff == 0)
             {
-                int levelDom = 0;
-                int levelExt = 0;
+                int X = 0;
+                int Y = 0;
                 Club_Ville dom = x.Domicile as Club_Ville;
                 Club_Ville ext = x.Exterieur as Club_Ville;
-                if (dom != null) levelDom += (int)Math.Pow(2, dom.Championnat.Niveau);
-                if (ext != null) levelDom += (int)Math.Pow(2, ext.Championnat.Niveau);
+                if (dom != null) X += (int)Math.Pow(2, 10 - dom.Championnat.Niveau);
+                if (ext != null) X += (int)Math.Pow(2, 10 - ext.Championnat.Niveau);
                 dom = y.Domicile as Club_Ville;
                 ext = y.Exterieur as Club_Ville;
-                if (dom != null) levelExt += (int)Math.Pow(2, dom.Championnat.Niveau);
-                if (ext != null) levelExt += (int)Math.Pow(2, ext.Championnat.Niveau);
-                if (levelDom < levelExt) res = -1;
+                if (dom != null) Y += (int)Math.Pow(2, 10 - dom.Championnat.Niveau);
+                if (ext != null) Y += (int)Math.Pow(2, 10 - ext.Championnat.Niveau);
+                if (X > Y) res = -1;
             }
             return res;
-            //return DateTime.Compare(x.Jour, y.Jour);
         }
     }
 }
