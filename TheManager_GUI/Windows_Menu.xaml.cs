@@ -52,11 +52,9 @@ namespace TheManager_GUI
 
         private void BtnAvancer_Click(object sender, RoutedEventArgs e)
         {
-            for(int i = 0; i<1000; i++)
-            {
-                _partie.Avancer();
-                Refresh();
-            }
+            _partie.Avancer();
+            Refresh();
+            
             
         }
 
@@ -86,7 +84,7 @@ namespace TheManager_GUI
                     dgClubs.Items.Clear();
                     foreach(Club cl in c.Tours[0].Clubs)
                     {
-                        dgClubs.Items.Add(new ClubElement{ Nom = cl.Nom, Niveau = cl.Niveau() });
+                        dgClubs.Items.Add(new ClubElement{ Nom = cl.NomCourt, Niveau = cl.Niveau() });
                     }
                 }
 
@@ -169,9 +167,10 @@ namespace TheManager_GUI
             TourElimination te = t as TourElimination;
             foreach (Match m in matchs)
             {
-                string date = "";
                 if (lastTime != m.Jour.Date)
-                    date = m.Jour.ToShortDateString();
+                {
+                    dgMatchs.Items.Add(new CalendrierElement { Heure=m.Jour.ToShortDateString()});
+                }
                 lastTime = m.Jour.Date;
                 string score = "A jouer";
                 string affluence = "-";
@@ -182,8 +181,8 @@ namespace TheManager_GUI
                     if (m.Prolongations) score += " ap";
                     if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
                 }
-                string equipe1 = m.Domicile.Nom;
-                string equipe2 = m.Exterieur.Nom;
+                string equipe1 = m.Domicile.NomCourt;
+                string equipe2 = m.Exterieur.NomCourt;
 
                 Competition champD = m.Domicile.Championnat;
                 Competition champE = m.Exterieur.Championnat;
@@ -192,7 +191,7 @@ namespace TheManager_GUI
                     equipe1 += " (" + champD.NomCourt + ")";
                     equipe2 += " (" + champE.NomCourt + ")";
                 }
-                dgMatchs.Items.Add(new CalendrierElement { Date= date, Heure = m.Jour.ToShortTimeString(), Equipe1 = equipe1, Equipe2 = equipe2, Score = score, Affluence = affluence, Match = m });
+                dgMatchs.Items.Add(new CalendrierElement { Heure = m.Jour.ToShortTimeString(), Equipe1 = equipe1, Equipe2 = equipe2, Score = score, Affluence = affluence, Match = m });
             }
         }
 
@@ -231,11 +230,18 @@ namespace TheManager_GUI
             dgButeurs.Items.Clear();
             foreach(KeyValuePair<Joueur,int> buteur in t.Buteurs())
             {
-                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key.Prenom + " " + buteur.Key.Nom, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Nom() : buteur.Key.Club.Nom, NbButs = buteur.Value });
+                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key.Prenom + " " + buteur.Key.Nom, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Nom() : buteur.Key.Club.NomCourt, NbButs = buteur.Value });
             }
         }
 
-        
+        private void BtnSimuler_Click(object sender, RoutedEventArgs e)
+        {
+            while (!(_partie.Date.Month == 6 && _partie.Date.Day == 13))
+            {
+                _partie.Avancer();
+            }
+            Refresh();
+        }
     }
 
     public struct ClubElement
@@ -254,7 +260,6 @@ namespace TheManager_GUI
     public struct CalendrierElement
     {
         public Match Match { get; set; }
-        public string Date { get; set; }
         public string Heure { get; set; }
         public string Equipe1 { get; set; }
         public string Equipe2 { get; set; }

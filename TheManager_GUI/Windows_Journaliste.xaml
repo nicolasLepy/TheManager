@@ -1,0 +1,26 @@
+﻿<Window x:Class="TheManager_GUI.Windows_Journaliste"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+        Title="Windows_Journaliste" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			</StackPanel>
+			<Label Name="lbJournaliste"  Content="Journaliste" Style="{StaticResource StyleLabel1}"/>
+			<Label Name="lbMedia"  Content="Media" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
+			<DataGrid HorizontalAlignment="Left" MaxHeight="250" Margin="20" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="" Binding="{Binding Date}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Heure}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+				</DataGrid.Columns>
+			</DataGrid>
+		</StackPanel>
+    </Grid>
+</Window>

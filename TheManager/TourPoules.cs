@@ -62,6 +62,7 @@ namespace TheManager
                 foreach(Qualification q in _qualifications)
                 {
                     Club c = poules[i][q.Classement - 1];
+                    Console.WriteLine(c.Nom + " qualifié poule");
                     if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
                     else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
                 }

@@ -43,5 +43,10 @@ namespace TheManager
             this._base = _base;
             _retrait = retrait;
         }
+
+        public override string ToString()
+        {
+            return Prenom + " " + Nom;
+        }
     }
 }

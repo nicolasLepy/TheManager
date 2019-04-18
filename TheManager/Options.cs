@@ -13,7 +13,7 @@ namespace TheManager
 
         public Options()
         {
-            Exporter = true;
+            Exporter = false;
         }
 
     }

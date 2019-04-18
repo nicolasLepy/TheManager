@@ -58,6 +58,9 @@
     <Compile Include="Windows_Club.xaml.cs">
       <DependentUpon>Windows_Club.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows_Journaliste.xaml.cs">
+      <DependentUpon>Windows_Journaliste.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows_Match.xaml.cs">
       <DependentUpon>Windows_Match.xaml</DependentUpon>
     </Compile>
@@ -80,6 +83,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Windows_Club.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows_Journaliste.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

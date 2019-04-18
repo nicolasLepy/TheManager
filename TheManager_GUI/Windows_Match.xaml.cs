@@ -66,7 +66,7 @@ namespace TheManager_GUI
             }
             foreach(Journaliste j in match.Journalistes)
             {
-                dgEvenements.Items.Add(new JournalisteElement { Journaliste = j.Prenom + " " + j.Nom, Media = j.Media.Nom });
+                dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j, Media = j.Media.Nom });
             }
         }
 
@@ -74,11 +74,23 @@ namespace TheManager_GUI
         {
             this.Close();
         }
+
+        private void DgJournalistes_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+            if (dgJournalistes.SelectedItem != null)
+            {
+                JournalisteElement selected = (JournalisteElement)dgJournalistes.SelectedItem;
+                Windows_Journaliste wj = new Windows_Journaliste(selected.Journaliste);
+                wj.Show();
+            }
+        }
+
     }
 
     public struct JournalisteElement
     {
-        public string Journaliste { get; set; }
+        public Journaliste Journaliste { get; set; }
         public string Media{ get; set; }
     }
 
