@@ -6,17 +6,29 @@ using System.Text;
 
 namespace TheManager
 {
-    public class Continent : IEquipesRecuperables
+    public class Continent : IEquipesRecuperables, ILocalisation
     {
         private List<Pays> _pays;
+        private List<Competition> _competitions;
+        private string _nom;
 
-        public string Nom { get; set; }
         public List<Pays> Pays { get { return _pays; } }
+        public List<Competition> Competitions()
+        {
+            return _competitions;
+        }
+
+        public string Nom()
+        {
+            return _nom;
+        }
         
+
         public Continent(string nom)
         {
-            Nom = nom;
+            _nom = nom;
             _pays = new List<Pays>();
+            _competitions = new List<Competition>();
         }
 
         public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode)
@@ -33,6 +45,11 @@ namespace TheManager
             List<Club> res = new List<Club>();
             for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
             return res;
+        }
+
+        public override string ToString()
+        {
+            return _nom;
         }
     }
 }

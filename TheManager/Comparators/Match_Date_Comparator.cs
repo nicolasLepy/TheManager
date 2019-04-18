@@ -19,12 +19,12 @@ namespace TheManager.Comparators
                 int Y = 0;
                 Club_Ville dom = x.Domicile as Club_Ville;
                 Club_Ville ext = x.Exterieur as Club_Ville;
-                if (dom != null) X += (int)Math.Pow(2, 10 - dom.Championnat.Niveau);
-                if (ext != null) X += (int)Math.Pow(2, 10 - ext.Championnat.Niveau);
+                if (dom != null && dom.Championnat != null) X += (int)Math.Pow(2, 10 - dom.Championnat.Niveau);
+                if (ext != null && ext.Championnat != null) X += (int)Math.Pow(2, 10 - ext.Championnat.Niveau);
                 dom = y.Domicile as Club_Ville;
                 ext = y.Exterieur as Club_Ville;
-                if (dom != null) Y += (int)Math.Pow(2, 10 - dom.Championnat.Niveau);
-                if (ext != null) Y += (int)Math.Pow(2, 10 - ext.Championnat.Niveau);
+                if (dom != null && dom.Championnat != null) Y += (int)Math.Pow(2, 10 - dom.Championnat.Niveau);
+                if (ext != null && ext.Championnat != null) Y += (int)Math.Pow(2, 10 - ext.Championnat.Niveau);
                 if (X > Y) res = -1;
             }
             return res;

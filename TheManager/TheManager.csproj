@@ -58,13 +58,16 @@
     <Compile Include="Contrat.cs" />
     <Compile Include="EvenementMatch.cs" />
     <Compile Include="Exportation\Exporteur.cs" />
+    <Compile Include="Exportation\Exporteurs2.cs" />
     <Compile Include="Gestionnaire.cs" />
     <Compile Include="Historique.cs" />
     <Compile Include="IEquipesRecuperables.cs" />
+    <Compile Include="ILocalisation.cs" />
     <Compile Include="Journaliste.cs" />
     <Compile Include="Langue.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="Media.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Partie.cs" />
     <Compile Include="Pays.cs" />
     <Compile Include="Continent.cs" />

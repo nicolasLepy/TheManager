@@ -169,6 +169,7 @@ namespace TheManager
                 {
                     string nom = e2.Attribute("nom").Value;
                     string nomCourt = e2.Attribute("nomCourt").Value;
+                    if (nomCourt == "") nomCourt = nom;
                     int reputation = int.Parse(e2.Attribute("reputation").Value);
                     int budget = int.Parse(e2.Attribute("budget").Value);
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
@@ -244,9 +245,11 @@ namespace TheManager
                     string debutSaison = e2.Attribute("debut_saison").Value;
                     bool championnat = e2.Attribute("championnat").Value == "oui" ? true : false;
                     int niveau = int.Parse(e2.Attribute("niveau").Value);
+                    ILocalisation localisation = _gestionnaire.String2Localisation(e2.Attribute("localisation").Value);
                     DateTime debut = String2Date(debutSaison);
                     Competition c = new Competition(nom, logo, debut, nomCourt, championnat, niveau);
-                    _gestionnaire.Competitions.Add(c);
+                    localisation.Competitions().Add(c);
+                    //_gestionnaire.Competitions.Add(c);
                 }
             }
 

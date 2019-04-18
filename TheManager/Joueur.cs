@@ -45,6 +45,30 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Club actuel du joueur
+        /// </summary>
+        public Club_Ville Club
+        {
+            get
+            {
+                Club_Ville res = null;
+                foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
+                {
+                    Club_Ville cv = c as Club_Ville;
+                    if(cv != null)
+                    {
+                        foreach(Contrat ct in cv.Contrats)
+                        {
+                            if (ct.Joueur == this)
+                                res = cv;
+                        }
+                    }
+                }
+                return res;
+            }
+        }
+
         public Joueur(string prenom, string nom, DateTime naissance, int niveau, int potentiel, Pays nationalite, Poste poste)
         {
             _prenom = prenom;

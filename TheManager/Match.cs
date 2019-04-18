@@ -7,6 +7,7 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
+
     public class Match
     {
         //Attributs propres à la gestion du match
@@ -16,9 +17,13 @@ namespace TheManager
         private List<Joueur> _compo1Terrain;
         private List<Joueur> _compo2Terrain;
 
+
         private int _score1;
         private int _score2;
         private List<EvenementMatch> _evenements;
+        private float _possession;
+        private int _tirs1;
+        private int _tirs2;
         private List<Joueur> _compo1;
         private List<Joueur> _compo2;
         private bool _prolongations;
@@ -42,6 +47,8 @@ namespace TheManager
         public int Tab1 { get => _tab1; }
         public int Tab2 { get => _tab2; }
         public List<Journaliste> Journalistes { get => _journalistes; }
+        public int Tirs1 { get => _tirs1; }
+        public int Tirs2 { get => _tirs2; }
 
         /// <summary>
         /// Si un match a été joué ou non
@@ -210,6 +217,44 @@ namespace TheManager
             }
         }
 
+        public float PossessionDomicile
+        {
+            get { return _possession; }
+        }
+
+        public float PossessionExterieur
+        {
+            get { return 100 - _possession; }
+        }
+
+        public int ScoreMT1
+        {
+            get
+            {
+                int res = 0;
+                foreach(EvenementMatch em in _evenements)
+                {
+                    if (em.Club == Domicile && em.MiTemps == 1 && (em.Type == Evenement.BUT || em.Type == Evenement.BUT_CSC || em.Type == Evenement.BUT_PENALTY))
+                        res++;
+                }
+                return res;
+            }
+        }
+
+        public int ScoreMT2
+        {
+            get
+            {
+                int res = 0;
+                foreach (EvenementMatch em in _evenements)
+                {
+                    if (em.Club == Exterieur && em.MiTemps == 1 && (em.Type == Evenement.BUT || em.Type == Evenement.BUT_CSC || em.Type == Evenement.BUT_PENALTY))
+                        res++;
+                }
+                return res;
+            }
+        }
+
         public Match(Club domicile, Club exterieur, DateTime jour, bool prolongationSiNul, Match matchAller = null)
         {
             Domicile = domicile;
@@ -219,6 +264,9 @@ namespace TheManager
             _score2 = 0;
             _tab2 = 0;
             _tab1 = 0;
+            _tirs1 = 0;
+            _tirs2 = 0;
+            _possession = 0;
             _prolongations = false;
             _evenements = new List<EvenementMatch>();
             _compo1 = new List<Joueur>();
@@ -236,6 +284,8 @@ namespace TheManager
         private void EtablirAffluence()
         {
             _affluence = (int)(Domicile.Supporters * (Session.Instance.Random(6, 14) / 10.0f));
+            _affluence = (int)(_affluence * Exterieur.Reputation / (Domicile.Reputation + 0.0f));
+            if (_affluence > Domicile.Stade.Capacite) _affluence = Domicile.Stade.Capacite;
             if(Domicile as Club_Ville != null)
             {
                 (Domicile as Club_Ville).ModifierBudget(_affluence * Domicile.PrixBillet());
@@ -300,12 +350,6 @@ namespace TheManager
                     JouerTAB();
                 }
             }
-
-            string afficher = Jour.ToString() + " : " + Domicile.Nom + " - " + Exterieur.Nom;
-            int ecart = 70 - afficher.Length;
-            for (int i = 0; i < ecart; i++) afficher += " ";
-            afficher += _score1 + "-" + _score2;
-            Console.WriteLine(afficher);
            
         }
 
@@ -412,7 +456,5 @@ namespace TheManager
             EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
             _evenements.Add(em);
         }
-
-        
     }
 }

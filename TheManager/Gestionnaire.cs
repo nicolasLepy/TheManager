@@ -10,7 +10,7 @@ namespace TheManager
     {
 
         private List<Club> _clubs;
-        private List<Competition> _competitions;
+        //private List<Competition> _competitions;
         private List<Joueur> _joueursLibres;
         private List<Continent> _continents;
         private List<Langue> _langues;
@@ -18,7 +18,20 @@ namespace TheManager
         private List<Media> _medias;
 
         public List<Club> Clubs { get => _clubs; }
-        public List<Competition> Competitions { get => _competitions; }
+        //public List<Competition> Competitions { get => _competitions; }
+        public List<Competition> Competitions
+        {
+            get
+            {
+                List<Competition> res = new List<Competition>();
+                foreach(Continent c in _continents)
+                {
+                    foreach (Competition cp in c.Competitions()) res.Add(cp);
+                    foreach (Pays p in c.Pays) foreach (Competition cp in p.Competitions()) res.Add(cp);
+                }
+                return res;
+            }
+        }
         public List<Joueur> JoueursLibres { get => _joueursLibres; }
         public List<Continent> Continents { get => _continents; }
         public List<Langue> Langues { get => _langues; }
@@ -28,7 +41,7 @@ namespace TheManager
         public Gestionnaire()
         {
             _clubs = new List<Club>();
-            _competitions = new List<Competition>();
+            //_competitions = new List<Competition>();
             _joueursLibres = new List<Joueur>();
             _continents = new List<Continent>();
             _langues = new List<Langue>();
@@ -52,6 +65,26 @@ namespace TheManager
             return res;
         }
 
+        /// <summary>
+        /// Donne la liste de tous les matchs des compétitions en cours
+        /// </summary>
+        public List<Match> Matchs
+        {
+            get
+            {
+                List<Match> res = new List<Match>();
+                foreach(Competition c in Competitions)
+                {
+                    foreach(Tour t in c.Tours)
+                    {
+                        foreach (Match m in t.Matchs) res.Add(m);
+                    }
+                }
+
+                return res;
+            }
+        }
+
         public Pays String2Pays(string pays)
         {
             Pays res = null;
@@ -60,7 +93,7 @@ namespace TheManager
             {
                 foreach(Pays p in c.Pays)
                 {
-                    if (p.Nom == pays) res = p;
+                    if (p.Nom() == pays) res = p;
                 }
             }
             return res;
@@ -87,7 +120,7 @@ namespace TheManager
         public Competition String2Competition(string nom)
         {
             Competition res = null;
-            foreach(Competition competition in _competitions)
+            foreach(Competition competition in Competitions)
             {
                 if (competition.Nom == nom) res = competition;
             }
@@ -117,7 +150,7 @@ namespace TheManager
         public Continent String2Continent(string nom)
         {
             Continent res = null;
-            foreach (Continent c in _continents) if (c.Nom == nom) res = c;
+            foreach (Continent c in _continents) if (c.Nom() == nom) res = c;
             return res;
         }
 
@@ -176,6 +209,36 @@ namespace TheManager
                 _joueursLibres.Remove(j);
                 //Console.WriteLine(j.Prenom + " " + j.Nom + " (" + j.Age + " ans) part en retraite");
             }
+        }
+
+        /// <summary>
+        /// Récupére une localisation (continent ou pays) à partir d'un nom
+        /// </summary>
+        /// <param name="nom"></param>
+        /// <returns></returns>
+        public ILocalisation String2Localisation(string nom)
+        {
+            ILocalisation res = null;
+            foreach(Continent c in _continents)
+            {
+                if (c.Nom() == nom) res = c;
+                foreach(Pays p in c.Pays)
+                {
+                    if (p.Nom() == nom) res = p;
+                }
+            }
+            return res;
+        }
+
+        public ILocalisation LocalisationCompetition(Competition competition)
+        {
+            ILocalisation res = null;
+            foreach(Continent c in _continents)
+            {
+                if(c.Competitions().Contains(competition)) res = c;
+                foreach (Pays p in c.Pays) if (p.Competitions().Contains(competition)) res = p;
+            }
+            return res;
         }
 
     }

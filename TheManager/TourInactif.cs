@@ -34,7 +34,14 @@ namespace TheManager
         public override void QualifierClubs()
         {
             List<Club> classement = new List<Club>(_clubs);
-            classement.Sort(new Club_Classement_Random_Comparator());
+            try
+            {
+                classement.Sort(new Club_Classement_Random_Comparator());
+            }
+            catch
+            {
+                Console.WriteLine("Le classement aléatoire n'a pu être généré");
+            }
 
             //Simuler des gains d'argent de matchs pour les clubs (affluence)
 

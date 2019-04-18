@@ -1,0 +1,41 @@
+﻿<Window x:Class="TheManager_GUI.Windows_Match"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+        Title="Windows_Match" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			</StackPanel>
+			<Label Content="Feuille de match" Style="{StaticResource StyleLabel1}"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<Label Name="lbEquipe1" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
+				<Label Name="lbScore" Content="4 - 0" Margin="40 0 40 0" Style="{StaticResource StyleLabel1}"/>
+				<Label Name="lbEquipe2" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
+			</StackPanel>
+			<Label Name="lbMT" Content="(2 - 0)" Style="{StaticResource StyleLabel1}"/>
+			<Label Name="lbStade" Content="Stade du Pré Fleuri" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+			<Label Name="lbAffluence" Content="28500 spectateurs" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+			<DataGrid HorizontalAlignment="Center" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="" Binding="{Binding Col1}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Col2}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Col3}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Col4}"/>
+				</DataGrid.Columns>
+
+			</DataGrid>
+			<DataGrid HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="" Binding="{Binding Media}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Journaliste}"/>
+				</DataGrid.Columns>
+
+			</DataGrid>
+		</StackPanel>
+	</Grid>
+</Window>

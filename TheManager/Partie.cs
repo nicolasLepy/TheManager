@@ -12,14 +12,25 @@ namespace TheManager
     {
         private DateTime _date;
         private Gestionnaire _gestionnaire;
+        private Options _options;
 
         public DateTime Date { get { return _date; } }
         public Gestionnaire Gestionnaire { get => _gestionnaire; }
+        public Options Options { get => _options; }
 
         public Partie()
         {
             _date = new DateTime(2018, 07, 01);
             _gestionnaire = new Gestionnaire();
+            _options = new Options();
+        }
+
+        public void Exportations(Competition c)
+        {
+            if (Utils.ComparerDatesSansAnnee(c.DebutSaison.AddDays(-7), _date))
+            {
+                Exporteur.Exporter(c);
+            }
         }
 
         public void Avancer()
@@ -39,7 +50,8 @@ namespace TheManager
                         {
                             m.Jouer();
                             Club_Ville cv = m.Domicile as Club_Ville;
-                            if(cv != null)
+                            Club_Ville ce = m.Exterieur as Club_Ville;
+                            if(cv != null && ce != null && (cv.Championnat != null && cv.Championnat.Niveau <= 2 || ce.Championnat != null && ce.Championnat.Niveau <= 2))
                             {
                                 foreach (Media media in _gestionnaire.Medias)
                                 {
@@ -95,10 +107,7 @@ namespace TheManager
                     c.RAZ();
                 }
 
-                if(Utils.ComparerDatesSansAnnee(c.DebutSaison.AddDays(-7),_date))
-                {
-                    Exporteur.Exporter(c);
-                }
+                if (Options.Exporter) Exportations(c);
             }
             
             
@@ -147,7 +156,7 @@ namespace TheManager
                         cv.GenererJeunes();
 
                         //Affichage budget
-                        Console.WriteLine(c.Nom + " - " + cv.Budget.ToString("F20"));
+                        //Console.WriteLine(c.Nom + " - " + cv.Budget.ToString("F20"));
                     }
                 }
             }

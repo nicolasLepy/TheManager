@@ -321,7 +321,7 @@ namespace TheManager
             int res = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Domicile == c || m.Exterieur == c)
+                if (m.Joue && (m.Domicile == c || m.Exterieur == c))
                 {
                     if (m.Score1 == m.Score2) res++;
                 }
@@ -432,6 +432,11 @@ namespace TheManager
             List<Club> res = new List<Club>();
             for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
             return res;
+        }
+
+        public override string ToString()
+        {
+            return _nom;
         }
     }
 }

@@ -39,6 +39,24 @@ namespace TheManager
                 return minutes;
             }
         }
+
+        public string MinuteStr
+        {
+            get
+            {
+                int tpAdd = (_minute - 45 > 0) ? _minute - 45 : 0;
+                int minutes = _minute;
+                if (_miTemps == 2) minutes = minutes + 45;
+                else if (_miTemps == 3) minutes = minutes + 90;
+                else if (_miTemps == 4) minutes = minutes + 105;
+
+                string res = (minutes - tpAdd).ToString();
+                if (tpAdd > 0)
+                    res += "+" + tpAdd;
+                res += "'";
+                return res;
+            }
+        }
         public int MiTemps { get => _miTemps; }
         public Joueur Joueur { get => _joueur; }
         public Club Club { get => _club; }

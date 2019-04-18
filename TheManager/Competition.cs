@@ -8,6 +8,28 @@ using TheManager.Exportation;
 namespace TheManager
 {
 
+    public struct StatistiquesCompetitions
+    {
+        public Match PlusGrandScore { get; set; }
+        public Match PlusGrandEcart { get; set; }
+        public KeyValuePair<int, Joueur> MeilleurButeursUneSaison { get; set; }
+        public KeyValuePair<int, Club> PlusGrosseAttaque { get; set; }
+        public KeyValuePair<int, Club> PlusFaibleAttaque { get; set; }
+        public KeyValuePair<int, Club> PlusGrosseDefense { get; set; }
+        public KeyValuePair<int, Club> PlusFaibleDefense { get; set; }
+
+        public StatistiquesCompetitions(int i)
+        {
+            PlusGrandScore = null;
+            PlusGrandEcart = null;
+            MeilleurButeursUneSaison = new KeyValuePair<int, Joueur>(0, null);
+            PlusGrosseAttaque = new KeyValuePair<int, Club>(0, null);
+            PlusFaibleAttaque = new KeyValuePair<int, Club>(0, null);
+            PlusGrosseDefense = new KeyValuePair<int, Club>(0, null);
+            PlusFaibleDefense = new KeyValuePair<int, Club>(0, null);
+        }
+    }
+
     public class Competition
     {
         
@@ -19,6 +41,7 @@ namespace TheManager
         private List<Club>[] _qualificationAnneeSuivante;
         private bool _championnat;
         private int _niveau;
+        private StatistiquesCompetitions _statistiques;
 
         public string Nom { get => _nom; }
         public List<Tour> Tours { get => _tours; }
@@ -26,6 +49,7 @@ namespace TheManager
         public int TourActuel { get; set; }
         public DateTime DebutSaison { get { return _debutSaison; } }
         public string NomCourt { get => _nomCourt; }
+        public StatistiquesCompetitions Statistiques { get => _statistiques; set => _statistiques = value; }
         /// <summary>
         /// Est un championnat (L1, L2)
         /// </summary>
@@ -45,6 +69,7 @@ namespace TheManager
             _nomCourt = nomCourt;
             _championnat = championnat;
             _niveau = niveau;
+            _statistiques = new StatistiquesCompetitions(0);
         }
 
         public void InitialiserQualificationsAnneesSuivantes()
@@ -61,8 +86,10 @@ namespace TheManager
         /// </summary>
         public void RAZ()
         {
+            MAJRecords();
             Competition copieArchive = new Competition(_nom, _logo, _debutSaison, _nomCourt, _championnat, _niveau);
             foreach (Tour t in Tours) copieArchive.Tours.Add(t);
+            copieArchive.Statistiques = Statistiques;
             Session.Instance.Partie.Gestionnaire.CompetitionsArchives.Add(copieArchive);
             for (int i = 0; i<Tours.Count; i++)
             {
@@ -72,6 +99,21 @@ namespace TheManager
             }
             InitialiserQualificationsAnneesSuivantes();
             TourActuel = -1;
+            
+        }
+
+        private void MAJRecords()
+        {
+            foreach(Tour t in _tours)
+            {
+                foreach(Match m in t.Matchs)
+                {
+                    if (_statistiques.PlusGrandEcart == null || Math.Abs(m.Score1 - m.Score2) > Math.Abs(_statistiques.PlusGrandEcart.Score1 - _statistiques.PlusGrandEcart.Score2))
+                        _statistiques.PlusGrandEcart = m;
+                    if (_statistiques.PlusGrandScore == null || m.Score1 + m.Score2 > _statistiques.PlusGrandScore.Score1 + _statistiques.PlusGrandScore.Score2)
+                        _statistiques.PlusGrandScore = m;
+                }
+            }
         }
 
         public void TourSuivant()
@@ -93,6 +135,11 @@ namespace TheManager
         public void AjouterClubAnneeSuivante(Club c, int indexTour)
         {
             _qualificationAnneeSuivante[indexTour].Add(c);
+        }
+
+        public override string ToString()
+        {
+            return _nom;
         }
 
     }

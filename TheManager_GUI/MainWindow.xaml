@@ -1,0 +1,17 @@
+﻿<Window x:Class="TheManager_GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+        Title="The Manager" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+    <Grid>
+		<StackPanel Margin="80">
+			<Label Content="The Manager" Style="{StaticResource StyleLabel1}"/>
+			<Button Name="btnNouvellePartie" Click="BtnNouvellePartie_Click" Content="Nouvelle partie" Style="{StaticResource StyleButton1}"/>
+			<Button Name="btnQuitter" Click="BtnQuitter_Click" Content="Quitter" Style="{StaticResource StyleButton1}"/>
+
+		</StackPanel>
+	</Grid>
+</Window>

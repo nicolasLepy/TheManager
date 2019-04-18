@@ -132,7 +132,7 @@ namespace TheManager
             for (int i = 0; i<5; i++)
             {
                 int prix = (int)(967.50471* Math.Pow(1.12867,CentreFormation));
-                Console.WriteLine(Nom + " doit payer " + prix + " euros pour ameliorer son centre.");
+                //Console.WriteLine(Nom + " doit payer " + prix + " euros pour ameliorer son centre.");
                 if (_budget/3 > prix && CentreFormation<99)
                 {
                     ModifierBudget(-prix);
