@@ -14,6 +14,17 @@ namespace TheManager
         ATTAQUANT
     }
 
+    public struct HistoriqueJoueur
+    {
+        public int Niveau { get; set; }
+        public int Annee { get; set; }
+        public HistoriqueJoueur(int niveau, int annee)
+        {
+            Niveau = niveau;
+            Annee = annee;
+        }
+    }
+
     public class Joueur
     {
         private string _nom;
@@ -25,6 +36,7 @@ namespace TheManager
         private Poste _poste;
         private bool _suspendu;
         private int _energie;
+        private List<HistoriqueJoueur> _historique;
 
         public string Nom { get => _nom; }
         public string Prenom { get => _prenom;  }
@@ -34,6 +46,7 @@ namespace TheManager
         public Pays Nationalite { get => _nationalite;}
         public Poste Poste { get => _poste;}
         public bool Suspendu { get => _suspendu; set => _suspendu = value; }
+        public List<HistoriqueJoueur> Historique { get => _historique; }
         public int Energie
         {
             get { return _energie; }
@@ -80,6 +93,7 @@ namespace TheManager
             _nationalite = nationalite;
             Suspendu = false;
             _energie = 100;
+            _historique = new List<HistoriqueJoueur>();
         }
 
         public int Age
@@ -127,6 +141,9 @@ namespace TheManager
             return salaire;
         }
 
+        /// <summary>
+        /// Met à jour le niveau du joueur, et enregistre le niveau actuel dans l'historique
+        /// </summary>
         public void MiseAJourNiveau()
         {
             int age = Age;
@@ -140,6 +157,12 @@ namespace TheManager
             {
                 _niveau -= Session.Instance.Random(1, 5);
             }
+            _historique.Add(new HistoriqueJoueur(_niveau, Session.Instance.Partie.Date.Year + 1));
+        }
+
+        public override string ToString()
+        {
+            return _prenom + " " + _nom;
         }
 
     }

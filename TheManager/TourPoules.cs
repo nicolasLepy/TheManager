@@ -52,6 +52,7 @@ namespace TheManager
 
         public override void QualifierClubs()
         {
+           
             List<Club>[] poules = new List<Club>[_nombrePoules];
             for (int i = 0; i < _nombrePoules; i++)
             {
@@ -62,7 +63,6 @@ namespace TheManager
                 foreach(Qualification q in _qualifications)
                 {
                     Club c = poules[i][q.Classement - 1];
-                    Console.WriteLine(c.Nom + " qualifié poule");
                     if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
                     else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
                 }
@@ -102,7 +102,7 @@ namespace TheManager
         public List<Club> Classement(int poule)
         {
             List<Club> res = new List<Club>(_poules[poule]);
-            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this);
+            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
             res.Sort(comparator);
             return res;
         }
@@ -140,6 +140,28 @@ namespace TheManager
 
         public override void DistribuerDotations()
         {
+            foreach(Dotation d in _dotations)
+            {
+                for(int i = 0;i<NombrePoules; i++)
+                {
+                    Club_Ville cv = Classement(i)[d.Classement - 1] as Club_Ville;
+                    if (cv != null)
+                    {
+                        cv.ModifierBudget(d.Somme);
+                        Console.WriteLine(cv.Nom + " reçoit " + d.Somme + "eurros");
+                    }
+                }
+
+            }
+        }
+
+        /// <summary>
+        /// N'a pas de sens, il n'y a aucune compétition qui se termine avec une phase de poules
+        /// </summary>
+        /// <returns></returns>
+        public override Club Vainqueur()
+        {
+            return _matchs[_matchs.Count - 1].Vainqueur;
         }
     }
 }

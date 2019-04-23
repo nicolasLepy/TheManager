@@ -8,11 +8,11 @@ namespace TheManager.Comparators
 {
     public class Club_Classement_Comparator : IComparer<Club>
     {
-        private Tour _tour;
+        private List<Match> _tour;
 
-        public Club_Classement_Comparator(Tour t)
+        public Club_Classement_Comparator(/*Tour t*/List<Match> matchs)
         {
-            _tour = t;
+            _tour = matchs;
         }
 
         public int Compare(Club x, Club y)
@@ -25,12 +25,14 @@ namespace TheManager.Comparators
 
         private int Points(Club c)
         {
-            return _tour.Points(c);
+            return Utils.Points(_tour, c);
+            //return _tour.Points(c);
         }
 
         private int Difference(Club c)
         {
-            return _tour.Difference(c);
+            return Utils.Difference(_tour, c);
+            //return _tour.Difference(c);
         }
     }
 }

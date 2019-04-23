@@ -4,12 +4,46 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
-        mc:Ignorable="d"
-        Title="Windows_Club" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+		mc:Ignorable="d"
+        Title="Windows_Club" Height="650" Width="900" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			</StackPanel>
+			<Label Name="lbClub"  Content="Club" Style="{StaticResource StyleLabel1}"/>
+			<StackPanel Orientation="Horizontal">
+				<StackPanel Orientation="Vertical">
+					<Label Content="Budget" Style="{StaticResource StyleLabel2}"/>
+					<lvc:CartesianChart Width="350" Height="200" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
+						<lvc:CartesianChart.AxisY>
+							<lvc:Axis Title="Budget" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
+						</lvc:CartesianChart.AxisY>
+						<lvc:CartesianChart.AxisX>
+							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+						</lvc:CartesianChart.AxisX>
+					</lvc:CartesianChart>
+				
+					<Label Content="Centre de formation" Style="{StaticResource StyleLabel2}"/>
+					<lvc:CartesianChart Width="350" Height="200" Series="{Binding CFCollection}" LegendLocation="Right" >
+						<lvc:CartesianChart.AxisY>
+							<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
+						</lvc:CartesianChart.AxisY>
+						<lvc:CartesianChart.AxisX>
+							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+						</lvc:CartesianChart.AxisX>
+					</lvc:CartesianChart>
+				</StackPanel>
+				<DataGrid IsReadOnly="True" Name="dgMatchs" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="" Binding="{Binding Date}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Score}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+					</DataGrid.Columns>
+				</DataGrid>
 			</StackPanel>
 		</StackPanel>
     </Grid>

@@ -31,6 +31,11 @@ namespace TheManager
             
         }
 
+        public override Club Vainqueur()
+        {
+            return _clubs[0];
+        }
+
         public override void QualifierClubs()
         {
             List<Club> classement = new List<Club>(_clubs);

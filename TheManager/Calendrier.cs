@@ -16,6 +16,100 @@ namespace TheManager
 
     public class Calendrier
     {
+
+        /// <summary>
+        /// Génère l'heure d'un match en fonction du niveau d'un club
+        /// </summary>
+        /// <param name="niveau">Niveau du championnat du club</param>
+        public static void Heure(Match match)
+        {
+            if (_niveau2 == null) ConstruireTables();
+            List<int> niveau = _niveau2;
+            if(match.Domicile.Championnat != null)
+            {
+                switch(match.Domicile.Championnat.Niveau)
+                {
+                    case 1: niveau = _niveau2; break;
+                    case 2: niveau = _niveau2; break;
+                    case 3: niveau = _niveau2; break;
+                    case 4: niveau = _niveau2; break;
+                    case 5: niveau = _niveau2; break;
+                    case 6: niveau = _niveau6; break;
+                    case 7 : niveau = _niveau6; break;
+                    default: niveau = _niveau6;break;
+                }
+            }
+            int heureInt = niveau[Session.Instance.Random(0, _niveau2.Count)];
+            int jourDecalage = heureInt % 10 - 1;
+            int heure = heureInt / 1000;
+            int minute = (heureInt / 10) % 100;
+            match.Jour = match.Jour.AddDays(jourDecalage);
+            match.Jour = match.Jour.AddHours(heure - match.Jour.Hour);
+            match.Jour = match.Jour.AddMinutes(minute - match.Jour.Minute);
+
+        }
+
+        private static List<int> _niveau2;
+        private static List<int> _niveau3;
+        private static List<int> _niveau4;
+        private static List<int> _niveau5;
+        private static List<int> _niveau6;
+        private static List<int> _niveau7;
+
+        private static void ConstruireTables()
+        {
+            _niveau2 = new List<int>();
+            _niveau3 = new List<int>();
+            _niveau4 = new List<int>();
+            _niveau5 = new List<int>();
+            _niveau6 = new List<int>();
+            _niveau7 = new List<int>();
+            for (int i = 0; i < 2; i++) _niveau2.Add(18000);
+            for (int i = 0; i < 1; i++) _niveau2.Add(19000);
+            for (int i = 0; i < 1; i++) _niveau2.Add(20000);
+            for (int i = 0; i < 4; i++) _niveau2.Add(14001);
+            for (int i = 0; i < 3; i++) _niveau2.Add(14301);
+            for (int i = 0; i < 9; i++) _niveau2.Add(15001);
+            for (int i = 0; i < 2; i++) _niveau2.Add(16001);
+            for (int i = 0; i < 10; i++) _niveau2.Add(17001);
+            for (int i = 0; i < 25; i++) _niveau2.Add(18001);
+            for (int i = 0; i < 11; i++) _niveau2.Add(18301);
+            for (int i = 0; i < 8; i++) _niveau2.Add(19001);
+            for (int i = 0; i < 5; i++) _niveau2.Add(20001);
+            for (int i = 0; i < 1; i++) _niveau2.Add(13302);
+            for (int i = 0; i < 4; i++) _niveau2.Add(14002);
+            for (int i = 0; i < 7; i++) _niveau2.Add(15002);
+            for (int i = 0; i < 3; i++) _niveau2.Add(16002);
+            for (int i = 0; i < 2; i++) _niveau2.Add(17002);
+            for (int i = 0; i < 1; i++) _niveau2.Add(20002);
+            for (int i = 0; i < 1; i++) _niveau2.Add(20452);
+            for (int i = 0; i < 1; i++) _niveau2.Add(20303);
+
+            for (int i = 0; i < 10; i++) _niveau6.Add(15001);
+            for (int i = 0; i < 2; i++) _niveau6.Add(15301);
+            for (int i = 0; i < 6; i++) _niveau6.Add(16001);
+            for (int i = 0; i < 1; i++) _niveau6.Add(16301);
+            for (int i = 0; i < 9; i++) _niveau6.Add(17001);
+            for (int i = 0; i < 1; i++) _niveau6.Add(17301);
+            for (int i = 0; i < 18; i++) _niveau6.Add(18001);
+            for (int i = 0; i < 5; i++) _niveau6.Add(18301);
+            for (int i = 0; i < 4; i++) _niveau6.Add(19001);
+            for (int i = 0; i < 2; i++) _niveau6.Add(19301);
+            for (int i = 0; i < 1; i++) _niveau6.Add(20001);
+            for (int i = 0; i < 3; i++) _niveau6.Add(13002);
+            for (int i = 0; i < 7; i++) _niveau6.Add(13302);
+            for (int i = 0; i < 14; i++) _niveau6.Add(14002);
+            for (int i = 0; i < 8; i++) _niveau6.Add(14302);
+            for (int i = 0; i < 66; i++) _niveau6.Add(15002);
+            for (int i = 0; i < 10; i++) _niveau6.Add(15302);
+            for (int i = 0; i < 4; i++) _niveau6.Add(16002);
+            for (int i = 0; i < 1; i++) _niveau6.Add(16302);
+            for (int i = 0; i < 2; i++) _niveau6.Add(17002);
+            for (int i = 0; i < 1; i++) _niveau6.Add(17302);
+            for (int i = 0; i < 1; i++) _niveau6.Add(18002);
+
+        }
+
         public static List<Match> GenererCalendrier(List<Club> clubs, ProgrammationTour programmation, bool allerRetour)
         {
             List<Match> res = new List<Match>();
@@ -163,6 +257,12 @@ namespace TheManager
                 //Affectation de la nouvelle heure
                 matchs[indice].Jour = matchs[indice].Jour.AddHours(d.Heure.Heures);
                 matchs[indice].Jour = matchs[indice].Jour.AddMinutes(d.Heure.Minutes);
+                indice++;
+            }
+            //Les autres matchs sont programmés plus randomly
+            while(indice < matchs.Count)
+            {
+                Heure(matchs[indice]);
                 indice++;
             }
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -43,6 +44,13 @@ namespace TheManager
                 }
             }
             List<Club> res = new List<Club>();
+            if (methode == MethodeRecuperation.MEILLEURS)
+                clubs.Sort(new Club_Niveau_Comparator());
+            else if (methode == MethodeRecuperation.PIRES)
+                clubs.Sort(new Club_Niveau_Comparator(true));
+            else if (methode == MethodeRecuperation.ALEATOIRE)
+                clubs = Utils.MelangerListe<Club>(clubs);
+
             for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
             return res;
         }

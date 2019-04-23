@@ -8,6 +8,15 @@
 		<SolidColorBrush x:Key="color2" Color="#a4f17a" />
 		<SolidColorBrush x:Key="backgroundColor" Color="#1c262b"/>
 		<SolidColorBrush x:Key="borderColor" Color="#1a1a1a"/>
+
+		<SolidColorBrush x:Key="promotionColor" Color="#075002"/>
+		<SolidColorBrush x:Key="barrageColor" Color="#5E7004"/>
+		<SolidColorBrush x:Key="barrageRelegationColor" Color="#CA040B"/>
+		<SolidColorBrush x:Key="relegationColor" Color="#7C0004"/>
+
+		<SolidColorBrush x:Key="victoireColor" Color="#033e00"/>
+		<SolidColorBrush x:Key="defaiteColor" Color="#3e1500"/>
+		<SolidColorBrush x:Key="nulColor" Color="#813e00"/>
 		
 		<Style x:Key="StyleWindows" TargetType="{x:Type Window}">
 			<Setter Property="WindowStyle" Value="None"/>
@@ -41,6 +50,13 @@
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="FontFamily" Value="Arial Narrow"/>
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
+		</Style>
+
+		<Style x:Key="StyleCheckBox" TargetType="{x:Type CheckBox}">
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="FontFamily" Value="Arial Narrow"/>
+			<Setter Property="FontStyle" Value="Italic"/>
+			<Setter Property="Foreground" Value="{StaticResource color1}" />
 		</Style>
 
 		<Style x:Key="StyleListBox" TargetType="{x:Type ListBox}">

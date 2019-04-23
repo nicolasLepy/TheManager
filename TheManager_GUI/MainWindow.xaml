@@ -11,6 +11,7 @@
 			<Label Content="The Manager" Style="{StaticResource StyleLabel1}"/>
 			<Button Name="btnNouvellePartie" Click="BtnNouvellePartie_Click" Content="Nouvelle partie" Style="{StaticResource StyleButton1}"/>
 			<Button Name="btnQuitter" Click="BtnQuitter_Click" Content="Quitter" Style="{StaticResource StyleButton1}"/>
+			<Label Visibility="Hidden" Name="lbCreationPartie" Content="Creation de la partie" HorizontalAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 
 		</StackPanel>
 	</Grid>

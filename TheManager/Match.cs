@@ -14,6 +14,7 @@ namespace TheManager
         private int _minute;
         private int _miTemps;
         private int _diffNiveau;
+        private float _diffNiveauRatio;
         private List<Joueur> _compo1Terrain;
         private List<Joueur> _compo2Terrain;
 
@@ -49,6 +50,9 @@ namespace TheManager
         public List<Journaliste> Journalistes { get => _journalistes; }
         public int Tirs1 { get => _tirs1; }
         public int Tirs2 { get => _tirs2; }
+        public float Cote1 { get; set; }
+        public float CoteN { get; set; }
+        public float Cote2 { get; set; }
 
         /// <summary>
         /// Si un match a été joué ou non
@@ -255,6 +259,29 @@ namespace TheManager
             }
         }
 
+        private void EtablirCotes()
+        {
+            float domN = Domicile.Niveau();
+            float extN = Exterieur.Niveau();
+            if(domN > extN)
+            {
+                domN *= 2f;
+            }
+            else
+            {
+                extN *= 2f;
+            }
+            float ratioD = domN / extN;
+            float ratioE = extN / domN;
+            float ratio = ratioD / (ratioD + ratioE);
+            //float ratio = Domicile.Niveau() / Exterieur.Niveau();
+            Cote1 = 1 / ratio;// 1 / ((ratio * 50) / 100);
+            //ratio = Exterieur.Niveau() / Domicile.Niveau();
+            ratio = ratioE / (ratioD + ratioE);
+            Cote2 = 1 / ratio;// ((ratio * 50) / 100);
+            CoteN = (Cote1 + Cote2) / 2;
+        }
+
         public Match(Club domicile, Club exterieur, DateTime jour, bool prolongationSiNul, Match matchAller = null)
         {
             Domicile = domicile;
@@ -279,6 +306,7 @@ namespace TheManager
             _compo2Terrain = new List<Joueur>();
             _affluence = 0;
             _journalistes = new List<Journaliste>();
+            EtablirCotes();
         }
 
         private void EtablirAffluence()
@@ -305,18 +333,19 @@ namespace TheManager
         public void CalculerDifferenceNiveau()
         {
             float diffF = Math.Abs(NiveauCompo(_compo1Terrain)*1.05f - NiveauCompo(_compo2Terrain));
-            this._diffNiveau = (int)diffF;
 
+            this._diffNiveau = (int)diffF;
+            this._diffNiveauRatio = (NiveauCompo(_compo1Terrain) * 1.05f) / NiveauCompo(_compo2Terrain);
         }
 
         public void Jouer()
         {
             DefinirCompo();
-            Club a;
-            Club b;
+            Club a = Domicile;
+            Club b = Exterieur;
             CalculerDifferenceNiveau();
             EtablirAffluence();
-            if(NiveauCompo(Compo1) > NiveauCompo(Compo2))
+            /*if(NiveauCompo(Compo1) > NiveauCompo(Compo2))
             {
                 a = Domicile;
                 b = Exterieur;
@@ -325,7 +354,7 @@ namespace TheManager
             {
                 a = Exterieur;
                 b = Domicile;
-            }
+            }*/
 
             for(_miTemps = 1; _miTemps < 3; _miTemps++)
             {
@@ -390,7 +419,34 @@ namespace TheManager
         private void JouerMinute(Club a, Club b)
         {
             int diff = _diffNiveau;
-            if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
+            float diffRatio = _diffNiveauRatio;
+
+            if(diffRatio > 1)
+            {
+                diffRatio = 1 / diffRatio;
+                Club temp = a;
+                a = b;
+                b = temp;
+            }
+
+            if (diffRatio < 0.1) IterationMatch(a, b, 2, 2, 8, 70);
+            else if (diffRatio >= 0.1 && diffRatio < 0.2) IterationMatch(a, b, 2, 2, 8, 56);
+            else if (diffRatio >= 0.2 && diffRatio < 0.3) IterationMatch(a, b, 2, 2, 8, 46);
+            else if (diffRatio >= 0.3 && diffRatio < 0.4) IterationMatch(a, b, 2, 2, 8, 40);
+            else if (diffRatio >= 0.4 && diffRatio < 0.5) IterationMatch(a, b, 2, 3, 8, 35);
+            else if (diffRatio >= 0.5 && diffRatio < 0.6) IterationMatch(a, b, 2, 3, 8, 30);
+            else if (diffRatio >= 0.6 && diffRatio < 0.65) IterationMatch(a, b, 2, 3, 8, 20);
+            else if (diffRatio >= 0.65 && diffRatio < 0.7) IterationMatch(a, b, 1, 3, 8, 19);
+            else if (diffRatio >= 0.7 && diffRatio < 0.74) IterationMatch(a, b, 1, 3, 8, 18);
+            else if (diffRatio >= 0.74 && diffRatio < 0.78) IterationMatch(a, b, 1, 4, 8, 18);
+            else if (diffRatio >= 0.78 && diffRatio < 0.81) IterationMatch(a, b, 1, 4, 8, 17);
+            else if (diffRatio >= 0.81 && diffRatio < 0.85) IterationMatch(a, b, 1, 4, 8, 16);
+            else if (diffRatio >= 0.85 && diffRatio < 0.88) IterationMatch(a, b, 1, 5, 8, 16);
+            else if (diffRatio >= 0.88 && diffRatio < 0.91) IterationMatch(a, b, 1, 5, 8, 15);
+            else if (diffRatio >= 0.91 && diffRatio < 0.94) IterationMatch(a, b, 1, 5, 8, 14);
+            else if (diffRatio >= 0.94 && diffRatio < 0.98) IterationMatch(a, b, 1, 6, 8, 14);
+            else if (diffRatio >= 0.98 && diffRatio < 1.01) IterationMatch(a, b, 1, 6, 8, 13);
+            /*if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
             if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
             if (diff >= 3 && diff <= 4) IterationMatch(a, b, 1, 8, 9, 14);
             if (diff >= 5 && diff <= 7) IterationMatch(a, b, 1, 9, 10, 14);
@@ -407,7 +463,7 @@ namespace TheManager
             if (diff >= 64 && diff <= 70) IterationMatch(a, b, 1, 26, 40, 40);
             if (diff >= 71 && diff <= 79) IterationMatch(a, b, 1, 36, 40, 40);
             if (diff >= 80 && diff <= 89) IterationMatch(a, b, 1, 39, 40, 40);
-            if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);
+            if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);*/
         }
 
         private void IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)

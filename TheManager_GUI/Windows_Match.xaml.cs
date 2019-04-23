@@ -64,7 +64,18 @@ namespace TheManager_GUI
                 }
                 
             }
-            foreach(Journaliste j in match.Journalistes)
+
+            foreach(Joueur j in match.Compo1)
+            {
+                dgCompo1.Items.Add(new JoueurElement { Joueur = j, Poste = j.Poste });
+            }
+
+            foreach (Joueur j in match.Compo2)
+            {
+                dgCompo2.Items.Add(new JoueurElement { Joueur = j, Poste = j.Poste });
+            }
+
+            foreach (Journaliste j in match.Journalistes)
             {
                 dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j, Media = j.Media.Nom });
             }
@@ -77,7 +88,6 @@ namespace TheManager_GUI
 
         private void DgJournalistes_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-
             if (dgJournalistes.SelectedItem != null)
             {
                 JournalisteElement selected = (JournalisteElement)dgJournalistes.SelectedItem;
@@ -86,6 +96,31 @@ namespace TheManager_GUI
             }
         }
 
+        private void DgCompo1_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(dgCompo1.SelectedItem != null)
+            {
+                JoueurElement je = (JoueurElement)dgCompo1.SelectedItem;
+                Windows_Joueur wj = new Windows_Joueur(je.Joueur);
+                wj.Show();
+            }
+        }
+
+        private void DgCompo2_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgCompo2.SelectedItem != null)
+            {
+                JoueurElement je = (JoueurElement)dgCompo2.SelectedItem;
+                Windows_Joueur wj = new Windows_Joueur(je.Joueur);
+                wj.Show();
+            }
+        }
+    }
+
+    public struct JoueurElement
+    {
+        public Joueur Joueur { get; set; }
+        public Poste Poste { get; set; }
     }
 
     public struct JournalisteElement

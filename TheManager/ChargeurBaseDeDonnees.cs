@@ -87,7 +87,7 @@ namespace TheManager
                         case "MILIEU": poste = Poste.MILIEU; break;
                         case "ATTAQUANT": poste = Poste.ATTAQUANT; break;
                     }
-                    Joueur j = new Joueur(prenom, nom, new DateTime(1990, 1, 1), niveau, niveau + 5, _gestionnaire.String2Pays("France"), poste);
+                    Joueur j = new Joueur(prenom, nom, new DateTime(1995, 1, 1), niveau, niveau + 5, _gestionnaire.String2Pays("France"), poste);
                     club.AjouterJoueur(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1)));
                 }
             }
@@ -202,6 +202,10 @@ namespace TheManager
 
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
+
+                    //Simplification
+                    reputation = centreFormation;
+
                     Club c = new Club_Ville(nom, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade);
                     _gestionnaire.Clubs.Add(c);
                 }

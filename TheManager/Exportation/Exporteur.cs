@@ -36,17 +36,15 @@ namespace TheManager.Exportation
         {
             ExporterClubs();
             string dir = "Output\\" + c.Nom + " " + Session.Instance.Partie.Date.Year;
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
+            string dir2 = "Output\\" + c.NomCourt + Session.Instance.Partie.Date.Year;
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            if (!Directory.Exists(dir2)) Directory.CreateDirectory(dir2);
 
-            foreach(Tour t in c.Tours)
+            foreach (Tour t in c.Tours)
             {
-                if (!Directory.Exists(dir + "\\" + t.Nom))
-                {
-                    Directory.CreateDirectory(dir + "\\" + t.Nom);
-                }
+                if (!Directory.Exists(dir + "\\" + t.Nom)) Directory.CreateDirectory(dir + "\\" + t.Nom);
+                if (!Directory.Exists(dir2 + "\\" + t.Nom)) Directory.CreateDirectory(dir2 + "\\" + t.Nom);
+
                 string output = "<p>" + t.Nom + "</p><p>";
                 foreach(Club cl in t.Clubs)
                 {
@@ -68,6 +66,7 @@ namespace TheManager.Exportation
                     int matchsJournee = (tc.Clubs.Count % 2 == 1) ? tc.Clubs.Count/2+1 : tc.Clubs.Count/2;
                     int nbJournees = (tc.Matchs.Count / tc.Clubs.Count) * 2;
                     int k = 0;
+                    Exporteurs2.ExporterClassementL(tc, "Output\\" + c.NomCourt + Session.Instance.Partie.Date.Year + "\\" + t.Nom + "\\Matchs\\");
                     for (int i = 0; i<nbJournees; i++)
                     {
                         List<Match> journee = new List<Match>();
@@ -76,7 +75,10 @@ namespace TheManager.Exportation
                             journee.Add(tc.Matchs[i * matchsJournee + j]);
                         }
                         journee.Sort(new Match_Date_Comparator());
-                        
+
+
+                        Exporteurs2.ExporterL(journee, "Output\\" + c.NomCourt + Session.Instance.Partie.Date.Year + "\\" + t.Nom, i + 1);
+
                         output += "<p>Journée " + (int)(i + 1) + "</p><table>";
                         DateTime last = new DateTime(2000, 1, 1);
                         foreach (Match m in journee)
@@ -141,7 +143,7 @@ namespace TheManager.Exportation
                     {
                         if (nbEquipesParPoules < poules.Count) nbEquipesParPoules = poules.Count;
                         List<Club> classement = new List<Club>(poules);
-                        classement.Sort(new Club_Classement_Comparator(t));
+                        classement.Sort(new Club_Classement_Comparator(t.Matchs));
                         output += "<p>Groupe</p><table>";
                         foreach (Club club in classement)
                         {

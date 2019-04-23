@@ -11,27 +11,27 @@
 			
 			<Label Content="Bureau" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Horizontal">
-				<StackPanel Margin="30,30,0,30" Orientation="Vertical" Height="70" Width="150" HorizontalAlignment="Left">
+				<StackPanel Margin="10" Orientation="Vertical" Height="70" Width="150" HorizontalAlignment="Left">
 					<Button Name="btnOptions" Style="{StaticResource StyleButton1}" Content="Options" Click="BtnOptions_Click"/>
 					<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Content="Avancer" Click="BtnAvancer_Click"/>
 					<Label Name="labelDate" Style="{StaticResource StyleLabel2}" Content="10/10/2010"/>
 				</StackPanel>
 				<StackPanel Margin="30,30,0,30" Orientation="Vertical" Height="70" Width="170" HorizontalAlignment="Right">
 					<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Content="Simuler jusqu'à fin de l'année" Click="BtnSimuler_Click"/>
+					<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Content="Simuler 100 ans" Click="BtnSimuler2_Click"/>
 				</StackPanel>
 			</StackPanel>
 			
-			<StackPanel Name="SP_Centre" Margin="20" Orientation="Horizontal" Height="400">
+			<StackPanel Name="SP_Centre" Margin="10" Orientation="Horizontal" Height="400">
 				<StackPanel Orientation="Vertical">
 					<ComboBox Name="comboPays" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboPays_SelectionChanged">
-						
 					</ComboBox>
-					<ListBox Name="lbChampionnats" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
+					<ListBox Name="lbChampionnats" MaxHeight="150" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
+					</ListBox>
+					<ListBox Name="lbTours" HorizontalAlignment="Left" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged">
 					</ListBox>
 				</StackPanel>
-				<ListBox Name="lbTours" HorizontalAlignment="Left" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged">
-				</ListBox>
-				<DataGrid Margin="10" Name="dgClassement" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid Margin="10" IsReadOnly="True" MouseDoubleClick="DgClassement_MouseDoubleClick" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
 							<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
@@ -44,22 +44,29 @@
 							<DataGridTextColumn Header="Bc" Binding="{Binding bc}"/>
 							<DataGridTextColumn Header="Diff" Binding="{Binding Diff}"/>
 						</DataGrid.Columns>
-
+					<DataGrid.CellStyle>
+						<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource StyleDataCellGrid}">
+							
+						</Style>
+					</DataGrid.CellStyle>
 				</DataGrid>
 
 					<DataGrid IsReadOnly="True" MouseDoubleClick="DataGridRow_MouseDoubleClick"  Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Heure}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Score}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Affluence}"/>
-						</DataGrid.Columns>
-					</DataGrid>
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="" Binding="{Binding Heure}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Score}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Affluence}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Cote1}"/>
+						<DataGridTextColumn Header="" Binding="{Binding CoteN}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Cote2}"/>
+					</DataGrid.Columns>
+				</DataGrid>
 				
 				<StackPanel Orientation="Vertical">
 					<Label Content="Buteurs" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" MaxWidth="300" Height="150" Name="dgButeurs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid Margin="10" IsReadOnly="True" MouseDoubleClick="DgButeurs_MouseDoubleClick" MaxWidth="300" Height="150" Name="dgButeurs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="" Binding="{Binding Buteur}"/>
 							<DataGridTextColumn Header="" Binding="{Binding NbButs}"/>
@@ -68,18 +75,27 @@
 					</DataGrid>
 					<StackPanel Orientation="Vertical">
 						<Label Content="Plus gros écart" Style="{StaticResource StyleLabel2}"/>
-						<Label Name="lbGrosEcart" Content="Nancy 5-0 Lorient" Style="{StaticResource StyleLabel2}"/>
+						<Label Name="lbGrosEcart" Content="" Style="{StaticResource StyleLabel2}"/>
 						<Label Content="Plus gros score" Style="{StaticResource StyleLabel2}"/>
-						<Label Name="lbGrandScore" Content="Nancy 5-3 Lorient" Style="{StaticResource StyleLabel2}"/>
+						<Label Name="lbGrandScore" Content="" Style="{StaticResource StyleLabel2}"/>
 					</StackPanel>
 
 				</StackPanel>
 				<StackPanel Orientation="Vertical">
 					<Label Content="Participants" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" MaxWidth="300" Name="dgClubs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid Margin="10" MaxWidth="300" MaxHeight="150" Name="dgClubs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
 							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
+							<DataGridTextColumn Header="Budget" Binding="{Binding Budget}"/>
+							<DataGridTextColumn Header="Affluence" Binding="{Binding Affluence}"/>
+						</DataGrid.Columns>
+					</DataGrid>
+					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid Margin="10" MaxWidth="300" MaxHeight="150" Name="dgPalmares" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Annee" Binding="{Binding Annee}"/>
+							<DataGridTextColumn Header="Club" Binding="{Binding Club}"/>
 						</DataGrid.Columns>
 					</DataGrid>
 				</StackPanel>

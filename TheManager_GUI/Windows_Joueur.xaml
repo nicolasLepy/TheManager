@@ -1,0 +1,39 @@
+﻿<Window x:Class="TheManager_GUI.Windows_Joueur"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+		mc:Ignorable="d"
+        Title="Windows_Joueur" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			</StackPanel>
+			
+			<Label Name="lbJoueur" Content="Joueur" Style="{StaticResource StyleLabel1}"/>
+
+
+			<StackPanel Orientation="Horizontal">
+				<StackPanel Orientation="Vertical">
+					<Label Content="Progression" Style="{StaticResource StyleLabel2}"/>
+					<lvc:CartesianChart Width="350" Height="200" Series="{Binding NiveauCollection}" LegendLocation="Right" >
+						<lvc:CartesianChart.AxisY>
+							<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
+						</lvc:CartesianChart.AxisY>
+						<lvc:CartesianChart.AxisX>
+							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+						</lvc:CartesianChart.AxisX>
+					</lvc:CartesianChart>
+				</StackPanel>
+				<StackPanel Orientation="Vertical" Width="300">
+					<Label Name="lbAge" Content="Age" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+					<!-- ICI AGE, NIVEAU, POTENTIEL, HISTORIQUE -->
+				</StackPanel>
+			</StackPanel>
+
+		</StackPanel>
+    </Grid>
+</Window>

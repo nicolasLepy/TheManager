@@ -407,10 +407,21 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Initialise le tour (tirage au sort, calendrier)
+        /// </summary>
         public abstract void Initialiser();
+        /// <summary>
+        /// Qualifie les clubs pour les tours suivants
+        /// </summary>
         public abstract void QualifierClubs();
         public abstract Tour Copie();
         public abstract void DistribuerDotations();
+        /// <summary>
+        /// Vainqueur du tour
+        /// </summary>
+        /// <returns></returns>
+        public abstract Club Vainqueur();
         
 
 

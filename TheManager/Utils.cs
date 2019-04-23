@@ -79,5 +79,75 @@ namespace TheManager
             double d = R * c;
             return (float)d;
         }
+
+
+        public static int Points(List<Match> matchs, Club c)
+        {
+            return (3 * Gagnes(matchs, c)) + Nuls(matchs, c);
+        }
+
+        public static int Joues(List<Match> matchs, Club c)
+        {
+            return Gagnes(matchs, c) + Nuls(matchs, c) + Perdus(matchs, c);
+        }
+
+
+        public static int Gagnes(List<Match> matchs, Club c)
+        {
+            int res = 0;
+            foreach (Match m in matchs)
+            {
+                if (m.Domicile == c) if (m.Score1 > m.Score2) res++;
+                if (m.Exterieur == c) if (m.Score1 < m.Score2) res++;
+            }
+            return res;
+        }
+        public static int Perdus(List<Match> matchs, Club c)
+        {
+            int res = 0;
+            foreach (Match m in matchs)
+            {
+                if (m.Domicile == c) if (m.Score1 < m.Score2) res++;
+                if (m.Exterieur == c) if (m.Score1 > m.Score2) res++;
+            }
+            return res;
+        }
+        public static int Nuls(List<Match> matchs, Club c)
+        {
+            int res = 0;
+            foreach (Match m in matchs)
+            {
+                if ((m.Domicile == c || m.Exterieur == c) && m.Score1 == m.Score2) res++;
+            }
+            return res;
+        }
+
+        public static int Bp(List<Match> matchs, Club c)
+        {
+            int res = 0;
+            foreach (Match m in matchs)
+            {
+                if (m.Domicile == c) res += m.Score1;
+                if (m.Exterieur == c) res += m.Score2;
+            }
+            return res;
+        }
+
+        public static int Bc(List<Match> matchs, Club c)
+        {
+            int res = 0;
+            foreach (Match m in matchs)
+            {
+                if (m.Domicile == c) res += m.Score2;
+                if (m.Exterieur == c) res += m.Score1;
+            }
+            return res;
+        }
+
+        public static int Difference(List<Match> matchs, Club c)
+        {
+            return Bp(matchs, c) - Bc(matchs, c);
+        }
+
     }
 }

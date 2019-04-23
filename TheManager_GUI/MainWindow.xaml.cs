@@ -27,8 +27,9 @@ namespace TheManager_GUI
 
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
-            Windows_Menu menu = new Windows_Menu();
-            menu.Show();
+            lbCreationPartie.Visibility = Visibility.Visible;
+            Windows_ConfigurationPartie wcp = new Windows_ConfigurationPartie();
+            wcp.Show();
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)

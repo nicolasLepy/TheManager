@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Match" Height="550" Width="800" Style="{StaticResource StyleWindows}">
+        Title="Windows_Match" Height="650" Width="800" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
@@ -20,7 +20,7 @@
 			<Label Name="lbMT" Content="(2 - 0)" Style="{StaticResource StyleLabel1}"/>
 			<Label Name="lbStade" Content="Stade du Pré Fleuri" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
 			<Label Name="lbAffluence" Content="28500 spectateurs" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
-			<DataGrid HorizontalAlignment="Center" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="" Binding="{Binding Col1}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Col2}"/>
@@ -29,7 +29,21 @@
 				</DataGrid.Columns>
 
 			</DataGrid>
-			<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick"  HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo1_MouseDoubleClick" Margin="20" Name="dgCompo1" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
+					</DataGrid.Columns>
+				</DataGrid>
+				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo2_MouseDoubleClick" Margin="20" Name="dgCompo2" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
+					</DataGrid.Columns>
+				</DataGrid>
+			</StackPanel>
+			<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick" HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="" Binding="{Binding Media}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Journaliste}"/>

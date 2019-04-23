@@ -42,6 +42,7 @@ namespace TheManager
         private bool _championnat;
         private int _niveau;
         private StatistiquesCompetitions _statistiques;
+        private List<Competition> _editionsPrecedentes;
 
         public string Nom { get => _nom; }
         public List<Tour> Tours { get => _tours; }
@@ -49,6 +50,7 @@ namespace TheManager
         public int TourActuel { get; set; }
         public DateTime DebutSaison { get { return _debutSaison; } }
         public string NomCourt { get => _nomCourt; }
+        public List<Competition> EditionsPrecedentes { get => _editionsPrecedentes; }
         public StatistiquesCompetitions Statistiques { get => _statistiques; set => _statistiques = value; }
         /// <summary>
         /// Est un championnat (L1, L2)
@@ -70,6 +72,7 @@ namespace TheManager
             _championnat = championnat;
             _niveau = niveau;
             _statistiques = new StatistiquesCompetitions(0);
+            _editionsPrecedentes = new List<Competition>();
         }
 
         public void InitialiserQualificationsAnneesSuivantes()
@@ -88,9 +91,9 @@ namespace TheManager
         {
             MAJRecords();
             Competition copieArchive = new Competition(_nom, _logo, _debutSaison, _nomCourt, _championnat, _niveau);
-            foreach (Tour t in Tours) copieArchive.Tours.Add(t);
+            foreach (Tour t in Tours) copieArchive.Tours.Add(t.Copie());
             copieArchive.Statistiques = Statistiques;
-            Session.Instance.Partie.Gestionnaire.CompetitionsArchives.Add(copieArchive);
+            _editionsPrecedentes.Add(copieArchive);
             for (int i = 0; i<Tours.Count; i++)
             {
                 Tours[i].RAZ();
@@ -140,6 +143,38 @@ namespace TheManager
         public override string ToString()
         {
             return _nom;
+        }
+
+        public int AffluenceMoyenne(Club c)
+        {
+            int i = 0;
+            int affluence = 0;
+            foreach(Tour t in _tours)
+            {
+                foreach(Match m in t.Matchs)
+                {
+                    if((m.Domicile == c) && m.Joue)
+                    {
+                        affluence += m.Affluence;
+                        i++;
+                    }
+                }
+            }
+            return i != 0 ? affluence/i : 0;
+        }
+
+        public Club Vainqueur()
+        {
+            Club res = null;
+            if(Championnat)
+            {
+                return _tours[0].Vainqueur();
+            }
+            else
+            {
+                return _tours[_tours.Count - 1].Vainqueur();
+            }
+            return res;
         }
 
     }

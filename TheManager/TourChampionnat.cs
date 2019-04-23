@@ -52,7 +52,7 @@ namespace TheManager
 
         public List<Club> Classement()
         {
-            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this);
+            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
             List<Club> classement = new List<Club>(_clubs);
             classement.Sort(comparator);
             return classement;
@@ -129,7 +129,7 @@ namespace TheManager
         public override void DistribuerDotations()
         {
             List<Club> classement = new List<Club>(_clubs);
-            classement.Sort(new Club_Classement_Comparator(this));
+            classement.Sort(new Club_Classement_Comparator(this.Matchs));
             foreach(Dotation d in _dotations)
             {
                 Club_Ville cv = classement[d.Classement-1] as Club_Ville;
@@ -139,6 +139,11 @@ namespace TheManager
                 }
                     
             }
+        }
+
+        public override Club Vainqueur()
+        {
+            return Classement()[0];
         }
     }
 }

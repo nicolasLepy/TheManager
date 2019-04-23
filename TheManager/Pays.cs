@@ -18,6 +18,17 @@ namespace TheManager
         public List<Stade> Stades { get { return _stades; } }
         public Langue Langue { get => _langue; }
 
+        public string Drapeau
+        {
+            get
+            {
+                string drapeau = _nom;
+                drapeau = drapeau.Replace(" ", "");
+                drapeau = drapeau.ToLower();
+                return drapeau;
+            }
+        }
+
         public Pays(string nom, Langue langue)
         {
             _nom = nom;

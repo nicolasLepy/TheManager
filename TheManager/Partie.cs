@@ -27,7 +27,7 @@ namespace TheManager
 
         public void Exportations(Competition c)
         {
-            if (Utils.ComparerDatesSansAnnee(c.DebutSaison.AddDays(-7), _date))
+            if (Utils.ComparerDatesSansAnnee(c.DebutSaison.AddDays(-7), _date) && Options.CompetitionsAExporter.Contains(c))
             {
                 Exporteur.Exporter(c);
             }
@@ -124,7 +124,10 @@ namespace TheManager
                 }
 
                 //Mise à jour du niveau des joueurs sans clubs
-                foreach (Joueur j in _gestionnaire.JoueursLibres) j.MiseAJourNiveau();
+                foreach (Joueur j in _gestionnaire.JoueursLibres)
+                {
+                    j.MiseAJourNiveau();
+                }
 
                 //On balaye tous les clubs
                 foreach (Club c in _gestionnaire.Clubs)
