@@ -16,7 +16,7 @@
 			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Vertical">
 					<Label Content="Budget" Style="{StaticResource StyleLabel2}"/>
-					<lvc:CartesianChart Width="350" Height="200" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
+					<lvc:CartesianChart Width="350" Height="150" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
 							<lvc:Axis Title="Budget" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
 						</lvc:CartesianChart.AxisY>
@@ -26,7 +26,7 @@
 					</lvc:CartesianChart>
 				
 					<Label Content="Centre de formation" Style="{StaticResource StyleLabel2}"/>
-					<lvc:CartesianChart Width="350" Height="200" Series="{Binding CFCollection}" LegendLocation="Right" >
+					<lvc:CartesianChart Width="350" Height="150" Series="{Binding CFCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
 							<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
 						</lvc:CartesianChart.AxisY>
@@ -35,7 +35,7 @@
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
 				</StackPanel>
-				<DataGrid IsReadOnly="True" Name="dgMatchs" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid IsReadOnly="True" Name="dgMatchs" MaxHeight="350" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="" Binding="{Binding Date}"/>
 						<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
@@ -45,6 +45,17 @@
 					</DataGrid.Columns>
 				</DataGrid>
 			</StackPanel>
+			<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgJoueurs" MouseDoubleClick="DgJoueurs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+					<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
+					<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
+					<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
+					<DataGridTextColumn Header="Potentiel" Binding="{Binding Potentiel}"/>
+					<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
+					<DataGridTextColumn Header="Fin du contrat" Binding="{Binding Contrat}"/>
+				</DataGrid.Columns>
+			</DataGrid>
 		</StackPanel>
     </Grid>
 </Window>

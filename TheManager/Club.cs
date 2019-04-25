@@ -4,17 +4,30 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TheManager.Comparators;
+using System.Runtime.Serialization;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
+    [KnownType(typeof(Club_Ville))]
+    [System.Xml.Serialization.XmlInclude(typeof(Club_Ville))]
+    [KnownType(typeof(SelectionNationale))]
+    [System.Xml.Serialization.XmlInclude(typeof(SelectionNationale))]
     public abstract class Club
     {
+        [DataMember]
         private string _nom;
+        [DataMember]
         private int _reputation;
+        [DataMember]
         private int _supporters;
+        [DataMember]
         protected int _centreFormation;
+        [DataMember]
         private Stade _stade;
+        [DataMember]
         private string _logo;
+        [DataMember]
         private string _nomCourt;
 
         public string Nom { get => _nom; }
@@ -142,6 +155,5 @@ namespace TheManager
         }
 
 
-        //BUDGET TRANSFERT / SALAIRE
     }
 }

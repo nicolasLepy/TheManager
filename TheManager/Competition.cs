@@ -2,20 +2,29 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Exportation;
 
 namespace TheManager
 {
 
+    [DataContract]
     public struct StatistiquesCompetitions
     {
+        [DataMember]
         public Match PlusGrandScore { get; set; }
+        [DataMember]
         public Match PlusGrandEcart { get; set; }
+        [DataMember]
         public KeyValuePair<int, Joueur> MeilleurButeursUneSaison { get; set; }
+        [DataMember]
         public KeyValuePair<int, Club> PlusGrosseAttaque { get; set; }
+        [DataMember]
         public KeyValuePair<int, Club> PlusFaibleAttaque { get; set; }
+        [DataMember]
         public KeyValuePair<int, Club> PlusGrosseDefense { get; set; }
+        [DataMember]
         public KeyValuePair<int, Club> PlusFaibleDefense { get; set; }
 
         public StatistiquesCompetitions(int i)
@@ -30,23 +39,35 @@ namespace TheManager
         }
     }
 
+    [DataContract(IsReference =true)]
     public class Competition
     {
-        
+
+        [DataMember]
         private string _nom;
+        [DataMember]
         private List<Tour> _tours;
+        [DataMember]
         private string _logo;
+        [DataMember]
         private DateTime _debutSaison;
+        [DataMember]
         private string _nomCourt;
+        [DataMember]
         private List<Club>[] _qualificationAnneeSuivante;
+        [DataMember]
         private bool _championnat;
+        [DataMember]
         private int _niveau;
+        [DataMember]
         private StatistiquesCompetitions _statistiques;
+        [DataMember]
         private List<Competition> _editionsPrecedentes;
 
         public string Nom { get => _nom; }
         public List<Tour> Tours { get => _tours; }
         public string Logo { get => _logo; }
+        [DataMember]
         public int TourActuel { get; set; }
         public DateTime DebutSaison { get { return _debutSaison; } }
         public string NomCourt { get => _nomCourt; }

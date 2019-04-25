@@ -11,7 +11,8 @@
 			
 			<Label Content="Bureau" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Horizontal">
-				<StackPanel Margin="10" Orientation="Vertical" Height="70" Width="150" HorizontalAlignment="Left">
+				<StackPanel Margin="10" Orientation="Vertical" Height="80" Width="150" HorizontalAlignment="Left">
+					<Button Name="btnSauvegarder" Style="{StaticResource StyleButton1}" Content="Sauvegarder" Click="BtnSauvegarder_Click"/>
 					<Button Name="btnOptions" Style="{StaticResource StyleButton1}" Content="Options" Click="BtnOptions_Click"/>
 					<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Content="Avancer" Click="BtnAvancer_Click"/>
 					<Label Name="labelDate" Style="{StaticResource StyleLabel2}" Content="10/10/2010"/>
@@ -83,7 +84,7 @@
 				</StackPanel>
 				<StackPanel Orientation="Vertical">
 					<Label Content="Participants" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" MaxWidth="300" MaxHeight="150" Name="dgClubs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid Margin="10" MaxWidth="300" IsReadOnly="True" MaxHeight="150" Name="dgClubs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
 							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
@@ -92,7 +93,7 @@
 						</DataGrid.Columns>
 					</DataGrid>
 					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" MaxWidth="300" MaxHeight="150" Name="dgPalmares" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid Margin="10" MaxWidth="300" IsReadOnly="True" MaxHeight="150" Name="dgPalmares" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Annee" Binding="{Binding Annee}"/>
 							<DataGridTextColumn Header="Club" Binding="{Binding Club}"/>

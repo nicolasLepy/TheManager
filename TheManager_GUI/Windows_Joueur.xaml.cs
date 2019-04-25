@@ -24,6 +24,8 @@ namespace TheManager_GUI
     {
 
         public SeriesCollection NiveauCollection { get; set; }
+        public SeriesCollection ButsCollection { get; set; }
+        public SeriesCollection MatchsCollection { get; set; }
         public string[] LabelsAnnees { get; set; }
 
         public Windows_Joueur(Joueur joueur)
@@ -33,9 +35,13 @@ namespace TheManager_GUI
             lbAge.Content = joueur.Age + " ans";
 
             ChartValues<int> niveaux = new ChartValues<int>();
+            ChartValues<int> buts = new ChartValues<int>();
+            ChartValues<int> joues = new ChartValues<int>();
             foreach (HistoriqueJoueur hj in joueur.Historique)
             {
                 niveaux.Add(hj.Niveau);
+                buts.Add(hj.Buts);
+                joues.Add(hj.MatchsJoues);
             }
 
             NiveauCollection = new SeriesCollection
@@ -44,6 +50,24 @@ namespace TheManager_GUI
                 {
                     Title = "Niveau",
                     Values = niveaux,
+                }
+            };
+
+            ButsCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Buts",
+                    Values = buts,
+                }
+            };
+
+            MatchsCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Matchs",
+                    Values = joues,
                 }
             };
 

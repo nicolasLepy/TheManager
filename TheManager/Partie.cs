@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.Runtime.Serialization;
 using TheManager.Comparators;
 using TheManager.Exportation;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class Partie
     {
+        [DataMember]
         private DateTime _date;
+        [DataMember]
         private Gestionnaire _gestionnaire;
+        [DataMember]
         private Options _options;
 
         public DateTime Date { get { return _date; } }
@@ -30,6 +33,29 @@ namespace TheManager
             if (Utils.ComparerDatesSansAnnee(c.DebutSaison.AddDays(-7), _date) && Options.CompetitionsAExporter.Contains(c))
             {
                 Exporteur.Exporter(c);
+            }
+        }
+
+        public void Sauvegarder(string chemin)
+        {
+            using (FileStream writer = new FileStream(chemin, FileMode.Create, FileAccess.Write))
+            {
+                DataContractSerializer ser = new DataContractSerializer(typeof(Partie));
+                ser.WriteObject(writer, this);
+            }
+            
+        }
+
+        public void Charger(string chemin)
+        {
+            Partie loadObj;
+            using (FileStream reader = new FileStream(chemin,FileMode.Open, FileAccess.Read))
+            {
+                DataContractSerializer ser = new DataContractSerializer(typeof(Partie));
+                loadObj = (Partie)ser.ReadObject(reader);
+                _options= loadObj.Options;
+                this._gestionnaire = loadObj.Gestionnaire;
+                this._date = loadObj.Date;
             }
         }
 
@@ -72,7 +98,7 @@ namespace TheManager
                                         }
                                         if(commentateur == null)
                                         {
-                                            Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), cv.Ville, 80);
+                                            Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), cv.Ville, 100);
                                             media.Journalistes.Add(nouveau);
                                             commentateur = nouveau;
                                             //Console.WriteLine("Pas de journalistes disponibles pour " + m.Domicile.Nom + "-" + m.Exterieur.Nom);
@@ -114,13 +140,15 @@ namespace TheManager
             //Mise à jour annuelle des clubs (sponsors, centre de formation, contrats)
             if(Date.Day == 1 && Date.Month == 7)
             {
-
                 foreach(Media m in _gestionnaire.Medias)
                 {
+                    List<Journaliste> toDelete = new List<Journaliste>();
                     foreach(Journaliste j in m.Journalistes)
                     {
                         j.Age++;
+                        if (j.Age > 65) if (Session.Instance.Random(1, 8) == 1) toDelete.Add(j);
                     }
+                    foreach (Journaliste j in toDelete) m.Journalistes.Remove(j);
                 }
 
                 //Mise à jour du niveau des joueurs sans clubs
@@ -158,8 +186,6 @@ namespace TheManager
                         cv.MiseAJourCentreFormation();
                         cv.GenererJeunes();
 
-                        //Affichage budget
-                        //Console.WriteLine(c.Nom + " - " + cv.Budget.ToString("F20"));
                     }
                 }
             }
@@ -167,7 +193,23 @@ namespace TheManager
             //Période des transferts
             if(Date.Month == 7 || Date.Month == 8)
             {
+                //Joueurs checks leurs offres
+                foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
+                List<Joueur> aRetirer = new List<Joueur>();
+                foreach (Joueur j in Gestionnaire.JoueursLibres)
+                {
+                    j.ConsidererOffres();
+                    if (j.Club != null) aRetirer.Add(j);
+                }
+                foreach (Joueur j in aRetirer) Gestionnaire.JoueursLibres.Remove(j);
 
+                //Clubs recherchent des joueurs libres
+                foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
+                    {
+                        //Le club part en recherche en moyenne un peu moins d'un fois par semaine
+                        if(Session.Instance.Random(1,6) == 1)
+                            (c as Club_Ville).RechercherJoueursLibres();
+                    } 
             }
 
             //Les joueurs libres peuvent partir en retraite

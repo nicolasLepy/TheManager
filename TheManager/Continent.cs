@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class Continent : IEquipesRecuperables, ILocalisation
     {
+        [DataMember]
         private List<Pays> _pays;
+        [DataMember]
         private List<Competition> _competitions;
+        [DataMember]
         private string _nom;
 
         public List<Pays> Pays { get { return _pays; } }

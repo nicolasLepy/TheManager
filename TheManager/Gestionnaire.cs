@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class Gestionnaire
     {
 
+        [DataMember]
         private List<Club> _clubs;
         //private List<Competition> _competitions;
+        [DataMember]
         private List<Joueur> _joueursLibres;
+        [DataMember]
         private List<Continent> _continents;
+        [DataMember]
         private List<Langue> _langues;
+        [DataMember]
         private List<Media> _medias;
 
         public List<Club> Clubs { get => _clubs; }

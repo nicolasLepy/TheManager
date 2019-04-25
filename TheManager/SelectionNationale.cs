@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class SelectionNationale : Club
     {
 
+        [DataMember]
         private float _coefficient;
+        [DataMember]
         private List<Joueur> _selectionnes;
+        [DataMember]
         private Pays _pays;
 
         public float Coefficient { get => _coefficient; }

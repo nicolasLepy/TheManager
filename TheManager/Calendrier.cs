@@ -199,7 +199,7 @@ namespace TheManager
                         matchs.Add(m);
                     }
                 }
-                ProgrammeTV(matchs, programmation.DecalagesTV);
+                ProgrammeTV(matchs, programmation.DecalagesTV, i+1);
             }
             if(allerRetour)
             {
@@ -219,7 +219,7 @@ namespace TheManager
                         res.Add(retour);
                     }
                     if(nbJourneesAller-i >= programmation.DernieresJourneesMemeJour)
-                        ProgrammeTV(matchs, programmation.DecalagesTV);
+                        ProgrammeTV(matchs, programmation.DecalagesTV, nbJourneesAller + i);
                 }
                 //Dernière journée : première journée inversée
                 matchs = new List<Match>();
@@ -233,7 +233,7 @@ namespace TheManager
                     res.Add(retour);
                 }
                 if(programmation.DernieresJourneesMemeJour < 1)
-                    ProgrammeTV(matchs, programmation.DecalagesTV);
+                    ProgrammeTV(matchs, programmation.DecalagesTV, nbJourneesAller*2);
             }
             return res;
         }
@@ -244,20 +244,27 @@ namespace TheManager
             return components[1] + " v " + components[0];
         }
 
-        private static void ProgrammeTV(List<Match> matchs, List<DecalagesTV> decalages)
+        private static void ProgrammeTV(List<Match> matchs, List<DecalagesTV> decalages, int journee)
         {
             int indice = 0;
             matchs.Sort(new Match_Niveau_Comparator());
             foreach (DecalagesTV d in decalages)
             {
-                matchs[indice].Jour = matchs[indice].Jour.AddDays(d.DecalageJours);
-                //Remise des heures à 0
-                matchs[indice].Jour = matchs[indice].Jour.AddHours(-matchs[indice].Jour.Hour);
-                matchs[indice].Jour = matchs[indice].Jour.AddMinutes(-matchs[indice].Jour.Minute);
-                //Affectation de la nouvelle heure
-                matchs[indice].Jour = matchs[indice].Jour.AddHours(d.Heure.Heures);
-                matchs[indice].Jour = matchs[indice].Jour.AddMinutes(d.Heure.Minutes);
-                indice++;
+                bool prisEnCompte = true;
+                if (d.Probabilite != 1) prisEnCompte = (Session.Instance.Random(1, d.Probabilite + 1) == 1) ? true : false;
+                if (d.Journee != 0) prisEnCompte = (d.Journee == journee) ? true : false;
+                if(indice < matchs.Count && prisEnCompte)
+                {
+                    matchs[indice].Jour = matchs[indice].Jour.AddDays(d.DecalageJours);
+                    //Remise des heures à 0
+                    matchs[indice].Jour = matchs[indice].Jour.AddHours(-matchs[indice].Jour.Hour);
+                    matchs[indice].Jour = matchs[indice].Jour.AddMinutes(-matchs[indice].Jour.Minute);
+                    //Affectation de la nouvelle heure
+                    matchs[indice].Jour = matchs[indice].Jour.AddHours(d.Heure.Heures);
+                    matchs[indice].Jour = matchs[indice].Jour.AddMinutes(d.Heure.Minutes);
+                    indice++;
+                }
+                
             }
             //Les autres matchs sont programmés plus randomly
             while(indice < matchs.Count)
@@ -293,7 +300,7 @@ namespace TheManager
                 res.Add(new Match(dom, ext, jour, !tour.AllerRetour));
             }
 
-            ProgrammeTV(res, tour.Programmation.DecalagesTV);
+            ProgrammeTV(res, tour.Programmation.DecalagesTV,0);
             if(tour.AllerRetour)
             {
                 List<Match> matchs = new List<Match>();
@@ -306,7 +313,7 @@ namespace TheManager
                     matchs.Add(retour);
                     res.Add(retour);
                 }
-                ProgrammeTV(matchs, tour.Programmation.DecalagesTV);
+                ProgrammeTV(matchs, tour.Programmation.DecalagesTV, 0);
             }
             return res;
         }

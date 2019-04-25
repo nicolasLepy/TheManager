@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace TheManager
@@ -14,29 +15,66 @@ namespace TheManager
         ATTAQUANT
     }
 
-    public struct HistoriqueJoueur
+    [DataContract]
+    public struct OffreContrat
     {
-        public int Niveau { get; set; }
-        public int Annee { get; set; }
-        public HistoriqueJoueur(int niveau, int annee)
+        public int Salaire { get; set; }
+        public int DureeContrat { get; set; }
+        public Club_Ville Club { get; set; }
+
+        public OffreContrat(Club_Ville club, int salaire, int dureeContrat)
         {
-            Niveau = niveau;
-            Annee = annee;
+            Club = club;
+            Salaire = salaire;
+            DureeContrat = dureeContrat;
         }
     }
 
+    [DataContract]
+    public struct HistoriqueJoueur
+    {
+        [DataMember]
+        public int Niveau { get; set; }
+        [DataMember]
+        public int Annee { get; set; }
+        [DataMember]
+        public int Buts { get; set; }
+        [DataMember]
+        public int MatchsJoues { get; set; }
+        public HistoriqueJoueur(int niveau, int annee, int buts, int matchJoues)
+        {
+            Niveau = niveau;
+            Annee = annee;
+            Buts = buts;
+            MatchsJoues = matchJoues;
+        }
+    }
+
+    [DataContract(IsReference =true)]
     public class Joueur
     {
+        [DataMember]
         private string _nom;
+        [DataMember]
         private string _prenom;
+        [DataMember]
         private DateTime _naissance;
+        [DataMember]
         private int _niveau;
+        [DataMember]
         private int _potentiel;
+        [DataMember]
         private Pays _nationalite;
+        [DataMember]
         private Poste _poste;
+        [DataMember]
         private bool _suspendu;
+        [DataMember]
         private int _energie;
+        [DataMember]
         private List<HistoriqueJoueur> _historique;
+        [DataMember]
+        private List<OffreContrat> _offres;
 
         public string Nom { get => _nom; }
         public string Prenom { get => _prenom;  }
@@ -47,6 +85,17 @@ namespace TheManager
         public Poste Poste { get => _poste;}
         public bool Suspendu { get => _suspendu; set => _suspendu = value; }
         public List<HistoriqueJoueur> Historique { get => _historique; }
+        public List<OffreContrat> Offres { get => _offres; }
+        /// <summary>
+        /// Matchs joués sur la saison en cours
+        /// </summary>
+        [DataMember]
+        public int MatchsJoues { get; set; }
+        /// <summary>
+        /// Buts marqués sur la saison en cours
+        /// </summary>
+        [DataMember]
+        public int ButsMarques { get; set; }
         public int Energie
         {
             get { return _energie; }
@@ -94,6 +143,10 @@ namespace TheManager
             Suspendu = false;
             _energie = 100;
             _historique = new List<HistoriqueJoueur>();
+            ButsMarques = 0;
+            MatchsJoues = 0;
+            _offres = new List<OffreContrat>();
+
         }
 
         public int Age
@@ -129,15 +182,6 @@ namespace TheManager
         public int EstimerSalaire()
         {
             int salaire = (int)(0.292188*Math.Pow(1.1859960,Niveau));
-            /*if (Niveau < 30) salaire = 40 * Niveau;
-            else if (Niveau < 40) salaire = 120 * Niveau;
-            else if (Niveau < 50) salaire = 270 * Niveau;
-            else if (Niveau < 60) salaire = 360 * Niveau;
-            else if (Niveau < 70) salaire = 490 * Niveau;
-            else if (Niveau < 80) salaire = 590 * Niveau;
-            else if (Niveau < 90) salaire = 850 * Niveau;
-            else salaire = 1300 * Niveau;*/
-            //Console.WriteLine("Niveau : " + Niveau + " : " + salaire);
             return salaire;
         }
 
@@ -157,9 +201,49 @@ namespace TheManager
             {
                 _niveau -= Session.Instance.Random(1, 5);
             }
-            _historique.Add(new HistoriqueJoueur(_niveau, Session.Instance.Partie.Date.Year + 1));
+            _historique.Add(new HistoriqueJoueur(_niveau, Session.Instance.Partie.Date.Year + 1,ButsMarques, MatchsJoues));
+            ButsMarques = 0;
+            MatchsJoues = 0;
         }
 
+        /// <summary>
+        /// Le joueur considère toutes ses offres de contrats
+        /// </summary>
+        public void ConsidererOffres()
+        {
+            foreach(OffreContrat oc in _offres)
+            {
+                //Si le joueur à un club
+                if(Club != null)
+                {
+                    if (oc.Club.Niveau() - Club.Niveau() > Session.Instance.Random(-10,-5))
+                    {
+                        Contrat sonContrat = null;
+                        foreach (Contrat ct in Club.Contrats) if (ct.Joueur == this) sonContrat = ct;
+                        //Si le salaire proposé est en légère augmentation par rapport à son budget actuel
+                        if((oc.Salaire+0.0f) / sonContrat.Salaire > (Session.Instance.Random(100, 120) / 100.0f))
+                        {
+                            Club ancien = Club;
+                            Club.RetirerJoueur(this);
+                            oc.Club.AjouterJoueur(new Contrat(this, oc.Salaire, new DateTime(Session.Instance.Partie.Date.Year+oc.DureeContrat,7,1)));
+                            Console.WriteLine(ToString() + " transfert joueur de " + ancien.Nom + " a " + Club.Nom);
+                        }
+
+                    }
+                }
+                else
+                {
+                    //Si l'offre du salaire n'est pas trop mauvaise (au moins entre 0.7 et 1 de sa "vrai valeur salariale")
+                    if((oc.Salaire+0.0f) / EstimerSalaire() > (Session.Instance.Random(70,100)/100.0f))
+                    {
+                        oc.Club.AjouterJoueur(new Contrat(this, oc.Salaire, new DateTime(Session.Instance.Partie.Date.Year + oc.DureeContrat, 7, 1)));
+                        Console.WriteLine(ToString() + " transfert joueur libre vers " + Club.Nom + " (" + oc.Salaire + ")");
+                    }
+                }
+            }
+            _offres.Clear();
+        }
+        
         public override string ToString()
         {
             return _prenom + " " + _nom;

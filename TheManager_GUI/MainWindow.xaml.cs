@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TheManager;
 
 namespace TheManager_GUI
 {
@@ -35,6 +37,19 @@ namespace TheManager_GUI
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void BtnChargerPartie_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == true)
+            {
+                Partie p = new Partie();
+                p.Charger(openFileDialog.FileName);
+                Session.Instance.Partie = p;
+                Windows_Menu wm = new Windows_Menu();
+                wm.Show();
+            }
         }
     }
 }

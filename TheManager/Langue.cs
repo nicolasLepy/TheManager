@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class Langue
     {
+        [DataMember]
         private string _nom;
+        [DataMember]
         private List<string> _prenoms;
+        [DataMember]
         private List<string> _noms;
 
         public string Nom { get => _nom; }

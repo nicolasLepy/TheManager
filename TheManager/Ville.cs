@@ -2,15 +2,21 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class Ville
     {
+        [DataMember]
         public string Nom { get; set; }
+        [DataMember]
         public int Population { get; set; }
+        [DataMember]
         public float Latitude { get; set; }
+        [DataMember]
         public float Longitude { get; set; }
 
         public Ville(string nom, int population, float latitude, float longitude)

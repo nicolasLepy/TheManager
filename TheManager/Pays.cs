@@ -1,17 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class Pays : ILocalisation
     {
+        [DataMember]
         private List<Ville> _villes;
+        [DataMember]
         private List<Stade> _stades;
+        [DataMember]
         private Langue _langue;
+        [DataMember]
         private List<Competition> _competitions;
+        [DataMember]
         private string _nom;
 
         public List<Ville> Villes { get { return _villes; } }

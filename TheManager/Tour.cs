@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
 
@@ -23,10 +24,14 @@ namespace TheManager
         PIRES
     }
 
+    [DataContract]
     public struct RecuperationEquipes
     {
+        [DataMember]
         public IEquipesRecuperables Source { get; set; }
+        [DataMember]
         public int Nombre { get; set; }
+        [DataMember]
         public MethodeRecuperation Methode { get; set; }
         public RecuperationEquipes(IEquipesRecuperables source, int nombre, MethodeRecuperation methode)
         {
@@ -36,14 +41,20 @@ namespace TheManager
         }
     }
 
-
+    [DataContract(IsReference =true)]
     public class ProgrammationTour
     {
+        [DataMember]
         private Heure _heureParDefaut;
+        [DataMember]
         private List<DateTime> _joursDeMatchs;
+        [DataMember]
         private List<DecalagesTV> _decalagesTV;
+        [DataMember]
         private DateTime _initialisation;
+        [DataMember]
         private DateTime _fin;
+        [DataMember]
         private int _dernieresJourneesMemeJour;
 
         public Heure HeureParDefaut { get => _heureParDefaut; }
@@ -64,23 +75,37 @@ namespace TheManager
         }
     }
 
+    [DataContract]
     public struct DecalagesTV
     {
+        [DataMember]
         public int DecalageJours { get; set; }
+        [DataMember]
         public Heure Heure { get; set; }
-        
-        public DecalagesTV(int nbjours, Heure heure)
+        [DataMember]
+        public int Probabilite { get; set; }
+        [DataMember]
+        public int Journee { get; set; }
+
+        public DecalagesTV(int nbjours, Heure heure, int probabilite, int journee)
         {
             DecalageJours = nbjours;
             Heure = heure;
+            Probabilite = probabilite;
+            Journee = journee;
         }
     }
 
+    [DataContract]
     public struct Qualification
     {
+        [DataMember]
         public int Classement { get; set; }
+        [DataMember]
         public int IDTour { get; set; }
+        [DataMember]
         public Competition Competition { get; set; }
+        [DataMember]
         public bool AnneeSuivante { get; set; }
 
         public Qualification(int classement, int idtour, Competition competition, bool anneeSuivante)
@@ -92,9 +117,12 @@ namespace TheManager
         }
     }
 
+    [DataContract]
     public struct Dotation
     {
+        [DataMember]
         public int Classement { get; set; }
+        [DataMember]
         public int Somme { get; set; }
 
         public Dotation(int classement, int somme)
@@ -104,46 +132,64 @@ namespace TheManager
         }
     }
 
+    [DataContract(IsReference =true)]
+    [KnownType(typeof(TourChampionnat))]
+    [System.Xml.Serialization.XmlInclude(typeof(TourChampionnat))]
+    [KnownType(typeof(TourElimination))]
+    [System.Xml.Serialization.XmlInclude(typeof(TourElimination))]
+    [KnownType(typeof(TourInactif))]
+    [System.Xml.Serialization.XmlInclude(typeof(TourInactif))]
+    [KnownType(typeof(TourPoules))]
+    [System.Xml.Serialization.XmlInclude(typeof(TourPoules))]
     public abstract class Tour : IEquipesRecuperables
     {
         /// <summary>
         /// Nom du tour
         /// </summary>
+        [DataMember]
         protected string _nom;
         /// <summary>
         /// Liste des clubs participant à ce tour
         /// </summary>
+        [DataMember]
         protected List<Club> _clubs;
         /// <summary>
         /// Liste des matchs du tour
         /// </summary>
+        [DataMember]
         protected List<Match> _matchs;
         /// <summary>
         /// Si le tour se déroule en matchs aller-retour
         /// </summary>
+        [DataMember]
         protected bool _allerRetour;
 
         /// <summary>
         /// Concerne la programmation générale des matchs du tour (TV, heure, jours)
         /// </summary>
+        [DataMember]
         protected ProgrammationTour _programmation;
 
+        [DataMember]
         protected List<Qualification> _qualifications;
 
         /// <summary>
         /// Liste des équipes récupérées d'autres compétitions en cours
         /// </summary>
+        [DataMember]
         protected List<RecuperationEquipes> _recuperationsEquipes;
 
         /// <summary>
         /// Règles concernant le tour
         /// Exemple : l'équipe reçoit si elle évolue deux division en moins
         /// </summary>
+        [DataMember]
         protected List<Regle> _regles;
 
         /// <summary>
         /// Liste des dotations données aux clubs à la fin du tour
         /// </summary>
+        [DataMember]
         protected List<Dotation> _dotations;
 
 

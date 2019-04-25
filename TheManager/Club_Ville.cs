@@ -2,17 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class Club_Ville : Club
     {
 
+        [DataMember]
         private int _budget;
+        [DataMember]
         private Ville _ville;
+        [DataMember]
         private float _sponsor;
+        [DataMember]
         private List<Contrat> _joueurs;
+        [DataMember]
         private HistoriqueClub _historique;
 
         public int Budget { get => _budget; }
@@ -33,6 +40,16 @@ namespace TheManager
         public void AjouterJoueur(Contrat c)
         {
             _joueurs.Add(c);
+        }
+
+        public void RetirerJoueur(Joueur j)
+        {
+            Contrat aRetirer = null;
+
+            foreach (Contrat ct in _joueurs) if (ct.Joueur == j) aRetirer = ct;
+
+            if (aRetirer != null)
+                _joueurs.Remove(aRetirer);
         }
 
         public override List<Joueur> Joueurs()
@@ -190,6 +207,42 @@ namespace TheManager
             }
 
             return res;
+        }
+
+        public void RechercherJoueursLibres()
+        {
+            float niveau = Niveau();
+            Pays paysClub = Ville.Pays();
+
+            int chance = 100 - (int)niveau;
+
+            int joueursARechercher = 20 - Contrats.Count;
+            if (joueursARechercher < 0) joueursARechercher = 0;
+
+            int i = 0;
+            bool poursuivre = true;
+            int joueursTrouves = 0;
+            while(poursuivre)
+            {
+                Joueur j = Session.Instance.Partie.Gestionnaire.JoueursLibres[i];
+                //Susceptible d'interesser le club
+                if ((Session.Instance.Random(1,chance) == 1) && j.Niveau / niveau > 0.90f)
+                {
+                    bool peut = true;
+                    //Si le joueur n'a pas un niveau pro, il faut qu'il soit du même pays
+                    if (j.Niveau < 60 && j.Nationalite != paysClub) peut = false;
+                    if(peut)
+                    {
+                        int salaire = (int)(j.EstimerSalaire() * (Session.Instance.Random(80, 120) / 100.0f));
+                        j.Offres.Add(new OffreContrat(this, salaire, Session.Instance.Random(1, 5)));
+                        joueursTrouves++;
+                        Console.WriteLine(Nom + " emet une offre vers " + j);
+                    }
+                }
+                i++;
+                if (i == Session.Instance.Partie.Gestionnaire.JoueursLibres.Count || joueursTrouves == joueursARechercher)
+                    poursuivre = false;
+            }
         }
 
     }

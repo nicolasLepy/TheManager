@@ -346,7 +346,13 @@ namespace TheManager
                         {
                             int jour = int.Parse(e4.Attribute("jour").Value);
                             Heure heure = String2Heure(e4.Attribute("heure").Value);
-                            DecalagesTV dtv = new DecalagesTV(jour, heure);
+                            int probabilite = 1;
+                            if (e4.Attribute("probabilite") != null)
+                                probabilite = int.Parse(e4.Attribute("probabilite").Value);
+                            int journee = 0;
+                            if (e4.Attribute("journee") != null)
+                                journee = int.Parse(e4.Attribute("journee").Value);
+                            DecalagesTV dtv = new DecalagesTV(jour, heure, probabilite, journee);
                             tour.Programmation.DecalagesTV.Add(dtv);
                         }
                         foreach (XElement e4 in e3.Descendants("Regle"))

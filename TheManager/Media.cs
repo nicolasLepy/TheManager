@@ -2,14 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace TheManager
 {
 
+    [DataContract]
     public struct CouvertureCompetition
     {
+        [DataMember]
         public Competition Competition { get; set; }
+        [DataMember]
         public int IndexDebut { get; set; }
 
         public CouvertureCompetition(Competition competition, int indexDebut)
@@ -19,11 +23,16 @@ namespace TheManager
         }
     }
 
+    [DataContract(IsReference =true)]
     public class Media
     {
+        [DataMember]
         private string _nom;
+        [DataMember]
         private List<Journaliste> _journalistes;
+        [DataMember]
         private List<CouvertureCompetition> _couvertures;
+        [DataMember]
         private Pays _pays;
 
         public string Nom { get => _nom; }

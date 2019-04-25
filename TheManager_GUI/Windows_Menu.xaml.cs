@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -333,7 +334,14 @@ namespace TheManager_GUI
             }
         }
 
-        
+        private void BtnSauvegarder_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                Session.Instance.Partie.Sauvegarder(saveFileDialog.FileName);
+            }
+        }
     }
 
     public struct PalmaresElement

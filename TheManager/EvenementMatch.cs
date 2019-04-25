@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace TheManager
@@ -16,13 +17,19 @@ namespace TheManager
         CARTON_ROUGE
     }
 
+    [DataContract(IsReference =true)]
     public class EvenementMatch
     {
 
+        [DataMember]
         private Evenement _type;
+        [DataMember]
         private int _minute;
+        [DataMember]
         private int _miTemps;
+        [DataMember]
         private Joueur _joueur;
+        [DataMember]
         private Club _club;
 
         public Evenement Type { get => _type; }

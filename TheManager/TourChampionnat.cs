@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class TourChampionnat : Tour
     {
 
@@ -32,15 +34,6 @@ namespace TheManager
         {
             List<Club> classement = Classement();
 
-            foreach(Club c in classement)
-            {
-                string affiche = c.Nom;
-                int ecart = 30 - affiche.Length;
-                for (int i = 0; i < ecart; i++) affiche += " ";
-                affiche += Points(c) + "  " + Joues(c) + "  " + Gagnes(c) + "  " + Nuls(c) + "  " + Perdus(c) + "  " + ButsPour(c) + "  " + ButsContre(c) + "  " + Difference(c);
-                Console.WriteLine(affiche);
-            }
-
             List<Club> qualifies = new List<Club>();
             foreach(Qualification q in Qualifications)
             {
@@ -57,12 +50,7 @@ namespace TheManager
             classement.Sort(comparator);
             return classement;
         }
-
-
-
-
         
-
         public List<Match> ProchaineJournee()
         {
             List<Match> res = new List<Match>();

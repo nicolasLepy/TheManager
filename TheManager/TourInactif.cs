@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
     public class TourInactif : Tour
     {
 

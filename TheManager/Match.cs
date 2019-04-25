@@ -2,42 +2,68 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
 
 namespace TheManager
 {
 
+    [DataContract(IsReference =true)]
     public class Match
     {
         //Attributs propres à la gestion du match
+        [DataMember]
         private int _minute;
+        [DataMember]
         private int _miTemps;
+        [DataMember]
         private int _diffNiveau;
+        [DataMember]
         private float _diffNiveauRatio;
+        [DataMember]
         private List<Joueur> _compo1Terrain;
+        [DataMember]
         private List<Joueur> _compo2Terrain;
 
 
+        [DataMember]
         private int _score1;
+        [DataMember]
         private int _score2;
+        [DataMember]
         private List<EvenementMatch> _evenements;
+        [DataMember]
         private float _possession;
+        [DataMember]
         private int _tirs1;
+        [DataMember]
         private int _tirs2;
+        [DataMember]
         private List<Joueur> _compo1;
+        [DataMember]
         private List<Joueur> _compo2;
+        [DataMember]
         private bool _prolongations;
+        [DataMember]
         private int _tab1;
+        [DataMember]
         private int _tab2;
+        [DataMember]
         private bool _prolongationSiNul;
+        [DataMember]
         private Match _matchAller;
+        [DataMember]
         private int _affluence;
+        [DataMember]
         private List<Journaliste> _journalistes;
 
         public int Affluence { get => _affluence; }
+        [DataMember]
         public DateTime Jour { get; set; }
+        [DataMember]
         public Club Domicile { get; set; }
+        [DataMember]
         public Club Exterieur { get; set; }
         public int Score1 { get => _score1; }
         public int Score2 { get => _score2; }
@@ -50,8 +76,11 @@ namespace TheManager
         public List<Journaliste> Journalistes { get => _journalistes; }
         public int Tirs1 { get => _tirs1; }
         public int Tirs2 { get => _tirs2; }
+        [DataMember]
         public float Cote1 { get; set; }
+        [DataMember]
         public float CoteN { get; set; }
+        [DataMember]
         public float Cote2 { get; set; }
 
         /// <summary>
@@ -326,8 +355,16 @@ namespace TheManager
             _compo2 = new List<Joueur>(Exterieur.Composition());
             _compo1Terrain = new List<Joueur>(_compo1);
             _compo2Terrain = new List<Joueur>(_compo2);
-            foreach (Joueur j in _compo1) j.Energie -= Session.Instance.Random(13, 33);
-            foreach (Joueur j in _compo2) j.Energie -= Session.Instance.Random(13, 33);
+            foreach (Joueur j in _compo1)
+            {
+                j.Energie -= Session.Instance.Random(13, 33);
+                j.MatchsJoues++;
+            }
+            foreach (Joueur j in _compo2)
+            {
+                j.Energie -= Session.Instance.Random(13, 33);
+                j.MatchsJoues++;
+            }
         }
 
         public void CalculerDifferenceNiveau()
@@ -429,7 +466,8 @@ namespace TheManager
                 b = temp;
             }
 
-            if (diffRatio < 0.1) IterationMatch(a, b, 2, 2, 8, 70);
+            if (diffRatio < 0.05) IterationMatch(a, b, 2, 2, 8, 95);
+            if (diffRatio < 0.1) IterationMatch(a, b, 2, 2, 8, 80);
             else if (diffRatio >= 0.1 && diffRatio < 0.2) IterationMatch(a, b, 2, 2, 8, 56);
             else if (diffRatio >= 0.2 && diffRatio < 0.3) IterationMatch(a, b, 2, 2, 8, 46);
             else if (diffRatio >= 0.3 && diffRatio < 0.4) IterationMatch(a, b, 2, 2, 8, 40);
@@ -440,11 +478,11 @@ namespace TheManager
             else if (diffRatio >= 0.7 && diffRatio < 0.74) IterationMatch(a, b, 1, 3, 8, 18);
             else if (diffRatio >= 0.74 && diffRatio < 0.78) IterationMatch(a, b, 1, 4, 8, 18);
             else if (diffRatio >= 0.78 && diffRatio < 0.81) IterationMatch(a, b, 1, 4, 8, 17);
-            else if (diffRatio >= 0.81 && diffRatio < 0.85) IterationMatch(a, b, 1, 4, 8, 16);
-            else if (diffRatio >= 0.85 && diffRatio < 0.88) IterationMatch(a, b, 1, 5, 8, 16);
-            else if (diffRatio >= 0.88 && diffRatio < 0.91) IterationMatch(a, b, 1, 5, 8, 15);
-            else if (diffRatio >= 0.91 && diffRatio < 0.94) IterationMatch(a, b, 1, 5, 8, 14);
-            else if (diffRatio >= 0.94 && diffRatio < 0.98) IterationMatch(a, b, 1, 6, 8, 14);
+            else if (diffRatio >= 0.81 && diffRatio < 0.85) IterationMatch(a, b, 1, 5, 8, 17);
+            else if (diffRatio >= 0.85 && diffRatio < 0.89) IterationMatch(a, b, 1, 5, 8, 16);
+            else if (diffRatio >= 0.89 && diffRatio < 0.92) IterationMatch(a, b, 1, 5, 8, 15);
+            else if (diffRatio >= 0.92 && diffRatio < 0.95) IterationMatch(a, b, 1, 5, 8, 14);
+            else if (diffRatio >= 0.95 && diffRatio < 0.98) IterationMatch(a, b, 1, 6, 8, 14);
             else if (diffRatio >= 0.98 && diffRatio < 1.01) IterationMatch(a, b, 1, 6, 8, 13);
             /*if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
             if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
@@ -493,6 +531,7 @@ namespace TheManager
             //int minute = Session.Instance.Random(1, 50);
             //int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, _minute, _miTemps);
+            j.ButsMarques++;
             _evenements.Add(em);
         }
 

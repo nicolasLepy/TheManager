@@ -64,8 +64,12 @@ namespace TheManager_GUI
                 
             }
 
+            foreach (Contrat ct in c.Contrats)
+            {
+                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €"});
+            }
+
             Style s = new Style();
-            int height = 16;
             s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("backgroundColor") as SolidColorBrush });
             s.Setters.Add(new Setter() { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
 
@@ -162,6 +166,16 @@ namespace TheManager_GUI
                 wm.Show();
             }
         }
+
+        private void DgJoueurs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if(dgJoueurs.SelectedItem != null)
+            {
+                JoueurClubElement jce = (JoueurClubElement)dgJoueurs.SelectedItem;
+                Windows_Joueur wj = new Windows_Joueur(jce.Joueur);
+                wj.Show();
+            }
+        }
     }
 
     public struct MatchClubElement
@@ -173,5 +187,17 @@ namespace TheManager_GUI
         public string Competition { get; set; }
         public Match Match { get; set; }
         public int Couleur { get; set; }
+    }
+
+    public struct JoueurClubElement
+    {
+        public Joueur Joueur { get; set; }
+        public string Nom { get; set; }
+        public int Age { get; set; }
+        public string Poste { get; set; }
+        public string Contrat { get; set; }
+        public string Salaire { get; set; }
+        public int Niveau { get; set; }
+        public int Potentiel { get; set; }
     }
 }
