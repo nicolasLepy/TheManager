@@ -28,6 +28,18 @@ namespace TheManager
         public List<Contrat> Contrats { get => _joueurs; }
         public HistoriqueClub Historique { get => _historique; }
 
+        public float MasseSalariale
+        {
+            get
+            {
+                float res = 0;
+
+                foreach (Contrat c in _joueurs) res += c.Salaire;
+
+                return res;
+            }
+        }
+
         public Club_Ville(string nom, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade) : base(nom,nomCourt,reputation,supporters,centreFormation,logo,stade)
         {
             _budget = budget;
@@ -209,6 +221,35 @@ namespace TheManager
             return res;
         }
 
+        public void MettreAJourListeTransferts()
+        {
+            float niveauClub = Niveau();
+            foreach(Contrat ct in _joueurs)
+            {
+                //Si le joueur est trop mauvais
+                if (ct.Joueur.Potentiel / niveauClub < 0.80) ct.Transferable = true;
+                else ct.Transferable = false;
+            }
+        }
+
+        public void RecevoirOffre(Contrat contrat, Club_Ville interessee, int somme, int salaire, int dureeContrat)
+        {
+            if(contrat.Transferable)
+            {
+                if(somme < contrat.Joueur.EstimerValeurTransfert())
+                {
+                    contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
+                }
+            }
+            else
+            {
+                if(somme > contrat.Joueur.EstimerValeurTransfert()*1.2f)
+                {
+                    contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
+                }
+            }
+        }
+
         public void RechercherJoueursLibres()
         {
             float niveau = Niveau();
@@ -236,7 +277,7 @@ namespace TheManager
                         int salaire = (int)(j.EstimerSalaire() * (Session.Instance.Random(80, 120) / 100.0f));
                         j.Offres.Add(new OffreContrat(this, salaire, Session.Instance.Random(1, 5)));
                         joueursTrouves++;
-                        Console.WriteLine(Nom + " emet une offre vers " + j);
+                        //Console.WriteLine(Nom + " emet une offre vers " + j);
                     }
                 }
                 i++;

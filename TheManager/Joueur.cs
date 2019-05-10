@@ -182,7 +182,23 @@ namespace TheManager
         public int EstimerSalaire()
         {
             int salaire = (int)(0.292188*Math.Pow(1.1859960,Niveau));
+            switch (_poste)
+            {
+                case Poste.GARDIEN: salaire = (int)(salaire *0.8f);
+                    break;
+                case Poste.DEFENSEUR:
+                    salaire = (int)(salaire * 0.9f);
+                    break;
+                case Poste.ATTAQUANT:
+                    salaire = (int)(salaire * 1.1f);
+                    break;
+            }
             return salaire;
+        }
+
+        public int EstimerValeurTransfert()
+        {
+            return EstimerSalaire() * 100;
         }
 
         /// <summary>
@@ -226,7 +242,6 @@ namespace TheManager
                             Club ancien = Club;
                             Club.RetirerJoueur(this);
                             oc.Club.AjouterJoueur(new Contrat(this, oc.Salaire, new DateTime(Session.Instance.Partie.Date.Year+oc.DureeContrat,7,1)));
-                            Console.WriteLine(ToString() + " transfert joueur de " + ancien.Nom + " a " + Club.Nom);
                         }
 
                     }
@@ -237,7 +252,6 @@ namespace TheManager
                     if((oc.Salaire+0.0f) / EstimerSalaire() > (Session.Instance.Random(70,100)/100.0f))
                     {
                         oc.Club.AjouterJoueur(new Contrat(this, oc.Salaire, new DateTime(Session.Instance.Partie.Date.Year + oc.DureeContrat, 7, 1)));
-                        Console.WriteLine(ToString() + " transfert joueur libre vers " + Club.Nom + " (" + oc.Salaire + ")");
                     }
                 }
             }

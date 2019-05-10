@@ -18,11 +18,19 @@ namespace TheManager
         public bool Exporter { get; set; }
         public List<Competition> CompetitionsAExporter { get => _competitionsAExporter; }
 
+        [DataMember]
+        private bool _transferts;
+
+        public bool Transferts { get => _transferts; set => _transferts = value; }
+
         public Options()
         {
             Exporter = false;
             _competitionsAExporter = new List<Competition>();
+            _transferts = true;
         }
+
+
         
 
     }

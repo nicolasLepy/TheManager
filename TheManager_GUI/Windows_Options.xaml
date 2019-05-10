@@ -14,6 +14,12 @@
 			</StackPanel>
 			<Label Content="Options" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Vertical">
+				<RadioButton GroupName="grTheme" Content="Thème vert" Name="rb_Theme1" Style="{StaticResource StyleRadioButton}" Click="Rb_Theme1_Click"/>
+				<RadioButton GroupName="grTheme" Content="Thème bleu" Name="rb_Theme2" Style="{StaticResource StyleRadioButton}" Click="Rb_Theme2_Click"/>
+				<StackPanel Orientation="Horizontal">
+					<CheckBox Name="cbTransferts" Click="CbTransferts_Click"/>
+					<Label Content="Activer les transferts" Style="{StaticResource StyleLabel2}"/>
+				</StackPanel>
 				<StackPanel Orientation="Horizontal">
 					<CheckBox Name="cbExporter" Click="CbExporter_Click"/>
 					<Label Content="Exporter les compétitions sous format HTML à la fin de la saison" Style="{StaticResource StyleLabel2}"/>

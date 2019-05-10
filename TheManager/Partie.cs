@@ -185,35 +185,43 @@ namespace TheManager
                         cv.ObtenirSponsor();
                         cv.MiseAJourCentreFormation();
                         cv.GenererJeunes();
+                        //Mettre les joueurs les plus indésirables sur la liste des transferts
+                        cv.MettreAJourListeTransferts();
 
                     }
                 }
             }
 
             //Période des transferts
-            if(Date.Month == 7 || Date.Month == 8)
+            if(Options.Transferts)
             {
-                //Joueurs checks leurs offres
-                foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
-                List<Joueur> aRetirer = new List<Joueur>();
-                foreach (Joueur j in Gestionnaire.JoueursLibres)
-                {
-                    j.ConsidererOffres();
-                    if (j.Club != null) aRetirer.Add(j);
-                }
-                foreach (Joueur j in aRetirer) Gestionnaire.JoueursLibres.Remove(j);
 
-                //Clubs recherchent des joueurs libres
-                foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
+                if (Date.Month == 7 || Date.Month == 8)
+                {
+                    //Joueurs checks leurs offres
+                    foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
+                    List<Joueur> aRetirer = new List<Joueur>();
+                    foreach (Joueur j in Gestionnaire.JoueursLibres)
                     {
-                        //Le club part en recherche en moyenne un peu moins d'un fois par semaine
-                        if(Session.Instance.Random(1,6) == 1)
-                            (c as Club_Ville).RechercherJoueursLibres();
-                    } 
+                        j.ConsidererOffres();
+                        if (j.Club != null) aRetirer.Add(j);
+                    }
+                    foreach (Joueur j in aRetirer) Gestionnaire.JoueursLibres.Remove(j);
+
+                    //Clubs recherchent des joueurs libres
+                    foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
+                        {
+                            //Le club part en recherche en moyenne un peu moins d'un fois par semaine
+                            if (Session.Instance.Random(1, 14) == 1)
+                                (c as Club_Ville).RechercherJoueursLibres();
+                        }
+                }
+
+
             }
 
             //Les joueurs libres peuvent partir en retraite
-            if(Date.Day == 2 && Date.Month == 7)
+            if (Date.Day == 2 && Date.Month == 7)
             {
                 _gestionnaire.RetraiteJoueursLibres();
             }

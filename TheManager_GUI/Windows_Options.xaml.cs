@@ -36,6 +36,7 @@ namespace TheManager_GUI
             InitializeComponent();
             _checkbox = new List<CheckBox>();
             cbExporter.IsChecked = Session.Instance.Partie.Options.Exporter;
+            cbTransferts.IsChecked = Session.Instance.Partie.Options.Transferts;
 
             foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
             {
@@ -110,7 +111,47 @@ namespace TheManager_GUI
                     Session.Instance.Partie.Options.CompetitionsAExporter.Add(comp);
             }
             Session.Instance.Partie.Options.Exporter = (bool)cbExporter.IsChecked;
+            Session.Instance.Partie.Options.Transferts = (bool)cbTransferts.IsChecked;
+
             Close();
+        }
+
+        private void Rb_Theme1_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Resources["Font"] = new FontFamily("Arial Narrow");
+        }
+
+        private void Rb_Theme2_Click(object sender, RoutedEventArgs e)
+        {
+            Color c1 = Colors.DarkBlue;
+            c1.R = 28;
+            c1.G = 88;
+            c1.B = 116;
+            Color c2 = Colors.Cyan;
+            /*
+            {
+                R = 28,
+                G = 88,
+                B = 116
+            };*/
+            /*            Color c2 = new Color
+                        {
+                            R = 121,
+                            G = 237,
+                            B = 240
+                        };
+                        c2.A = 0;*/
+            c2.R = 121;
+            c2.G = 237;
+            c2.B = 240;
+            Application.Current.Resources["Color1"] = c1;
+            Application.Current.Resources["Color2"] = c2;
+            Application.Current.Resources["Font"] = new FontFamily("Montserrat");
+        }
+
+        private void CbTransferts_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

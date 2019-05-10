@@ -90,6 +90,7 @@
 							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
 							<DataGridTextColumn Header="Budget" Binding="{Binding Budget}"/>
 							<DataGridTextColumn Header="Affluence" Binding="{Binding Affluence}"/>
+							<DataGridTextColumn Header="Masse" Binding="{Binding MasseSalariale}"/>
 						</DataGrid.Columns>
 					</DataGrid>
 					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>

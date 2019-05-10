@@ -46,12 +46,16 @@ namespace TheManager_GUI
             this.Close();
         }
 
-        private void BtnAvancer_Click(object sender, RoutedEventArgs e)
+        private void Avancer()
         {
             _partie.Avancer();
             Refresh();
-            
-            
+        }
+
+        private void BtnAvancer_Click(object sender, RoutedEventArgs e)
+        {
+
+            Avancer();
         }
 
         private void LbChampionnats_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -84,8 +88,14 @@ namespace TheManager_GUI
                     foreach(Club cl in c.Tours[0].Clubs)
                     {
                         int budget = 0;
-                        if (cl as Club_Ville != null) budget = (cl as Club_Ville).Budget;
-                        dgClubs.Items.Add(new ClubElement{ Nom = cl.NomCourt, Niveau = cl.Niveau(), Budget = budget, Affluence = c.AffluenceMoyenne(cl) });
+                        int masseSalariale = 0;
+                        if (cl as Club_Ville != null)
+                        {
+                            budget = (cl as Club_Ville).Budget;
+                            masseSalariale = (int)(cl as Club_Ville).MasseSalariale;
+                        }
+
+                        dgClubs.Items.Add(new ClubElement{ Nom = cl.NomCourt, Niveau = cl.Niveau(), Budget = budget, Affluence = c.AffluenceMoyenne(cl), MasseSalariale = masseSalariale });
                     }
                 }
 
@@ -150,12 +160,11 @@ namespace TheManager_GUI
 
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
         {
-            _partie.Avancer();
+            Avancer();
             while (!(_partie.Date.Month == 6 && _partie.Date.Day == 13))
             {
-                _partie.Avancer();
+                Avancer();
             }
-            Refresh();
         }
 
         private void BtnSimuler2_Click(object sender, RoutedEventArgs e)
@@ -356,6 +365,7 @@ namespace TheManager_GUI
         public float Niveau { get; set; }
         public int Budget { get; set; }
         public int Affluence { get; set; }
+        public int MasseSalariale { get; set; }
     }
 
     public struct ButeurElement

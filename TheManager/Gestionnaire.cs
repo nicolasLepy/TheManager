@@ -89,6 +89,31 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Liste des joueurs transférables d'un championnat
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public List<Joueur> ListeTransferts(Competition c)
+        {
+            List<Joueur> joueurs = new List<Joueur>();
+            Tour tourChampionnat = c.Tours[0];
+
+            foreach(Club club in tourChampionnat.Clubs)
+            {
+                Club_Ville cv = club as Club_Ville;
+                if(cv != null)
+                {
+                    foreach (Contrat ct in cv.Contrats)
+                    {
+                        if (ct.Transferable) joueurs.Add(ct.Joueur);
+                    }
+                }
+            }
+
+            return joueurs;
+        }
+
         public Pays String2Pays(string pays)
         {
             Pays res = null;
