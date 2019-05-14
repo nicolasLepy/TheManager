@@ -123,7 +123,6 @@ namespace TheManager
             }
             InitialiserQualificationsAnneesSuivantes();
             TourActuel = -1;
-            
         }
 
         private void MAJRecords()

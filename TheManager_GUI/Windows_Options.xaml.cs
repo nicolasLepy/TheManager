@@ -118,6 +118,16 @@ namespace TheManager_GUI
 
         private void Rb_Theme1_Click(object sender, RoutedEventArgs e)
         {
+            Color c1 = Colors.DarkBlue;
+            c1.R = 28;
+            c1.G = 116;
+            c1.B = 53;
+            Color c2 = Colors.Cyan;
+            c2.R = 164;
+            c2.G = 241;
+            c2.B = 122;
+            Application.Current.Resources["Color1"] = c1;
+            Application.Current.Resources["Color2"] = c2;
             Application.Current.Resources["Font"] = new FontFamily("Arial Narrow");
         }
 
@@ -128,19 +138,6 @@ namespace TheManager_GUI
             c1.G = 88;
             c1.B = 116;
             Color c2 = Colors.Cyan;
-            /*
-            {
-                R = 28,
-                G = 88,
-                B = 116
-            };*/
-            /*            Color c2 = new Color
-                        {
-                            R = 121,
-                            G = 237,
-                            B = 240
-                        };
-                        c2.A = 0;*/
             c2.R = 121;
             c2.G = 237;
             c2.B = 240;

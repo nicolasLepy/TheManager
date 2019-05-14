@@ -88,7 +88,7 @@ namespace TheManager
                         case "ATTAQUANT": poste = Poste.ATTAQUANT; break;
                     }
                     Joueur j = new Joueur(prenom, nom, new DateTime(1995, 1, 1), niveau, niveau + 5, _gestionnaire.String2Pays("France"), poste);
-                    club.AjouterJoueur(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1)));
+                    club.AjouterJoueur(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                 }
             }
         }

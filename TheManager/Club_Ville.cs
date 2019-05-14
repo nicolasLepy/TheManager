@@ -4,9 +4,45 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
+
+    [DataContract]
+    public struct OffreContrat
+    {
+        public int Salaire { get; set; }
+        public int DureeContrat { get; set; }
+        public Joueur Joueur { get; set; }
+
+        public OffreContrat(Joueur joueur, int salaire, int dureeContrat)
+        {
+            Joueur = joueur;
+            Salaire = salaire;
+            DureeContrat = dureeContrat;
+        }
+    }
+
+    [DataContract(IsReference =true)]
+    public class GestionTransfertsClub
+    {
+        [DataMember]
+        private List<Joueur> _joueursCibles;
+        [DataMember]
+        private List<OffreContrat> _offres;
+
+        public List<Joueur> JoueursCibles { get => _joueursCibles; }
+        public List<OffreContrat> Offres { get => _offres; }
+
+        public GestionTransfertsClub()
+        {
+            _joueursCibles = new List<Joueur>();
+            _offres = new List<OffreContrat>();
+        }
+    }
+
+
     [DataContract(IsReference =true)]
     public class Club_Ville : Club
     {
@@ -21,12 +57,16 @@ namespace TheManager
         private List<Contrat> _joueurs;
         [DataMember]
         private HistoriqueClub _historique;
+        [DataMember]
+        private GestionTransfertsClub _gestionTransfertsClub;
+
 
         public int Budget { get => _budget; }
         public Ville Ville { get => _ville; }
         public float Sponsor { get => _sponsor; }
         public List<Contrat> Contrats { get => _joueurs; }
         public HistoriqueClub Historique { get => _historique; }
+        public GestionTransfertsClub GestionTransfertsClub { get => _gestionTransfertsClub; }
 
         public float MasseSalariale
         {
@@ -47,6 +87,7 @@ namespace TheManager
             _sponsor = 0;
             _joueurs = new List<Contrat>();
             _historique = new HistoriqueClub();
+            _gestionTransfertsClub = new GestionTransfertsClub();
         }
 
         public void AjouterJoueur(Contrat c)
@@ -82,14 +123,14 @@ namespace TheManager
             return niveau / (_joueurs.Count+0.0f);
         }
 
-        public void GenererJoueur(Poste p, int ageMin, int ageMax)
+        public void GenererJoueur(Poste p, int ageMin, int ageMax, int decalagePotentiel = 0)
         {
             string prenom = _ville.Pays().Langue.ObtenirPrenom();
             string nom = _ville.Pays().Langue.ObtenirNom();
             int anneeNaissance = Session.Instance.Random(Session.Instance.Partie.Date.Year - ageMax, Session.Instance.Partie.Date.Year - ageMin+1);
 
             //Potentiel
-            int potentiel = Session.Instance.Random(CentreFormation - 18, CentreFormation + 18);
+            int potentiel = Session.Instance.Random(CentreFormation - 18, CentreFormation + 18) + decalagePotentiel;
             if (potentiel < 1) potentiel = 1;
             if (potentiel > 99) potentiel = 99;
 
@@ -101,7 +142,7 @@ namespace TheManager
             
             Joueur j = new Joueur(prenom, nom, new DateTime(anneeNaissance, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), niveau, potentiel, this.Ville.Pays(), p);
             int annee = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
-            Contrats.Add(new Contrat(j, j.EstimerSalaire(), new DateTime(annee, 7, 1)));
+            Contrats.Add(new Contrat(j, j.EstimerSalaire(), new DateTime(annee, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
         }
 
         public void GenererJoueur(int ageMin, int ageMax)
@@ -236,22 +277,46 @@ namespace TheManager
         {
             if(contrat.Transferable)
             {
-                if(somme < contrat.Joueur.EstimerValeurTransfert())
+                if(somme > contrat.Joueur.EstimerValeurTransfert())
                 {
-                    contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
+                    interessee.GestionTransfertsClub.Offres.Add(new OffreContrat(contrat.Joueur, salaire, dureeContrat));
+                    //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
                 }
             }
             else
             {
                 if(somme > contrat.Joueur.EstimerValeurTransfert()*1.2f)
                 {
-                    contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
+                    interessee.GestionTransfertsClub.Offres.Add(new OffreContrat(contrat.Joueur, salaire, dureeContrat));
+                    //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
                 }
+            }
+        }
+
+        public void ConsiderationOffres()
+        {
+            foreach(OffreContrat oc in GestionTransfertsClub.Offres)
+            {
+                oc.Joueur.ConsidererOffre(oc, this);
+            }
+
+            GestionTransfertsClub.Offres.Clear();
+        }
+
+        public void FaireOffreJoueurs()
+        {
+            if(GestionTransfertsClub.JoueursCibles.Count > 0)
+            {
+                Joueur cible = GestionTransfertsClub.JoueursCibles[0];
+                int salaire = (int)(cible.EstimerSalaire() * (Session.Instance.Random(80, 120) / 100.0f));
+                GestionTransfertsClub.Offres.Add(new OffreContrat(cible, salaire, Session.Instance.Random(1, 5)));
             }
         }
 
         public void RechercherJoueursLibres()
         {
+            GestionTransfertsClub.JoueursCibles.Clear();
+
             float niveau = Niveau();
             Pays paysClub = Ville.Pays();
 
@@ -274,15 +339,43 @@ namespace TheManager
                     if (j.Niveau < 60 && j.Nationalite != paysClub) peut = false;
                     if(peut)
                     {
-                        int salaire = (int)(j.EstimerSalaire() * (Session.Instance.Random(80, 120) / 100.0f));
-                        j.Offres.Add(new OffreContrat(this, salaire, Session.Instance.Random(1, 5)));
+                        GestionTransfertsClub.JoueursCibles.Add(j);
                         joueursTrouves++;
-                        //Console.WriteLine(Nom + " emet une offre vers " + j);
                     }
                 }
                 i++;
                 if (i == Session.Instance.Partie.Gestionnaire.JoueursLibres.Count || joueursTrouves == joueursARechercher)
                     poursuivre = false;
+            }
+            GestionTransfertsClub.JoueursCibles.Sort(new Joueur_Niveau_Comparator());
+        }
+
+        /// <summary>
+        /// Complète une équipe à la fin de la période de transfert si le club n'a pas assez de joueurs pour faire la saison
+        /// Bien entendu, les joueurs générés sont plus faibles
+        /// </summary>
+        public void CompleterEquipe()
+        {
+            List<Joueur> joueurs = ListerJoueurPoste(Poste.GARDIEN);
+            if(joueurs.Count < 2)
+            {
+                for (int i = 0; i < 2 - joueurs.Count; i++) GenererJoueur(Poste.GARDIEN, 18, 22, (int)(CentreFormation * 0.75f));
+            }
+            joueurs = ListerJoueurPoste(Poste.DEFENSEUR);
+            if (joueurs.Count < 5)
+            {
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.DEFENSEUR, 18, 22, (int)(CentreFormation * 0.75f));
+            }
+
+            joueurs = ListerJoueurPoste(Poste.MILIEU);
+            if (joueurs.Count < 5)
+            {
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.MILIEU, 18, 22, (int)(CentreFormation * 0.75f));
+            }
+            joueurs = ListerJoueurPoste(Poste.ATTAQUANT);
+            if (joueurs.Count < 5)
+            {
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.ATTAQUANT, 18, 22, (int)(CentreFormation * 0.75f));
             }
         }
 

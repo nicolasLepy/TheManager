@@ -290,9 +290,30 @@ namespace TheManager
 
         private void EtablirCotes()
         {
-            float domN = Domicile.Niveau();
+            float domN = Domicile.Niveau() * 1.2f;
             float extN = Exterieur.Niveau();
-            if(domN > extN)
+
+            float rapportD = domN / extN;
+            rapportD *= rapportD;
+
+            float rapportE = extN / domN;
+            rapportE *= rapportE;
+
+            if(rapportD < 1)
+            {
+                Cote1 = 1 / rapportD;
+                Cote2 = 1 / (1-rapportD);
+            }
+            else
+            {
+                Cote2 = 1 / rapportE;
+                Cote1 = 1 / (1 - rapportE);
+            }
+
+            CoteN = (Cote1 + Cote2) / 2;
+
+            /*
+            if (domN > extN)
             {
                 domN *= 2f;
             }
@@ -308,7 +329,7 @@ namespace TheManager
             //ratio = Exterieur.Niveau() / Domicile.Niveau();
             ratio = ratioE / (ratioD + ratioE);
             Cote2 = 1 / ratio;// ((ratio * 50) / 100);
-            CoteN = (Cote1 + Cote2) / 2;
+            CoteN = (Cote1 + Cote2) / 2;*/
         }
 
         public Match(Club domicile, Club exterieur, DateTime jour, bool prolongationSiNul, Match matchAller = null)
@@ -531,7 +552,7 @@ namespace TheManager
             //int minute = Session.Instance.Random(1, 50);
             //int miTemps = Session.Instance.Random(1, 3);
             EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, _minute, _miTemps);
-            j.ButsMarques++;
+            if(j !=null) j.ButsMarques++;
             _evenements.Add(em);
         }
 

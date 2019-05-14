@@ -66,7 +66,9 @@ namespace TheManager_GUI
 
             foreach (Contrat ct in c.Contrats)
             {
-                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €"});
+                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €", DebutContrat = ct.Debut.ToShortDateString()});
+                if((ct.Debut.Year == Session.Instance.Partie.Date.Year-1 && ct.Debut.Month < 7) || (ct.Debut.Year == Session.Instance.Partie.Date.Year && ct.Debut.Month >= 7))
+                    dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.Joueur, Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Salaire = ct.Salaire + " €" });
             }
 
             Style s = new Style();
@@ -199,5 +201,6 @@ namespace TheManager_GUI
         public string Salaire { get; set; }
         public int Niveau { get; set; }
         public int Potentiel { get; set; }
+        public string DebutContrat { get; set; }
     }
 }

@@ -45,17 +45,33 @@
 					</DataGrid.Columns>
 				</DataGrid>
 			</StackPanel>
-			<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgJoueurs" MouseDoubleClick="DgJoueurs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
-					<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
-					<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
-					<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
-					<DataGridTextColumn Header="Potentiel" Binding="{Binding Potentiel}"/>
-					<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
-					<DataGridTextColumn Header="Fin du contrat" Binding="{Binding Contrat}"/>
-				</DataGrid.Columns>
-			</DataGrid>
+			<StackPanel Orientation="Horizontal">
+				<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgJoueurs" MouseDoubleClick="DgJoueurs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+						<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
+						<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
+						<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
+						<DataGridTextColumn Header="Potentiel" Binding="{Binding Potentiel}"/>
+						<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
+						<DataGridTextColumn Header="Début du contrat" Binding="{Binding DebutContrat}"/>
+						<DataGridTextColumn Header="Fin du contrat" Binding="{Binding Contrat}"/>
+					</DataGrid.Columns>
+				</DataGrid>
+				<StackPanel Orientation="Vertical">
+					<Label Content="Arrivées cette année" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgArrivees"  Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
+							<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</StackPanel>
+				
+				
+
+			</StackPanel>
 		</StackPanel>
     </Grid>
 </Window>

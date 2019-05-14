@@ -195,11 +195,17 @@ namespace TheManager
             //Période des transferts
             if(Options.Transferts)
             {
-
+                //Premier jour du mercato, le club identifie une liste de joueurs à recruter
+                if(Date.Month == 7 && Date.Day == 2)
+                {
+                    foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
+                            (c as Club_Ville).RechercherJoueursLibres();
+                }
                 if (Date.Month == 7 || Date.Month == 8)
                 {
+
                     //Joueurs checks leurs offres
-                    foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
+                    /*foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
                     List<Joueur> aRetirer = new List<Joueur>();
                     foreach (Joueur j in Gestionnaire.JoueursLibres)
                     {
@@ -207,14 +213,18 @@ namespace TheManager
                         if (j.Club != null) aRetirer.Add(j);
                     }
                     foreach (Joueur j in aRetirer) Gestionnaire.JoueursLibres.Remove(j);
-
+                    */
                     //Clubs recherchent des joueurs libres
-                    foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
+                    foreach (Club c in Gestionnaire.Clubs)
+                    {
+                        Club_Ville cv = c as Club_Ville;
+                        if (cv != null)
                         {
-                            //Le club part en recherche en moyenne un peu moins d'un fois par semaine
-                            if (Session.Instance.Random(1, 14) == 1)
-                                (c as Club_Ville).RechercherJoueursLibres();
+                            cv.ConsiderationOffres();
+                            cv.FaireOffreJoueurs();
                         }
+                    }
+
                 }
 
 
@@ -224,6 +234,19 @@ namespace TheManager
             if (Date.Day == 2 && Date.Month == 7)
             {
                 _gestionnaire.RetraiteJoueursLibres();
+            }
+
+            //Les équipes sont complétées à la fin de la période de transfert si elles n'ont pas assez de joueurs
+            if(Date.Day == 1 && Date.Month == 9)
+            {
+                foreach (Club c in _gestionnaire.Clubs)
+                {
+                    Club_Ville cv = c as Club_Ville;
+                    if (cv != null)
+                    {
+                        cv.CompleterEquipe();
+                    }
+                }
             }
 
             //Salaires des clubs && récupération sponsor

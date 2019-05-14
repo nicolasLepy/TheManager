@@ -11,6 +11,8 @@ namespace TheManager
     public class Contrat
     {
         [DataMember]
+        private DateTime _debut;
+        [DataMember]
         private int _salaire;
         [DataMember]
         private DateTime _fin;
@@ -22,13 +24,15 @@ namespace TheManager
         [DataMember]
         public bool Transferable { get; set; }
         public Joueur Joueur { get => _joueur; }
+        public DateTime Debut { get => _debut; }
 
-        public Contrat(Joueur joueur, int salaire, DateTime fin)
+        public Contrat(Joueur joueur, int salaire, DateTime fin, DateTime debut)
         {
             _joueur = joueur;
             _salaire = salaire;
             _fin = fin;
             Transferable = false;
+            _debut = debut;
         }
 
         public void MettreAJour(int salaire, DateTime fin)
