@@ -251,7 +251,13 @@ namespace TheManager
                     int niveau = int.Parse(e2.Attribute("niveau").Value);
                     ILocalisation localisation = _gestionnaire.String2Localisation(e2.Attribute("localisation").Value);
                     DateTime debut = String2Date(debutSaison);
-                    Competition c = new Competition(nom, logo, debut, nomCourt, championnat, niveau);
+                    int periodicite = 1;
+                    if(e2.Attribute("periodicite") != null)
+                        periodicite = int.Parse(e2.Attribute("periodicite").Value);
+                    int anneesRestantes = 1;
+                    if (e2.Attribute("anneesRestantes") != null)
+                        anneesRestantes = int.Parse(e2.Attribute("anneesRestantes").Value);
+                    Competition c = new Competition(nom, logo, debut, nomCourt, championnat, niveau, periodicite, anneesRestantes);
                     localisation.Competitions().Add(c);
                     //_gestionnaire.Competitions.Add(c);
                 }

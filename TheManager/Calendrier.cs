@@ -307,7 +307,7 @@ namespace TheManager
                 List<Match> aller = new List<Match>(res);
                 foreach (Match m in aller)
                 {
-                    DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, tour.Programmation.JoursDeMatchs[0].Month, tour.Programmation.JoursDeMatchs[0].Day, tour.Programmation.HeureParDefaut.Heures, tour.Programmation.HeureParDefaut.Minutes, 0);
+                    DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, tour.Programmation.JoursDeMatchs[1].Month, tour.Programmation.JoursDeMatchs[1].Day, tour.Programmation.HeureParDefaut.Heures, tour.Programmation.HeureParDefaut.Minutes, 0);
                     if (Utils.EstAvantSansAnnee(jour, tour.Programmation.Initialisation)) jour = jour.AddYears(1);
                     Match retour = new Match(m.Exterieur, m.Domicile, jour, !tour.AllerRetour, m);
                     matchs.Add(retour);

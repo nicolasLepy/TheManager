@@ -165,7 +165,7 @@ namespace TheManager
         /// <returns></returns>
         public override Club Vainqueur()
         {
-            return _matchs[_matchs.Count - 1].Vainqueur;
+            return null;
         }
     }
 }

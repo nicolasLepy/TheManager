@@ -366,7 +366,7 @@ namespace TheManager
             {
                 for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.DEFENSEUR, 18, 22, (int)(CentreFormation * 0.75f));
             }
-
+            
             joueurs = ListerJoueurPoste(Poste.MILIEU);
             if (joueurs.Count < 5)
             {

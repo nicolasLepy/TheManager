@@ -63,6 +63,10 @@ namespace TheManager
         private StatistiquesCompetitions _statistiques;
         [DataMember]
         private List<Competition> _editionsPrecedentes;
+        [DataMember]
+        private int _periodicite;
+        [DataMember]
+        private int _anneeRestante;
 
         public string Nom { get => _nom; }
         public List<Tour> Tours { get => _tours; }
@@ -82,7 +86,7 @@ namespace TheManager
         /// </summary>
         public int Niveau { get => _niveau; }
 
-        public Competition(string nom, string logo, DateTime debutSaison, string nomCourt, bool championnat, int niveau)
+        public Competition(string nom, string logo, DateTime debutSaison, string nomCourt, bool championnat, int niveau, int periodicite, int anneeRestante)
         {
             _tours = new List<Tour>();
             _nom = nom;
@@ -94,6 +98,8 @@ namespace TheManager
             _niveau = niveau;
             _statistiques = new StatistiquesCompetitions(0);
             _editionsPrecedentes = new List<Competition>();
+            _periodicite = periodicite;
+            _anneeRestante = anneeRestante;
         }
 
         public void InitialiserQualificationsAnneesSuivantes()
@@ -110,19 +116,25 @@ namespace TheManager
         /// </summary>
         public void RAZ()
         {
-            MAJRecords();
-            Competition copieArchive = new Competition(_nom, _logo, _debutSaison, _nomCourt, _championnat, _niveau);
-            foreach (Tour t in Tours) copieArchive.Tours.Add(t.Copie());
-            copieArchive.Statistiques = Statistiques;
-            _editionsPrecedentes.Add(copieArchive);
-            for (int i = 0; i<Tours.Count; i++)
+            _anneeRestante--;
+            if (_anneeRestante == 0)
             {
-                Tours[i].RAZ();
-                List<Club> clubs = new List<Club>(_qualificationAnneeSuivante[i]);
-                foreach (Club c in clubs) Tours[i].Clubs.Add(c);
+                _anneeRestante = _periodicite;
+            
+                MAJRecords();
+                Competition copieArchive = new Competition(_nom, _logo, _debutSaison, _nomCourt, _championnat, _niveau, _periodicite, _anneeRestante);
+                foreach (Tour t in Tours) copieArchive.Tours.Add(t.Copie());
+                copieArchive.Statistiques = Statistiques;
+                _editionsPrecedentes.Add(copieArchive);
+                for (int i = 0; i<Tours.Count; i++)
+                {
+                    Tours[i].RAZ();
+                    List<Club> clubs = new List<Club>(_qualificationAnneeSuivante[i]);
+                    foreach (Club c in clubs) Tours[i].Clubs.Add(c);
+                }
+                InitialiserQualificationsAnneesSuivantes();
+                TourActuel = -1;
             }
-            InitialiserQualificationsAnneesSuivantes();
-            TourActuel = -1;
         }
 
         private void MAJRecords()
@@ -141,7 +153,7 @@ namespace TheManager
 
         public void TourSuivant()
         {
-            if(TourActuel > -1)
+            if(TourActuel > -1 && TourActuel < _tours.Count)
                 _tours[TourActuel].DistribuerDotations();
             if (_tours.Count > TourActuel + 1)
             {
