@@ -30,6 +30,8 @@ namespace TheManager_GUI
 
 
             _partie = Session.Instance.Partie;
+
+            imgClub.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + _partie.Club.Logo + ".png"));
             comboPays.Items.Clear();
             foreach (Continent c in _partie.Gestionnaire.Continents)
             {
@@ -82,22 +84,7 @@ namespace TheManager_GUI
                     lbGrosEcart.Content = "";
 
 
-                if(c.Championnat)
-                {
-                    dgClubs.Items.Clear();
-                    foreach(Club cl in c.Tours[0].Clubs)
-                    {
-                        int budget = 0;
-                        int masseSalariale = 0;
-                        if (cl as Club_Ville != null)
-                        {
-                            budget = (cl as Club_Ville).Budget;
-                            masseSalariale = (int)(cl as Club_Ville).MasseSalariale;
-                        }
-
-                        dgClubs.Items.Add(new ClubElement{ Nom = cl.NomCourt, Niveau = cl.Niveau(), Budget = budget, Affluence = c.AffluenceMoyenne(cl), MasseSalariale = masseSalariale });
-                    }
-                }
+                
 
                 Palmares(c);
 
@@ -169,7 +156,7 @@ namespace TheManager_GUI
 
         private void BtnSimuler2_Click(object sender, RoutedEventArgs e)
         {
-            for(int i = 0; i<100;i++)
+            for(int i = 0; i<10;i++)
             {
                 _partie.Avancer();
                 while (!(_partie.Date.Month == 6 && _partie.Date.Day == 13))
@@ -261,8 +248,8 @@ namespace TheManager_GUI
                 foreach (Club c in poule)
                 {
                     i++;
-                    dgClassement.Items.Add(new ClassementElement { Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c) });
-                }
+                    dgClassement.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png", Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c) });
+                    }
             }
         }
 
@@ -273,17 +260,17 @@ namespace TheManager_GUI
             foreach(Club c in t.Classement())
             {
                 i++;
-                dgClassement.Items.Add(new ClassementElement { Club=c, Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c)});
+                dgClassement.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png", Club =c, Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c)});
             }
             Style s = new Style();
-            int height = 16;
             /*s.Setters.Add(new Setter(){ Property = Control.HeightProperty, Value = height });
             s.Setters.Add(new Setter() { Property = Control.FontSizeProperty, Value = 12 });
             s.Setters.Add(new Setter() { Property = Control.BorderThicknessProperty, Value = 1 });*/
-            s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("backgroundColor") as SolidColorBrush });
+            
+            s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
             s.Setters.Add(new Setter() { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
 
-
+            
             //Pour chaque couleur
             foreach(Qualification q in t.Qualifications)
             {
@@ -338,8 +325,6 @@ namespace TheManager_GUI
                     int annee = t.Matchs[t.Matchs.Count - 1].Jour.Year;
                     dgPalmares.Items.Add(new PalmaresElement { Annee = annee, Club = vainqueur.Nom });
                 }
-
-
             }
         }
 
@@ -351,6 +336,16 @@ namespace TheManager_GUI
                 Session.Instance.Partie.Sauvegarder(saveFileDialog.FileName);
             }
         }
+
+        private void BtnParticipants_Click(object sender, RoutedEventArgs e)
+        {
+            Competition c = lbChampionnats.SelectedItem as Competition;
+            if (c != null)
+            {
+                Windows_Participants participants = new Windows_Participants(c);
+                participants.Show();
+            }
+        }
     }
 
     public struct PalmaresElement
@@ -359,14 +354,7 @@ namespace TheManager_GUI
         public string Club { get; set; }
     }
 
-    public struct ClubElement
-    {
-        public string Nom { get; set; }
-        public float Niveau { get; set; }
-        public int Budget { get; set; }
-        public int Affluence { get; set; }
-        public int MasseSalariale { get; set; }
-    }
+    
 
     public struct ButeurElement
     {
@@ -390,6 +378,7 @@ namespace TheManager_GUI
 
     public struct ClassementElement
     {
+        public string Logo { get; set; }
         public int Classement { get; set; }
         public string Nom { get; set; }
         public int Pts { get; set; }

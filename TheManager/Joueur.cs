@@ -28,12 +28,15 @@ namespace TheManager
         public int Buts { get; set; }
         [DataMember]
         public int MatchsJoues { get; set; }
-        public HistoriqueJoueur(int niveau, int annee, int buts, int matchJoues)
+        [DataMember]
+        public Club_Ville Club { get; set; }
+        public HistoriqueJoueur(int niveau, int annee, int buts, int matchJoues, Club_Ville club)
         {
             Niveau = niveau;
             Annee = annee;
             Buts = buts;
             MatchsJoues = matchJoues;
+            Club = club;
         }
     }
 
@@ -203,7 +206,7 @@ namespace TheManager
             {
                 _niveau -= Session.Instance.Random(1, 5);
             }
-            _historique.Add(new HistoriqueJoueur(_niveau, Session.Instance.Partie.Date.Year + 1,ButsMarques, MatchsJoues));
+            _historique.Add(new HistoriqueJoueur(_niveau, Session.Instance.Partie.Date.Year + 1,ButsMarques, MatchsJoues, Club));
             ButsMarques = 0;
             MatchsJoues = 0;
         }

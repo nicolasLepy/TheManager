@@ -16,16 +16,20 @@ namespace TheManager
         private Gestionnaire _gestionnaire;
         [DataMember]
         private Options _options;
+        [DataMember]
+        private Club_Ville _club;
 
         public DateTime Date { get { return _date; } }
         public Gestionnaire Gestionnaire { get => _gestionnaire; }
         public Options Options { get => _options; }
+        public Club_Ville Club { get => _club; set => _club = value; }
 
         public Partie()
         {
             _date = new DateTime(2018, 07, 01);
             _gestionnaire = new Gestionnaire();
             _options = new Options();
+            _club = null;
         }
 
         public void Exportations(Competition c)

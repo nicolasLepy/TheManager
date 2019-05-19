@@ -35,13 +35,20 @@
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
 				</StackPanel>
-				<DataGrid IsReadOnly="True" Name="dgMatchs" MaxHeight="350" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid IsReadOnly="True" Name="dgMatchs" MaxHeight="350" MaxWidth="375" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="" Binding="{Binding Date}"/>
 						<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
 						<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
 						<DataGridTextColumn Header="" Binding="{Binding Score}"/>
 						<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+					</DataGrid.Columns>
+				</DataGrid>
+				<DataGrid IsReadOnly="True" Name="dgHistorique" MaxHeight="350" Width="150" MouseDoubleClick="DgHistorique_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="" Binding="{Binding Annee}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+						<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
 					</DataGrid.Columns>
 				</DataGrid>
 			</StackPanel>

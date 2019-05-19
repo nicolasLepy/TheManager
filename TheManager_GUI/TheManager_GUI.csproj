@@ -64,6 +64,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Windows_ChoixClub.xaml.cs">
+      <DependentUpon>Windows_ChoixClub.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows_Club.xaml.cs">
       <DependentUpon>Windows_Club.xaml</DependentUpon>
     </Compile>
@@ -85,6 +88,9 @@
     <Compile Include="Windows_Options.xaml.cs">
       <DependentUpon>Windows_Options.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Windows_Participants.xaml.cs">
+      <DependentUpon>Windows_Participants.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,6 +103,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows_ChoixClub.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows_Club.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -122,6 +132,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows_Options.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows_Participants.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

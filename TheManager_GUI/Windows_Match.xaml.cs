@@ -62,6 +62,25 @@ namespace TheManager_GUI
                     }
                     dgEvenements.Items.Add(new EvenementElement { Col1 = c1, Col2 = c2, Col3 = c3, Col4 = c4 });
                 }
+
+                if(em.Type == Evenement.CARTON_ROUGE)
+                {
+                    string c1 = "";
+                    string c2 = "";
+                    string c3 = "";
+                    string c4 = "";
+                    if (em.Club == match.Domicile)
+                    {
+                        c1 = em.MinuteStr;
+                        c2 = em.Joueur.Prenom + " " + em.Joueur.Nom;
+                    }
+                    else
+                    {
+                        c4 = em.MinuteStr;
+                        c3 = em.Joueur.Prenom + " " + em.Joueur.Nom;
+                    }
+                    dgCR.Items.Add(new EvenementElement { Col1 = c1, Col2 = c2, Col3 = c3, Col4 = c4 });
+                }
                 
             }
 

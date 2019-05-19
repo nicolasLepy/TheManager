@@ -137,8 +137,8 @@ namespace TheManager_GUI
             {
                 Session.Instance.Partie.Gestionnaire.LocalisationCompetition(c).Competitions().Remove(c);
             }
-            Windows_Menu menu = new Windows_Menu();
-            menu.Show();
+            Windows_ChoixClub wch = new Windows_ChoixClub();
+            wch.Show();
 
             Close();
         }

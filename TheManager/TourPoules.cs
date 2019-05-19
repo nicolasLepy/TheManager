@@ -69,6 +69,13 @@ namespace TheManager
                     Club c = poules[i][q.Classement - 1];
                     if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
                     else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                    if (q.Competition.Championnat && c.Championnat != null)
+                    {
+                        if (q.Competition.Niveau > c.Championnat.Niveau)
+                            c.Supporters = (int)(c.Supporters * 1.4f);
+                        else if (q.Competition.Niveau < c.Championnat.Niveau)
+                            c.Supporters = (int)(c.Supporters / 1.4f);
+                    }
                 }
             }
         }

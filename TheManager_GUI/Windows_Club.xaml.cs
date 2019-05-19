@@ -18,6 +18,15 @@ using TheManager.Comparators;
 
 namespace TheManager_GUI
 {
+
+    public class HistoriqueClubComparator : IComparer<HistoriqueClubElement>
+    {
+        public int Compare(HistoriqueClubElement x, HistoriqueClubElement y)
+        {
+            return y.Annee - x.Annee;
+        }
+    }
+
     /// <summary>
     /// Logique d'interaction pour Windows_Club.xaml
     /// </summary>
@@ -70,6 +79,34 @@ namespace TheManager_GUI
                 if((ct.Debut.Year == Session.Instance.Partie.Date.Year-1 && ct.Debut.Month < 7) || (ct.Debut.Year == Session.Instance.Partie.Date.Year && ct.Debut.Month >= 7))
                     dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.Joueur, Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Salaire = ct.Salaire + " €" });
             }
+
+            List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();
+            foreach(Competition competition in Session.Instance.Partie.Gestionnaire.Competitions)
+            {
+                int annee = 2019;
+                foreach(Competition ancienne in competition.EditionsPrecedentes)
+                {
+                    if(ancienne.Championnat && ancienne.Tours[0].Clubs.Contains(c))
+                    {
+                        int classement = 0;
+                        //Si la compétition était active (tour 0 un tour de type championnat, pas inactif)
+                        if((ancienne.Tours[0] as TourChampionnat) != null)
+                        {
+                            classement = (ancienne.Tours[0] as TourChampionnat).Classement().IndexOf(c) + 1;
+                        }
+                        
+                        //int annee = ancienne.Tours[0].Matchs[ancienne.Tours[0].Matchs.Count - 1].Jour.Year;
+                        lhce.Add(new HistoriqueClubElement { Competition = ancienne, Classement = classement, Annee = annee });
+                        annee++;
+                    }
+                }
+            }
+            lhce.Sort(new HistoriqueClubComparator());
+            foreach(HistoriqueClubElement hce in lhce)
+            {
+                dgHistorique.Items.Add(hce);
+            }
+
 
             Style s = new Style();
             s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("backgroundColor") as SolidColorBrush });
@@ -178,6 +215,22 @@ namespace TheManager_GUI
                 wj.Show();
             }
         }
+
+        private void DgHistorique_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (dgHistorique.SelectedItem != null)
+            {
+                HistoriqueClubElement hce = (HistoriqueClubElement)dgHistorique.SelectedItem;
+                //Afficher une fenêtre compétition
+            }
+        }
+    }
+
+    public struct HistoriqueClubElement
+    {
+        public int Annee { get; set; }
+        public Competition Competition { get; set; }
+        public int Classement { get; set; }
     }
 
     public struct MatchClubElement

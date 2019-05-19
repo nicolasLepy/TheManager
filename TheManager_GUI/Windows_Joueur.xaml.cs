@@ -34,6 +34,27 @@ namespace TheManager_GUI
             lbJoueur.Content = joueur.ToString();
             lbAge.Content = joueur.Age + " ans";
 
+            if(joueur.Historique.Count > 0)
+            {
+                Club precedant = null;
+                int arrivee = joueur.Historique[0].Annee;
+                foreach (HistoriqueJoueur hj in joueur.Historique)
+                {
+                    if (precedant == null) precedant = hj.Club;
+                    else if (precedant != hj.Club)
+                    {
+                        int depart = hj.Annee;
+
+                        dgHistorique.Items.Add(new JoueurHistoriqueElement { Club = precedant, AnneeA = arrivee, AnneeD = depart });
+
+                        arrivee = hj.Annee;
+                    }
+                    precedant = hj.Club;
+                }
+                dgHistorique.Items.Add(new JoueurHistoriqueElement { Club = precedant, AnneeA = arrivee, AnneeD = joueur.Historique[joueur.Historique.Count-1].Annee });
+
+            }
+
             ChartValues<int> niveaux = new ChartValues<int>();
             ChartValues<int> buts = new ChartValues<int>();
             ChartValues<int> joues = new ChartValues<int>();
@@ -86,5 +107,12 @@ namespace TheManager_GUI
         {
             Close();
         }
+    }
+
+    public struct JoueurHistoriqueElement
+    {
+        public int AnneeA { get; set; }
+        public int AnneeD { get; set; }
+        public Club Club { get; set; }
     }
 }

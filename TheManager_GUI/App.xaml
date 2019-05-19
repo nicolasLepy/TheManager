@@ -1,13 +1,16 @@
 ﻿<Application x:Class="TheManager_GUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:TheManager_GUI"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+			 xmlns:local="clr-namespace:TheManager_GUI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
+
 		<Color x:Key="Color1">#1c7435</Color>
 		<Color x:Key="Color2">#a4f17a</Color>
 		<FontFamily x:Key="Font">Arial Narrow</FontFamily>
-
+		<FontFamily x:Key="FontClassement">Bitstream Vera Sans</FontFamily>
+		
 		<SolidColorBrush x:Key="color1" Color="{DynamicResource Color1}" />
 		<SolidColorBrush x:Key="color2" Color="{DynamicResource Color2}" />
 		<SolidColorBrush x:Key="backgroundColor" Color="#1c262b"/>
@@ -96,6 +99,7 @@
 			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
 			<Setter Property="Background" Value="{StaticResource backgroundColor}" />
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
+			<Setter Property="AlternationCount" Value="2" />
 		</Style>
 
 		<Style x:Key="StyleDataHeaderGrid" TargetType="{x:Type DataGridColumnHeader}">
@@ -103,8 +107,8 @@
 			<Setter Property="Height" Value="16"/>
 			<Setter Property="Background" Value="{StaticResource backgroundColor}" />
 			<Setter Property="Foreground" Value="{StaticResource color1}" />
-
 		</Style>
+		
 		<Style x:Key="StyleDataCellGrid" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
 			<Setter Property="FontSize" Value="12"/>
 			<Setter Property="Height" Value="16"/>
@@ -112,6 +116,57 @@
 			<Setter Property="Background" Value="{StaticResource backgroundColor}" />
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
 		</Style>
+		
+		<Style x:Key="StyleDataRowGrid" TargetType="{x:Type DataGridRow}">
+			<Style.Triggers>
+				<Trigger Property="ItemsControl.AlternationIndex" Value="0">
+					<Setter Property="Background" Value="GreenYellow"/>
+				</Trigger>
+				<Trigger Property="ItemsControl.AlternationIndex" Value="1">
+					<Setter Property="Background" Value="Bisque"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
+
+
+
+
+		<Style x:Key="StyleDataGridClassement" TargetType="{x:Type DataGrid}">
+			<Setter Property="FontFamily" Value="{DynamicResource FontClassement}"/>
+			<!--<Setter Property="Background" Value="{StaticResource backgroundColor}" />
+			<Setter Property="Foreground" Value="{StaticResource color2}" />-->
+			<Setter Property="AlternationCount" Value="2" />
+		</Style>
+
+		<Style x:Key="StyleDataHeaderGridClassement" TargetType="{x:Type DataGridColumnHeader}">
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="Height" Value="16"/>
+			<!--<Setter Property="Background" Value="{StaticResource backgroundColor}" />
+			<Setter Property="Foreground" Value="{StaticResource color1}" />-->
+		</Style>
+
+		<Style x:Key="StyleDataCellGridClassement" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+			<Setter Property="FontSize" Value="13"/>
+			<Setter Property="FontStyle" Value="Italic"/>
+			<Setter Property="Height" Value="18"/>
+			<Setter Property="BorderThickness" Value="0"/>
+			<Setter Property="BorderBrush" Value="Transparent"/>
+			<!--<Setter Property="Background" Value="{StaticResource backgroundColor}" />
+			<Setter Property="Foreground" Value="{StaticResource color2}" /> -->
+		</Style>
+
+		<Style x:Key="StyleDataRowGridClassement" TargetType="{x:Type DataGridRow}">
+			<Style.Triggers>
+				<Trigger Property="ItemsControl.AlternationIndex" Value="0">
+					<Setter Property="Background" Value="BlueViolet"/>
+				</Trigger>
+				<Trigger Property="ItemsControl.AlternationIndex" Value="1">
+					<Setter Property="Background" Value="Gray"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+
 
 	</Application.Resources>
 </Application>

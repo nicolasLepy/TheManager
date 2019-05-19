@@ -8,6 +8,38 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
+    [DataContract(IsReference =true)]
+    public class Statistiques
+    {
+        [DataMember]
+        public int Possession1 { get; set; }
+        [DataMember]
+        public int Possession2 { get; set; }
+
+        public float PossessionDomicile
+        {
+            get
+            {
+                return Possession1 / (Possession1 + Possession2 + 0.0f);
+            }
+        }
+
+        public float PossessionExterieur { get => 1 - PossessionDomicile; }
+
+        [DataMember]
+        public int TirsDomicile { get; set; }
+        [DataMember]
+        public int TirsExterieurs { get; set; }
+
+
+        public Statistiques()
+        {
+            TirsDomicile = 0;
+            TirsExterieurs = 0;
+            Possession1 = 0;
+            Possession2 = 0;
+        }
+    }
 
     [DataContract(IsReference =true)]
     public class Match
@@ -34,11 +66,7 @@ namespace TheManager
         [DataMember]
         private List<EvenementMatch> _evenements;
         [DataMember]
-        private float _possession;
-        [DataMember]
-        private int _tirs1;
-        [DataMember]
-        private int _tirs2;
+        private Statistiques _statistiques;
         [DataMember]
         private List<Joueur> _compo1;
         [DataMember]
@@ -74,8 +102,7 @@ namespace TheManager
         public int Tab1 { get => _tab1; }
         public int Tab2 { get => _tab2; }
         public List<Journaliste> Journalistes { get => _journalistes; }
-        public int Tirs1 { get => _tirs1; }
-        public int Tirs2 { get => _tirs2; }
+        public Statistiques Statistiques { get => _statistiques; }
         [DataMember]
         public float Cote1 { get; set; }
         [DataMember]
@@ -252,12 +279,12 @@ namespace TheManager
 
         public float PossessionDomicile
         {
-            get { return _possession; }
+            get { return _statistiques.PossessionDomicile; }
         }
 
         public float PossessionExterieur
         {
-            get { return 100 - _possession; }
+            get { return _statistiques.PossessionExterieur; }
         }
 
         public int ScoreMT1
@@ -290,15 +317,24 @@ namespace TheManager
 
         private void EtablirCotes()
         {
-            float domN = Domicile.Niveau() * 1.2f;
+            float domN = Domicile.Niveau() * 1.1f;
             float extN = Exterieur.Niveau();
-
+            
             float rapportD = domN / extN;
-            rapportD *= rapportD;
+            rapportD *= rapportD * rapportD * rapportD;
 
             float rapportE = extN / domN;
-            rapportE *= rapportE;
+            rapportE *= rapportE * rapportE * rapportE;
 
+            
+            Cote1 = (float)(1.01f + (1 / Math.Exp((2.5f * rapportD - 3f))));
+            Cote2 = (float)(1.01f + (1 / Math.Exp((2.5f * rapportE - 3f))));
+            
+
+            /*Cote1 = (float)(-1.64266 * Math.Pow(rapportD, 6) + 24.1675 * Math.Pow(rapportD, 5) - 88.8353 * Math.Pow(rapportD, 4) + 117.695 * Math.Pow(rapportD, 3) - 29.6458 * Math.Pow(rapportD, 2) - 49.5219 * rapportD + 30.2832);
+            Cote2 = (float)(-1.64266 * Math.Pow(rapportE, 6) + 24.1675 * Math.Pow(rapportE, 5) - 88.8353 * Math.Pow(rapportE, 4) + 117.695 * Math.Pow(rapportE, 3) - 29.6458 * Math.Pow(rapportE, 2) - 49.5219 * rapportE + 30.2832);
+            */
+            /*
             if(rapportD < 1)
             {
                 Cote1 = 1 / rapportD;
@@ -308,7 +344,7 @@ namespace TheManager
             {
                 Cote2 = 1 / rapportE;
                 Cote1 = 1 / (1 - rapportE);
-            }
+            }*/
 
             CoteN = (Cote1 + Cote2) / 2;
 
@@ -341,9 +377,7 @@ namespace TheManager
             _score2 = 0;
             _tab2 = 0;
             _tab1 = 0;
-            _tirs1 = 0;
-            _tirs2 = 0;
-            _possession = 0;
+            _statistiques = new Statistiques();
             _prolongations = false;
             _evenements = new List<EvenementMatch>();
             _compo1 = new List<Joueur>();
@@ -362,7 +396,7 @@ namespace TheManager
         private void EtablirAffluence()
         {
             _affluence = (int)(Domicile.Supporters * (Session.Instance.Random(6, 14) / 10.0f));
-            _affluence = (int)(_affluence * Exterieur.Reputation / (Domicile.Reputation + 0.0f));
+            _affluence = (int)(_affluence * (Exterieur.Niveau() / (Domicile.Niveau())));
             if (_affluence > Domicile.Stade.Capacite) _affluence = Domicile.Stade.Capacite;
             if(Domicile as Club_Ville != null)
             {

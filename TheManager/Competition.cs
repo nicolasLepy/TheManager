@@ -79,6 +79,7 @@ namespace TheManager
         public StatistiquesCompetitions Statistiques { get => _statistiques; set => _statistiques = value; }
         /// <summary>
         /// Est un championnat (L1, L2)
+        /// Fixé : si c'est un championnat, le tour principal est le tour à l'index 0
         /// </summary>
         public bool Championnat { get => _championnat; }
         /// <summary>

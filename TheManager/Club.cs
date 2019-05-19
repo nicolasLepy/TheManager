@@ -32,7 +32,7 @@ namespace TheManager
 
         public string Nom { get => _nom; }
         public int Reputation { get => _reputation; }
-        public int Supporters { get => _supporters; }
+        public int Supporters { get => _supporters; set => _supporters = value; }
         public int CentreFormation { get => _centreFormation;}
         public Stade Stade { get => _stade; }
         public string Logo { get => _logo; }
@@ -154,6 +154,11 @@ namespace TheManager
             return prix;
         }
 
+
+        public override string ToString()
+        {
+            return Nom;
+        }
 
     }
 }

@@ -89,19 +89,30 @@ namespace TheManager
             {
                 foreach (Match m in matchs)
                 {
+                    Club c = null;
                     //Vainqueurs
                     if (q.Classement == 1)
                     {
-                        Club c = m.Vainqueur;
+                        c = m.Vainqueur;
                         if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
                         else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
                     }
                     //Perdants
                     else if (q.Classement == 2)
                     {
-                        Club c = m.Perdant;
+                        c = m.Perdant;
                         if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
                         else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                    }
+                    if(c != null)
+                    {
+                        if (q.Competition.Championnat && c.Championnat != null)
+                        {
+                            if (q.Competition.Niveau > c.Championnat.Niveau)
+                                c.Supporters = (int)(c.Supporters * 1.4f);
+                            else if (q.Competition.Niveau < c.Championnat.Niveau)
+                                c.Supporters = (int)(c.Supporters / 1.4f);
+                        }
                     }
                 }
             }

@@ -202,6 +202,7 @@ namespace TheManager
 
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
+                    if (logo == "") logo = "generic";
 
                     //Simplification
                     reputation = centreFormation;

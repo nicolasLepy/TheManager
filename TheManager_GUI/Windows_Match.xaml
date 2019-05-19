@@ -20,23 +20,32 @@
 			<Label Name="lbMT" Content="(2 - 0)" Style="{StaticResource StyleLabel1}"/>
 			<Label Name="lbStade" Content="Stade du Pré Fleuri" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
 			<Label Name="lbAffluence" Content="28500 spectateurs" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
-			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+			<Label Content="Buts" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
+			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" MaxHeight="100" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="" Binding="{Binding Col1}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Col2}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Col3}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Col4}"/>
 				</DataGrid.Columns>
-
+			</DataGrid>
+			<Label Content="Explusions" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
+			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" MaxHeight="100" Margin="20" Name="dgCR" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="" Binding="{Binding Col1}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Col2}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Col3}"/>
+					<DataGridTextColumn Header="" Binding="{Binding Col4}"/>
+				</DataGrid.Columns>
 			</DataGrid>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo1_MouseDoubleClick" Margin="20" Name="dgCompo1" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo1_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo1" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
 						<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
 					</DataGrid.Columns>
 				</DataGrid>
-				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo2_MouseDoubleClick" Margin="20" Name="dgCompo2" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo2_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo2" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 					<DataGrid.Columns>
 						<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
 						<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>

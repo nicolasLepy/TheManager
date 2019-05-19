@@ -1,0 +1,20 @@
+﻿<Window x:Class="TheManager_GUI.Windows_ChoixClub"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+        Title="Windows_ChoixClub" Height="300" Width="600" Style="{StaticResource StyleWindows}">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
+			<StackPanel Orientation="Horizontal">
+				<ListBox Name="lbPays" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbPays_SelectionChanged"></ListBox>
+				<ListBox Name="lbChampionnats" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged"></ListBox>
+				<ListBox Name="lbClubs" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbClubs_SelectionChanged"></ListBox>
+			</StackPanel>
+			<Button Content="Valider" Style="{StaticResource StyleButton1}" Width="150" Click="Button_Click"/>
+		</StackPanel>
+    </Grid>
+</Window>
