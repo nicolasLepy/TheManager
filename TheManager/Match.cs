@@ -110,6 +110,25 @@ namespace TheManager
         [DataMember]
         public float Cote2 { get; set; }
 
+        public Competition Competition
+        {
+            get
+            {
+                Competition res = null;
+                foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                {
+                    foreach(Tour t in c.Tours)
+                    {
+                        foreach(Match m in t.Matchs)
+                        {
+                            if (m == this) res = c;
+                        }
+                    }
+                }
+                return res;
+            }
+        }
+
         /// <summary>
         /// Si un match a été joué ou non
         /// </summary>
@@ -146,7 +165,6 @@ namespace TheManager
                     }
                     if (c == null)
                     {
-                        Console.WriteLine(_miTemps + " - " + Session.Instance.Partie.Date.ToShortDateString() + " " + Domicile.Nom + " - " + Exterieur.Nom + "  prolongations jouées + " + Prolongations + " prolongations si nul : " + _prolongationSiNul + " date du match " + Jour.ToShortDateString());
                         c = Domicile;
                     }
                 }
@@ -400,25 +418,35 @@ namespace TheManager
             if (_affluence > Domicile.Stade.Capacite) _affluence = Domicile.Stade.Capacite;
             if(Domicile as Club_Ville != null)
             {
-                (Domicile as Club_Ville).ModifierBudget(_affluence * Domicile.PrixBillet());
+                (Domicile as Club_Ville).ModifierBudget(_affluence * Domicile.PrixBillet);
             }
         }
 
-        private void DefinirCompo()
+        public void DefinirCompo()
         {
             _compo1 = new List<Joueur>(Domicile.Composition());
             _compo2 = new List<Joueur>(Exterieur.Composition());
             _compo1Terrain = new List<Joueur>(_compo1);
             _compo2Terrain = new List<Joueur>(_compo2);
-            foreach (Joueur j in _compo1)
+            
+        }
+
+        /// <summary>
+        /// Définir une composition en la passant en paramètre
+        /// </summary>
+        /// <param name="compo">Les joueurs</param>
+        /// <param name="club">Le club</param>
+        public void DefinirCompo(List<Joueur> compo, Club club)
+        {
+            if(club == Domicile)
             {
-                j.Energie -= Session.Instance.Random(13, 33);
-                j.MatchsJoues++;
+                _compo1 = new List<Joueur>(compo);
+                _compo1Terrain = new List<Joueur>(compo);
             }
-            foreach (Joueur j in _compo2)
+            else if(club == Exterieur)
             {
-                j.Energie -= Session.Instance.Random(13, 33);
-                j.MatchsJoues++;
+                _compo2 = new List<Joueur>(compo);
+                _compo2Terrain = new List<Joueur>(compo);
             }
         }
 
@@ -430,23 +458,17 @@ namespace TheManager
             this._diffNiveauRatio = (NiveauCompo(_compo1Terrain) * 1.05f) / NiveauCompo(_compo2Terrain);
         }
 
+        public void MinuteSuivante()
+        {
+            _minute++;
+        }
+
         public void Jouer()
         {
-            DefinirCompo();
             Club a = Domicile;
             Club b = Exterieur;
             CalculerDifferenceNiveau();
             EtablirAffluence();
-            /*if(NiveauCompo(Compo1) > NiveauCompo(Compo2))
-            {
-                a = Domicile;
-                b = Exterieur;
-            }
-            else
-            {
-                a = Exterieur;
-                b = Domicile;
-            }*/
 
             for(_miTemps = 1; _miTemps < 3; _miTemps++)
             {
@@ -510,6 +532,18 @@ namespace TheManager
 
         private void JouerMinute(Club a, Club b)
         {
+
+            foreach (Joueur j in _compo1)
+            {
+                if (Session.Instance.Random(2, 7) == 3) j.Energie--;
+                j.MatchsJoues++;
+            }
+            foreach (Joueur j in _compo2)
+            {
+                if (Session.Instance.Random(2, 7) == 3) j.Energie--;
+                j.MatchsJoues++;
+            }
+
             int diff = _diffNiveau;
             float diffRatio = _diffNiveauRatio;
 
@@ -521,24 +555,24 @@ namespace TheManager
                 b = temp;
             }
 
-            if (diffRatio < 0.05) IterationMatch(a, b, 2, 2, 8, 95);
-            if (diffRatio < 0.1) IterationMatch(a, b, 2, 2, 8, 80);
-            else if (diffRatio >= 0.1 && diffRatio < 0.2) IterationMatch(a, b, 2, 2, 8, 56);
-            else if (diffRatio >= 0.2 && diffRatio < 0.3) IterationMatch(a, b, 2, 2, 8, 46);
-            else if (diffRatio >= 0.3 && diffRatio < 0.4) IterationMatch(a, b, 2, 2, 8, 40);
-            else if (diffRatio >= 0.4 && diffRatio < 0.5) IterationMatch(a, b, 2, 3, 8, 35);
-            else if (diffRatio >= 0.5 && diffRatio < 0.6) IterationMatch(a, b, 2, 3, 8, 30);
-            else if (diffRatio >= 0.6 && diffRatio < 0.65) IterationMatch(a, b, 2, 3, 8, 20);
-            else if (diffRatio >= 0.65 && diffRatio < 0.7) IterationMatch(a, b, 1, 3, 8, 19);
-            else if (diffRatio >= 0.7 && diffRatio < 0.74) IterationMatch(a, b, 1, 3, 8, 18);
-            else if (diffRatio >= 0.74 && diffRatio < 0.78) IterationMatch(a, b, 1, 4, 8, 18);
-            else if (diffRatio >= 0.78 && diffRatio < 0.81) IterationMatch(a, b, 1, 4, 8, 17);
-            else if (diffRatio >= 0.81 && diffRatio < 0.85) IterationMatch(a, b, 1, 5, 8, 17);
-            else if (diffRatio >= 0.85 && diffRatio < 0.89) IterationMatch(a, b, 1, 5, 8, 16);
-            else if (diffRatio >= 0.89 && diffRatio < 0.92) IterationMatch(a, b, 1, 5, 8, 15);
-            else if (diffRatio >= 0.92 && diffRatio < 0.95) IterationMatch(a, b, 1, 5, 8, 14);
-            else if (diffRatio >= 0.95 && diffRatio < 0.98) IterationMatch(a, b, 1, 6, 8, 14);
-            else if (diffRatio >= 0.98 && diffRatio < 1.01) IterationMatch(a, b, 1, 6, 8, 13);
+            if (diffRatio < 0.05) IterationMatch(a, b, 22, 22, 208, 295);
+            else if (diffRatio < 0.1) IterationMatch(a, b, 22, 22, 208, 280);
+            else if (diffRatio >= 0.1 && diffRatio < 0.2) IterationMatch(a, b, 22, 22, 208, 256);
+            else if (diffRatio >= 0.2 && diffRatio < 0.3) IterationMatch(a, b, 22, 22, 208, 246);
+            else if (diffRatio >= 0.3 && diffRatio < 0.4) IterationMatch(a, b, 22, 22, 208, 240);
+            else if (diffRatio >= 0.4 && diffRatio < 0.5) IterationMatch(a, b, 22, 23, 208, 235);
+            else if (diffRatio >= 0.5 && diffRatio < 0.6) IterationMatch(a, b, 22, 23, 208, 230);
+            else if (diffRatio >= 0.6 && diffRatio < 0.65) IterationMatch(a, b, 22, 23, 208, 220);
+            else if (diffRatio >= 0.65 && diffRatio < 0.7) IterationMatch(a, b, 21, 23, 208, 219);
+            else if (diffRatio >= 0.7 && diffRatio < 0.74) IterationMatch(a, b, 21, 23, 208, 218);
+            else if (diffRatio >= 0.74 && diffRatio < 0.78) IterationMatch(a, b, 21, 24, 208, 218);
+            else if (diffRatio >= 0.78 && diffRatio < 0.81) IterationMatch(a, b, 21, 24, 208, 217);
+            else if (diffRatio >= 0.81 && diffRatio < 0.85) IterationMatch(a, b, 21, 25, 208, 217);
+            else if (diffRatio >= 0.85 && diffRatio < 0.89) IterationMatch(a, b, 21, 25, 208, 216);
+            else if (diffRatio >= 0.89 && diffRatio < 0.92) IterationMatch(a, b, 21, 25, 208, 215);
+            else if (diffRatio >= 0.92 && diffRatio < 0.95) IterationMatch(a, b, 21, 25, 208, 214);
+            else if (diffRatio >= 0.95 && diffRatio < 0.98) IterationMatch(a, b, 21, 26, 208, 214);
+            else if (diffRatio >= 0.98 && diffRatio < 1.01) IterationMatch(a, b, 21, 26, 208, 213);
             /*if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
             if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
             if (diff >= 3 && diff <= 4) IterationMatch(a, b, 1, 8, 9, 14);
@@ -562,6 +596,7 @@ namespace TheManager
         private void IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)
         {
             int hasard = Session.Instance.Random(0, 500);
+            //Buts
             if (hasard >= min_a && hasard <= max_a)
             {
                 if (a == Domicile) _score1++;
@@ -574,37 +609,73 @@ namespace TheManager
                 else _score1++;
                 But(b);
             }
-            else if (hasard >= 171 && hasard <= 176) CartonJaune(a);
-            else if (hasard >= 186 && hasard <= 191) CartonJaune(b);
-            else if (hasard == 181) CartonRouge(a);
-            else if (hasard == 183) CartonRouge(b);
+            //Cartons jaunes
+            else if (hasard >= 4 && hasard <= 9) CartonJaune(a);
+            else if (hasard >= 14 && hasard <= 19) CartonJaune(b);
+            //Cartons rouges
+            else if (hasard == 2) CartonRouge(a);
+            else if (hasard == 3) CartonRouge(b);
+            //Tirs
+            if (hasard >= min_a && hasard <= max_a + ((max_a + 1 - min_a) * 4))
+            {
+                if (a == Domicile) _statistiques.TirsDomicile++;
+                else _statistiques.TirsExterieurs++;
+            } 
+            if (hasard >= min_b && hasard <= max_b + ((max_b+1 - min_b) * 4))
+            {
+                if(a == Domicile) _statistiques.TirsExterieurs++;
+                else _statistiques.TirsDomicile++;
+            }
         }
 
         private void But(Club c)
         {
             Joueur j = Buteur(c == Domicile ? Compo1 : Compo2);
-            //int minute = Session.Instance.Random(1, 50);
-            //int miTemps = Session.Instance.Random(1, 3);
-            EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, _minute, _miTemps);
-            if(j !=null) j.ButsMarques++;
-            _evenements.Add(em);
+            if(j != null)
+            {
+                EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, _minute, _miTemps);
+                if (j != null) j.ButsMarques++;
+                _evenements.Add(em);
+            }
         }
 
         private void CartonJaune(Club c)
         {
             Joueur j = Carton(c == Domicile ? Compo1 : Compo2);
-            EvenementMatch em = new EvenementMatch(Evenement.CARTON_JAUNE, c, j, _minute, _miTemps);
-            _evenements.Add(em);
+            if(j != null)
+            {
+
+                bool deuxiemeJaune = false;
+                foreach (EvenementMatch ev in _evenements) if (ev.Joueur == j && ev.Type == Evenement.CARTON_JAUNE) deuxiemeJaune = true;
+
+
+                EvenementMatch em = new EvenementMatch(Evenement.CARTON_JAUNE, c, j, _minute, _miTemps);
+                _evenements.Add(em);
+
+                //Si c'est son deuxième jaune, carte rouge attribué
+                if (deuxiemeJaune == true)
+                {
+                    List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
+                    compo.Remove(j);
+                    CalculerDifferenceNiveau();
+                    em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
+                    _evenements.Add(em);
+
+                }
+            }
         }
 
         private void CartonRouge(Club c)
         {
             List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
             Joueur j = Carton(compo);
-            compo.Remove(j);
-            CalculerDifferenceNiveau();
-            EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
-            _evenements.Add(em);
+            if(j != null)
+            {
+                compo.Remove(j);
+                CalculerDifferenceNiveau();
+                EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
+                _evenements.Add(em);
+            }
         }
     }
 }

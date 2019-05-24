@@ -6,15 +6,26 @@
         xmlns:local="clr-namespace:TheManager_GUI"
 		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 		mc:Ignorable="d"
-        Title="Windows_Club" Height="650" Width="900" Style="{StaticResource StyleWindows}">
+        Title="Windows_Club" Height="830" Width="900" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
 			</StackPanel>
+			<Image Name="imgLogo" Width="75" Height="75"/>
 			<Label Name="lbClub"  Content="Club" Style="{StaticResource StyleLabel1}"/>
+
 			<StackPanel Orientation="Horizontal">
+				<!-- partie gauche -->
 				<StackPanel Orientation="Vertical">
+					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" Name="dgPalmares" Height="100" MaxHeight="350" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Nombre}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Annees}"/>
+						</DataGrid.Columns>
+					</DataGrid>
 					<Label Content="Budget" Style="{StaticResource StyleLabel2}"/>
 					<lvc:CartesianChart Width="350" Height="150" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
@@ -24,7 +35,7 @@
 							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
-				
+
 					<Label Content="Centre de formation" Style="{StaticResource StyleLabel2}"/>
 					<lvc:CartesianChart Width="350" Height="150" Series="{Binding CFCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
@@ -34,40 +45,49 @@
 							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
+					<Label Content="Histoire" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" Name="dgHistorique" Height="150" MaxHeight="350" Width="150" MouseDoubleClick="DgHistorique_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Annee}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
+						</DataGrid.Columns>
+					</DataGrid>
 				</StackPanel>
-				<DataGrid IsReadOnly="True" Name="dgMatchs" MaxHeight="350" MaxWidth="375" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="" Binding="{Binding Date}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Score}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
-					</DataGrid.Columns>
-				</DataGrid>
-				<DataGrid IsReadOnly="True" Name="dgHistorique" MaxHeight="350" Width="150" MouseDoubleClick="DgHistorique_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="" Binding="{Binding Annee}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
-					</DataGrid.Columns>
-				</DataGrid>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgJoueurs" MouseDoubleClick="DgJoueurs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
-						<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
-						<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
-						<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
-						<DataGridTextColumn Header="Potentiel" Binding="{Binding Potentiel}"/>
-						<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
-						<DataGridTextColumn Header="Début du contrat" Binding="{Binding DebutContrat}"/>
-						<DataGridTextColumn Header="Fin du contrat" Binding="{Binding Contrat}"/>
-					</DataGrid.Columns>
-				</DataGrid>
+				<!-- partie droite -->
 				<StackPanel Orientation="Vertical">
+					<Label Content="Effectif" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgJoueurs" MouseDoubleClick="DgJoueurs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+							<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
+							<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
+							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
+							<DataGridTextColumn Header="Potentiel" Binding="{Binding Potentiel}"/>
+							<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
+							<DataGridTextColumn Header="Début du contrat" Binding="{Binding DebutContrat}"/>
+							<DataGridTextColumn Header="Fin du contrat" Binding="{Binding Contrat}"/>
+							<DataGridTemplateColumn Header="Energie" Width="100">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<ProgressBar Value="{Binding Energie}" Minimum="0" Maximum="100"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+					<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" Name="dgMatchs" Height="200" MaxHeight="350" MaxWidth="375" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Date}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Score}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+						</DataGrid.Columns>
+					</DataGrid>
 					<Label Content="Arrivées cette année" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgArrivees"  Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="150" Name="dgArrivees"  Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
 							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
@@ -75,10 +95,9 @@
 						</DataGrid.Columns>
 					</DataGrid>
 				</StackPanel>
-				
-				
-
 			</StackPanel>
+			
+			
 		</StackPanel>
     </Grid>
 </Window>

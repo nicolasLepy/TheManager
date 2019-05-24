@@ -38,19 +38,48 @@ namespace TheManager_GUI
         public string[] LabelsAnnees { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
+        public void Palmares(Club_Ville club)
+        {
+            foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+            {
+                int nombre = 0;
+                string annees = "";
+                foreach(Competition archive in c.EditionsPrecedentes)
+                {
+                    if(archive.Championnat)
+                    {
+                        if (archive.Tours[0].Vainqueur() == club)
+                            nombre++;
+                    }
+                    else
+                    {
+                        Tour t = archive.Tours[archive.Tours.Count - 1];
+                        if (t.Vainqueur() == club)
+                        {
+                            nombre++;
+                        }
+
+                    }
+                }
+                if(nombre > 0)
+                {
+                    dgPalmares.Items.Add(new PalmaresClubElement { Annees = annees, Competition = c, Nombre = nombre});
+                }
+            }
+        }
+
         public Windows_Club(Club_Ville c)
         {
             InitializeComponent();
             lbClub.Content = c.Nom;
-
-            List<Match> matchs = new List<Match>();
-            foreach(Match m in Session.Instance.Partie.Gestionnaire.Matchs)
+            try
             {
-                if (m.Domicile == c || m.Exterieur == c) matchs.Add(m);
+                imgLogo.Source = new BitmapImage(new Uri(Utils.Logo(c)));
             }
+            catch { }
+            Palmares(c);
 
-            matchs.Sort(new Match_Date_Comparator());
-
+            List<Match> matchs = c.Matchs;
             int j = -1;
             for(int index = matchs.Count-1; index >= 0; index--, j++)
             {
@@ -75,7 +104,7 @@ namespace TheManager_GUI
 
             foreach (Contrat ct in c.Contrats)
             {
-                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €", DebutContrat = ct.Debut.ToShortDateString()});
+                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €", DebutContrat = ct.Debut.ToShortDateString(), Energie = ct.Joueur.Energie});
                 if((ct.Debut.Year == Session.Instance.Partie.Date.Year-1 && ct.Debut.Month < 7) || (ct.Debut.Year == Session.Instance.Partie.Date.Year && ct.Debut.Month >= 7))
                     dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.Joueur, Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Salaire = ct.Salaire + " €" });
             }
@@ -255,5 +284,13 @@ namespace TheManager_GUI
         public int Niveau { get; set; }
         public int Potentiel { get; set; }
         public string DebutContrat { get; set; }
+        public int Energie { get; set; }
+    }
+
+    public struct PalmaresClubElement
+    {
+        public Competition Competition { get; set; }
+        public int Nombre { get; set; }
+        public string Annees { get; set; }
     }
 }

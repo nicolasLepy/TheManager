@@ -37,6 +37,7 @@ namespace TheManager_GUI
             _checkbox = new List<CheckBox>();
             cbExporter.IsChecked = Session.Instance.Partie.Options.Exporter;
             cbTransferts.IsChecked = Session.Instance.Partie.Options.Transferts;
+            cbSimuler.IsChecked = Session.Instance.Partie.Options.SimulerMatchs;
 
             foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
             {
@@ -112,6 +113,7 @@ namespace TheManager_GUI
             }
             Session.Instance.Partie.Options.Exporter = (bool)cbExporter.IsChecked;
             Session.Instance.Partie.Options.Transferts = (bool)cbTransferts.IsChecked;
+            Session.Instance.Partie.Options.SimulerMatchs = (bool)cbSimuler.IsChecked;
 
             Close();
         }
@@ -147,6 +149,11 @@ namespace TheManager_GUI
         }
 
         private void CbTransferts_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void CbSimuler_Click(object sender, RoutedEventArgs e)
         {
 
         }

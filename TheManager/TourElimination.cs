@@ -73,7 +73,6 @@ namespace TheManager
         {
             AjouterEquipesARecuperer();
             _matchs = Calendrier.TirageAuSort(this);
-            Console.WriteLine(Session.Instance.Partie.Date.ToShortDateString() + " - " + Nom + " - " + _matchs.Count);
         }
 
         public override void QualifierClubs()
@@ -120,7 +119,12 @@ namespace TheManager
         }
         public override Club Vainqueur()
         {
-            return _matchs[_matchs.Count - 1].Vainqueur;
+            Club res = null;
+            if(_clubs.Count > 0)
+            {
+                res = _clubs[0];
+            }
+            return res;
         }
     }
 }

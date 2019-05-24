@@ -149,5 +149,20 @@ namespace TheManager
             return Bp(matchs, c) - Bc(matchs, c);
         }
 
+        public static string Logo(Club c)
+        {
+            return System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png";
+        }
+
+        public static string Image(string image)
+        {
+            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\" + image;
+        }
+
+        public static string LogoCompetition(Competition competition)
+        {
+            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\Logo\\" + competition.Logo + ".png";
+        }
+
     }
 }

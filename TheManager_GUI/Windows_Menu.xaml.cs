@@ -24,14 +24,18 @@ namespace TheManager_GUI
     {
         private Partie _partie = null;
 
+        private DateTime _calendrierJour;
+
         public Windows_Menu()
         {
             InitializeComponent();
-
+            imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\close.png"));
+            imgBtnGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\left.png"));
+            imgBtnDroite.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\right.png"));
 
             _partie = Session.Instance.Partie;
 
-            imgClub.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + _partie.Club.Logo + ".png"));
+            imgClub.Source = new BitmapImage(new Uri(Utils.Logo(_partie.Club)));
             comboPays.Items.Clear();
             foreach (Continent c in _partie.Gestionnaire.Continents)
             {
@@ -50,7 +54,12 @@ namespace TheManager_GUI
 
         private void Avancer()
         {
-            _partie.Avancer();
+            Match m = _partie.Avancer();
+            if (m != null)
+            {
+                Windows_AvantMatch wam = new Windows_AvantMatch(m, _partie.Club);
+                wam.ShowDialog();
+            }
             Refresh();
         }
 
@@ -82,12 +91,7 @@ namespace TheManager_GUI
                     lbGrosEcart.Content = c.Statistiques.PlusGrandEcart.Domicile.Nom + " " + c.Statistiques.PlusGrandEcart.Score1 + "-" + c.Statistiques.PlusGrandEcart.Score2 + " " + c.Statistiques.PlusGrandEcart.Exterieur.Nom;
                 else
                     lbGrosEcart.Content = "";
-
-
-                
-
                 Palmares(c);
-
             }
         }
 
@@ -112,10 +116,12 @@ namespace TheManager_GUI
             if(dgMatchs.SelectedItem != null)
             {
                 CalendrierElement selected = (CalendrierElement)dgMatchs.SelectedItem;
-                Windows_Match match = new Windows_Match(selected.Match);
-                match.Show();
+                if(selected.Match != null)
+                {
+                    Windows_Match match = new Windows_Match(selected.Match);
+                    match.Show();
+                }
             }
-            
         }
 
         private void DgClassement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -195,8 +201,127 @@ namespace TheManager_GUI
         private void Refresh()
         {
             this.labelDate.Content = _partie.Date.ToLongDateString();
+            if(cbOpti.IsChecked == false)
+            {
+                ProchainsMatchsClub();
+                ClassementClub();
+                BandeauActualites();
+            }
         }
 
+        private void BandeauActualites()
+        {
+            tbActu.Text = "";
+            if (_partie.Club != null && _partie.Club.Championnat != null)
+            {
+                //Choix de la compétition à afficher dans le bandeau : compétition du dernier match joué par l'équipe
+                List<Match> matchs = _partie.Club.Matchs;
+                bool trouve = false;
+                Competition comp = null;
+                int i = 0;
+                if (matchs.Count == 0) trouve = true;
+                while(!trouve)
+                {
+                    if(!matchs[i].Joue)
+                    {
+                        comp = matchs[i].Competition;
+                        trouve = true;
+                    }
+                    i++;
+                    if (i + 1 == matchs.Count) trouve = true;
+                }
+
+                if(comp != null)
+                {
+                    Tour t = null;
+                    if (comp.Championnat)
+                    {
+                        t = comp.Tours[0];
+                        tbActu.Text = comp.Nom + " : ";
+                        i = 1;
+                        TourChampionnat tc = t as TourChampionnat;
+                        foreach (Club c in tc.Classement())
+                        {
+                            tbActu.Text += i + " " + c.NomCourt + " " + t.Points(c) + ", " + t.Difference(c) + " / ";
+                            i++;
+                        }
+                    }
+                    else
+                    {
+                        t = comp.Tours[comp.TourActuel];
+                        tbActu.Text += comp.Nom + ", " + t.Nom + " : ";
+                        foreach(Match m in t.Matchs)
+                        {
+                            tbActu.Text += m.Domicile.NomCourt + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.NomCourt + ", ";
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ClassementClub()
+        {
+            dgClubClassement.Items.Clear();
+            if(_partie.Club != null && _partie.Club.Championnat != null)
+            {
+                Tour championnat = _partie.Club.Championnat.Tours[0];
+                List<Club> classement = (championnat as TourChampionnat).Classement();
+                int indice = classement.IndexOf(_partie.Club);
+                indice = indice - 2;
+                if (indice < 0) indice = 0;
+                if (indice > classement.Count - 5) indice = classement.Count - 5;
+                for(int i = indice; i<indice+5; i++)
+                {
+                    Club c = classement[i];
+                    dgClubClassement.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.NomCourt, Pts = championnat.Points(c), bc = championnat.ButsContre(c), bp = championnat.ButsPour(c), Diff = championnat.Difference(c), G = championnat.Gagnes(c), J = championnat.Joues(c), N = championnat.Nuls(c), P = championnat.Perdus(c) });
+                }
+            }
+        }
+
+        private void ProchainsMatchsClub()
+        {
+            dgClubProchainsMatchs.Items.Clear();
+            if(_partie.Club != null)
+            {
+                List<Match> matchs = new List<Match>();
+                foreach (Match m in _partie.Gestionnaire.Matchs)
+                {
+                    if (m.Domicile == _partie.Club || m.Exterieur == _partie.Club) matchs.Add(m);
+                }
+                matchs.Sort(new Match_Date_Comparator());
+                int diff = -1;
+                int indice = -1;
+                foreach (Match m in matchs)
+                {
+                    TimeSpan ts = m.Jour - _partie.Date;
+
+                    int diffM = Math.Abs(ts.Days);
+                    if (diffM < diff || diff == -1)
+                    {
+                        diff = diffM;
+                        indice = matchs.IndexOf(m);
+                    }
+                }
+                indice = indice - 2;
+                if (indice < 0) indice = 0;
+                if (indice > matchs.Count - 3) indice = matchs.Count - 3;
+                for(int i = indice; i<indice+5; i++)
+                {
+                    //Cas où si jamais il y a moins de 5 matchs pour le club
+                    if(i < matchs.Count && i>=0)
+                    {
+                        Match m = matchs[i];
+                        string score = m.Score1 + " - " + m.Score2;
+                        if (!m.Joue)
+                        {
+                            score = m.Jour.ToShortDateString();
+                        }
+                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Competition.NomCourt, Equipe1 = m.Domicile.NomCourt, Equipe2 = m.Exterieur.NomCourt, Score = score, LogoD = Utils.Logo(m.Domicile), LogoE = Utils.Logo(m.Exterieur) });
+                    }
+                }
+            }
+        }
+        
         private void Calendrier(Tour t)
         {
             dgMatchs.Items.Clear();
@@ -248,7 +373,7 @@ namespace TheManager_GUI
                 foreach (Club c in poule)
                 {
                     i++;
-                    dgClassement.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png", Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c) });
+                    dgClassement.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c) });
                     }
             }
         }
@@ -307,7 +432,7 @@ namespace TheManager_GUI
             dgButeurs.Items.Clear();
             foreach(KeyValuePair<Joueur,int> buteur in t.Buteurs())
             {
-                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Nom() : buteur.Key.Club.NomCourt, NbButs = buteur.Value });
+                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Nom() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
             }
         }
 
@@ -317,13 +442,14 @@ namespace TheManager_GUI
             foreach (Competition arc in c.EditionsPrecedentes)
             {
                 Club vainqueur = arc.Vainqueur();
+              
 
                 Tour t = arc.Tours[arc.Tours.Count - 1];
                 //Si le tour final n'est pas un tour inactif, on peut établir le palmarès
                 if (t.Matchs.Count > 0)
                 {
                     int annee = t.Matchs[t.Matchs.Count - 1].Jour.Year;
-                    dgPalmares.Items.Add(new PalmaresElement { Annee = annee, Club = vainqueur.Nom });
+                    dgPalmares.Items.Add(new PalmaresElement { Annee = annee, Club = vainqueur });
                 }
             }
         }
@@ -346,12 +472,37 @@ namespace TheManager_GUI
                 participants.Show();
             }
         }
+
+        private void DgClubProchainsMatchs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            Match m = dgClubProchainsMatchs.SelectedItem as Match;
+            if (m != null)
+            {
+                Windows_Match wm = new Windows_Match(m);
+                wm.Show();
+            }
+        }
+
+        private void DgClubClassement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void BtnDroite_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void BtnGauche_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 
     public struct PalmaresElement
     {
         public int Annee { get; set; }
-        public string Club { get; set; }
+        public Club Club { get; set; }
     }
 
     
@@ -390,5 +541,16 @@ namespace TheManager_GUI
         public int bc { get; set; }
         public int Diff { get; set; }
         public Club Club { get; set; }
+    }
+
+    public struct ProchainMatchElement
+    {
+        public string Competition { get; set; }
+        public string LogoD { get; set; }
+        public string LogoE { get; set; }
+        public string Equipe1 { get; set; }
+        public string Equipe2 { get; set; }
+        public string Score { get; set; }
+        public Match Match { get; set; }
     }
 }

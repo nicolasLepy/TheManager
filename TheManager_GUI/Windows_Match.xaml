@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Match" Height="650" Width="800" Style="{StaticResource StyleWindows}">
+        Title="Windows_Match" Height="650" Width="800" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
 			</StackPanel>
-			<Label Content="Feuille de match" Style="{StaticResource StyleLabel1}"/>
+			<Image Source="image.png" Name="imgCompetition" Height="75" Width="75"/>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 				<Label Name="lbEquipe1" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
 				<Label Name="lbScore" Content="4 - 0" Margin="40 0 40 0" Style="{StaticResource StyleLabel1}"/>
@@ -20,24 +20,40 @@
 			<Label Name="lbMT" Content="(2 - 0)" Style="{StaticResource StyleLabel1}"/>
 			<Label Name="lbStade" Content="Stade du Pré Fleuri" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
 			<Label Name="lbAffluence" Content="28500 spectateurs" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
-			<Label Content="Buts" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
-			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" MaxHeight="100" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" MaxHeight="150" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 				<DataGrid.Columns>
+					<DataGridTemplateColumn Width="18">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<Image Source="{Binding Img1}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
 					<DataGridTextColumn Header="" Binding="{Binding Col1}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Col2}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Col3}"/>
 					<DataGridTextColumn Header="" Binding="{Binding Col4}"/>
+					<DataGridTemplateColumn Width="18">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<Image Source="{Binding Img2}" />
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
 				</DataGrid.Columns>
 			</DataGrid>
-			<Label Content="Explusions" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
-			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" MaxHeight="100" Margin="20" Name="dgCR" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="" Binding="{Binding Col1}"/>
-					<DataGridTextColumn Header="" Binding="{Binding Col2}"/>
-					<DataGridTextColumn Header="" Binding="{Binding Col3}"/>
-					<DataGridTextColumn Header="" Binding="{Binding Col4}"/>
-				</DataGrid.Columns>
-			</DataGrid>
+			<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Possession"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<Label Name="lbPossession1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+				<ProgressBar Name="pbPossession" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
+				<Label Name="lbPossession2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+			</StackPanel>
+			<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+				<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
+				<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+			</StackPanel>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo1_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo1" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 					<DataGrid.Columns>

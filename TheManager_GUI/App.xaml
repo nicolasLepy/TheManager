@@ -10,6 +10,9 @@
 		<Color x:Key="Color2">#a4f17a</Color>
 		<FontFamily x:Key="Font">Arial Narrow</FontFamily>
 		<FontFamily x:Key="FontClassement">Bitstream Vera Sans</FontFamily>
+		<sys:Double x:Key="TailleGrande">15</sys:Double>
+		<sys:Double x:Key="TailleMoyenne">14</sys:Double>
+		<sys:Double x:Key="TaillePetite">13</sys:Double>
 		
 		<SolidColorBrush x:Key="color1" Color="{DynamicResource Color1}" />
 		<SolidColorBrush x:Key="color2" Color="{DynamicResource Color2}" />
@@ -58,6 +61,13 @@
 			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
 		</Style>
+
+		<Style x:Key="StyleTextBlock" TargetType="{x:Type TextBlock}">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
+			<Setter Property="Foreground" Value="{StaticResource color2}" />
+		</Style>
+
 
 		<Style x:Key="StyleCheckBox" TargetType="{x:Type CheckBox}">
 			<Setter Property="FontSize" Value="13"/>
@@ -108,7 +118,7 @@
 			<Setter Property="Background" Value="{StaticResource backgroundColor}" />
 			<Setter Property="Foreground" Value="{StaticResource color1}" />
 		</Style>
-		
+
 		<Style x:Key="StyleDataCellGrid" TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
 			<Setter Property="FontSize" Value="12"/>
 			<Setter Property="Height" Value="16"/>
@@ -116,21 +126,6 @@
 			<Setter Property="Background" Value="{StaticResource backgroundColor}" />
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
 		</Style>
-		
-		<Style x:Key="StyleDataRowGrid" TargetType="{x:Type DataGridRow}">
-			<Style.Triggers>
-				<Trigger Property="ItemsControl.AlternationIndex" Value="0">
-					<Setter Property="Background" Value="GreenYellow"/>
-				</Trigger>
-				<Trigger Property="ItemsControl.AlternationIndex" Value="1">
-					<Setter Property="Background" Value="Bisque"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>
-
-
-
-
 
 		<Style x:Key="StyleDataGridClassement" TargetType="{x:Type DataGrid}">
 			<Setter Property="FontFamily" Value="{DynamicResource FontClassement}"/>

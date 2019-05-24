@@ -23,11 +23,16 @@ namespace TheManager
 
         public bool Transferts { get => _transferts; set => _transferts = value; }
 
+        [DataMember]
+        private bool _simulerMatchs;
+        public bool SimulerMatchs { get => _simulerMatchs; set => _simulerMatchs = value; }
+
         public Options()
         {
             Exporter = false;
             _competitionsAExporter = new List<Competition>();
             _transferts = true;
+            _simulerMatchs = false;
         }
 
 

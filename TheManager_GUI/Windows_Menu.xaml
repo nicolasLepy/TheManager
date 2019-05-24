@@ -5,106 +5,186 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Menu" Height="700" Width="1400" Style="{StaticResource StyleWindows}">
+        Title="Windows_Menu" Height="695" Width="1400" Style="{StaticResource StyleWindows}" WindowStartupLocation="Manual" Left="50" Top="50">
     <Grid>
 		<StackPanel Margin="3" Orientation="Vertical">
-			
-			<Label Content="Bureau" Style="{StaticResource StyleLabel1}"/>
+
 			<StackPanel Orientation="Horizontal">
-				<StackPanel Margin="10" Orientation="Vertical" Height="80" Width="150" HorizontalAlignment="Left">
-					<Button Name="btnSauvegarder" Style="{StaticResource StyleButton1}" Content="Sauvegarder" Click="BtnSauvegarder_Click"/>
-					<Button Name="btnOptions" Style="{StaticResource StyleButton1}" Content="Options" Click="BtnOptions_Click"/>
-					<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Content="Avancer" Click="BtnAvancer_Click"/>
+				<Button Name="btnQuitter" Click="BtnQuitter_Click">
+					<Image Name="imgBtnQuitter" Source="Images/close.png" Width="25" Height="25"/>
+				</Button>
+				<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Avancer" Click="BtnAvancer_Click"/>
+				<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Simuler fin saison" Click="BtnSimuler_Click"/>
+				<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Simuler 10 ans" Click="BtnSimuler2_Click"/>
+				<Button Name="btnOptions" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Options" Click="BtnOptions_Click"/>
+				<Button Name="btnSauvegarder" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Sauvegarder" Click="BtnSauvegarder_Click"/>
+				<CheckBox Name="cbOpti" Style="{StaticResource StyleCheckBox}" VerticalAlignment="Center"/>
+				<Label Content="Optimiser durée simulation" Style="{StaticResource StyleLabel2}"/>
+
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<!-- côté gauche, infos générales -->
+				<StackPanel Orientation="Vertical" Width="700">
 					<Label Name="labelDate" Style="{StaticResource StyleLabel2}" Content="10/10/2010"/>
-				</StackPanel>
-				<StackPanel Margin="30,30,0,30" Orientation="Vertical" Height="70" Width="170" HorizontalAlignment="Right">
-					<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Content="Simuler jusqu'à fin de l'année" Click="BtnSimuler_Click"/>
-					<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Content="Simuler 100 ans" Click="BtnSimuler2_Click"/>
-				</StackPanel>
-				<Image Name="imgClub" Width="150" Height="150" Source="generic.png" Margin="800 0 0 0"></Image>
-			</StackPanel>
-			
-			<StackPanel Name="SP_Centre" Margin="10" Orientation="Horizontal" Height="400">
-				<StackPanel Orientation="Vertical">
-					<ComboBox Name="comboPays" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboPays_SelectionChanged">
-					</ComboBox> 
-					<ListBox Name="lbChampionnats" MaxHeight="150" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
-					</ListBox>
-					<ListBox Name="lbTours" HorizontalAlignment="Left" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged">
-					</ListBox>
-				</StackPanel>
-				<DataGrid Margin="10" IsReadOnly="True" GridLinesVisibility="None" MouseDoubleClick="DgClassement_MouseDoubleClick" Name="dgClassement" Style="{StaticResource StyleDataGridClassement}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGridClassement}" RowStyle="{StaticResource StyleDataRowGridClassement}">
-						<DataGrid.Columns>
-							<DataGridTemplateColumn Width="18">
-								<DataGridTemplateColumn.CellTemplate>
-									<DataTemplate>
-									<Image Source="{Binding Logo}" />
-									</DataTemplate>
-								</DataGridTemplateColumn.CellTemplate>
-							</DataGridTemplateColumn>
-						<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
-							<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
-							<DataGridTextColumn Header="Pts" Binding="{Binding Pts}"/>
-							<DataGridTextColumn Header="J" Binding="{Binding J}"/>
-							<DataGridTextColumn Header="G" Binding="{Binding G}"/>
-							<DataGridTextColumn Header="N" Binding="{Binding N}"/>
-							<DataGridTextColumn Header="P" Binding="{Binding P}"/>
-							<DataGridTextColumn Header="Bp" Binding="{Binding bp}"/>
-							<DataGridTextColumn Header="Bc" Binding="{Binding bc}"/>
-							<DataGridTextColumn Header="Diff" Binding="{Binding Diff}"/>
-						</DataGrid.Columns>
-					<DataGrid.CellStyle>
-						<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource StyleDataCellGridClassement}">
-							
-						</Style>
-					</DataGrid.CellStyle>
-				</DataGrid>
+					<ComboBox Name="comboPays" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboPays_SelectionChanged" Width="200" HorizontalAlignment="Left">
+					</ComboBox>
+					<StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+						<StackPanel Orientation="Vertical" Width="250">
+							<StackPanel Orientation="Horizontal">
+								<ListBox Name="lbChampionnats" Height="100" Width="125" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
+								</ListBox>
+								<ListBox Name="lbTours" HorizontalAlignment="Left" Height="100" Width="125" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged">
+								</ListBox>
+							</StackPanel>
+							<Label Content="Plus gros écart" Style="{StaticResource StyleLabel2}"/>
+							<Label Name="lbGrosEcart" Content="" Style="{StaticResource StyleLabel2}"/>
+							<Label Content="Plus gros score" Style="{StaticResource StyleLabel2}"/>
+							<Label Name="lbGrandScore" Content="" Style="{StaticResource StyleLabel2}"/>
+							<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
+							<DataGrid Margin="10" MaxWidth="300" IsReadOnly="True" Height="100" Width="175" Name="dgPalmares" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+								<DataGrid.Columns>
+									<DataGridTextColumn Header="Annee" Binding="{Binding Annee}"/>
+									<DataGridTextColumn Header="Club" Binding="{Binding Club}"/>
+								</DataGrid.Columns>
+							</DataGrid>
+							<StackPanel Orientation="Horizontal">
+								
+							</StackPanel>
+							<Label Content="Buteurs" Style="{StaticResource StyleLabel2}"/>
+							<DataGrid Margin="10" IsReadOnly="True" MouseDoubleClick="DgButeurs_MouseDoubleClick" Width="175" Height="175" Name="dgButeurs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+								<DataGrid.Columns>
+									<DataGridTemplateColumn Width="18">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<Image Source="{Binding Club}" />
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTextColumn Header="" Binding="{Binding Buteur}"/>
+									<DataGridTextColumn Header="" Binding="{Binding NbButs}"/>
+								</DataGrid.Columns>
+							</DataGrid>
+						</StackPanel>
+						<StackPanel Orientation="Vertical">
+							<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
+							<DataGrid Margin="10" IsReadOnly="True" Height="300" GridLinesVisibility="None" MouseDoubleClick="DgClassement_MouseDoubleClick" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+								<DataGrid.Columns>
+									<DataGridTemplateColumn Width="18">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<Image Source="{Binding Logo}" />
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
+									<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
+									<DataGridTextColumn Header="Pts" Binding="{Binding Pts}"/>
+									<DataGridTextColumn Header="J" Binding="{Binding J}"/>
+									<DataGridTextColumn Header="G" Binding="{Binding G}"/>
+									<DataGridTextColumn Header="N" Binding="{Binding N}"/>
+									<DataGridTextColumn Header="P" Binding="{Binding P}"/>
+									<DataGridTextColumn Header="Bp" Binding="{Binding bp}"/>
+									<DataGridTextColumn Header="Bc" Binding="{Binding bc}"/>
+									<DataGridTextColumn Header="Diff" Binding="{Binding Diff}"/>
+								</DataGrid.Columns>
+								<DataGrid.CellStyle>
+									<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource StyleDataCellGrid}">
 
-					<DataGrid IsReadOnly="True" MouseDoubleClick="DataGridRow_MouseDoubleClick"  Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="" Binding="{Binding Heure}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Score}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Affluence}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Cote1}"/>
-						<DataGridTextColumn Header="" Binding="{Binding CoteN}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Cote2}"/>
-					</DataGrid.Columns>
-				</DataGrid>
-
-				<StackPanel Orientation="Vertical">
-					<Label Content="Buteurs" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" IsReadOnly="True" MouseDoubleClick="DgButeurs_MouseDoubleClick" MaxWidth="300" Height="150" Name="dgButeurs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Buteur}"/>
-							<DataGridTextColumn Header="" Binding="{Binding NbButs}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Club}"/>
-						</DataGrid.Columns>
-					</DataGrid>
-					<StackPanel Orientation="Vertical">
-						<Label Content="Plus gros écart" Style="{StaticResource StyleLabel2}"/>
-						<Label Name="lbGrosEcart" Content="" Style="{StaticResource StyleLabel2}"/>
-						<Label Content="Plus gros score" Style="{StaticResource StyleLabel2}"/>
-						<Label Name="lbGrandScore" Content="" Style="{StaticResource StyleLabel2}"/>
+									</Style>
+								</DataGrid.CellStyle>
+							</DataGrid>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+								<Button Name="btnGauche" Click="BtnGauche_Click">
+									<Image Name="imgBtnGauche" Source="Images/left.png" Width="25" Height="25"/>
+								</Button>
+								<Label Content="Samedi 20 janvier 2019" HorizontalContentAlignment="Center" Width="150" Style="{StaticResource StyleLabel2}"/>
+								<Button Name="btnDroite" Click="BtnDroite_Click">
+									<Image Name="imgBtnDroite" Source="Images/right.png" Width="25" Height="25"/>
+								</Button>
+							</StackPanel>
+							<DataGrid IsReadOnly="True" MouseDoubleClick="DataGridRow_MouseDoubleClick" Height="175" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+								<DataGrid.Columns>
+									<DataGridTextColumn Header="" Binding="{Binding Heure}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Score}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Affluence}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Cote1}"/>
+									<DataGridTextColumn Header="" Binding="{Binding CoteN}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Cote2}"/>
+								</DataGrid.Columns>
+							</DataGrid>
+						</StackPanel>
 					</StackPanel>
+				</StackPanel>
+				<!-- côté droit, info sur le club contrôlé -->
+				<StackPanel Orientation="Horizontal" Width="700">
+					<StackPanel Orientation="Vertical" Width="330">
+						<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
+					</StackPanel>
+					<StackPanel Orientation="Vertical" Width="350">
+						<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
+						<DataGrid IsReadOnly="True" MouseDoubleClick="DgClubProchainsMatchs_MouseDoubleClick" Height="100" Name="dgClubProchainsMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+								<DataGridTemplateColumn Width="18"><DataGridTemplateColumn.CellTemplate><DataTemplate><Image Source="{Binding LogoD}" /></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+								<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+								<DataGridTextColumn Header="" Binding="{Binding Score}"/>
+								<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+								<DataGridTemplateColumn Width="18"><DataGridTemplateColumn.CellTemplate><DataTemplate><Image Source="{Binding LogoE}" /></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+							</DataGrid.Columns>
+						</DataGrid>
 
+						<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
+						<DataGrid Margin="10" IsReadOnly="True" Height="100" GridLinesVisibility="None" MouseDoubleClick="DgClubClassement_MouseDoubleClick" Name="dgClubClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+								<DataGrid.Columns>
+									<DataGridTemplateColumn Width="18">
+										<DataGridTemplateColumn.CellTemplate>
+											<DataTemplate>
+												<Image Source="{Binding Logo}" />
+											</DataTemplate>
+										</DataGridTemplateColumn.CellTemplate>
+									</DataGridTemplateColumn>
+									<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
+									<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
+									<DataGridTextColumn Header="Pts" Binding="{Binding Pts}"/>
+									<DataGridTextColumn Header="J" Binding="{Binding J}"/>
+									<DataGridTextColumn Header="G" Binding="{Binding G}"/>
+									<DataGridTextColumn Header="N" Binding="{Binding N}"/>
+									<DataGridTextColumn Header="P" Binding="{Binding P}"/>
+									<DataGridTextColumn Header="Bp" Binding="{Binding bp}"/>
+									<DataGridTextColumn Header="Bc" Binding="{Binding bc}"/>
+									<DataGridTextColumn Header="Diff" Binding="{Binding Diff}"/>
+								</DataGrid.Columns>
+								<DataGrid.CellStyle>
+									<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource StyleDataCellGrid}">
+
+									</Style>
+								</DataGrid.CellStyle>
+							</DataGrid>
+						<Label Content="Stats en tout genre (à venir)" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
 				</StackPanel>
-				<StackPanel Orientation="Vertical">
-					<Button Name="btnParticipants" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
-					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" MaxWidth="300" IsReadOnly="True" MaxHeight="150" Name="dgPalmares" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Annee" Binding="{Binding Annee}"/>
-							<DataGridTextColumn Header="Club" Binding="{Binding Club}"/>
-						</DataGrid.Columns>
-					</DataGrid>
-				</StackPanel>
-				
 			</StackPanel>
-			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
-				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour au menu" Click="BtnQuitter_Click"/>
-			</StackPanel>
+			<TextBlock Name="tbActu" Grid.Row="2" FontSize="18" Style="{StaticResource StyleTextBlock}">
+				<TextBlock.RenderTransform>
+					<TranslateTransform x:Name="translate" />
+				</TextBlock.RenderTransform>
+				<TextBlock.Triggers>
+					<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+						<BeginStoryboard>
+							<Storyboard RepeatBehavior="Forever">
+								<DoubleAnimation
+                        From="1200" To="-1200"
+                        Storyboard.TargetName="translate"
+                        Storyboard.TargetProperty="X"
+                        Duration="0:0:20" />
+							</Storyboard>
+						</BeginStoryboard>
+					</EventTrigger>
+				</TextBlock.Triggers>
+    XXX transféré de XXX à XXX, Ligue 1 : belle victoire de Marseille contre Bordeaux, Paris reprend la tête du championnat; Coupe de la Ligue, Quarts de finales : sensation d'Orléans qui bat Reims aux tirs au buts, Lorient battu 3-0 par Saint-Etienne
+			</TextBlock>
 		</StackPanel>
 	</Grid>
 </Window>

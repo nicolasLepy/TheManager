@@ -28,6 +28,7 @@ namespace TheManager
         {
             AjouterEquipesARecuperer();
             _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation, AllerRetour);
+
         }
 
         public override void QualifierClubs()

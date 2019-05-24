@@ -10,9 +10,19 @@
 		<StackPanel Orientation="Vertical">
 			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Horizontal">
-				<ListBox Name="lbPays" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbPays_SelectionChanged"></ListBox>
-				<ListBox Name="lbChampionnats" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged"></ListBox>
-				<ListBox Name="lbClubs" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbClubs_SelectionChanged"></ListBox>
+				<ListBox Name="lbPays" Width="125" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbPays_SelectionChanged"></ListBox>
+				<ListBox Name="lbChampionnats" Width="125" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged"></ListBox>
+				<ListBox Name="lbClubs" Width="125" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbClubs_SelectionChanged"></ListBox>
+				<StackPanel Orientation="Vertical">
+					<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
+					<StackPanel Orientation="Horizontal" Name="spEtoiles">
+						<Image Name="imgEtoile1" Width="20" Height="20" Source="generic.png"></Image>
+						<Image Name="imgEtoile2" Width="20" Height="20" Source="generic.png"></Image>
+						<Image Name="imgEtoile3" Width="20" Height="20" Source="generic.png"></Image>
+						<Image Name="imgEtoile4" Width="20" Height="20" Source="generic.png"></Image>
+						<Image Name="imgEtoile5" Width="20" Height="20" Source="generic.png"></Image>
+					</StackPanel>
+				</StackPanel>
 			</StackPanel>
 			<Button Content="Valider" Style="{StaticResource StyleButton1}" Width="150" Click="Button_Click"/>
 		</StackPanel>

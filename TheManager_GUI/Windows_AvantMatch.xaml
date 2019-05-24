@@ -1,0 +1,64 @@
+﻿<Window x:Class="TheManager_GUI.Windows_AvantMatch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+        Title="Windows_AvantMatch" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+	<Grid>
+		<StackPanel Orientation="Vertical">
+			<Label Content="Avant-match" Style="{StaticResource StyleLabel1}"/>
+			<Label Name="lbMatch" Content="Dijon - Lyon" Style="{StaticResource StyleLabel1}"/>
+			<Grid>
+				<Label Name="lbStade" Content="Stade GG" Style="{StaticResource StyleLabel2}"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<Label Name="lbCote1" Content="2.50" Width="50" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbCoteN" Content="2.60" Width="50" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbCote2" Content="4.10" Width="50" Style="{StaticResource StyleLabel2}"/>
+				</StackPanel>
+			</Grid>
+			<StackPanel Orientation="Horizontal">
+				<StackPanel Orientation="Vertical">
+					<Label Content="Joueurs disponibles" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="275" Name="dgJoueursDispo" MouseDoubleClick="DgJoueursDispo_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
+							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+							<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
+							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
+							<DataGridTemplateColumn Header="Energie" Width="75">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<ProgressBar Value="{Binding Energie}" Minimum="0" Maximum="100"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+					<Button Name="btnCompoAuto" Content="Composition automatique" Style="{StaticResource StyleButton1}" Width="150" Click="BtnCompoAuto_Click"/>
+				</StackPanel>
+				<StackPanel Orientation="Vertical">
+					<Label Content="Composition" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="275" Name="dgCompo" MouseDoubleClick="DgCompo_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
+							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
+							<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
+							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
+							<DataGridTemplateColumn Header="Energie" Width="75">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<ProgressBar Value="{Binding Energie}" Minimum="0" Maximum="100"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+					<Button Name="btnRAZ" Content="Réinitialiser" Style="{StaticResource StyleButton1}" Width="150" Click="BtnRAZ_Click"/>
+				</StackPanel>
+			</StackPanel>
+			<Button Name="btnJouer" Content="Jouer" Style="{StaticResource StyleButton1}" Width="100" Click="Button_Click"/>
+		</StackPanel>
+    </Grid>
+</Window>

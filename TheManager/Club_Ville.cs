@@ -148,7 +148,7 @@ namespace TheManager
         public void GenererJoueur(int ageMin, int ageMax)
         {
             Poste p = Poste.GARDIEN;
-            int random = Session.Instance.Random(1, 12);
+            int random = Session.Instance.Random(1, 13);
             if(random >= 2 && random <= 5) p = Poste.DEFENSEUR;
             if (random >= 6 && random <= 9) p = Poste.MILIEU;
             if (random >= 10) p = Poste.ATTAQUANT;
@@ -293,6 +293,28 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Génère le calendrier des matchs amicaux du club avant le début de la compétition
+        /// </summary>
+        public void GenererCalendrierMatchsAmicaux()
+        {
+            Competition championnat = Championnat;
+            if(championnat != null)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Club adv = Session.Instance.Partie.Gestionnaire.Clubs[Session.Instance.Random(0, Session.Instance.Partie.Gestionnaire.Clubs.Count)];
+                    if(championnat.Tours[0] as TourChampionnat != null)
+                    {
+                        DateTime debut = new DateTime(championnat.Tours[0].Matchs[0].Jour.Year, championnat.Tours[0].Matchs[0].Jour.Month, championnat.Tours[0].Matchs[0].Jour.Day);
+                        debut = debut.AddDays(Session.Instance.Random(-30, -10));
+                        Session.Instance.Partie.Gestionnaire.AjouterMatchAmical(new Match(this, adv, debut, false));
+                    }
+                }
+
+            }
+        }
+
         public void ConsiderationOffres()
         {
             foreach(OffreContrat oc in GestionTransfertsClub.Offres)
@@ -359,23 +381,23 @@ namespace TheManager
             List<Joueur> joueurs = ListerJoueurPoste(Poste.GARDIEN);
             if(joueurs.Count < 2)
             {
-                for (int i = 0; i < 2 - joueurs.Count; i++) GenererJoueur(Poste.GARDIEN, 18, 22, (int)(CentreFormation * 0.75f));
+                for (int i = 0; i < 2 - joueurs.Count; i++) GenererJoueur(Poste.GARDIEN, 18, 22, -(int)(CentreFormation-(CentreFormation * 0.75f)));
             }
             joueurs = ListerJoueurPoste(Poste.DEFENSEUR);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.DEFENSEUR, 18, 22, (int)(CentreFormation * 0.75f));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.DEFENSEUR, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
             }
             
             joueurs = ListerJoueurPoste(Poste.MILIEU);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.MILIEU, 18, 22, (int)(CentreFormation * 0.75f));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.MILIEU, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
             }
             joueurs = ListerJoueurPoste(Poste.ATTAQUANT);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.ATTAQUANT, 18, 22, (int)(CentreFormation * 0.75f));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.ATTAQUANT, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
             }
         }
 

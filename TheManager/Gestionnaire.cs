@@ -236,7 +236,6 @@ namespace TheManager
             foreach (Joueur j in partentEnRetraite)
             {
                 _joueursLibres.Remove(j);
-                //Console.WriteLine(j.Prenom + " " + j.Nom + " (" + j.Age + " ans) part en retraite");
             }
         }
 
@@ -268,6 +267,12 @@ namespace TheManager
                 foreach (Pays p in c.Pays) if (p.Competitions().Contains(competition)) res = p;
             }
             return res;
+        }
+
+        public void AjouterMatchAmical(Match m)
+        {
+            Competition amc = String2Competition("Matchs amicaux");
+            amc.Tours[0].Matchs.Add(m);
         }
 
     }

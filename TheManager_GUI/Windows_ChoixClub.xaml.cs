@@ -66,6 +66,37 @@ namespace TheManager_GUI
 
         private void LbClubs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Club c = lbClubs.SelectedItem as Club;
+            if(c != null)
+            {
+                spEtoiles.Children.Clear();
+                try
+                {
+                    imgClub.Source = new BitmapImage(new Uri(Utils.Logo(c)));
+                }
+                catch
+                {
+                    Console.WriteLine("Pas de logo disponible pour " + c.Logo);
+                }
+                float etoiles = c.Etoiles;
+                int etoilesEntieres = (int)Math.Floor(etoiles);
+                for(int i = 1; i<=etoilesEntieres; i++)
+                {
+                    Image img = new Image();
+                    img.Width = 20;
+                    img.Height = 20;
+                    img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
+                    spEtoiles.Children.Add(img);
+                }
+                if(etoiles - etoilesEntieres != 0)
+                {
+                    Image img = new Image();
+                    img.Width = 20;
+                    img.Height = 20;
+                    img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
+                    spEtoiles.Children.Add(img);
+                }
+            }
 
         }
 

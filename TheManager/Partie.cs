@@ -63,9 +63,102 @@ namespace TheManager
             }
         }
 
-        public void Avancer()
+        public void MiseAJourDesClubs()
+        {
+            foreach (Media m in _gestionnaire.Medias)
+            {
+                List<Journaliste> toDelete = new List<Journaliste>();
+                foreach (Journaliste j in m.Journalistes)
+                {
+                    j.Age++;
+                    if (j.Age > 65) if (Session.Instance.Random(1, 8) == 1) toDelete.Add(j);
+                }
+                foreach (Journaliste j in toDelete) m.Journalistes.Remove(j);
+            }
+
+            //Mise à jour du niveau des joueurs sans clubs
+            foreach (Joueur j in _gestionnaire.JoueursLibres)
+            {
+                j.MiseAJourNiveau();
+            }
+
+            //On balaye tous les clubs
+            foreach (Club c in _gestionnaire.Clubs)
+            {
+                Club_Ville cv = c as Club_Ville;
+                if (cv != null)
+                {
+                    cv.Historique.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.Budget, cv.CentreFormation));
+                    //Prolonger les joueurs
+                    List<Contrat> joueursALiberer = new List<Contrat>();
+                    foreach (Contrat ct in cv.Contrats)
+                    {
+                        ct.Joueur.MiseAJourNiveau();
+                        if (ct.Fin.Year == Date.Year)
+                        {
+                            if (!cv.Prolonger(ct)) joueursALiberer.Add(ct);
+
+                        }
+                    }
+                    //Libérer les joueurs non prolongés
+                    foreach (Contrat ct in joueursALiberer)
+                    {
+                        cv.Contrats.Remove(ct);
+                        _gestionnaire.JoueursLibres.Add(ct.Joueur);
+                    }
+
+                    cv.ObtenirSponsor();
+                    cv.MiseAJourCentreFormation();
+                    cv.GenererJeunes();
+                    //Mettre les joueurs les plus indésirables sur la liste des transferts
+                    cv.MettreAJourListeTransferts();
+
+                }
+            }
+        }
+
+        public void Transferts()
+        {
+            //Premier jour du mercato, le club identifie une liste de joueurs à recruter
+            if (Date.Month == 7 && Date.Day == 2)
+            {
+                foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
+                        (c as Club_Ville).RechercherJoueursLibres();
+            }
+            if (Date.Month == 7 || Date.Month == 8)
+            {
+
+                //Joueurs checks leurs offres
+                /*foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
+                List<Joueur> aRetirer = new List<Joueur>();
+                foreach (Joueur j in Gestionnaire.JoueursLibres)
+                {
+                    j.ConsidererOffres();
+                    if (j.Club != null) aRetirer.Add(j);
+                }
+                foreach (Joueur j in aRetirer) Gestionnaire.JoueursLibres.Remove(j);
+                */
+                //Clubs recherchent des joueurs libres
+                foreach (Club c in Gestionnaire.Clubs)
+                {
+                    Club_Ville cv = c as Club_Ville;
+                    if (cv != null)
+                    {
+                        cv.ConsiderationOffres();
+                        cv.FaireOffreJoueurs();
+                    }
+                }
+
+            }
+
+        }
+
+        public Match Avancer()
         {
             _date = _date.AddDays(1);
+
+            List<Match> aJouer = new List<Match>();
+            Match matchClub = null;
 
             foreach (Media m in _gestionnaire.Medias) m.LibererJournalistes();
 
@@ -78,7 +171,15 @@ namespace TheManager
                     {
                         if (Utils.ComparerDates(m.Jour, _date))
                         {
-                            m.Jouer();
+                            m.DefinirCompo();
+                            if ((m.Domicile == Club || m.Exterieur == Club) && !Options.SimulerMatchs)
+                            {
+                                matchClub = m;
+                            }
+                            else
+                            {
+                                m.Jouer();
+                            }
                             Club_Ville cv = m.Domicile as Club_Ville;
                             Club_Ville ce = m.Exterieur as Club_Ville;
                             if(cv != null && ce != null && (cv.Championnat != null && cv.Championnat.Niveau <= 2 || ce.Championnat != null && ce.Championnat.Niveau <= 2))
@@ -105,7 +206,6 @@ namespace TheManager
                                             Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), cv.Ville, 100);
                                             media.Journalistes.Add(nouveau);
                                             commentateur = nouveau;
-                                            //Console.WriteLine("Pas de journalistes disponibles pour " + m.Domicile.Nom + "-" + m.Exterieur.Nom);
                                         }
 
                                         commentateur.EstPris = true;
@@ -144,100 +244,25 @@ namespace TheManager
             //Mise à jour annuelle des clubs (sponsors, centre de formation, contrats)
             if(Date.Day == 1 && Date.Month == 7)
             {
-                foreach(Media m in _gestionnaire.Medias)
-                {
-                    List<Journaliste> toDelete = new List<Journaliste>();
-                    foreach(Journaliste j in m.Journalistes)
-                    {
-                        j.Age++;
-                        if (j.Age > 65) if (Session.Instance.Random(1, 8) == 1) toDelete.Add(j);
-                    }
-                    foreach (Journaliste j in toDelete) m.Journalistes.Remove(j);
-                }
-
-                //Mise à jour du niveau des joueurs sans clubs
-                foreach (Joueur j in _gestionnaire.JoueursLibres)
-                {
-                    j.MiseAJourNiveau();
-                }
-
-                //On balaye tous les clubs
-                foreach (Club c in _gestionnaire.Clubs)
-                {
-                    Club_Ville cv = c as Club_Ville;
-                    if (cv != null)
-                    {
-                        cv.Historique.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.Budget, cv.CentreFormation));
-                        //Prolonger les joueurs
-                        List<Contrat> joueursALiberer = new List<Contrat>();
-                        foreach (Contrat ct in cv.Contrats)
-                        {
-                            ct.Joueur.MiseAJourNiveau();
-                            if(ct.Fin.Year == Date.Year)
-                            {
-                                if (!cv.Prolonger(ct)) joueursALiberer.Add(ct);
-
-                            }
-                        }
-                        //Libérer les joueurs non prolongés
-                        foreach(Contrat ct in joueursALiberer)
-                        {
-                            cv.Contrats.Remove(ct);
-                            _gestionnaire.JoueursLibres.Add(ct.Joueur);
-                        }
-
-                        cv.ObtenirSponsor();
-                        cv.MiseAJourCentreFormation();
-                        cv.GenererJeunes();
-                        //Mettre les joueurs les plus indésirables sur la liste des transferts
-                        cv.MettreAJourListeTransferts();
-
-                    }
-                }
+                MiseAJourDesClubs();
             }
 
             //Période des transferts
             if(Options.Transferts)
             {
-                //Premier jour du mercato, le club identifie une liste de joueurs à recruter
-                if(Date.Month == 7 && Date.Day == 2)
-                {
-                    foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
-                            (c as Club_Ville).RechercherJoueursLibres();
-                }
-                if (Date.Month == 7 || Date.Month == 8)
-                {
-
-                    //Joueurs checks leurs offres
-                    /*foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
-                    List<Joueur> aRetirer = new List<Joueur>();
-                    foreach (Joueur j in Gestionnaire.JoueursLibres)
-                    {
-                        j.ConsidererOffres();
-                        if (j.Club != null) aRetirer.Add(j);
-                    }
-                    foreach (Joueur j in aRetirer) Gestionnaire.JoueursLibres.Remove(j);
-                    */
-                    //Clubs recherchent des joueurs libres
-                    foreach (Club c in Gestionnaire.Clubs)
-                    {
-                        Club_Ville cv = c as Club_Ville;
-                        if (cv != null)
-                        {
-                            cv.ConsiderationOffres();
-                            cv.FaireOffreJoueurs();
-                        }
-                    }
-
-                }
-
-
+                Transferts();
             }
 
             //Les joueurs libres peuvent partir en retraite
             if (Date.Day == 2 && Date.Month == 7)
             {
                 _gestionnaire.RetraiteJoueursLibres();
+            }
+
+            //20 juillet => les équipes mettent en place le prix des billets
+            if(Date.Day == 20 && Date.Month == 7)
+            {
+                foreach (Club c in Gestionnaire.Clubs) c.DefinirPrixBillet();
             }
 
             //Les équipes sont complétées à la fin de la période de transfert si elles n'ont pas assez de joueurs
@@ -282,6 +307,8 @@ namespace TheManager
             {
                 j.Recuperer();
             }
+
+            return matchClub;
         }
     }
 }

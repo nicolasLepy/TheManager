@@ -64,6 +64,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Windows_AvantMatch.xaml.cs">
+      <DependentUpon>Windows_AvantMatch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Windows_ChoixClub.xaml.cs">
       <DependentUpon>Windows_ChoixClub.xaml</DependentUpon>
     </Compile>
@@ -72,6 +75,9 @@
     </Compile>
     <Compile Include="Windows_ConfigurationPartie.xaml.cs">
       <DependentUpon>Windows_ConfigurationPartie.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows_JouerMatch.xaml.cs">
+      <DependentUpon>Windows_JouerMatch.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows_Joueur.xaml.cs">
       <DependentUpon>Windows_Joueur.xaml</DependentUpon>
@@ -103,6 +109,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Windows_AvantMatch.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Windows_ChoixClub.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -112,6 +122,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows_ConfigurationPartie.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows_JouerMatch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

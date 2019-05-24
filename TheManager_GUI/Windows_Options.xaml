@@ -21,6 +21,10 @@
 					<Label Content="Activer les transferts" Style="{StaticResource StyleLabel2}"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal">
+					<CheckBox Name="cbSimuler" Click="CbSimuler_Click"/>
+					<Label Content="Simuler les matchs" Style="{StaticResource StyleLabel2}"/>
+				</StackPanel>
+				<StackPanel Orientation="Horizontal">
 					<CheckBox Name="cbExporter" Click="CbExporter_Click"/>
 					<Label Content="Exporter les compétitions sous format HTML à la fin de la saison" Style="{StaticResource StyleLabel2}"/>
 				</StackPanel>

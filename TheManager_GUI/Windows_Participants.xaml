@@ -5,17 +5,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Participants" Height="450" Width="400" Style="{StaticResource StyleWindows}">
+        Title="Windows_Participants" Height="450" Width="450" Style="{StaticResource StyleWindows}">
 	<Grid>
 		<StackPanel Orientation="Vertical">
 			<Label Content="Participants" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
-			<DataGrid Margin="10" MaxWidth="300" IsReadOnly="True" MaxHeight="150" Name="dgClubs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+			<DataGrid Margin="10" Width="420" IsReadOnly="True" Height="350" Name="dgClubs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 				<DataGrid.Columns>
 					<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
 					<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
 					<DataGridTextColumn Header="Budget" Binding="{Binding Budget}"/>
 					<DataGridTextColumn Header="Affluence" Binding="{Binding Affluence}"/>
 					<DataGridTextColumn Header="Masse" Binding="{Binding MasseSalariale}"/>
+					<DataGridTemplateColumn Width="100">
+						<DataGridTemplateColumn.CellTemplate>
+							<DataTemplate>
+								<StackPanel Orientation="Horizontal" Name="spEtoiles">
+									<Image Width="15" Height="15" Source="{Binding Star1}" />
+									<Image Width="15" Height="15" Source="{Binding Star2}" />
+									<Image Width="15" Height="15" Source="{Binding Star3}" />
+									<Image Width="15" Height="15" Source="{Binding Star4}" />
+									<Image Width="15" Height="15" Source="{Binding Star5}" />
+								</StackPanel>
+							</DataTemplate>
+						</DataGridTemplateColumn.CellTemplate>
+					</DataGridTemplateColumn>
 				</DataGrid.Columns>
 			</DataGrid>
 			<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Quitter" Width="200" Click="BtnOptions_Click"/>

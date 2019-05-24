@@ -64,7 +64,7 @@ namespace TheManager
                 Club_Ville cv = c as Club_Ville;
                 if(cv != null)
                 {
-                    cv.ModifierBudget(nbMatchs * cv.Supporters * cv.PrixBillet());
+                    cv.ModifierBudget(nbMatchs * cv.Supporters * cv.PrixBillet);
                 }
             }
             foreach(Qualification q in _qualifications)

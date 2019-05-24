@@ -135,6 +135,7 @@ namespace TheManager
                 }
                 InitialiserQualificationsAnneesSuivantes();
                 TourActuel = -1;
+                
             }
         }
 
@@ -161,8 +162,26 @@ namespace TheManager
                 TourActuel++;
                 _tours[TourActuel].Initialiser();
             }
+
+            //Tour 0, championnat -> génère match amicaux
+            if(TourActuel == 0)
+            {
+                if (Championnat)
+                {
+                    foreach (Club c in Tours[0].Clubs)
+                    {
+                        Club_Ville cv = c as Club_Ville;
+                        if (cv != null)
+                        {
+                            cv.GenererCalendrierMatchsAmicaux();
+                        }
+                    }
+                }
+            }
+            
+
         }
-        
+
         /// <summary>
         /// Qualifie un club à un tour de l'édition suivante de la compétition
         /// </summary>
