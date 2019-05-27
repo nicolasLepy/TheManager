@@ -8,6 +8,29 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
+
+
+    public struct RetourMatch
+    {
+        public RetourMatchEvenement Evenement { get; set; }
+        public object Acteur { get; set; }
+
+        public RetourMatch(RetourMatchEvenement evenement, object acteur)
+        {
+            Evenement = evenement;
+            Acteur = acteur;
+        }
+    }
+
+    public enum RetourMatchEvenement
+    {
+        EVENEMENT,
+        REMPLACEMENT,
+        ACTION,
+        FIN_MITEMPS,
+        FIN_MATCH
+    }
+
     [DataContract(IsReference =true)]
     public class Statistiques
     {
@@ -49,6 +72,8 @@ namespace TheManager
         private int _minute;
         [DataMember]
         private int _miTemps;
+        [DataMember]
+        private int _tempsAdditionnel;
         [DataMember]
         private int _diffNiveau;
         [DataMember]
@@ -129,6 +154,25 @@ namespace TheManager
             }
         }
 
+        public Tour Tour
+        {
+            get
+            {
+                Tour res = null;
+                foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                {
+                    foreach (Tour t in c.Tours)
+                    {
+                        foreach (Match m in t.Matchs)
+                        {
+                            if (m == this) res = t;
+                        }
+                    }
+                }
+                return res;
+            }
+        }
+
         /// <summary>
         /// Si un match a été joué ou non
         /// </summary>
@@ -143,6 +187,27 @@ namespace TheManager
                     res = true;
                 }
                 return res;
+            }
+        }
+
+        public string Temps
+        {
+            get
+            {
+                string temps = "";
+
+                int tmp = _minute;
+                switch (_miTemps)
+                {
+                    case 2: tmp += 45;break;
+                    case 3: tmp += 90;break;
+                    case 4: tmp += 105;break;
+                }
+                int tmpAdd = _minute - ((_miTemps < 3) ? 45 : 15);
+                temps = tmp.ToString();
+                if (tmpAdd > 0) temps += "+" + tmpAdd;
+                temps += "°";
+                return temps;
             }
         }
 
@@ -395,6 +460,7 @@ namespace TheManager
             _score2 = 0;
             _tab2 = 0;
             _tab1 = 0;
+            _tempsAdditionnel = 0;
             _statistiques = new Statistiques();
             _prolongations = false;
             _evenements = new List<EvenementMatch>();
@@ -458,9 +524,57 @@ namespace TheManager
             this._diffNiveauRatio = (NiveauCompo(_compo1Terrain) * 1.05f) / NiveauCompo(_compo2Terrain);
         }
 
-        public void MinuteSuivante()
+        public List<RetourMatch> MinuteSuivante()
         {
+            List<RetourMatch> retours = new List<RetourMatch>();
+            //Au début du match
+            if(_minute == 0 && _miTemps == 1)
+            {
+                CalculerDifferenceNiveau();
+                EtablirAffluence();
+            }
+
+            Club a = Domicile;
+            Club b = Exterieur;
+
             _minute++;
+            retours = JouerMinute(a, b);
+
+            int dureeMiTemps = (_miTemps < 3) ? 45 : 15;
+            //Fin temps réglementaire
+            if (_minute == dureeMiTemps) _tempsAdditionnel = Session.Instance.Random(1, 6);
+
+            //Fin miTemps
+            if (_minute == dureeMiTemps + _tempsAdditionnel)
+            {
+                _miTemps++;
+                _minute = 0;
+                _tempsAdditionnel = 0;
+                if(_miTemps == 3)
+                {
+                    if ((_prolongationSiNul && (_score1 == _score2)) || MatchRetourNul())
+                    {
+                        _prolongations = true;
+                    }
+                    else
+                    {
+                        retours.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                    }
+                }
+                if(_miTemps == 5)
+                {
+                    if ((_prolongationSiNul && _score1 == _score2) || MatchRetourNul())
+                    {
+                        JouerTAB();
+                    }
+                    retours.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+
+                }
+            }
+
+            
+            return retours;
+
         }
 
         public void Jouer()
@@ -470,7 +584,7 @@ namespace TheManager
             CalculerDifferenceNiveau();
             EtablirAffluence();
 
-            for(_miTemps = 1; _miTemps < 3; _miTemps++)
+            for (_miTemps = 1; _miTemps < 3; _miTemps++)
             {
                 for (_minute = 1; _minute < 50; _minute++)
                 {
@@ -530,9 +644,9 @@ namespace TheManager
             }
         }
 
-        private void JouerMinute(Club a, Club b)
+        private List<RetourMatch> JouerMinute(Club a, Club b)
         {
-
+            List<RetourMatch> retours = new List<RetourMatch>();
             foreach (Joueur j in _compo1)
             {
                 if (Session.Instance.Random(2, 7) == 3) j.Energie--;
@@ -555,24 +669,24 @@ namespace TheManager
                 b = temp;
             }
 
-            if (diffRatio < 0.05) IterationMatch(a, b, 22, 22, 208, 295);
-            else if (diffRatio < 0.1) IterationMatch(a, b, 22, 22, 208, 280);
-            else if (diffRatio >= 0.1 && diffRatio < 0.2) IterationMatch(a, b, 22, 22, 208, 256);
-            else if (diffRatio >= 0.2 && diffRatio < 0.3) IterationMatch(a, b, 22, 22, 208, 246);
-            else if (diffRatio >= 0.3 && diffRatio < 0.4) IterationMatch(a, b, 22, 22, 208, 240);
-            else if (diffRatio >= 0.4 && diffRatio < 0.5) IterationMatch(a, b, 22, 23, 208, 235);
-            else if (diffRatio >= 0.5 && diffRatio < 0.6) IterationMatch(a, b, 22, 23, 208, 230);
-            else if (diffRatio >= 0.6 && diffRatio < 0.65) IterationMatch(a, b, 22, 23, 208, 220);
-            else if (diffRatio >= 0.65 && diffRatio < 0.7) IterationMatch(a, b, 21, 23, 208, 219);
-            else if (diffRatio >= 0.7 && diffRatio < 0.74) IterationMatch(a, b, 21, 23, 208, 218);
-            else if (diffRatio >= 0.74 && diffRatio < 0.78) IterationMatch(a, b, 21, 24, 208, 218);
-            else if (diffRatio >= 0.78 && diffRatio < 0.81) IterationMatch(a, b, 21, 24, 208, 217);
-            else if (diffRatio >= 0.81 && diffRatio < 0.85) IterationMatch(a, b, 21, 25, 208, 217);
-            else if (diffRatio >= 0.85 && diffRatio < 0.89) IterationMatch(a, b, 21, 25, 208, 216);
-            else if (diffRatio >= 0.89 && diffRatio < 0.92) IterationMatch(a, b, 21, 25, 208, 215);
-            else if (diffRatio >= 0.92 && diffRatio < 0.95) IterationMatch(a, b, 21, 25, 208, 214);
-            else if (diffRatio >= 0.95 && diffRatio < 0.98) IterationMatch(a, b, 21, 26, 208, 214);
-            else if (diffRatio >= 0.98 && diffRatio < 1.01) IterationMatch(a, b, 21, 26, 208, 213);
+            if (diffRatio < 0.05) retours = IterationMatch(a, b, 22, 22, 208, 295);
+            else if (diffRatio < 0.1) retours = IterationMatch(a, b, 22, 22, 208, 280);
+            else if (diffRatio >= 0.1 && diffRatio < 0.2) retours = IterationMatch(a, b, 22, 22, 208, 256);
+            else if (diffRatio >= 0.2 && diffRatio < 0.3) retours = IterationMatch(a, b, 22, 22, 208, 246);
+            else if (diffRatio >= 0.3 && diffRatio < 0.4) retours = IterationMatch(a, b, 22, 22, 208, 240);
+            else if (diffRatio >= 0.4 && diffRatio < 0.5) retours = IterationMatch(a, b, 22, 23, 208, 235);
+            else if (diffRatio >= 0.5 && diffRatio < 0.6) retours = IterationMatch(a, b, 22, 23, 208, 230);
+            else if (diffRatio >= 0.6 && diffRatio < 0.65) retours = IterationMatch(a, b, 22, 23, 208, 220);
+            else if (diffRatio >= 0.65 && diffRatio < 0.7) retours = IterationMatch(a, b, 21, 23, 208, 219);
+            else if (diffRatio >= 0.7 && diffRatio < 0.74) retours = IterationMatch(a, b, 21, 23, 208, 218);
+            else if (diffRatio >= 0.74 && diffRatio < 0.78) retours = IterationMatch(a, b, 21, 24, 208, 218);
+            else if (diffRatio >= 0.78 && diffRatio < 0.81) retours = IterationMatch(a, b, 21, 24, 208, 217);
+            else if (diffRatio >= 0.81 && diffRatio < 0.85) retours = IterationMatch(a, b, 21, 25, 208, 217);
+            else if (diffRatio >= 0.85 && diffRatio < 0.89) retours = IterationMatch(a, b, 21, 25, 208, 216);
+            else if (diffRatio >= 0.89 && diffRatio < 0.92) retours = IterationMatch(a, b, 21, 25, 208, 215);
+            else if (diffRatio >= 0.92 && diffRatio < 0.95) retours = IterationMatch(a, b, 21, 25, 208, 214);
+            else if (diffRatio >= 0.95 && diffRatio < 0.98) retours = IterationMatch(a, b, 21, 26, 208, 214);
+            else if (diffRatio >= 0.98 && diffRatio < 1.01) retours = IterationMatch(a, b, 21, 26, 208, 213);
             /*if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
             if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
             if (diff >= 3 && diff <= 4) IterationMatch(a, b, 1, 8, 9, 14);
@@ -591,10 +705,15 @@ namespace TheManager
             if (diff >= 71 && diff <= 79) IterationMatch(a, b, 1, 36, 40, 40);
             if (diff >= 80 && diff <= 89) IterationMatch(a, b, 1, 39, 40, 40);
             if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);*/
+
+            return retours;
         }
 
-        private void IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)
+        private List<RetourMatch> IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)
         {
+
+            List<RetourMatch> res = new List<RetourMatch>();
+
             int hasard = Session.Instance.Random(0, 500);
             //Buts
             if (hasard >= min_a && hasard <= max_a)
@@ -602,19 +721,37 @@ namespace TheManager
                 if (a == Domicile) _score1++;
                 else _score2++;
                 But(a);
+                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
             else if (hasard >= min_b && hasard <= max_b)
             {
                 if (a == Domicile) _score2++;
                 else _score1++;
                 But(b);
+                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
             //Cartons jaunes
-            else if (hasard >= 4 && hasard <= 9) CartonJaune(a);
-            else if (hasard >= 14 && hasard <= 19) CartonJaune(b);
+            else if (hasard >= 4 && hasard <= 9)
+            {
+                CartonJaune(a);
+                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+            }
+            else if (hasard >= 14 && hasard <= 19)
+            {
+                CartonJaune(b);
+                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+            }
             //Cartons rouges
-            else if (hasard == 2) CartonRouge(a);
-            else if (hasard == 3) CartonRouge(b);
+            else if (hasard == 2)
+            {
+                CartonRouge(a);
+                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+            }
+            else if (hasard == 3)
+            {
+                CartonRouge(b);
+                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+            }
             //Tirs
             if (hasard >= min_a && hasard <= max_a + ((max_a + 1 - min_a) * 4))
             {
@@ -626,6 +763,8 @@ namespace TheManager
                 if(a == Domicile) _statistiques.TirsExterieurs++;
                 else _statistiques.TirsDomicile++;
             }
+
+            return res;
         }
 
         private void But(Club c)

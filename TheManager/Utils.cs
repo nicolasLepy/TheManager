@@ -164,5 +164,20 @@ namespace TheManager
             return System.IO.Directory.GetCurrentDirectory() + "\\Images\\Logo\\" + competition.Logo + ".png";
         }
 
+        public static string CheminSon(string son)
+        {
+            return System.IO.Directory.GetCurrentDirectory() + "\\Musiques\\" + son + ".mp3";
+        }
+
+        public static bool RetoursContient(RetourMatchEvenement evenement, List<RetourMatch> retours)
+        {
+            bool res = false;
+            foreach(RetourMatch rm in retours)
+            {
+                if (rm.Evenement == evenement) res = true;
+            }
+            return res;
+        }
+
     }
 }

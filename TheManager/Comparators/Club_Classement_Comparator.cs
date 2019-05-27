@@ -18,8 +18,27 @@ namespace TheManager.Comparators
         public int Compare(Club x, Club y)
         {
             int res = 1;
-            if (Points(y) < Points(x)) res = -1;
-            else if (Points(y) == Points(x)) if(Difference(y) < Difference(x)) res = -1;
+            if (Points(y) < Points(x))
+            {
+                res = -1;
+            }
+
+            else if (Points(y) == Points(x))
+            {
+                if (Difference(y) < Difference(x))
+                {
+                    res = -1;
+                }
+                else if (Difference(x) == Difference(y))
+                {
+                    if (ButPour(y) < ButPour(x))
+                    {
+                        res = -1;
+                    }
+                }
+            }
+            
+            
             return res;
         }
 
@@ -33,6 +52,11 @@ namespace TheManager.Comparators
         {
             return Utils.Difference(_tour, c);
             //return _tour.Difference(c);
+        }
+
+        private int ButPour(Club c)
+        {
+            return Utils.Bp(_tour, c);
         }
     }
 }

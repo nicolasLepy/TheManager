@@ -29,7 +29,10 @@ namespace TheManager_GUI
             _match = m;
             _club = c;
 
-            foreach(Joueur j in c.Joueurs())
+            
+
+
+            foreach (Joueur j in c.Joueurs())
             {
                 dgJoueursDispo.Items.Add(new JoueurCompoElement { Poste = j.Poste.ToString(), Age = j.Age, Energie = j.Energie, Niveau = j.Niveau, Nom = j});
             }
@@ -64,7 +67,8 @@ namespace TheManager_GUI
                 }
 
                 _match.DefinirCompo(compo, _club);
-                _match.Jouer();
+                Windows_JouerMatch wjm = new Windows_JouerMatch(_match);
+                wjm.ShowDialog ();
                 Close();
             }
         }

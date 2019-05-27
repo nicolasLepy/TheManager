@@ -22,6 +22,9 @@ namespace TheManager_GUI
     /// </summary>
     public partial class MainWindow : Window
     {
+
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -31,6 +34,7 @@ namespace TheManager_GUI
                 Joueur j = new Joueur("", "", new DateTime(2000, 1, 1), i, i, null, Poste.MILIEU);
                 Console.WriteLine("Niveau " + i + " : salaire " + j.EstimerSalaire());
             }
+
         }
 
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)

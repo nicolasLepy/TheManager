@@ -178,7 +178,8 @@ namespace TheManager
                             }
                             else
                             {
-                                m.Jouer();
+                                while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
+                                //m.Jouer();
                             }
                             Club_Ville cv = m.Domicile as Club_Ville;
                             Club_Ville ce = m.Exterieur as Club_Ville;

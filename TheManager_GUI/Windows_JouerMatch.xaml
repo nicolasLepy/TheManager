@@ -6,9 +6,55 @@
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
         Title="Windows_JouerMatch" Height="450" Width="800" Style="{StaticResource StyleWindows}" >
-    <Grid>
+	<Grid>
 		<StackPanel Orientation="Vertical">
-			<Button Name="btnSimuler" Content="Simuler jusqu'à la fin du match" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Vitesse simulation" Style="{StaticResource StyleLabel2}"/>
+				<Slider Name="sliderVitesseSimulation" Minimum="50" Maximum="1500" Value="400" TickPlacement="BottomRight" TickFrequency="10" Width="140" />
+			</StackPanel>
+			<!-- panneau principal -->
+			<StackPanel Orientation="Horizontal">
+				<!-- mon match -->
+				<StackPanel Orientation="Vertical">
+					<Label Name="lbTemps" Content="45°" Style="{StaticResource StyleLabel1}"/>
+					<Label Name="lbScore" Content="1 - 0" Style="{StaticResource StyleLabel1}"/>
+					<Button Name="btnSimuler" Content="Simuler jusqu'à la fin du match" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
+				</StackPanel>
+				<!-- infos compet -->
+				<StackPanel Orientation="Vertical">
+					<DataGrid Margin="10" IsReadOnly="True" Height="300" GridLinesVisibility="None" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTemplateColumn Width="18">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<Image Source="{Binding Logo}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
+							<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
+							<DataGridTextColumn Header="Pts" Binding="{Binding Pts}"/>
+							<DataGridTextColumn Header="J" Binding="{Binding J}"/>
+							<DataGridTextColumn Header="G" Binding="{Binding G}"/>
+							<DataGridTextColumn Header="N" Binding="{Binding N}"/>
+							<DataGridTextColumn Header="P" Binding="{Binding P}"/>
+							<DataGridTextColumn Header="Bp" Binding="{Binding bp}"/>
+							<DataGridTextColumn Header="Bc" Binding="{Binding bc}"/>
+							<DataGridTextColumn Header="Diff" Binding="{Binding Diff}"/>
+						</DataGrid.Columns>
+						<DataGrid.CellStyle>
+							<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource StyleDataCellGrid}">
+
+							</Style>
+						</DataGrid.CellStyle>
+					</DataGrid>
+				</StackPanel>
+				<!-- info autres matchs -->
+				<StackPanel Orientation="Vertical">
+					
+				</StackPanel>
+			</StackPanel>
+			
 		</StackPanel>
     </Grid>
 </Window>
