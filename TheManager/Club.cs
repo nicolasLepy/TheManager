@@ -32,6 +32,9 @@ namespace TheManager
         [DataMember]
         private int _prixBillet;
 
+        [DataMember]
+        private string _musiqueBut;
+
         public string Nom { get => _nom; }
         public int Reputation { get => _reputation; }
         public int Supporters { get => _supporters; set => _supporters = value; }
@@ -40,6 +43,7 @@ namespace TheManager
         public string Logo { get => _logo; }
         public string NomCourt { get => _nomCourt; }
         public int PrixBillet { get => _prixBillet; }
+        public string MusiqueBut { get => _musiqueBut; }
 
         /// <summary>
         /// Liste des matchs joués par le club
@@ -113,7 +117,7 @@ namespace TheManager
             }
         }
 
-        public Club(string nom, string nomCourt, int reputation, int supporters, int centreFormation, string logo, Stade stade)
+        public Club(string nom, string nomCourt, int reputation, int supporters, int centreFormation, string logo, Stade stade, string musiqueBut)
         {
             _nom = nom;
             _nomCourt = nomCourt;
@@ -122,6 +126,7 @@ namespace TheManager
             _centreFormation = centreFormation;
             _logo = logo;
             _stade = stade;
+            _musiqueBut = musiqueBut;
         }
 
         public List<Joueur> ListerJoueurPoste(Poste poste)

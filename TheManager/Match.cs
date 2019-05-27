@@ -182,10 +182,11 @@ namespace TheManager
             {
                 bool res = false;
                 //Si la date de la partie est supérieure ou égale au jour du match, alors le match a été joué
-                if(DateTime.Compare(Session.Instance.Partie.Date,Jour) >= 0)
+                if (_minute > 0 || _miTemps > 1) res = true;
+                /*if(DateTime.Compare(Session.Instance.Partie.Date,Jour) >= 0)
                 {
                     res = true;
-                }
+                }*/
                 return res;
             }
         }

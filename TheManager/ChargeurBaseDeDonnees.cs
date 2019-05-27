@@ -200,14 +200,21 @@ namespace TheManager
                     if (stade == null)
                         stade = new Stade("Stade de " + nomCourt, ville.Population / 10, ville);
 
+
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
                     if (logo == "") logo = "generic";
 
+                    string musiqueBut = "";
+                    if (e2.Attribute("musiqueBut") != null)
+                        musiqueBut = e2.Attribute("musiqueBut").Value ;
+                    else
+                        musiqueBut = "null";
+
                     //Simplification
                     reputation = centreFormation;
 
-                    Club c = new Club_Ville(nom, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade);
+                    Club c = new Club_Ville(nom, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade,musiqueBut);
                     _gestionnaire.Clubs.Add(c);
                 }
                 foreach (XElement e2 in e.Descendants("Selection"))
@@ -229,7 +236,14 @@ namespace TheManager
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
                     float coefficient = float.Parse(e2.Attribute("coefficient").Value);
-                    Club c = new SelectionNationale(nom, nomCourt, reputation, supporters, centreFormation, logo, stade, coefficient,pays);
+
+                    string musiqueBut = "";
+                    if (e2.Attribute("musiqueBut") != null)
+                        musiqueBut = e2.Attribute("musiqueBut").Value;
+                    else
+                        musiqueBut = "null";
+
+                    Club c = new SelectionNationale(nom, nomCourt, reputation, supporters, centreFormation, logo, stade, coefficient,pays,musiqueBut);
                     _gestionnaire.Clubs.Add(c);
                 }
             }

@@ -10,21 +10,37 @@ using WMPLib;
 
 namespace TheManager_GUI
 {
+
+    public class ThreadDuree
+    {
+
+        private WindowsMediaPlayer _player;
+        private int _duree;
+        private int _decalage;
+
+        public ThreadDuree(WindowsMediaPlayer player, int duree, int decalage)
+        {
+            _player = player;
+            _duree = duree;
+            _decalage = decalage;
+        }
+        
+        public void ThreadProc()
+        {
+            Thread.Sleep(_decalage * 1000);
+            _player.controls.play();
+            Thread.Sleep(_duree * 1000);
+            _player.close();
+        }
+
+    }
+
     public class Media
     {
 
         private List<WindowsMediaPlayer> _players;
 
-
-
-        private void ThreadDuree(WindowsMediaPlayer player, int duree, int decalage)
-        {
-            Thread.Sleep(decalage * 1000);
-            player.controls.play();
-            Thread.Sleep(duree * 1000);
-            player.close();
-        }
-
+        
         private void Player_MediaError(object pMediaObject)
         {
             MessageBox.Show("Ne peut pas jouer le son.");
@@ -43,7 +59,9 @@ namespace TheManager_GUI
             _players.Add(wplayer);
             if(duree != 0)
             {
-                Thread t = new Thread(() => ThreadDuree(wplayer, duree, decalage));
+                ThreadDuree td = new ThreadDuree(wplayer, duree, decalage);
+                //Thread t = new Thread(() => ThreadDuree(wplayer, duree, decalage));
+                Thread t = new Thread(new ThreadStart(td.ThreadProc));
                 t.Start();
             }
             else
@@ -78,7 +96,13 @@ namespace TheManager_GUI
             }
         }
 
-        public void But4000()
+        public void But(Match m)
+        {
+            if (m.Affluence < 12000) But4000(m.Domicile.MusiqueBut);
+            else But12000(m.Domicile.MusiqueBut);
+        }
+
+        public void But4000(string musique)
         {
             int random = Session.Instance.Random(1, 4);
             switch (random)
@@ -93,10 +117,10 @@ namespace TheManager_GUI
                     AjouterSon("Ambiances\\But_4000_3", false, 15);
                     break;
             }
-            AjouterSon("montpellier", false, 15,2);
+            AjouterSon(musique, false, 15,2);
         }
 
-        public void But12000()
+        public void But12000(string musique)
         {
             int random = Session.Instance.Random(1, 5);
             switch (random)
@@ -114,7 +138,7 @@ namespace TheManager_GUI
                     AjouterSon("Ambiances\\But_12000_4", false, 15);
                     break;
             }
-            AjouterSon("montpellier", false, 15,2);
+            AjouterSon(musique, false, 15,2);
         }
 
         public Media()

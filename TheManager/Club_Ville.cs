@@ -80,7 +80,7 @@ namespace TheManager
             }
         }
 
-        public Club_Ville(string nom, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade) : base(nom,nomCourt,reputation,supporters,centreFormation,logo,stade)
+        public Club_Ville(string nom, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade, string musiqueBut) : base(nom,nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
         {
             _budget = budget;
             _ville = ville;

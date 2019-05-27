@@ -153,12 +153,51 @@ namespace TheManager
 
         }
 
-        public Match Avancer()
+        private void EtablirMediasPourMatch(Match m, Competition c)
+        {
+            Club_Ville cv = m.Domicile as Club_Ville;
+            Club_Ville ce = m.Exterieur as Club_Ville;
+            if (cv != null && ce != null && (cv.Championnat != null && cv.Championnat.Niveau <= 2 || ce.Championnat != null && ce.Championnat.Niveau <= 2))
+            {
+                foreach (Media media in _gestionnaire.Medias)
+                {
+                    if (media.Couvre(c, c.TourActuel))
+                    {
+                        List<Journaliste> j = new List<Journaliste>();
+                        foreach (Journaliste j1 in media.Journalistes) if (!j1.EstPris) j.Add(j1);
+
+                        Journaliste commentateur = null;
+                        if (j.Count > 0)
+                        {
+                            j.Sort(new Journalistes_Comparator(cv.Ville));
+
+                            if (Math.Abs(Utils.Distance(j[0].Base, cv.Ville)) < 300)
+                            {
+                                commentateur = j[0];
+                            }
+                        }
+                        if (commentateur == null)
+                        {
+                            Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), cv.Ville, 100);
+                            media.Journalistes.Add(nouveau);
+                            commentateur = nouveau;
+                        }
+
+                        commentateur.EstPris = true;
+                        m.Journalistes.Add(commentateur);
+
+
+                    }
+                }
+            }
+        }
+
+        public List<Match> Avancer()
         {
             _date = _date.AddDays(1);
 
             List<Match> aJouer = new List<Match>();
-            Match matchClub = null;
+            List<Match> matchClub = new List<Match>();
 
             foreach (Media m in _gestionnaire.Medias) m.LibererJournalistes();
 
@@ -174,48 +213,15 @@ namespace TheManager
                             m.DefinirCompo();
                             if ((m.Domicile == Club || m.Exterieur == Club) && !Options.SimulerMatchs)
                             {
-                                matchClub = m;
+                                matchClub.Add(m);
                             }
                             else
                             {
-                                while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
+                                //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
                                 //m.Jouer();
+                                aJouer.Add(m);
                             }
-                            Club_Ville cv = m.Domicile as Club_Ville;
-                            Club_Ville ce = m.Exterieur as Club_Ville;
-                            if(cv != null && ce != null && (cv.Championnat != null && cv.Championnat.Niveau <= 2 || ce.Championnat != null && ce.Championnat.Niveau <= 2))
-                            {
-                                foreach (Media media in _gestionnaire.Medias)
-                                {
-                                    if (media.Couvre(c, c.TourActuel))
-                                    {
-                                        List<Journaliste> j = new List<Journaliste>();
-                                        foreach (Journaliste j1 in media.Journalistes) if (!j1.EstPris) j.Add(j1);
-
-                                        Journaliste commentateur = null;
-                                        if(j.Count > 0)
-                                        {
-                                            j.Sort(new Journalistes_Comparator(cv.Ville));
-                                            
-                                            if(Math.Abs(Utils.Distance(j[0].Base,cv.Ville)) < 300)
-                                            {
-                                                commentateur = j[0];
-                                            }
-                                        }
-                                        if(commentateur == null)
-                                        {
-                                            Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), cv.Ville, 100);
-                                            media.Journalistes.Add(nouveau);
-                                            commentateur = nouveau;
-                                        }
-
-                                        commentateur.EstPris = true;
-                                        m.Journalistes.Add(commentateur);
-
-
-                                    }
-                                }
-                            }
+                            EtablirMediasPourMatch(m, c);
                             
                         }
                             
@@ -239,6 +245,15 @@ namespace TheManager
                 }
 
                 if (Options.Exporter) Exportations(c);
+            }
+
+            bool clubAMatch = (matchClub.Count > 0) ? true : false;
+            foreach(Match m in aJouer)
+            {
+                if (clubAMatch && m.Competition == matchClub[0].Competition && m.Jour.ToShortTimeString() == matchClub[0].Jour.ToShortTimeString())
+                    matchClub.Add(m);
+                else
+                    m.Jouer();
             }
             
             

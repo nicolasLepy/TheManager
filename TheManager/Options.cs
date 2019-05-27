@@ -31,7 +31,7 @@ namespace TheManager
         {
             Exporter = false;
             _competitionsAExporter = new List<Competition>();
-            _transferts = true;
+            _transferts = false;
             _simulerMatchs = false;
         }
 

@@ -5,23 +5,39 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_JouerMatch" Height="450" Width="800" Style="{StaticResource StyleWindows}" >
+        Title="Windows_JouerMatch" Height="550" Width="800" Style="{StaticResource StyleWindows}" >
 	<Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Vitesse simulation" Style="{StaticResource StyleLabel2}"/>
+				<Label Content="Rapide" FontSize="10" Style="{StaticResource StyleLabel2}"/>
 				<Slider Name="sliderVitesseSimulation" Minimum="50" Maximum="1500" Value="400" TickPlacement="BottomRight" TickFrequency="10" Width="140" />
+				<Label Content="Lent" FontSize="10" Style="{StaticResource StyleLabel2}"/>
 			</StackPanel>
 			<!-- panneau principal -->
 			<StackPanel Orientation="Horizontal">
 				<!-- mon match -->
 				<StackPanel Orientation="Vertical">
-					<Label Name="lbTemps" Content="45°" Style="{StaticResource StyleLabel1}"/>
+					<StackPanel Orientation="Horizontal">
+						<Image Name="imgEquipe1" Width="50" Height="50" Source="generic.png"></Image>
+						<Label Name="lbEquipe1" VerticalAlignment="Center" Content="SC Amiens" Style="{StaticResource StyleLabel1}"/>
+						<Label Name="lbEquipe2" VerticalAlignment="Center" Content="Dijon FCO" Style="{StaticResource StyleLabel1}"/>
+						<Image Name="imgEquipe2" Width="50" Height="50" Source="generic.png"></Image>
+					</StackPanel>
 					<Label Name="lbScore" Content="1 - 0" Style="{StaticResource StyleLabel1}"/>
-					<Button Name="btnSimuler" Content="Simuler jusqu'à la fin du match" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
+					<Label Name="lbTemps" Content="45°" Style="{StaticResource StyleLabel1}"/>
+					<Button Name="btnSimuler" Content="Abandonner et simuler match" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
+					<Button Name="btnTerminer" Content="Quitter" Visibility="Hidden" Width="200" Click="BtnTerminer_Click" Style="{StaticResource StyleButton1}"/>
 				</StackPanel>
 				<!-- infos compet -->
 				<StackPanel Orientation="Vertical">
+					<DataGrid IsReadOnly="True" Height="150" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Score}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+						</DataGrid.Columns>
+					</DataGrid>
 					<DataGrid Margin="10" IsReadOnly="True" Height="300" GridLinesVisibility="None" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTemplateColumn Width="18">

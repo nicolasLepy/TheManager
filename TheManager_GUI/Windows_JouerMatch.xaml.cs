@@ -16,13 +16,15 @@ using TheManager;
 
 namespace TheManager_GUI
 {
+
+  
     /// <summary>
     /// Logique d'interaction pour Windows_JouerMatch.xaml
     /// </summary>
     public partial class Windows_JouerMatch : Window
     {
 
-        private  Match _match;
+        private List<Match> _matchs;
         private Tour _tour;
 
         private Media _media;
@@ -30,75 +32,106 @@ namespace TheManager_GUI
         private bool _enCours;
 
 
-        async Task Match()
+        async Task Match(Match match)
         {
-            List<RetourMatch> res = _match.MinuteSuivante();
+            List<RetourMatch> res = match.MinuteSuivante();
             if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res)) _enCours = false;
             //Si y a un évenement
             if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
             {
-                EvenementMatch em = _match.Evenements[_match.Evenements.Count - 1];
+                EvenementMatch em = match.Evenements[match.Evenements.Count - 1];
                 if(em.Type == Evenement.BUT || em.Type == Evenement.BUT_PENALTY || em.Type == Evenement.BUT_CSC)
                 {
-                    if(em.Club == _match.Domicile)
+                    if(em.Club == match.Domicile)
                     {
-                        _media.But12000();
+                        //_media.But(match);
                     }
+
+                    //Refresh en cas de but
+                    Classement();
+                    Matchs();
                 }
             }
 
 
             //Refresh
-            lbTemps.Content = _match.Temps;
-            lbScore.Content = _match.Score1 + " - " + _match.Score2;
-            Classement();
+            if(match == _matchs[0])
+            {
+                lbTemps.Content = match.Temps;
+                lbScore.Content = match.Score1 + " - " + match.Score2;
+            }
+            //Thread t = new Thread(new ThreadStart(ThreadClassement));
+            //t.Start();
+
 
             await Task.Delay((int)sliderVitesseSimulation.Value);
         }
 
-        public void ThreadProc()
+        public void ThreadMatch(Match match)
         {
             
             this.Dispatcher.Invoke(async () =>
             {
                 while(_enCours == true)
                 {
-                    await Match();
-                    
-                    //Thread.CurrentThread.Join(160);
-
+                    await Match(match);
                 }
+                btnTerminer.Visibility = Visibility.Visible;
             });
             
-            
-            
         }
 
-        public Windows_JouerMatch(Match m)
+        public void ThreadClassement()
+        {
+           this.Dispatcher.Invoke(() =>
+           {
+               Classement();
+           });
+        }
+
+        public Windows_JouerMatch(List<Match> matchs)
         {
             InitializeComponent();
-            _enCours = true;
-            _match = m;
             _media = new Media();
-            _tour = _match.Tour;
+            _enCours = true;
+            _matchs = matchs;
+            _tour = _matchs[0].Tour;
 
-            _media.Ambiance12000();
+            _media.Ambiance4000();
 
-            Thread t = new Thread(new ThreadStart(ThreadProc));
+            try
+            {
+                imgEquipe1.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].Domicile)));
+                imgEquipe2.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].Exterieur)));
+            }
+            catch { }
+            lbEquipe1.Content = _matchs[0].Domicile;
+            lbEquipe2.Content = _matchs[0].Exterieur;
 
-            
-            t.Start();
+
+            //Thread t = new Thread(new ThreadStart(ThreadMatch));
+
+            for (int i = 0; i<_matchs.Count; i++)
+            {
+                int j = i;
+                Thread t = new Thread(() => ThreadMatch(_matchs[j]));
+                t.Start();
+            }
 
 
         }
 
 
 
-        private void BtnSimuler_Click(object sender, RoutedEventArgs e)
+        
+
+        private void Matchs()
         {
-            while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH,_match.MinuteSuivante()));
-            _media.Detruire();
-            Close();
+            dgMatchs.Items.Clear();
+            foreach(Match match in _matchs)
+            {
+                dgMatchs.Items.Add(new MatchLiveElement { Equipe1 = match.Domicile, Equipe2 = match.Exterieur, Score = match.Score1 + " - " + match.Score2 });
+            }
         }
 
         private void Classement()
@@ -113,11 +146,35 @@ namespace TheManager_GUI
                     List<Club> classement = tc.Classement();
                     foreach(Club c in classement)
                     {
-                        dgClassement.Items.Add(new ClassementElement { Classement = i, Club = c, Logo = Utils.Logo(c), Nom = c.NomCourt, Pts = tc.Points(c), J = tc.Joues(c), bc = tc.ButsContre(c), bp = tc.ButsPour(c), Diff = tc.Difference(c), G = tc.Gagnes(c), N = tc.Nuls(c), P = tc.ButsPour(c) });
+                        dgClassement.Items.Add(new ClassementElement { Classement = i, Club = c, Logo = Utils.Logo(c), Nom = c.NomCourt, Pts = tc.Points(c), J = tc.Joues(c), bc = tc.ButsContre(c), bp = tc.ButsPour(c), Diff = tc.Difference(c), G = tc.Gagnes(c), N = tc.Nuls(c), P = tc.Perdus(c) });
                         i++;
                     }
                 }
             }
         }
+
+        private void BtnTerminer_Click(object sender, RoutedEventArgs e)
+        {
+            _media.Detruire();
+            Close();
+        }
+
+        private void BtnSimuler_Click(object sender, RoutedEventArgs e)
+        {
+            for(int i = 0; i<_matchs.Count; i++)
+            {
+                _matchs[i].Jouer();
+            }
+            //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, _matchs[0].MinuteSuivante())) ;
+            _media.Detruire();
+            Close();
+        }
+    }
+
+    public struct MatchLiveElement
+    {
+        public Club Equipe1 { get; set; }
+        public string Score { get; set; }
+        public Club Equipe2 { get; set; }
     }
 }

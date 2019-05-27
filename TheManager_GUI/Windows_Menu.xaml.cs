@@ -54,10 +54,10 @@ namespace TheManager_GUI
 
         private void Avancer()
         {
-            Match m = _partie.Avancer();
-            if (m != null)
+            List<Match> matchs = _partie.Avancer();
+            if (matchs.Count > 0)
             {
-                Windows_AvantMatch wam = new Windows_AvantMatch(m, _partie.Club);
+                Windows_AvantMatch wam = new Windows_AvantMatch(matchs, _partie.Club);
                 wam.ShowDialog();
             }
             Refresh();

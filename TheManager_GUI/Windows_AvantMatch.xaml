@@ -57,8 +57,22 @@
 					</DataGrid>
 					<Button Name="btnRAZ" Content="Réinitialiser" Style="{StaticResource StyleButton1}" Width="150" Click="BtnRAZ_Click"/>
 				</StackPanel>
+				<StackPanel Orientation="Vertical">
+					<Label Style="{StaticResource StyleLabel2}" Content="Programme du jour"/>
+					<DataGrid IsReadOnly="True" Name="dgMatchs" Height="275" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Heure}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Score}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
+						</DataGrid.Columns>
+					</DataGrid>
+				</StackPanel>
 			</StackPanel>
-			<Button Name="btnJouer" Content="Jouer" Style="{StaticResource StyleButton1}" Width="100" Click="Button_Click"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<Button Name="btnJouer" Content="Jouer" Style="{StaticResource StyleButton1}" Width="100" Click="Button_Click"/>
+				<Button Name="btnSimuler" Content="Résultat immédiat" Style="{StaticResource StyleButton1}" Width="100" Click="BtnSimuler_Click"/>
+			</StackPanel>
 		</StackPanel>
     </Grid>
 </Window>
