@@ -9,57 +9,31 @@ namespace TheManager
 {
 
     [DataContract]
-    public class CommentairesMatch
+    public class CommentairesEvenementMatch
     {
         [DataMember]
-        public List<string> CommentairesBut { get; set; }
+        private Evenement _evenement;
         [DataMember]
-        public List<string> CommentairesTir { get; set; }
-        [DataMember]
-        public List<string> CommentairesCartonJaune { get; set; }
-        [DataMember]
-        public List<string> CommentairesCartonRouge { get; set; }
+        private List<string> _commentaires;
 
-        public CommentairesMatch()
+        public List<string> Commentaires { get => _commentaires; }
+        public Evenement Evenement { get => _evenement; }
+
+        public CommentairesEvenementMatch(Evenement evenement)
         {
-            CommentairesBut = new List<string>();
-            CommentairesTir = new List<string>();
-            CommentairesCartonJaune = new List<string>();
-            CommentairesCartonRouge = new List<string>();
+            _evenement = evenement;
+            _commentaires = new List<string>();
         }
 
-        public string CommentaireBut(EvenementMatch em)
+        public string Commentaire(EvenementMatch em)
         {
-            string commentaireBrut = CommentairesBut[Session.Instance.Random(0, CommentairesBut.Count - 1)];
-            commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + em.Club.NomCourt + " ");
-            commentaireBrut = commentaireBrut.Replace(" JOUEUR ", " " + em.Joueur.Nom + " ");
-            return commentaireBrut;
-        }
-
-        public string CommentaireTir(Club club, Joueur joueur)
-        {
-            string commentaireBrut = CommentairesTir[Session.Instance.Random(0, CommentairesTir.Count - 1)];
-            commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + club.NomCourt + " ");
-            commentaireBrut = commentaireBrut.Replace(" JOUEUR ", " " + joueur.Nom + " ");
-            return commentaireBrut;
-        }
-
-        public string CommentaireCartonJaune(EvenementMatch em)
-        {
-            string commentaireBrut = CommentairesCartonJaune[Session.Instance.Random(0, CommentairesCartonJaune.Count - 1)];
-            commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + em.Club.NomCourt + " ");
-            commentaireBrut = commentaireBrut.Replace(" JOUEUR ", " " + em.Joueur.Nom + " ");
-            return commentaireBrut;
-        }
-
-        public string CommentaireCartonRouge(EvenementMatch em)
-        {
-            string commentaireBrut = CommentairesCartonRouge[Session.Instance.Random(0, CommentairesCartonRouge.Count - 1)];
+            string commentaireBrut = Commentaires[Session.Instance.Random(0, Commentaires.Count - 1)];
             commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + em.Club.NomCourt + " ");
             commentaireBrut = commentaireBrut.Replace(" JOUEUR ", " " + em.Joueur.Nom + " ");
             return commentaireBrut;
         }
     }
+    
 
     [DataContract(IsReference =true)]
     public class Gestionnaire
@@ -79,10 +53,10 @@ namespace TheManager
         [DataMember]
         private List<Media> _medias;
         [DataMember]
-        private CommentairesMatch _commentairesMatchs;
+        private List<CommentairesEvenementMatch> _commentairesMatchs;
 
         public List<Club> Clubs { get => _clubs; }
-        //public List<Competition> Competitions { get => _competitions; }
+
         public List<Competition> Competitions
         {
             get
@@ -100,17 +74,21 @@ namespace TheManager
         public List<Continent> Continents { get => _continents; }
         public List<Langue> Langues { get => _langues; }
         public List<Media> Medias { get => _medias; }
-        public CommentairesMatch CommentairesMatchs { get => _commentairesMatchs; }
+        public List<CommentairesEvenementMatch> CommentairesMatchs { get => _commentairesMatchs; }
 
         public Gestionnaire()
         {
             _clubs = new List<Club>();
-            //_competitions = new List<Competition>();
             _joueursLibres = new List<Joueur>();
             _continents = new List<Continent>();
             _langues = new List<Langue>();
             _medias = new List<Media>();
-            _commentairesMatchs = new CommentairesMatch();
+            _commentairesMatchs = new List<CommentairesEvenementMatch>();
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.BUT));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.BUT_PENALTY));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.CARTON_JAUNE));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.CARTON_ROUGE));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.TIR));
         }
 
         public Ville String2Ville(string nom)
@@ -333,6 +311,26 @@ namespace TheManager
         {
             Competition amc = String2Competition("Matchs amicaux");
             amc.Tours[0].Matchs.Add(m);
+        }
+
+        public void AjouterCommmentaireMatch(Evenement evenement, string commentaire)
+        {
+            foreach(CommentairesEvenementMatch cem in _commentairesMatchs)
+            {
+                if (cem.Evenement == evenement) cem.Commentaires.Add(commentaire);
+            }
+        }
+
+        public string Commentaire(EvenementMatch evenement)
+        {
+            string res = "";
+            foreach(CommentairesEvenementMatch cem in _commentairesMatchs)
+            {
+                if (cem.Evenement == evenement.Type)
+                    res = cem.Commentaire(evenement);
+            }
+
+            return res;
         }
 
     }

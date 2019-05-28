@@ -28,43 +28,49 @@ namespace TheManager_GUI
 
         private Media _media;
 
-        private bool _enCours;
+        private List<bool> _enCours;
 
 
         async Task Match(Match match)
         {
             List<RetourMatch> res = match.MinuteSuivante();
-            if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res)) _enCours = false;
+            if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res)) _enCours[_matchs.IndexOf(match)] = false;
             //Si y a un évenement
             if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
             {
                 EvenementMatch em = match.Evenements[match.Evenements.Count - 1];
                 string icone = "";
+                bool afficherAction = false;
                 
                 if(em.Type == Evenement.BUT || em.Type == Evenement.BUT_PENALTY || em.Type == Evenement.BUT_CSC)
                 {
-                    if(em.Club == match.Domicile)
+                    icone = "goal.png";
+                    afficherAction = true;
+                    /*if (em.Club == match.Domicile)
                     {
-                        //_media.But(match);
-                    }
-
+                        _media.But(match);
+                    }*/
 
                     //Refresh en cas de but
-                    Classement();
                     Matchs();
-                    if (match == _matchs[0]) ActionsMatch();
-                    icone = "goal.png";
+                    Classement();
                 }
                 else if(em.Type == Evenement.CARTON_JAUNE)
                 {
                     icone = "yellow_card.png";
+                    afficherAction = true;
                 }
                 else if(em.Type == Evenement.CARTON_ROUGE)
                 {
                     icone = "red_card.png";
+                    afficherAction = true;
                 }
-                dgEvenements.Items.Insert(0,new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteStr, Joueur = em.Joueur.Nom + " (" + em.Joueur.Club.NomCourt + ")", Evenement = match.Domicile + " - " + match.Exterieur + " : " + match.Score1 + " - " + match.Score2 });
 
+                if (afficherAction)
+                {
+                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteStr, Joueur = em.Joueur.Nom + " (" + em.Joueur.Club.NomCourt + ")", Evenement = match.Domicile + " - " + match.Exterieur + " : " + match.Score1 + " - " + match.Score2 });
+                }
+                if (match == _matchs[0]) ActionsMatch();
             }
 
 
@@ -90,11 +96,13 @@ namespace TheManager_GUI
             
             this.Dispatcher.Invoke(async () =>
             {
-                while(_enCours == true)
+                while(_enCours[_matchs.IndexOf(match)] == true)
                 {
                     await Match(match);
                 }
-                btnTerminer.Visibility = Visibility.Visible;
+
+                if(match == _matchs[0])
+                    btnTerminer.Visibility = Visibility.Visible;
             });
             
         }
@@ -111,10 +119,15 @@ namespace TheManager_GUI
         {
             InitializeComponent();
             _media = new Media();
-            _enCours = true;
+            _enCours = new List<bool>();
             _matchs = matchs;
             _tour = _matchs[0].Tour;
             Matchs();
+
+            foreach(Match m in _matchs)
+            {
+                _enCours.Add(true);
+            }
 
             _media.Ambiance4000();
 
@@ -137,7 +150,6 @@ namespace TheManager_GUI
                 t.Start();
             }
         }
-        
 
         private void ActionsMatch()
         {

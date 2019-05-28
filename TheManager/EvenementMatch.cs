@@ -14,7 +14,8 @@ namespace TheManager
         BUT_PENALTY,
         BUT_CSC,
         CARTON_JAUNE,
-        CARTON_ROUGE
+        CARTON_ROUGE,
+        TIR
     }
 
     [DataContract(IsReference =true)]

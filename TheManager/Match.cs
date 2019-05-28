@@ -723,20 +723,53 @@ namespace TheManager
             List<RetourMatch> res = new List<RetourMatch>();
 
             int hasard = Session.Instance.Random(0, 500);
+
+            //Tirs
+            if (hasard >= min_a && hasard <= max_a + ((max_a + 1 - min_a) * 4))
+            {
+                if (a == Domicile)
+                {
+                    _statistiques.TirsDomicile++;
+                    Tir(Domicile);
+                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                }
+                else
+                {
+                    _statistiques.TirsExterieurs++;
+                    Tir(Exterieur);
+                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                }
+            }
+            else if (hasard >= min_b && hasard <= max_b + ((max_b + 1 - min_b) * 4))
+            {
+                if (a == Domicile)
+                {
+                    _statistiques.TirsExterieurs++;
+                    Tir(Exterieur);
+                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                }
+                else
+                {
+                    _statistiques.TirsDomicile++;
+                    Tir(Domicile);
+                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                }
+            }
+
             //Buts
             if (hasard >= min_a && hasard <= max_a)
             {
                 if (a == Domicile) _score1++;
                 else _score2++;
-                But(a);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                But(a);
             }
             else if (hasard >= min_b && hasard <= max_b)
             {
                 if (a == Domicile) _score2++;
                 else _score1++;
-                But(b);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                But(b);
             }
             //Cartons jaunes
             else if (hasard >= 4 && hasard <= 9)
@@ -760,33 +793,7 @@ namespace TheManager
                 CartonRouge(b);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
-            //Tirs
-            if (hasard >= min_a && hasard <= max_a + ((max_a + 1 - min_a) * 4))
-            {
-                if (a == Domicile)
-                {
-                    _statistiques.TirsDomicile++;
-                    _actions.Add(new KeyValuePair<string, string>(Temps,Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Domicile,Buteur(Compo1))));
-                }
-                else
-                {
-                    _statistiques.TirsExterieurs++;
-                    _actions.Add(new KeyValuePair<string, string>(Temps, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Exterieur, Buteur(Compo2))));
-                }
-            } 
-            if (hasard >= min_b && hasard <= max_b + ((max_b+1 - min_b) * 4))
-            {
-                if (a == Domicile)
-                {
-                    _statistiques.TirsExterieurs++;
-                    _actions.Add(new KeyValuePair<string, string>(Temps, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Exterieur, Buteur(Compo2))));
-                }
-                else
-                {
-                    _statistiques.TirsDomicile++;
-                    _actions.Add(new KeyValuePair<string, string>(Temps, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Domicile, Buteur(Compo1))));
-                }
-            }
+            
 
             return res;
         }
@@ -799,7 +806,7 @@ namespace TheManager
                 EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, _minute, _miTemps);
                 if (j != null) j.ButsMarques++;
                 _evenements.Add(em);
-                _actions.Add(new KeyValuePair<string, string>(em.MinuteStr, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireBut(em)));
+                AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
             }
         }
 
@@ -815,7 +822,7 @@ namespace TheManager
 
                 EvenementMatch em = new EvenementMatch(Evenement.CARTON_JAUNE, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                _actions.Add(new KeyValuePair<string, string>(em.MinuteStr, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireCartonJaune(em)));
+                AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
 
                 //Si c'est son deuxième jaune, carte rouge attribué
                 if (deuxiemeJaune == true)
@@ -840,7 +847,19 @@ namespace TheManager
                 CalculerDifferenceNiveau();
                 EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                _actions.Add(new KeyValuePair<string, string>(em.MinuteStr, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireCartonRouge(em)));
+                AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
+            }
+        }
+
+        private void Tir(Club c)
+        {
+            List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
+            Joueur j = Buteur(compo);
+            if(j != null)
+            {
+                EvenementMatch em = new EvenementMatch(Evenement.TIR, c, j, _minute, _miTemps);
+                _evenements.Add(em);
+                AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
             }
         }
 

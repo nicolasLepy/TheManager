@@ -31,7 +31,6 @@ namespace TheManager
             ChargerCommentairesMatch();
         }
 
-
         public void ChargerCommentairesMatch()
         {
             XDocument doc = XDocument.Load("Donnees/actions.xml");
@@ -41,14 +40,16 @@ namespace TheManager
                 {
                     string type = e2.Attribute("type").Value;
                     string content = e2.Value;
-                    Console.WriteLine(content);
+                    Evenement evenement = Evenement.BUT;
                     switch(type)
                     {
-                        case "tir":_gestionnaire.CommentairesMatchs.CommentairesTir.Add(content); break;
-                        case "but": _gestionnaire.CommentairesMatchs.CommentairesBut.Add(content); break;
-                        case "carton_jaune": _gestionnaire.CommentairesMatchs.CommentairesCartonJaune.Add(content);break;
-                        case "carton_rouge": _gestionnaire.CommentairesMatchs.CommentairesCartonRouge.Add(content); break;
+                        case "tir": evenement = Evenement.TIR; break;
+                        case "but": evenement = Evenement.BUT; break;
+                        case "but_pen": evenement = Evenement.BUT_PENALTY; break;
+                        case "carton_jaune": evenement = Evenement.CARTON_JAUNE; break;
+                        case "carton_rouge": evenement = Evenement.CARTON_ROUGE; break;
                     }
+                    _gestionnaire.AjouterCommmentaireMatch(evenement, content);
                 }
             }
         }
