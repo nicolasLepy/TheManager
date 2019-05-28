@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_JouerMatch" Height="550" Width="800" Style="{StaticResource StyleWindows}" >
+        Title="Windows_JouerMatch" Height="550" Width="850" Style="{StaticResource StyleWindows}" >
 	<Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Orientation="Horizontal">
@@ -26,12 +26,31 @@
 					</StackPanel>
 					<Label Name="lbScore" Content="1 - 0" Style="{StaticResource StyleLabel1}"/>
 					<Label Name="lbTemps" Content="45°" Style="{StaticResource StyleLabel1}"/>
+					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
+						<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
+					<DataGrid IsReadOnly="True" Height="250" Width="250" Name="dgActions" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Minute}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Action}">
+								<DataGridTextColumn.EditingElementStyle>
+									<Style TargetType="TextBox">
+										<Setter Property="TextWrapping" Value="Wrap" />
+										<Setter Property="AcceptsReturn" Value="true" />
+									</Style>
+								</DataGridTextColumn.EditingElementStyle>
+							</DataGridTextColumn>
+						</DataGrid.Columns>
+					</DataGrid>
 					<Button Name="btnSimuler" Content="Abandonner et simuler match" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
 					<Button Name="btnTerminer" Content="Quitter" Visibility="Hidden" Width="200" Click="BtnTerminer_Click" Style="{StaticResource StyleButton1}"/>
 				</StackPanel>
 				<!-- infos compet -->
 				<StackPanel Orientation="Vertical">
-					<DataGrid IsReadOnly="True" Height="150" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid IsReadOnly="True" Height="150" MaxWidth="250" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
 							<DataGridTextColumn Header="" Binding="{Binding Score}"/>
@@ -67,7 +86,20 @@
 				</StackPanel>
 				<!-- info autres matchs -->
 				<StackPanel Orientation="Vertical">
-					
+					<DataGrid GridLinesVisibility="None" IsReadOnly="True" Height="450" Width="250" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTemplateColumn Width="18">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<Image Source="{Binding Logo}" />
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+							<DataGridTextColumn Header="" Binding="{Binding Minute}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Evenement}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
+						</DataGrid.Columns>
+					</DataGrid>
 				</StackPanel>
 			</StackPanel>
 			

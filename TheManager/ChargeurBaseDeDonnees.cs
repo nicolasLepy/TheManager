@@ -28,6 +28,29 @@ namespace TheManager
             InitialiserEquipes();
             InitialiserJoueurs();
             ChargerMedias();
+            ChargerCommentairesMatch();
+        }
+
+
+        public void ChargerCommentairesMatch()
+        {
+            XDocument doc = XDocument.Load("Donnees/actions.xml");
+            foreach (XElement e in doc.Descendants("Actions"))
+            {
+                foreach (XElement e2 in e.Descendants("Action"))
+                {
+                    string type = e2.Attribute("type").Value;
+                    string content = e2.Value;
+                    Console.WriteLine(content);
+                    switch(type)
+                    {
+                        case "tir":_gestionnaire.CommentairesMatchs.CommentairesTir.Add(content); break;
+                        case "but": _gestionnaire.CommentairesMatchs.CommentairesBut.Add(content); break;
+                        case "carton_jaune": _gestionnaire.CommentairesMatchs.CommentairesCartonJaune.Add(content);break;
+                        case "carton_rouge": _gestionnaire.CommentairesMatchs.CommentairesCartonRouge.Add(content); break;
+                    }
+                }
+            }
         }
 
         public void ChargerMedias()

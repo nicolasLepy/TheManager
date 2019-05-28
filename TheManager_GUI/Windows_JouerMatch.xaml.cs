@@ -23,7 +23,6 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_JouerMatch : Window
     {
-
         private List<Match> _matchs;
         private Tour _tour;
 
@@ -40,6 +39,8 @@ namespace TheManager_GUI
             if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
             {
                 EvenementMatch em = match.Evenements[match.Evenements.Count - 1];
+                string icone = "";
+                
                 if(em.Type == Evenement.BUT || em.Type == Evenement.BUT_PENALTY || em.Type == Evenement.BUT_CSC)
                 {
                     if(em.Club == match.Domicile)
@@ -47,18 +48,35 @@ namespace TheManager_GUI
                         //_media.But(match);
                     }
 
+
                     //Refresh en cas de but
                     Classement();
                     Matchs();
+                    if (match == _matchs[0]) ActionsMatch();
+                    icone = "goal.png";
                 }
+                else if(em.Type == Evenement.CARTON_JAUNE)
+                {
+                    icone = "yellow_card.png";
+                }
+                else if(em.Type == Evenement.CARTON_ROUGE)
+                {
+                    icone = "red_card.png";
+                }
+                dgEvenements.Items.Insert(0,new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteStr, Joueur = em.Joueur.Nom + " (" + em.Joueur.Club.NomCourt + ")", Evenement = match.Domicile + " - " + match.Exterieur + " : " + match.Score1 + " - " + match.Score2 });
+
             }
 
 
             //Refresh
-            if(match == _matchs[0])
+            if (match == _matchs[0])
             {
                 lbTemps.Content = match.Temps;
                 lbScore.Content = match.Score1 + " - " + match.Score2;
+                lbTirs1.Content = match.Statistiques.TirsDomicile;
+                lbTirs2.Content = match.Statistiques.TirsExterieurs;
+                pbTirs.Maximum = match.Statistiques.TirsDomicile + match.Statistiques.TirsExterieurs;
+                pbTirs.Value = match.Statistiques.TirsDomicile;
             }
             //Thread t = new Thread(new ThreadStart(ThreadClassement));
             //t.Start();
@@ -96,6 +114,7 @@ namespace TheManager_GUI
             _enCours = true;
             _matchs = matchs;
             _tour = _matchs[0].Tour;
+            Matchs();
 
             _media.Ambiance4000();
 
@@ -117,13 +136,17 @@ namespace TheManager_GUI
                 Thread t = new Thread(() => ThreadMatch(_matchs[j]));
                 t.Start();
             }
-
-
         }
-
-
-
         
+
+        private void ActionsMatch()
+        {
+            dgActions.Items.Clear();
+            foreach(KeyValuePair<string,string> kvp in _matchs[0].Actions)
+            {
+                dgActions.Items.Insert(0,new MatchLiveAction { Minute = kvp.Key, Action = kvp.Value });
+            }
+        }
 
         private void Matchs()
         {
@@ -163,7 +186,14 @@ namespace TheManager_GUI
         {
             for(int i = 0; i<_matchs.Count; i++)
             {
-                _matchs[i].Jouer();
+                Match match = _matchs[i];
+                bool termine = false;
+                while(!termine)
+                {
+                    List<RetourMatch> rm = match.MinuteSuivante();
+                    if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, rm)) termine = true;
+                }
+                //_matchs[i].Jouer();
             }
             //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, _matchs[0].MinuteSuivante())) ;
             _media.Detruire();
@@ -176,5 +206,19 @@ namespace TheManager_GUI
         public Club Equipe1 { get; set; }
         public string Score { get; set; }
         public Club Equipe2 { get; set; }
+    }
+
+    public struct MatchLiveEvenementElement
+    {
+        public string Logo { get; set; }
+        public string Minute { get; set; }
+        public string Evenement { get; set; }
+        public string Joueur { get; set; }
+    }
+
+    public struct MatchLiveAction
+    {
+        public string Minute { get; set; }
+        public string Action { get; set; }
     }
 }

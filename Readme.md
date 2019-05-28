@@ -26,6 +26,14 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ![Alt text](Pics/pic6.png?raw=true "Match screen")
 
+### Pre-match screen
+
+![Alt text](Pics/pic8.png?raw=true "Pre-match screen")
+
+### Live match screen
+
+![Alt text](Pics/pic7.png?raw=true "Live match")
+
 
 ## Features implemented
 * Simulation on multiple years
@@ -38,17 +46,16 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 * Evolution of club training facilities
 * XML Database
 * HTML exportation
+* Engine to follow matchs in real-time. (real-time ranking, real-time results of others matches)
 
 ## Features to be implemented
 * Implement a system for transferring players between clubs.
-* Complete club sheet (history, best players ...) .
 * Attendance adaptation when a club grow up or down.
 * Add the player's history in their description.
 * Add a panel to give informations (transfers, main results... ) during simulation.
 * Add reserves teams.
 * Set up international tournaments on multiples years.
 * Real-time simulation
-* Engine to follow matchs in real-time.
 * Improve GUI.
 * (Data editor)
 * (Generate Wiki with simulation data)
@@ -60,6 +67,7 @@ Nicolas Lépy
 Visual Studio
 C#
 WPF
+Windows Media Player library
 
 ## Credits
 Live Charts for WPF (https://lvcharts.net/)

@@ -91,6 +91,8 @@ namespace TheManager
         [DataMember]
         private List<EvenementMatch> _evenements;
         [DataMember]
+        private List<KeyValuePair<string, string>> _actions;
+        [DataMember]
         private Statistiques _statistiques;
         [DataMember]
         private List<Joueur> _compo1;
@@ -127,6 +129,10 @@ namespace TheManager
         public int Tab1 { get => _tab1; }
         public int Tab2 { get => _tab2; }
         public List<Journaliste> Journalistes { get => _journalistes; }
+        /// <summary>
+        /// Description des actions du match [minute , action]
+        /// </summary>
+        public List<KeyValuePair<string,string>> Actions { get => _actions; }
         public Statistiques Statistiques { get => _statistiques; }
         [DataMember]
         public float Cote1 { get; set; }
@@ -475,6 +481,7 @@ namespace TheManager
             _compo2Terrain = new List<Joueur>();
             _affluence = 0;
             _journalistes = new List<Journaliste>();
+            _actions = new List<KeyValuePair<string, string>>();
             EtablirCotes();
         }
 
@@ -756,13 +763,29 @@ namespace TheManager
             //Tirs
             if (hasard >= min_a && hasard <= max_a + ((max_a + 1 - min_a) * 4))
             {
-                if (a == Domicile) _statistiques.TirsDomicile++;
-                else _statistiques.TirsExterieurs++;
+                if (a == Domicile)
+                {
+                    _statistiques.TirsDomicile++;
+                    _actions.Add(new KeyValuePair<string, string>(Temps,Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Domicile,Buteur(Compo1))));
+                }
+                else
+                {
+                    _statistiques.TirsExterieurs++;
+                    _actions.Add(new KeyValuePair<string, string>(Temps, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Exterieur, Buteur(Compo2))));
+                }
             } 
             if (hasard >= min_b && hasard <= max_b + ((max_b+1 - min_b) * 4))
             {
-                if(a == Domicile) _statistiques.TirsExterieurs++;
-                else _statistiques.TirsDomicile++;
+                if (a == Domicile)
+                {
+                    _statistiques.TirsExterieurs++;
+                    _actions.Add(new KeyValuePair<string, string>(Temps, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Exterieur, Buteur(Compo2))));
+                }
+                else
+                {
+                    _statistiques.TirsDomicile++;
+                    _actions.Add(new KeyValuePair<string, string>(Temps, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireTir(Domicile, Buteur(Compo1))));
+                }
             }
 
             return res;
@@ -776,6 +799,7 @@ namespace TheManager
                 EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, _minute, _miTemps);
                 if (j != null) j.ButsMarques++;
                 _evenements.Add(em);
+                _actions.Add(new KeyValuePair<string, string>(em.MinuteStr, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireBut(em)));
             }
         }
 
@@ -791,6 +815,7 @@ namespace TheManager
 
                 EvenementMatch em = new EvenementMatch(Evenement.CARTON_JAUNE, c, j, _minute, _miTemps);
                 _evenements.Add(em);
+                _actions.Add(new KeyValuePair<string, string>(em.MinuteStr, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireCartonJaune(em)));
 
                 //Si c'est son deuxième jaune, carte rouge attribué
                 if (deuxiemeJaune == true)
@@ -815,7 +840,18 @@ namespace TheManager
                 CalculerDifferenceNiveau();
                 EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
                 _evenements.Add(em);
+                _actions.Add(new KeyValuePair<string, string>(em.MinuteStr, Session.Instance.Partie.Gestionnaire.CommentairesMatchs.CommentaireCartonRouge(em)));
             }
+        }
+
+        /// <summary>
+        /// Ajoute la description d'une action dans le match
+        /// </summary>
+        /// <param name="minute">Minute de l'action</param>
+        /// <param name="action">Description de l'action</param>
+        public void AjouterAction(string minute, string action)
+        {
+            _actions.Add(new KeyValuePair<string, string>(minute, action));
         }
     }
 }
