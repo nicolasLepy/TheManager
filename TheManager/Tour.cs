@@ -203,7 +203,7 @@ namespace TheManager
         public List<Regle> Regles { get => _regles; }
         public List<Dotation> Dotations { get => _dotations; }
 
-        /*public Competition Competition
+        public Competition Competition
         {
             get
             {
@@ -222,7 +222,7 @@ namespace TheManager
 
                 return competition;
             }
-        }*/
+        }
 
         public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, bool allerRetour, int dernieresJourneesMemeJour)
         {

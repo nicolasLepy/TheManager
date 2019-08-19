@@ -40,21 +40,19 @@
 				</StackPanel>
 				<StackPanel Orientation="Vertical">
 					<Label Content="Composition" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="275" Name="dgCompo" MouseDoubleClick="DgCompo_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
-							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
-							<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
-							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
-							<DataGridTemplateColumn Header="Energie" Width="75">
-								<DataGridTemplateColumn.CellTemplate>
-									<DataTemplate>
-										<ProgressBar Value="{Binding Energie}" Minimum="0" Maximum="100"/>
-									</DataTemplate>
-								</DataGridTemplateColumn.CellTemplate>
-							</DataGridTemplateColumn>
-						</DataGrid.Columns>
-					</DataGrid>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spAttaquants" >
+						<StackPanel Orientation="Vertical">
+							<Label Content="Sliti" HorizontalAlignment="Center"  Style="{StaticResource StyleLabel2}"/>
+							<ProgressBar Value="10" Maximum="40" Height="5" Width="40"/>
+							<Label Content="68" HorizontalAlignment="Center" FontSize="10"  Style="{StaticResource StyleLabel2}"/>
+						</StackPanel>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spMilieux" >
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spDefenseurs" >
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spGardiens" >
+					</StackPanel>
 					<Button Name="btnRAZ" Content="Réinitialiser" Style="{StaticResource StyleButton1}" Width="150" Click="BtnRAZ_Click"/>
 				</StackPanel>
 				<StackPanel Orientation="Vertical">

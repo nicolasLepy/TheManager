@@ -65,6 +65,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Media.cs" />
+    <Compile Include="VueClassement\FabriqueVueClassement.cs" />
+    <Compile Include="VueClassement\IVueClassement.cs" />
+    <Compile Include="VueClassement\VueClassementChampionnat.cs" />
+    <Compile Include="VueClassement\VueClassementEliminatoires.cs" />
+    <Compile Include="VueClassement\VueClassementPoules.cs" />
     <Compile Include="Windows_AvantMatch.xaml.cs">
       <DependentUpon>Windows_AvantMatch.xaml</DependentUpon>
     </Compile>
@@ -73,6 +78,9 @@
     </Compile>
     <Compile Include="Windows_Club.xaml.cs">
       <DependentUpon>Windows_Club.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Windows_Competition.xaml.cs">
+      <DependentUpon>Windows_Competition.xaml</DependentUpon>
     </Compile>
     <Compile Include="Windows_ConfigurationPartie.xaml.cs">
       <DependentUpon>Windows_ConfigurationPartie.xaml</DependentUpon>
@@ -119,6 +127,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Windows_Club.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Windows_Competition.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

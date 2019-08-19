@@ -80,7 +80,7 @@ namespace TheManager
             }
         }
 
-        public Club_Ville(string nom, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade, string musiqueBut) : base(nom,nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
+        public Club_Ville(string nom, Entraineur entraineur, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade, string musiqueBut) : base(nom,entraineur,nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
         {
             _budget = budget;
             _ville = ville;
@@ -299,19 +299,32 @@ namespace TheManager
         public void GenererCalendrierMatchsAmicaux()
         {
             Competition championnat = Championnat;
-            if(championnat != null)
+            List<Club> adversairesPossibles = new List<Club>();
+            
+            if(championnat != null && championnat.Tours[0] as TourChampionnat != null)
             {
-                for (int i = 0; i < 4; i++)
+                foreach (Club c in Session.Instance.Partie.Gestionnaire.Clubs)
                 {
-                    Club adv = Session.Instance.Partie.Gestionnaire.Clubs[Session.Instance.Random(0, Session.Instance.Partie.Gestionnaire.Clubs.Count)];
-                    if(championnat.Tours[0] as TourChampionnat != null)
+                    Club_Ville cv = c as Club_Ville;
+                    if (cv != null && Utils.Distance(cv.Ville, Ville) < 300)
                     {
-                        DateTime debut = new DateTime(championnat.Tours[0].Matchs[0].Jour.Year, championnat.Tours[0].Matchs[0].Jour.Month, championnat.Tours[0].Matchs[0].Jour.Day);
-                        debut = debut.AddDays(Session.Instance.Random(-30, -10));
-                        Session.Instance.Partie.Gestionnaire.AjouterMatchAmical(new Match(this, adv, debut, false));
+                        adversairesPossibles.Add(cv);
                     }
-                }
 
+                }
+                int nbMatchs = Session.Instance.Random(3, 6);
+                if (nbMatchs > adversairesPossibles.Count) nbMatchs = adversairesPossibles.Count;
+                for(int i = 0; i < nbMatchs; i++)
+                {
+                    Club adv = adversairesPossibles[Session.Instance.Random(0, adversairesPossibles.Count)];
+                    adversairesPossibles.Remove(adv);
+                    DateTime debut = new DateTime(championnat.Tours[0].Matchs[0].Jour.Year, championnat.Tours[0].Matchs[0].Jour.Month, championnat.Tours[0].Matchs[0].Jour.Day);
+                    debut = debut.AddDays(Session.Instance.Random(-30, -10));
+                    debut = debut.AddHours(Session.Instance.Random(14, 22));
+                    Match match = new Match(this, adv, debut, false);
+                    match.Reprogrammer(0);
+                    Session.Instance.Partie.Gestionnaire.AjouterMatchAmical(match);
+                }
             }
         }
 

@@ -92,8 +92,60 @@ namespace TheManager_GUI
                     if (em.Type == Evenement.BUT_PENALTY) c3 += " (sp)";
                     if (em.Type == Evenement.BUT_CSC) c3 += " (csc)";
                 }
-                dgEvenements.Items.Add(new EvenementElement { Col1 = c1, Col2 = c2, Col3 = c3, Col4 = c4, Img1 = img1, Img2 = img2 });
-                
+                if(em.Type != Evenement.TIR)
+                {
+
+                    StackPanel spEv = new StackPanel();
+                    spEv.Orientation = Orientation.Horizontal;
+                    spEv.Width = 400;
+
+                    Image im1 = new Image();
+                    im1.Width = 25;
+                    if(img1 != "")
+                    {
+                        im1.Source = new BitmapImage(new Uri(img1));
+                    }
+
+                    Label l1 = new Label();
+                    l1.Width = 40;
+                    l1.HorizontalContentAlignment = HorizontalAlignment.Center;
+                    l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                    l1.Content = c1;
+
+                    Label l2 = new Label();
+                    l2.Width = 130;
+                    l2.HorizontalContentAlignment = HorizontalAlignment.Left;
+                    l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                    l2.Content = c2;
+
+                    Label l3 = new Label();
+                    l3.Width = 130;
+                    l3.HorizontalContentAlignment = HorizontalAlignment.Right;
+                    l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                    l3.Content = c3;
+
+                    Label l4 = new Label();
+                    l4.Width = 40;
+                    l4.HorizontalContentAlignment = HorizontalAlignment.Center;
+                    l4.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                    l4.Content = c4;
+
+                    Image im2 = new Image();
+                    im2.Width = 25;
+                    if (img2 != "")
+                    {
+                        im2.Source = new BitmapImage(new Uri(img2));
+                    }
+
+                    spEv.Children.Add(im1);
+                    spEv.Children.Add(l1);
+                    spEv.Children.Add(l2);
+                    spEv.Children.Add(l3);
+                    spEv.Children.Add(l4);
+                    spEv.Children.Add(im2);
+                    spEvenements.Children.Add(spEv);
+                }
+
             }
 
             foreach (Joueur j in match.Compo1)
@@ -160,13 +212,4 @@ namespace TheManager_GUI
         public string Media{ get; set; }
     }
 
-    public struct EvenementElement
-    {
-        public string Col1 { get; set; }
-        public string Col2 { get; set; }
-        public string Col3 { get; set; }
-        public string Col4 { get; set; }
-        public string Img1 { get; set; }
-        public string Img2 { get; set; }
-    }
 }

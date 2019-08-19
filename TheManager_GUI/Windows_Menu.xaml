@@ -36,34 +36,11 @@
 								<ListBox Name="lbTours" HorizontalAlignment="Left" Height="100" Width="125" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged">
 								</ListBox>
 							</StackPanel>
-							<Label Content="Plus gros écart" Style="{StaticResource StyleLabel2}"/>
-							<Label Name="lbGrosEcart" Content="" Style="{StaticResource StyleLabel2}"/>
-							<Label Content="Plus gros score" Style="{StaticResource StyleLabel2}"/>
-							<Label Name="lbGrandScore" Content="" Style="{StaticResource StyleLabel2}"/>
-							<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-							<DataGrid Margin="10" MaxWidth="300" IsReadOnly="True" Height="100" Width="175" Name="dgPalmares" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-								<DataGrid.Columns>
-									<DataGridTextColumn Header="Annee" Binding="{Binding Annee}"/>
-									<DataGridTextColumn Header="Club" Binding="{Binding Club}"/>
-								</DataGrid.Columns>
-							</DataGrid>
-							<StackPanel Orientation="Horizontal">
-								
+							<Button Name="btnCompetition" Content="Ouvrir" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
+							<Label Content="News" Style="{StaticResource StyleLabel1}"/>
+							<StackPanel Orientation="Vertical" Name="spNews">
+								<TextBlock Style="{StaticResource StyleTextBlock}" TextWrapping="WrapWithOverflow">Content="Dijon s'impose 4 buts à contre le Paris Saint-Germain de Neymar"</TextBlock>
 							</StackPanel>
-							<Label Content="Buteurs" Style="{StaticResource StyleLabel2}"/>
-							<DataGrid Margin="10" IsReadOnly="True" MouseDoubleClick="DgButeurs_MouseDoubleClick" Width="175" Height="175" Name="dgButeurs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-								<DataGrid.Columns>
-									<DataGridTemplateColumn Width="18">
-										<DataGridTemplateColumn.CellTemplate>
-											<DataTemplate>
-												<Image Source="{Binding Club}" />
-											</DataTemplate>
-										</DataGridTemplateColumn.CellTemplate>
-									</DataGridTemplateColumn>
-									<DataGridTextColumn Header="" Binding="{Binding Buteur}"/>
-									<DataGridTextColumn Header="" Binding="{Binding NbButs}"/>
-								</DataGrid.Columns>
-							</DataGrid>
 						</StackPanel>
 						<StackPanel Orientation="Vertical">
 							<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>

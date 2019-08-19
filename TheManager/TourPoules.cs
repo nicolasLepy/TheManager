@@ -16,20 +16,30 @@ namespace TheManager
         [DataMember]
         private List<Club>[] _poules;
 
+        [DataMember]
+        private MethodeTirageAuSort _methodeTirageAuSort;
+        [DataMember]
+        private List<Position> _localisationGroupes;
+        
+
         public List<Club>[] Poules { get => _poules; }
 
         public int NombrePoules { get { return _nombrePoules; } }
 
-        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
+        public List<Position> LocalisationGroupes { get => _localisationGroupes; }
+
+        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, MethodeTirageAuSort methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
             for (int i = 0; i < _nombrePoules; i++) _poules[i] = new List<Club>();
+            _methodeTirageAuSort = methodeTirageAuSort;
+            _localisationGroupes = new List<Position>();
         }
 
         public override Tour Copie()
         {
-            TourPoules t = new TourPoules(Nom, this.Programmation.HeureParDefaut, new List<DateTime>(Programmation.JoursDeMatchs), new List<DecalagesTV>(Programmation.DecalagesTV), NombrePoules, AllerRetour, Programmation.Initialisation, Programmation.Fin);
+            TourPoules t = new TourPoules(Nom, this.Programmation.HeureParDefaut, new List<DateTime>(Programmation.JoursDeMatchs), new List<DecalagesTV>(Programmation.DecalagesTV), NombrePoules, AllerRetour, Programmation.Initialisation, Programmation.Fin, _methodeTirageAuSort);
             foreach (Match m in this.Matchs) t.Matchs.Add(m);
             foreach (Club c in this.Clubs) t.Clubs.Add(c);
             int i = 0;
@@ -118,35 +128,19 @@ namespace TheManager
             return res;
         }
 
-
         private void DefinirPoules()
         {
-            List<Club> pot = new List<Club>(_clubs);
-            pot.Sort(new Club_Niveau_Comparator());
-            int equipesParPoule = _clubs.Count / _nombrePoules;
-            List<Club>[] pots = new List<Club>[equipesParPoule];
-            int ind = 0;
-            for (int i = 0; i < equipesParPoule; i++)
+            ITirageAuSort tirage = null;
+            switch (_methodeTirageAuSort)
             {
-                pots[i] = new List<Club>();
-                for (int j = 0; j < _nombrePoules; j++)
-                {
-                    pots[i].Add(pot[ind]);
-                    ind++;
-                }
-
+                case MethodeTirageAuSort.NIVEAU:
+                    tirage = new TirageAuSortParNiveau(this);
+                    break;
+                case MethodeTirageAuSort.GEOGRAPHIQUE:
+                    tirage = new TirageAuSortGeographique(this);
+                    break;
             }
-            //Pour chaque poule
-            for (int i = 0; i < _nombrePoules; i++)
-            {
-                //Pour chaque pot
-                for (int j = 0; j < equipesParPoule; j++)
-                {
-                    Club c = pots[j][Session.Instance.Random(0, pots[j].Count)];
-                    pots[j].Remove(c);
-                    _poules[i].Add(c);
-                }
-            }
+            tirage.TirerAuSort();
         }
 
         public override void DistribuerDotations()

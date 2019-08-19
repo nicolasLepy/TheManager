@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ChoixClub" Height="300" Width="600" Style="{StaticResource StyleWindows}">
+        Title="Windows_ChoixClub" Height="400" Width="600" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
@@ -24,6 +24,23 @@
 					</StackPanel>
 				</StackPanel>
 			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Prénom" Width="100" Style="{StaticResource StyleLabel2}"/>
+				<TextBox Name="tbPrenom" Width="125"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Nom" Width="100" Style="{StaticResource StyleLabel2}"/>
+				<TextBox Name="tbNom" Width="125"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Naissance" Width="100" Style="{StaticResource StyleLabel2}"/>
+				<DatePicker Name="dpNaissance" Width="125"/>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal">
+				<Label Content="Nationalité" Width="100" Style="{StaticResource StyleLabel2}"/>
+				<ComboBox Name="cbNationalite" Style="{StaticResource StyleComboBox}" Width="125"/>
+			</StackPanel>
+
 			<Button Content="Valider" Style="{StaticResource StyleButton1}" Width="150" Click="Button_Click"/>
 		</StackPanel>
     </Grid>

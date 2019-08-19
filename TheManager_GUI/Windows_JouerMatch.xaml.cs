@@ -26,7 +26,7 @@ namespace TheManager_GUI
         private List<Match> _matchs;
         private Tour _tour;
 
-        private Media _media;
+        private MediaWAV _media;
 
         private List<bool> _enCours;
 
@@ -46,10 +46,13 @@ namespace TheManager_GUI
                 {
                     icone = "goal.png";
                     afficherAction = true;
-                    /*if (em.Club == match.Domicile)
+                    if (em.Club == match.Domicile)
                     {
                         _media.But(match);
-                    }*/
+                    }
+                    if(cbJingleBut.IsChecked == true)
+                        _media.AjouterSon("jingle", false);
+
 
                     //Refresh en cas de but
                     Matchs();
@@ -118,7 +121,10 @@ namespace TheManager_GUI
         public Windows_JouerMatch(List<Match> matchs)
         {
             InitializeComponent();
-            _media = new Media();
+
+            cbJingleBut.IsChecked = true;
+
+            _media = new MediaWAV();
             _enCours = new List<bool>();
             _matchs = matchs;
             _tour = _matchs[0].Tour;
@@ -209,6 +215,7 @@ namespace TheManager_GUI
             }
             //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, _matchs[0].MinuteSuivante())) ;
             _media.Detruire();
+            _media = null;
             Close();
         }
     }

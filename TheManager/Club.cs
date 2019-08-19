@@ -18,6 +18,8 @@ namespace TheManager
         [DataMember]
         private string _nom;
         [DataMember]
+        private Entraineur _entraineur;
+        [DataMember]
         private int _reputation;
         [DataMember]
         private int _supporters;
@@ -36,6 +38,7 @@ namespace TheManager
         private string _musiqueBut;
 
         public string Nom { get => _nom; }
+        public Entraineur Entraineur { get => _entraineur; set => _entraineur = value; }
         public int Reputation { get => _reputation; }
         public int Supporters { get => _supporters; set => _supporters = value; }
         public int CentreFormation { get => _centreFormation;}
@@ -62,6 +65,50 @@ namespace TheManager
                 return res;
             }
         }
+
+        /// <summary>
+        /// Renvoi vrai si le club joue un match proche à la date passée en paramètre (un nombre de jour inférieur au seuil)
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
+        public bool MatchProche(DateTime date, int seuil)
+        {
+            bool matchProche = false;
+            List<Match> matchs = Matchs;
+            foreach (Match match in matchs)
+            {
+                int diff = Utils.NombreJoursEntreDeuxDates(date.Date, match.Jour);
+                if (diff < seuil) matchProche = true;
+            }
+            return matchProche;
+        }
+
+        /// <summary>
+        /// Donne le nombre de jours entre la date et le match le plus proche joué
+        /// </summary>
+        /// <param name="date">Regarder par rapport à cette date</param>
+        /// <returns></returns>
+        /*public int NombreJoursMatchPlusProche(DateTime date)
+        {
+                int res = -1;
+                List<Match> matchs = Matchs;
+                foreach(Match m in matchs)
+                {
+                    if(m.Jour.CompareTo(date) > 0)
+                    {
+                        //On a dépassé ajd
+                        int diffM = Utils.NombreJoursEntreDeuxDates(m.Jour, date); //Match à venir
+                        int indexMatch = matchs.IndexOf(m);
+                        int diffN = indexMatch > 0 ? Utils.NombreJoursEntreDeuxDates(matchs[indexMatch-1].Jour, date) : -1; //Dernier match du club
+                        res = diffM >= diffN ? diffN : diffM;
+                    }
+                }
+                if (res == -1 && matchs.Count > 0)
+                    res = Utils.NombreJoursEntreDeuxDates(date, matchs[matchs.Count - 1].Jour);
+            if (res == -1) res = 365;
+                return res;
+            
+        }*/
 
         /// <summary>
         /// Championnat où joue le club
@@ -117,9 +164,10 @@ namespace TheManager
             }
         }
 
-        public Club(string nom, string nomCourt, int reputation, int supporters, int centreFormation, string logo, Stade stade, string musiqueBut)
+        public Club(string nom, Entraineur entraineur, string nomCourt, int reputation, int supporters, int centreFormation, string logo, Stade stade, string musiqueBut)
         {
             _nom = nom;
+            _entraineur = entraineur;
             _nomCourt = nomCourt;
             _reputation = reputation;
             _supporters = supporters;
@@ -197,6 +245,16 @@ namespace TheManager
             else if (niveau < 80) prix = 30;
             else prix = 45;
             _prixBillet = prix;
+        }
+
+        /// <summary>
+        /// Change l'entraineur du club et met l'ancien entraineur dans les entraineurs libres
+        /// </summary>
+        /// <param name="nouvelEntraineur"></param>
+        public void ChangerEntraineur(Entraineur nouvelEntraineur)
+        {
+            Session.Instance.Partie.Gestionnaire.EntraineursLibres.Add(_entraineur);
+            _entraineur = nouvelEntraineur;
         }
 
 

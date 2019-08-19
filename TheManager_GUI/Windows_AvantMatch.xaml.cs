@@ -22,10 +22,60 @@ namespace TheManager_GUI
     {
         private List<Match> _matchs;
         private Club _club;
+        private List<Joueur> _joueurs;
+
+        public void AfficherComposition()
+        {
+            spDefenseurs.Children.Clear();
+            spMilieux.Children.Clear();
+            spAttaquants.Children.Clear();
+            spGardiens.Children.Clear();
+
+            foreach(Joueur j in _joueurs)
+            {
+                StackPanel conteneur = null;
+                switch(j.Poste)
+                {
+                    case Poste.GARDIEN: conteneur = spGardiens;break;
+                    case Poste.DEFENSEUR: conteneur = spDefenseurs; break;
+                    case Poste.MILIEU: conteneur = spMilieux; break;
+                    case Poste.ATTAQUANT: conteneur = spAttaquants; break;
+                }
+
+                StackPanel conteneurJoueur = new StackPanel();
+                conteneurJoueur.Orientation = Orientation.Vertical;
+
+                Label label = new Label();
+                label.Content = j.Nom;
+                label.HorizontalAlignment = HorizontalAlignment.Center;
+                label.Style = Application.Current.FindResource("StyleLabel2") as Style;
+
+                ProgressBar pb = new ProgressBar();
+                pb.Value = j.Energie;
+                pb.Maximum = 100;
+                pb.Height = 5;
+                pb.Width = 40;
+
+
+                Label note = new Label();
+                note.Content = j.Niveau;
+                note.HorizontalAlignment = HorizontalAlignment.Center;
+                note.FontSize = 10;
+                note.Style = Application.Current.FindResource("StyleLabel2") as Style;
+
+                conteneurJoueur.Children.Add(label);
+                conteneurJoueur.Children.Add(pb);
+                conteneurJoueur.Children.Add(note);
+
+                conteneur.Children.Add(conteneurJoueur);
+
+            }
+        }
 
         public Windows_AvantMatch(List<Match> m, Club c)
         {
             InitializeComponent();
+            _joueurs = new List<Joueur>();
             _matchs = m;
             _club = c;
 
@@ -50,42 +100,36 @@ namespace TheManager_GUI
         
         private void DgJoueursDispo_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if(dgCompo.Items.Count < 11)
+            if(_joueurs.Count < 11)
             {
                 if(dgJoueursDispo.SelectedItem != null)
                 {
                     JoueurCompoElement jce = (JoueurCompoElement)dgJoueursDispo.SelectedItem;
                     dgJoueursDispo.Items.Remove(jce);
-                    dgCompo.Items.Add(jce);
+                    _joueurs.Add(jce.Nom);
+                    AfficherComposition();
                 }
             }
         }
 
         private void BtnCompoAuto_Click(object sender, RoutedEventArgs e)
         {
-            dgCompo.Items.Clear();
+            _joueurs.Clear();
 
             List<Joueur> compo = _club.Composition();
             foreach(Joueur j in compo)
             {
-                dgCompo.Items.Add(new JoueurCompoElement { Poste = j.Poste.ToString(), Age = j.Age, Energie = j.Energie, Niveau = j.Niveau, Nom = j});
+                _joueurs.Add(j);
             }
+            AfficherComposition();
         }
 
         private void BtnRAZ_Click(object sender, RoutedEventArgs e)
         {
-            dgCompo.Items.Clear();
+            _joueurs.Clear();
+            AfficherComposition();
         }
 
-        private void DgCompo_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if(dgCompo.SelectedItem != null)
-            {
-                JoueurCompoElement jce = (JoueurCompoElement)dgCompo.SelectedItem;
-                dgCompo.Items.Remove(jce);
-                dgJoueursDispo.Items.Add(jce);
-            }
-        }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
@@ -94,10 +138,9 @@ namespace TheManager_GUI
             if (VerifierComposition())
             {
                 List<Joueur> compo = new List<Joueur>();
-                for (int i = 0; i < dgCompo.Items.Count; i++)
+                for (int i = 0; i < _joueurs.Count; i++)
                 {
-                    JoueurCompoElement jce = (JoueurCompoElement)dgCompo.Items[i];
-                    compo.Add(jce.Nom);
+                    compo.Add(_joueurs[i]);
                 }
 
                 _matchs[0].DefinirCompo(compo, _club);
@@ -114,10 +157,9 @@ namespace TheManager_GUI
             if (VerifierComposition())
             {
                 List<Joueur> compo = new List<Joueur>();
-                for (int i = 0; i < dgCompo.Items.Count; i++)
+                for (int i = 0; i < _joueurs.Count; i++)
                 {
-                    JoueurCompoElement jce = (JoueurCompoElement)dgCompo.Items[i];
-                    compo.Add(jce.Nom);
+                    compo.Add(_joueurs[i]);
                 }
 
                 _matchs[0].DefinirCompo(compo, _club);
@@ -132,7 +174,7 @@ namespace TheManager_GUI
         private bool VerifierComposition()
         {
             bool continuer = false;
-            if (dgCompo.Items.Count < 11)
+            if (_joueurs.Count < 11)
             {
                 MessageBoxResult result = MessageBox.Show("Moins de 11 joueurs sélectionnés. Continuer ?", "Composition", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes) continuer = true;

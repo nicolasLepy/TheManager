@@ -18,14 +18,29 @@ namespace TheManager
         private Options _options;
         [DataMember]
         private Club_Ville _club;
+        [DataMember]
+        private List<Article> _articles;
 
+        /// <summary>
+        /// Date du jeur
+        /// </summary>
         public DateTime Date { get { return _date; } }
         public Gestionnaire Gestionnaire { get => _gestionnaire; }
         public Options Options { get => _options; }
+        /// <summary>
+        /// Club controllé par le joueur
+        /// </summary>
         public Club_Ville Club { get => _club; set => _club = value; }
+        /// <summary>
+        /// Entraîneur représentant le joueur
+        /// </summary>
+        public Entraineur Entraineur { get => Club.Entraineur; }
+
+        public List<Article> Articles { get => _articles; }
 
         public Partie()
         {
+            _articles = new List<Article>();
             _date = new DateTime(2018, 07, 01);
             _gestionnaire = new Gestionnaire();
             _options = new Options();
@@ -60,6 +75,7 @@ namespace TheManager
                 _options= loadObj.Options;
                 this._gestionnaire = loadObj.Gestionnaire;
                 this._date = loadObj.Date;
+                this._club = loadObj.Club;
             }
         }
 
@@ -219,9 +235,14 @@ namespace TheManager
                             {
                                 //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
                                 //m.Jouer();
-                                aJouer.Add(m);
+                                if (c.Championnat && (Date.Month == 1 || Date.Month == 12) && Session.Instance.Random(1, 26) == 2)
+                                    m.Reprogrammer(3);
+                                else
+                                {
+                                    aJouer.Add(m);
+                                    EtablirMediasPourMatch(m, c);
+                                }
                             }
-                            EtablirMediasPourMatch(m, c);
                             
                         }
                             

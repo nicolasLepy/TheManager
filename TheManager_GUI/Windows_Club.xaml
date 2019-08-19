@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TheManager_GUI"
 		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 		mc:Ignorable="d"
-        Title="Windows_Club" Height="830" Width="900" Style="{StaticResource StyleWindows}" Left="50" Top="50">
+        Title="Windows_Club" Height="870" Width="900" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
@@ -14,7 +14,7 @@
 			</StackPanel>
 			<Image Name="imgLogo" Width="75" Height="75"/>
 			<Label Name="lbClub"  Content="Club" Style="{StaticResource StyleLabel1}"/>
-
+			<Label Name="lbEntraineur" Content="Entraineur : Antoine Kombouaré" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
 			<StackPanel Orientation="Horizontal">
 				<!-- partie gauche -->
 				<StackPanel Orientation="Vertical">

@@ -83,7 +83,6 @@ namespace TheManager
             for (int i = 0; i < 2; i++) _niveau2.Add(17002);
             for (int i = 0; i < 1; i++) _niveau2.Add(20002);
             for (int i = 0; i < 1; i++) _niveau2.Add(20452);
-            for (int i = 0; i < 1; i++) _niveau2.Add(20303);
 
             for (int i = 0; i < 10; i++) _niveau6.Add(15001);
             for (int i = 0; i < 2; i++) _niveau6.Add(15301);

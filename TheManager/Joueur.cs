@@ -41,20 +41,12 @@ namespace TheManager
     }
 
     [DataContract(IsReference =true)]
-    public class Joueur
+    public class Joueur : Personne
     {
-        [DataMember]
-        private string _nom;
-        [DataMember]
-        private string _prenom;
-        [DataMember]
-        private DateTime _naissance;
         [DataMember]
         private int _niveau;
         [DataMember]
         private int _potentiel;
-        [DataMember]
-        private Pays _nationalite;
         [DataMember]
         private Poste _poste;
         [DataMember]
@@ -66,12 +58,8 @@ namespace TheManager
         [DataMember]
         private List<OffreContrat> _offres;
 
-        public string Nom { get => _nom; }
-        public string Prenom { get => _prenom;  }
-        public DateTime Naissance { get => _naissance; }
         public int Niveau { get => _niveau; set => _niveau = value; }
         public int Potentiel { get => _potentiel; }
-        public Pays Nationalite { get => _nationalite;}
         public Poste Poste { get => _poste;}
         public bool Suspendu { get => _suspendu; set => _suspendu = value; }
         public List<HistoriqueJoueur> Historique { get => _historique; }
@@ -120,15 +108,12 @@ namespace TheManager
             }
         }
 
-        public Joueur(string prenom, string nom, DateTime naissance, int niveau, int potentiel, Pays nationalite, Poste poste)
+        public Joueur(string prenom, string nom, DateTime naissance, int niveau, int potentiel, Pays nationalite, Poste poste) : base(prenom,nom,naissance,nationalite)
         {
-            _prenom = prenom;
-            _nom = nom;
-            _naissance = naissance;
+            
             _niveau = niveau;
             _potentiel = potentiel;
             _poste = poste;
-            _nationalite = nationalite;
             Suspendu = false;
             _energie = 100;
             _historique = new List<HistoriqueJoueur>();
@@ -138,23 +123,7 @@ namespace TheManager
 
         }
 
-        public int Age
-        {
-            get
-            {
-                DateTime date = Session.Instance.Partie.Date;
-                int age = date.Year - Naissance.Year;
-                if(date.Month < Naissance.Month)
-                {
-                    age--;
-                }
-                else if(date.Month == Naissance.Month && date.Day < Naissance.Day)
-                {
-                    age--;
-                }
-                return age;
-            }
-        }
+        
 
         //Propriétés
         //nb de jaunes cette saison
@@ -288,7 +257,7 @@ namespace TheManager
         
         public override string ToString()
         {
-            return _prenom + " " + _nom;
+            return base.ToString();
         }
 
     }

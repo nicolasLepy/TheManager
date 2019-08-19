@@ -25,6 +25,7 @@ namespace TheManager
             ChargerClubs();
             ChargerCompetitions();
             ChargerJoueurs();
+            ChargerEntraineurs();
             InitialiserEquipes();
             InitialiserJoueurs();
             ChargerMedias();
@@ -117,7 +118,27 @@ namespace TheManager
             }
         }
 
-            public void ChargerVilles()
+        public void ChargerEntraineurs()
+        {
+            XDocument doc = XDocument.Load("Donnees/entraineurs.xml");
+            foreach (XElement e in doc.Descendants("Entraineurs"))
+            {
+                foreach (XElement e2 in e.Descendants("Entraineur"))
+                {
+                    string nom = e2.Attribute("nom").Value;
+                    string prenom = e2.Attribute("prenom").Value;
+                    int niveau = int.Parse(e2.Attribute("niveau").Value);
+                    string nomClub = e2.Attribute("club").Value;
+                    Club_Ville club = _gestionnaire.String2Club(nomClub) as Club_Ville;
+                    string nomPays = e2.Attribute("nationalite").Value;
+                    Pays pays = _gestionnaire.String2Pays(nomPays);
+                    Entraineur entraineur = new Entraineur(prenom, nom, niveau, new DateTime(1970, 1, 1), pays);
+                    club.Entraineur = entraineur;
+                }
+            }
+        }
+
+        public void ChargerVilles()
         {
             XDocument doc = XDocument.Load("Donnees/villes.xml");
             foreach (XElement e in doc.Descendants("Villes"))
@@ -238,7 +259,10 @@ namespace TheManager
                     //Simplification
                     reputation = centreFormation;
 
-                    Club c = new Club_Ville(nom, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade,musiqueBut);
+                    Pays pays = ville.Pays();
+                    Entraineur entraineur = new Entraineur(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
+
+                    Club c = new Club_Ville(nom,entraineur, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade,musiqueBut);
                     _gestionnaire.Clubs.Add(c);
                 }
                 foreach (XElement e2 in e.Descendants("Selection"))
@@ -267,12 +291,14 @@ namespace TheManager
                     else
                         musiqueBut = "null";
 
-                    Club c = new SelectionNationale(nom, nomCourt, reputation, supporters, centreFormation, logo, stade, coefficient,pays,musiqueBut);
+                    Entraineur entraineur = new Entraineur(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
+
+                    Club c = new SelectionNationale(nom,entraineur, nomCourt, reputation, supporters, centreFormation, logo, stade, coefficient,pays,musiqueBut);
                     _gestionnaire.Clubs.Add(c);
                 }
             }
         }
-
+        
         public void ChargerCompetitions()
         {
             XDocument doc = XDocument.Load("Donnees/competitions.xml");
@@ -349,7 +375,22 @@ namespace TheManager
                         else if(type =="poules")
                         {
                             int nbpoules = int.Parse(e3.Attribute("nombrePoules").Value);
-                            tour = new TourPoules(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), nbpoules, allerRetour, date_initialisation, date_fin);
+                            MethodeTirageAuSort methode = String2MethodeTirageAuSort(e3.Attribute("methode").Value);
+                            tour = new TourPoules(nomTour, String2Heure(heureParDefaut), dates, new List<DecalagesTV>(), nbpoules, allerRetour, date_initialisation, date_fin, methode);
+
+                            if(methode == MethodeTirageAuSort.GEOGRAPHIQUE)
+                            {
+                                //Lecture position poules
+                                for (int numPoule = 1; numPoule <= nbpoules; numPoule++)
+                                {
+                                    string[] poulePosition = e3.Attribute("poule" + numPoule).Value.Split(';');
+                                    float latitude = float.Parse(poulePosition[0], CultureInfo.InvariantCulture);
+                                    float longitude = float.Parse(poulePosition[1], CultureInfo.InvariantCulture);
+                                    TourPoules tp = tour as TourPoules;
+                                    tp.LocalisationGroupes.Add(new Position(latitude, longitude));
+                                }
+                            }
+                            
                         }
                         else if (type == "inactif")
                         {
@@ -539,6 +580,16 @@ namespace TheManager
             h.Heures = int.Parse(splitted[0]);
             h.Minutes = int.Parse(splitted[1]);
             return h;
+        }
+
+        private MethodeTirageAuSort String2MethodeTirageAuSort(string methode)
+        {
+            MethodeTirageAuSort res = MethodeTirageAuSort.NIVEAU;
+
+            if (methode == "Niveau") res = MethodeTirageAuSort.NIVEAU;
+            else if (methode == "Geographique") res = MethodeTirageAuSort.GEOGRAPHIQUE;
+
+            return res;
         }
     }
 }

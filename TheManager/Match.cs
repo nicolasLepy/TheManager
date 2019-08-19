@@ -290,13 +290,25 @@ namespace TheManager
             }
         }
 
-        private float NiveauCompo(List<Joueur> compo)
+        private float NiveauCompo(Club club)
         {
+            List<Joueur> compo = (club == Domicile) ? _compo1Terrain : _compo2Terrain;
+            
             float res = 0;
             foreach(Joueur j in compo)
             {
                 res += j.Niveau;
             }
+            float nivEquipe = res / (11.0f);
+            
+            int niveauEntraineur;
+            if (club.Entraineur != null)
+                niveauEntraineur = club.Entraineur.Niveau;
+            else
+                niveauEntraineur = (int)(nivEquipe * 0.8f);
+
+            //On ajoute le niveau de l'entraîneur
+            nivEquipe = nivEquipe + 0.175f*(niveauEntraineur - nivEquipe);
             return res / (11.0f);
         }
 
@@ -485,6 +497,30 @@ namespace TheManager
             EtablirCotes();
         }
 
+        /// <summary>
+        /// Reprogrammer un match qui a été reportée à la date qui vient la plus arrangeante pour les deux clubs
+        /// decalage : commence à rechercher une date à partir du jour du match + decalage
+        /// </summary>
+        public void Reprogrammer(int decalage)
+        {
+            bool dateTrouvee = false;
+            DateTime dateBase = this.Jour.AddDays(decalage);
+            dateBase.AddHours(-dateBase.Hour + Session.Instance.Random(18,22));
+            while(!dateTrouvee)
+            {
+                
+                if(!Domicile.MatchProche(dateBase,3) && !Exterieur.MatchProche(dateBase, 3))
+                {
+                    dateTrouvee = true;
+                    this.Jour = dateBase;
+                }
+                else
+                {
+                    dateBase = dateBase.AddDays(1);
+                }
+            }
+        }
+
         private void EtablirAffluence()
         {
             _affluence = (int)(Domicile.Supporters * (Session.Instance.Random(6, 14) / 10.0f));
@@ -526,10 +562,10 @@ namespace TheManager
 
         public void CalculerDifferenceNiveau()
         {
-            float diffF = Math.Abs(NiveauCompo(_compo1Terrain)*1.05f - NiveauCompo(_compo2Terrain));
+            float diffF = Math.Abs(NiveauCompo(Domicile)*1.05f - NiveauCompo(Exterieur));
 
             this._diffNiveau = (int)diffF;
-            this._diffNiveauRatio = (NiveauCompo(_compo1Terrain) * 1.05f) / NiveauCompo(_compo2Terrain);
+            this._diffNiveauRatio = (NiveauCompo(Domicile) * 1.05f) / NiveauCompo(Exterieur);
         }
 
         public List<RetourMatch> MinuteSuivante()
@@ -615,7 +651,13 @@ namespace TheManager
                     JouerTAB();
                 }
             }
-           
+
+            if(Domicile == Session.Instance.Partie.Club || Exterieur == Session.Instance.Partie.Club)
+            {
+                string res = GenerateurArticle.Instance.GenererArticle(this);
+                Article article = new Article(res, "", new DateTime(Jour.Year, Jour.Month, Jour.Day), 2);
+                Session.Instance.Partie.Articles.Add(article);
+            }
         }
 
         private bool MatchRetourNul()

@@ -72,6 +72,16 @@ namespace TheManager_GUI
         {
             InitializeComponent();
             lbClub.Content = c.Nom;
+
+            if(c.Entraineur != null)
+            {
+                lbEntraineur.Content = "Entraîneur : " + c.Entraineur.ToString();
+            }
+            else
+            {
+                lbEntraineur.Content = "Aucun entraîneur";
+            }
+
             try
             {
                 imgLogo.Source = new BitmapImage(new Uri(Utils.Logo(c)));

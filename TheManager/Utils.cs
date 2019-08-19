@@ -9,6 +9,13 @@ namespace TheManager
     public class Utils
     {
 
+        public static int NombreJoursEntreDeuxDates(DateTime a, DateTime b)
+        {
+            TimeSpan ts = a - b;
+
+            return Math.Abs(ts.Days);
+        }
+
         public static bool ComparerDates(DateTime a, DateTime b)
         {
             bool res = false;
@@ -66,6 +73,22 @@ namespace TheManager
 
         public static float Distance(Ville a, Ville b)
         {
+            float lat1 = a.Position.Latitude;
+            float lon1 = a.Position.Longitude;
+            float lat2 = b.Position.Latitude;
+            float lon2 = b.Position.Longitude;
+
+            int R = 6371;
+            double dLat = Deg2Rad(lat2 - lat1);
+            double dLon = Deg2Rad(lon2 - lon1);
+            double va = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(Deg2Rad(lat1)) * Math.Cos(Deg2Rad(lat2)) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(va), Math.Sqrt(1 - va));
+            double d = R * c;
+            return (float)d;
+        }
+
+        public static float Distance(Position a, Position b)
+        {
             float lat1 = a.Latitude;
             float lon1 = a.Longitude;
             float lat2 = b.Latitude;
@@ -79,7 +102,6 @@ namespace TheManager
             double d = R * c;
             return (float)d;
         }
-
 
         public static int Points(List<Match> matchs, Club c)
         {
@@ -151,7 +173,11 @@ namespace TheManager
 
         public static string Logo(Club c)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png";
+            string res = "";
+            if (c != null) res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png";
+            else
+                Console.WriteLine(c.Nom + " n'a pas de logo");
+            return res;
         }
 
         public static string Image(string image)
@@ -166,7 +192,7 @@ namespace TheManager
 
         public static string CheminSon(string son)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Musiques\\" + son + ".mp3";
+            return System.IO.Directory.GetCurrentDirectory() + "\\Musiques\\" + son + ".wav";
         }
 
         public static bool RetoursContient(RetourMatchEvenement evenement, List<RetourMatch> retours)

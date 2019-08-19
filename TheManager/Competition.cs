@@ -226,7 +226,26 @@ namespace TheManager
             {
                 return _tours[_tours.Count - 1].Vainqueur();
             }
-            return res;
+        }
+
+        public List<KeyValuePair<Joueur, int>> Buteurs()
+        {
+            Dictionary<Joueur, int> buteurs = new Dictionary<Joueur, int>();
+
+            foreach(Tour t in _tours)
+            {
+                foreach(KeyValuePair<Joueur,int> kvp in t.Buteurs())
+                {
+                    if (buteurs.ContainsKey(kvp.Key)) buteurs[kvp.Key] += kvp.Value;
+                    else buteurs[kvp.Key] = kvp.Value;
+                }
+            }
+
+            List<KeyValuePair<Joueur, int>> liste = buteurs.ToList();
+
+            liste.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+
+            return liste;
         }
 
     }

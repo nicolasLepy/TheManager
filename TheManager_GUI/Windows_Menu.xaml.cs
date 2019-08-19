@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TheManager;
 using TheManager.Comparators;
+using TheManager_GUI.VueClassement;
 
 namespace TheManager_GUI
 {
@@ -47,6 +48,20 @@ namespace TheManager_GUI
             
         }
 
+        private void RemplirArticles()
+        {
+            spNews.Children.Clear();
+            foreach(Article a in Session.Instance.Partie.Articles)
+            {
+                TextBlock tb = new TextBlock();
+                tb.TextWrapping = TextWrapping.WrapWithOverflow;
+                tb.Text = a.Publication.ToShortDateString() + " - " + a.Titre;
+                tb.Style = Application.Current.FindResource("StyleTextBlock") as Style;
+                spNews.Children.Add(tb);
+
+            }
+        }
+
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
@@ -75,7 +90,6 @@ namespace TheManager_GUI
             if(c != null)
             {
                 lbTours.Items.Clear();
-                dgButeurs.Items.Clear();
                 dgClassement.Items.Clear();
                 dgMatchs.Items.Clear();
                 foreach (Tour t in c.Tours)
@@ -83,31 +97,25 @@ namespace TheManager_GUI
                     lbTours.Items.Add(t);
                 }
 
-                if (c.Statistiques.PlusGrandScore != null)
-                    lbGrandScore.Content = c.Statistiques.PlusGrandScore.Domicile.Nom + " " + c.Statistiques.PlusGrandScore.Score1 + "-" + c.Statistiques.PlusGrandScore.Score2 + " " + c.Statistiques.PlusGrandScore.Exterieur.Nom;
-                else
-                    lbGrandScore.Content = "";
-                if (c.Statistiques.PlusGrandEcart != null)
-                    lbGrosEcart.Content = c.Statistiques.PlusGrandEcart.Domicile.Nom + " " + c.Statistiques.PlusGrandEcart.Score1 + "-" + c.Statistiques.PlusGrandEcart.Score2 + " " + c.Statistiques.PlusGrandEcart.Exterieur.Nom;
-                else
-                    lbGrosEcart.Content = "";
-                Palmares(c);
             }
         }
 
         private void LbTours_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Tour t = lbTours.SelectedItem as Tour;
+
+            IVueClassement vue = FabriqueVueClassement.CreerVue(dgClassement, t);
+            if (vue != null) vue.Afficher();
+            /*
             if (t as TourChampionnat != null)
                 Classement(t as TourChampionnat);
             else if (t as TourPoules != null)
                 Classement(t as TourPoules);
             else
-                dgClassement.Items.Clear();
+                dgClassement.Items.Clear();*/
             if (t != null)
             {
                 Calendrier(t);
-                Buteurs(t);
             }
         }
 
@@ -175,16 +183,6 @@ namespace TheManager_GUI
 
         }
 
-        private void DgButeurs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (dgButeurs.SelectedItem != null)
-            {
-                ButeurElement je = (ButeurElement)dgButeurs.SelectedItem;
-                Windows_Joueur wj = new Windows_Joueur(je.Buteur);
-                wj.Show();
-            }
-        }
-
         private void ListerCompetitions(ILocalisation localisation)
         {
             if(localisation != null)
@@ -206,6 +204,7 @@ namespace TheManager_GUI
                 ProchainsMatchsClub();
                 ClassementClub();
                 BandeauActualites();
+                RemplirArticles();
             }
         }
 
@@ -359,101 +358,6 @@ namespace TheManager_GUI
             }
         }
 
-        private void Classement(TourPoules t)
-        {
-            dgClassement.Items.Clear();
-            for(int poules = 0;poules < t.NombrePoules; poules++)
-            {
-                List<Club> poule = new List<Club>(t.Poules[poules]);
-                poule.Sort(new Club_Classement_Comparator(t.Matchs));
-                int i = 0;
-                dgClassement.Items.Add(new ClassementElement { Classement = 0, Nom = "" });
-                dgClassement.Items.Add(new ClassementElement { Classement = i, Nom = "Poule " + (int)(poules + 1) });
-                dgClassement.Items.Add(new ClassementElement { Classement = 0, Nom = "" });
-                foreach (Club c in poule)
-                {
-                    i++;
-                    dgClassement.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c) });
-                    }
-            }
-        }
-
-        private void Classement(TourChampionnat t)
-        {
-            dgClassement.Items.Clear();
-            int i = 0;
-            foreach(Club c in t.Classement())
-            {
-                i++;
-                dgClassement.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png", Club =c, Classement = i, Nom = c.NomCourt, Pts = t.Points(c), J = t.Joues(c), G = t.Gagnes(c), N = t.Nuls(c), P = t.Perdus(c), bp = t.ButsPour(c), bc = t.ButsContre(c), Diff = t.Difference(c)});
-            }
-            Style s = new Style();
-            /*s.Setters.Add(new Setter(){ Property = Control.HeightProperty, Value = height });
-            s.Setters.Add(new Setter() { Property = Control.FontSizeProperty, Value = 12 });
-            s.Setters.Add(new Setter() { Property = Control.BorderThicknessProperty, Value = 1 });*/
-            
-            s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-            s.Setters.Add(new Setter() { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-
-            
-            //Pour chaque couleur
-            foreach(Qualification q in t.Qualifications)
-            {
-                if(q.Competition.Championnat)
-                {
-                    string couleur = "backgroundColor";
-                    if (q.Competition.Niveau < (lbChampionnats.SelectedItem as Competition).Niveau)
-                        couleur = "promotionColor";
-                    else if (q.Competition.Niveau > (lbChampionnats.SelectedItem as Competition).Niveau)
-                        couleur = "relegationColor";
-                    else if (q.Competition.Niveau == (lbChampionnats.SelectedItem as Competition).Niveau && q.IDTour > (lbChampionnats.SelectedItem as Competition).Tours.IndexOf(t))
-                        couleur = "barrageColor";
-
-                    DataTrigger tg = new DataTrigger()
-                    {
-                        Binding = new Binding("Classement"),
-                        Value = q.Classement
-                    };
-                    tg.Setters.Add(new Setter()
-                    {
-                        Property = Control.BackgroundProperty,
-                        Value = App.Current.TryFindResource(couleur) as SolidColorBrush
-                    });
-                    s.Triggers.Add(tg);
-
-                    dgClassement.CellStyle = s;
-                }
-                
-            }
-        }
-
-        private void Buteurs(Tour t)
-        {
-            dgButeurs.Items.Clear();
-            foreach(KeyValuePair<Joueur,int> buteur in t.Buteurs())
-            {
-                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Nom() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
-            }
-        }
-
-        private void Palmares(Competition c)
-        {
-            dgPalmares.Items.Clear();
-            foreach (Competition arc in c.EditionsPrecedentes)
-            {
-                Club vainqueur = arc.Vainqueur();
-              
-
-                Tour t = arc.Tours[arc.Tours.Count - 1];
-                //Si le tour final n'est pas un tour inactif, on peut établir le palmarès
-                if (t.Matchs.Count > 0)
-                {
-                    int annee = t.Matchs[t.Matchs.Count - 1].Jour.Year;
-                    dgPalmares.Items.Add(new PalmaresElement { Annee = annee, Club = vainqueur });
-                }
-            }
-        }
-
         private void BtnSauvegarder_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -496,6 +400,18 @@ namespace TheManager_GUI
         private void BtnGauche_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void BtnCompetition_Click(object sender, RoutedEventArgs e)
+        {
+            Competition c = lbChampionnats.SelectedItem as Competition;
+            if(c != null)
+            {
+                Windows_Competition wc = new Windows_Competition(c);
+                wc.Left = 50;
+                wc.Top = 50;
+                wc.Show();
+            }
         }
     }
 

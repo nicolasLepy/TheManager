@@ -20,61 +20,54 @@
 			<Label Name="lbMT" Content="(2 - 0)" Style="{StaticResource StyleLabel1}"/>
 			<Label Name="lbStade" Content="Stade du Pré Fleuri" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
 			<Label Name="lbAffluence" Content="28500 spectateurs" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
-			<DataGrid HorizontalAlignment="Center" IsReadOnly="True" MaxHeight="150" Margin="20" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-				<DataGrid.Columns>
-					<DataGridTemplateColumn Width="18">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<Image Source="{Binding Img1}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-					<DataGridTextColumn Header="" Binding="{Binding Col1}"/>
-					<DataGridTextColumn Header="" Binding="{Binding Col2}"/>
-					<DataGridTextColumn Header="" Binding="{Binding Col3}"/>
-					<DataGridTextColumn Header="" Binding="{Binding Col4}"/>
-					<DataGridTemplateColumn Width="18">
-						<DataGridTemplateColumn.CellTemplate>
-							<DataTemplate>
-								<Image Source="{Binding Img2}" />
-							</DataTemplate>
-						</DataGridTemplateColumn.CellTemplate>
-					</DataGridTemplateColumn>
-				</DataGrid.Columns>
-			</DataGrid>
-			<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Possession"/>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<Label Name="lbPossession1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-				<ProgressBar Name="pbPossession" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
-				<Label Name="lbPossession2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-			</StackPanel>
-			<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-				<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
-				<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo1_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo1" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
-					</DataGrid.Columns>
-				</DataGrid>
-				<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo2_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo2" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-					<DataGrid.Columns>
-						<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
-						<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
-					</DataGrid.Columns>
-				</DataGrid>
-			</StackPanel>
-			<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick" HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="" Binding="{Binding Media}"/>
-					<DataGridTextColumn Header="" Binding="{Binding Journaliste}"/>
-				</DataGrid.Columns>
 
-			</DataGrid>
+			<ScrollViewer VerticalScrollBarVisibility="Auto" Height="400" >
+
+				<StackPanel Orientation="Vertical">
+
+					<StackPanel Orientation="Vertical" Name="spEvenements">
+
+					</StackPanel>
+
+					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Possession"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<Label Name="lbPossession1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+						<ProgressBar Name="pbPossession" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
+						<Label Name="lbPossession2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
+					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
+						<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo1_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo1" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
+								<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+						<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo2_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo2" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+							<DataGrid.Columns>
+								<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
+								<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
+							</DataGrid.Columns>
+						</DataGrid>
+					</StackPanel>
+					<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick" HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Media}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Journaliste}"/>
+						</DataGrid.Columns>
+
+					</DataGrid>
+
+
+				</StackPanel>
+				
+			</ScrollViewer>
+			
 		</StackPanel>
 	</Grid>
 </Window>

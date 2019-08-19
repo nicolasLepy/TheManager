@@ -58,6 +58,16 @@ namespace TheManager
             classement.Sort(comparator);
             return classement;
         }
+
+        public int NombreJournees()
+        {
+            int nbEquipes = Clubs.Count;
+            int nbMatchs = Matchs.Count;
+            if (nbEquipes % 2 == 1) nbEquipes++;
+            int nbJournees = nbMatchs / nbEquipes;
+            if (AllerRetour) nbJournees *= 2;
+            return nbJournees ;
+        }
         
         public List<Match> ProchaineJournee()
         {

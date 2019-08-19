@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_JouerMatch" Height="550" Width="850" Style="{StaticResource StyleWindows}" >
+        Title="Windows_JouerMatch" Height="550" Width="1050" Style="{StaticResource StyleWindows}" >
 	<Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Orientation="Horizontal">
@@ -13,6 +13,7 @@
 				<Label Content="Rapide" FontSize="10" Style="{StaticResource StyleLabel2}"/>
 				<Slider Name="sliderVitesseSimulation" Minimum="50" Maximum="1500" Value="400" TickPlacement="BottomRight" TickFrequency="10" Width="140" />
 				<Label Content="Lent" FontSize="10" Style="{StaticResource StyleLabel2}"/>
+				<CheckBox Name="cbJingleBut" Content="Jingle but" Style="{StaticResource StyleCheckBox}" />
 			</StackPanel>
 			<!-- panneau principal -->
 			<StackPanel Orientation="Horizontal">
@@ -32,7 +33,7 @@
 						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
 						<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 					</StackPanel>
-					<DataGrid IsReadOnly="True" Height="250" Width="250" Name="dgActions" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid IsReadOnly="True" Height="250" Width="350" Name="dgActions" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="" Binding="{Binding Minute}"/>
 							<DataGridTextColumn Header="" Binding="{Binding Action}">
@@ -86,7 +87,7 @@
 				</StackPanel>
 				<!-- info autres matchs -->
 				<StackPanel Orientation="Vertical">
-					<DataGrid GridLinesVisibility="None" IsReadOnly="True" Height="450" Width="250" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+					<DataGrid GridLinesVisibility="None" IsReadOnly="True" Height="450" Width="400" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTemplateColumn Width="18">
 								<DataGridTemplateColumn.CellTemplate>

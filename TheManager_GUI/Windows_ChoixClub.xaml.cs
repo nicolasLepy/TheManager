@@ -33,6 +33,11 @@ namespace TheManager_GUI
                     }
                 }
             }
+
+            foreach (Continent c in Session.Instance.Partie.Gestionnaire.Continents)
+                foreach (Pays p in c.Pays)
+                    cbNationalite.Items.Add(p);
+
         }
 
         private void LbPays_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -102,10 +107,20 @@ namespace TheManager_GUI
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            string prenom = tbPrenom.Text;
+            string nom = tbNom.Text;
+            string[] strNaissance = dpNaissance.Text.Split('/');
+            DateTime naissance = new DateTime( int.Parse(strNaissance[2]), int.Parse(strNaissance[1]), int.Parse(strNaissance[0]));
+            Pays nationalite = Session.Instance.Partie.Gestionnaire.String2Pays("France");
+            Pays pays_selected = cbNationalite.SelectedItem as Pays;
+            if (pays_selected != null) nationalite = pays_selected;
+
             Club c = lbClubs.SelectedItem as Club;
             if(c != null)
             {
                 Session.Instance.Partie.Club = c as Club_Ville;
+                Entraineur entraineur = new Entraineur(prenom, nom, 70, naissance, nationalite);
+                Session.Instance.Partie.Club.ChangerEntraineur(entraineur);
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
                 Close();

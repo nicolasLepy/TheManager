@@ -43,9 +43,10 @@ namespace TheManager
 
         [DataMember]
         private List<Club> _clubs;
-        //private List<Competition> _competitions;
         [DataMember]
         private List<Joueur> _joueursLibres;
+        [DataMember]
+        private List<Entraineur> _entraineursLibres;
         [DataMember]
         private List<Continent> _continents;
         [DataMember]
@@ -71,6 +72,7 @@ namespace TheManager
             }
         }
         public List<Joueur> JoueursLibres { get => _joueursLibres; }
+        public List<Entraineur> EntraineursLibres { get => _entraineursLibres; }
         public List<Continent> Continents { get => _continents; }
         public List<Langue> Langues { get => _langues; }
         public List<Media> Medias { get => _medias; }
@@ -83,6 +85,7 @@ namespace TheManager
             _continents = new List<Continent>();
             _langues = new List<Langue>();
             _medias = new List<Media>();
+            _entraineursLibres = new List<Entraineur>();
             _commentairesMatchs = new List<CommentairesEvenementMatch>();
             _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.BUT));
             _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.BUT_PENALTY));
