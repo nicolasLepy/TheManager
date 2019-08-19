@@ -53,6 +53,7 @@
     <Compile Include="Calendrier.cs" />
     <Compile Include="ChargeurBaseDeDonnees.cs" />
     <Compile Include="Club.cs" />
+    <Compile Include="Club_Reserve.cs" />
     <Compile Include="Club_Ville.cs" />
     <Compile Include="Comparators\Article_Comparator.cs" />
     <Compile Include="Comparators\Club_Classement_Comparator.cs" />

@@ -39,6 +39,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 * Simulation on multiple years
 * Hierarchical Competitions (promotion, relegation ...)
 * Match simulation
+* Managers
 * Domestic Cup
 * International tournaments
 * Players evolution
@@ -47,15 +48,16 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 * XML Database
 * HTML exportation
 * Engine to follow matchs in real-time. (real-time ranking, real-time results of others matches)
+* Real-time simulation
 
 ## Features to be implemented
-* Implement a system for transferring players between clubs.
+* Dynamic dates, from one season to an other
+* A system for transferring players between clubs.
 * Attendance adaptation when a club grow up or down.
 * Add the player's history in their description.
 * Add a panel to give informations (transfers, main results... ) during simulation.
 * Add reserves teams.
 * Set up international tournaments on multiples years.
-* Real-time simulation
 * Improve GUI.
 * (Data editor)
 * (Generate Wiki with simulation data)

@@ -13,6 +13,8 @@ namespace TheManager
     [System.Xml.Serialization.XmlInclude(typeof(Club_Ville))]
     [KnownType(typeof(SelectionNationale))]
     [System.Xml.Serialization.XmlInclude(typeof(SelectionNationale))]
+    [KnownType(typeof(Club_Reserve))]
+    [System.Xml.Serialization.XmlInclude(typeof(Club_Reserve))]
     public abstract class Club
     {
         [DataMember]

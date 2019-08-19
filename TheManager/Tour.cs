@@ -480,7 +480,13 @@ namespace TheManager
                     clubs = Utils.MelangerListe<Club>(clubs);
                     break;
                 case MethodeRecuperation.MEILLEURS:
-                    clubs.Sort(new Club_Niveau_Comparator());
+                    try
+                    {
+                        clubs.Sort(new Club_Niveau_Comparator());
+                    }catch(Exception e)
+                    {
+                        Console.WriteLine("Erreur sort Club_Niveau_Comparator pour " + Nom);
+                    }
                     break;
                 case MethodeRecuperation.PIRES:
                     clubs.Sort(new Club_Niveau_Comparator(true));

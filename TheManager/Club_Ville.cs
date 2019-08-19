@@ -59,7 +59,10 @@ namespace TheManager
         private HistoriqueClub _historique;
         [DataMember]
         private GestionTransfertsClub _gestionTransfertsClub;
-
+        [DataMember]
+        private List<Club_Reserve> _reserves;
+        [DataMember]
+        private bool _equipePremiere;
 
         public int Budget { get => _budget; }
         public Ville Ville { get => _ville; }
@@ -67,6 +70,8 @@ namespace TheManager
         public List<Contrat> Contrats { get => _joueurs; }
         public HistoriqueClub Historique { get => _historique; }
         public GestionTransfertsClub GestionTransfertsClub { get => _gestionTransfertsClub; }
+        public List<Club_Reserve> Reserves { get => _reserves; }
+        private bool EquipePremiere { get => _equipePremiere; }
 
         public float MasseSalariale
         {
@@ -80,7 +85,7 @@ namespace TheManager
             }
         }
 
-        public Club_Ville(string nom, Entraineur entraineur, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade, string musiqueBut) : base(nom,entraineur,nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
+        public Club_Ville(string nom, Entraineur entraineur, string nomCourt, int reputation, int budget, int supporters, int centreFormation, Ville ville, string logo, Stade stade, string musiqueBut, bool equipePremiere) : base(nom,entraineur,nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
         {
             _budget = budget;
             _ville = ville;
@@ -88,6 +93,8 @@ namespace TheManager
             _joueurs = new List<Contrat>();
             _historique = new HistoriqueClub();
             _gestionTransfertsClub = new GestionTransfertsClub();
+            _equipePremiere = equipePremiere;
+            _reserves = new List<Club_Reserve>();
         }
 
         public void AjouterJoueur(Contrat c)
@@ -412,6 +419,24 @@ namespace TheManager
             {
                 for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.ATTAQUANT, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
             }
+        }
+
+        /// <summary>
+        /// Dispatche les joueurs de l'équipe parmi l'équipe première et les réserves
+        /// </summary>
+        public void RemplirEquipesReserves()
+        {
+            if(_reserves.Count > 0)
+            {
+                List<Contrat> equipeComplete = new List<Contrat>(_joueurs);
+                foreach (Club_Reserve cr in _reserves) foreach (Contrat ct in cr.Contrats) equipeComplete.Add(ct);
+
+                List<Joueur> joueursComplets = new List<Joueur>(Joueurs());
+                foreach (Club_Reserve cr in _reserves) foreach (Joueur j in cr.Joueurs()) joueursComplets.Add(j);
+
+                List<Joueur> gardiens = Utils.JoueursPoste(joueursComplets, Poste.GARDIEN);
+            }
+
         }
 
     }

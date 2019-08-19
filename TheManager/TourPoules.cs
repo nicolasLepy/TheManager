@@ -153,7 +153,6 @@ namespace TheManager
                     if (cv != null)
                     {
                         cv.ModifierBudget(d.Somme);
-                        Console.WriteLine(cv.Nom + " reçoit " + d.Somme + "eurros");
                     }
                 }
 

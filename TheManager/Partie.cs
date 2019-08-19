@@ -329,6 +329,16 @@ namespace TheManager
                 }
             }
 
+            //Construction des équipes réserves le 5 du mois
+            if(Date.Day == 5)
+            {
+                foreach(Club c in _gestionnaire.Clubs)
+                {
+                    Club_Ville cv = c as Club_Ville;
+                    cv.RemplirEquipesReserves();
+                }
+            }
+
             //Récupération des joueurs
             foreach(Club c in _gestionnaire.Clubs)
             {

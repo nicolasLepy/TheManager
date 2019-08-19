@@ -262,7 +262,8 @@ namespace TheManager
                     Pays pays = ville.Pays();
                     Entraineur entraineur = new Entraineur(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
 
-                    Club c = new Club_Ville(nom,entraineur, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade,musiqueBut);
+                    bool equipePremiere = true;
+                    Club c = new Club_Ville(nom,entraineur, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade,musiqueBut, equipePremiere);
                     _gestionnaire.Clubs.Add(c);
                 }
                 foreach (XElement e2 in e.Descendants("Selection"))
@@ -400,7 +401,16 @@ namespace TheManager
                         foreach (XElement e4 in e3.Descendants("Club"))
                         {
                             string nomClub = e4.Attribute("nom").Value;
-                            tour.Clubs.Add(_gestionnaire.String2Club(nomClub));
+                            Club club = _gestionnaire.String2Club(nomClub);
+
+                            if (e4.Attribute("reserveDe") != null)
+                            {
+                                Club_Ville equipePremiere = _gestionnaire.String2Club(e4.Attribute("reserveDe").Value) as Club_Ville;
+                                club = new Club_Reserve(equipePremiere, nomClub, nomClub, null);
+                                equipePremiere.Reserves.Add(club as Club_Reserve);
+                            }
+                            
+                            tour.Clubs.Add(club);
                         }
                         foreach(XElement e4 in e3.Descendants("Participants"))
                         {
