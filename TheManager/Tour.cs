@@ -12,7 +12,8 @@ namespace TheManager
 
     public enum Regle
     {
-        RECOIT_SI_DEUX_DIVISION_ECART
+        RECOIT_SI_DEUX_DIVISION_ECART,
+        EQUIPES_PREMIERES_UNIQUEMENT
     }
 
  
@@ -446,7 +447,9 @@ namespace TheManager
         {
             foreach(RecuperationEquipes re in _recuperationsEquipes)
             {
-                foreach(Club c in re.Source.RecupererEquipes(re.Nombre, re.Methode))
+                bool equipesPremieresUniquement = false;
+                if (Regles.Contains(Regle.EQUIPES_PREMIERES_UNIQUEMENT)) equipesPremieresUniquement = true;
+                foreach (Club c in re.Source.RecupererEquipes(re.Nombre, re.Methode, equipesPremieresUniquement))
                 {
                     _clubs.Add(c);
                 }
@@ -471,9 +474,19 @@ namespace TheManager
         
 
 
-        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode)
+        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode, bool equipesPremieresUniquement)
         {
             List<Club> clubs = new List<Club>(_clubs);
+
+            //Si on a décidé d'avoir que les équipes premières, on supprime toutes les équipes réserve de la liste de choix
+            if(equipesPremieresUniquement)
+            {
+                List<Club> aSupprimer = new List<Club>();
+                foreach (Club c in clubs) if (c as Club_Reserve != null) aSupprimer.Add(c);
+                foreach (Club c in aSupprimer) clubs.Remove(c);
+            }
+
+
             switch (methode)
             {
                 case MethodeRecuperation.ALEATOIRE:

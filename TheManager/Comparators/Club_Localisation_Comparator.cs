@@ -18,10 +18,12 @@ namespace TheManager.Comparators
 
         public int Compare(Club x, Club y)
         {
-            int res = 1;
-            if (Utils.Distance(x.Stade.Ville.Position, _reference) > Utils.Distance(y.Stade.Ville.Position, _reference))
+            int res = 0;
+            float distX = Utils.Distance(x.Stade.Ville.Position, _reference);
+            float distY = Utils.Distance(y.Stade.Ville.Position, _reference);
+            if (distX > distY)
                 res = 1;
-            else
+            else if(distY > distX)
                 res = -1;
             return res;
         }

@@ -335,7 +335,8 @@ namespace TheManager
                 foreach(Club c in _gestionnaire.Clubs)
                 {
                     Club_Ville cv = c as Club_Ville;
-                    cv.RemplirEquipesReserves();
+                    if(cv !=  null)
+                        cv.RemplirEquipesReserves();
                 }
             }
 

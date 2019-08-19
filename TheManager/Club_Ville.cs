@@ -123,11 +123,22 @@ namespace TheManager
         public override float Niveau()
         {
             float niveau = 0;
-            foreach(Contrat c in _joueurs)
+
+            
+            List<Joueur> joueurs = new List<Joueur>();
+            foreach (Contrat c in _joueurs) joueurs.Add(c.Joueur);
+            joueurs.Sort(new Joueur_Niveau_Comparator());
+
+            int total = 0;
+            for(int i = 0;i<16;i++)
             {
-                niveau += c.Joueur.Niveau;
+                if (joueurs.Count > i)
+                {
+                    niveau += joueurs[i].Niveau;
+                    total++;
+                }
             }
-            return niveau / (_joueurs.Count+0.0f);
+            return niveau / (total+0.0f);
         }
 
         public void GenererJoueur(Poste p, int ageMin, int ageMax, int decalagePotentiel = 0)
@@ -428,13 +439,81 @@ namespace TheManager
         {
             if(_reserves.Count > 0)
             {
+
+                List<Joueur>[] joueurs = new List<Joueur>[1+_reserves.Count];
+                for (int i = 0; i < joueurs.Length; i++) joueurs[i] = new List<Joueur>();
+
+                List<Contrat>[] contrats = new List<Contrat>[1 + _reserves.Count];
+                for (int i = 0; i < contrats.Length; i++) contrats[i] = new List<Contrat>();
+
                 List<Contrat> equipeComplete = new List<Contrat>(_joueurs);
                 foreach (Club_Reserve cr in _reserves) foreach (Contrat ct in cr.Contrats) equipeComplete.Add(ct);
 
                 List<Joueur> joueursComplets = new List<Joueur>(Joueurs());
                 foreach (Club_Reserve cr in _reserves) foreach (Joueur j in cr.Joueurs()) joueursComplets.Add(j);
 
-                List<Joueur> gardiens = Utils.JoueursPoste(joueursComplets, Poste.GARDIEN);
+                int[] equipePremiereQuotas = new int[4] { 3, 6, 6, 4 };
+                int[] equipesReservesQuotas = new int[4] { 2, 5, 5, 4 };
+                Poste[] postes = new Poste[4] { Poste.GARDIEN, Poste.DEFENSEUR, Poste.MILIEU, Poste.ATTAQUANT };
+
+                //Pour tous les postes
+                for(int numposte = 0; numposte < 4; numposte++)
+                {
+                    Poste poste = postes[numposte];
+                    int quotaEquipePremiere = equipePremiereQuotas[numposte];
+                    int quotaEquipeReserve = equipesReservesQuotas[numposte];
+
+                    List<Joueur> joueursPoste = Utils.JoueursPoste(joueursComplets, poste);
+                    joueursPoste.Sort(new Joueur_Niveau_Comparator());
+                    //Equipe première
+                    for (int i = 0; i < quotaEquipePremiere; i++)
+                        if (joueursPoste.Count > 0)
+                        {
+                            joueurs[0].Add(joueursPoste[0]);
+                            joueursPoste.RemoveAt(0);
+                        }
+                    //Pour les équipes réserves : 2 gardiens
+                    for (int i = 1; i < _reserves.Count + 1; i++)
+                    {
+                        for (int j = 0; j < quotaEquipeReserve; j++)
+                            if (joueursPoste.Count > 0)
+                            {
+                                joueurs[i].Add(joueursPoste[0]);
+                                joueursPoste.RemoveAt(0);
+                            }
+                    }
+
+                    //Les joueurs qui restent
+                    while(joueursPoste.Count>0)
+                    {
+                        joueurs[joueurs.Length - 1].Add(joueursPoste[0]);
+                        joueursPoste.RemoveAt(0);
+                    }
+
+                }
+
+                //Récupérer les contrats associés aux joueurs
+                for(int i = 0; i<joueurs.Length; i++)
+                {
+                    foreach(Joueur j in joueurs[i])
+                    {
+                        Contrat ct = null;
+                        foreach (Contrat c in equipeComplete) if (c.Joueur == j) ct = c;
+
+                        contrats[i].Add(ct);
+                    }
+                }
+
+                //Répartir les joueurs dans les différentes équipes
+                _joueurs.Clear();
+                foreach(Contrat ct in contrats[0]) _joueurs.Add(ct);
+                
+                for (int i = 1; i<_reserves.Count+1;i++)
+                {
+                    _reserves[i - 1].Contrats.Clear();
+                    foreach (Contrat ct in contrats[i]) _reserves[i - 1].Contrats.Add(ct);
+                }
+
             }
 
         }

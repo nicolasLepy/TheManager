@@ -37,7 +37,14 @@ namespace TheManager
             _competitions = new List<Competition>();
         }
 
-        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode)
+        /// <summary>
+        /// Le paramètre "equipesPremieresUniquement" est ignoré vu que les sélections nationales sont toutes des équipes premières
+        /// </summary>
+        /// <param name="nombre"></param>
+        /// <param name="methode"></param>
+        /// <param name="equipesPremieresUniquement"></param>
+        /// <returns></returns>
+        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode, bool equipesPremieresUniquement)
         {
             List<Club> clubs = new List<Club>();
             foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)

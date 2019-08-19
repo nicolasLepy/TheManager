@@ -408,8 +408,14 @@ namespace TheManager
                                 Club_Ville equipePremiere = _gestionnaire.String2Club(e4.Attribute("reserveDe").Value) as Club_Ville;
                                 club = new Club_Reserve(equipePremiere, nomClub, nomClub, null);
                                 equipePremiere.Reserves.Add(club as Club_Reserve);
+                                //Une équipe réserve à été générée, créeons quelques joueurs dans le club de base pour la remplir
+                                int potentielMoyen = (int)(equipePremiere.CentreFormation-(equipePremiere.CentreFormation / 1.5f));
+                                for (int g = 0; g < 2; g++) equipePremiere.GenererJoueur(Poste.GARDIEN, 16, 23, -potentielMoyen);
+                                for (int g = 0; g < 5; g++) equipePremiere.GenererJoueur(Poste.DEFENSEUR, 16, 23, -potentielMoyen);
+                                for (int g = 0; g < 5; g++) equipePremiere.GenererJoueur(Poste.MILIEU, 16, 23, -potentielMoyen);
+                                for (int g = 0; g < 3; g++) equipePremiere.GenererJoueur(Poste.ATTAQUANT, 16, 23, -potentielMoyen);
                             }
-                            
+
                             tour.Clubs.Add(club);
                         }
                         foreach(XElement e4 in e3.Descendants("Participants"))
@@ -457,6 +463,7 @@ namespace TheManager
                             switch(e4.Attribute("nom").Value)
                             {
                                 case "RECOIT_SI_DEUX_DIVISION_ECART": regle = Regle.RECOIT_SI_DEUX_DIVISION_ECART; break;
+                                case "EQUIPES_PREMIERES_UNIQUEMENT":regle = Regle.EQUIPES_PREMIERES_UNIQUEMENT;break;
                             }
                             tour.Regles.Add(regle);
                         }
