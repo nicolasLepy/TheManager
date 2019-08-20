@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
+using System.IO;
 
 namespace TheManager
 {
@@ -248,7 +249,7 @@ namespace TheManager
 
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
-                    if (logo == "") logo = "generic";
+                    if (logo == "" || !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + logo + ".png")) logo = "generic";
 
                     string musiqueBut = "";
                     if (e2.Attribute("musiqueBut") != null)
@@ -390,6 +391,12 @@ namespace TheManager
                                     TourPoules tp = tour as TourPoules;
                                     tp.LocalisationGroupes.Add(new Position(latitude, longitude));
                                 }
+                            }
+
+                            foreach(XElement eNoms in e3.Descendants("Nom"))
+                            {
+                                TourPoules tp = tour as TourPoules;
+                                tp.AjouterNomGroupe(eNoms.Value);
                             }
                             
                         }

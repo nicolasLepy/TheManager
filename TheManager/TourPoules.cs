@@ -20,6 +20,8 @@ namespace TheManager
         private MethodeTirageAuSort _methodeTirageAuSort;
         [DataMember]
         private List<Position> _localisationGroupes;
+        [DataMember]
+        private List<string> _nomGroupes;
         
 
         public List<Club>[] Poules { get => _poules; }
@@ -28,10 +30,24 @@ namespace TheManager
 
         public List<Position> LocalisationGroupes { get => _localisationGroupes; }
 
+        public string NomGroupe(int idGroupe)
+        {
+            string res = "";
+            if (_nomGroupes.Count > idGroupe) res = _nomGroupes[idGroupe];
+            else res = "Groupe " + (idGroupe + 1);
+            return res;
+        }
+
+        public void AjouterNomGroupe(string nom)
+        {
+            _nomGroupes.Add(nom);
+        }
+
         public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, MethodeTirageAuSort methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
+            _nomGroupes = new List<string>();
             for (int i = 0; i < _nombrePoules; i++) _poules[i] = new List<Club>();
             _methodeTirageAuSort = methodeTirageAuSort;
             _localisationGroupes = new List<Position>();

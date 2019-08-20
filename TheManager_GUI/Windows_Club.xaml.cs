@@ -38,6 +38,87 @@ namespace TheManager_GUI
         public string[] LabelsAnnees { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
+        private Club _club;
+
+        public void RemplirMatchs()
+        {
+            List<Match> matchs = _club.Matchs;
+            int j = -1;
+            for (int index = matchs.Count - 1; index >= 0; index--, j++)
+            {
+                Match m = matchs[index];
+
+                StackPanel spMatch = new StackPanel();
+                spMatch.Orientation = Orientation.Horizontal;
+
+                int couleur = 0;
+                if (m.Domicile == _club)
+                {
+                    if (m.Score1 > m.Score2) couleur = 2;
+                    else if (m.Score2 > m.Score1) couleur = 0;
+                }
+                else if (m.Exterieur == _club)
+                {
+                    if (m.Score2 > m.Score1) couleur = 2;
+                    else if (m.Score1 > m.Score2) couleur = 0;
+                }
+                if (m.Score1 == m.Score2)
+                    couleur = 1;
+
+                string fontStyle = "victoireColor";
+                switch (couleur)
+                {
+                    case 0: fontStyle = "defaiteColor"; break;
+                    case 1: fontStyle = "nulColor"; break;
+                    case 2: fontStyle = "victoireColor"; break;
+                }
+
+                SolidColorBrush color = Application.Current.TryFindResource(fontStyle) as SolidColorBrush;
+                spMatch.Background = color;
+
+
+                Label l1 = new Label();
+                l1.Content = m.Competition.Nom;
+                l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                l1.FontSize = 10;
+                l1.Width = 150;
+
+                Label l2 = new Label();
+                l2.Content = m.Jour.ToShortDateString();
+                l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                l2.FontSize = 10;
+                l2.Width = 75;
+
+                Label l3 = new Label();
+                l3.Content = m.Domicile.Nom;
+                l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                l3.FontSize = 10;
+                l3.Width = 100;
+
+                Button btnScore = new Button();
+                btnScore.Name = "btnScore_" + index;
+                btnScore.Click += new RoutedEventHandler(BtnMatch_Click);
+                btnScore.Content = m.Score1 + " - " + m.Score2 + (m.Prolongations ? " ap" : "") + (m.TAB ? " (" + m.Tab1 + "-" + m.Tab2 + " tab)" : "");
+                btnScore.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
+                btnScore.FontSize = 10;
+                btnScore.Width = 50;
+
+                Label l5 = new Label();
+                l5.Content = m.Exterieur.Nom;
+                l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                l5.FontSize = 10;
+                l5.Width = 100;
+
+                spMatch.Children.Add(l1);
+                spMatch.Children.Add(l2);
+                spMatch.Children.Add(l3);
+                spMatch.Children.Add(btnScore);
+                spMatch.Children.Add(l5);
+
+                spMatchs.Children.Add(spMatch);
+            }
+        }
+
         public void Palmares(Club_Ville club)
         {
             foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
@@ -71,6 +152,7 @@ namespace TheManager_GUI
         public Windows_Club(Club_Ville c)
         {
             InitializeComponent();
+            _club = c;
             lbClub.Content = c.Nom;
 
             if(c.Entraineur != null)
@@ -88,30 +170,9 @@ namespace TheManager_GUI
             }
             catch { }
             Palmares(c);
+            RemplirMatchs();
 
-            List<Match> matchs = c.Matchs;
-            int j = -1;
-            for(int index = matchs.Count-1; index >= 0; index--, j++)
-            {
-                Match m = matchs[index];
-                int couleur = 0;
-                if (m.Domicile == c)
-                {
-                    if (m.Score1 > m.Score2) couleur = 2;
-                    else if (m.Score2 > m.Score1) couleur = 0;
-                }
-                else if (m.Exterieur == c)
-                {
-                    if (m.Score2 > m.Score1) couleur = 2;
-                    else if (m.Score1 > m.Score2) couleur = 0;
-                }
-                if (m.Score1 == m.Score2)
-                    couleur = 1;
-
-                dgMatchs.Items.Add(new MatchClubElement { Couleur=couleur, Match=m, Competition="", Date=m.Jour.ToShortDateString(), Equipe1=m.Domicile.Nom, Equipe2=m.Exterieur.Nom, Score = m.Score1 + " - " + m.Score2 + (m.Prolongations ? " ap" : "") + (m.TAB ? " (" + m.Tab1 + "-" + m.Tab2 +" tab)" : "" ) });
-                
-            }
-
+            
             foreach (Contrat ct in c.Contrats)
             {
                 dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €", DebutContrat = ct.Debut.ToShortDateString(), Energie = ct.Joueur.Energie});
@@ -146,50 +207,7 @@ namespace TheManager_GUI
                 dgHistorique.Items.Add(hce);
             }
 
-
-            Style s = new Style();
-            s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("backgroundColor") as SolidColorBrush });
-            s.Setters.Add(new Setter() { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-
-            DataTrigger tg = new DataTrigger()
-            {
-                Binding = new Binding("Couleur"),
-                Value = 0
-            };
-            tg.Setters.Add(new Setter()
-            {
-                Property = Control.BackgroundProperty,
-                Value = App.Current.TryFindResource("defaiteColor") as SolidColorBrush
-            });
-            s.Triggers.Add(tg);
-
-            tg = new DataTrigger()
-            {
-                Binding = new Binding("Couleur"),
-                Value = 1
-            };
-            tg.Setters.Add(new Setter()
-            {
-                Property = Control.BackgroundProperty,
-                Value = App.Current.TryFindResource("nulColor") as SolidColorBrush
-            });
-            s.Triggers.Add(tg);
-
-            tg = new DataTrigger()
-            {
-                Binding = new Binding("Couleur"),
-                Value = 2
-            };
-            tg.Setters.Add(new Setter()
-            {
-                Property = Control.BackgroundProperty,
-                Value = App.Current.TryFindResource("victoireColor") as SolidColorBrush
-            });
-            s.Triggers.Add(tg);
-
-            dgMatchs.CellStyle = s;
             
-
             ChartValues<int> budgets = new ChartValues<int>();
             ChartValues<int> centreFormation = new ChartValues<int>();
             foreach (EntreeHistorique eh in c.Historique.Elements)
@@ -235,16 +253,6 @@ namespace TheManager_GUI
             Close();
         }
 
-        private void DgMatchs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if(dgMatchs.SelectedItem != null)
-            {
-                MatchClubElement mce = (MatchClubElement)dgMatchs.SelectedItem;
-                Windows_Match wm = new Windows_Match(mce.Match);
-                wm.Show();
-            }
-        }
-
         private void DgJoueurs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if(dgJoueurs.SelectedItem != null)
@@ -263,6 +271,16 @@ namespace TheManager_GUI
                 //Afficher une fenêtre compétition
             }
         }
+
+        private void BtnMatch_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
+            int idMatch = int.Parse(btn.Name.Split('_')[1]);
+            Match match = _club.Matchs[idMatch];
+            Windows_Match wm = new Windows_Match(match);
+            wm.Show();
+
+        }
     }
 
     public struct HistoriqueClubElement
@@ -270,17 +288,6 @@ namespace TheManager_GUI
         public int Annee { get; set; }
         public Competition Competition { get; set; }
         public int Classement { get; set; }
-    }
-
-    public struct MatchClubElement
-    {
-        public string Date { get; set; }
-        public string Equipe1 { get; set; }
-        public string Score { get; set; }
-        public string Equipe2 { get; set; }
-        public string Competition { get; set; }
-        public Match Match { get; set; }
-        public int Couleur { get; set; }
     }
 
     public struct JoueurClubElement

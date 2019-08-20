@@ -77,15 +77,13 @@
 						</DataGrid.Columns>
 					</DataGrid>
 					<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" Name="dgMatchs" Height="200" MaxHeight="350" MaxWidth="375" MouseDoubleClick="DgMatchs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Date}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Score}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
-						</DataGrid.Columns>
-					</DataGrid>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="250" Width="475">
+						<StackPanel Name="spMatchs" Orientation="Vertical">
+
+						</StackPanel>
+
+					</ScrollViewer>
+					
 					<Label Content="Arrivées cette année" Style="{StaticResource StyleLabel2}"/>
 					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="150" Name="dgArrivees"  Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>

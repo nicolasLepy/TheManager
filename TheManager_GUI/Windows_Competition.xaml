@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Competition" Height="750" Width="1070" Style="{StaticResource StyleWindows}">
+        Title="Windows_Competition" Height="750" Width="1100" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Button Content="Fermer" Name="btnQuitter" Width="100" Click="BtnQuitter_Click" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}"/>
@@ -71,8 +71,11 @@
 					
 				</StackPanel>
 
-				<StackPanel Orientation="Vertical" Name="spClassement">
-				</StackPanel>
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600" Width="440">
+					<StackPanel Orientation="Vertical" Name="spClassement" Width="440">
+					</StackPanel>
+				</ScrollViewer>
+					
 			</StackPanel>
 			
 		</StackPanel>
