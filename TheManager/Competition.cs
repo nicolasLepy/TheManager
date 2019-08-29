@@ -248,5 +248,40 @@ namespace TheManager
             return liste;
         }
 
+
+        /// <summary>
+        /// Rend la compétition inactive
+        /// </summary>
+        public void RendreInactive()
+        {
+
+            Tour premierTour = _tours[0];
+            Tour dernierTour = _tours[_tours.Count - 1];
+            TourInactif ti = new TourInactif("Tour", new Heure() { Heures = 18, Minutes = 0 }, premierTour.Programmation.Initialisation.AddDays(3), dernierTour.Programmation.Fin.AddDays(-3));
+
+            List<IEquipesRecuperables> tours = new List<IEquipesRecuperables>(_tours);
+
+            //qualifications
+
+            foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+            {
+                if(c != this)
+                {
+                    foreach(Tour t in _tours)
+                    {
+                        for(int i = 0; i<t.RecuperationEquipes.Count; i++)
+                        {
+                            RecuperationEquipes re = t.RecuperationEquipes[i];
+                            if (tours.Contains(re.Source)) re.Source = ti;
+                        }
+                    }
+                }
+            }
+
+            _tours.Clear();
+            _tours.Add(ti);
+
+        }
+
     }
 }

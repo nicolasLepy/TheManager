@@ -59,6 +59,18 @@ namespace TheManager
             return classement;
         }
 
+        public List<Club> ClassementSansReserves(int poule)
+        {
+            List<Club> res = new List<Club>();
+            foreach (Club c in _clubs)
+            {
+                if ((c as Club_Reserve) == null) res.Add(c);
+            }
+            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
+            res.Sort(comparator);
+            return res;
+        }
+
         public int NombreJournees()
         {
             int nbEquipes = Clubs.Count;

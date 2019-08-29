@@ -67,7 +67,20 @@ namespace TheManager_GUI
             Calendrier(_competition.Tours[_indexTour]);
             IVueClassement vue = FabriqueVueClassement.CreerVue(null, _competition.Tours[_indexTour]);
             vue.Remplir(spClassement);
-            
+
+            int nbRegles = 0;
+            foreach (Regle r in _competition.Tours[_indexTour].Regles)
+            {
+                Label l = new Label();
+                l.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                l.Width = 20;
+                l.Content = Utils.Regle2String(r);
+                spBlocClassement.Children.Add(l);
+                nbRegles++;
+            }
+
+
+
         }
 
         private void Buteurs()

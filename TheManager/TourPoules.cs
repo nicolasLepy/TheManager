@@ -144,6 +144,18 @@ namespace TheManager
             return res;
         }
 
+        public List<Club> ClassementSansReserves(int poule)
+        {
+            List<Club> res = new List<Club>();
+            foreach(Club c in _poules[poule])
+            {
+                if ((c as Club_Reserve) == null) res.Add(c);
+            }
+            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
+            res.Sort(comparator);
+            return res;
+        }
+
         private void DefinirPoules()
         {
             ITirageAuSort tirage = null;

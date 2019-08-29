@@ -71,10 +71,12 @@
 					
 				</StackPanel>
 
-				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600" Width="440">
-					<StackPanel Orientation="Vertical" Name="spClassement" Width="440">
-					</StackPanel>
-				</ScrollViewer>
+				<StackPanel Orientation="Vertical" Name="spBlocClassement">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600" Width="440">
+						<StackPanel Orientation="Vertical" Name="spClassement" Width="440">
+						</StackPanel>
+					</ScrollViewer>
+				</StackPanel>
 					
 			</StackPanel>
 			

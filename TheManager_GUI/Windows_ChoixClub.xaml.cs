@@ -20,89 +20,131 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_ChoixClub : Window
     {
+
+        private Club club;
+
         public Windows_ChoixClub()
         {
+            club = null;
             InitializeComponent();
-            foreach(Continent c in Session.Instance.Partie.Gestionnaire.Continents)
-            {
-                foreach(Pays p in c.Pays)
-                {
-                    if(p.Competitions().Count > 0)
-                    {
-                        lbPays.Items.Add(p);
-                    }
-                }
-            }
 
             foreach (Continent c in Session.Instance.Partie.Gestionnaire.Continents)
                 foreach (Pays p in c.Pays)
                     cbNationalite.Items.Add(p);
 
+            RemplirTreeView();
+
         }
 
-        private void LbPays_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RemplirTreeView()
         {
-            Pays p = lbPays.SelectedItem as Pays;
-            if(p != null)
+
+            tvClubs.Items.Clear();
+
+            foreach(Continent c in Session.Instance.Partie.Gestionnaire.Continents)
             {
-                lbChampionnats.Items.Clear();
-                foreach(Competition c in p.Competitions())
+                foreach(Pays p in c.Pays)
                 {
-                    if(c.Championnat)
+                    foreach(Competition cp in p.Competitions())
                     {
-                        lbChampionnats.Items.Add(c);
+                        if(cp.Championnat)
+                        {
+                            TreeViewItem tv = new TreeViewItem();
+                            tv.Header = cp.Nom;
+
+                            foreach(Club club in cp.Tours[0].Clubs)
+                            {
+                                StackPanel sp = new StackPanel();
+                                sp.Orientation = Orientation.Horizontal;
+                                Image logo = new Image();
+                                logo.Width = 20;
+                                logo.Height = 20;
+                                logo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
+                                Button btnClub = new Button();
+                                btnClub.Content = club.Nom;
+                                btnClub.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
+                                btnClub.FontSize = 8;
+                                btnClub.Name = "club_" + Session.Instance.Partie.Gestionnaire.Clubs.IndexOf(club).ToString();
+                                btnClub.Click += new RoutedEventHandler(BtnClub_Click);
+                                Label lbClub = new Label();
+                                lbClub.Content = club.Nom;
+                                lbClub.Style = Application.Current.FindResource("StyleLabel2") as Style;
+                                lbClub.FontSize = 8;
+                                sp.Children.Add(logo);
+                                sp.Children.Add(btnClub);
+                                tv.Items.Add(sp);
+                            }
+                            tvClubs.Items.Add(tv);
+                        }
                     }
                 }
             }
+            
+            /*
+             * <TreeViewItem Header="Employee1">
+					<TreeViewItem Header="Jesper Aaberg">
+						<StackPanel Orientation="Horizontal">
+							<Label Content="ha"/>
+							<Label Content="ha"/>
+						</StackPanel>
+					</TreeViewItem>
+             */
         }
 
-        private void LbChampionnats_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RemplirEffectif(Club c)
         {
-            Competition c = lbChampionnats.SelectedItem as Competition;
-            if(c != null)
+            spEffectif.Children.Clear();
+            foreach(Joueur j in c.Joueurs())
             {
-                lbClubs.Items.Clear();
-                foreach(Club cl in c.Tours[0].Clubs)
-                {
-                    lbClubs.Items.Add(cl);
-                }
+                Label l = new Label();
+                l.Content = j.Nom + " - " + j.Niveau + " (" + j.Potentiel + ")";
+                spEffectif.Children.Add(l);
             }
         }
 
-        private void LbClubs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ClubSelectionne()
         {
-            Club c = lbClubs.SelectedItem as Club;
-            if(c != null)
+            RemplirEffectif(club);
+            spEtoiles.Children.Clear();
+            try
             {
-                spEtoiles.Children.Clear();
-                try
-                {
-                    imgClub.Source = new BitmapImage(new Uri(Utils.Logo(c)));
-                }
-                catch
-                {
-                    Console.WriteLine("Pas de logo disponible pour " + c.Logo);
-                }
-                float etoiles = c.Etoiles;
-                int etoilesEntieres = (int)Math.Floor(etoiles);
-                for(int i = 1; i<=etoilesEntieres; i++)
-                {
-                    Image img = new Image();
-                    img.Width = 20;
-                    img.Height = 20;
-                    img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
-                    spEtoiles.Children.Add(img);
-                }
-                if(etoiles - etoilesEntieres != 0)
-                {
-                    Image img = new Image();
-                    img.Width = 20;
-                    img.Height = 20;
-                    img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
-                    spEtoiles.Children.Add(img);
-                }
+                imgClub.Source = new BitmapImage(new Uri(Utils.Logo(club)));
             }
+            catch
+            {
+                Console.WriteLine("Pas de logo disponible pour " + club.Logo);
+            }
+            float etoiles = club.Etoiles;
+            int etoilesEntieres = (int)Math.Floor(etoiles);
+            for (int i = 1; i <= etoilesEntieres; i++)
+            {
+                Image img = new Image();
+                img.Width = 20;
+                img.Height = 20;
+                img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
+                spEtoiles.Children.Add(img);
+            }
+            if (etoiles - etoilesEntieres != 0)
+            {
+                Image img = new Image();
+                img.Width = 20;
+                img.Height = 20;
+                img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
+                spEtoiles.Children.Add(img);
+            }
+        }
+        
+        private void BtnClub_Click(object sender, RoutedEventArgs e)
+        {
+            Button btn = sender as Button;
+            int id = int.Parse(btn.Name.Split('_')[1]);
+            Club c = Session.Instance.Partie.Gestionnaire.Clubs[id];
 
+            if (c != null)
+            {
+                club = c;
+                ClubSelectionne();
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -115,10 +157,9 @@ namespace TheManager_GUI
             Pays pays_selected = cbNationalite.SelectedItem as Pays;
             if (pays_selected != null) nationalite = pays_selected;
 
-            Club c = lbClubs.SelectedItem as Club;
-            if(c != null)
+            if(club != null)
             {
-                Session.Instance.Partie.Club = c as Club_Ville;
+                Session.Instance.Partie.Club = club as Club_Ville;
                 Entraineur entraineur = new Entraineur(prenom, nom, 70, naissance, nationalite);
                 Session.Instance.Partie.Club.ChangerEntraineur(entraineur);
                 Windows_Menu wm = new Windows_Menu();
@@ -128,4 +169,5 @@ namespace TheManager_GUI
 
         }
     }
+
 }

@@ -68,7 +68,7 @@ namespace TheManager_GUI
                         cb.IsChecked = true;
                         cb.Content = cp.Nom;
                         cb.Style = FindResource("StyleCheckBox") as Style;
-                        //cb.Click += new RoutedEventHandler(CheckboxComp_Click);
+                        cb.Click += new RoutedEventHandler(CheckboxComp_Click);
                         box.Children.Add(cb);
                         _checkbox.Add(cb);
                     }
@@ -82,8 +82,6 @@ namespace TheManager_GUI
                         lb.Style = FindResource("StyleLabel2") as Style;
                         Image i = new Image();
                         i.Source = new BitmapImage(new Uri( Environment.CurrentDirectory + "/Images/Drapeaux/" + p.Drapeau + ".png", UriKind.RelativeOrAbsolute));
-                        Console.WriteLine(i.Source);
-                        Console.WriteLine(p.Drapeau);
                         i.Width = 30;
                         i.Height = 15;
                         StackPanel sp = new StackPanel();
@@ -93,21 +91,42 @@ namespace TheManager_GUI
                         box.Children.Add(sp);
                         foreach (Competition cp in p.Competitions())
                         {
-                            
-                            CheckBox cb = new CheckBox();
-                            cb.IsChecked = true;
-                            cb.Content = cp.Nom;
-                            cb.Style = FindResource("StyleCheckBox") as Style;
-                            box.Children.Add(cb);
-                            if (cp.Championnat)
-                                cb.IsEnabled = false;
-                            _checkbox.Add(cb);
+                            if(cp.Championnat)
+                            {
+                                CheckBox cb = new CheckBox();
+                                cb.IsChecked = true;
+                                cb.Content = cp.Nom;
+                                cb.Style = FindResource("StyleCheckBox") as Style;
+                                box.Children.Add(cb);
+                                _checkbox.Add(cb);
+
+                            }
 
                         }
                     }
                 }
             }
 
+        }
+
+        private void CheckboxComp_Click(object sender, RoutedEventArgs e)
+        {
+            int nbClubs = 0;
+            int nbJoueurs = 0;
+            foreach(CheckBox cb in _checkbox)
+            {
+                if(cb.IsChecked == true)
+                {
+                    Competition c = Session.Instance.Partie.Gestionnaire.String2Competition(cb.Content.ToString());
+                    foreach (Club cl in c.Tours[0].Clubs)
+                    {
+                        nbClubs++;
+                        nbJoueurs += 21;
+                    }
+                }
+            }
+            lbnbClubs.Content = "Nombre de clubs : " + nbClubs;
+            lbnbJoueurs.Content = "Nombre de joueurs : " + nbJoueurs;
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
@@ -135,7 +154,7 @@ namespace TheManager_GUI
             }
             foreach(Competition c in toDelete)
             {
-                Session.Instance.Partie.Gestionnaire.LocalisationCompetition(c).Competitions().Remove(c);
+                c.RendreInactive();
             }
             Windows_ChoixClub wch = new Windows_ChoixClub();
             wch.Show();

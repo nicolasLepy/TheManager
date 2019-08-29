@@ -117,6 +117,17 @@
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
 		</Style>
 
+		<Style x:Key="StyleTreeView" TargetType="{x:Type TreeView}">
+			<Setter Property="Background" Value="{StaticResource backgroundColor}"/>
+		</Style>
+
+		<Style x:Key="StyleTreeViewItem" TargetType="{x:Type TreeViewItem}">
+			<Setter Property="FontSize" Value="11"/>
+			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
+			<Setter Property="Foreground" Value="{StaticResource color2}" />
+		</Style>
+
+
 		<Style x:Key="StyleDataGrid" TargetType="{x:Type DataGrid}">
 			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
 			<Setter Property="Background" Value="{StaticResource backgroundColor}" />

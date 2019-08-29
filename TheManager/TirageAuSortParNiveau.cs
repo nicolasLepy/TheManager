@@ -19,7 +19,14 @@ namespace TheManager
         public void TirerAuSort()
         {
             List<Club> pot = new List<Club>(_tour.Clubs);
-            pot.Sort(new Club_Niveau_Comparator());
+            try
+            {
+                pot.Sort(new Club_Niveau_Comparator());
+            }
+            catch
+            {
+                Console.WriteLine("Le tri pour " + _tour.Nom + "(" + _tour.Competition.Nom + " de type niveau a echoué");
+            }
             int equipesParPoule = _tour.Clubs.Count / _tour.NombrePoules;
             List<Club>[] pots = new List<Club>[equipesParPoule];
             int ind = 0;

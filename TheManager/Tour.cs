@@ -13,10 +13,9 @@ namespace TheManager
     public enum Regle
     {
         RECOIT_SI_DEUX_DIVISION_ECART,
-        EQUIPES_PREMIERES_UNIQUEMENT
+        EQUIPES_PREMIERES_UNIQUEMENT,
+        RESERVES_NE_MONTENT_PAS
     }
-
- 
 
     public enum MethodeRecuperation
     {

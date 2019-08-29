@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ConfigurationPartie" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+        Title="Windows_ConfigurationPartie" Height="500" Width="800" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
@@ -26,10 +26,11 @@
 					</StackPanel>
 				</StackPanel>
 			</ScrollViewer>
-		
 
+					<Label Name="lbnbClubs" Content="Nombre de clubs : " Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbnbJoueurs" Content="Nombre de joueurs approximatifs : " Style="{StaticResource StyleLabel2}"/>
+					<Button Name="btnLancer" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}" Content="Lancer" Click="BtnLancer_Click"/>
 
-		<Button Name="btnLancer" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}" Content="Lancer" Click="BtnLancer_Click"/>
 		</StackPanel>
     </Grid>
 </Window>

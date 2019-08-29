@@ -9,10 +9,12 @@
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
-			<StackPanel Orientation="Horizontal">
-				<ListBox Name="lbPays" Width="125" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbPays_SelectionChanged"></ListBox>
-				<ListBox Name="lbChampionnats" Width="125" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged"></ListBox>
-				<ListBox Name="lbClubs" Width="125" Height="220" Margin="10" Style="{StaticResource StyleListBox}" SelectionChanged="LbClubs_SelectionChanged"></ListBox>
+			
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="225">
+					<TreeView Name="tvClubs" Style="{StaticResource StyleTreeView}" >
+					</TreeView>
+				</ScrollViewer>
 				<StackPanel Orientation="Vertical">
 					<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
 					<StackPanel Orientation="Horizontal" Name="spEtoiles">
@@ -22,6 +24,11 @@
 						<Image Name="imgEtoile4" Width="20" Height="20" Source="generic.png"></Image>
 						<Image Name="imgEtoile5" Width="20" Height="20" Source="generic.png"></Image>
 					</StackPanel>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Width="170" Height="70">
+						<StackPanel Height="50" Width="150" Name="spEffectif" Orientation="Vertical">
+							
+						</StackPanel>
+					</ScrollViewer>
 				</StackPanel>
 			</StackPanel>
 			<StackPanel Orientation="Horizontal">

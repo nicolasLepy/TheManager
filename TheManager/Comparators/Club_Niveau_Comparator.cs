@@ -18,7 +18,9 @@ namespace TheManager.Comparators
 
         public int Compare(Club x, Club y)
         {
-            int res = (int)(y.Niveau() - x.Niveau());
+            int res;
+            if (Math.Abs(x.Niveau() - y.Niveau()) < 0.01) res = 0;
+            else res = (int)(y.Niveau() - x.Niveau());
             if (_envers)
                 res = -res;
             return res;

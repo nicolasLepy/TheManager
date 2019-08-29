@@ -28,13 +28,6 @@ namespace TheManager_GUI
         public MainWindow()
         {
             InitializeComponent();
-
-            for(int i = 0;i<100; i++)
-            {
-                Joueur j = new Joueur("", "", new DateTime(2000, 1, 1), i, i, null, Poste.MILIEU);
-                Console.WriteLine("Niveau " + i + " : salaire " + j.EstimerSalaire());
-            }
-
         }
 
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)

@@ -205,5 +205,23 @@ namespace TheManager
             return res;
         }
 
+        public static string Regle2String(Regle regle)
+        {
+            string res = "";
+            switch (regle)
+            {
+                case Regle.RECOIT_SI_DEUX_DIVISION_ECART:
+                    res = "Le club reçoit s'il évolue au moins deux divisions en dessous";
+                    break;
+                case Regle.EQUIPES_PREMIERES_UNIQUEMENT:
+                    res = "Seulement les équipes premières peuvent entrer";
+                    break;
+                case Regle.RESERVES_NE_MONTENT_PAS:
+                    res = "Les réserves ne peuvent pas monter";
+                    break;
+            }
+            return res;
+        }
+
     }
 }

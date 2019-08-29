@@ -11,10 +11,128 @@ namespace TheManager
 {
     public class ChargeurBaseDeDonnees
     {
+
+        private Dictionary<int, Club> _idClubs;
+
         private Gestionnaire _gestionnaire;
         public ChargeurBaseDeDonnees(Gestionnaire gestionnaire)
         {
             _gestionnaire = gestionnaire;
+            _idClubs = new Dictionary<int, Club>();
+        }
+
+
+        private int GetIDClub(Club club)
+        {
+            int res = -1;
+            foreach (KeyValuePair<int, Club> kvp in _idClubs)
+            {
+                if (kvp.Value == club) res = kvp.Key;
+            }
+            return res;
+        }
+
+        private int NextIDClub()
+        {
+            int res = -1;
+
+            foreach(KeyValuePair<int,Club> kvp in _idClubs)
+            {
+                if (kvp.Key > res) res = kvp.Key;
+            }
+
+            res++;
+            return res;
+        }
+
+        public void FIFACSV2Joueurs()
+        {
+            XDocument d = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
+            XElement root = new XElement("Joueurs");
+            d.Add(root);
+
+            string[] lines = File.ReadAllLines("Donnees/Joueurs_FIFA.csv",Encoding.UTF8);
+            foreach(string line in lines)
+            {
+                string[] joueur = line.Split(';');
+                string nom = joueur[0];
+                int age = int.Parse(joueur[1]);
+                DateTime naissance = new DateTime(2019 - age, 1, 1);
+                string paysNom = joueur[2];
+                Pays pays = _gestionnaire.String2Pays(paysNom);
+                if (pays == null) pays = _gestionnaire.String2Pays("France");
+                int niveau = int.Parse(joueur[3]) - 2;
+                int potentiel = int.Parse(joueur[4]) - 2;
+                int idclub = 0;
+                bool res = int.TryParse(joueur[5],out idclub);
+                string postestr = joueur[6];
+                Poste p = Poste.MILIEU;
+                switch (postestr)
+                {
+                    case "GK": p = Poste.GARDIEN;break;
+                    case "CB": case "LB": case "RB": case "LCB": case "RCB": case "RDM": p = Poste.DEFENSEUR; break;
+                    case "CDM": case "CM": case "LM": case "LW": case "LWB":  case "RM": case "RCM": case "LDM":  case "RW": case "RWB": p = Poste.MILIEU; break;
+                    case "CAM": case "CF": case "ST": case "LAM": case "RF": case "LCM": case "RAM": case "LF": case "LS": case "RS": p = Poste.ATTAQUANT; break;
+                }
+                if(idclub != 0)
+                {
+                    Console.WriteLine(nom);
+                    XElement e = new XElement("Joueur");
+                    e.Add(new XAttribute("prenom", ""));
+                    e.Add(new XAttribute("nom", nom));
+                    e.Add(new XAttribute("niveau", niveau));
+                    e.Add(new XAttribute("potentiel", potentiel));
+                    e.Add(new XAttribute("poste", p.ToString()));
+                    e.Add(new XAttribute("club", idclub));
+                    root.Add(e);
+                }
+            }
+            d.Save("Donnees/joueursFIFA.xml");
+        }
+
+        public void AjouterIDAuxClubs()
+        {
+            int id = 0;
+
+            XDocument doc = XDocument.Load("Donnees/clubs.xml");
+
+            foreach(XElement x in doc.Descendants("Clubs"))
+            {
+                foreach(XElement x2 in x.Descendants("Club"))
+                {
+                    XAttribute attr_id = new XAttribute("id", id);
+                    x2.Add(attr_id);
+                    id++;
+                }
+
+                foreach (XElement x2 in x.Descendants("Selection"))
+                {
+                    XAttribute attr_id = new XAttribute("id", id);
+                    x2.Add(attr_id);
+                    id++;
+                }
+
+
+            }
+
+            doc.Save("Donnees/clubs_id.xml");
+
+        }
+
+        private void RemplacerCompetitionID()
+        {
+            XDocument doc = XDocument.Load("Donnees/competitions.xml");
+
+            foreach(XElement x in doc.Descendants("Club"))
+            {
+                string nom = x.Attribute("nom").Value;
+                Club club = _gestionnaire.String2Club(nom);
+                int id_club = GetIDClub(club);
+                x.RemoveAttributes();
+                x.Add(new XAttribute("id", id_club));
+            }
+
+            doc.Save("Donnees/competitions_id.xml");
         }
 
         public void Charger()
@@ -31,6 +149,7 @@ namespace TheManager
             InitialiserJoueurs();
             ChargerMedias();
             ChargerCommentairesMatch();
+            //FIFACSV2Joueurs();
         }
 
         public void ChargerCommentairesMatch()
@@ -103,8 +222,9 @@ namespace TheManager
                     string nom = e2.Attribute("nom").Value;
                     string prenom = e2.Attribute("prenom").Value;
                     int niveau = int.Parse(e2.Attribute("niveau").Value);
-                    string nomClub = e2.Attribute("club").Value;
-                    Club_Ville club = _gestionnaire.String2Club(nomClub) as Club_Ville;
+                    int potentiel = int.Parse(e2.Attribute("potentiel").Value);
+                    int idClub = int.Parse(e2.Attribute("club").Value);
+                    Club_Ville club = _idClubs[idClub] as Club_Ville;
                     Poste poste = Poste.GARDIEN;
                     string nomPoste = e2.Attribute("poste").Value;
                     switch(nomPoste)
@@ -113,7 +233,7 @@ namespace TheManager
                         case "MILIEU": poste = Poste.MILIEU; break;
                         case "ATTAQUANT": poste = Poste.ATTAQUANT; break;
                     }
-                    Joueur j = new Joueur(prenom, nom, new DateTime(1995, 1, 1), niveau, niveau + 5, _gestionnaire.String2Pays("France"), poste);
+                    Joueur j = new Joueur(prenom, nom, new DateTime(1995, 1, 1), niveau, potentiel, _gestionnaire.String2Pays("France"), poste);
                     club.AjouterJoueur(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                 }
             }
@@ -213,6 +333,7 @@ namespace TheManager
             {
                 foreach (XElement e2 in e.Descendants("Club"))
                 {
+                    int id = int.Parse(e2.Attribute("id").Value);
                     string nom = e2.Attribute("nom").Value;
                     string nomCourt = e2.Attribute("nomCourt").Value;
                     if (nomCourt == "") nomCourt = nom;
@@ -265,10 +386,12 @@ namespace TheManager
 
                     bool equipePremiere = true;
                     Club c = new Club_Ville(nom,entraineur, nomCourt, reputation, budget, supporters, centreFormation, ville, logo, stade,musiqueBut, equipePremiere);
+                    _idClubs[id] = c;
                     _gestionnaire.Clubs.Add(c);
                 }
                 foreach (XElement e2 in e.Descendants("Selection"))
                 {
+                    int id = int.Parse(e2.Attribute("id").Value);
                     string nom = e2.Attribute("nom").Value;
                     string nomCourt = nom;
                     int reputation = int.Parse(e2.Attribute("reputation").Value);
@@ -296,6 +419,7 @@ namespace TheManager
                     Entraineur entraineur = new Entraineur(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
 
                     Club c = new SelectionNationale(nom,entraineur, nomCourt, reputation, supporters, centreFormation, logo, stade, coefficient,pays,musiqueBut);
+                    _idClubs[id] = c;
                     _gestionnaire.Clubs.Add(c);
                 }
             }
@@ -407,22 +531,34 @@ namespace TheManager
                         c.Tours.Add(tour);
                         foreach (XElement e4 in e3.Descendants("Club"))
                         {
-                            string nomClub = e4.Attribute("nom").Value;
-                            Club club = _gestionnaire.String2Club(nomClub);
-
-                            if (e4.Attribute("reserveDe") != null)
+                            Club club;
+                            int idClub = int.Parse(e4.Attribute("id").Value);
+                            if(e4.Attribute("reserve") == null)
                             {
-                                Club_Ville equipePremiere = _gestionnaire.String2Club(e4.Attribute("reserveDe").Value) as Club_Ville;
-                                club = new Club_Reserve(equipePremiere, nomClub, nomClub, null);
+                                club = _idClubs[idClub];
+                            }
+                            else
+                            {
+                                Club_Ville equipePremiere = _idClubs[int.Parse(e4.Attribute("id").Value)] as Club_Ville;
+                                string additif = " B";
+                                float diviseur = 1.5f;
+                                if (equipePremiere.Reserves.Count == 1) { additif = " C"; diviseur = 2.5f; }
+                                if (equipePremiere.Reserves.Count == 2) { additif = " D"; diviseur = 3.5f; }
+                                if (equipePremiere.Reserves.Count == 3) { additif = " E"; diviseur = 4.5f; }
+                                club = new Club_Reserve(equipePremiere, equipePremiere.Nom + additif, equipePremiere.NomCourt + additif, null);
+                                int new_id = NextIDClub();
+                                _idClubs[new_id] = club;
+                                _gestionnaire.Clubs.Add(club);
                                 equipePremiere.Reserves.Add(club as Club_Reserve);
                                 //Une équipe réserve à été générée, créeons quelques joueurs dans le club de base pour la remplir
-                                int potentielMoyen = (int)(equipePremiere.CentreFormation-(equipePremiere.CentreFormation / 1.5f));
+                                int potentielMoyen = (int)(equipePremiere.CentreFormation - (equipePremiere.CentreFormation / diviseur));
                                 for (int g = 0; g < 2; g++) equipePremiere.GenererJoueur(Poste.GARDIEN, 16, 23, -potentielMoyen);
                                 for (int g = 0; g < 5; g++) equipePremiere.GenererJoueur(Poste.DEFENSEUR, 16, 23, -potentielMoyen);
                                 for (int g = 0; g < 5; g++) equipePremiere.GenererJoueur(Poste.MILIEU, 16, 23, -potentielMoyen);
                                 for (int g = 0; g < 3; g++) equipePremiere.GenererJoueur(Poste.ATTAQUANT, 16, 23, -potentielMoyen);
                             }
 
+                           
                             tour.Clubs.Add(club);
                         }
                         foreach(XElement e4 in e3.Descendants("Participants"))
@@ -471,6 +607,7 @@ namespace TheManager
                             {
                                 case "RECOIT_SI_DEUX_DIVISION_ECART": regle = Regle.RECOIT_SI_DEUX_DIVISION_ECART; break;
                                 case "EQUIPES_PREMIERES_UNIQUEMENT":regle = Regle.EQUIPES_PREMIERES_UNIQUEMENT;break;
+                                case "RESERVES_NE_MONTENT_PAS": regle = Regle.RESERVES_NE_MONTENT_PAS; break;
                             }
                             tour.Regles.Add(regle);
                         }

@@ -18,7 +18,7 @@ namespace TheManager_GUI.VueClassement
             if (tour as TourChampionnat != null)
                 res = new VueCalendrierChampionnat(grille, tour as TourChampionnat);
             if (tour as TourElimination != null)
-                res = new VueClassementEliminatoires(grille);
+                res = new VueClassementEliminatoires(grille, tour as TourElimination);
             if (tour as TourPoules != null)
                 res = new VueClassementPoules(grille, tour as TourPoules);
 
