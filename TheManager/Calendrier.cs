@@ -246,27 +246,38 @@ namespace TheManager
         private static void ProgrammeTV(List<Match> matchs, List<DecalagesTV> decalages, int journee)
         {
             int indice = 0;
-            matchs.Sort(new Match_Niveau_Comparator());
-            foreach (DecalagesTV d in decalages)
+            if (decalages.Count>0)
             {
-                bool prisEnCompte = true;
-                if (d.Probabilite != 1) prisEnCompte = (Session.Instance.Random(1, d.Probabilite + 1) == 1) ? true : false;
-                if (d.Journee != 0) prisEnCompte = (d.Journee == journee) ? true : false;
-                if(indice < matchs.Count && prisEnCompte)
+                try
                 {
-                    matchs[indice].Jour = matchs[indice].Jour.AddDays(d.DecalageJours);
-                    //Remise des heures à 0
-                    matchs[indice].Jour = matchs[indice].Jour.AddHours(-matchs[indice].Jour.Hour);
-                    matchs[indice].Jour = matchs[indice].Jour.AddMinutes(-matchs[indice].Jour.Minute);
-                    //Affectation de la nouvelle heure
-                    matchs[indice].Jour = matchs[indice].Jour.AddHours(d.Heure.Heures);
-                    matchs[indice].Jour = matchs[indice].Jour.AddMinutes(d.Heure.Minutes);
-                    indice++;
+                    matchs.Sort(new Match_Niveau_Comparator());
                 }
-                
+                catch
+                {
+                    Console.WriteLine("Match_Niveau_Comparator exception pour programme TV");
+                }
+                foreach (DecalagesTV d in decalages)
+                {
+                    bool prisEnCompte = true;
+                    if (d.Probabilite != 1) prisEnCompte = (Session.Instance.Random(1, d.Probabilite + 1) == 1) ? true : false;
+                    if (d.Journee != 0) prisEnCompte = (d.Journee == journee) ? true : false;
+                    if (indice < matchs.Count && prisEnCompte)
+                    {
+                        matchs[indice].Jour = matchs[indice].Jour.AddDays(d.DecalageJours);
+                        //Remise des heures à 0
+                        matchs[indice].Jour = matchs[indice].Jour.AddHours(-matchs[indice].Jour.Hour);
+                        matchs[indice].Jour = matchs[indice].Jour.AddMinutes(-matchs[indice].Jour.Minute);
+                        //Affectation de la nouvelle heure
+                        matchs[indice].Jour = matchs[indice].Jour.AddHours(d.Heure.Heures);
+                        matchs[indice].Jour = matchs[indice].Jour.AddMinutes(d.Heure.Minutes);
+                        indice++;
+                    }
+
+                }
+
             }
             //Les autres matchs sont programmés plus randomly
-            while(indice < matchs.Count)
+            while (indice < matchs.Count)
             {
                 Heure(matchs[indice]);
                 indice++;

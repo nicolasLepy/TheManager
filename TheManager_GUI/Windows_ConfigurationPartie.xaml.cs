@@ -136,7 +136,7 @@ namespace TheManager_GUI
 
         private void BtnLancer_Click(object sender, RoutedEventArgs e)
         {
-            List<Competition> toDelete = new List<Competition>();
+            List<Competition> toDesactivate = new List<Competition>();
             foreach (CheckBox cb in _checkbox)
             {
                 if(cb.IsChecked == false)
@@ -146,13 +146,13 @@ namespace TheManager_GUI
                     {
                         if (c.Nom == nom)
                         {
-                            toDelete.Add(c);
+                            toDesactivate.Add(c);
                         }
                     }
                 }
                 
             }
-            foreach(Competition c in toDelete)
+            foreach(Competition c in toDesactivate)
             {
                 c.RendreInactive();
             }

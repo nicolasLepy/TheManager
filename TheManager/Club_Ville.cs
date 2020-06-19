@@ -147,6 +147,19 @@ namespace TheManager
             string nom = _ville.Pays().Langue.ObtenirNom();
             int anneeNaissance = Session.Instance.Random(Session.Instance.Partie.Date.Year - ageMax, Session.Instance.Partie.Date.Year - ageMin+1);
 
+            //Méthode Niveau -> Potentiel
+            int niveau = Session.Instance.Random(CentreFormation - 18, CentreFormation + 18) + decalagePotentiel;
+            if (niveau < 1) niveau = 1;
+            if (niveau > 99) niveau = 99;
+
+            int age = Session.Instance.Partie.Date.Year - anneeNaissance;
+            int diff = 24 - age;
+            int potentiel = niveau;
+            if (diff > 0) potentiel += 3 * diff;
+
+            if (potentiel > 99) potentiel = 99;
+
+            /* Méthode Potentiel -> Niveau
             //Potentiel
             int potentiel = Session.Instance.Random(CentreFormation - 18, CentreFormation + 18) + decalagePotentiel;
             if (potentiel < 1) potentiel = 1;
@@ -157,6 +170,9 @@ namespace TheManager
             int diff = 24 - age;
             int niveau = potentiel;
             if (diff > 0) niveau -= 3 * diff;
+            
+            if(niveau < 1) niveau = 1;
+             */
             
             Joueur j = new Joueur(prenom, nom, new DateTime(anneeNaissance, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), niveau, potentiel, this.Ville.Pays(), p);
             int annee = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
@@ -437,6 +453,7 @@ namespace TheManager
         /// </summary>
         public void RemplirEquipesReserves()
         {
+            /*
             if(_reserves.Count > 0)
             {
 
@@ -515,7 +532,7 @@ namespace TheManager
                 }
 
             }
-
+            */
         }
 
     }

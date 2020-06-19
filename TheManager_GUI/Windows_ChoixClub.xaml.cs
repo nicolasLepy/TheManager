@@ -94,11 +94,13 @@ namespace TheManager_GUI
         private void RemplirEffectif(Club c)
         {
             spEffectif.Children.Clear();
-            foreach(Joueur j in c.Joueurs())
+            Console.WriteLine("Génération du club - " + c.CentreFormation);
+            foreach (Joueur j in c.Joueurs())
             {
                 Label l = new Label();
                 l.Content = j.Nom + " - " + j.Niveau + " (" + j.Potentiel + ")";
                 spEffectif.Children.Add(l);
+                Console.WriteLine(j.Niveau + " (" + j.Potentiel + ") - " + j.Age);
             }
         }
 

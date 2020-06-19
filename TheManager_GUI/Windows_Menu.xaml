@@ -39,7 +39,7 @@
 							<Button Name="btnCompetition" Content="Ouvrir" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
 							<Label Content="News" Style="{StaticResource StyleLabel1}"/>
 							<StackPanel Orientation="Vertical" Name="spNews">
-								<TextBlock Style="{StaticResource StyleTextBlock}" TextWrapping="WrapWithOverflow">Content="Dijon s'impose 4 buts à contre le Paris Saint-Germain de Neymar"</TextBlock>
+								<TextBlock Style="{StaticResource StyleTextBlock}" TextWrapping="WrapWithOverflow">Content="Dijon s'impose 4 buts à contre le Paris Saint-Germain"</TextBlock>
 							</StackPanel>
 						</StackPanel>
 						<StackPanel Orientation="Vertical">

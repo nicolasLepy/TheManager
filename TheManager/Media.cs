@@ -15,11 +15,18 @@ namespace TheManager
         public Competition Competition { get; set; }
         [DataMember]
         public int IndexDebut { get; set; }
+        [DataMember]
+        public int NombreMatchsMiniMultiplex { get; set; }
+        [DataMember]
+        public int NombreMatchsParMultiplex { get; set; }
 
-        public CouvertureCompetition(Competition competition, int indexDebut)
+        public CouvertureCompetition(Competition competition, int indexDebut, int nombreMatchsMiniMultiplex, int nombreMatchsParMultiplex)
         {
             Competition = competition;
             IndexDebut = indexDebut;
+            NombreMatchsMiniMultiplex = nombreMatchsMiniMultiplex;
+            NombreMatchsParMultiplex = nombreMatchsParMultiplex;
+
         }
     }
 
@@ -55,6 +62,18 @@ namespace TheManager
             {
                 if (cc.Competition == c && cc.IndexDebut <= indexTour) res = true;
             }
+            return res;
+        }
+
+        public CouvertureCompetition GetCouverture(Competition competition)
+        {
+            CouvertureCompetition res = _couvertures[0];
+
+            foreach(CouvertureCompetition c in _couvertures)
+            {
+                if (c.Competition == competition) res = c;
+            }
+
             return res;
         }
 

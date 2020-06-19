@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using TheManager.Comparators;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -24,6 +26,35 @@ namespace TheManager
             foreach (Match m in this.Matchs) t.Matchs.Add(m);
             foreach (Club c in this.Clubs) t.Clubs.Add(c);
             return t;
+        }
+
+        public override List<Match> ProchaineJournee()
+        {
+            List<Match> res = new List<Match>(this.Matchs);
+
+            if (AllerRetour)
+            {
+                bool matchsAllersTousJoues = true;
+                for(int i = 0;i<res.Count/2; i++)
+                {
+                    if (!Matchs[i].Joue) matchsAllersTousJoues = false;
+                }
+                int deb = 0;
+                if (matchsAllersTousJoues)
+                    deb = res.Count / 2;
+                res = new List<Match>(res.GetRange(deb, res.Count/2));
+            }
+
+            try
+            {
+                res.Sort(new Match_Date_Comparator());
+            }
+            catch
+            {
+                Console.WriteLine("TourElimination : match date comparator failed");
+            }
+
+            return res;
         }
 
         public override void DistribuerDotations()

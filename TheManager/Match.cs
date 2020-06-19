@@ -111,7 +111,7 @@ namespace TheManager
         [DataMember]
         private int _affluence;
         [DataMember]
-        private List<Journaliste> _journalistes;
+        private List<KeyValuePair<Media,Journaliste>> _journalistes;
 
         public int Affluence { get => _affluence; }
         [DataMember]
@@ -128,7 +128,7 @@ namespace TheManager
         public bool Prolongations { get => _prolongations; }
         public int Tab1 { get => _tab1; }
         public int Tab2 { get => _tab2; }
-        public List<Journaliste> Journalistes { get => _journalistes; }
+        public List<KeyValuePair<Media, Journaliste>> Journalistes { get => _journalistes; }
         /// <summary>
         /// Description des actions du match [minute , action]
         /// </summary>
@@ -492,7 +492,7 @@ namespace TheManager
             _compo1Terrain = new List<Joueur>();
             _compo2Terrain = new List<Joueur>();
             _affluence = 0;
-            _journalistes = new List<Journaliste>();
+            _journalistes = new List<KeyValuePair<Media, Journaliste>>();
             _actions = new List<KeyValuePair<string, string>>();
             EtablirCotes();
         }

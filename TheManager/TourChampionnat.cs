@@ -81,7 +81,7 @@ namespace TheManager
             return nbJournees ;
         }
         
-        public List<Match> ProchaineJournee()
+        public override List<Match> ProchaineJournee()
         {
             List<Match> res = new List<Match>();
 

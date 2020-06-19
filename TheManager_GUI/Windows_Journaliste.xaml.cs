@@ -29,7 +29,10 @@ namespace TheManager_GUI
             List<Match> matchs = new List<Match>();
             foreach (Match m in Session.Instance.Partie.Gestionnaire.Matchs)
             {
-                if (m.Journalistes.Contains(journaliste)) matchs.Add(m);
+                foreach(KeyValuePair<TheManager.Media, Journaliste> j in m.Journalistes)
+                {
+                    if (j.Value == journaliste) matchs.Add(m);
+                }
             }
             matchs.Sort(new Match_Date_Comparator());
 

@@ -206,7 +206,11 @@ namespace TheManager
                     {
                         int index = int.Parse(e3.Attribute("aPartir").Value);
                         Competition competition = _gestionnaire.String2Competition(e3.Attribute("competition").Value);
-                        m.Couvertures.Add(new CouvertureCompetition(competition, index));
+                        int moyenneMatch = -1;
+                        int multiplexMin = -1;
+                        if (e3.Attribute("matchParMultiplex") != null) moyenneMatch = int.Parse(e3.Attribute("matchParMultiplex").Value);
+                        if (e3.Attribute("multiplex") != null) multiplexMin = int.Parse(e3.Attribute("multiplex").Value);
+                        m.Couvertures.Add(new CouvertureCompetition(competition, index, multiplexMin, moyenneMatch));
                     }
                 }
             }
@@ -552,6 +556,7 @@ namespace TheManager
                                 equipePremiere.Reserves.Add(club as Club_Reserve);
                                 //Une équipe réserve à été générée, créeons quelques joueurs dans le club de base pour la remplir
                                 int potentielMoyen = (int)(equipePremiere.CentreFormation - (equipePremiere.CentreFormation / diviseur));
+                                //Attention aux {2,5,5,3} -> 15 est utilisé dans l'initialsiation des équipes pour déterminer le nombre de joueur de l'équipe première
                                 for (int g = 0; g < 2; g++) equipePremiere.GenererJoueur(Poste.GARDIEN, 16, 23, -potentielMoyen);
                                 for (int g = 0; g < 5; g++) equipePremiere.GenererJoueur(Poste.DEFENSEUR, 16, 23, -potentielMoyen);
                                 for (int g = 0; g < 5; g++) equipePremiere.GenererJoueur(Poste.MILIEU, 16, 23, -potentielMoyen);
@@ -686,11 +691,17 @@ namespace TheManager
                 Club_Ville cv = c as Club_Ville;
                 if(cv != null)
                 {
-                    int nbContratsManquants = 19 - cv.Contrats.Count;
+                    int nombreJoueursEquipePremiere = cv.Contrats.Count - (cv.Reserves.Count * 15);
+                    int nbContratsManquants = 19 - nombreJoueursEquipePremiere;
 
+                    /*
+                    if(cv.Nom == "FC Chambly Oise")
+                    {
+                        Console.WriteLine("chambly " + nbContratsManquants + " - " + cv.Contrats.Count);
+                    }*/
                     for (int i = 0; i < nbContratsManquants; i++)
                     {
-                        cv.GenererJoueur(18,32);
+                        cv.GenererJoueur(24,33);
                     }
                 }
             }

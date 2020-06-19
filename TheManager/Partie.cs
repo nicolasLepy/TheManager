@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using TheManager.Comparators;
 using TheManager.Exportation;
+using MathNet.Numerics.Distributions;
 
 namespace TheManager
 {
@@ -79,18 +80,49 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Gère les départs des journalistes d'une année à l'autre
+        /// </summary>
+        public void MiseAJourJournalistes()
+        {
+            foreach(Media m in _gestionnaire.Medias)
+            {
+                for(int i = 0;i<m.Journalistes.Count; i++)
+                {
+                    Journaliste j = m.Journalistes[i];
+                    j.Age++;
+                    if (j.Age > 65)
+                    {
+                        if (Session.Instance.Random(1, 4) == 1)
+                        {
+                            m.Journalistes.Remove(j);
+                            i--;
+                        }
+                    }
+                    else
+                    {
+                        int nbMatchsCommentes = j.NombreMatchsCommentes;
+                        if(nbMatchsCommentes < 10)
+                        {
+                            int chanceDePartir = nbMatchsCommentes - 1;
+                            if (chanceDePartir < 1) chanceDePartir = 1;
+                            if(Session.Instance.Random(0,chanceDePartir) == 0)
+                            {
+                                if(m.Journalistes.Remove(j))
+                                {
+                                    _gestionnaire.JournalistesLibres.Add(j);
+                                    i--;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
         public void MiseAJourDesClubs()
         {
-            foreach (Media m in _gestionnaire.Medias)
-            {
-                List<Journaliste> toDelete = new List<Journaliste>();
-                foreach (Journaliste j in m.Journalistes)
-                {
-                    j.Age++;
-                    if (j.Age > 65) if (Session.Instance.Random(1, 8) == 1) toDelete.Add(j);
-                }
-                foreach (Journaliste j in toDelete) m.Journalistes.Remove(j);
-            }
 
             //Mise à jour du niveau des joueurs sans clubs
             foreach (Joueur j in _gestionnaire.JoueursLibres)
@@ -164,11 +196,87 @@ namespace TheManager
                         cv.FaireOffreJoueurs();
                     }
                 }
-
             }
-
         }
 
+        private void EtablrMediasPourCompetition(List<Match> listeMatchs, Competition c)
+        {
+            List<Match> matchs = new List<Match>(listeMatchs);
+            foreach(Media media in _gestionnaire.Medias)
+            {
+                if(media.Couvre(c,c.TourActuel))
+                {
+                    int nbMatchsASuivre = matchs.Count;
+                    CouvertureCompetition cc = media.GetCouverture(c);
+                    if (cc.NombreMatchsMiniMultiplex != -1 && matchs.Count >= cc.NombreMatchsMiniMultiplex)
+                    {
+                        Tour t = c.Tours[c.TourActuel];
+                        int nbMatchsParJournee = t.Clubs.Count/2;
+                        int nbJournees = t.Matchs.Count / nbMatchsParJournee;
+                        int j = (t.Matchs.IndexOf(listeMatchs[0]) / nbMatchsParJournee) + 1;
+
+
+                        nbMatchsASuivre = cc.NombreMatchsParMultiplex;
+                        Normal n = new Normal(3, 1);
+                        nbMatchsASuivre = (int)Math.Round(n.Sample());
+                        if (nbMatchsASuivre < 0) nbMatchsASuivre = 0;
+                        if (nbMatchsASuivre > matchs.Count) nbMatchsASuivre = matchs.Count;
+
+                        if (nbJournees-j == 1)
+                        {
+                            matchs.Sort(new Match_Classement_Comparator(t as TourChampionnat));
+                        }
+                        else if (nbJournees - j == 0)
+                        {
+                            matchs.Sort(new Match_Classement_Comparator(t as TourChampionnat));
+                        }
+                        else if(j<3)
+                        {
+                            matchs.Sort(new Match_Niveau_Comparator());
+                        }
+                        else if(t as TourChampionnat != null) 
+                        {
+                            matchs.Sort(new Match_Classement_Comparator(t as TourChampionnat));
+                        }
+                        else
+                        {
+                            matchs.Sort(new Match_Niveau_Comparator());
+                        }
+                    }
+
+                    for(int i= 0;i<nbMatchsASuivre;i++)
+                    {
+                        Match m = matchs[i];
+                        Ville ville = null;
+                        if (m.Domicile as Club_Ville != null) ville = (m.Domicile as Club_Ville).Ville;
+                        if (m.Domicile as Club_Reserve != null) ville = (m.Domicile as Club_Reserve).EquipePremiere.Ville;
+                        List<Journaliste> j = new List<Journaliste>();
+                        foreach (Journaliste j1 in media.Journalistes) if (!j1.EstPris) j.Add(j1);
+                        Journaliste commentateur = null;
+                        if(j.Count > 0)
+                        {
+                            j.Sort(new Journalistes_Comparator(ville));
+
+                            if(Math.Abs(Utils.Distance(j[0].Base, ville))< 300)
+                            {
+                                commentateur = j[0];
+                            }
+                        }
+                        if(commentateur == null)
+                        {
+                            Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), ville, 100);
+                            media.Journalistes.Add(nouveau);
+                            commentateur = nouveau;
+                        }
+                        commentateur.EstPris = true;
+                        KeyValuePair<Media, Journaliste> poste = new KeyValuePair<Media, Journaliste>(commentateur.Media, commentateur);
+                        m.Journalistes.Add(poste);
+                    }
+                }
+            }
+        }
+
+       /*
         private void EtablirMediasPourMatch(Match m, Competition c)
         {
             Club_Ville cv = m.Domicile as Club_Ville;
@@ -206,7 +314,7 @@ namespace TheManager
                     }
                 }
             }
-        }
+        }*/
 
         public List<Match> Avancer()
         {
@@ -217,8 +325,10 @@ namespace TheManager
 
             foreach (Media m in _gestionnaire.Medias) m.LibererJournalistes();
 
+            
             foreach (Competition c in _gestionnaire.Competitions)
             {
+                List<Match> matchsDuJour = new List<Match>();
                 if(c.TourActuel > -1)
                 {
                     Tour enCours = c.Tours[c.TourActuel];
@@ -226,6 +336,7 @@ namespace TheManager
                     {
                         if (Utils.ComparerDates(m.Jour, _date))
                         {
+                            matchsDuJour.Add(m);
                             m.DefinirCompo();
                             if ((m.Domicile == Club || m.Exterieur == Club) && !Options.SimulerMatchs)
                             {
@@ -240,13 +351,13 @@ namespace TheManager
                                 else
                                 {
                                     aJouer.Add(m);
-                                    EtablirMediasPourMatch(m, c);
+                                    //EtablirMediasPourMatch(m, c);
                                 }
                             }
                             
-                        }
-                            
+                        }       
                     }
+                    EtablrMediasPourCompetition(matchsDuJour, c);
                 }
                 foreach(Tour t in c.Tours)
                 {
@@ -276,10 +387,15 @@ namespace TheManager
                 else
                     m.Jouer();
             }
-            
-            
+
+
+            if (Date.Month == 6 && Date.Day == 15)
+            {
+                MiseAJourJournalistes();
+            }
+
             //Mise à jour annuelle des clubs (sponsors, centre de formation, contrats)
-            if(Date.Day == 1 && Date.Month == 7)
+            if (Date.Day == 1 && Date.Month == 7)
             {
                 MiseAJourDesClubs();
             }

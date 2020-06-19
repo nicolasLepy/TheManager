@@ -74,6 +74,7 @@ Windows Media Player library
 
 ## Credits
 Live Charts for WPF (https://lvcharts.net/)
+MathNet.Numerics
 
 ## License
 

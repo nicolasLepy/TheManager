@@ -158,9 +158,9 @@ namespace TheManager_GUI
                 dgCompo2.Items.Add(new JoueurElement { Joueur = j, Poste = j.Poste });
             }
 
-            foreach (Journaliste j in match.Journalistes)
+            foreach (KeyValuePair<TheManager.Media, Journaliste> j in match.Journalistes)
             {
-                dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j, Media = j.Media.Nom });
+                dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j.Value, Media = j.Key.Nom });
             }
         }
 

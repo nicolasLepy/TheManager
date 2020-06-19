@@ -470,6 +470,12 @@ namespace TheManager
         /// </summary>
         /// <returns></returns>
         public abstract Club Vainqueur();
+
+        /// <summary>
+        /// Prochaine journée du tour
+        /// </summary>
+        /// <returns></returns>
+        public abstract List<Match> ProchaineJournee();
         
 
 

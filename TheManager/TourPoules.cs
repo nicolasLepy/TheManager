@@ -106,7 +106,7 @@ namespace TheManager
             }
         }
 
-        public List<Match> ProchaineJournee()
+        public override  List<Match> ProchaineJournee()
         {
             List<Match> res = new List<Match>();
             return ProchainsMatchs();

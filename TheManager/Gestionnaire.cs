@@ -55,6 +55,8 @@ namespace TheManager
         private List<Media> _medias;
         [DataMember]
         private List<CommentairesEvenementMatch> _commentairesMatchs;
+        [DataMember]
+        private List<Journaliste> _journalistesLibres;
 
         public List<Club> Clubs { get => _clubs; }
 
@@ -77,6 +79,7 @@ namespace TheManager
         public List<Langue> Langues { get => _langues; }
         public List<Media> Medias { get => _medias; }
         public List<CommentairesEvenementMatch> CommentairesMatchs { get => _commentairesMatchs; }
+        public List<Journaliste> JournalistesLibres { get => _journalistesLibres; }
 
         public Gestionnaire()
         {
@@ -92,6 +95,7 @@ namespace TheManager
             _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.CARTON_JAUNE));
             _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.CARTON_ROUGE));
             _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.TIR));
+            _journalistesLibres = new List<Journaliste>();
         }
 
         public Ville String2Ville(string nom)

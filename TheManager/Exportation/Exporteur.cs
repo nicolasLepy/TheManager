@@ -221,9 +221,9 @@ namespace TheManager.Exportation
             foreach (Joueur j in m.Compo2) output += "<br>" + j.Prenom + " " + j.Nom + "(" + j.Poste + ")";
 
             output += "<p><b>Médias</b></p>";
-            foreach(Journaliste j in m.Journalistes)
+            foreach(KeyValuePair<Media,Journaliste> j in m.Journalistes)
             {
-                output += "<p>" + j.Prenom + " " + j.Nom + " (" + j.Media.Nom + ")";
+                output += "<p>" + j.Value.Prenom + " " + j.Value.Nom + " (" + j.Key.Nom + ")";
             }
             File.WriteAllText(nomFichier,output);
         }

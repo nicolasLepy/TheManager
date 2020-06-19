@@ -42,6 +42,27 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Donne le nombre de matchs commentés par le journaliste sur l'ensemble des compétitions non archivées
+        /// </summary>
+        public int NombreMatchsCommentes
+        {
+            get
+            {
+                int res = 0;
+
+                foreach(Match m in Session.Instance.Partie.Gestionnaire.Matchs)
+                {
+                    foreach(KeyValuePair<Media, Journaliste> j in m.Journalistes)
+                    {
+                        if (j.Value == this) res++;
+                    }
+                }
+
+                return res;
+            }
+        }
+
         public Journaliste(string prenom, string nom, int age, Ville _base, int retrait)
         {
             EstPris = false;

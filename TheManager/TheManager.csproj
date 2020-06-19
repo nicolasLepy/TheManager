@@ -37,8 +37,12 @@
     <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
       <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="MathNet.Numerics, Version=4.8.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.4.8.1\lib\net461\MathNet.Numerics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -64,6 +68,7 @@
     <Compile Include="Comparators\Joueur_Composition_Comparator.cs" />
     <Compile Include="Comparators\Joueur_Niveau_Comparator.cs" />
     <Compile Include="Comparators\Journalistes_Comparator.cs" />
+    <Compile Include="Comparators\Match_Classement_Comparator.cs" />
     <Compile Include="Comparators\Match_Date_Comparator.cs" />
     <Compile Include="Comparators\Match_Niveau_Comparator.cs" />
     <Compile Include="Competition.cs" />

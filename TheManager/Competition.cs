@@ -255,6 +255,54 @@ namespace TheManager
         public void RendreInactive()
         {
 
+            List<Tour> nouveauxTours = new List<Tour>();
+            foreach(Tour t in _tours)
+            {
+                TourInactif tour = new TourInactif(t.Nom, t.Programmation.HeureParDefaut, t.Programmation.Initialisation, t.Programmation.Fin);
+                nouveauxTours.Add(tour);
+                foreach (Qualification q in t.Qualifications)
+                {
+
+                    //if(t as TourPoules != null)
+
+                    //if(t as TourElimination != null)
+                    //else
+                    //tour.Qualifications.Add(q);
+                }
+                foreach (RecuperationEquipes re in t.RecuperationEquipes)
+                {
+                    tour.RecuperationEquipes.Add(re);
+                }
+                foreach (Club c in t.Clubs) tour.Clubs.Add(c);
+                foreach (Dotation d in t.Dotations) tour.Dotations.Add(d);
+                foreach (Regle r in t.Regles) tour.Regles.Add(r);
+            }
+
+            foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+            {
+                if(c != this)
+                {
+                    foreach (Tour t in c.Tours)
+                    {
+                        for(int i = 0; i<t.RecuperationEquipes.Count; i++)
+                        {
+                            RecuperationEquipes re = t.RecuperationEquipes[i];
+                            if (_tours.Contains(re.Source))
+                            {
+                                int index = _tours.IndexOf(re.Source as Tour);
+                                re.Source = nouveauxTours[index];
+                            }
+                        }
+                        
+                    }
+
+                }
+            }
+
+            _tours.Clear();
+            foreach (Tour t in nouveauxTours) _tours.Add(t);
+
+            /*
             Tour premierTour = _tours[0];
             Tour dernierTour = _tours[_tours.Count - 1];
             TourInactif ti = new TourInactif("Tour", new Heure() { Heures = 18, Minutes = 0 }, premierTour.Programmation.Initialisation.AddDays(3), dernierTour.Programmation.Fin.AddDays(-3));
@@ -263,7 +311,9 @@ namespace TheManager
 
             //qualifications
 
-            foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+            //Pour toutes les autres compétitions, quand il faut récupérer des équipes de cette compétition on les récupère depuis le tour que l'on est en train de créer
+            //Pour toutes les qualitifcations des autres compétitions vers ce tour, elle se transforment au tour 0 si c'est le tour 0 qui est visé et année suivante, sinon on abandonnne
+            foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
             {
                 if(c != this)
                 {
@@ -274,12 +324,23 @@ namespace TheManager
                             RecuperationEquipes re = t.RecuperationEquipes[i];
                             if (tours.Contains(re.Source)) re.Source = ti;
                         }
+                        for(int i = 0; i<t.Qualifications.Count; i++)
+                        {
+                            Qualification q = t.Qualifications[i];
+                            if(!(q.Competition == this && q.IDTour == 0 && q.AnneeSuivante == true))
+                            {
+                                t.Qualifications.Remove(q);
+                                i--;
+                            }
+                        }
+
                     }
                 }
             }
 
+
             _tours.Clear();
-            _tours.Add(ti);
+            _tours.Add(ti);*/
 
         }
 

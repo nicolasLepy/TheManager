@@ -33,6 +33,11 @@ namespace TheManager
             
         }
 
+        public override List<Match> ProchaineJournee()
+        {
+            return new List<Match>();
+        }
+
         public override Club Vainqueur()
         {
             return _clubs[0];
