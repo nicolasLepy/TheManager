@@ -2,6 +2,8 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Screenshots
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/981285a9e5e542f79c39d71e14b04c59)](https://app.codacy.com/manual/lepynicolas/TheManager?utm_source=github.com&utm_medium=referral&utm_content=nicolasLepy/TheManager&utm_campaign=Badge_Grade_Dashboard)
+
 ### Menu
 
 ![Alt text](Pics/pic1.png?raw=true "Main menu")
