@@ -1,4 +1,4 @@
-The Manager is a soccer simulator aiming to simulate tournaments, matchs, and clubs/players evolution.
+The Manager is a soccer simulator aiming to simulate tournaments, matchs, and clubs/players evolution, inspired by games such as Football Manager, FIFA Manager.
 
 ## Screenshots
 
@@ -34,9 +34,12 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ![Alt text](Pics/pic7.png?raw=true "Live match")
 
-
 ## Features implemented
-* Simulation on multiple years
+
+| Feature | 
+| ------------- | 
+| Simulation on multiple years |
+
 * Hierarchical Competitions (promotion, relegation ...)
 * Match simulation
 * Managers
@@ -52,16 +55,24 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 * Reserves teams
 * Reserves teams can't play domestic cup
 
-## Features to be implemented
-* Dynamic dates, from one season to an other
-* A system for transferring players between clubs.
-* Attendance adaptation when a club grow up or down.
-* Add the player's history in their description.
-* Add a panel to give informations (transfers, main results... ) during simulation.
-* Set up international tournaments on multiples years.
-* Improve GUI.
-* (Data editor)
-* (Generate Wiki with simulation data)
+## Features to implement
+
+| Task  | Status |
+| ------------- | ------------- |
+| **Environment** |  |
+| Dynamic dates, from one season to an other | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| A system for transferring players between clubs | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| **Tournaments** |  |
+| Attendance adaptation when a club grow up or down | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Set up international tournaments on multiples years | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| **GUI** |  |
+| Add the player's history in their description | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Add a panel to give informations (transfers, main results... ) during simulation | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Improve GUI | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| **Miscellaneous** |  |
+| (Data editor) | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| (Generate Wiki with simulation data) | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+
 
 ## Authors
 Nicolas Lépy
