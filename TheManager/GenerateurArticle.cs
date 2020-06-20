@@ -130,18 +130,30 @@ namespace TheManager
 
                     switch(type)
                     {
-                        case "GL_F": _gl_f.Add(article); break;
-                        case "GL_E": _gl_e.Add(article); break;
-                        case "GL_O": _gl_o.Add(article); break;
-                        case "GS_F": _gs_f.Add(article); break;
-                        case "GS_E": _gs_e.Add(article); break;
-                        case "GS_O": _gs_o.Add(article); break;
-                        case "N_F": _n_f.Add(article); break;
-                        case "N_E": _n_e.Add(article); break;
-                        case "N_O": _n_o.Add(article); break;
-                        case "NL_F": _nl_f.Add(article); break;
-                        case "NL_E": _nl_e.Add(article); break;
-                        case "NL_O": _nl_o.Add(article); break;
+                        case "GL_F": _gl_f.Add(article); 
+                            break;
+                        case "GL_E": _gl_e.Add(article); 
+                            break;
+                        case "GL_O": _gl_o.Add(article); 
+                            break;
+                        case "GS_F": _gs_f.Add(article); 
+                            break;
+                        case "GS_E": _gs_e.Add(article); 
+                            break;
+                        case "GS_O": _gs_o.Add(article); 
+                            break;
+                        case "N_F": _n_f.Add(article); 
+                            break;
+                        case "N_E": _n_e.Add(article); 
+                            break;
+                        case "N_O": _n_o.Add(article); 
+                            break;
+                        case "NL_F": _nl_f.Add(article); 
+                            break;
+                        case "NL_E": _nl_e.Add(article); 
+                            break;
+                        case "NL_O": _nl_o.Add(article); 
+                            break;
                     }
                 }
             }

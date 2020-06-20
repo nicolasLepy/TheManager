@@ -69,10 +69,16 @@ namespace TheManager
                 Poste p = Poste.MILIEU;
                 switch (postestr)
                 {
-                    case "GK": p = Poste.GARDIEN;break;
-                    case "CB": case "LB": case "RB": case "LCB": case "RCB": case "RDM": p = Poste.DEFENSEUR; break;
-                    case "CDM": case "CM": case "LM": case "LW": case "LWB":  case "RM": case "RCM": case "LDM":  case "RW": case "RWB": p = Poste.MILIEU; break;
-                    case "CAM": case "CF": case "ST": case "LAM": case "RF": case "LCM": case "RAM": case "LF": case "LS": case "RS": p = Poste.ATTAQUANT; break;
+                    case "GK": p = Poste.GARDIEN;
+                        break;
+                    case "CB": case "LB": case "RB": case "LCB": case "RCB": case "RDM": p = Poste.DEFENSEUR; 
+                        break;
+                    case "CDM": case "CM": case "LM": case "LW": case "LWB":  case "RM": case "RCM": case "LDM":  case "RW": case "RWB": p = Poste.MILIEU; 
+                        break;
+                    case "CAM": case "CF": case "ST": case "LAM": case "RF": case "LCM": case "RAM": case "LF": case "LS": case "RS": p = Poste.ATTAQUANT; 
+                        break;   
+                    default : p = Poste.DEFENSEUR;
+                        break;
                 }
                 if(idclub != 0)
                 {
@@ -164,11 +170,24 @@ namespace TheManager
                     Evenement evenement = Evenement.BUT;
                     switch(type)
                     {
-                        case "tir": evenement = Evenement.TIR; break;
-                        case "but": evenement = Evenement.BUT; break;
-                        case "but_pen": evenement = Evenement.BUT_PENALTY; break;
-                        case "carton_jaune": evenement = Evenement.CARTON_JAUNE; break;
-                        case "carton_rouge": evenement = Evenement.CARTON_ROUGE; break;
+                        case "tir": 
+                            evenement = Evenement.TIR; 
+                            break;
+                        case "but": 
+                            evenement = Evenement.BUT; 
+                            break;
+                        case "but_pen": 
+                            evenement = Evenement.BUT_PENALTY; 
+                            break;
+                        case "carton_jaune": 
+                            evenement = Evenement.CARTON_JAUNE; 
+                            break;
+                        case "carton_rouge": 
+                            evenement = Evenement.CARTON_ROUGE; 
+                            break;
+                        default : 
+                            evenement = Evenement.BUT;
+                            break;
                     }
                     _gestionnaire.AjouterCommmentaireMatch(evenement, content);
                 }
@@ -233,9 +252,18 @@ namespace TheManager
                     string nomPoste = e2.Attribute("poste").Value;
                     switch(nomPoste)
                     {
-                        case "DEFENSEUR": poste = Poste.DEFENSEUR; break;
-                        case "MILIEU": poste = Poste.MILIEU; break;
-                        case "ATTAQUANT": poste = Poste.ATTAQUANT; break;
+                        case "DEFENSEUR": 
+                            poste = Poste.DEFENSEUR; 
+                            break;
+                        case "MILIEU": 
+                            poste = Poste.MILIEU; 
+                            break;
+                        case "ATTAQUANT": 
+                            poste = Poste.ATTAQUANT; 
+                            break;
+                        default :
+                            poste = Poste.DEFENSEUR;
+                            break;
                     }
                     Joueur j = new Joueur(prenom, nom, new DateTime(1995, 1, 1), niveau, potentiel, _gestionnaire.String2Pays("France"), poste);
                     club.AjouterJoueur(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
@@ -586,9 +614,18 @@ namespace TheManager
                             MethodeRecuperation methode = MethodeRecuperation.ALEATOIRE;
                             switch(e4.Attribute("methode").Value)
                             {
-                                case "meilleurs": methode = MethodeRecuperation.MEILLEURS; break;
-                                case "pires": methode = MethodeRecuperation.PIRES; break;
-                                case "aleatoire": methode = MethodeRecuperation.ALEATOIRE; break;
+                                case "meilleurs":
+                                    methode = MethodeRecuperation.MEILLEURS; 
+                                    break;
+                                case "pires":
+                                    methode = MethodeRecuperation.PIRES; 
+                                    break;
+                                case "aleatoire":
+                                    methode = MethodeRecuperation.ALEATOIRE; 
+                                    break;
+                                default :
+                                    methode = MethodeRecuperation.MEILLEURS;
+                                    break;
                             }
                             tour.RecuperationEquipes.Add(new RecuperationEquipes(source, nombre,methode));
                         }

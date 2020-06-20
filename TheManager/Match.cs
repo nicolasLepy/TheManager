@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using LiveCharts.Wpf;
 using TheManager.Comparators;
 
 namespace TheManager
@@ -206,9 +207,15 @@ namespace TheManager
                 int tmp = _minute;
                 switch (_miTemps)
                 {
-                    case 2: tmp += 45;break;
-                    case 3: tmp += 90;break;
-                    case 4: tmp += 105;break;
+                    case 2: 
+                        tmp += 45;
+                        break;
+                    case 3: 
+                        tmp += 90;
+                        break;
+                    case 4: 
+                        tmp += 105;
+                        break;
                 }
                 int tmpAdd = _minute - ((_miTemps < 3) ? 45 : 15);
                 temps = tmp.ToString();
@@ -331,6 +338,9 @@ namespace TheManager
                     case Poste.ATTAQUANT:
                         int k = j.Niveau / 2;
                         for (int i = 0; i < k; i++) joueurs.Add(j);
+                        break;
+                    default:
+                        for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
                         break;
                 }
             }
