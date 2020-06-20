@@ -60,6 +60,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | HTML exportation |
 | **GUI** |
 | Sample GUI | 
+| Team composition |
 
 
 ## Features to implement
@@ -70,6 +71,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Dynamic dates, from one season to an other | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | A system for transferring players between clubs | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Tournaments** |  |
+| Odds | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Attendance adaptation when a club grow up or down | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Set up international tournaments on multiples years | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **GUI** |  |
