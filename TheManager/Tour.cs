@@ -25,7 +25,7 @@ namespace TheManager
     }
 
     [DataContract]
-    public struct RecuperationEquipes
+    public struct RecuperationEquipes : IEquatable<RecuperationEquipes>
     {
         [DataMember]
         public IEquipesRecuperables Source { get; set; }
@@ -38,6 +38,11 @@ namespace TheManager
             Source = source;
             Nombre = nombre;
             Methode = methode;
+        }
+
+        public bool Equals(RecuperationEquipes other)
+        {
+            throw new NotImplementedException();
         }
     }
 
@@ -76,7 +81,7 @@ namespace TheManager
     }
 
     [DataContract]
-    public struct DecalagesTV
+    public struct DecalagesTV : IEquatable<DecalagesTV>
     {
         [DataMember]
         public int DecalageJours { get; set; }
@@ -94,10 +99,15 @@ namespace TheManager
             Probabilite = probabilite;
             Journee = journee;
         }
+
+        public bool Equals(DecalagesTV other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     [DataContract]
-    public struct Qualification
+    public struct Qualification : IEquatable<Qualification>
     {
         [DataMember]
         public int Classement { get; set; }
@@ -115,10 +125,15 @@ namespace TheManager
             Competition = competition;
             AnneeSuivante = anneeSuivante;
         }
+
+        public bool Equals(Qualification other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     [DataContract]
-    public struct Dotation
+    public struct Dotation : IEquatable<Dotation>
     {
         [DataMember]
         public int Classement { get; set; }
@@ -129,6 +144,11 @@ namespace TheManager
         {
             Classement = classement;
             Somme = somme;
+        }
+
+        public bool Equals(Dotation other)
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -9,7 +9,7 @@ namespace TheManager
 {
 
     [DataContract]
-    public struct CouvertureCompetition
+    public struct CouvertureCompetition : IEquatable<CouvertureCompetition>
     {
         [DataMember]
         public Competition Competition { get; set; }
@@ -27,6 +27,11 @@ namespace TheManager
             NombreMatchsMiniMultiplex = nombreMatchsMiniMultiplex;
             NombreMatchsParMultiplex = nombreMatchsParMultiplex;
 
+        }
+
+        public bool Equals(CouvertureCompetition other)
+        {
+            throw new NotImplementedException();
         }
     }
 

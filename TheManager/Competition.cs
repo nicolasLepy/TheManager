@@ -10,7 +10,7 @@ namespace TheManager
 {
 
     [DataContract]
-    public struct StatistiquesCompetitions
+    public struct StatistiquesCompetitions : IEquatable<StatistiquesCompetitions>
     {
         [DataMember]
         public Match PlusGrandScore { get; set; }
@@ -36,6 +36,11 @@ namespace TheManager
             PlusFaibleAttaque = new KeyValuePair<int, Club>(0, null);
             PlusGrosseDefense = new KeyValuePair<int, Club>(0, null);
             PlusFaibleDefense = new KeyValuePair<int, Club>(0, null);
+        }
+        
+        public bool Equals(StatistiquesCompetitions other)
+        {
+            throw new NotImplementedException();
         }
     }
 

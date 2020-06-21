@@ -109,10 +109,14 @@ namespace TheManager_GUI
         }
     }
 
-    public struct JoueurHistoriqueElement
+    public struct JoueurHistoriqueElement : IEquatable<JoueurHistoriqueElement>
     {
         public int AnneeA { get; set; }
         public int AnneeD { get; set; }
         public Club Club { get; set; }
+        public bool Equals(JoueurHistoriqueElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

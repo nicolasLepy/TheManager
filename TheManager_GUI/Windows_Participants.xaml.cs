@@ -75,7 +75,7 @@ namespace TheManager_GUI
         }
     }
 
-    public struct ClubElement
+    public struct ClubElement : IEquatable<ClubElement>
     {
         public string Nom { get; set; }
         public float Niveau { get; set; }
@@ -87,5 +87,9 @@ namespace TheManager_GUI
         public string Star3 { get; set; }
         public string Star4 { get; set; }
         public string Star5 { get; set; }
+        public bool Equals(ClubElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

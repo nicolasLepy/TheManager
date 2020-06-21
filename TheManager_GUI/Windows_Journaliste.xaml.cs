@@ -49,11 +49,15 @@ namespace TheManager_GUI
         }
     }
 
-    public struct MatchElement
+    public struct MatchElement : IEquatable<MatchElement>
     {
         public string Date { get; set; }
         public string Heure { get; set; }
         public string Equipe1 { get; set; }
         public string Equipe2 { get; set; }
+        public bool Equals(MatchElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

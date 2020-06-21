@@ -283,14 +283,18 @@ namespace TheManager_GUI
         }
     }
 
-    public struct HistoriqueClubElement
+    public struct HistoriqueClubElement : IEquatable<HistoriqueClubElement>
     {
         public int Annee { get; set; }
         public Competition Competition { get; set; }
         public int Classement { get; set; }
+        public bool Equals(HistoriqueClubElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct JoueurClubElement
+    public struct JoueurClubElement : IEquatable<JoueurClubElement>
     {
         public Joueur Joueur { get; set; }
         public string Nom { get; set; }
@@ -302,12 +306,20 @@ namespace TheManager_GUI
         public int Potentiel { get; set; }
         public string DebutContrat { get; set; }
         public int Energie { get; set; }
+        public bool Equals(JoueurClubElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct PalmaresClubElement
+    public struct PalmaresClubElement : IEquatable<PalmaresClubElement>
     {
         public Competition Competition { get; set; }
         public int Nombre { get; set; }
         public string Annees { get; set; }
+        public bool Equals(PalmaresClubElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

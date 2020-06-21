@@ -187,20 +187,28 @@ namespace TheManager_GUI
         }
     }
 
-    public struct JoueurCompoElement
+    public struct JoueurCompoElement : IEquatable<JoueurCompoElement>
     {
         public string Poste { get; set; }
         public Joueur Nom { get; set; }
         public int Age { get; set; }
         public int Niveau { get; set; }
         public int Energie { get; set; }
+        public bool Equals(JoueurCompoElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct ProgrammeElement
+    public struct ProgrammeElement : IEquatable<ProgrammeElement>
     {
         public string Heure { get; set; }
         public Club Equipe1 { get; set; }
         public string Score { get; set; }
         public Club Equipe2 { get; set; }
+        public bool Equals(ProgrammeElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

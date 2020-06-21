@@ -18,7 +18,7 @@ namespace TheManager
     
 
     [DataContract]
-    public struct HistoriqueJoueur
+    public struct HistoriqueJoueur : IEquatable<HistoriqueJoueur>
     {
         [DataMember]
         public int Niveau { get; set; }
@@ -37,6 +37,11 @@ namespace TheManager
             Buts = buts;
             MatchsJoues = matchJoues;
             Club = club;
+        }
+        
+        public bool Equals(HistoriqueJoueur other)
+        {
+            return (Annee > other.Annee);
         }
     }
 

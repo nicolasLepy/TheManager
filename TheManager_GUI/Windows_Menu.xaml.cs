@@ -415,22 +415,30 @@ namespace TheManager_GUI
         }
     }
 
-    public struct PalmaresElement
+    public struct PalmaresElement : IEquatable<PalmaresElement>
     {
         public int Annee { get; set; }
         public Club Club { get; set; }
+        public bool Equals(PalmaresElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
     
 
-    public struct ButeurElement
+    public struct ButeurElement : IEquatable<ButeurElement>
     {
         public Joueur Buteur { get; set; }
         public int NbButs { get; set; }
         public string Club { get; set; }
+        public bool Equals(ButeurElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct CalendrierElement
+    public struct CalendrierElement : IEquatable<CalendrierElement>
     {
         public Match Match { get; set; }
         public string Heure { get; set; }
@@ -441,9 +449,13 @@ namespace TheManager_GUI
         public string Cote1 { get; set; }
         public string CoteN { get; set; }
         public string Cote2 { get; set; }
+        public bool Equals(CalendrierElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct ClassementElement
+    public struct ClassementElement : IEquatable<ClassementElement>
     {
         public string Logo { get; set; }
         public int Classement { get; set; }
@@ -457,9 +469,13 @@ namespace TheManager_GUI
         public int bc { get; set; }
         public int Diff { get; set; }
         public Club Club { get; set; }
+        public bool Equals(ClassementElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct ProchainMatchElement
+    public struct ProchainMatchElement : IEquatable<ProchainMatchElement>
     {
         public string Competition { get; set; }
         public string LogoD { get; set; }
@@ -468,5 +484,9 @@ namespace TheManager_GUI
         public string Equipe2 { get; set; }
         public string Score { get; set; }
         public Match Match { get; set; }
+        public bool Equals(ProchainMatchElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

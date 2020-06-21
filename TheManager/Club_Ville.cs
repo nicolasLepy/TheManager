@@ -10,7 +10,7 @@ namespace TheManager
 {
 
     [DataContract]
-    public struct OffreContrat
+    public struct OffreContrat : IEquatable<OffreContrat>
     {
         public int Salaire { get; set; }
         public int DureeContrat { get; set; }
@@ -21,6 +21,11 @@ namespace TheManager
             Joueur = joueur;
             Salaire = salaire;
             DureeContrat = dureeContrat;
+        }
+
+        public bool Equals(OffreContrat other)
+        {
+            throw new NotImplementedException();
         }
     }
 

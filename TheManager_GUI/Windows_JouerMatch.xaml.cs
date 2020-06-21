@@ -220,24 +220,36 @@ namespace TheManager_GUI
         }
     }
 
-    public struct MatchLiveElement
+    public struct MatchLiveElement : IEquatable<MatchLiveElement>
     {
         public Club Equipe1 { get; set; }
         public string Score { get; set; }
         public Club Equipe2 { get; set; }
+        public bool Equals(MatchLiveElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct MatchLiveEvenementElement
+    public struct MatchLiveEvenementElement : IEquatable<MatchLiveEvenementElement>
     {
         public string Logo { get; set; }
         public string Minute { get; set; }
         public string Evenement { get; set; }
         public string Joueur { get; set; }
+        public bool Equals(MatchLiveEvenementElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct MatchLiveAction
+    public struct MatchLiveAction : IEquatable<MatchLiveAction>
     {
         public string Minute { get; set; }
         public string Action { get; set; }
+        public bool Equals(MatchLiveAction other)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

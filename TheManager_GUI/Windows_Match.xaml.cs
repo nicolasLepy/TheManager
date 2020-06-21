@@ -200,16 +200,24 @@ namespace TheManager_GUI
         }
     }
 
-    public struct JoueurElement
+    public struct JoueurElement : IEquatable<JoueurElement>
     {
         public Joueur Joueur { get; set; }
         public Poste Poste { get; set; }
+        public bool Equals(JoueurElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public struct JournalisteElement
+    public struct JournalisteElement : IEquatable<JournalisteElement>
     {
         public Journaliste Journaliste { get; set; }
         public string Media{ get; set; }
+        public bool Equals(JournalisteElement other)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }

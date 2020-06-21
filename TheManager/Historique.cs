@@ -9,7 +9,7 @@ namespace TheManager
 {
 
     [DataContract]
-    public struct EntreeHistorique
+    public struct EntreeHistorique : IEquatable<EntreeHistorique>
     {
         [DataMember]
         public DateTime Date { get; set; }
@@ -23,6 +23,11 @@ namespace TheManager
             Date = date;
             Budget = budget;
             CentreFormation = centreFormation;
+        }
+
+        public bool Equals(EntreeHistorique other)
+        {
+            throw new NotImplementedException();
         }
     }
 

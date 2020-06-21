@@ -11,7 +11,7 @@ namespace TheManager
 {
 
 
-    public struct RetourMatch
+    public struct RetourMatch : IEquatable<RetourMatch>
     {
         public RetourMatchEvenement Evenement { get; set; }
         public object Acteur { get; set; }
@@ -20,6 +20,11 @@ namespace TheManager
         {
             Evenement = evenement;
             Acteur = acteur;
+        }
+
+        public bool Equals(RetourMatch other)
+        {
+            throw new NotImplementedException();
         }
     }
 
