@@ -18,17 +18,14 @@ namespace TheManager
 
         public static bool ComparerDates(DateTime a, DateTime b)
         {
-            bool res = false;
+            bool res = a.Year == b.Year && a.Month == b.Month && a.Day == b.Day;
 
-            if (a.Year == b.Year && a.Month == b.Month && a.Day == b.Day) res = true;
             return res;
         }
         
         public static bool ComparerDatesSansAnnee(DateTime a, DateTime b)
         {
-            bool res = false;
-
-            if (a.Month == b.Month && a.Day == b.Day) res = true;
+            bool res = a.Month == b.Month && a.Day == b.Day;
             return res;
         }
 
@@ -36,8 +33,14 @@ namespace TheManager
         {
             bool res = false;
 
-            if (a.Month < b.Month) res = true;
-            else if (a.Month == b.Month && a.Day < b.Day) res = true;
+            if (a.Month < b.Month)
+            {
+                res = true;
+            }
+            else if (a.Month == b.Month && a.Day < b.Day)
+            {
+                res = true;
+            }
 
             return res;
         }
@@ -46,7 +49,13 @@ namespace TheManager
         {
             List<Joueur> res = new List<Joueur>();
 
-            foreach (Joueur j in joueurs) if (j.Poste == p) res.Add(j);
+            foreach (Joueur j in joueurs)
+            {
+                if (j.Poste == p)
+                {
+                    res.Add(j);
+                }
+            }
         
             return res;
         }
@@ -67,7 +76,7 @@ namespace TheManager
         }
 
         public static double Deg2Rad(float deg)
-        {
+        { 
             return (float)(deg * (Math.PI / 180.0f));
         }
 
@@ -119,8 +128,21 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c) if (m.Score1 > m.Score2) res++;
-                if (m.Exterieur == c) if (m.Score1 < m.Score2) res++;
+                if (m.Domicile == c)
+                {
+                    if (m.Score1 > m.Score2)
+                    {
+                        res++;
+                    }
+                }
+
+                if (m.Exterieur == c)
+                {
+                    if (m.Score1 < m.Score2)
+                    {
+                        res++;
+                    }
+                }
             }
             return res;
         }
@@ -129,8 +151,21 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c) if (m.Score1 < m.Score2) res++;
-                if (m.Exterieur == c) if (m.Score1 > m.Score2) res++;
+                if (m.Domicile == c)
+                {
+                    if (m.Score1 < m.Score2)
+                    {
+                        res++;
+                    }
+                }
+
+                if (m.Exterieur == c)
+                {
+                    if (m.Score1 > m.Score2)
+                    {
+                        res++;
+                    }
+                }
             }
             return res;
         }
@@ -139,7 +174,10 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if ((m.Domicile == c || m.Exterieur == c) && m.Score1 == m.Score2) res++;
+                if ((m.Domicile == c || m.Exterieur == c) && m.Score1 == m.Score2)
+                {
+                    res++;
+                }
             }
             return res;
         }
@@ -149,8 +187,15 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c) res += m.Score1;
-                if (m.Exterieur == c) res += m.Score2;
+                if (m.Domicile == c)
+                {
+                    res += m.Score1;
+                }
+
+                if (m.Exterieur == c)
+                {
+                    res += m.Score2;
+                }
             }
             return res;
         }
@@ -160,8 +205,15 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c) res += m.Score2;
-                if (m.Exterieur == c) res += m.Score1;
+                if (m.Domicile == c)
+                {
+                    res += m.Score2;
+                }
+
+                if (m.Exterieur == c)
+                {
+                    res += m.Score1;
+                }
             }
             return res;
         }
@@ -174,7 +226,10 @@ namespace TheManager
         public static string Logo(Club c)
         {
             string res = "";
-            if (c != null) res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png";
+            if (c != null)
+            {
+                res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png";
+            }
             else
                 Console.WriteLine(c.Nom + " n'a pas de logo valide");
             return res;
@@ -200,7 +255,10 @@ namespace TheManager
             bool res = false;
             foreach(RetourMatch rm in retours)
             {
-                if (rm.Evenement == evenement) res = true;
+                if (rm.Evenement == evenement)
+                {
+                    res = true;
+                }
             }
             return res;
         }
@@ -222,6 +280,5 @@ namespace TheManager
             }
             return res;
         }
-
     }
 }

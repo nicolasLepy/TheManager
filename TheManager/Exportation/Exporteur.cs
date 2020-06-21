@@ -21,6 +21,8 @@ namespace TheManager.Exportation
                 Club_Ville cv = c as Club_Ville;
                 if(cv != null)
                 {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("<h2>").Append(cv.Nom).Append("</h2>");
                     output += "<h2>" + cv.Nom + "</h2>";
                     foreach(EntreeHistorique eh in cv.Historique.Elements)
                     {

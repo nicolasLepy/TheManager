@@ -64,90 +64,170 @@ namespace TheManager
             _niveau5 = new List<int>();
             _niveau6 = new List<int>();
             _niveau7 = new List<int>();
-            for (int i = 0; i < 2; i++) 
+            for (int i = 0; i < 2; i++)
+            {
                 _niveau2.Add(18000);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau2.Add(19000);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau2.Add(20000);
-            for (int i = 0; i < 4; i++) 
+            }
+            for (int i = 0; i < 4; i++)
+            {
                 _niveau2.Add(14001);
-            for (int i = 0; i < 3; i++) 
+            }
+            for (int i = 0; i < 3; i++)
+            {
                 _niveau2.Add(14301);
-            for (int i = 0; i < 9; i++) 
+            }
+            for (int i = 0; i < 9; i++)
+            {
                 _niveau2.Add(15001);
-            for (int i = 0; i < 2; i++) 
+            }
+            for (int i = 0; i < 2; i++)
+            {
                 _niveau2.Add(16001);
-            for (int i = 0; i < 10; i++) 
+            }
+            for (int i = 0; i < 10; i++)
+            {
                 _niveau2.Add(17001);
-            for (int i = 0; i < 25; i++) 
+            }
+            for (int i = 0; i < 25; i++)
+            {
                 _niveau2.Add(18001);
-            for (int i = 0; i < 11; i++) 
+            }
+            for (int i = 0; i < 11; i++)
+            {
                 _niveau2.Add(18301);
-            for (int i = 0; i < 8; i++) 
+            }
+            for (int i = 0; i < 8; i++)
+            {
                 _niveau2.Add(19001);
-            for (int i = 0; i < 5; i++) 
+            }
+            for (int i = 0; i < 5; i++)
+            {
                 _niveau2.Add(20001);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau2.Add(13302);
-            for (int i = 0; i < 4; i++) 
+            }
+            for (int i = 0; i < 4; i++)
+            {
                 _niveau2.Add(14002);
-            for (int i = 0; i < 7; i++) 
+            }
+            for (int i = 0; i < 7; i++)
+            {
                 _niveau2.Add(15002);
-            for (int i = 0; i < 3; i++) 
+            }
+            for (int i = 0; i < 3; i++)
+            {
                 _niveau2.Add(16002);
-            for (int i = 0; i < 2; i++) 
+            }
+            for (int i = 0; i < 2; i++)
+            {
                 _niveau2.Add(17002);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau2.Add(20002);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau2.Add(20452);
-
-            for (int i = 0; i < 10; i++) 
+            }
+            for (int i = 0; i < 10; i++)
+            {
                 _niveau6.Add(15001);
-            for (int i = 0; i < 2; i++) 
+            }
+            for (int i = 0; i < 2; i++)
+            {
                 _niveau6.Add(15301);
-            for (int i = 0; i < 6; i++) 
+            }
+            for (int i = 0; i < 6; i++)
+            {
                 _niveau6.Add(16001);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau6.Add(16301);
-            for (int i = 0; i < 9; i++) 
+            }
+            for (int i = 0; i < 9; i++)
+            {
                 _niveau6.Add(17001);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau6.Add(17301);
-            for (int i = 0; i < 18; i++) 
+            }
+            for (int i = 0; i < 18; i++)
+            {
                 _niveau6.Add(18001);
-            for (int i = 0; i < 5; i++) 
+            }
+            for (int i = 0; i < 5; i++)
+            {
                 _niveau6.Add(18301);
-            for (int i = 0; i < 4; i++) 
+            }
+            for (int i = 0; i < 4; i++)
+            {
                 _niveau6.Add(19001);
-            for (int i = 0; i < 2; i++) 
+            }
+            for (int i = 0; i < 2; i++)
+            {
                 _niveau6.Add(19301);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau6.Add(20001);
-            for (int i = 0; i < 3; i++) 
+            }
+            for (int i = 0; i < 3; i++)
+            {
                 _niveau6.Add(13002);
-            for (int i = 0; i < 7; i++) 
+            }
+            for (int i = 0; i < 7; i++)
+            {
                 _niveau6.Add(13302);
-            for (int i = 0; i < 14; i++) 
+            }
+            for (int i = 0; i < 14; i++)
+            {
                 _niveau6.Add(14002);
-            for (int i = 0; i < 8; i++) 
+            }
+            for (int i = 0; i < 8; i++)
+            {
                 _niveau6.Add(14302);
-            for (int i = 0; i < 66; i++) 
+            }
+            for (int i = 0; i < 66; i++)
+            {
                 _niveau6.Add(15002);
-            for (int i = 0; i < 10; i++) 
+            }
+            for (int i = 0; i < 10; i++)
+            {
                 _niveau6.Add(15302);
-            for (int i = 0; i < 4; i++) 
+            }
+            for (int i = 0; i < 4; i++)
+            {
                 _niveau6.Add(16002);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau6.Add(16302);
-            for (int i = 0; i < 2; i++) 
+            }
+            for (int i = 0; i < 2; i++)
+            {
                 _niveau6.Add(17002);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau6.Add(17302);
-            for (int i = 0; i < 1; i++) 
+            }
+            for (int i = 0; i < 1; i++)
+            {
                 _niveau6.Add(18002);
-
+            }
         }
 
         public static List<Match> GenererCalendrier(List<Club> clubs, ProgrammationTour programmation, bool allerRetour)
