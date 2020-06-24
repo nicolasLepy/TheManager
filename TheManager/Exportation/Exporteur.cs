@@ -34,15 +34,15 @@ namespace TheManager.Exportation
 
         }
 
-        public static void Exporter(Competition c)
+        public static void Exporter(Tournament c)
         {
             ExporterClubs();
-            string dir = "Output\\" + c.Nom + " " + Session.Instance.Partie.Date.Year;
-            string dir2 = "Output\\" + c.NomCourt + Session.Instance.Partie.Date.Year;
+            string dir = "Output\\" + c.name + " " + Session.Instance.Partie.Date.Year;
+            string dir2 = "Output\\" + c.shortName + Session.Instance.Partie.Date.Year;
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             if (!Directory.Exists(dir2)) Directory.CreateDirectory(dir2);
 
-            foreach (Tour t in c.Tours)
+            foreach (Tour t in c.rounds)
             {
                 if (!Directory.Exists(dir + "\\" + t.Nom)) Directory.CreateDirectory(dir + "\\" + t.Nom);
                 if (!Directory.Exists(dir2 + "\\" + t.Nom)) Directory.CreateDirectory(dir2 + "\\" + t.Nom);
@@ -68,7 +68,7 @@ namespace TheManager.Exportation
                     int matchsJournee = (tc.Clubs.Count % 2 == 1) ? tc.Clubs.Count/2+1 : tc.Clubs.Count/2;
                     int nbJournees = (tc.Matchs.Count / tc.Clubs.Count) * 2;
                     int k = 0;
-                    Exporteurs2.ExporterClassementL(tc, "Output\\" + c.NomCourt + Session.Instance.Partie.Date.Year + "\\" + t.Nom + "\\Matchs\\");
+                    Exporteurs2.ExporterClassementL(tc, "Output\\" + c.shortName + Session.Instance.Partie.Date.Year + "\\" + t.Nom + "\\Matchs\\");
                     for (int i = 0; i<nbJournees; i++)
                     {
                         List<Match> journee = new List<Match>();
@@ -79,7 +79,7 @@ namespace TheManager.Exportation
                         journee.Sort(new Match_Date_Comparator());
 
 
-                        Exporteurs2.ExporterL(journee, "Output\\" + c.NomCourt + Session.Instance.Partie.Date.Year + "\\" + t.Nom, i + 1);
+                        Exporteurs2.ExporterL(journee, "Output\\" + c.shortName + Session.Instance.Partie.Date.Year + "\\" + t.Nom, i + 1);
 
                         output += "<p>Journée " + (int)(i + 1) + "</p><table>";
                         DateTime last = new DateTime(2000, 1, 1);
@@ -113,12 +113,12 @@ namespace TheManager.Exportation
                             output += "<tr><td colspan=\"3\">"+m.Jour.Date.ToShortDateString()+"</td></tr>";
                         }
                         last = m.Jour;
-                        Competition compDom = m.Domicile.Championship;
-                        Competition compExt = m.Exterieur.Championship;
+                        Tournament compDom = m.Domicile.Championship;
+                        Tournament compExt = m.Exterieur.Championship;
                         string sCompDom = "";
                         string sCompExt = "";
-                        if (compDom != null) sCompDom = " (" + compDom.NomCourt + ")";
-                        if (compExt != null) sCompExt = " (" + compExt.NomCourt + ")";
+                        if (compDom != null) sCompDom = " (" + compDom.shortName + ")";
+                        if (compExt != null) sCompExt = " (" + compExt.shortName + ")";
                         string score = m.Score1 + " - " + m.Score2;
                         if (m.Prolongations) score += " ap";
                         if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";

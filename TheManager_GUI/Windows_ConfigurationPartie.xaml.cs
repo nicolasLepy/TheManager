@@ -62,11 +62,11 @@ namespace TheManager_GUI
                     lb.Content = c.Nom();
                     lb.Style = FindResource("StyleLabel2") as Style;
                     box.Children.Add(lb);
-                    foreach(Competition cp in c.Competitions())
+                    foreach(Tournament cp in c.Competitions())
                     {
                         CheckBox cb = new CheckBox();
                         cb.IsChecked = true;
-                        cb.Content = cp.Nom;
+                        cb.Content = cp.name;
                         cb.Style = FindResource("StyleCheckBox") as Style;
                         cb.Click += new RoutedEventHandler(CheckboxComp_Click);
                         box.Children.Add(cb);
@@ -89,13 +89,13 @@ namespace TheManager_GUI
                         sp.Children.Add(i);
                         sp.Children.Add(lb);
                         box.Children.Add(sp);
-                        foreach (Competition cp in p.Competitions())
+                        foreach (Tournament cp in p.Competitions())
                         {
-                            if(cp.Championnat)
+                            if(cp.isChampionship)
                             {
                                 CheckBox cb = new CheckBox();
                                 cb.IsChecked = true;
-                                cb.Content = cp.Nom;
+                                cb.Content = cp.name;
                                 cb.Style = FindResource("StyleCheckBox") as Style;
                                 box.Children.Add(cb);
                                 _checkbox.Add(cb);
@@ -117,8 +117,8 @@ namespace TheManager_GUI
             {
                 if(cb.IsChecked == true)
                 {
-                    Competition c = Session.Instance.Partie.Gestionnaire.String2Competition(cb.Content.ToString());
-                    foreach (Club cl in c.Tours[0].Clubs)
+                    Tournament c = Session.Instance.Partie.Gestionnaire.String2Competition(cb.Content.ToString());
+                    foreach (Club cl in c.rounds[0].Clubs)
                     {
                         nbClubs++;
                         nbJoueurs += 21;
@@ -136,15 +136,15 @@ namespace TheManager_GUI
 
         private void BtnLancer_Click(object sender, RoutedEventArgs e)
         {
-            List<Competition> toDesactivate = new List<Competition>();
+            List<Tournament> toDesactivate = new List<Tournament>();
             foreach (CheckBox cb in _checkbox)
             {
                 if(cb.IsChecked == false)
                 {
                     string nom = cb.Content.ToString();
-                    foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                    foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
                     {
-                        if (c.Nom == nom)
+                        if (c.name == nom)
                         {
                             toDesactivate.Add(c);
                         }
@@ -152,7 +152,7 @@ namespace TheManager_GUI
                 }
                 
             }
-            foreach(Competition c in toDesactivate)
+            foreach(Tournament c in toDesactivate)
             {
                 c.RendreInactive();
             }

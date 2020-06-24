@@ -23,11 +23,11 @@ namespace TheManager_GUI
     public partial class Windows_Competition : Window
     {
 
-        private Competition _competition;
+        private Tournament _competition;
         private int _indexTour;
         private int _indexJournee;
 
-        public Windows_Competition(Competition competition)
+        public Windows_Competition(Tournament competition)
         {
             InitializeComponent();
             _competition = competition;
@@ -38,8 +38,8 @@ namespace TheManager_GUI
 
         private List<Match> Journee()
         {
-            List<Match> res = _competition.Tours[_indexTour].Matchs;
-            TourChampionnat tc = _competition.Tours[_indexTour] as TourChampionnat;
+            List<Match> res = _competition.rounds[_indexTour].Matchs;
+            TourChampionnat tc = _competition.rounds[_indexTour] as TourChampionnat;
             if(tc != null)
             {
                 res = tc.Journee(_indexJournee);
@@ -49,27 +49,27 @@ namespace TheManager_GUI
 
         private void InitWidgets()
         {
-            lbCompetition.Content = _competition.Nom;
-            lbNomTour.Content = _competition.Tours[_indexTour].Nom;
+            lbCompetition.Content = _competition.name;
+            lbNomTour.Content = _competition.rounds[_indexTour].Nom;
             dgButeurs.Items.Clear();
             
 
-            if (_competition.Statistiques.PlusGrandScore != null)
-                lbGrandScore.Content = _competition.Statistiques.PlusGrandScore.Domicile.name + " " + _competition.Statistiques.PlusGrandScore.Score1 + "-" + _competition.Statistiques.PlusGrandScore.Score2 + " " + _competition.Statistiques.PlusGrandScore.Exterieur.name;
+            if (_competition.statistics.LargerScore != null)
+                lbGrandScore.Content = _competition.statistics.LargerScore.Domicile.name + " " + _competition.statistics.LargerScore.Score1 + "-" + _competition.statistics.LargerScore.Score2 + " " + _competition.statistics.LargerScore.Exterieur.name;
             else
                 lbGrandScore.Content = "";
-            if (_competition.Statistiques.PlusGrandEcart != null)
-                lbGrosEcart.Content = _competition.Statistiques.PlusGrandEcart.Domicile.name + " " + _competition.Statistiques.PlusGrandEcart.Score1 + "-" + _competition.Statistiques.PlusGrandEcart.Score2 + " " + _competition.Statistiques.PlusGrandEcart.Exterieur.name;
+            if (_competition.statistics.LargerScore != null)
+                lbGrosEcart.Content = _competition.statistics.LargerScore.Domicile.name + " " + _competition.statistics.LargerScore.Score1 + "-" + _competition.statistics.LargerScore.Score2 + " " + _competition.statistics.LargerScore.Exterieur.name;
             else
                 lbGrosEcart.Content = "";
             Palmares();
             Buteurs();
-            Calendrier(_competition.Tours[_indexTour]);
-            IVueClassement vue = FabriqueVueClassement.CreerVue(null, _competition.Tours[_indexTour]);
+            Calendrier(_competition.rounds[_indexTour]);
+            IVueClassement vue = FabriqueVueClassement.CreerVue(null, _competition.rounds[_indexTour]);
             vue.Remplir(spClassement);
 
             int nbRegles = 0;
-            foreach (Rule r in _competition.Tours[_indexTour].Regles)
+            foreach (Rule r in _competition.rounds[_indexTour].Regles)
             {
                 Label l = new Label();
                 l.Style = Application.Current.FindResource("StyleLabel2") as Style;
@@ -87,7 +87,7 @@ namespace TheManager_GUI
         {
             dgButeurs.Items.Clear();
 
-            foreach (KeyValuePair<Joueur, int> buteur in _competition.Buteurs())
+            foreach (KeyValuePair<Joueur, int> buteur in _competition.Goalscorers())
             {
                 dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Nom() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
             }
@@ -136,12 +136,12 @@ namespace TheManager_GUI
                 string equipe1 = m.Domicile.shortName;
                 string equipe2 = m.Exterieur.shortName;
 
-                Competition champD = m.Domicile.Championship;
-                Competition champE = m.Exterieur.Championship;
+                Tournament champD = m.Domicile.Championship;
+                Tournament champE = m.Exterieur.Championship;
                 if (te != null && champD != null && champE != null)
                 {
-                    equipe1 += " (" + champD.NomCourt + ")";
-                    equipe2 += " (" + champE.NomCourt + ")";
+                    equipe1 += " (" + champD.shortName + ")";
+                    equipe2 += " (" + champE.shortName + ")";
                 }
 
                 StackPanel spHeureMatch = new StackPanel();
@@ -213,13 +213,13 @@ namespace TheManager_GUI
         private void Palmares()
         {
             dgPalmares.Items.Clear();
-            foreach (Competition arc in _competition.EditionsPrecedentes)
+            foreach (Tournament arc in _competition.previousEditions)
             {
-                Club vainqueur = arc.Vainqueur();
+                Club vainqueur = arc.Winner();
 
 
-                Tour t = arc.Tours[arc.Tours.Count - 1];
-                //Si le tour final n'est pas un tour inactif, on peut établir le palmarès
+                Tour t = arc.rounds[arc.rounds.Count - 1];
+                //If the final round was not inactive, we can make the palmares
                 if (t.Matchs.Count > 0)
                 {
                     int annee = t.Matchs[t.Matchs.Count - 1].Jour.Year;
@@ -245,7 +245,7 @@ namespace TheManager_GUI
 
         private void BtnTourDroite_Click(object sender, RoutedEventArgs e)
         {
-            if (_indexTour < _competition.Tours.Count-1) _indexTour++;
+            if (_indexTour < _competition.rounds.Count-1) _indexTour++;
             InitWidgets();
         }
 
@@ -263,7 +263,7 @@ namespace TheManager_GUI
 
         private void BtnJourneeDroite_Click(object sender, RoutedEventArgs e)
         {
-            TourChampionnat tc = _competition.Tours[_indexTour] as TourChampionnat;
+            TourChampionnat tc = _competition.rounds[_indexTour] as TourChampionnat;
             if (tc != null)
             {
                 if (_indexJournee < tc.NombreJournees()) _indexJournee++;

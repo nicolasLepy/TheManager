@@ -12,11 +12,11 @@ namespace TheManager
     {
 
         [DataMember]
-        private List<Competition> _competitionsAExporter;
+        private List<Tournament> _competitionsAExporter;
 
         [DataMember]
         public bool Exporter { get; set; }
-        public List<Competition> CompetitionsAExporter { get => _competitionsAExporter; }
+        public List<Tournament> CompetitionsAExporter { get => _competitionsAExporter; }
 
         [DataMember]
         private bool _transferts;
@@ -30,7 +30,7 @@ namespace TheManager
         public Options()
         {
             Exporter = false;
-            _competitionsAExporter = new List<Competition>();
+            _competitionsAExporter = new List<Tournament>();
             _transferts = false;
             _simulerMatchs = false;
         }

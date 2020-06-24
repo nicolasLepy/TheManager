@@ -147,14 +147,14 @@ namespace TheManager
         [DataMember]
         public float Cote2 { get; set; }
 
-        public Competition Competition
+        public Tournament Competition
         {
             get
             {
-                Competition res = null;
-                foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                Tournament res = null;
+                foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
                 {
-                    foreach(Tour t in c.Tours)
+                    foreach(Tour t in c.rounds)
                     {
                         foreach(Match m in t.Matchs)
                         {
@@ -171,9 +171,9 @@ namespace TheManager
             get
             {
                 Tour res = null;
-                foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
                 {
-                    foreach (Tour t in c.Tours)
+                    foreach (Tour t in c.rounds)
                     {
                         foreach (Match m in t.Matchs)
                         {

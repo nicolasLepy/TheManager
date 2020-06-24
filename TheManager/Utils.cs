@@ -240,9 +240,9 @@ namespace TheManager
             return System.IO.Directory.GetCurrentDirectory() + "\\Images\\" + image;
         }
 
-        public static string LogoTournament(Competition tournament)
+        public static string LogoTournament(Tournament tournament)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\Logo\\" + tournament.Logo + ".png";
+            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\Logo\\" + tournament.logo + ".png";
         }
 
         public static string PathSong(string song)

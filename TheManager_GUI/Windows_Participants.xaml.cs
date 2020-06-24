@@ -20,13 +20,13 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_Participants : Window
     {
-        public Windows_Participants(Competition c)
+        public Windows_Participants(Tournament c)
         {
             InitializeComponent();
-            if (c.Championnat)
+            if (c.isChampionship)
             {
                 dgClubs.Items.Clear();
-                foreach (Club cl in c.Tours[0].Clubs)
+                foreach (Club cl in c.rounds[0].Clubs)
                 {
                     int budget = 0;
                     int masseSalariale = 0;
@@ -64,7 +64,7 @@ namespace TheManager_GUI
                     if (etoiles > 4 && etoiles < 5)
                         e5 = Utils.Image("demistar.png");
 
-                    dgClubs.Items.Add(new ClubElement { Nom = cl.shortName, Niveau = cl.Level(), Budget = budget, Affluence = c.AffluenceMoyenne(cl), MasseSalariale = masseSalariale, Star1=e1, Star2=e2, Star3=e3, Star4=e4,Star5=e5 });
+                    dgClubs.Items.Add(new ClubElement { Nom = cl.shortName, Niveau = cl.Level(), Budget = budget, Affluence = c.AverageAttendance(cl), MasseSalariale = masseSalariale, Star1=e1, Star2=e2, Star3=e3, Star4=e4,Star5=e5 });
                 }
             }
         }

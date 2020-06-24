@@ -17,7 +17,7 @@ namespace TheManager
         [DataMember]
         private Langue _langue;
         [DataMember]
-        private List<Competition> _competitions;
+        private List<Tournament> _competitions;
         [DataMember]
         private string _nom;
 
@@ -42,10 +42,10 @@ namespace TheManager
             _langue = langue;
             _villes = new List<Ville>();
             _stades = new List<Stade>();
-            _competitions = new List<Competition>();
+            _competitions = new List<Tournament>();
         }
 
-        public List<Competition> Competitions()
+        public List<Tournament> Competitions()
         {
             return _competitions;
         }

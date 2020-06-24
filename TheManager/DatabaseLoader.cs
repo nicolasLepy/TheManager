@@ -227,7 +227,7 @@ namespace TheManager
                     foreach (XElement e3 in e2.Descendants("Couvre"))
                     {
                         int index = int.Parse(e3.Attribute("aPartir").Value);
-                        Competition tournament = _kernel.String2Competition(e3.Attribute("competition").Value);
+                        Tournament tournament = _kernel.String2Competition(e3.Attribute("competition").Value);
                         int averageGames = -1;
                         int multiplexMinGames = -1;
                         if (e3.Attribute("matchParMultiplex") != null) averageGames = int.Parse(e3.Attribute("matchParMultiplex").Value);
@@ -483,7 +483,7 @@ namespace TheManager
                     int remainingYears = 1;
                     if (e2.Attribute("anneesRestantes") != null)
                         remainingYears = int.Parse(e2.Attribute("anneesRestantes").Value);
-                    Competition c = new Competition(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears);
+                    Tournament c = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears);
                     localisation.Competitions().Add(c);
                     //_gestionnaire.Competitions.Add(c);
                 }
@@ -495,7 +495,7 @@ namespace TheManager
                 foreach(XElement e2 in e.Descendants("Competition"))
                 {
                     string name = e2.Attribute("nom").Value;
-                    Competition c = _kernel.String2Competition(name);
+                    Tournament c = _kernel.String2Competition(name);
                     foreach(XElement e3 in e2.Descendants("Tour"))
                     {
                         Tour round = null;
@@ -563,7 +563,7 @@ namespace TheManager
                         {
                             round = new TourInactif(nomTour, String2Hour(hourByDefault), initialisationDate, endDate);
                         }
-                        c.Tours.Add(round);
+                        c.rounds.Add(round);
                         foreach (XElement e4 in e3.Descendants("Club"))
                         {
                             Club club;
@@ -610,8 +610,8 @@ namespace TheManager
                             {
                                 string competitionName = e4.Attribute("competition").Value;
                                 int tourIndex = int.Parse(e4.Attribute("idTour").Value);
-                                Competition comp = _kernel.String2Competition(competitionName);
-                                Tour r = comp.Tours[tourIndex];
+                                Tournament comp = _kernel.String2Competition(competitionName);
+                                Tour r = comp.rounds[tourIndex];
                                 source = r;
                             }
                             MethodeRecuperation method;
@@ -667,7 +667,7 @@ namespace TheManager
                             int tourId = int.Parse(e4.Attribute("id_tour").Value);
                             bool nextYear = false;
                             if (e4.Attribute("anneeSuivante") != null) nextYear = e4.Attribute("anneeSuivante").Value == "oui" ? true : false;
-                            Competition targetedTournament = null;
+                            Tournament targetedTournament = null;
                             if (e4.Attribute("competition") != null) targetedTournament = _kernel.String2Competition(e4.Attribute("competition").Value);
                             else targetedTournament = c;
 
@@ -696,9 +696,9 @@ namespace TheManager
                 }
             }
 
-            foreach(Competition c in _kernel.Competitions)
+            foreach(Tournament c in _kernel.Competitions)
             {
-                c.InitialiserQualificationsAnneesSuivantes();
+                c.InitializeQualificationsNextYearsLists();
             }
         }
 

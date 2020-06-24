@@ -264,7 +264,7 @@ namespace TheManager
             }
             for(int i = 0; i<nb; i++)
             {
-                GenerateJuniors();
+                GeneratePlayer(17,19);
             }
         }
 
@@ -336,10 +336,10 @@ namespace TheManager
         /// </summary>
         public void GenerateFriendlyGamesCalendar()
         {
-            Competition championship = Championship;
+            Tournament championship = Championship;
             List<Club> possibleOpponents = new List<Club>();
             
-            if(championship != null && championship.Tours[0] as TourChampionnat != null)
+            if(championship != null && championship.rounds[0] as TourChampionnat != null)
             {
                 foreach (Club c in Session.Instance.Partie.Gestionnaire.Clubs)
                 {
@@ -356,7 +356,7 @@ namespace TheManager
                 {
                     Club adv = possibleOpponents[Session.Instance.Random(0, possibleOpponents.Count)];
                     possibleOpponents.Remove(adv);
-                    DateTime begin = new DateTime(championship.Tours[0].Matchs[0].Jour.Year, championship.Tours[0].Matchs[0].Jour.Month, championship.Tours[0].Matchs[0].Jour.Day);
+                    DateTime begin = new DateTime(championship.rounds[0].Matchs[0].Jour.Year, championship.rounds[0].Matchs[0].Jour.Month, championship.rounds[0].Matchs[0].Jour.Day);
                     begin = begin.AddDays(Session.Instance.Random(-30, -10));
                     begin = begin.AddHours(Session.Instance.Random(14, 22));
                     Match game = new Match(this, adv, begin, false);

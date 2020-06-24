@@ -12,7 +12,7 @@ namespace TheManager
     public struct CouvertureCompetition : IEquatable<CouvertureCompetition>
     {
         [DataMember]
-        public Competition Competition { get; set; }
+        public Tournament Competition { get; set; }
         [DataMember]
         public int IndexDebut { get; set; }
         [DataMember]
@@ -20,7 +20,7 @@ namespace TheManager
         [DataMember]
         public int NombreMatchsParMultiplex { get; set; }
 
-        public CouvertureCompetition(Competition competition, int indexDebut, int nombreMatchsMiniMultiplex, int nombreMatchsParMultiplex)
+        public CouvertureCompetition(Tournament competition, int indexDebut, int nombreMatchsMiniMultiplex, int nombreMatchsParMultiplex)
         {
             Competition = competition;
             IndexDebut = indexDebut;
@@ -60,7 +60,7 @@ namespace TheManager
             _pays = pays;
         }
 
-        public bool Couvre(Competition c, int indexTour)
+        public bool Couvre(Tournament c, int indexTour)
         {
             bool res = false;
             foreach(CouvertureCompetition cc in Couvertures)
@@ -70,7 +70,7 @@ namespace TheManager
             return res;
         }
 
-        public CouvertureCompetition GetCouverture(Competition competition)
+        public CouvertureCompetition GetCouverture(Tournament competition)
         {
             CouvertureCompetition res = _couvertures[0];
 

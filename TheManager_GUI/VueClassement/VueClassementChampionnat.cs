@@ -106,15 +106,15 @@ namespace TheManager_GUI.VueClassement
 
             foreach (Qualification q in _tour.Qualifications)
             {
-                if (q.Competition.Championnat)
+                if (q.Competition.isChampionship)
                 {
-                    int niveau = _tour.Competition.Niveau;
+                    int niveau = _tour.Competition.level;
                     string couleur = "backgroundColor";
-                    if (q.Competition.Niveau < niveau)
+                    if (q.Competition.level < niveau)
                         couleur = "promotionColor";
-                    else if (q.Competition.Niveau > niveau)
+                    else if (q.Competition.level > niveau)
                         couleur = "relegationColor";
-                    else if (q.Competition.Niveau == niveau && q.IDTour > _tour.Competition.Tours.IndexOf(_tour))
+                    else if (q.Competition.level == niveau && q.IDTour > _tour.Competition.rounds.IndexOf(_tour))
                         couleur = "barrageColor";
 
                     int index = q.Classement-1;
@@ -184,15 +184,15 @@ namespace TheManager_GUI.VueClassement
             //Pour chaque couleur
             foreach (Qualification q in _tour.Qualifications)
             {
-                if (q.Competition.Championnat)
+                if (q.Competition.isChampionship)
                 {
-                    int niveau = _tour.Competition.Niveau;
+                    int niveau = _tour.Competition.level;
                     string couleur = "backgroundColor";
-                    if (q.Competition.Niveau < niveau)
+                    if (q.Competition.level < niveau)
                         couleur = "promotionColor";
-                    else if (q.Competition.Niveau > niveau)
+                    else if (q.Competition.level > niveau)
                         couleur = "relegationColor";
-                    else if (q.Competition.Niveau == niveau && q.IDTour > _tour.Competition.Tours.IndexOf(_tour))
+                    else if (q.Competition.level == niveau && q.IDTour > _tour.Competition.rounds.IndexOf(_tour))
                         couleur = "barrageColor";
 
                     DataTrigger tg = new DataTrigger()

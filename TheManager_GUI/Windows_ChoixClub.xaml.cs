@@ -45,14 +45,14 @@ namespace TheManager_GUI
             {
                 foreach(Pays p in c.Pays)
                 {
-                    foreach(Competition cp in p.Competitions())
+                    foreach(Tournament cp in p.Competitions())
                     {
-                        if(cp.Championnat)
+                        if(cp.isChampionship)
                         {
                             TreeViewItem tv = new TreeViewItem();
-                            tv.Header = cp.Nom;
+                            tv.Header = cp.name;
 
-                            foreach(Club club in cp.Tours[0].Clubs)
+                            foreach(Club club in cp.rounds[0].Clubs)
                             {
                                 StackPanel sp = new StackPanel();
                                 sp.Orientation = Orientation.Horizontal;

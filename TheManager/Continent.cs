@@ -14,12 +14,12 @@ namespace TheManager
         [DataMember]
         private List<Pays> _pays;
         [DataMember]
-        private List<Competition> _competitions;
+        private List<Tournament> _competitions;
         [DataMember]
         private string _nom;
 
         public List<Pays> Pays { get { return _pays; } }
-        public List<Competition> Competitions()
+        public List<Tournament> Competitions()
         {
             return _competitions;
         }
@@ -34,7 +34,7 @@ namespace TheManager
         {
             _nom = nom;
             _pays = new List<Pays>();
-            _competitions = new List<Competition>();
+            _competitions = new List<Tournament>();
         }
 
         /// <summary>

@@ -114,11 +114,11 @@ namespace TheManager
         [DataMember]
         public int IDTour { get; set; }
         [DataMember]
-        public Competition Competition { get; set; }
+        public Tournament Competition { get; set; }
         [DataMember]
         public bool AnneeSuivante { get; set; }
 
-        public Qualification(int classement, int idtour, Competition competition, bool anneeSuivante)
+        public Qualification(int classement, int idtour, Tournament competition, bool anneeSuivante)
         {
             Classement = classement;
             IDTour = idtour;
@@ -223,15 +223,15 @@ namespace TheManager
         public List<Rule> Regles { get => _regles; }
         public List<Dotation> Dotations { get => _dotations; }
 
-        public Competition Competition
+        public Tournament Competition
         {
             get
             {
-                Competition competition = null;
+                Tournament competition = null;
 
-                foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach(Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
                 {
-                    foreach(Tour t in c.Tours)
+                    foreach(Tour t in c.rounds)
                     {
                         if(t == this)
                         {

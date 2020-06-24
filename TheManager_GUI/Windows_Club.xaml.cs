@@ -78,7 +78,7 @@ namespace TheManager_GUI
 
 
                 Label l1 = new Label();
-                l1.Content = m.Competition.Nom;
+                l1.Content = m.Competition.name;
                 l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l1.FontSize = 10;
                 l1.Width = 150;
@@ -121,20 +121,20 @@ namespace TheManager_GUI
 
         public void Palmares(CityClub club)
         {
-            foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+            foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
             {
                 int nombre = 0;
                 string annees = "";
-                foreach(Competition archive in c.EditionsPrecedentes)
+                foreach(Tournament archive in c.previousEditions)
                 {
-                    if(archive.Championnat)
+                    if(archive.isChampionship)
                     {
-                        if (archive.Tours[0].Vainqueur() == club)
+                        if (archive.rounds[0].Vainqueur() == club)
                             nombre++;
                     }
                     else
                     {
-                        Tour t = archive.Tours[archive.Tours.Count - 1];
+                        Tour t = archive.rounds[archive.rounds.Count - 1];
                         if (t.Vainqueur() == club)
                         {
                             nombre++;
@@ -184,18 +184,18 @@ namespace TheManager_GUI
             }
 
             List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();
-            foreach(Competition competition in Session.Instance.Partie.Gestionnaire.Competitions)
+            foreach(Tournament competition in Session.Instance.Partie.Gestionnaire.Competitions)
             {
                 int annee = 2019;
-                foreach(Competition ancienne in competition.EditionsPrecedentes)
+                foreach(Tournament ancienne in competition.previousEditions)
                 {
-                    if(ancienne.Championnat && ancienne.Tours[0].Clubs.Contains(c))
+                    if(ancienne.isChampionship && ancienne.rounds[0].Clubs.Contains(c))
                     {
                         int classement = 0;
                         //Si la compétition était active (tour 0 un tour de type championnat, pas inactif)
-                        if((ancienne.Tours[0] as TourChampionnat) != null)
+                        if((ancienne.rounds[0] as TourChampionnat) != null)
                         {
-                            classement = (ancienne.Tours[0] as TourChampionnat).Classement().IndexOf(c) + 1;
+                            classement = (ancienne.rounds[0] as TourChampionnat).Classement().IndexOf(c) + 1;
                         }
                         
                         //int annee = ancienne.Tours[0].Matchs[ancienne.Tours[0].Matchs.Count - 1].Jour.Year;
@@ -289,7 +289,7 @@ namespace TheManager_GUI
     public struct HistoriqueClubElement : IEquatable<HistoriqueClubElement>
     {
         public int Annee { get; set; }
-        public Competition Competition { get; set; }
+        public Tournament Competition { get; set; }
         public int Classement { get; set; }
         public bool Equals(HistoriqueClubElement other)
         {
@@ -317,7 +317,7 @@ namespace TheManager_GUI
 
     public struct PalmaresClubElement : IEquatable<PalmaresClubElement>
     {
-        public Competition Competition { get; set; }
+        public Tournament Competition { get; set; }
         public int Nombre { get; set; }
         public string Annees { get; set; }
         public bool Equals(PalmaresClubElement other)

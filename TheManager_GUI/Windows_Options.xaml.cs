@@ -39,11 +39,11 @@ namespace TheManager_GUI
             cbTransferts.IsChecked = Session.Instance.Partie.Options.Transferts;
             cbSimuler.IsChecked = Session.Instance.Partie.Options.SimulerMatchs;
 
-            foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+            foreach(Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
             {
                 CheckBox cb = new CheckBox();
                 cb.IsChecked = Session.Instance.Partie.Options.CompetitionsAExporter.Contains(c);
-                cb.Content = c.Nom;
+                cb.Content = c.name;
                 cb.Style = FindResource("StyleCheckBox") as Style;
                 spOptions.Children.Add(cb);
                 _checkbox.Add(cb);
@@ -107,7 +107,7 @@ namespace TheManager_GUI
             Session.Instance.Partie.Options.CompetitionsAExporter.Clear();
             foreach(CheckBox cb in _checkbox)
             {
-                Competition comp = Session.Instance.Partie.Gestionnaire.String2Competition(cb.Content.ToString());
+                Tournament comp = Session.Instance.Partie.Gestionnaire.String2Competition(cb.Content.ToString());
                 if (cb.IsChecked == true)
                     Session.Instance.Partie.Options.CompetitionsAExporter.Add(comp);
             }

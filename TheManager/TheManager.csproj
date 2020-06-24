@@ -71,7 +71,7 @@
     <Compile Include="Comparators\Match_Classement_Comparator.cs" />
     <Compile Include="Comparators\Match_Date_Comparator.cs" />
     <Compile Include="Comparators\Match_Niveau_Comparator.cs" />
-    <Compile Include="Competition.cs" />
+    <Compile Include="Tournament.cs" />
     <Compile Include="Contrat.cs" />
     <Compile Include="Entraineur.cs" />
     <Compile Include="EvenementMatch.cs" />

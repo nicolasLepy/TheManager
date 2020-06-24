@@ -116,18 +116,18 @@ namespace TheManager
         /// Championship where play the club
         /// <returns>null if the club don't play in championship (for example national teams)</returns>
         /// </summary>
-        public Competition Championship
+        public Tournament Championship
         {
             get
             {
-                Competition res = null;
+                Tournament res = null;
 
-                foreach(Competition tournament in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach(Tournament tournament in Session.Instance.Partie.Gestionnaire.Competitions)
                 {
-                    if(tournament.Championnat)
+                    if(tournament.isChampionship)
                     {
                         
-                        foreach (Club cl in tournament.Tours[0].Clubs)
+                        foreach (Club cl in tournament.rounds[0].Clubs)
                         {
                             if (cl == this)
                             {

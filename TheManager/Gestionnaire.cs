@@ -60,15 +60,15 @@ namespace TheManager
 
         public List<Club> Clubs { get => _clubs; }
 
-        public List<Competition> Competitions
+        public List<Tournament> Competitions
         {
             get
             {
-                List<Competition> res = new List<Competition>();
+                List<Tournament> res = new List<Tournament>();
                 foreach(Continent c in _continents)
                 {
-                    foreach (Competition cp in c.Competitions()) res.Add(cp);
-                    foreach (Pays p in c.Pays) foreach (Competition cp in p.Competitions()) res.Add(cp);
+                    foreach (Tournament cp in c.Competitions()) res.Add(cp);
+                    foreach (Pays p in c.Pays) foreach (Tournament cp in p.Competitions()) res.Add(cp);
                 }
                 return res;
             }
@@ -122,9 +122,9 @@ namespace TheManager
             get
             {
                 List<Match> res = new List<Match>();
-                foreach(Competition c in Competitions)
+                foreach(Tournament c in Competitions)
                 {
-                    foreach(Tour t in c.Tours)
+                    foreach(Tour t in c.rounds)
                     {
                         foreach (Match m in t.Matchs) res.Add(m);
                     }
@@ -139,10 +139,10 @@ namespace TheManager
         /// </summary>
         /// <param name="c"></param>
         /// <returns></returns>
-        public List<Joueur> ListeTransferts(Competition c)
+        public List<Joueur> ListeTransferts(Tournament c)
         {
             List<Joueur> joueurs = new List<Joueur>();
-            Tour tourChampionnat = c.Tours[0];
+            Tour tourChampionnat = c.rounds[0];
 
             foreach(Club club in tourChampionnat.Clubs)
             {
@@ -191,12 +191,12 @@ namespace TheManager
             return res;
         }
 
-        public Competition String2Competition(string nom)
+        public Tournament String2Competition(string nom)
         {
-            Competition res = null;
-            foreach(Competition competition in Competitions)
+            Tournament res = null;
+            foreach(Tournament competition in Competitions)
             {
-                if (competition.Nom == nom) res = competition;
+                if (competition.name == nom) res = competition;
             }
             return res;
         }
@@ -303,7 +303,7 @@ namespace TheManager
             return res;
         }
 
-        public ILocalisation LocalisationCompetition(Competition competition)
+        public ILocalisation LocalisationCompetition(Tournament competition)
         {
             ILocalisation res = null;
             foreach(Continent c in _continents)
@@ -316,8 +316,8 @@ namespace TheManager
 
         public void AjouterMatchAmical(Match m)
         {
-            Competition amc = String2Competition("Matchs amicaux");
-            amc.Tours[0].Matchs.Add(m);
+            Tournament amc = String2Competition("Matchs amicaux");
+            amc.rounds[0].Matchs.Add(m);
         }
 
         public void AjouterCommmentaireMatch(GameEvent evenement, string commentaire)

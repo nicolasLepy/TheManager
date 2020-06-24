@@ -25,7 +25,7 @@ namespace TheManager
             }
             catch
             {
-                Console.WriteLine("Le tri pour " + _tour.Nom + "(" + _tour.Competition.Nom + " de type niveau a echoué");
+                Console.WriteLine("Le tri pour " + _tour.Nom + "(" + _tour.Competition.name + " de type niveau a echoué");
             }
             int equipesParPoule = _tour.Clubs.Count / _tour.NombrePoules;
             List<Club>[] pots = new List<Club>[equipesParPoule];

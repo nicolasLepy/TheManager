@@ -86,13 +86,13 @@ namespace TheManager_GUI
 
         private void LbChampionnats_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Competition c = lbChampionnats.SelectedItem as Competition;
+            Tournament c = lbChampionnats.SelectedItem as Tournament;
             if(c != null)
             {
                 lbTours.Items.Clear();
                 dgClassement.Items.Clear();
                 dgMatchs.Items.Clear();
-                foreach (Tour t in c.Tours)
+                foreach (Tour t in c.rounds)
                 {
                     lbTours.Items.Add(t);
                 }
@@ -189,7 +189,7 @@ namespace TheManager_GUI
             {
                 lbChampionnats.Items.Clear();
                 lbTours.Items.Clear();
-                foreach (Competition c in localisation.Competitions())
+                foreach (Tournament c in localisation.Competitions())
                 {
                     this.lbChampionnats.Items.Add(c);
                 }
@@ -216,7 +216,7 @@ namespace TheManager_GUI
                 //Choix de la compétition à afficher dans le bandeau : compétition du dernier match joué par l'équipe
                 List<Match> matchs = _partie.Club.Games;
                 bool trouve = false;
-                Competition comp = null;
+                Tournament comp = null;
                 int i = 0;
                 if (matchs.Count == 0) trouve = true;
                 while(!trouve)
@@ -233,10 +233,10 @@ namespace TheManager_GUI
                 if(comp != null)
                 {
                     Tour t = null;
-                    if (comp.Championnat)
+                    if (comp.isChampionship)
                     {
-                        t = comp.Tours[0];
-                        tbActu.Text = comp.Nom + " : ";
+                        t = comp.rounds[0];
+                        tbActu.Text = comp.name + " : ";
                         i = 1;
                         TourChampionnat tc = t as TourChampionnat;
                         foreach (Club c in tc.Classement())
@@ -247,8 +247,8 @@ namespace TheManager_GUI
                     }
                     else
                     {
-                        t = comp.Tours[comp.TourActuel];
-                        tbActu.Text += comp.Nom + ", " + t.Nom + " : ";
+                        t = comp.rounds[comp.currentRound];
+                        tbActu.Text += comp.name + ", " + t.Nom + " : ";
                         foreach(Match m in t.Matchs)
                         {
                             tbActu.Text += m.Domicile.shortName + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.shortName + ", ";
@@ -263,7 +263,7 @@ namespace TheManager_GUI
             dgClubClassement.Items.Clear();
             if(_partie.Club != null && _partie.Club.Championship != null)
             {
-                Tour championnat = _partie.Club.Championship.Tours[0];
+                Tour championnat = _partie.Club.Championship.rounds[0];
                 List<Club> classement = (championnat as TourChampionnat).Classement();
                 int indice = classement.IndexOf(_partie.Club);
                 indice = indice - 2;
@@ -315,7 +315,7 @@ namespace TheManager_GUI
                         {
                             score = m.Jour.ToShortDateString();
                         }
-                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Competition.NomCourt, Equipe1 = m.Domicile.shortName, Equipe2 = m.Exterieur.shortName, Score = score, LogoD = Utils.Logo(m.Domicile), LogoE = Utils.Logo(m.Exterieur) });
+                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Competition.shortName, Equipe1 = m.Domicile.shortName, Equipe2 = m.Exterieur.shortName, Score = score, LogoD = Utils.Logo(m.Domicile), LogoE = Utils.Logo(m.Exterieur) });
                     }
                 }
             }
@@ -347,12 +347,12 @@ namespace TheManager_GUI
                 string equipe1 = m.Domicile.shortName;
                 string equipe2 = m.Exterieur.shortName;
 
-                Competition champD = m.Domicile.Championship;
-                Competition champE = m.Exterieur.Championship;
+                Tournament champD = m.Domicile.Championship;
+                Tournament champE = m.Exterieur.Championship;
                 if (te != null && champD != null && champE != null)
                 {
-                    equipe1 += " (" + champD.NomCourt + ")";
-                    equipe2 += " (" + champE.NomCourt + ")";
+                    equipe1 += " (" + champD.shortName + ")";
+                    equipe2 += " (" + champE.shortName + ")";
                 }
                 dgMatchs.Items.Add(new CalendrierElement { Heure = m.Jour.ToShortTimeString(), Equipe1 = equipe1, Equipe2 = equipe2, Score = score, Affluence = affluence, Match = m, Cote1 = m.Cote1.ToString("0.00"), Cote2 = m.Cote2.ToString("0.00"), CoteN = m.CoteN.ToString("0.00") });
             }
@@ -369,7 +369,7 @@ namespace TheManager_GUI
 
         private void BtnParticipants_Click(object sender, RoutedEventArgs e)
         {
-            Competition c = lbChampionnats.SelectedItem as Competition;
+            Tournament c = lbChampionnats.SelectedItem as Tournament;
             if (c != null)
             {
                 Windows_Participants participants = new Windows_Participants(c);
@@ -404,7 +404,7 @@ namespace TheManager_GUI
 
         private void BtnCompetition_Click(object sender, RoutedEventArgs e)
         {
-            Competition c = lbChampionnats.SelectedItem as Competition;
+            Tournament c = lbChampionnats.SelectedItem as Tournament;
             if(c != null)
             {
                 Windows_Competition wc = new Windows_Competition(c);

@@ -26,7 +26,7 @@ namespace TheManager
             List<int> level = _level2;
             if(match.Domicile.Championship != null)
             {
-                switch(match.Domicile.Championship.Niveau)
+                switch(match.Domicile.Championship.level)
                 {
                     case 1: level = _level2; break;
                     case 2: level = _level2; break;
@@ -435,9 +435,9 @@ namespace TheManager
 
                 if(round.Regles.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
-                    Competition champH = home.Championship;
-                    Competition champA = away.Championship;
-                    if((champH != null && champA != null) && champA.Niveau - champH.Niveau >= 2)
+                    Tournament champH = home.Championship;
+                    Tournament champA = away.Championship;
+                    if((champH != null && champA != null) && champA.level - champH.level >= 2)
                     {
                         Club temp = home;
                         home = away;

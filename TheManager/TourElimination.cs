@@ -120,27 +120,27 @@ namespace TheManager
                 foreach (Match m in matchs)
                 {
                     Club c = null;
-                    //Vainqueurs
+                    //Winners
                     if (q.Classement == 1)
                     {
                         c = m.Vainqueur;
-                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                        if (!q.AnneeSuivante) q.Competition.rounds[q.IDTour].Clubs.Add(c);
+                        else q.Competition.AddClubForNextYear(c, q.IDTour);
                     }
-                    //Perdants
+                    //Losers
                     else if (q.Classement == 2)
                     {
                         c = m.Perdant;
-                        if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
-                        else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
+                        if (!q.AnneeSuivante) q.Competition.rounds[q.IDTour].Clubs.Add(c);
+                        else q.Competition.AddClubForNextYear(c, q.IDTour);
                     }
                     if(c != null)
                     {
-                        if (q.Competition.Championnat && c.Championship != null)
+                        if (q.Competition.isChampionship && c.Championship != null)
                         {
-                            if (q.Competition.Niveau > c.Championship.Niveau)
+                            if (q.Competition.level > c.Championship.level)
                                 c.supporters = (int)(c.supporters * 1.4f);
-                            else if (q.Competition.Niveau < c.Championship.Niveau)
+                            else if (q.Competition.level < c.Championship.level)
                                 c.supporters = (int)(c.supporters / 1.4f);
                         }
                     }

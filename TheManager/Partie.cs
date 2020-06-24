@@ -48,9 +48,9 @@ namespace TheManager
             _club = null;
         }
 
-        public void Exportations(Competition c)
+        public void Exportations(Tournament c)
         {
-            if (Utils.CompareDatesWithoutYear(c.DebutSaison.AddDays(-7), _date) && Options.CompetitionsAExporter.Contains(c))
+            if (Utils.CompareDatesWithoutYear(c.seasonBeginning.AddDays(-7), _date) && Options.CompetitionsAExporter.Contains(c))
             {
                 Exporteur.Exporter(c);
             }
@@ -199,18 +199,18 @@ namespace TheManager
             }
         }
 
-        private void EtablrMediasPourCompetition(List<Match> listeMatchs, Competition c)
+        private void EtablrMediasPourCompetition(List<Match> listeMatchs, Tournament c)
         {
             List<Match> matchs = new List<Match>(listeMatchs);
             foreach(Media media in _gestionnaire.Medias)
             {
-                if(media.Couvre(c,c.TourActuel))
+                if(media.Couvre(c,c.currentRound))
                 {
                     int nbMatchsASuivre = matchs.Count;
                     CouvertureCompetition cc = media.GetCouverture(c);
                     if (cc.NombreMatchsMiniMultiplex != -1 && matchs.Count >= cc.NombreMatchsMiniMultiplex)
                     {
-                        Tour t = c.Tours[c.TourActuel];
+                        Tour t = c.rounds[c.currentRound];
                         int nbMatchsParJournee = t.Clubs.Count/2;
                         int nbJournees = t.Matchs.Count / nbMatchsParJournee;
                         int j = (t.Matchs.IndexOf(listeMatchs[0]) / nbMatchsParJournee) + 1;
@@ -326,12 +326,12 @@ namespace TheManager
             foreach (Media m in _gestionnaire.Medias) m.LibererJournalistes();
 
             
-            foreach (Competition c in _gestionnaire.Competitions)
+            foreach (Tournament c in _gestionnaire.Competitions)
             {
                 List<Match> matchsDuJour = new List<Match>();
-                if(c.TourActuel > -1)
+                if(c.currentRound > -1)
                 {
-                    Tour enCours = c.Tours[c.TourActuel];
+                    Tour enCours = c.rounds[c.currentRound];
                     foreach (Match m in enCours.Matchs)
                     {
                         if (Utils.CompareDates(m.Jour, _date))
@@ -346,7 +346,7 @@ namespace TheManager
                             {
                                 //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
                                 //m.Jouer();
-                                if (c.Championnat && (Date.Month == 1 || Date.Month == 12) && Session.Instance.Random(1, 26) == 2)
+                                if (c.isChampionship && (Date.Month == 1 || Date.Month == 12) && Session.Instance.Random(1, 26) == 2)
                                     m.Reprogrammer(3);
                                 else
                                 {
@@ -359,7 +359,7 @@ namespace TheManager
                     }
                     EtablrMediasPourCompetition(matchsDuJour, c);
                 }
-                foreach(Tour t in c.Tours)
+                foreach(Tour t in c.rounds)
                 {
                     if(Utils.CompareDatesWithoutYear(t.Programmation.Fin, _date))
                     {
@@ -367,13 +367,13 @@ namespace TheManager
                     }
                     if (Utils.CompareDatesWithoutYear (t.Programmation.Initialisation, _date))
                     {
-                        c.TourSuivant();
+                        c.NextRound();
                     }
                 }
 
-                if(Utils.CompareDatesWithoutYear(c.DebutSaison,_date))
+                if(Utils.CompareDatesWithoutYear(c.seasonBeginning,_date))
                 {
-                    c.RAZ();
+                    c.Reset();
                 }
 
                 if (Options.Exporter) Exportations(c);

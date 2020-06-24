@@ -53,7 +53,7 @@ namespace TheManager_GUI.VueClassement
                 img1.Source = new BitmapImage(new Uri(Utils.Logo(m.Domicile)));
 
                 Label l3 = new Label();
-                l3.Content = m.Domicile.name + (m.Domicile as CityClub != null ? " (" + m.Domicile.Championship.NomCourt + ")" : "");
+                l3.Content = m.Domicile.name + (m.Domicile as CityClub != null ? " (" + m.Domicile.Championship.shortName + ")" : "");
                 l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l3.FontSize = 10;
                 l3.Width = 100;
@@ -67,7 +67,7 @@ namespace TheManager_GUI.VueClassement
                 btnScore.Width = 65;
 
                 Label l5 = new Label();
-                l5.Content = m.Exterieur.name + (m.Exterieur as CityClub != null ? " (" + m.Exterieur.Championship.NomCourt + ")" : "");
+                l5.Content = m.Exterieur.name + (m.Exterieur as CityClub != null ? " (" + m.Exterieur.Championship.shortName + ")" : "");
                 l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l5.FontSize = 10;
                 l5.Width = 100;
