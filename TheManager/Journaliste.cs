@@ -34,7 +34,7 @@ namespace TheManager
             get
             {
                 Media res = null;
-                foreach(Media m in Session.Instance.Partie.Gestionnaire.Medias)
+                foreach(Media m in Session.Instance.Partie.Gestionnaire.medias)
                 {
                     foreach (Journaliste j in m.Journalistes) if (j == this) res = m;
                 }

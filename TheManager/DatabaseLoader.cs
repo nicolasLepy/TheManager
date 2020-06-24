@@ -17,8 +17,8 @@ namespace TheManager
 
         private Dictionary<int, Club> _clubsId;
 
-        private Gestionnaire _kernel;
-        public DatabaseLoader(Gestionnaire kernel)
+        private Kernel _kernel;
+        public DatabaseLoader(Kernel kernel)
         {
             _kernel = kernel;
             _clubsId = new Dictionary<int, Club>();
@@ -62,8 +62,8 @@ namespace TheManager
                 int age = int.Parse(joueur[1]);
                 DateTime naissance = new DateTime(2019 - age, 1, 1);
                 string paysNom = joueur[2];
-                Pays pays = _kernel.String2Pays(paysNom);
-                if (pays == null) pays = _kernel.String2Pays("France");
+                Pays pays = _kernel.String2Country(paysNom);
+                if (pays == null) pays = _kernel.String2Country("France");
                 int niveau = int.Parse(joueur[3]) - 2;
                 int potentiel = int.Parse(joueur[4]) - 2;
                 int idclub = 0;
@@ -192,7 +192,7 @@ namespace TheManager
                             gameEvent = GameEvent.Goal;
                             break;
                     }
-                    _kernel.AjouterCommmentaireMatch(gameEvent, content);
+                    _kernel.AddMatchCommentary(gameEvent, content);
                 }
             }
         }
@@ -205,16 +205,16 @@ namespace TheManager
                 foreach (XElement e2 in e.Descendants("Media"))
                 {
                     string name = e2.Attribute("nom").Value;
-                    Pays country = _kernel.String2Pays(e2.Attribute("pays").Value);
+                    Pays country = _kernel.String2Country(e2.Attribute("pays").Value);
                     Media m = new Media(name, country);
-                    _kernel.Medias.Add(m);
+                    _kernel.medias.Add(m);
 
                     foreach (XElement e3 in e2.Descendants("Journaliste"))
                     {
                         string firstName = e3.Attribute("prenom").Value;
                         string lastName = e3.Attribute("nom").Value;
                         int age = int.Parse(e3.Attribute("age").Value);
-                        Ville city = _kernel.String2Ville(e3.Attribute("ville").Value);
+                        Ville city = _kernel.String2City(e3.Attribute("ville").Value);
                         int offset = 0;
                         if(e3.Attribute("retrait") != null)
                             offset = int.Parse(e3.Attribute("retrait").Value);
@@ -227,7 +227,7 @@ namespace TheManager
                     foreach (XElement e3 in e2.Descendants("Couvre"))
                     {
                         int index = int.Parse(e3.Attribute("aPartir").Value);
-                        Tournament tournament = _kernel.String2Competition(e3.Attribute("competition").Value);
+                        Tournament tournament = _kernel.String2Tournament(e3.Attribute("competition").Value);
                         int averageGames = -1;
                         int multiplexMinGames = -1;
                         if (e3.Attribute("matchParMultiplex") != null) averageGames = int.Parse(e3.Attribute("matchParMultiplex").Value);
@@ -268,7 +268,7 @@ namespace TheManager
                             position = Position.Defender;
                             break;
                     }
-                    Joueur j = new Joueur(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Pays("France"), position);
+                    Joueur j = new Joueur(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Country("France"), position);
                     club.AddPlayer(new Contract(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                 }
             }
@@ -287,7 +287,7 @@ namespace TheManager
                     string clubName = e2.Attribute("club").Value;
                     CityClub club = _kernel.String2Club(clubName) as CityClub;
                     string countryName = e2.Attribute("nationalite").Value;
-                    Pays country = _kernel.String2Pays(countryName);
+                    Pays country = _kernel.String2Country(countryName);
                     Manager manager = new Manager(firstName, lastName, level, new DateTime(1970, 1, 1), country);
                     club.manager = manager;
                 }
@@ -305,7 +305,7 @@ namespace TheManager
                     int population = int.Parse(e2.Element("Population").Value);
                     float lat = float.Parse(e2.Element("Latitute").Value, CultureInfo.InvariantCulture);
                     float lon = float.Parse(e2.Element("Longitude").Value, CultureInfo.InvariantCulture);
-                    _kernel.String2Pays("France").Villes.Add(new Ville(name, population, lat, lon));
+                    _kernel.String2Country("France").Villes.Add(new Ville(name, population, lat, lon));
 
                 }
             }
@@ -324,7 +324,7 @@ namespace TheManager
                     {
                         string countryName = e3.Attribute("nom").Value;
                         string language = e3.Attribute("langue").Value;
-                        Langue l = _kernel.String2Langue(language);
+                        Langue l = _kernel.String2Language(language);
                         Pays p = new Pays(countryName,l);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
@@ -338,7 +338,7 @@ namespace TheManager
                         }
                         c.countries.Add(p);
                     }
-                    _kernel.Continents.Add(c);
+                    _kernel.continents.Add(c);
                 }
             }
         }
@@ -353,7 +353,7 @@ namespace TheManager
                     string name = e2.Attribute("nom").Value;
                     int capacity = int.Parse(e2.Attribute("capacite").Value);
                     string cityName = e2.Attribute("ville").Value;
-                    Ville v = _kernel.String2Ville(cityName);
+                    Ville v = _kernel.String2City(cityName);
                     Stade s = new Stade(name, capacity, v);
                     v.Pays().Stades.Add(s);
                 }
@@ -377,13 +377,13 @@ namespace TheManager
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
 
                     string cityName = e2.Attribute("ville").Value;
-                    Ville city = _kernel.String2Ville(cityName);
+                    Ville city = _kernel.String2City(cityName);
 
                     Stade stadium = null;
                     if (e2.Attribute("stade") != null)
                     {
                         string stadiumName = e2.Attribute("stade").Value;
-                        stadium = _kernel.String2Stade(stadiumName);
+                        stadium = _kernel.String2Stadium(stadiumName);
                         if(stadium == null)
                         {
                             int capacite = 1000;
@@ -431,13 +431,13 @@ namespace TheManager
                     string shortName = name;
                     int reputation = int.Parse(e2.Attribute("reputation").Value);
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
-                    Pays country = _kernel.String2Pays(e2.Attribute("pays").Value);
+                    Pays country = _kernel.String2Country(e2.Attribute("pays").Value);
 
                     Stade stadium = null;
                     if (e2.Attribute("stade") != null)
                     {
                         string nom_stade = e2.Attribute("stade").Value;
-                        stadium = _kernel.String2Stade(nom_stade);
+                        stadium = _kernel.String2Stadium(nom_stade);
                     }
                     if (stadium == null)
                         stadium = new Stade("Stade de " + shortName, 15000, null);
@@ -495,7 +495,7 @@ namespace TheManager
                 foreach(XElement e2 in e.Descendants("Competition"))
                 {
                     string name = e2.Attribute("nom").Value;
-                    Tournament c = _kernel.String2Competition(name);
+                    Tournament c = _kernel.String2Tournament(name);
                     foreach(XElement e3 in e2.Descendants("Tour"))
                     {
                         Tour round = null;
@@ -600,7 +600,7 @@ namespace TheManager
                         foreach(XElement e4 in e3.Descendants("Participants"))
                         {
                             int number = int.Parse(e4.Attribute("nombre").Value);
-                            IEquipesRecuperables source = null;
+                            IRecoverableTeams source = null;
                             XAttribute continent = e4.Attribute("continent");
                             if(continent != null)
                             {
@@ -610,7 +610,7 @@ namespace TheManager
                             {
                                 string competitionName = e4.Attribute("competition").Value;
                                 int tourIndex = int.Parse(e4.Attribute("idTour").Value);
-                                Tournament comp = _kernel.String2Competition(competitionName);
+                                Tournament comp = _kernel.String2Tournament(competitionName);
                                 Tour r = comp.rounds[tourIndex];
                                 source = r;
                             }
@@ -668,7 +668,7 @@ namespace TheManager
                             bool nextYear = false;
                             if (e4.Attribute("anneeSuivante") != null) nextYear = e4.Attribute("anneeSuivante").Value == "oui" ? true : false;
                             Tournament targetedTournament = null;
-                            if (e4.Attribute("competition") != null) targetedTournament = _kernel.String2Competition(e4.Attribute("competition").Value);
+                            if (e4.Attribute("competition") != null) targetedTournament = _kernel.String2Tournament(e4.Attribute("competition").Value);
                             else targetedTournament = c;
 
                             //Deux cas
@@ -721,7 +721,7 @@ namespace TheManager
             {
                 language.AjouterNom(line);
             }
-            _kernel.Langues.Add(language);
+            _kernel.languages.Add(language);
         }
 
         public void InitTeams()
@@ -748,7 +748,7 @@ namespace TheManager
                 SelectionNationale nationalTeam = c as SelectionNationale;
                 if(nationalTeam != null)
                 {
-                    int gap = 30 - _kernel.NombreJoueursPays(nationalTeam.Pays); 
+                    int gap = 30 - _kernel.NumberPlayersOfCountry(nationalTeam.Pays); 
                     if(gap > 0)
                     {
                         for(int i =0; i<gap; i++)
@@ -764,12 +764,12 @@ namespace TheManager
                                 case 7: case 8: p = Position.Striker;  break;
                             }
                             Joueur j = new Joueur(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.Pays, p);
-                            _kernel.JoueursLibres.Add(j);
+                            _kernel.freePlayers.Add(j);
                         }
                     }
                 }
             }
-            _kernel.AppelsSelection();
+            _kernel.NationalTeamsCall();
         }
 
         private DateTime String2Date(string date)

@@ -7,7 +7,7 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
-    public class TirageAuSortGeographique : ITirageAuSort
+    public class TirageAuSortGeographique : IRandomDrawing
     {
 
         private TourPoules _tour;
@@ -17,7 +17,7 @@ namespace TheManager
             _tour = tour;
         }
 
-        public void TirerAuSort()
+        public void RandomDrawing()
         {
             int nbClubsParPoule = _tour.Clubs.Count / _tour.NombrePoules;
             List<Club> clubs = new List<Club>(_tour.Clubs);

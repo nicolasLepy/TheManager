@@ -213,10 +213,10 @@ namespace TheManager_GUI
             
             ChartValues<int> budgets = new ChartValues<int>();
             ChartValues<int> centreFormation = new ChartValues<int>();
-            foreach (EntreeHistorique eh in c.history.Elements)
+            foreach (HistoricEntry eh in c.history.elements)
             {
-                budgets.Add(eh.Budget);
-                centreFormation.Add(eh.CentreFormation);
+                budgets.Add(eh.budget);
+                centreFormation.Add(eh.formationFacilities);
             }
 
             BudgetsCollection = new SeriesCollection
@@ -239,11 +239,11 @@ namespace TheManager_GUI
                 }
             };
 
-            LabelsAnnees = new string[c.history.Elements.Count];
+            LabelsAnnees = new string[c.history.elements.Count];
             int i = 0;
-            foreach(EntreeHistorique eh in c.history.Elements)
+            foreach(HistoricEntry eh in c.history.elements)
             {
-                LabelsAnnees[i] = c.history.Elements[i].Date.Year.ToString();
+                LabelsAnnees[i] = c.history.elements[i].date.Year.ToString();
                 i++;
             }
             YFormatter = value => value.ToString("C");

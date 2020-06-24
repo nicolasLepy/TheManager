@@ -38,7 +38,7 @@ namespace TheManager_GUI
 
             imgClub.Source = new BitmapImage(new Uri(Utils.Logo(_partie.Club)));
             comboPays.Items.Clear();
-            foreach (Continent c in _partie.Gestionnaire.Continents)
+            foreach (Continent c in _partie.Gestionnaire.continents)
             {
                 if (c.Tournaments().Count > 0) this.comboPays.Items.Add(c);
                 foreach (Pays p in c.countries) if (p.Tournaments().Count > 0) { this.comboPays.Items.Add(p); Console.WriteLine(p); }

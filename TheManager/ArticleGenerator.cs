@@ -7,24 +7,24 @@ using System.Xml.Linq;
 
 namespace TheManager
 {
-    public class GenerateurArticle
+    public class ArticleGenerator
     {
 
-        private static GenerateurArticle _instance = null;
+        private static ArticleGenerator _instance = null;
 
-        public static GenerateurArticle Instance
+        public static ArticleGenerator Instance
         {
             get
             {
                 if (_instance == null)
-                    _instance = new GenerateurArticle();
+                    _instance = new ArticleGenerator();
                 return _instance;
             }
         }
 
-        private GenerateurArticle()
+        private ArticleGenerator()
         {
-            ChargerArticles();
+            LoadArticles();
         }
 
         private List<string> _gl_f = new List<string>();
@@ -42,21 +42,21 @@ namespace TheManager
 
 
 
-        public string GenererArticle(Match match)
+        public string GenerateArticle(Match match)
         {
             string res = "";
-            Club equ1 = match.Vainqueur;
-            Club equ2 = match.Perdant;
-            float niv1 = equ1.Level();
-            float niv2 = equ2.Level();
+            Club team1 = match.Vainqueur;
+            Club team2 = match.Perdant;
+            float niv1 = team1.Level();
+            float niv2 = team2.Level();
             int score1 = match.Score1;
             int score2 = match.Score2;
             
-            //Vainqueur est favori
+            //Winner is favorite
             if(niv1-niv2 > 8)
             {
                 //Large victoire
-                if ((equ1 == match.Domicile && score1 - score2 > 2) || (equ1 == match.Exterieur && score2 - score1 > 2))
+                if ((team1 == match.Domicile && score1 - score2 > 2) || (team1 == match.Exterieur && score2 - score1 > 2))
                 {
                     res = _gl_f[Session.Instance.Random(0, _gl_f.Count)];
                 }
@@ -76,7 +76,7 @@ namespace TheManager
             else if(niv1-niv2 < -8)
             {
                 //Large victoire
-                if ((equ1 == match.Domicile && score1 - score2 > 2) || (equ1 == match.Exterieur && score2 - score1 > 2))
+                if ((team1 == match.Domicile && score1 - score2 > 2) || (team1 == match.Exterieur && score2 - score1 > 2))
                 {
                     res = _gl_o[Session.Instance.Random(0, _gl_o.Count)];
                 }
@@ -96,7 +96,7 @@ namespace TheManager
             else
             {
                 //Large victoire
-                if ((equ1 == match.Domicile && score1 - score2 > 2) || (equ1 == match.Exterieur && score2 - score1 > 2))
+                if ((team1 == match.Domicile && score1 - score2 > 2) || (team1 == match.Exterieur && score2 - score1 > 2))
                 {
                     res = _gl_e[Session.Instance.Random(0, _gl_e.Count)];
                 }
@@ -112,13 +112,13 @@ namespace TheManager
                 }
             }
 
-            res = res.Replace("VAINQUEUR", equ1.shortName);
-            res = res.Replace("VAINCU", equ2.shortName);
+            res = res.Replace("VAINQUEUR", team1.shortName);
+            res = res.Replace("VAINCU", team2.shortName);
             res = res.Replace("SCORE", score1 + "-" + score2);
             return res;
         }
 
-        private void ChargerArticles()
+        private void LoadArticles()
         {
             XDocument doc = XDocument.Load("Donnees/articles.xml");
             foreach (XElement e in doc.Descendants("Articles"))

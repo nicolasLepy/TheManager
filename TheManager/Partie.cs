@@ -14,7 +14,7 @@ namespace TheManager
         [DataMember]
         private DateTime _date;
         [DataMember]
-        private Gestionnaire _gestionnaire;
+        private Kernel _gestionnaire;
         [DataMember]
         private Options _options;
         [DataMember]
@@ -26,7 +26,7 @@ namespace TheManager
         /// Date du jeur
         /// </summary>
         public DateTime Date { get { return _date; } }
-        public Gestionnaire Gestionnaire { get => _gestionnaire; }
+        public Kernel Gestionnaire { get => _gestionnaire; }
         public Options Options { get => _options; }
         /// <summary>
         /// Club controllé par le joueur
@@ -43,7 +43,7 @@ namespace TheManager
         {
             _articles = new List<Article>();
             _date = new DateTime(2018, 07, 01);
-            _gestionnaire = new Gestionnaire();
+            _gestionnaire = new Kernel();
             _options = new Options();
             _club = null;
         }
@@ -85,7 +85,7 @@ namespace TheManager
         /// </summary>
         public void MiseAJourJournalistes()
         {
-            foreach(Media m in _gestionnaire.Medias)
+            foreach(Media m in _gestionnaire.medias)
             {
                 for(int i = 0;i<m.Journalistes.Count; i++)
                 {
@@ -110,7 +110,7 @@ namespace TheManager
                             {
                                 if(m.Journalistes.Remove(j))
                                 {
-                                    _gestionnaire.JournalistesLibres.Add(j);
+                                    _gestionnaire.freeJournalists.Add(j);
                                     i--;
                                 }
                             }
@@ -125,7 +125,7 @@ namespace TheManager
         {
 
             //Mise à jour du niveau des joueurs sans clubs
-            foreach (Joueur j in _gestionnaire.JoueursLibres)
+            foreach (Joueur j in _gestionnaire.freePlayers)
             {
                 j.MiseAJourNiveau();
             }
@@ -136,7 +136,7 @@ namespace TheManager
                 CityClub cv = c as CityClub;
                 if (cv != null)
                 {
-                    cv.history.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.budget, cv.formationFacilities));
+                    cv.history.elements.Add(new HistoricEntry(new DateTime(Date.Year, Date.Month, Date.Day), cv.budget, cv.formationFacilities));
                     //Prolonger les joueurs
                     List<Contract> joueursALiberer = new List<Contract>();
                     foreach (Contract ct in cv.contracts)
@@ -152,7 +152,7 @@ namespace TheManager
                     foreach (Contract ct in joueursALiberer)
                     {
                         cv.contracts.Remove(ct);
-                        _gestionnaire.JoueursLibres.Add(ct.player);
+                        _gestionnaire.freePlayers.Add(ct.player);
                     }
 
                     cv.GetSponsor();
@@ -202,7 +202,7 @@ namespace TheManager
         private void EtablrMediasPourCompetition(List<Match> listeMatchs, Tournament c)
         {
             List<Match> matchs = new List<Match>(listeMatchs);
-            foreach(Media media in _gestionnaire.Medias)
+            foreach(Media media in _gestionnaire.medias)
             {
                 if(media.Couvre(c,c.currentRound))
                 {
@@ -323,7 +323,7 @@ namespace TheManager
             List<Match> aJouer = new List<Match>();
             List<Match> matchClub = new List<Match>();
 
-            foreach (Media m in _gestionnaire.Medias) m.LibererJournalistes();
+            foreach (Media m in _gestionnaire.medias) m.LibererJournalistes();
 
             
             foreach (Tournament c in _gestionnaire.Competitions)
@@ -409,7 +409,7 @@ namespace TheManager
             //Les joueurs libres peuvent partir en retraite
             if (Date.Day == 2 && Date.Month == 7)
             {
-                _gestionnaire.RetraiteJoueursLibres();
+                _gestionnaire.RetirementOfFreePlayers();
             }
 
             //20 juillet => les équipes mettent en place le prix des billets
@@ -467,7 +467,7 @@ namespace TheManager
                     }
                 }
             }
-            foreach(Joueur j in _gestionnaire.JoueursLibres)
+            foreach(Joueur j in _gestionnaire.freePlayers)
             {
                 j.Recuperer();
             }

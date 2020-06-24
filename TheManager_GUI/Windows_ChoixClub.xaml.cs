@@ -28,7 +28,7 @@ namespace TheManager_GUI
             club = null;
             InitializeComponent();
 
-            foreach (Continent c in Session.Instance.Partie.Gestionnaire.Continents)
+            foreach (Continent c in Session.Instance.Partie.Gestionnaire.continents)
                 foreach (Pays p in c.countries)
                     cbNationalite.Items.Add(p);
 
@@ -41,7 +41,7 @@ namespace TheManager_GUI
 
             tvClubs.Items.Clear();
 
-            foreach(Continent c in Session.Instance.Partie.Gestionnaire.Continents)
+            foreach(Continent c in Session.Instance.Partie.Gestionnaire.continents)
             {
                 foreach(Pays p in c.countries)
                 {
@@ -155,7 +155,7 @@ namespace TheManager_GUI
             string nom = tbNom.Text;
             string[] strNaissance = dpNaissance.Text.Split('/');
             DateTime naissance = new DateTime( int.Parse(strNaissance[2]), int.Parse(strNaissance[1]), int.Parse(strNaissance[0]));
-            Pays nationalite = Session.Instance.Partie.Gestionnaire.String2Pays("France");
+            Pays nationalite = Session.Instance.Partie.Gestionnaire.String2Country("France");
             Pays pays_selected = cbNationalite.SelectedItem as Pays;
             if (pays_selected != null) nationalite = pays_selected;
 

@@ -15,7 +15,7 @@ namespace TheManager_Console
         {
             Partie partie = new Partie();
             Session.Instance.Partie = partie;
-            Gestionnaire g = partie.Gestionnaire;
+            Kernel g = partie.Gestionnaire;
             DatabaseLoader cbdd = new DatabaseLoader(g);
             cbdd.Load();
 

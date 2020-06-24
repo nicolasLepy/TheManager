@@ -9,7 +9,7 @@ using TheManager.Comparators;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
-    public class Continent : IEquipesRecuperables, ILocalisation
+    public class Continent : IRecoverableTeams, ILocalisation
     {
         [DataMember]
         private List<Pays> _countries;

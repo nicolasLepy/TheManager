@@ -7,7 +7,7 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
-    public class TirageAuSortParNiveau : ITirageAuSort
+    public class TirageAuSortParNiveau : IRandomDrawing
     {
         private TourPoules _tour;
 
@@ -16,7 +16,7 @@ namespace TheManager
             _tour = tour;
         }
 
-        public void TirerAuSort()
+        public void RandomDrawing()
         {
             List<Club> pot = new List<Club>(_tour.Clubs);
             try

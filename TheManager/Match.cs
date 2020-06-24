@@ -669,7 +669,7 @@ namespace TheManager
 
             if(Domicile == Session.Instance.Partie.Club || Exterieur == Session.Instance.Partie.Club)
             {
-                string res = GenerateurArticle.Instance.GenererArticle(this);
+                string res = ArticleGenerator.Instance.GenerateArticle(this);
                 Article article = new Article(res, "", new DateTime(Jour.Year, Jour.Month, Jour.Day), 2);
                 Session.Instance.Partie.Articles.Add(article);
             }
@@ -863,7 +863,7 @@ namespace TheManager
                 MatchEvent em = new MatchEvent(GameEvent.Goal, c, j, _minute, _miTemps);
                 if (j != null) j.ButsMarques++;
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentaire(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
             }
         }
 
@@ -879,7 +879,7 @@ namespace TheManager
 
                 MatchEvent em = new MatchEvent(GameEvent.YellowCard, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentaire(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
 
                 //Si c'est son deuxième jaune, carte rouge attribué
                 if (deuxiemeJaune == true)
@@ -904,7 +904,7 @@ namespace TheManager
                 CalculerDifferenceNiveau();
                 MatchEvent em = new MatchEvent(GameEvent.RedCard, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentaire(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
             }
         }
 
@@ -916,7 +916,7 @@ namespace TheManager
             {
                 MatchEvent em = new MatchEvent(GameEvent.Shot, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentaire(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
             }
         }
 

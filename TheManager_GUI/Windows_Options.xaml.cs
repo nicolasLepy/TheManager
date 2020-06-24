@@ -107,7 +107,7 @@ namespace TheManager_GUI
             Session.Instance.Partie.Options.CompetitionsAExporter.Clear();
             foreach(CheckBox cb in _checkbox)
             {
-                Tournament comp = Session.Instance.Partie.Gestionnaire.String2Competition(cb.Content.ToString());
+                Tournament comp = Session.Instance.Partie.Gestionnaire.String2Tournament(cb.Content.ToString());
                 if (cb.IsChecked == true)
                     Session.Instance.Partie.Options.CompetitionsAExporter.Add(comp);
             }

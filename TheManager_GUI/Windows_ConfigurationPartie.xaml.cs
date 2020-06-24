@@ -30,11 +30,11 @@ namespace TheManager_GUI
 
             Partie partie = new Partie();
             Session.Instance.Partie = partie;
-            Gestionnaire g = partie.Gestionnaire;
+            Kernel g = partie.Gestionnaire;
             DatabaseLoader cbdd = new DatabaseLoader(g);
             cbdd.Load();
 
-            foreach(Continent c in g.Continents)
+            foreach(Continent c in g.continents)
             {
                 StackPanel box = spCompEu;
                 switch (c.Name())
@@ -117,7 +117,7 @@ namespace TheManager_GUI
             {
                 if(cb.IsChecked == true)
                 {
-                    Tournament c = Session.Instance.Partie.Gestionnaire.String2Competition(cb.Content.ToString());
+                    Tournament c = Session.Instance.Partie.Gestionnaire.String2Tournament(cb.Content.ToString());
                     foreach (Club cl in c.rounds[0].Clubs)
                     {
                         nbClubs++;

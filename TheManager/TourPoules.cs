@@ -158,7 +158,7 @@ namespace TheManager
 
         private void DefinirPoules()
         {
-            ITirageAuSort tirage = null;
+            IRandomDrawing tirage = null;
             switch (_methodeTirageAuSort)
             {
                 case DrawingMethod.Level:
@@ -168,7 +168,7 @@ namespace TheManager
                     tirage = new TirageAuSortGeographique(this);
                     break;
             }
-            tirage.TirerAuSort();
+            tirage.RandomDrawing();
         }
 
         public override void DistribuerDotations()

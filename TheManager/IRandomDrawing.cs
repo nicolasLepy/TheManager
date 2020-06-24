@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace TheManager
 {
-    public interface ITirageAuSort
+    public interface IRandomDrawing
     {
-        void TirerAuSort();
+        void RandomDrawing();
     }
 }

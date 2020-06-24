@@ -28,12 +28,12 @@ namespace TheManager
     public struct RecuperationEquipes : IEquatable<RecuperationEquipes>
     {
         [DataMember]
-        public IEquipesRecuperables Source { get; set; }
+        public IRecoverableTeams Source { get; set; }
         [DataMember]
         public int Nombre { get; set; }
         [DataMember]
         public RecuperationMethod Methode { get; set; }
-        public RecuperationEquipes(IEquipesRecuperables source, int nombre, RecuperationMethod methode)
+        public RecuperationEquipes(IRecoverableTeams source, int nombre, RecuperationMethod methode)
         {
             Source = source;
             Nombre = nombre;
@@ -161,7 +161,7 @@ namespace TheManager
     [System.Xml.Serialization.XmlInclude(typeof(TourInactif))]
     [KnownType(typeof(TourPoules))]
     [System.Xml.Serialization.XmlInclude(typeof(TourPoules))]
-    public abstract class Tour : IEquipesRecuperables
+    public abstract class Tour : IRecoverableTeams
     {
         /// <summary>
         /// Nom du tour

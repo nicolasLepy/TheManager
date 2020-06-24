@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheManager
 {
-    public interface IEquipesRecuperables
+    public interface IRecoverableTeams
     {
         List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams);
     }

@@ -61,7 +61,7 @@ namespace TheManager
         [DataMember]
         private List<Contract> _players;
         [DataMember]
-        private HistoriqueClub _historic;
+        private ClubHistory _historic;
         [DataMember]
         private ClubTransfersManagement _clubTransfersManagement;
         [DataMember]
@@ -73,7 +73,7 @@ namespace TheManager
         public Ville city { get => _city; }
         public float sponsor { get => _sponsor; }
         public List<Contract> contracts { get => _players; }
-        public HistoriqueClub history { get => _historic; }
+        public ClubHistory history { get => _historic; }
         public ClubTransfersManagement clubTransfersManagement { get => _clubTransfersManagement; }
         public List<ReserveClub> reserves { get => _reserves; }
         private bool isFannionTeam { get => _isFannion; }
@@ -96,7 +96,7 @@ namespace TheManager
             _city = city;
             _sponsor = 0;
             _players = new List<Contract>();
-            _historic = new HistoriqueClub();
+            _historic = new ClubHistory();
             _clubTransfersManagement = new ClubTransfersManagement();
             _isFannion = isFannion;
             _reserves = new List<ReserveClub>();
@@ -361,7 +361,7 @@ namespace TheManager
                     begin = begin.AddHours(Session.Instance.Random(14, 22));
                     Match game = new Match(this, adv, begin, false);
                     game.Reprogrammer(0);
-                    Session.Instance.Partie.Gestionnaire.AjouterMatchAmical(game );
+                    Session.Instance.Partie.Gestionnaire.AddFriendlyGame(game );
                 }
             }
         }
@@ -403,7 +403,7 @@ namespace TheManager
             int playersFound = 0;
             while(pursue)
             {
-                Joueur j = Session.Instance.Partie.Gestionnaire.JoueursLibres[i];
+                Joueur j = Session.Instance.Partie.Gestionnaire.freePlayers[i];
                 //Likely to interest the club
                 if ((Session.Instance.Random(1,chance) == 1) && j.Niveau / level > 0.90f)
                 {
@@ -418,7 +418,7 @@ namespace TheManager
                     }
                 }
                 i++;
-                if (i == Session.Instance.Partie.Gestionnaire.JoueursLibres.Count || playersFound == playersToResearch)
+                if (i == Session.Instance.Partie.Gestionnaire.freePlayers.Count || playersFound == playersToResearch)
                     pursue = false;
             }
             clubTransfersManagement.targetedPlayers.Sort(new Joueur_Niveau_Comparator());

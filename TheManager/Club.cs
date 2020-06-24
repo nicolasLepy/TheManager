@@ -265,7 +265,7 @@ namespace TheManager
         /// <param name="newManager">The new manager of the club</param>
         public void ChangeManager(Manager newManager)
         {
-            Session.Instance.Partie.Gestionnaire.EntraineursLibres.Add(_manager);
+            Session.Instance.Partie.Gestionnaire.freeManagers.Add(_manager);
             _manager = newManager;
         }
 

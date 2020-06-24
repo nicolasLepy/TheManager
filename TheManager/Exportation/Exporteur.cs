@@ -24,9 +24,9 @@ namespace TheManager.Exportation
                     StringBuilder sb = new StringBuilder();
                     sb.Append("<h2>").Append(cv.name).Append("</h2>");
                     output += "<h2>" + cv.name + "</h2>";
-                    foreach(EntreeHistorique eh in cv.history.Elements)
+                    foreach(HistoricEntry eh in cv.history.elements)
                     {
-                        output += "<p><b>" + eh.Date.ToShortDateString() + "</b><br>Budget : " + eh.Budget + "<br>Centre de formation : " + eh.CentreFormation + "</p>";
+                        output += "<p><b>" + eh.date.ToShortDateString() + "</b><br>Budget : " + eh.budget + "<br>Centre de formation : " + eh.formationFacilities + "</p>";
                     }
                 }
             }

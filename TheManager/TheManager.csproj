@@ -77,12 +77,12 @@
     <Compile Include="MatchEvent.cs" />
     <Compile Include="Exportation\Exporteur.cs" />
     <Compile Include="Exportation\Exporteurs2.cs" />
-    <Compile Include="GenerateurArticle.cs" />
-    <Compile Include="Gestionnaire.cs" />
-    <Compile Include="Historique.cs" />
-    <Compile Include="IEquipesRecuperables.cs" />
+    <Compile Include="ArticleGenerator.cs" />
+    <Compile Include="Kernel.cs" />
+    <Compile Include="History.cs" />
+    <Compile Include="IRecoverableTeams.cs" />
     <Compile Include="ILocalisation.cs" />
-    <Compile Include="ITirageAuSort.cs" />
+    <Compile Include="IRandomDrawing.cs" />
     <Compile Include="Journaliste.cs" />
     <Compile Include="Langue.cs" />
     <Compile Include="Match.cs" />
