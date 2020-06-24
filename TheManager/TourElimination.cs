@@ -79,10 +79,10 @@ namespace TheManager
                 {
                     foreach(Match m in matchs)
                     {
-                        Club_Ville cv = m.Vainqueur as Club_Ville;
+                        CityClub cv = m.Vainqueur as CityClub;
                         if(cv != null)
                         {
-                            cv.ModifierBudget(d.Somme);
+                            cv.ModifyBudget(d.Somme);
                         }
                     }
                 }
@@ -90,10 +90,10 @@ namespace TheManager
                 {
                     foreach (Match m in matchs)
                     {
-                        Club_Ville cv = m.Perdant as Club_Ville;
+                        CityClub cv = m.Perdant as CityClub;
                         if (cv != null)
                         {
-                            cv.ModifierBudget(d.Somme);
+                            cv.ModifyBudget(d.Somme);
                         }
                     }
                 }

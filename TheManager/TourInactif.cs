@@ -66,10 +66,10 @@ namespace TheManager
             int nbMatchs = (int)((fin - Programmation.Initialisation).TotalDays) / 14;
             foreach (Club c in classement)
             {
-                Club_Ville cv = c as Club_Ville;
+                CityClub cv = c as CityClub;
                 if(cv != null)
                 {
-                    cv.ModifierBudget(nbMatchs * cv.supporters * cv.ticketPrice);
+                    cv.ModifyBudget(nbMatchs * cv.supporters * cv.ticketPrice);
                 }
             }
             foreach(Qualification q in _qualifications)

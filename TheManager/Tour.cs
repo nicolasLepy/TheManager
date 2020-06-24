@@ -507,7 +507,7 @@ namespace TheManager
             if(equipesPremieresUniquement)
             {
                 List<Club> aSupprimer = new List<Club>();
-                foreach (Club c in clubs) if (c as Club_Reserve != null) aSupprimer.Add(c);
+                foreach (Club c in clubs) if (c as ReserveClub != null) aSupprimer.Add(c);
                 foreach (Club c in aSupprimer) clubs.Remove(c);
             }
 

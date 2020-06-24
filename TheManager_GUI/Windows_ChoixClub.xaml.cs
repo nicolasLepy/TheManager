@@ -161,7 +161,7 @@ namespace TheManager_GUI
 
             if(club != null)
             {
-                Session.Instance.Partie.Club = club as Club_Ville;
+                Session.Instance.Partie.Club = club as CityClub;
                 Entraineur entraineur = new Entraineur(prenom, nom, 70, naissance, nationalite);
                 Session.Instance.Partie.Club.ChangeManager(entraineur);
                 Windows_Menu wm = new Windows_Menu();

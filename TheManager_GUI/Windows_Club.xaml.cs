@@ -119,7 +119,7 @@ namespace TheManager_GUI
             }
         }
 
-        public void Palmares(Club_Ville club)
+        public void Palmares(CityClub club)
         {
             foreach (Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
             {
@@ -149,7 +149,7 @@ namespace TheManager_GUI
             }
         }
 
-        public Windows_Club(Club_Ville c)
+        public Windows_Club(CityClub c)
         {
             InitializeComponent();
             _club = c;
@@ -176,7 +176,7 @@ namespace TheManager_GUI
             RemplirMatchs();
 
             
-            foreach (Contrat ct in c.Contrats)
+            foreach (Contrat ct in c.contracts)
             {
                 dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €", DebutContrat = ct.Debut.ToShortDateString(), Energie = ct.Joueur.Energie});
                 if((ct.Debut.Year == Session.Instance.Partie.Date.Year-1 && ct.Debut.Month < 7) || (ct.Debut.Year == Session.Instance.Partie.Date.Year && ct.Debut.Month >= 7))
@@ -213,7 +213,7 @@ namespace TheManager_GUI
             
             ChartValues<int> budgets = new ChartValues<int>();
             ChartValues<int> centreFormation = new ChartValues<int>();
-            foreach (EntreeHistorique eh in c.Historique.Elements)
+            foreach (EntreeHistorique eh in c.history.Elements)
             {
                 budgets.Add(eh.Budget);
                 centreFormation.Add(eh.CentreFormation);
@@ -239,11 +239,11 @@ namespace TheManager_GUI
                 }
             };
 
-            LabelsAnnees = new string[c.Historique.Elements.Count];
+            LabelsAnnees = new string[c.history.Elements.Count];
             int i = 0;
-            foreach(EntreeHistorique eh in c.Historique.Elements)
+            foreach(EntreeHistorique eh in c.history.Elements)
             {
-                LabelsAnnees[i] = c.Historique.Elements[i].Date.Year.ToString();
+                LabelsAnnees[i] = c.history.Elements[i].Date.Year.ToString();
                 i++;
             }
             YFormatter = value => value.ToString("C");

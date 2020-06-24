@@ -18,7 +18,7 @@ namespace TheManager
         [DataMember]
         private Options _options;
         [DataMember]
-        private Club_Ville _club;
+        private CityClub _club;
         [DataMember]
         private List<Article> _articles;
 
@@ -31,7 +31,7 @@ namespace TheManager
         /// <summary>
         /// Club controllé par le joueur
         /// </summary>
-        public Club_Ville Club { get => _club; set => _club = value; }
+        public CityClub Club { get => _club; set => _club = value; }
         /// <summary>
         /// Entraîneur représentant le joueur
         /// </summary>
@@ -133,33 +133,33 @@ namespace TheManager
             //On balaye tous les clubs
             foreach (Club c in _gestionnaire.Clubs)
             {
-                Club_Ville cv = c as Club_Ville;
+                CityClub cv = c as CityClub;
                 if (cv != null)
                 {
-                    cv.Historique.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.Budget, cv.formationFacilities));
+                    cv.history.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.budget, cv.formationFacilities));
                     //Prolonger les joueurs
                     List<Contrat> joueursALiberer = new List<Contrat>();
-                    foreach (Contrat ct in cv.Contrats)
+                    foreach (Contrat ct in cv.contracts)
                     {
                         ct.Joueur.MiseAJourNiveau();
                         if (ct.Fin.Year == Date.Year)
                         {
-                            if (!cv.Prolonger(ct)) joueursALiberer.Add(ct);
+                            if (!cv.Prolong(ct)) joueursALiberer.Add(ct);
 
                         }
                     }
                     //Libérer les joueurs non prolongés
                     foreach (Contrat ct in joueursALiberer)
                     {
-                        cv.Contrats.Remove(ct);
+                        cv.contracts.Remove(ct);
                         _gestionnaire.JoueursLibres.Add(ct.Joueur);
                     }
 
-                    cv.ObtenirSponsor();
-                    cv.MiseAJourCentreFormation();
-                    cv.GenererJeunes();
+                    cv.GetSponsor();
+                    cv.UpdateFormationFacilities();
+                    cv.GenerateJuniors();
                     //Mettre les joueurs les plus indésirables sur la liste des transferts
-                    cv.MettreAJourListeTransferts();
+                    cv.UpdateTransfertList();
 
                 }
             }
@@ -170,8 +170,8 @@ namespace TheManager
             //Premier jour du mercato, le club identifie une liste de joueurs à recruter
             if (Date.Month == 7 && Date.Day == 2)
             {
-                foreach (Club c in Gestionnaire.Clubs) if (c as Club_Ville != null)
-                        (c as Club_Ville).RechercherJoueursLibres();
+                foreach (Club c in Gestionnaire.Clubs) if (c as CityClub != null)
+                        (c as CityClub).SearchFreePlayers();
             }
             if (Date.Month == 7 || Date.Month == 8)
             {
@@ -189,11 +189,11 @@ namespace TheManager
                 //Clubs recherchent des joueurs libres
                 foreach (Club c in Gestionnaire.Clubs)
                 {
-                    Club_Ville cv = c as Club_Ville;
+                    CityClub cv = c as CityClub;
                     if (cv != null)
                     {
-                        cv.ConsiderationOffres();
-                        cv.FaireOffreJoueurs();
+                        cv.ConsiderateOffers();
+                        cv.SendOfferToPlayers();
                     }
                 }
             }
@@ -248,8 +248,8 @@ namespace TheManager
                     {
                         Match m = matchs[i];
                         Ville ville = null;
-                        if (m.Domicile as Club_Ville != null) ville = (m.Domicile as Club_Ville).Ville;
-                        if (m.Domicile as Club_Reserve != null) ville = (m.Domicile as Club_Reserve).EquipePremiere.Ville;
+                        if (m.Domicile as CityClub != null) ville = (m.Domicile as CityClub).city;
+                        if (m.Domicile as ReserveClub != null) ville = (m.Domicile as ReserveClub).FannionClub.city;
                         List<Journaliste> j = new List<Journaliste>();
                         foreach (Journaliste j1 in media.Journalistes) if (!j1.EstPris) j.Add(j1);
                         Journaliste commentateur = null;
@@ -423,10 +423,10 @@ namespace TheManager
             {
                 foreach (Club c in _gestionnaire.Clubs)
                 {
-                    Club_Ville cv = c as Club_Ville;
+                    CityClub cv = c as CityClub;
                     if (cv != null)
                     {
-                        cv.CompleterEquipe();
+                        cv.CompleteSquad();
                     }
                 }
             }
@@ -436,11 +436,11 @@ namespace TheManager
             {
                 foreach(Club c in _gestionnaire.Clubs)
                 {
-                    Club_Ville cv = c as Club_Ville;
+                    CityClub cv = c as CityClub;
                     if(cv != null)
                     {
-                        cv.PayerSalaires();
-                        cv.SubvensionSponsor();
+                        cv.PayWages();
+                        cv.SponsorGrant();
                     }
                 }
             }
@@ -450,16 +450,16 @@ namespace TheManager
             {
                 foreach(Club c in _gestionnaire.Clubs)
                 {
-                    Club_Ville cv = c as Club_Ville;
+                    CityClub cv = c as CityClub;
                     if(cv !=  null)
-                        cv.RemplirEquipesReserves();
+                        cv.DispatchPlayersInReserveTeams();
                 }
             }
 
             //Récupération des joueurs
             foreach(Club c in _gestionnaire.Clubs)
             {
-                if(c as Club_Ville != null)
+                if(c as CityClub != null)
                 {
                     foreach (Joueur j in c.Players())
                     {

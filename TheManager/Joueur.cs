@@ -19,8 +19,8 @@ namespace TheManager
         [DataMember]
         public int MatchsJoues { get; set; }
         [DataMember]
-        public Club_Ville Club { get; set; }
-        public HistoriqueJoueur(int niveau, int annee, int buts, int matchJoues, Club_Ville club)
+        public CityClub Club { get; set; }
+        public HistoriqueJoueur(int niveau, int annee, int buts, int matchJoues, CityClub club)
         {
             Niveau = niveau;
             Annee = annee;
@@ -51,7 +51,7 @@ namespace TheManager
         [DataMember]
         private List<HistoriqueJoueur> _historique;
         [DataMember]
-        private List<OffreContrat> _offres;
+        private List<ContractOffer> _offres;
 
         public int Niveau { get => _niveau; set => _niveau = value; }
         public int Potentiel { get => _potentiel; }
@@ -82,17 +82,17 @@ namespace TheManager
         /// <summary>
         /// Club actuel du joueur
         /// </summary>
-        public Club_Ville Club
+        public CityClub Club
         {
             get
             {
-                Club_Ville res = null;
+                CityClub res = null;
                 foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
                 {
-                    Club_Ville cv = c as Club_Ville;
+                    CityClub cv = c as CityClub;
                     if(cv != null)
                     {
-                        foreach(Contrat ct in cv.Contrats)
+                        foreach(Contrat ct in cv.contracts)
                         {
                             if (ct.Joueur == this)
                                 res = cv;
@@ -114,7 +114,7 @@ namespace TheManager
             _historique = new List<HistoriqueJoueur>();
             ButsMarques = 0;
             MatchsJoues = 0;
-            _offres = new List<OffreContrat>();
+            _offres = new List<ContractOffer>();
 
         }
 
@@ -182,7 +182,7 @@ namespace TheManager
         /// </summary>
         /// <param name="oc">L'offre à considérer</param>
         /// <returns>Vrai si l'offre à été acceptée par le joueur, faux sinon</returns>
-        public bool ConsidererOffre(OffreContrat oc, Club_Ville porteur)
+        public bool ConsidererOffre(ContractOffer oc, CityClub porteur)
         {
             bool res = false;
             //Si le joueur à un club
@@ -191,13 +191,13 @@ namespace TheManager
                 if (porteur.Level() - Club.Level() > Session.Instance.Random(-10, -5))
                 {
                     Contrat sonContrat = null;
-                    foreach (Contrat ct in Club.Contrats) if (ct.Joueur == this) sonContrat = ct;
+                    foreach (Contrat ct in Club.contracts) if (ct.Joueur == this) sonContrat = ct;
                     //Si le salaire proposé est en légère augmentation par rapport à son budget actuel
-                    if ((oc.Salaire + 0.0f) / sonContrat.Salaire > (Session.Instance.Random(100, 120) / 100.0f))
+                    if ((oc.Wage + 0.0f) / sonContrat.Salaire > (Session.Instance.Random(100, 120) / 100.0f))
                     {
                         Club ancien = Club;
-                        Club.RetirerJoueur(this);
-                        porteur.AjouterJoueur(new Contrat(this, oc.Salaire, new DateTime(Session.Instance.Partie.Date.Year + oc.DureeContrat, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+                        Club.RemovePlayer(this);
+                        porteur.AddPlayer(new Contrat(this, oc.Wage, new DateTime(Session.Instance.Partie.Date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                         res = true;
                     }
                 }
@@ -205,9 +205,9 @@ namespace TheManager
             else
             {
                 //Si l'offre du salaire n'est pas trop mauvaise (au moins entre 0.7 et 1 de sa "vrai valeur salariale")
-                if ((oc.Salaire + 0.0f) / EstimerSalaire() > (Session.Instance.Random(70, 100) / 100.0f))
+                if ((oc.Wage + 0.0f) / EstimerSalaire() > (Session.Instance.Random(70, 100) / 100.0f))
                 {
-                    porteur.AjouterJoueur(new Contrat(this, oc.Salaire, new DateTime(Session.Instance.Partie.Date.Year + oc.DureeContrat, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+                    porteur.AddPlayer(new Contrat(this, oc.Wage, new DateTime(Session.Instance.Partie.Date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                     res = true;
                 }
             }

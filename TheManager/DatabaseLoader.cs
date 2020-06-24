@@ -250,7 +250,7 @@ namespace TheManager
                     int level = int.Parse(e2.Attribute("niveau").Value);
                     int potential = int.Parse(e2.Attribute("potentiel").Value);
                     int clubId = int.Parse(e2.Attribute("club").Value);
-                    Club_Ville club = _clubsId[clubId] as Club_Ville;
+                    CityClub club = _clubsId[clubId] as CityClub;
                     Position position = Position.Goalkeeper;
                     string positionName = e2.Attribute("poste").Value;
                     switch(positionName)
@@ -269,7 +269,7 @@ namespace TheManager
                             break;
                     }
                     Joueur j = new Joueur(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Pays("France"), position);
-                    club.AjouterJoueur(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+                    club.AddPlayer(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                 }
             }
         }
@@ -285,7 +285,7 @@ namespace TheManager
                     string firstName = e2.Attribute("prenom").Value;
                     int level = int.Parse(e2.Attribute("niveau").Value);
                     string clubName = e2.Attribute("club").Value;
-                    Club_Ville club = _kernel.String2Club(clubName) as Club_Ville;
+                    CityClub club = _kernel.String2Club(clubName) as CityClub;
                     string countryName = e2.Attribute("nationalite").Value;
                     Pays country = _kernel.String2Pays(countryName);
                     Entraineur manager = new Entraineur(firstName, lastName, level, new DateTime(1970, 1, 1), country);
@@ -420,7 +420,7 @@ namespace TheManager
                     Entraineur entraineur = new Entraineur(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
 
                     bool equipePremiere = true;
-                    Club c = new Club_Ville(name,entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium,musiqueBut, equipePremiere);
+                    Club c = new CityClub(name,entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium,musiqueBut, equipePremiere);
                     _clubsId[id] = c;
                     _kernel.Clubs.Add(c);
                 }
@@ -574,24 +574,24 @@ namespace TheManager
                             }
                             else
                             {
-                                Club_Ville firstTeam = _clubsId[int.Parse(e4.Attribute("id").Value)] as Club_Ville;
+                                CityClub firstTeam = _clubsId[int.Parse(e4.Attribute("id").Value)] as CityClub;
                                 string nameAddon = " B";
                                 float divider = 1.5f;
-                                if (firstTeam.Reserves.Count == 1) { nameAddon = " C"; divider = 2.5f; }
-                                if (firstTeam.Reserves.Count == 2) { nameAddon = " D"; divider = 3.5f; }
-                                if (firstTeam.Reserves.Count == 3) { nameAddon = " E"; divider = 4.5f; }
-                                club = new Club_Reserve(firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
+                                if (firstTeam.reserves.Count == 1) { nameAddon = " C"; divider = 2.5f; }
+                                if (firstTeam.reserves.Count == 2) { nameAddon = " D"; divider = 3.5f; }
+                                if (firstTeam.reserves.Count == 3) { nameAddon = " E"; divider = 4.5f; }
+                                club = new ReserveClub(firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
                                 int newId = NextClubId();
                                 _clubsId[newId] = club;
                                 _kernel.Clubs.Add(club);
-                                firstTeam.Reserves.Add(club as Club_Reserve);
+                                firstTeam.reserves.Add(club as ReserveClub);
                                 //A reserve team was generated, let's create same players in base club to populate this reserve team
                                 int averagePotential = (int)(firstTeam.formationFacilities - (firstTeam.formationFacilities / divider));
                                 //Warning for {2,5,5,3} -> 15 is used in team initialisation to determine player number of first team
-                                for (int g = 0; g < 2; g++) firstTeam.GenererJoueur(Position.Goalkeeper, 16, 23, -averagePotential);
-                                for (int g = 0; g < 5; g++) firstTeam.GenererJoueur(Position.Defender , 16, 23, -averagePotential);
-                                for (int g = 0; g < 5; g++) firstTeam.GenererJoueur(Position.Midfielder, 16, 23, -averagePotential);
-                                for (int g = 0; g < 3; g++) firstTeam.GenererJoueur(Position.Striker, 16, 23, -averagePotential);
+                                for (int g = 0; g < 2; g++) firstTeam.GeneratePlayer(Position.Goalkeeper, 16, 23, -averagePotential);
+                                for (int g = 0; g < 5; g++) firstTeam.GeneratePlayer(Position.Defender , 16, 23, -averagePotential);
+                                for (int g = 0; g < 5; g++) firstTeam.GeneratePlayer(Position.Midfielder, 16, 23, -averagePotential);
+                                for (int g = 0; g < 3; g++) firstTeam.GeneratePlayer(Position.Striker, 16, 23, -averagePotential);
                             }
 
                            
@@ -728,14 +728,14 @@ namespace TheManager
         {
             foreach(Club c in _kernel.Clubs)
             {
-                Club_Ville cityClub = c as Club_Ville;
+                CityClub cityClub = c as CityClub;
                 if(cityClub != null)
                 {
-                    int firstTeamPlayersNumber = cityClub.Contrats.Count - (cityClub.Reserves.Count * 15);
+                    int firstTeamPlayersNumber = cityClub.contracts.Count - (cityClub.reserves.Count * 15);
                     int missingContractNumber = 19 - firstTeamPlayersNumber;
                     for (int i = 0; i < missingContractNumber; i++)
                     {
-                        cityClub.GenererJoueur(24,33);
+                        cityClub.GeneratePlayer(24,33);
                     }
                 }
             }

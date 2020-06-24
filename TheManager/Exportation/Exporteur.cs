@@ -18,13 +18,13 @@ namespace TheManager.Exportation
 
             foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
             {
-                Club_Ville cv = c as Club_Ville;
+                CityClub cv = c as CityClub;
                 if(cv != null)
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.Append("<h2>").Append(cv.name).Append("</h2>");
                     output += "<h2>" + cv.name + "</h2>";
-                    foreach(EntreeHistorique eh in cv.Historique.Elements)
+                    foreach(EntreeHistorique eh in cv.history.Elements)
                     {
                         output += "<p><b>" + eh.Date.ToShortDateString() + "</b><br>Budget : " + eh.Budget + "<br>Centre de formation : " + eh.CentreFormation + "</p>";
                     }
@@ -50,9 +50,9 @@ namespace TheManager.Exportation
                 string output = "<p>" + t.Nom + "</p><p>";
                 foreach(Club cl in t.Clubs)
                 {
-                    Club_Ville cv = cl as Club_Ville;
+                    CityClub cv = cl as CityClub;
                     if (cv != null)
-                        output += "" + cl.name + " - " + cl.formationFacilities + " - " + cv.Budget + " €<br>";
+                        output += "" + cl.name + " - " + cl.formationFacilities + " - " + cv.budget + " €<br>";
                 }
                 output += "</p>";
                 if(t as TourChampionnat != null)

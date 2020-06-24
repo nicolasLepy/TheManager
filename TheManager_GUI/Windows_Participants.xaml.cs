@@ -30,10 +30,10 @@ namespace TheManager_GUI
                 {
                     int budget = 0;
                     int masseSalariale = 0;
-                    if (cl as Club_Ville != null)
+                    if (cl as CityClub != null)
                     {
-                        budget = (cl as Club_Ville).Budget;
-                        masseSalariale = (int)(cl as Club_Ville).MasseSalariale;
+                        budget = (cl as CityClub).budget;
+                        masseSalariale = (int)(cl as CityClub).SalaryMass;
                     }
 
                     float etoiles = cl.Stars;

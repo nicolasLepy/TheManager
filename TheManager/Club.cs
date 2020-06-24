@@ -9,12 +9,12 @@ using System.Runtime.Serialization;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
-    [KnownType(typeof(Club_Ville))]
-    [System.Xml.Serialization.XmlInclude(typeof(Club_Ville))]
+    [KnownType(typeof(CityClub))]
+    [System.Xml.Serialization.XmlInclude(typeof(CityClub))]
     [KnownType(typeof(SelectionNationale))]
     [System.Xml.Serialization.XmlInclude(typeof(SelectionNationale))]
-    [KnownType(typeof(Club_Reserve))]
-    [System.Xml.Serialization.XmlInclude(typeof(Club_Reserve))]
+    [KnownType(typeof(ReserveClub))]
+    [System.Xml.Serialization.XmlInclude(typeof(ReserveClub))]
     public abstract class Club
     {
         [DataMember]
@@ -176,7 +176,7 @@ namespace TheManager
             }
         }
 
-        public Club(string name, Entraineur manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stade stadium, string goalMusic)
+        protected Club(string name, Entraineur manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stade stadium, string goalMusic)
         {
             _name = name;
             _manager = manager;

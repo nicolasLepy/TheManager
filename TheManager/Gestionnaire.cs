@@ -146,10 +146,10 @@ namespace TheManager
 
             foreach(Club club in tourChampionnat.Clubs)
             {
-                Club_Ville cv = club as Club_Ville;
+                CityClub cv = club as CityClub;
                 if(cv != null)
                 {
-                    foreach (Contrat ct in cv.Contrats)
+                    foreach (Contrat ct in cv.contracts)
                     {
                         if (ct.Transferable) joueurs.Add(ct.Joueur);
                     }
@@ -237,7 +237,7 @@ namespace TheManager
             }
             foreach(Club c in _clubs)
             {
-                if (c as Club_Ville != null) foreach (Joueur j in c.Players()) if (j.Nationalite == p) res++;
+                if (c as CityClub != null) foreach (Joueur j in c.Players()) if (j.Nationalite == p) res++;
             }
             return res;
         }
@@ -251,7 +251,7 @@ namespace TheManager
             }
             foreach (Club c in _clubs)
             {
-                if (c as Club_Ville != null) foreach (Joueur j in c.Players()) if (j.Nationalite == p) res.Add(j);
+                if (c as CityClub != null) foreach (Joueur j in c.Players()) if (j.Nationalite == p) res.Add(j);
             }
             return res;
         }

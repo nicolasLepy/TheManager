@@ -149,7 +149,7 @@ namespace TheManager
             List<Club> res = new List<Club>();
             foreach(Club c in _poules[poule])
             {
-                if ((c as Club_Reserve) == null) res.Add(c);
+                if ((c as ReserveClub) == null) res.Add(c);
             }
             Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
             res.Sort(comparator);
@@ -177,10 +177,10 @@ namespace TheManager
             {
                 for(int i = 0;i<NombrePoules; i++)
                 {
-                    Club_Ville cv = Classement(i)[d.Classement - 1] as Club_Ville;
+                    CityClub cv = Classement(i)[d.Classement - 1] as CityClub;
                     if (cv != null)
                     {
-                        cv.ModifierBudget(d.Somme);
+                        cv.ModifyBudget(d.Somme);
                     }
                 }
 

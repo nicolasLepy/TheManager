@@ -17,12 +17,12 @@ namespace TheManager.Comparators
             {
                 int X = 0;
                 int Y = 0;
-                Club_Ville dom = x.Domicile as Club_Ville;
-                Club_Ville ext = x.Exterieur as Club_Ville;
+                CityClub dom = x.Domicile as CityClub;
+                CityClub ext = x.Exterieur as CityClub;
                 if (dom != null && dom.Championship != null) X += (int)Math.Pow(2, 10 - dom.Championship.Niveau);
                 if (ext != null && ext.Championship != null) X += (int)Math.Pow(2, 10 - ext.Championship.Niveau);
-                dom = y.Domicile as Club_Ville;
-                ext = y.Exterieur as Club_Ville;
+                dom = y.Domicile as CityClub;
+                ext = y.Exterieur as CityClub;
                 if (dom != null && dom.Championship != null) Y += (int)Math.Pow(2, 10 - dom.Championship.Niveau);
                 if (ext != null && ext.Championship != null) Y += (int)Math.Pow(2, 10 - ext.Championship.Niveau);
                 if (X > Y) res = -1;

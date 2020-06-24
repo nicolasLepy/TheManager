@@ -175,10 +175,10 @@ namespace TheManager
                 {
                     foreach (Club c in Tours[0].Clubs)
                     {
-                        Club_Ville cv = c as Club_Ville;
+                        CityClub cv = c as CityClub;
                         if (cv != null)
                         {
-                            cv.GenererCalendrierMatchsAmicaux();
+                            cv.GenerateFriendlyGamesCalendar();
                         }
                     }
                 }

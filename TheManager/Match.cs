@@ -541,9 +541,9 @@ namespace TheManager
             _affluence = (int)(Domicile.supporters * (Session.Instance.Random(6, 14) / 10.0f));
             _affluence = (int)(_affluence * (Exterieur.Level() / (Domicile.Level())));
             if (_affluence > Domicile.stadium.Capacite) _affluence = Domicile.stadium.Capacite;
-            if(Domicile as Club_Ville != null)
+            if(Domicile as CityClub != null)
             {
-                (Domicile as Club_Ville).ModifierBudget(_affluence * Domicile.ticketPrice);
+                (Domicile as CityClub).ModifyBudget(_affluence * Domicile.ticketPrice);
             }
         }
 

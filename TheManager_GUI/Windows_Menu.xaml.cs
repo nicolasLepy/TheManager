@@ -137,9 +137,9 @@ namespace TheManager_GUI
             if(dgClassement.SelectedItem != null)
             {
                 ClassementElement selected = (ClassementElement)dgClassement.SelectedItem;
-                if (selected.Club as Club_Ville != null)
+                if (selected.Club as CityClub != null)
                 {
-                    Windows_Club club = new Windows_Club(selected.Club as Club_Ville);
+                    Windows_Club club = new Windows_Club(selected.Club as CityClub);
                     club.Show();
                 }
                    

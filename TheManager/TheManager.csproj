@@ -57,8 +57,8 @@
     <Compile Include="Calendar.cs" />
     <Compile Include="DatabaseLoader.cs" />
     <Compile Include="Club.cs" />
-    <Compile Include="Club_Reserve.cs" />
-    <Compile Include="Club_Ville.cs" />
+    <Compile Include="ReserveClub.cs" />
+    <Compile Include="CityClub.cs" />
     <Compile Include="Comparators\Article_Comparator.cs" />
     <Compile Include="Comparators\Club_Classement_Comparator.cs" />
     <Compile Include="Comparators\Club_Classement_Random_Comparator.cs" />
