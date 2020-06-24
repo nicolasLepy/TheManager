@@ -269,7 +269,7 @@ namespace TheManager
                             break;
                     }
                     Joueur j = new Joueur(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Pays("France"), position);
-                    club.AddPlayer(new Contrat(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+                    club.AddPlayer(new Contract(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                 }
             }
         }
@@ -288,7 +288,7 @@ namespace TheManager
                     CityClub club = _kernel.String2Club(clubName) as CityClub;
                     string countryName = e2.Attribute("nationalite").Value;
                     Pays country = _kernel.String2Pays(countryName);
-                    Entraineur manager = new Entraineur(firstName, lastName, level, new DateTime(1970, 1, 1), country);
+                    Manager manager = new Manager(firstName, lastName, level, new DateTime(1970, 1, 1), country);
                     club.manager = manager;
                 }
             }
@@ -336,7 +336,7 @@ namespace TheManager
                             Ville v = new Ville(cityName, population, lat, lon);
                             p.Villes.Add(v);
                         }
-                        c.Pays.Add(p);
+                        c.countries.Add(p);
                     }
                     _kernel.Continents.Add(c);
                 }
@@ -417,7 +417,7 @@ namespace TheManager
                     reputation = centreFormation;
 
                     Pays pays = city.Pays();
-                    Entraineur entraineur = new Entraineur(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
+                    Manager entraineur = new Manager(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
 
                     bool equipePremiere = true;
                     Club c = new CityClub(name,entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium,musiqueBut, equipePremiere);
@@ -451,7 +451,7 @@ namespace TheManager
                     else
                         goalMusic = "null";
 
-                    Entraineur entraineur = new Entraineur(country.Langue.ObtenirPrenom(), country.Langue.ObtenirNom(), formationFacilities, new DateTime(1970, 1, 1), country);
+                    Manager entraineur = new Manager(country.Langue.ObtenirPrenom(), country.Langue.ObtenirNom(), formationFacilities, new DateTime(1970, 1, 1), country);
 
                     Club c = new SelectionNationale(name,entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, coefficient,country,goalMusic);
                     _clubsId[id] = c;
@@ -484,7 +484,7 @@ namespace TheManager
                     if (e2.Attribute("anneesRestantes") != null)
                         remainingYears = int.Parse(e2.Attribute("anneesRestantes").Value);
                     Tournament c = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears);
-                    localisation.Competitions().Add(c);
+                    localisation.Tournaments().Add(c);
                     //_gestionnaire.Competitions.Add(c);
                 }
             }
@@ -614,23 +614,23 @@ namespace TheManager
                                 Tour r = comp.rounds[tourIndex];
                                 source = r;
                             }
-                            MethodeRecuperation method;
+                            RecuperationMethod method;
                             switch(e4.Attribute("methode").Value)
                             {
                                 case "meilleurs":
-                                    method = MethodeRecuperation.MEILLEURS; 
+                                    method = RecuperationMethod.Best; 
                                     break;
                                 case "pires":
-                                    method = MethodeRecuperation.PIRES; 
+                                    method = RecuperationMethod.Worst; 
                                     break;
                                 case "aleatoire":
-                                    method = MethodeRecuperation.ALEATOIRE; 
+                                    method = RecuperationMethod.Randomly; 
                                     break;
                                 default :
-                                    method = MethodeRecuperation.MEILLEURS;
+                                    method = RecuperationMethod.Best;
                                     break;
                             }
-                            round.RecuperationEquipes.Add(new RecuperationEquipes(source, number,method));
+                            round.RecuperationEquipes.Add(new RecuperationEquipes(source, number, method));
                         }
                         foreach (XElement e4 in e3.Descendants("Decalage"))
                         {

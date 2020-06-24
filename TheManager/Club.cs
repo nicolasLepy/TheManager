@@ -22,7 +22,7 @@ namespace TheManager
         [DataMember]
         private string _shortName;
         [DataMember]
-        private Entraineur _manager;
+        private Manager _manager;
         [DataMember]
         private int _reputation;
         [DataMember]
@@ -40,7 +40,7 @@ namespace TheManager
         private string _goalMusic;
 
         public string name { get => _name; }
-        public Entraineur manager { get => _manager; set => _manager = value; }
+        public Manager manager { get => _manager; set => _manager = value; }
         public int reputation { get => _reputation; }
         public int supporters { get => _supporters; set => _supporters = value; }
         public int formationFacilities { get => _formationFacilities;}
@@ -176,7 +176,7 @@ namespace TheManager
             }
         }
 
-        protected Club(string name, Entraineur manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stade stadium, string goalMusic)
+        protected Club(string name, Manager manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stade stadium, string goalMusic)
         {
             _name = name;
             _manager = manager;
@@ -263,7 +263,7 @@ namespace TheManager
         /// Change the current manager and put the old manager in free managers list
         /// </summary>
         /// <param name="newManager">The new manager of the club</param>
-        public void ChangeManager(Entraineur newManager)
+        public void ChangeManager(Manager newManager)
         {
             Session.Instance.Partie.Gestionnaire.EntraineursLibres.Add(_manager);
             _manager = newManager;

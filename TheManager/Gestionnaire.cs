@@ -25,11 +25,11 @@ namespace TheManager
             _commentaires = new List<string>();
         }
 
-        public string Commentaire(EvenementMatch em)
+        public string Commentaire(MatchEvent em)
         {
             string commentaireBrut = Commentaires[Session.Instance.Random(0, Commentaires.Count - 1)];
-            commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + em.Club.shortName + " ");
-            commentaireBrut = commentaireBrut.Replace(" JOUEUR ", " " + em.Joueur.Nom + " ");
+            commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + em.club.shortName + " ");
+            commentaireBrut = commentaireBrut.Replace(" JOUEUR ", " " + em.player.Nom + " ");
             return commentaireBrut;
         }
     }
@@ -46,7 +46,7 @@ namespace TheManager
         [DataMember]
         private List<Joueur> _joueursLibres;
         [DataMember]
-        private List<Entraineur> _entraineursLibres;
+        private List<Manager> _entraineursLibres;
         [DataMember]
         private List<Continent> _continents;
         [DataMember]
@@ -67,14 +67,14 @@ namespace TheManager
                 List<Tournament> res = new List<Tournament>();
                 foreach(Continent c in _continents)
                 {
-                    foreach (Tournament cp in c.Competitions()) res.Add(cp);
-                    foreach (Pays p in c.Pays) foreach (Tournament cp in p.Competitions()) res.Add(cp);
+                    foreach (Tournament cp in c.Tournaments()) res.Add(cp);
+                    foreach (Pays p in c.countries) foreach (Tournament cp in p.Tournaments()) res.Add(cp);
                 }
                 return res;
             }
         }
         public List<Joueur> JoueursLibres { get => _joueursLibres; }
-        public List<Entraineur> EntraineursLibres { get => _entraineursLibres; }
+        public List<Manager> EntraineursLibres { get => _entraineursLibres; }
         public List<Continent> Continents { get => _continents; }
         public List<Langue> Langues { get => _langues; }
         public List<Media> Medias { get => _medias; }
@@ -88,7 +88,7 @@ namespace TheManager
             _continents = new List<Continent>();
             _langues = new List<Langue>();
             _medias = new List<Media>();
-            _entraineursLibres = new List<Entraineur>();
+            _entraineursLibres = new List<Manager>();
             _commentairesMatchs = new List<CommentairesEvenementMatch>();
             _commentairesMatchs.Add(new CommentairesEvenementMatch(GameEvent.Goal));
             _commentairesMatchs.Add(new CommentairesEvenementMatch(GameEvent.PenaltyGoal));
@@ -103,7 +103,7 @@ namespace TheManager
             Ville res = null;
             foreach(Continent c in _continents)
             {
-                foreach(Pays p in c.Pays)
+                foreach(Pays p in c.countries)
                 {
                     foreach(Ville v in p.Villes)
                     {
@@ -149,9 +149,9 @@ namespace TheManager
                 CityClub cv = club as CityClub;
                 if(cv != null)
                 {
-                    foreach (Contrat ct in cv.contracts)
+                    foreach (Contract ct in cv.contracts)
                     {
-                        if (ct.Transferable) joueurs.Add(ct.Joueur);
+                        if (ct.isTransferable) joueurs.Add(ct.player);
                     }
                 }
             }
@@ -165,9 +165,9 @@ namespace TheManager
 
             foreach(Continent c in _continents)
             {
-                foreach(Pays p in c.Pays)
+                foreach(Pays p in c.countries)
                 {
-                    if (p.Nom() == pays) res = p;
+                    if (p.Name() == pays) res = p;
                 }
             }
             return res;
@@ -179,7 +179,7 @@ namespace TheManager
 
             foreach (Continent c in _continents)
             {
-                foreach(Pays p in c.Pays)
+                foreach(Pays p in c.countries)
                 {
                     foreach(Stade s in p.Stades)
                     {
@@ -224,7 +224,7 @@ namespace TheManager
         public Continent String2Continent(string nom)
         {
             Continent res = null;
-            foreach (Continent c in _continents) if (c.Nom() == nom) res = c;
+            foreach (Continent c in _continents) if (c.Name() == nom) res = c;
             return res;
         }
 
@@ -294,10 +294,10 @@ namespace TheManager
             ILocalisation res = null;
             foreach(Continent c in _continents)
             {
-                if (c.Nom() == nom) res = c;
-                foreach(Pays p in c.Pays)
+                if (c.Name() == nom) res = c;
+                foreach(Pays p in c.countries)
                 {
-                    if (p.Nom() == nom) res = p;
+                    if (p.Name() == nom) res = p;
                 }
             }
             return res;
@@ -308,8 +308,8 @@ namespace TheManager
             ILocalisation res = null;
             foreach(Continent c in _continents)
             {
-                if(c.Competitions().Contains(competition)) res = c;
-                foreach (Pays p in c.Pays) if (p.Competitions().Contains(competition)) res = p;
+                if(c.Tournaments().Contains(competition)) res = c;
+                foreach (Pays p in c.countries) if (p.Tournaments().Contains(competition)) res = p;
             }
             return res;
         }
@@ -328,12 +328,12 @@ namespace TheManager
             }
         }
 
-        public string Commentaire(EvenementMatch evenement)
+        public string Commentaire(MatchEvent evenement)
         {
             string res = "";
             foreach(CommentairesEvenementMatch cem in _commentairesMatchs)
             {
-                if (cem.Evenement == evenement.Type)
+                if (cem.Evenement == evenement.type)
                     res = cem.Commentaire(evenement);
             }
 

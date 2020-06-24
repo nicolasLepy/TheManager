@@ -35,7 +35,7 @@ namespace TheManager
         /// <summary>
         /// Entraîneur représentant le joueur
         /// </summary>
-        public Entraineur Entraineur { get => Club.manager; }
+        public Manager Entraineur { get => Club.manager; }
 
         public List<Article> Articles { get => _articles; }
 
@@ -138,21 +138,21 @@ namespace TheManager
                 {
                     cv.history.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.budget, cv.formationFacilities));
                     //Prolonger les joueurs
-                    List<Contrat> joueursALiberer = new List<Contrat>();
-                    foreach (Contrat ct in cv.contracts)
+                    List<Contract> joueursALiberer = new List<Contract>();
+                    foreach (Contract ct in cv.contracts)
                     {
-                        ct.Joueur.MiseAJourNiveau();
-                        if (ct.Fin.Year == Date.Year)
+                        ct.player.MiseAJourNiveau();
+                        if (ct.end.Year == Date.Year)
                         {
                             if (!cv.Prolong(ct)) joueursALiberer.Add(ct);
 
                         }
                     }
                     //Libérer les joueurs non prolongés
-                    foreach (Contrat ct in joueursALiberer)
+                    foreach (Contract ct in joueursALiberer)
                     {
                         cv.contracts.Remove(ct);
-                        _gestionnaire.JoueursLibres.Add(ct.Joueur);
+                        _gestionnaire.JoueursLibres.Add(ct.player);
                     }
 
                     cv.GetSponsor();

@@ -12,39 +12,39 @@ namespace TheManager
     public class Continent : IEquipesRecuperables, ILocalisation
     {
         [DataMember]
-        private List<Pays> _pays;
+        private List<Pays> _countries;
         [DataMember]
-        private List<Tournament> _competitions;
+        private List<Tournament> _tournaments;
         [DataMember]
-        private string _nom;
+        private string _name;
 
-        public List<Pays> Pays { get { return _pays; } }
-        public List<Tournament> Competitions()
+        public List<Pays> countries => _countries;
+        public List<Tournament> Tournaments()
         {
-            return _competitions;
+            return _tournaments;
         }
 
-        public string Nom()
+        public string Name()
         {
-            return _nom;
+            return _name;
         }
         
 
-        public Continent(string nom)
+        public Continent(string name)
         {
-            _nom = nom;
-            _pays = new List<Pays>();
-            _competitions = new List<Tournament>();
+            _name = name;
+            _countries = new List<Pays>();
+            _tournaments = new List<Tournament>();
         }
 
         /// <summary>
-        /// Le paramètre "equipesPremieresUniquement" est ignoré vu que les sélections nationales sont toutes des équipes premières
+        /// The parameter "onlyFirstTeams" is ignored because national teams are always first teams
         /// </summary>
         /// <param name="nombre"></param>
         /// <param name="methode"></param>
-        /// <param name="equipesPremieresUniquement"></param>
+        /// <param name="onlyFirstTeams"></param>
         /// <returns></returns>
-        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode, bool equipesPremieresUniquement)
+        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
             List<Club> clubs = new List<Club>();
             foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
@@ -52,24 +52,24 @@ namespace TheManager
                 SelectionNationale sn = c as SelectionNationale;
                 if(sn != null)
                 {
-                    if (_pays.Contains(sn.Pays)) clubs.Add(sn);
+                    if (_countries.Contains(sn.Pays)) clubs.Add(sn);
                 }
             }
             List<Club> res = new List<Club>();
-            if (methode == MethodeRecuperation.MEILLEURS)
+            if (method == RecuperationMethod.Best)
                 clubs.Sort(new Club_Niveau_Comparator());
-            else if (methode == MethodeRecuperation.PIRES)
+            else if (method == RecuperationMethod.Worst)
                 clubs.Sort(new Club_Niveau_Comparator(true));
-            else if (methode == MethodeRecuperation.ALEATOIRE)
+            else if (method == RecuperationMethod.Randomly)
                 clubs = Utils.ShuffleList<Club>(clubs);
 
-            for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
+            for (int i = 0; i < number; i++) res.Add(clubs[i]);
             return res;
         }
 
         public override string ToString()
         {
-            return _nom;
+            return _name;
         }
     }
 }

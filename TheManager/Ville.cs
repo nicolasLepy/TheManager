@@ -29,7 +29,7 @@ namespace TheManager
             Pays res = null;
             foreach(Continent c in Session.Instance.Partie.Gestionnaire.Continents)
             {
-                foreach(Pays p in c.Pays)
+                foreach(Pays p in c.countries)
                 {
                     foreach(Ville v in p.Villes)
                     {

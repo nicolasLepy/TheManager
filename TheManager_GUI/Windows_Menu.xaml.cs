@@ -40,8 +40,8 @@ namespace TheManager_GUI
             comboPays.Items.Clear();
             foreach (Continent c in _partie.Gestionnaire.Continents)
             {
-                if (c.Competitions().Count > 0) this.comboPays.Items.Add(c);
-                foreach (Pays p in c.Pays) if (p.Competitions().Count > 0) { this.comboPays.Items.Add(p); Console.WriteLine(p); }
+                if (c.Tournaments().Count > 0) this.comboPays.Items.Add(c);
+                foreach (Pays p in c.countries) if (p.Tournaments().Count > 0) { this.comboPays.Items.Add(p); Console.WriteLine(p); }
             }
             Refresh();
 
@@ -189,7 +189,7 @@ namespace TheManager_GUI
             {
                 lbChampionnats.Items.Clear();
                 lbTours.Items.Clear();
-                foreach (Tournament c in localisation.Competitions())
+                foreach (Tournament c in localisation.Tournaments())
                 {
                     this.lbChampionnats.Items.Add(c);
                 }

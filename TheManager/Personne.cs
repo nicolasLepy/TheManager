@@ -10,8 +10,8 @@ namespace TheManager
     [DataContract(IsReference = true)]
     [KnownType(typeof(Joueur))]
     [System.Xml.Serialization.XmlInclude(typeof(Joueur))]
-    [KnownType(typeof(Entraineur))]
-    [System.Xml.Serialization.XmlInclude(typeof(Entraineur))]
+    [KnownType(typeof(Manager))]
+    [System.Xml.Serialization.XmlInclude(typeof(Manager))]
     public class Personne
     {
         [DataMember]

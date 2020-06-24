@@ -6,18 +6,18 @@ using System.Threading.Tasks;
 
 namespace TheManager.Comparators
 {
-    public class EvenementMatch_Temps_Comparator : IComparer<EvenementMatch>
+    public class EvenementMatch_Temps_Comparator : IComparer<MatchEvent>
     {
-        public int Compare(EvenementMatch x, EvenementMatch y)
+        public int Compare(MatchEvent x, MatchEvent y)
         {
-            int tempsX = x.Minute;
-            if (x.MiTemps == 2) tempsX += 45;
-            else if (x.MiTemps == 3) tempsX += 90;
-            else if (x.MiTemps == 4) tempsX += 105;
-            int tempsY = y.Minute;
-            if (y.MiTemps == 2) tempsY += 45;
-            else if (y.MiTemps == 3) tempsY += 90;
-            else if (y.MiTemps == 4) tempsY += 105;
+            int tempsX = x.minute;
+            if (x.period == 2) tempsX += 45;
+            else if (x.period == 3) tempsX += 90;
+            else if (x.period == 4) tempsX += 105;
+            int tempsY = y.minute;
+            if (y.period == 2) tempsY += 45;
+            else if (y.period == 3) tempsY += 90;
+            else if (y.period == 4) tempsY += 105;
 
             return tempsX - tempsY;
         }

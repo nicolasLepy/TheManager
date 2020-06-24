@@ -89,7 +89,7 @@ namespace TheManager_GUI
 
             foreach (KeyValuePair<Joueur, int> buteur in _competition.Goalscorers())
             {
-                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Nom() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
+                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Name() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
             }
         }
 

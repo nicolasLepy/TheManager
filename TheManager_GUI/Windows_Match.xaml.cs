@@ -51,10 +51,10 @@ namespace TheManager_GUI
             }
             lbMT.Content = "(" + match.ScoreMT1 + " - " + match.ScoreMT2 + ")";
 
-            foreach(EvenementMatch em in match.Evenements)
+            foreach(MatchEvent em in match.Evenements)
             {
                 string icone = "";
-                switch (em.Type)
+                switch (em.type)
                 {
                     case GameEvent.Goal: icone = "goal.png";
                         break;
@@ -76,25 +76,24 @@ namespace TheManager_GUI
                 string c4 = "";
                 string img1 = "";
                 string img2 = "";
-                if (em.Club == match.Domicile)
+                if (em.club == match.Domicile)
                 {
                     img1 = Utils.Image(icone);
-                    c1 = em.MinuteStr;
-                    c2 = em.Joueur.Prenom + " " + em.Joueur.Nom;
-                    if (em.Type == GameEvent.PenaltyGoal) c2 += " (sp)";
-                    if (em.Type == GameEvent.AgGoal) c2 += " (csc)";
+                    c1 = em.MinuteToString;
+                    c2 = em.player.Prenom + " " + em.player.Nom;
+                    if (em.type == GameEvent.PenaltyGoal) c2 += " (sp)";
+                    if (em.type == GameEvent.AgGoal) c2 += " (csc)";
                 }
                 else
                 {
                     img2 = Utils.Image(icone);
-                    c4 = em.MinuteStr;
-                    c3 = em.Joueur.Prenom + " " + em.Joueur.Nom;
-                    if (em.Type == GameEvent.PenaltyGoal) c3 += " (sp)";
-                    if (em.Type == GameEvent.AgGoal) c3 += " (csc)";
+                    c4 = em.MinuteToString;
+                    c3 = em.player.Prenom + " " + em.player.Nom;
+                    if (em.type == GameEvent.PenaltyGoal) c3 += " (sp)";
+                    if (em.type == GameEvent.AgGoal) c3 += " (csc)";
                 }
-                if(em.Type != GameEvent.Shot)
+                if(em.type != GameEvent.Shot)
                 {
-
                     StackPanel spEv = new StackPanel();
                     spEv.Orientation = Orientation.Horizontal;
                     spEv.Width = 400;

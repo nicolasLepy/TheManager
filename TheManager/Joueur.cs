@@ -92,9 +92,9 @@ namespace TheManager
                     CityClub cv = c as CityClub;
                     if(cv != null)
                     {
-                        foreach(Contrat ct in cv.contracts)
+                        foreach(Contract ct in cv.contracts)
                         {
-                            if (ct.Joueur == this)
+                            if (ct.player == this)
                                 res = cv;
                         }
                     }
@@ -190,14 +190,14 @@ namespace TheManager
             {
                 if (porteur.Level() - Club.Level() > Session.Instance.Random(-10, -5))
                 {
-                    Contrat sonContrat = null;
-                    foreach (Contrat ct in Club.contracts) if (ct.Joueur == this) sonContrat = ct;
+                    Contract sonContrat = null;
+                    foreach (Contract ct in Club.contracts) if (ct.player == this) sonContrat = ct;
                     //Si le salaire proposé est en légère augmentation par rapport à son budget actuel
-                    if ((oc.Wage + 0.0f) / sonContrat.Salaire > (Session.Instance.Random(100, 120) / 100.0f))
+                    if ((oc.Wage + 0.0f) / sonContrat.wage > (Session.Instance.Random(100, 120) / 100.0f))
                     {
                         Club ancien = Club;
                         Club.RemovePlayer(this);
-                        porteur.AddPlayer(new Contrat(this, oc.Wage, new DateTime(Session.Instance.Partie.Date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+                        porteur.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Partie.Date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                         res = true;
                     }
                 }
@@ -207,7 +207,7 @@ namespace TheManager
                 //Si l'offre du salaire n'est pas trop mauvaise (au moins entre 0.7 et 1 de sa "vrai valeur salariale")
                 if ((oc.Wage + 0.0f) / EstimerSalaire() > (Session.Instance.Random(70, 100) / 100.0f))
                 {
-                    porteur.AddPlayer(new Contrat(this, oc.Wage, new DateTime(Session.Instance.Partie.Date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+                    porteur.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Partie.Date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
                     res = true;
                 }
             }

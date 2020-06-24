@@ -59,7 +59,7 @@ namespace TheManager
         [DataMember]
         private float _sponsor;
         [DataMember]
-        private List<Contrat> _players;
+        private List<Contract> _players;
         [DataMember]
         private HistoriqueClub _historic;
         [DataMember]
@@ -72,7 +72,7 @@ namespace TheManager
         public int budget { get => _budget; }
         public Ville city { get => _city; }
         public float sponsor { get => _sponsor; }
-        public List<Contrat> contracts { get => _players; }
+        public List<Contract> contracts { get => _players; }
         public HistoriqueClub history { get => _historic; }
         public ClubTransfersManagement clubTransfersManagement { get => _clubTransfersManagement; }
         public List<ReserveClub> reserves { get => _reserves; }
@@ -84,34 +84,34 @@ namespace TheManager
             {
                 float res = 0;
 
-                foreach (Contrat c in _players) res += c.Salaire;
+                foreach (Contract c in _players) res += c.wage;
 
                 return res;
             }
         }
 
-        public CityClub(string name, Entraineur manager, string shortName, int reputation, int budget, int supporters, int formationCenter, Ville city, string logo, Stade stadium, string goalMusic, bool isFannion) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic)
+        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, Ville city, string logo, Stade stadium, string goalMusic, bool isFannion) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic)
         {
             _budget = budget;
             _city = city;
             _sponsor = 0;
-            _players = new List<Contrat>();
+            _players = new List<Contract>();
             _historic = new HistoriqueClub();
             _clubTransfersManagement = new ClubTransfersManagement();
             _isFannion = isFannion;
             _reserves = new List<ReserveClub>();
         }
 
-        public void AddPlayer(Contrat c)
+        public void AddPlayer(Contract c)
         {
             _players.Add(c);
         }
 
         public void RemovePlayer(Joueur j)
         {
-            Contrat toRemove = null;
+            Contract toRemove = null;
 
-            foreach (Contrat ct in _players) if (ct.Joueur == j) toRemove = ct;
+            foreach (Contract ct in _players) if (ct.player == j) toRemove = ct;
 
             if (toRemove != null)
                 _players.Remove(toRemove);
@@ -120,8 +120,8 @@ namespace TheManager
         public override List<Joueur> Players()
         {
             List<Joueur> players = new List<Joueur>();
-            foreach (Contrat c in _players)
-                players.Add(c.Joueur);
+            foreach (Contract c in _players)
+                players.Add(c.player);
             return players;
         }
 
@@ -131,7 +131,7 @@ namespace TheManager
 
             
             List<Joueur> players = new List<Joueur>();
-            foreach (Contrat c in _players) players.Add(c.Joueur);
+            foreach (Contract c in _players) players.Add(c.player);
             players.Sort(new Joueur_Niveau_Comparator());
 
             int total = 0;
@@ -181,7 +181,7 @@ namespace TheManager
             
             Joueur j = new Joueur(firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Pays(), p);
             int year = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
-            contracts.Add(new Contrat(j, j.EstimerSalaire(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+            contracts.Add(new Contract(j, j.EstimerSalaire(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
         }
 
         public void GeneratePlayer(int minAge, int maxAge)
@@ -201,9 +201,9 @@ namespace TheManager
         
         public void PayWages()
         {
-            foreach(Contrat ct in contracts)
+            foreach(Contract ct in contracts)
             {
-                ModifyBudget(-ct.Salaire);
+                ModifyBudget(-ct.wage);
             }
         }
 
@@ -273,28 +273,28 @@ namespace TheManager
         /// </summary>
         /// <param name="ct">The contract to prolong</param>
         /// <returns>True if the contract was prolonged, false if not</returns>
-        public bool Prolong(Contrat ct)
+        public bool Prolong(Contract ct)
         {
             bool res = false;
-            int wage = ct.Joueur.EstimerSalaire();
-            if (wage < ct.Salaire) wage = ct.Salaire;
+            int wage = ct.player.EstimerSalaire();
+            if (wage < ct.wage) wage = ct.wage;
             wage = (int)(wage * (Session.Instance.Random(10, 14) / (10.0f)));
 
             bool validAge = true;
-            if (ct.Joueur.Age > 32)
+            if (ct.player.Age > 32)
                 if (Session.Instance.Random(1, 3) == 1) validAge = false;
 
             bool enoughGood = true;
-            if (ct.Joueur.Age < 25 && ct.Joueur.Potentiel < Level() - 12)
+            if (ct.player.Age < 25 && ct.player.Potentiel < Level() - 12)
                 enoughGood = false;
-            else if (ct.Joueur.Age >= 25 && ct.Joueur.Niveau < Level() - 12)
+            else if (ct.player.Age >= 25 && ct.player.Niveau < Level() - 12)
                 enoughGood = false;
 
             if(_budget > 12*wage && validAge && enoughGood)
             {
                 res = true;
                 int year = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
-                ct.MettreAJour(wage, new DateTime(year, 7, 1));
+                ct.Update(wage, new DateTime(year, 7, 1));
             }
 
             return res;
@@ -303,29 +303,29 @@ namespace TheManager
         public void UpdateTransfertList()
         {
             float clubLevel = Level();
-            foreach(Contrat ct in _players)
+            foreach(Contract ct in _players)
             {
                 //If a player is too bad for the club
-                if (ct.Joueur.Potentiel / clubLevel < 0.80) ct.Transferable = true;
-                else ct.Transferable = false;
+                if (ct.player.Potentiel / clubLevel < 0.80) ct.isTransferable = true;
+                else ct.isTransferable = false;
             }
         }
 
-        public void ReceiveOffer(Contrat contract, CityClub interestedClub, int amount, int wage, int contractDuration)
+        public void ReceiveOffer(Contract contract, CityClub interestedClub, int amount, int wage, int contractDuration)
         {
-            if(contract.Transferable)
+            if(contract.isTransferable)
             {
-                if(amount > contract.Joueur.EstimerValeurTransfert())
+                if(amount > contract.player.EstimerValeurTransfert())
                 {
-                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.Joueur, wage, contractDuration));
+                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration));
                     //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
                 }
             }
             else
             {
-                if(amount > contract.Joueur.EstimerValeurTransfert()*1.2f)
+                if(amount > contract.player.EstimerValeurTransfert()*1.2f)
                 {
-                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.Joueur, wage, contractDuration));
+                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration));
                     //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
                 }
             }

@@ -22,7 +22,7 @@ namespace TheManager
         public float Coefficient { get => _coefficient; }
         public Pays Pays { get => _pays; }
 
-        public SelectionNationale(string nom, Entraineur entraineur, string nomCourt,int reputation, int supporters, int centreFormation, string logo, Stade stade, float coefficient, Pays pays, string musiqueBut) : base(nom,entraineur, nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
+        public SelectionNationale(string nom, Manager entraineur, string nomCourt,int reputation, int supporters, int centreFormation, string logo, Stade stade, float coefficient, Pays pays, string musiqueBut) : base(nom,entraineur, nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
         {
             _coefficient = coefficient;
             _selectionnes = new List<Joueur>();

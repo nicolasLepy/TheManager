@@ -8,7 +8,7 @@ namespace TheManager
 {
     public interface ILocalisation
     {
-        List<Tournament> Competitions();
-        string Nom();
+        List<Tournament> Tournaments();
+        string Name();
     }
 }

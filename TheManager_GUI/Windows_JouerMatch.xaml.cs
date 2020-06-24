@@ -38,15 +38,15 @@ namespace TheManager_GUI
             //Si y a un évenement
             if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
             {
-                EvenementMatch em = match.Evenements[match.Evenements.Count - 1];
+                MatchEvent em = match.Evenements[match.Evenements.Count - 1];
                 string icone = "";
                 bool afficherAction = false;
                 
-                if(em.Type == GameEvent.Goal || em.Type == GameEvent.PenaltyGoal || em.Type == GameEvent.AgGoal)
+                if(em.type == GameEvent.Goal || em.type == GameEvent.PenaltyGoal || em.type == GameEvent.AgGoal)
                 {
                     icone = "goal.png";
                     afficherAction = true;
-                    if (em.Club == match.Domicile)
+                    if (em.club == match.Domicile)
                     {
                         _media.But(match);
                     }
@@ -58,12 +58,12 @@ namespace TheManager_GUI
                     Matchs();
                     Classement();
                 }
-                else if(em.Type == GameEvent.YellowCard)
+                else if(em.type == GameEvent.YellowCard)
                 {
                     icone = "yellow_card.png";
                     afficherAction = true;
                 }
-                else if(em.Type == GameEvent.RedCard)
+                else if(em.type == GameEvent.RedCard)
                 {
                     icone = "red_card.png";
                     afficherAction = true;
@@ -71,7 +71,7 @@ namespace TheManager_GUI
 
                 if (afficherAction)
                 {
-                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteStr, Joueur = em.Joueur.Nom + " (" + em.Joueur.Club.shortName + ")", Evenement = match.Domicile + " - " + match.Exterieur + " : " + match.Score1 + " - " + match.Score2 });
+                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteToString, Joueur = em.player.Nom + " (" + em.player.Club.shortName + ")", Evenement = match.Domicile + " - " + match.Exterieur + " : " + match.Score1 + " - " + match.Score2 });
                 }
                 if (match == _matchs[0]) ActionsMatch();
             }

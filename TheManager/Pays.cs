@@ -45,12 +45,12 @@ namespace TheManager
             _competitions = new List<Tournament>();
         }
 
-        public List<Tournament> Competitions()
+        public List<Tournament> Tournaments()
         {
             return _competitions;
         }
 
-        public string Nom()
+        public string Name()
         {
             return _nom;
         }

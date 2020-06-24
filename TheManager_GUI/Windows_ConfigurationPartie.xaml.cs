@@ -37,7 +37,7 @@ namespace TheManager_GUI
             foreach(Continent c in g.Continents)
             {
                 StackPanel box = spCompEu;
-                switch (c.Nom())
+                switch (c.Name())
                 {
                     case "Europe":
                         box = spCompEu;
@@ -56,13 +56,13 @@ namespace TheManager_GUI
                         break;
                 }
 
-                if (c.Competitions().Count>0)
+                if (c.Tournaments().Count>0)
                 {
                     Label lb = new Label();
-                    lb.Content = c.Nom();
+                    lb.Content = c.Name();
                     lb.Style = FindResource("StyleLabel2") as Style;
                     box.Children.Add(lb);
-                    foreach(Tournament cp in c.Competitions())
+                    foreach(Tournament cp in c.Tournaments())
                     {
                         CheckBox cb = new CheckBox();
                         cb.IsChecked = true;
@@ -73,12 +73,12 @@ namespace TheManager_GUI
                         _checkbox.Add(cb);
                     }
                 }
-                foreach(Pays p in c.Pays)
+                foreach(Pays p in c.countries)
                 {
-                    if(p.Competitions().Count > 0)
+                    if(p.Tournaments().Count > 0)
                     {
                         Label lb = new Label();
-                        lb.Content = p.Nom();
+                        lb.Content = p.Name();
                         lb.Style = FindResource("StyleLabel2") as Style;
                         Image i = new Image();
                         i.Source = new BitmapImage(new Uri( Environment.CurrentDirectory + "/Images/Drapeaux/" + p.Drapeau + ".png", UriKind.RelativeOrAbsolute));
@@ -89,7 +89,7 @@ namespace TheManager_GUI
                         sp.Children.Add(i);
                         sp.Children.Add(lb);
                         box.Children.Add(sp);
-                        foreach (Tournament cp in p.Competitions())
+                        foreach (Tournament cp in p.Tournaments())
                         {
                             if(cp.isChampionship)
                             {

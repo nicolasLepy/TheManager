@@ -176,11 +176,11 @@ namespace TheManager_GUI
             RemplirMatchs();
 
             
-            foreach (Contrat ct in c.contracts)
+            foreach (Contract ct in c.contracts)
             {
-                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.Joueur , Age = ct.Joueur.Age, Contrat = ct.Fin.ToShortDateString(), Poste = ct.Joueur.Poste.ToString(), Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Potentiel = ct.Joueur.Potentiel, Salaire = ct.Salaire + " €", DebutContrat = ct.Debut.ToShortDateString(), Energie = ct.Joueur.Energie});
-                if((ct.Debut.Year == Session.Instance.Partie.Date.Year-1 && ct.Debut.Month < 7) || (ct.Debut.Year == Session.Instance.Partie.Date.Year && ct.Debut.Month >= 7))
-                    dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.Joueur, Nom = ct.Joueur.ToString(), Niveau = ct.Joueur.Niveau, Salaire = ct.Salaire + " €" });
+                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.Poste.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.Niveau, Potentiel = ct.player.Potentiel, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.Energie});
+                if((ct.beginning.Year == Session.Instance.Partie.Date.Year-1 && ct.beginning.Month < 7) || (ct.beginning.Year == Session.Instance.Partie.Date.Year && ct.beginning.Month >= 7))
+                    dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.player, Nom = ct.player.ToString(), Niveau = ct.player.Niveau, Salaire = ct.wage + " €" });
             }
 
             List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();

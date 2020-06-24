@@ -17,11 +17,11 @@ namespace TheManager
         ReservesAreNotPromoted
     }
 
-    public enum MethodeRecuperation
+    public enum RecuperationMethod
     {
-        ALEATOIRE,
-        MEILLEURS,
-        PIRES
+        Randomly,
+        Best,
+        Worst
     }
 
     [DataContract]
@@ -32,8 +32,8 @@ namespace TheManager
         [DataMember]
         public int Nombre { get; set; }
         [DataMember]
-        public MethodeRecuperation Methode { get; set; }
-        public RecuperationEquipes(IEquipesRecuperables source, int nombre, MethodeRecuperation methode)
+        public RecuperationMethod Methode { get; set; }
+        public RecuperationEquipes(IEquipesRecuperables source, int nombre, RecuperationMethod methode)
         {
             Source = source;
             Nombre = nombre;
@@ -277,12 +277,12 @@ namespace TheManager
             Dictionary<Joueur, int> buteurs = new Dictionary<Joueur, int>();
             foreach(Match m in _matchs)
             {
-                foreach(EvenementMatch em in m.Evenements)
+                foreach(MatchEvent em in m.Evenements)
                 {
-                    if(em.Type == GameEvent.Goal || em.Type == GameEvent.PenaltyGoal)
+                    if(em.type == GameEvent.Goal || em.type == GameEvent.PenaltyGoal)
                     {
-                        if (buteurs.ContainsKey(em.Joueur)) buteurs[em.Joueur]++;
-                        else buteurs[em.Joueur] = 1;
+                        if (buteurs.ContainsKey(em.player)) buteurs[em.player]++;
+                        else buteurs[em.player] = 1;
                     }
                 }
             }
@@ -468,7 +468,7 @@ namespace TheManager
             {
                 bool equipesPremieresUniquement = false;
                 if (Regles.Contains(Rule.OnlyFirstTeams)) equipesPremieresUniquement = true;
-                foreach (Club c in re.Source.RecupererEquipes(re.Nombre, re.Methode, equipesPremieresUniquement))
+                foreach (Club c in re.Source.RetrieveTeams(re.Nombre, re.Methode, equipesPremieresUniquement))
                 {
                     _clubs.Add(c);
                 }
@@ -499,12 +499,12 @@ namespace TheManager
         
 
 
-        public List<Club> RecupererEquipes(int nombre, MethodeRecuperation methode, bool equipesPremieresUniquement)
+        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
             List<Club> clubs = new List<Club>(_clubs);
-
+            
             //Si on a décidé d'avoir que les équipes premières, on supprime toutes les équipes réserve de la liste de choix
-            if(equipesPremieresUniquement)
+            if(onlyFirstTeams)
             {
                 List<Club> aSupprimer = new List<Club>();
                 foreach (Club c in clubs) if (c as ReserveClub != null) aSupprimer.Add(c);
@@ -512,12 +512,12 @@ namespace TheManager
             }
 
 
-            switch (methode)
+            switch (method)
             {
-                case MethodeRecuperation.ALEATOIRE:
+                case RecuperationMethod.Randomly:
                     clubs = Utils.ShuffleList<Club>(clubs);
                     break;
-                case MethodeRecuperation.MEILLEURS:
+                case RecuperationMethod.Best:
                     try
                     {
                         clubs.Sort(new Club_Niveau_Comparator());
@@ -526,12 +526,12 @@ namespace TheManager
                         Console.WriteLine("Erreur sort Club_Niveau_Comparator pour " + Nom);
                     }
                     break;
-                case MethodeRecuperation.PIRES:
+                case RecuperationMethod.Worst:
                     clubs.Sort(new Club_Niveau_Comparator(true));
                     break;
             }
             List<Club> res = new List<Club>();
-            for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
+            for (int i = 0; i < number; i++) res.Add(clubs[i]);
             return res;
         }
 

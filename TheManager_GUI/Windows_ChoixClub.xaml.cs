@@ -29,7 +29,7 @@ namespace TheManager_GUI
             InitializeComponent();
 
             foreach (Continent c in Session.Instance.Partie.Gestionnaire.Continents)
-                foreach (Pays p in c.Pays)
+                foreach (Pays p in c.countries)
                     cbNationalite.Items.Add(p);
 
             RemplirTreeView();
@@ -43,9 +43,9 @@ namespace TheManager_GUI
 
             foreach(Continent c in Session.Instance.Partie.Gestionnaire.Continents)
             {
-                foreach(Pays p in c.Pays)
+                foreach(Pays p in c.countries)
                 {
-                    foreach(Tournament cp in p.Competitions())
+                    foreach(Tournament cp in p.Tournaments())
                     {
                         if(cp.isChampionship)
                         {
@@ -162,7 +162,7 @@ namespace TheManager_GUI
             if(club != null)
             {
                 Session.Instance.Partie.Club = club as CityClub;
-                Entraineur entraineur = new Entraineur(prenom, nom, 70, naissance, nationalite);
+                Manager entraineur = new Manager(prenom, nom, 70, naissance, nationalite);
                 Session.Instance.Partie.Club.ChangeManager(entraineur);
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
