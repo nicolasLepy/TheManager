@@ -12,7 +12,7 @@ namespace TheManager
     public class TourChampionnat : Tour
     {
 
-        public TourChampionnat(string nom, Heure heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, int dernieresJourneesMemeJour) : base(nom, heure, jours, decalages, initialisation,fin, allerRetour, dernieresJourneesMemeJour)
+        public TourChampionnat(string nom, Hour heure, List<DateTime> jours, bool allerRetour, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, int dernieresJourneesMemeJour) : base(nom, heure, jours, decalages, initialisation,fin, allerRetour, dernieresJourneesMemeJour)
         {
         }
 
@@ -27,7 +27,7 @@ namespace TheManager
         public override void Initialiser()
         {
             AjouterEquipesARecuperer();
-            _matchs = Calendrier.GenererCalendrier(this.Clubs, this.Programmation, AllerRetour);
+            _matchs = Calendar.GenererCalendrier(this.Clubs, this.Programmation, AllerRetour);
 
         }
 

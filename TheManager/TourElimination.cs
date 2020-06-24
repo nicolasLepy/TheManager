@@ -16,7 +16,7 @@ namespace TheManager
     {
 
 
-        public TourElimination(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, bool allerRetour,DateTime initialisation, DateTime fin) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
+        public TourElimination(string nom, Hour heure, List<DateTime> dates, List<DecalagesTV> decalages, bool allerRetour,DateTime initialisation, DateTime fin) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
         {
         }
 
@@ -103,7 +103,7 @@ namespace TheManager
         public override void Initialiser()
         {
             AjouterEquipesARecuperer();
-            _matchs = Calendrier.TirageAuSort(this);
+            _matchs = Calendar.TirageAuSort(this);
         }
 
         public override void QualifierClubs()

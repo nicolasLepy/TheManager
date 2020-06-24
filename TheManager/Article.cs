@@ -12,23 +12,23 @@ namespace TheManager
     {
 
         [DataMember]
-        private string _titre;
+        private string _title;
         [DataMember]
-        private string _contenu;
+        private string _content;
         [DataMember]
         private DateTime _publication;
         [DataMember]
         private int _importance;
 
-        public string Titre { get => _titre; }
-        public string Contenu { get => _contenu; }
-        public DateTime Publication { get => _publication; }
-        public int Importance { get => _importance; }
+        public string title { get => _title; }
+        public string content { get => _content; }
+        public DateTime publication { get => _publication; }
+        public int importance { get => _importance; }
 
-        public Article(string titre, string contenu, DateTime publication, int importance)
+        public Article(string title, string content, DateTime publication, int importance)
         {
-            _titre = titre;
-            _contenu = contenu;
+            _title = title;
+            _content = content;
             _publication = publication;
             _importance = importance;
         }

@@ -632,7 +632,7 @@ namespace TheManager
                         foreach (XElement e4 in e3.Descendants("Decalage"))
                         {
                             int jour = int.Parse(e4.Attribute("jour").Value);
-                            Heure heure = String2Heure(e4.Attribute("heure").Value);
+                            Hour heure = String2Heure(e4.Attribute("heure").Value);
                             int probabilite = 1;
                             if (e4.Attribute("probabilite") != null)
                                 probabilite = int.Parse(e4.Attribute("probabilite").Value);
@@ -782,11 +782,11 @@ namespace TheManager
             return d;
         }
 
-        private Heure String2Heure(string heure)
+        private Hour String2Heure(string heure)
         {
             string[] splitted = heure.Split(':');
-            Heure h = new Heure();
-            h.Heures = int.Parse(splitted[0]);
+            Hour h = new Hour();
+            h.Hours = int.Parse(splitted[0]);
             h.Minutes = int.Parse(splitted[1]);
             return h;
         }

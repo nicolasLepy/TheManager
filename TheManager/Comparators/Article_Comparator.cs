@@ -10,7 +10,7 @@ namespace TheManager.Comparators
     {
         public int Compare(Article x, Article y)
         {
-            return DateTime.Compare(x.Publication, y.Publication);
+            return DateTime.Compare(x.publication, y.publication);
         }
     }
 }

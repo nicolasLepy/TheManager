@@ -55,7 +55,7 @@ namespace TheManager_GUI
             {
                 TextBlock tb = new TextBlock();
                 tb.TextWrapping = TextWrapping.WrapWithOverflow;
-                tb.Text = a.Publication.ToShortDateString() + " - " + a.Titre;
+                tb.Text = a.publication.ToShortDateString() + " - " + a.title;
                 tb.Style = Application.Current.FindResource("StyleTextBlock") as Style;
                 spNews.Children.Add(tb);
 

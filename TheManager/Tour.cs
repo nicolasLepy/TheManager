@@ -50,7 +50,7 @@ namespace TheManager
     public class ProgrammationTour
     {
         [DataMember]
-        private Heure _heureParDefaut;
+        private Hour _heureParDefaut;
         [DataMember]
         private List<DateTime> _joursDeMatchs;
         [DataMember]
@@ -62,16 +62,16 @@ namespace TheManager
         [DataMember]
         private int _dernieresJourneesMemeJour;
 
-        public Heure HeureParDefaut { get => _heureParDefaut; }
+        public Hour HeureParDefaut { get => _heureParDefaut; }
         public List<DateTime> JoursDeMatchs { get => _joursDeMatchs; }
         public List<DecalagesTV> DecalagesTV { get => _decalagesTV; }
         public DateTime Initialisation { get => _initialisation; }
         public DateTime Fin { get => _fin; }
         public int DernieresJourneesMemeJour { get => _dernieresJourneesMemeJour; }
 
-        public ProgrammationTour(Heure heure, List<DateTime> jours, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, int dernieresJourneesMemeJour)
+        public ProgrammationTour(Hour hour, List<DateTime> jours, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, int dernieresJourneesMemeJour)
         {
-            _heureParDefaut = heure;
+            _heureParDefaut = hour;
             _joursDeMatchs = new List<DateTime>(jours);
             _decalagesTV = decalages;
             _initialisation = initialisation;
@@ -86,13 +86,13 @@ namespace TheManager
         [DataMember]
         public int DecalageJours { get; set; }
         [DataMember]
-        public Heure Heure { get; set; }
+        public Hour Heure { get; set; }
         [DataMember]
         public int Probabilite { get; set; }
         [DataMember]
         public int Journee { get; set; }
 
-        public DecalagesTV(int nbjours, Heure heure, int probabilite, int journee)
+        public DecalagesTV(int nbjours, Hour heure, int probabilite, int journee)
         {
             DecalageJours = nbjours;
             Heure = heure;
@@ -244,7 +244,7 @@ namespace TheManager
             }
         }
 
-        public Tour(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, bool allerRetour, int dernieresJourneesMemeJour)
+        public Tour(string nom, Hour heure, List<DateTime> dates, List<DecalagesTV> decalages, DateTime initialisation, DateTime fin, bool allerRetour, int dernieresJourneesMemeJour)
         {
             _nom = nom;
             _clubs = new List<Club>();

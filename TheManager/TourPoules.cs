@@ -43,7 +43,7 @@ namespace TheManager
             _nomGroupes.Add(nom);
         }
 
-        public TourPoules(string nom, Heure heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, MethodeTirageAuSort methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
+        public TourPoules(string nom, Hour heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, MethodeTirageAuSort methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
@@ -75,7 +75,7 @@ namespace TheManager
             DefinirPoules();
             for (int i = 0; i < _nombrePoules; i++)
             {
-                _matchs.AddRange(Calendrier.GenererCalendrier(_poules[i], _programmation, AllerRetour));
+                _matchs.AddRange(Calendar.GenererCalendrier(_poules[i], _programmation, AllerRetour));
             }
 
         }

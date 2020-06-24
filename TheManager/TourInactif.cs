@@ -12,7 +12,7 @@ namespace TheManager
     public class TourInactif : Tour
     {
 
-        public TourInactif(string nom, Heure heure, DateTime initialisation, DateTime fin) :base(nom,heure,new List<DateTime>(),new List<DecalagesTV>(),initialisation,fin,false,0)
+        public TourInactif(string nom, Hour heure, DateTime initialisation, DateTime fin) :base(nom,heure,new List<DateTime>(),new List<DecalagesTV>(),initialisation,fin,false,0)
         { }
 
         public override Tour Copie()
