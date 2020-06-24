@@ -10,11 +10,11 @@ namespace TheManager
 {
 
 
-    public enum Regle
+    public enum Rule
     {
-        RECOIT_SI_DEUX_DIVISION_ECART,
-        EQUIPES_PREMIERES_UNIQUEMENT,
-        RESERVES_NE_MONTENT_PAS
+        AtHomeIfTwoLevelDifference,
+        OnlyFirstTeams,
+        ReservesAreNotPromoted
     }
 
     public enum MethodeRecuperation
@@ -204,7 +204,7 @@ namespace TheManager
         /// Exemple : l'équipe reçoit si elle évolue deux division en moins
         /// </summary>
         [DataMember]
-        protected List<Regle> _regles;
+        protected List<Rule> _regles;
 
         /// <summary>
         /// Liste des dotations données aux clubs à la fin du tour
@@ -220,7 +220,7 @@ namespace TheManager
         public ProgrammationTour Programmation { get => _programmation; }
         public List<Qualification> Qualifications { get => _qualifications; }
         public List<RecuperationEquipes> RecuperationEquipes { get => _recuperationsEquipes; }
-        public List<Regle> Regles { get => _regles; }
+        public List<Rule> Regles { get => _regles; }
         public List<Dotation> Dotations { get => _dotations; }
 
         public Competition Competition
@@ -253,7 +253,7 @@ namespace TheManager
             _allerRetour = allerRetour;
             _qualifications = new List<Qualification>();
             _recuperationsEquipes = new List<RecuperationEquipes>();
-            _regles = new List<Regle>();
+            _regles = new List<Rule>();
             _dotations = new List<Dotation>();
         }
 
@@ -467,7 +467,7 @@ namespace TheManager
             foreach(RecuperationEquipes re in _recuperationsEquipes)
             {
                 bool equipesPremieresUniquement = false;
-                if (Regles.Contains(Regle.EQUIPES_PREMIERES_UNIQUEMENT)) equipesPremieresUniquement = true;
+                if (Regles.Contains(Rule.OnlyFirstTeams)) equipesPremieresUniquement = true;
                 foreach (Club c in re.Source.RecupererEquipes(re.Nombre, re.Methode, equipesPremieresUniquement))
                 {
                     _clubs.Add(c);

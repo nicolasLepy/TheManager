@@ -644,12 +644,12 @@ namespace TheManager
                         }
                         foreach (XElement e4 in e3.Descendants("Regle"))
                         {
-                            Regle regle = Regle.RECOIT_SI_DEUX_DIVISION_ECART;
+                            Rule regle = Rule.AtHomeIfTwoLevelDifference;
                             switch(e4.Attribute("nom").Value)
                             {
-                                case "RECOIT_SI_DEUX_DIVISION_ECART": regle = Regle.RECOIT_SI_DEUX_DIVISION_ECART; break;
-                                case "EQUIPES_PREMIERES_UNIQUEMENT":regle = Regle.EQUIPES_PREMIERES_UNIQUEMENT;break;
-                                case "RESERVES_NE_MONTENT_PAS": regle = Regle.RESERVES_NE_MONTENT_PAS; break;
+                                case "RECOIT_SI_DEUX_DIVISION_ECART": regle = Rule.AtHomeIfTwoLevelDifference; break;
+                                case "EQUIPES_PREMIERES_UNIQUEMENT":regle = Rule.OnlyFirstTeams;break;
+                                case "RESERVES_NE_MONTENT_PAS": regle = Rule.ReservesAreNotPromoted; break;
                             }
                             tour.Regles.Add(regle);
                         }

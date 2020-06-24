@@ -103,7 +103,7 @@ namespace TheManager
         public override void Initialiser()
         {
             AjouterEquipesARecuperer();
-            _matchs = Calendar.TirageAuSort(this);
+            _matchs = Calendar.Draw(this);
         }
 
         public override void QualifierClubs()

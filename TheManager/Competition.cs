@@ -280,7 +280,7 @@ namespace TheManager
                 }
                 foreach (Club c in t.Clubs) tour.Clubs.Add(c);
                 foreach (Dotation d in t.Dotations) tour.Dotations.Add(d);
-                foreach (Regle r in t.Regles) tour.Regles.Add(r);
+                foreach (Rule r in t.Regles) tour.Regles.Add(r);
             }
 
             foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)

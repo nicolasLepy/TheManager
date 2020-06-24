@@ -75,7 +75,7 @@ namespace TheManager
             DefinirPoules();
             for (int i = 0; i < _nombrePoules; i++)
             {
-                _matchs.AddRange(Calendar.GenererCalendrier(_poules[i], _programmation, AllerRetour));
+                _matchs.AddRange(Calendar.GenerateCalendar(_poules[i], _programmation, AllerRetour));
             }
 
         }

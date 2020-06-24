@@ -263,18 +263,18 @@ namespace TheManager
             return res;
         }
 
-        public static string Regle2String(Regle regle)
+        public static string Regle2String(Rule regle)
         {
             string res = "";
             switch (regle)
             {
-                case Regle.RECOIT_SI_DEUX_DIVISION_ECART:
+                case Rule.AtHomeIfTwoLevelDifference:
                     res = "Le club reçoit s'il évolue au moins deux divisions en dessous";
                     break;
-                case Regle.EQUIPES_PREMIERES_UNIQUEMENT:
+                case Rule.OnlyFirstTeams:
                     res = "Seulement les équipes premières peuvent entrer";
                     break;
-                case Regle.RESERVES_NE_MONTENT_PAS:
+                case Rule.ReservesAreNotPromoted:
                     res = "Les réserves ne peuvent pas monter";
                     break;
             }

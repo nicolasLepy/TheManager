@@ -69,7 +69,7 @@ namespace TheManager_GUI
             vue.Remplir(spClassement);
 
             int nbRegles = 0;
-            foreach (Regle r in _competition.Tours[_indexTour].Regles)
+            foreach (Rule r in _competition.Tours[_indexTour].Regles)
             {
                 Label l = new Label();
                 l.Style = Application.Current.FindResource("StyleLabel2") as Style;
