@@ -9,27 +9,27 @@ namespace TheManager
     public class Utils
     {
 
-        public static int NombreJoursEntreDeuxDates(DateTime a, DateTime b)
+        public static int DaysNumberBetweenTwoDates(DateTime a, DateTime b)
         {
             TimeSpan ts = a - b;
 
             return Math.Abs(ts.Days);
         }
 
-        public static bool ComparerDates(DateTime a, DateTime b)
+        public static bool CompareDates(DateTime a, DateTime b)
         {
             bool res = a.Year == b.Year && a.Month == b.Month && a.Day == b.Day;
 
             return res;
         }
         
-        public static bool ComparerDatesSansAnnee(DateTime a, DateTime b)
+        public static bool CompareDatesWithoutYear(DateTime a, DateTime b)
         {
             bool res = a.Month == b.Month && a.Day == b.Day;
             return res;
         }
 
-        public static bool EstAvantSansAnnee(DateTime a, DateTime b)
+        public static bool IsBeforeWithoutYear(DateTime a, DateTime b)
         {
             bool res = false;
 
@@ -45,7 +45,7 @@ namespace TheManager
             return res;
         }
 
-        public static List<Joueur> JoueursPoste(List<Joueur> joueurs, Position p)
+        public static List<Joueur> PlayersByPoste(List<Joueur> joueurs, Position p)
         {
             List<Joueur> res = new List<Joueur>();
 
@@ -60,16 +60,16 @@ namespace TheManager
             return res;
         }
 
-        public static List<E> MelangerListe<E>(List<E> liste)
+        public static List<E> ShuffleList<E>(List<E> list)
         {
             List<E> res = new List<E>();
 
             int random = 0;
-            while (liste.Count > 0)
+            while (list.Count > 0)
             {
-                random = Session.Instance.Random(0, liste.Count);
-                res.Add(liste[random]);
-                liste.RemoveAt(random);
+                random = Session.Instance.Random(0, list.Count);
+                res.Add(list[random]);
+                list.RemoveAt(random);
             }
 
             return res;
@@ -114,16 +114,16 @@ namespace TheManager
 
         public static int Points(List<Match> matchs, Club c)
         {
-            return (3 * Gagnes(matchs, c)) + Nuls(matchs, c);
+            return (3 * Wins(matchs, c)) + Draws(matchs, c);
         }
 
-        public static int Joues(List<Match> matchs, Club c)
+        public static int Played(List<Match> matchs, Club c)
         {
-            return Gagnes(matchs, c) + Nuls(matchs, c) + Perdus(matchs, c);
+            return Wins(matchs, c) + Draws(matchs, c) + Loses(matchs, c);
         }
 
 
-        public static int Gagnes(List<Match> matchs, Club c)
+        public static int Wins(List<Match> matchs, Club c)
         {
             int res = 0;
             foreach (Match m in matchs)
@@ -146,7 +146,7 @@ namespace TheManager
             }
             return res;
         }
-        public static int Perdus(List<Match> matchs, Club c)
+        public static int Loses(List<Match> matchs, Club c)
         {
             int res = 0;
             foreach (Match m in matchs)
@@ -169,7 +169,7 @@ namespace TheManager
             }
             return res;
         }
-        public static int Nuls(List<Match> matchs, Club c)
+        public static int Draws(List<Match> matchs, Club c)
         {
             int res = 0;
             foreach (Match m in matchs)
@@ -182,7 +182,7 @@ namespace TheManager
             return res;
         }
 
-        public static int Bp(List<Match> matchs, Club c)
+        public static int Gf(List<Match> matchs, Club c)
         {
             int res = 0;
             foreach (Match m in matchs)
@@ -200,7 +200,7 @@ namespace TheManager
             return res;
         }
 
-        public static int Bc(List<Match> matchs, Club c)
+        public static int Ga(List<Match> matchs, Club c)
         {
             int res = 0;
             foreach (Match m in matchs)
@@ -218,9 +218,9 @@ namespace TheManager
             return res;
         }
 
-        public static int Difference(List<Match> matchs, Club c)
+        public static int Difference(List<Match> games, Club c)
         {
-            return Bp(matchs, c) - Bc(matchs, c);
+            return Gf(games, c) - Ga(games, c);
         }
 
         public static string Logo(Club c)
@@ -228,10 +228,10 @@ namespace TheManager
             string res = "";
             if (c != null)
             {
-                res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.Logo + ".png";
+                res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png";
             }
             else
-                Console.WriteLine(c.Nom + " n'a pas de logo valide");
+                Console.WriteLine(c.name + " n'a pas de logo valide");
             return res;
         }
 
@@ -240,14 +240,14 @@ namespace TheManager
             return System.IO.Directory.GetCurrentDirectory() + "\\Images\\" + image;
         }
 
-        public static string LogoCompetition(Competition competition)
+        public static string LogoTournament(Competition tournament)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\Logo\\" + competition.Logo + ".png";
+            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\Logo\\" + tournament.Logo + ".png";
         }
 
-        public static string CheminSon(string son)
+        public static string PathSong(string song)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Musiques\\" + son + ".wav";
+            return System.IO.Directory.GetCurrentDirectory() + "\\Musiques\\" + song + ".wav";
         }
 
         public static bool RetoursContient(RetourMatchEvenement evenement, List<RetourMatch> retours)
@@ -263,10 +263,10 @@ namespace TheManager
             return res;
         }
 
-        public static string Regle2String(Rule regle)
+        public static string Rule2String(Rule rule)
         {
             string res = "";
-            switch (regle)
+            switch (rule)
             {
                 case Rule.AtHomeIfTwoLevelDifference:
                     res = "Le club reçoit s'il évolue au moins deux divisions en dessous";

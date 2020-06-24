@@ -117,7 +117,7 @@ namespace TheManager
                 _joueurs.Remove(aRetirer);
         }
 
-        public override List<Joueur> Joueurs()
+        public override List<Joueur> Players()
         {
             List<Joueur> joueurs = new List<Joueur>();
             foreach (Contrat c in _joueurs)
@@ -125,7 +125,7 @@ namespace TheManager
             return joueurs;
         }
 
-        public override float Niveau()
+        public override float Level()
         {
             float niveau = 0;
 
@@ -153,7 +153,7 @@ namespace TheManager
             int anneeNaissance = Session.Instance.Random(Session.Instance.Partie.Date.Year - ageMax, Session.Instance.Partie.Date.Year - ageMin+1);
 
             //Méthode Niveau -> Potentiel
-            int niveau = Session.Instance.Random(CentreFormation - 18, CentreFormation + 18) + decalagePotentiel;
+            int niveau = Session.Instance.Random(formationFacilities - 18, formationFacilities + 18) + decalagePotentiel;
             if (niveau < 1) niveau = 1;
             if (niveau > 99) niveau = 99;
 
@@ -215,7 +215,7 @@ namespace TheManager
         public void ObtenirSponsor()
         {
             int sponsor = 0;
-            float niveau = Niveau();
+            float niveau = Level();
             if (niveau < 1000) sponsor = Session.Instance.Random(5000, 14000);
             else if (niveau < 3000) sponsor = Session.Instance.Random(85000, 323000);
             else if (niveau < 4000) sponsor = Session.Instance.Random(200000, 500000);
@@ -235,17 +235,17 @@ namespace TheManager
         /// </summary>
         public void MiseAJourCentreFormation()
         {
-            _centreFormation -= Session.Instance.Random(1, 3);
-            if (_centreFormation < 1)
-                _centreFormation = 1;
+            _formationFacilities -= Session.Instance.Random(1, 3);
+            if (_formationFacilities < 1)
+                _formationFacilities = 1;
             for (int i = 0; i<5; i++)
             {
-                int prix = (int)(967.50471* Math.Pow(1.12867,CentreFormation));
+                int prix = (int)(967.50471* Math.Pow(1.12867,formationFacilities));
                 //Console.WriteLine(Nom + " doit payer " + prix + " euros pour ameliorer son centre.");
-                if (_budget/3 > prix && CentreFormation<99)
+                if (_budget/3 > prix && formationFacilities<99)
                 {
                     ModifierBudget(-prix);
-                    _centreFormation++;
+                    _formationFacilities++;
                 }
             }
         }
@@ -286,9 +286,9 @@ namespace TheManager
                 if (Session.Instance.Random(1, 3) == 1) ageValide = false;
 
             bool assezBon = true;
-            if (ct.Joueur.Age < 25 && ct.Joueur.Potentiel < Niveau() - 12)
+            if (ct.Joueur.Age < 25 && ct.Joueur.Potentiel < Level() - 12)
                 assezBon = false;
-            else if (ct.Joueur.Age >= 25 && ct.Joueur.Niveau < Niveau() - 12)
+            else if (ct.Joueur.Age >= 25 && ct.Joueur.Niveau < Level() - 12)
                 assezBon = false;
 
             if(_budget > 12*salaire && ageValide && assezBon)
@@ -303,7 +303,7 @@ namespace TheManager
 
         public void MettreAJourListeTransferts()
         {
-            float niveauClub = Niveau();
+            float niveauClub = Level();
             foreach(Contrat ct in _joueurs)
             {
                 //Si le joueur est trop mauvais
@@ -337,7 +337,7 @@ namespace TheManager
         /// </summary>
         public void GenererCalendrierMatchsAmicaux()
         {
-            Competition championnat = Championnat;
+            Competition championnat = Championship;
             List<Club> adversairesPossibles = new List<Club>();
             
             if(championnat != null && championnat.Tours[0] as TourChampionnat != null)
@@ -391,7 +391,7 @@ namespace TheManager
         {
             GestionTransfertsClub.JoueursCibles.Clear();
 
-            float niveau = Niveau();
+            float niveau = Level();
             Pays paysClub = Ville.Pays();
 
             int chance = 100 - (int)niveau;
@@ -430,26 +430,26 @@ namespace TheManager
         /// </summary>
         public void CompleterEquipe()
         {
-            List<Joueur> joueurs = ListerJoueurPoste(Position.Goalkeeper);
+            List<Joueur> joueurs = ListPlayersByPosition(Position.Goalkeeper);
             if(joueurs.Count < 2)
             {
-                for (int i = 0; i < 2 - joueurs.Count; i++) GenererJoueur(Position.Goalkeeper, 18, 22, -(int)(CentreFormation-(CentreFormation * 0.75f)));
+                for (int i = 0; i < 2 - joueurs.Count; i++) GenererJoueur(Position.Goalkeeper, 18, 22, -(int)(formationFacilities-(formationFacilities * 0.75f)));
             }
-            joueurs = ListerJoueurPoste(Position.Defender);
+            joueurs = ListPlayersByPosition(Position.Defender);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Defender, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Defender, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));
             }
             
-            joueurs = ListerJoueurPoste(Position.Midfielder);
+            joueurs = ListPlayersByPosition(Position.Midfielder);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Midfielder, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Midfielder, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));
             }
-            joueurs = ListerJoueurPoste(Position.Striker);
+            joueurs = ListPlayersByPosition(Position.Striker);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Striker, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Striker, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));
             }
         }
 

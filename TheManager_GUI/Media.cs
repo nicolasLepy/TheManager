@@ -77,7 +77,7 @@ namespace TheManager_GUI
             _thread = new Thread(() =>
             {
                 var c = new System.Windows.Media.MediaPlayer();
-                c.Open(new Uri(Utils.CheminSon(chemin)));
+                c.Open(new Uri(Utils.PathSong(chemin)));
                 if (decalage > 0)
                 {
                     Thread.Sleep(decalage * 1000);
@@ -174,8 +174,8 @@ namespace TheManager_GUI
 
         public void But(Match m)
         {
-            if (m.Affluence < 12000) But4000(m.Domicile.MusiqueBut);
-            else But12000(m.Domicile.MusiqueBut);
+            if (m.Affluence < 12000) But4000(m.Domicile.goalMusic);
+            else But12000(m.Domicile.goalMusic);
         }
 
         public void But4000(string musique)
@@ -247,7 +247,7 @@ namespace TheManager_GUI
         {
             WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
             wplayer.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(Player_MediaError);
-            wplayer.URL = Utils.CheminSon(chemin);
+            wplayer.URL = Utils.PathSong(chemin);
             Console.WriteLine(wplayer.URL);
             if(boucle)
             {
@@ -295,8 +295,8 @@ namespace TheManager_GUI
 
         public void But(Match m)
         {
-            if (m.Affluence < 12000) But4000(m.Domicile.MusiqueBut);
-            else But12000(m.Domicile.MusiqueBut);
+            if (m.Affluence < 12000) But4000(m.Domicile.goalMusic);
+            else But12000(m.Domicile.goalMusic);
         }
 
         public void But4000(string musique)

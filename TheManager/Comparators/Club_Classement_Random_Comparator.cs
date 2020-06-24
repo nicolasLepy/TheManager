@@ -10,8 +10,8 @@ namespace TheManager.Comparators
     {
         public int Compare(Club x, Club y)
         {
-            int nivX = (int)((100*x.Niveau()) * Session.Instance.Random(5,15)/10.0f );
-            int nivY = (int)((100*y.Niveau()) * Session.Instance.Random(5, 15) / 10.0f);
+            int nivX = (int)((100*x.Level()) * Session.Instance.Random(5,15)/10.0f );
+            int nivY = (int)((100*y.Level()) * Session.Instance.Random(5, 15) / 10.0f);
 
             return nivY-nivX;
         }

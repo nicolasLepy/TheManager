@@ -18,20 +18,20 @@ namespace TheManager
         public List<Contrat> Contrats { get => _joueurs; }
         public Club_Ville EquipePremiere { get => _equipePremiere; }
 
-        public Club_Reserve(Club_Ville equipePremiere, string nom, string nomCourt, Entraineur entraineur) : base(nom,entraineur,nomCourt,equipePremiere.Reputation/2,equipePremiere.Supporters/30,0,equipePremiere.Logo,equipePremiere.Stade,equipePremiere.MusiqueBut)
+        public Club_Reserve(Club_Ville equipePremiere, string nom, string nomCourt, Entraineur entraineur) : base(nom,entraineur,nomCourt,equipePremiere.reputation/2,equipePremiere.supporters/30,0,equipePremiere.logo,equipePremiere.stadium,equipePremiere.goalMusic)
         {
             _equipePremiere = equipePremiere;
             _joueurs = new List<Contrat>();
         }
 
-        public override List<Joueur> Joueurs()
+        public override List<Joueur> Players()
         {
             List<Joueur> res = new List<Joueur>();
             foreach (Contrat ct in _joueurs) res.Add(ct.Joueur);
             return res;
         }
 
-        public override float Niveau()
+        public override float Level()
         {
             float res = 0;
             foreach (Contrat ct in _joueurs)

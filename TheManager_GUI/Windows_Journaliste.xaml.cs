@@ -38,7 +38,7 @@ namespace TheManager_GUI
 
             foreach(Match m in matchs)
             {
-                dgMatchs.Items.Add(new MatchElement { Date = m.Jour.ToShortDateString(), Heure = m.Jour.ToShortTimeString(), Equipe1 = m.Domicile.Nom, Equipe2 = m.Exterieur.Nom });
+                dgMatchs.Items.Add(new MatchElement { Date = m.Jour.ToShortDateString(), Heure = m.Jour.ToShortTimeString(), Equipe1 = m.Domicile.name, Equipe2 = m.Exterieur.name });
             }
             
         }

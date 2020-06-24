@@ -56,7 +56,7 @@ namespace TheManager.Comparators
 
         private int ButPour(Club c)
         {
-            return Utils.Bp(_tour, c);
+            return Utils.Gf(_tour, c);
         }
     }
 }

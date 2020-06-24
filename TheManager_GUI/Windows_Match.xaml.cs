@@ -27,13 +27,13 @@ namespace TheManager_GUI
             InitializeComponent();
             try
             {
-                imgCompetition.Source = new BitmapImage(new Uri(Utils.LogoCompetition(match.Competition)));
+                imgCompetition.Source = new BitmapImage(new Uri(Utils.LogoTournament(match.Competition)));
             }
             catch { }
-            lbStade.Content = match.Domicile.Stade.Nom;
+            lbStade.Content = match.Domicile.stadium.Nom;
             lbAffluence.Content = match.Affluence + " spectateurs";
-            lbEquipe1.Content = match.Domicile.Nom;
-            lbEquipe2.Content = match.Exterieur.Nom;
+            lbEquipe1.Content = match.Domicile.name;
+            lbEquipe2.Content = match.Exterieur.name;
             lbScore.Content = match.Score1 + " - " + match.Score2;
             lbTirs1.Content = match.Statistiques.TirsDomicile;
             lbTirs2.Content = match.Statistiques.TirsExterieurs;

@@ -85,13 +85,13 @@ namespace TheManager_GUI
             }
 
 
-            foreach (Joueur j in c.Joueurs())
+            foreach (Joueur j in c.Players())
             {
                 dgJoueursDispo.Items.Add(new JoueurCompoElement { Poste = j.Poste.ToString(), Age = j.Age, Energie = j.Energie, Niveau = j.Niveau, Nom = j});
             }
 
             lbMatch.Content = m[0].Domicile + " - " + m[0].Exterieur;
-            lbStade.Content = m[0].Domicile.Stade.Nom;
+            lbStade.Content = m[0].Domicile.stadium.Nom;
             lbCote1.Content = m[0].Cote1.ToString("0.00");
             lbCoteN.Content = m[0].CoteN.ToString("0.00");
             lbCote2.Content = m[0].Cote2.ToString("0.00");

@@ -69,7 +69,7 @@ namespace TheManager
                 Club_Ville cv = c as Club_Ville;
                 if(cv != null)
                 {
-                    cv.ModifierBudget(nbMatchs * cv.Supporters * cv.PrixBillet);
+                    cv.ModifierBudget(nbMatchs * cv.supporters * cv.ticketPrice);
                 }
             }
             foreach(Qualification q in _qualifications)
@@ -77,12 +77,12 @@ namespace TheManager
                 Club c = classement[q.Classement - 1];
                 if (!q.AnneeSuivante) q.Competition.Tours[q.IDTour].Clubs.Add(c);
                 else q.Competition.AjouterClubAnneeSuivante(c, q.IDTour);
-                if (q.Competition.Championnat && c.Championnat != null)
+                if (q.Competition.Championnat && c.Championship != null)
                 {
-                    if (q.Competition.Niveau > c.Championnat.Niveau)
-                        c.Supporters = (int)(c.Supporters * 1.4f);
-                    else if (q.Competition.Niveau < c.Championnat.Niveau)
-                        c.Supporters = (int)(c.Supporters / 1.4f);
+                    if (q.Competition.Niveau > c.Championship.Niveau)
+                        c.supporters = (int)(c.supporters * 1.4f);
+                    else if (q.Competition.Niveau < c.Championship.Niveau)
+                        c.supporters = (int)(c.supporters / 1.4f);
                 }
             }
         }

@@ -29,12 +29,12 @@ namespace TheManager
             _pays = pays;
         }
 
-        public override List<Joueur> Joueurs()
+        public override List<Joueur> Players()
         {
            return new List<Joueur>(_selectionnes);
         }
 
-        public override float Niveau()
+        public override float Level()
         {
             float res = 0;
             foreach(Joueur j in _selectionnes)
@@ -47,22 +47,22 @@ namespace TheManager
         public void AppelSelection(List<Joueur> joueurs)
         {
             _selectionnes = new List<Joueur>();
-            List<Joueur> joueursPoste = Utils.JoueursPoste(joueurs,Position.Goalkeeper);
+            List<Joueur> joueursPoste = Utils.PlayersByPoste(joueurs,Position.Goalkeeper);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for(int i = 0; i<3; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
-            joueursPoste = Utils.JoueursPoste(joueurs, Position.Defender);
+            joueursPoste = Utils.PlayersByPoste(joueurs, Position.Defender);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for (int i = 0; i < 7; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
-            joueursPoste = Utils.JoueursPoste(joueurs, Position.Midfielder);
+            joueursPoste = Utils.PlayersByPoste(joueurs, Position.Midfielder);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for (int i = 0; i < 7; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
-            joueursPoste = Utils.JoueursPoste(joueurs, Position.Striker);
+            joueursPoste = Utils.PlayersByPoste(joueurs, Position.Striker);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for (int i = 0; i < 6; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);

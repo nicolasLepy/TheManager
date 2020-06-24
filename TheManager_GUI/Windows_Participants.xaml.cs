@@ -36,7 +36,7 @@ namespace TheManager_GUI
                         masseSalariale = (int)(cl as Club_Ville).MasseSalariale;
                     }
 
-                    float etoiles = cl.Etoiles;
+                    float etoiles = cl.Stars;
                     string e1 = "";
                     string e2 = "";
                     string e3 = "";
@@ -64,7 +64,7 @@ namespace TheManager_GUI
                     if (etoiles > 4 && etoiles < 5)
                         e5 = Utils.Image("demistar.png");
 
-                    dgClubs.Items.Add(new ClubElement { Nom = cl.NomCourt, Niveau = cl.Niveau(), Budget = budget, Affluence = c.AffluenceMoyenne(cl), MasseSalariale = masseSalariale, Star1=e1, Star2=e2, Star3=e3, Star4=e4,Star5=e5 });
+                    dgClubs.Items.Add(new ClubElement { Nom = cl.shortName, Niveau = cl.Level(), Budget = budget, Affluence = c.AffluenceMoyenne(cl), MasseSalariale = masseSalariale, Star1=e1, Star2=e2, Star3=e3, Star4=e4,Star5=e5 });
                 }
             }
         }

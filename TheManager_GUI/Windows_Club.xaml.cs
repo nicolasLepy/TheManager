@@ -42,7 +42,7 @@ namespace TheManager_GUI
 
         public void RemplirMatchs()
         {
-            List<Match> matchs = _club.Matchs;
+            List<Match> matchs = _club.Games;
             int j = -1;
             for (int index = matchs.Count - 1; index >= 0; index--, j++)
             {
@@ -90,7 +90,7 @@ namespace TheManager_GUI
                 l2.Width = 75;
 
                 Label l3 = new Label();
-                l3.Content = m.Domicile.Nom;
+                l3.Content = m.Domicile.name;
                 l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l3.FontSize = 10;
                 l3.Width = 100;
@@ -104,7 +104,7 @@ namespace TheManager_GUI
                 btnScore.Width = 50;
 
                 Label l5 = new Label();
-                l5.Content = m.Exterieur.Nom;
+                l5.Content = m.Exterieur.name;
                 l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l5.FontSize = 10;
                 l5.Width = 100;
@@ -153,11 +153,11 @@ namespace TheManager_GUI
         {
             InitializeComponent();
             _club = c;
-            lbClub.Content = c.Nom;
+            lbClub.Content = c.name;
 
-            if(c.Entraineur != null)
+            if(c.manager != null)
             {
-                lbEntraineur.Content = "Entraîneur : " + c.Entraineur.ToString();
+                lbEntraineur.Content = "Entraîneur : " + c.manager.ToString();
             }
             else
             {
@@ -168,7 +168,10 @@ namespace TheManager_GUI
             {
                 imgLogo.Source = new BitmapImage(new Uri(Utils.Logo(c)));
             }
-            catch { }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
             Palmares(c);
             RemplirMatchs();
 
@@ -276,7 +279,7 @@ namespace TheManager_GUI
         {
             Button btn = sender as Button;
             int idMatch = int.Parse(btn.Name.Split('_')[1]);
-            Match match = _club.Matchs[idMatch];
+            Match match = _club.Games[idMatch];
             Windows_Match wm = new Windows_Match(match);
             wm.Show();
 

@@ -314,8 +314,8 @@ namespace TheManager
             float nivEquipe = res / (11.0f);
             
             int niveauEntraineur;
-            if (club.Entraineur != null)
-                niveauEntraineur = club.Entraineur.Niveau;
+            if (club.manager != null)
+                niveauEntraineur = club.manager.Niveau;
             else
                 niveauEntraineur = (int)(nivEquipe * 0.8f);
 
@@ -434,8 +434,8 @@ namespace TheManager
 
         private void EtablirCotes()
         {
-            float domN = Domicile.Niveau() * 1.1f;
-            float extN = Exterieur.Niveau();
+            float domN = Domicile.Level() * 1.1f;
+            float extN = Exterieur.Level();
             
             float rapportD = domN / extN;
             rapportD *= rapportD * rapportD * rapportD;
@@ -524,7 +524,7 @@ namespace TheManager
             while(!dateTrouvee)
             {
                 
-                if(!Domicile.MatchProche(dateBase,3) && !Exterieur.MatchProche(dateBase, 3))
+                if(!Domicile.CloseGame(dateBase,3) && !Exterieur.CloseGame(dateBase, 3))
                 {
                     dateTrouvee = true;
                     this.Jour = dateBase;
@@ -538,12 +538,12 @@ namespace TheManager
 
         private void EtablirAffluence()
         {
-            _affluence = (int)(Domicile.Supporters * (Session.Instance.Random(6, 14) / 10.0f));
-            _affluence = (int)(_affluence * (Exterieur.Niveau() / (Domicile.Niveau())));
-            if (_affluence > Domicile.Stade.Capacite) _affluence = Domicile.Stade.Capacite;
+            _affluence = (int)(Domicile.supporters * (Session.Instance.Random(6, 14) / 10.0f));
+            _affluence = (int)(_affluence * (Exterieur.Level() / (Domicile.Level())));
+            if (_affluence > Domicile.stadium.Capacite) _affluence = Domicile.stadium.Capacite;
             if(Domicile as Club_Ville != null)
             {
-                (Domicile as Club_Ville).ModifierBudget(_affluence * Domicile.PrixBillet);
+                (Domicile as Club_Ville).ModifierBudget(_affluence * Domicile.ticketPrice);
             }
         }
 

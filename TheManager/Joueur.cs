@@ -188,7 +188,7 @@ namespace TheManager
             //Si le joueur à un club
             if (Club != null)
             {
-                if (porteur.Niveau() - Club.Niveau() > Session.Instance.Random(-10, -5))
+                if (porteur.Level() - Club.Level() > Session.Instance.Random(-10, -5))
                 {
                     Contrat sonContrat = null;
                     foreach (Contrat ct in Club.Contrats) if (ct.Joueur == this) sonContrat = ct;

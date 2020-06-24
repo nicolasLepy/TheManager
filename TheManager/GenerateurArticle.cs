@@ -47,8 +47,8 @@ namespace TheManager
             string res = "";
             Club equ1 = match.Vainqueur;
             Club equ2 = match.Perdant;
-            float niv1 = equ1.Niveau();
-            float niv2 = equ2.Niveau();
+            float niv1 = equ1.Level();
+            float niv2 = equ2.Level();
             int score1 = match.Score1;
             int score2 = match.Score2;
             
@@ -112,8 +112,8 @@ namespace TheManager
                 }
             }
 
-            res = res.Replace("VAINQUEUR", equ1.NomCourt);
-            res = res.Replace("VAINCU", equ2.NomCourt);
+            res = res.Replace("VAINQUEUR", equ1.shortName);
+            res = res.Replace("VAINCU", equ2.shortName);
             res = res.Replace("SCORE", score1 + "-" + score2);
             return res;
         }

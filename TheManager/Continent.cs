@@ -61,7 +61,7 @@ namespace TheManager
             else if (methode == MethodeRecuperation.PIRES)
                 clubs.Sort(new Club_Niveau_Comparator(true));
             else if (methode == MethodeRecuperation.ALEATOIRE)
-                clubs = Utils.MelangerListe<Club>(clubs);
+                clubs = Utils.ShuffleList<Club>(clubs);
 
             for (int i = 0; i < nombre; i++) res.Add(clubs[i]);
             return res;

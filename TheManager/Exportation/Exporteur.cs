@@ -22,8 +22,8 @@ namespace TheManager.Exportation
                 if(cv != null)
                 {
                     StringBuilder sb = new StringBuilder();
-                    sb.Append("<h2>").Append(cv.Nom).Append("</h2>");
-                    output += "<h2>" + cv.Nom + "</h2>";
+                    sb.Append("<h2>").Append(cv.name).Append("</h2>");
+                    output += "<h2>" + cv.name + "</h2>";
                     foreach(EntreeHistorique eh in cv.Historique.Elements)
                     {
                         output += "<p><b>" + eh.Date.ToShortDateString() + "</b><br>Budget : " + eh.Budget + "<br>Centre de formation : " + eh.CentreFormation + "</p>";
@@ -52,7 +52,7 @@ namespace TheManager.Exportation
                 {
                     Club_Ville cv = cl as Club_Ville;
                     if (cv != null)
-                        output += "" + cl.Nom + " - " + cl.CentreFormation + " - " + cv.Budget + " €<br>";
+                        output += "" + cl.name + " - " + cl.formationFacilities + " - " + cv.Budget + " €<br>";
                 }
                 output += "</p>";
                 if(t as TourChampionnat != null)
@@ -62,7 +62,7 @@ namespace TheManager.Exportation
                     
                     foreach (Club club in tc.Classement())
                     {
-                        output += "<tr><td>" + club.Nom + "</td><td>" + tc.Points(club) + "</td><td>" + tc.Joues(club) + "</td><td>" + tc.Gagnes(club) + "</td><td>" + tc.Nuls(club) + "</td><td>" + tc.Perdus(club) + "</td><td>" + tc.ButsPour(club) + "</td><td>" + tc.ButsContre(club) + "</td><td>" + tc.Difference(club) + "</td></tr>";
+                        output += "<tr><td>" + club.name + "</td><td>" + tc.Points(club) + "</td><td>" + tc.Joues(club) + "</td><td>" + tc.Gagnes(club) + "</td><td>" + tc.Nuls(club) + "</td><td>" + tc.Perdus(club) + "</td><td>" + tc.ButsPour(club) + "</td><td>" + tc.ButsContre(club) + "</td><td>" + tc.Difference(club) + "</td></tr>";
                     }
                     output += "</table>";
                     int matchsJournee = (tc.Clubs.Count % 2 == 1) ? tc.Clubs.Count/2+1 : tc.Clubs.Count/2;
@@ -90,7 +90,7 @@ namespace TheManager.Exportation
                                 output += "<tr><td colspan=\"3\">" + m.Jour.Date.ToShortDateString() + "</td></tr>";
                             }
                             last = m.Jour;
-                            output += "<tr><td>" + m.Jour.ToShortTimeString() + "</td><td>" + m.Domicile.Nom + "</td><td><a href=\""+tc.Nom+"\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.Nom + "</td></tr>";
+                            output += "<tr><td>" + m.Jour.ToShortTimeString() + "</td><td>" + m.Domicile.name + "</td><td><a href=\""+tc.Nom+"\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.name + "</td></tr>";
                             EcrireMatch(m, dir + "\\" + tc.Nom + "\\" + k + ".html");
                             k++;
                         }
@@ -113,8 +113,8 @@ namespace TheManager.Exportation
                             output += "<tr><td colspan=\"3\">"+m.Jour.Date.ToShortDateString()+"</td></tr>";
                         }
                         last = m.Jour;
-                        Competition compDom = m.Domicile.Championnat;
-                        Competition compExt = m.Exterieur.Championnat;
+                        Competition compDom = m.Domicile.Championship;
+                        Competition compExt = m.Exterieur.Championship;
                         string sCompDom = "";
                         string sCompExt = "";
                         if (compDom != null) sCompDom = " (" + compDom.NomCourt + ")";
@@ -122,7 +122,7 @@ namespace TheManager.Exportation
                         string score = m.Score1 + " - " + m.Score2;
                         if (m.Prolongations) score += " ap";
                         if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
-                        output += "<tr><td>" + m.Jour.ToShortTimeString() + "</td><td>" + m.Domicile.Nom + sCompDom + "</td><td><a href=\"" + te.Nom + "\\" + k + ".html\">" + score + "</a></td><td>" + m.Exterieur.Nom + sCompExt + "</td></tr>";
+                        output += "<tr><td>" + m.Jour.ToShortTimeString() + "</td><td>" + m.Domicile.name + sCompDom + "</td><td><a href=\"" + te.Nom + "\\" + k + ".html\">" + score + "</a></td><td>" + m.Exterieur.name + sCompExt + "</td></tr>";
                         EcrireMatch(m, dir + "\\" + te.Nom + "\\" + k + ".html");
                         k++;
                     }
@@ -134,7 +134,7 @@ namespace TheManager.Exportation
                     List<Club> clubs = new List<Club>(ti.Clubs);                    
                     foreach(Club club in clubs)
                     {
-                        output += "<p>" + club.Nom + "</p>";
+                        output += "<p>" + club.name + "</p>";
                     }
                 }
                 if (t as TourPoules != null)
@@ -149,7 +149,7 @@ namespace TheManager.Exportation
                         output += "<p>Groupe</p><table>";
                         foreach (Club club in classement)
                         {
-                            output += "<tr><td>" + club.Nom + "</td><td>" + t.Points(club) + "</td><td>" + t.Joues(club) + "</td><td>" + t.Gagnes(club) + "</td><td>" + t.Nuls(club) + "</td><td>" + t.Perdus(club) + "</td><td>" + t.ButsPour(club) + "</td><td>" + t.ButsContre(club) + "</td><td>" + t.Difference(club) + "</td></tr>";
+                            output += "<tr><td>" + club.name + "</td><td>" + t.Points(club) + "</td><td>" + t.Joues(club) + "</td><td>" + t.Gagnes(club) + "</td><td>" + t.Nuls(club) + "</td><td>" + t.Perdus(club) + "</td><td>" + t.ButsPour(club) + "</td><td>" + t.ButsContre(club) + "</td><td>" + t.Difference(club) + "</td></tr>";
                         }
                         output += "</table>";
                     }
@@ -169,7 +169,7 @@ namespace TheManager.Exportation
                         output += "<p>Journée " + (int)(i + 1) + "</p><table>";
                         foreach (Match m in journee)
                         {
-                            output += "<tr><td>" + m.Jour.ToString() + "</td><td>" + m.Domicile.Nom + "</td><td><a href=\"" + t.Nom + "\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.Nom + "</td></tr>";
+                            output += "<tr><td>" + m.Jour.ToString() + "</td><td>" + m.Domicile.name + "</td><td><a href=\"" + t.Nom + "\\" + k + ".html\">" + m.Score1 + "-" + m.Score2 + "</a></td><td>" + m.Exterieur.name + "</td></tr>";
                             EcrireMatch(m, dir + "\\" + t.Nom + "\\" + k + ".html");
                             k++;
                         }
@@ -191,7 +191,7 @@ namespace TheManager.Exportation
 
         public static void EcrireMatch(Match m, string nomFichier)
         {
-            string output = "<p>" + m.Domicile.Nom + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.Nom + "</p><table>";
+            string output = "<p>" + m.Domicile.name + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.name + "</p><table>";
             output += "<p>" + m.Affluence + " spectateurs.</p>";
             List<EvenementMatch> evenements = new List<EvenementMatch>();
             List<EvenementMatch> cartons = new List<EvenementMatch>();
@@ -212,7 +212,7 @@ namespace TheManager.Exportation
             output += "</table><table>";
             foreach (EvenementMatch em in cartons)
             {
-                output += "<tr><td>" + em.MinuteEv + "°</td><td>" + em.Joueur.Prenom + " " + em.Joueur.Nom + "</td><td>" + em.Type + "</td><td>" + em.Club.Nom + "</td></tr>";
+                output += "<tr><td>" + em.MinuteEv + "°</td><td>" + em.Joueur.Prenom + " " + em.Joueur.Nom + "</td><td>" + em.Type + "</td><td>" + em.Club.name + "</td></tr>";
             }
             output += "</table>";
 

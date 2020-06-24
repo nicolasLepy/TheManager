@@ -136,12 +136,12 @@ namespace TheManager
                     }
                     if(c != null)
                     {
-                        if (q.Competition.Championnat && c.Championnat != null)
+                        if (q.Competition.Championnat && c.Championship != null)
                         {
-                            if (q.Competition.Niveau > c.Championnat.Niveau)
-                                c.Supporters = (int)(c.Supporters * 1.4f);
-                            else if (q.Competition.Niveau < c.Championnat.Niveau)
-                                c.Supporters = (int)(c.Supporters / 1.4f);
+                            if (q.Competition.Niveau > c.Championship.Niveau)
+                                c.supporters = (int)(c.supporters * 1.4f);
+                            else if (q.Competition.Niveau < c.Championship.Niveau)
+                                c.supporters = (int)(c.supporters / 1.4f);
                         }
                     }
                 }

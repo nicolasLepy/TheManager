@@ -61,13 +61,13 @@ namespace TheManager_GUI
                                 logo.Height = 20;
                                 logo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
                                 Button btnClub = new Button();
-                                btnClub.Content = club.Nom;
+                                btnClub.Content = club.name;
                                 btnClub.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
                                 btnClub.FontSize = 8;
                                 btnClub.Name = "club_" + Session.Instance.Partie.Gestionnaire.Clubs.IndexOf(club).ToString();
                                 btnClub.Click += new RoutedEventHandler(BtnClub_Click);
                                 Label lbClub = new Label();
-                                lbClub.Content = club.Nom;
+                                lbClub.Content = club.name;
                                 lbClub.Style = Application.Current.FindResource("StyleLabel2") as Style;
                                 lbClub.FontSize = 8;
                                 sp.Children.Add(logo);
@@ -94,8 +94,8 @@ namespace TheManager_GUI
         private void RemplirEffectif(Club c)
         {
             spEffectif.Children.Clear();
-            Console.WriteLine("Génération du club - " + c.CentreFormation);
-            foreach (Joueur j in c.Joueurs())
+            Console.WriteLine("Génération du club - " + c.formationFacilities);
+            foreach (Joueur j in c.Players())
             {
                 Label l = new Label();
                 l.Content = j.Nom + " - " + j.Niveau + " (" + j.Potentiel + ")";
@@ -114,9 +114,9 @@ namespace TheManager_GUI
             }
             catch
             {
-                Console.WriteLine("Pas de logo disponible pour " + club.Logo);
+                Console.WriteLine("Pas de logo disponible pour " + club.logo);
             }
-            float etoiles = club.Etoiles;
+            float etoiles = club.Stars;
             int etoilesEntieres = (int)Math.Floor(etoiles);
             for (int i = 1; i <= etoilesEntieres; i++)
             {
@@ -163,7 +163,7 @@ namespace TheManager_GUI
             {
                 Session.Instance.Partie.Club = club as Club_Ville;
                 Entraineur entraineur = new Entraineur(prenom, nom, 70, naissance, nationalite);
-                Session.Instance.Partie.Club.ChangerEntraineur(entraineur);
+                Session.Instance.Partie.Club.ChangeManager(entraineur);
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
                 Close();

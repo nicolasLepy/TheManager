@@ -289,7 +289,7 @@ namespace TheManager
                     string countryName = e2.Attribute("nationalite").Value;
                     Pays country = _kernel.String2Pays(countryName);
                     Entraineur manager = new Entraineur(firstName, lastName, level, new DateTime(1970, 1, 1), country);
-                    club.Entraineur = manager;
+                    club.manager = manager;
                 }
             }
         }
@@ -580,13 +580,13 @@ namespace TheManager
                                 if (firstTeam.Reserves.Count == 1) { nameAddon = " C"; divider = 2.5f; }
                                 if (firstTeam.Reserves.Count == 2) { nameAddon = " D"; divider = 3.5f; }
                                 if (firstTeam.Reserves.Count == 3) { nameAddon = " E"; divider = 4.5f; }
-                                club = new Club_Reserve(firstTeam, firstTeam.Nom + nameAddon, firstTeam.NomCourt + nameAddon, null);
+                                club = new Club_Reserve(firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
                                 int newId = NextClubId();
                                 _clubsId[newId] = club;
                                 _kernel.Clubs.Add(club);
                                 firstTeam.Reserves.Add(club as Club_Reserve);
                                 //A reserve team was generated, let's create same players in base club to populate this reserve team
-                                int averagePotential = (int)(firstTeam.CentreFormation - (firstTeam.CentreFormation / divider));
+                                int averagePotential = (int)(firstTeam.formationFacilities - (firstTeam.formationFacilities / divider));
                                 //Warning for {2,5,5,3} -> 15 is used in team initialisation to determine player number of first team
                                 for (int g = 0; g < 2; g++) firstTeam.GenererJoueur(Position.Goalkeeper, 16, 23, -averagePotential);
                                 for (int g = 0; g < 5; g++) firstTeam.GenererJoueur(Position.Defender , 16, 23, -averagePotential);
@@ -763,7 +763,7 @@ namespace TheManager
                                 case 4: case 5: case 6: p = Position.Midfielder;  break;
                                 case 7: case 8: p = Position.Striker;  break;
                             }
-                            Joueur j = new Joueur(firstName, lastName, birthday, nationalTeam.CentreFormation, nationalTeam.CentreFormation + 2, nationalTeam.Pays, p);
+                            Joueur j = new Joueur(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.Pays, p);
                             _kernel.JoueursLibres.Add(j);
                         }
                     }

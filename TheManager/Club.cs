@@ -18,50 +18,50 @@ namespace TheManager
     public abstract class Club
     {
         [DataMember]
-        private string _nom;
+        private string _name;
         [DataMember]
-        private Entraineur _entraineur;
+        private string _shortName;
+        [DataMember]
+        private Entraineur _manager;
         [DataMember]
         private int _reputation;
         [DataMember]
         private int _supporters;
         [DataMember]
-        protected int _centreFormation;
+        protected int _formationFacilities;
         [DataMember]
-        private Stade _stade;
+        private Stade _stadium;
         [DataMember]
         private string _logo;
         [DataMember]
-        private string _nomCourt;
-        [DataMember]
-        private int _prixBillet;
+        private int _ticketPrice;
 
         [DataMember]
-        private string _musiqueBut;
+        private string _goalMusic;
 
-        public string Nom { get => _nom; }
-        public Entraineur Entraineur { get => _entraineur; set => _entraineur = value; }
-        public int Reputation { get => _reputation; }
-        public int Supporters { get => _supporters; set => _supporters = value; }
-        public int CentreFormation { get => _centreFormation;}
-        public Stade Stade { get => _stade; }
-        public string Logo { get => _logo; }
-        public string NomCourt { get => _nomCourt; }
-        public int PrixBillet { get => _prixBillet; }
-        public string MusiqueBut { get => _musiqueBut; }
+        public string name { get => _name; }
+        public Entraineur manager { get => _manager; set => _manager = value; }
+        public int reputation { get => _reputation; }
+        public int supporters { get => _supporters; set => _supporters = value; }
+        public int formationFacilities { get => _formationFacilities;}
+        public Stade stadium { get => _stadium; }
+        public string logo { get => _logo; }
+        public string shortName { get => _shortName; }
+        public int ticketPrice { get => _ticketPrice; }
+        public string goalMusic { get => _goalMusic; }
 
         /// <summary>
-        /// Liste des matchs joués par le club
+        /// List of games played by the club
         /// </summary>
-        public List<Match> Matchs
+        public List<Match> Games
         {
             get
             {
                 List<Match> res = new List<Match>();
 
-                foreach (Match m in Session.Instance.Partie.Gestionnaire.Matchs)
+                foreach (Match game in Session.Instance.Partie.Gestionnaire.Matchs)
                 {
-                    if (m.Domicile == this || m.Exterieur == this) res.Add(m);
+                    if (game.Domicile == this || game.Exterieur == this) res.Add(game);
                 }
                 res.Sort(new Match_Date_Comparator());
                 return res;
@@ -69,20 +69,20 @@ namespace TheManager
         }
 
         /// <summary>
-        /// Renvoi vrai si le club joue un match proche à la date passée en paramètre (un nombre de jour inférieur au seuil)
         /// </summary>
-        /// <param name="date"></param>
-        /// <returns></returns>
-        public bool MatchProche(DateTime date, int seuil)
+        /// <param name="date">From the date</param>
+        /// <param name="threshold">Offset days from the date</param>
+        /// <returns>True if the club play a game in the date interval in the threshold</returns>
+        public bool CloseGame(DateTime date, int threshold)
         {
-            bool matchProche = false;
-            List<Match> matchs = Matchs;
-            foreach (Match match in matchs)
+            bool closeGame = false;
+            List<Match> gamesList = Games;
+            foreach (Match match in gamesList)
             {
-                int diff = Utils.NombreJoursEntreDeuxDates(date.Date, match.Jour);
-                if (diff < seuil) matchProche = true;
+                int diff = Utils.DaysNumberBetweenTwoDates(date.Date, match.Jour);
+                if (diff < threshold) closeGame = true;
             }
-            return matchProche;
+            return closeGame;
         }
 
         /// <summary>
@@ -113,25 +113,25 @@ namespace TheManager
         }*/
 
         /// <summary>
-        /// Championnat où joue le club
-        /// null si le club ne joue dans aucun championnat (par exemple les sélections nationales)
+        /// Championship where play the club
+        /// <returns>null if the club don't play in championship (for example national teams)</returns>
         /// </summary>
-        public Competition Championnat
+        public Competition Championship
         {
             get
             {
                 Competition res = null;
 
-                foreach(Competition c in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach(Competition tournament in Session.Instance.Partie.Gestionnaire.Competitions)
                 {
-                    if(c.Championnat)
+                    if(tournament.Championnat)
                     {
                         
-                        foreach (Club cl in c.Tours[0].Clubs)
+                        foreach (Club cl in tournament.Tours[0].Clubs)
                         {
                             if (cl == this)
                             {
-                                res = c;
+                                res = tournament;
                             }
                         }
                             
@@ -143,53 +143,63 @@ namespace TheManager
             }
         }
 
-        public abstract List<Joueur> Joueurs();
-        public abstract float Niveau();
+        public abstract List<Joueur> Players();
+        public abstract float Level();
 
-        public float Etoiles
+        public float Stars
         {
             get
             {
-                float etoiles = 0.5f;
-                float niveau = Niveau();
-                if (niveau < 40) etoiles = 0.5f;
-                else if (niveau < 50) etoiles = 1f;
-                else if (niveau < 57) etoiles = 1.5f;
-                else if (niveau < 62) etoiles = 2f;
-                else if (niveau < 66) etoiles = 2.5f;
-                else if (niveau < 69) etoiles = 3f;
-                else if (niveau < 72) etoiles = 3.5f;
-                else if (niveau < 75) etoiles = 4f;
-                else if (niveau < 79) etoiles = 4.5f;
-                else etoiles = 5f;
-                return etoiles;
+                float stars = 0.5f;
+                float level = Level();
+                if (level < 40)
+                    stars = 0.5f;
+                else if (level < 50)
+                    stars = 1f;
+                else if (level < 57)
+                    stars = 1.5f;
+                else if (level < 62)
+                    stars = 2f;
+                else if (level < 66)
+                    stars = 2.5f;
+                else if (level < 69)
+                    stars = 3f;
+                else if (level < 72)
+                    stars = 3.5f;
+                else if (level < 75)
+                    stars = 4f;
+                else if (level < 79)
+                    stars = 4.5f;
+                else stars = 5f;
+                
+                return stars;
             }
         }
 
-        public Club(string nom, Entraineur entraineur, string nomCourt, int reputation, int supporters, int centreFormation, string logo, Stade stade, string musiqueBut)
+        public Club(string name, Entraineur manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stade stadium, string goalMusic)
         {
-            _nom = nom;
-            _entraineur = entraineur;
-            _nomCourt = nomCourt;
+            _name = name;
+            _manager = manager;
+            _shortName = shortName;
             _reputation = reputation;
             _supporters = supporters;
-            _centreFormation = centreFormation;
+            _formationFacilities = formationFacilities;
             _logo = logo;
-            _stade = stade;
-            _musiqueBut = musiqueBut;
+            _stadium = stadium;
+            _goalMusic = goalMusic;
         }
 
-        public List<Joueur> ListerJoueurPoste(Position poste)
+        public List<Joueur> ListPlayersByPosition(Position position)
         {
-            return Utils.JoueursPoste(Joueurs(), poste);
+            return Utils.PlayersByPoste(Players(), position);
         }
 
-        private List<Joueur> ListerJoueursPosteComposition(Position poste)
+        private List<Joueur> ListEligiblePlayersByPosition(Position position)
         {
             List<Joueur> res = new List<Joueur>();
-            foreach (Joueur j in Joueurs())
+            foreach (Joueur j in Players())
             {
-                if (j.Poste == poste && !j.Suspendu)
+                if (j.Poste == position && !j.Suspendu)
                 {
                     res.Add(j);
                 }
@@ -201,68 +211,68 @@ namespace TheManager
         {
             List<Joueur> res = new List<Joueur>();
 
-            List<Joueur> joueursPoste = ListerJoueursPosteComposition(Position.Goalkeeper);
-            joueursPoste.Sort(new Joueur_Composition_Comparator());
-            if (joueursPoste.Count >= 1)
-                res.Add(joueursPoste[0]);
+            List<Joueur> joueursPosition = ListEligiblePlayersByPosition(Position.Goalkeeper);
+            joueursPosition.Sort(new Joueur_Composition_Comparator());
+            if (joueursPosition.Count >= 1)
+                res.Add(joueursPosition[0]);
 
-            joueursPoste = ListerJoueursPosteComposition(Position.Defender);
-            joueursPoste.Sort(new Joueur_Composition_Comparator());
+            joueursPosition = ListEligiblePlayersByPosition(Position.Defender);
+            joueursPosition.Sort(new Joueur_Composition_Comparator());
             
-            if (joueursPoste.Count > 0) res.Add(joueursPoste[0]);
-            if (joueursPoste.Count > 1) res.Add(joueursPoste[1]);
-            if (joueursPoste.Count > 2) res.Add(joueursPoste[2]);
-            if (joueursPoste.Count > 3) res.Add(joueursPoste[3]);
+            if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
+            if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
+            if (joueursPosition.Count > 2) res.Add(joueursPosition[2]);
+            if (joueursPosition.Count > 3) res.Add(joueursPosition[3]);
             
 
-            joueursPoste = ListerJoueursPosteComposition(Position.Midfielder);
-            joueursPoste.Sort(new Joueur_Composition_Comparator());
+            joueursPosition = ListEligiblePlayersByPosition(Position.Midfielder);
+            joueursPosition.Sort(new Joueur_Composition_Comparator());
 
-            if (joueursPoste.Count > 0) res.Add(joueursPoste[0]);
-            if (joueursPoste.Count > 1) res.Add(joueursPoste[1]);
-            if (joueursPoste.Count > 2) res.Add(joueursPoste[2]);
-            if (joueursPoste.Count > 3) res.Add(joueursPoste[3]);
+            if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
+            if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
+            if (joueursPosition.Count > 2) res.Add(joueursPosition[2]);
+            if (joueursPosition.Count > 3) res.Add(joueursPosition[3]);
 
 
-            joueursPoste = ListerJoueursPosteComposition(Position.Striker);
-            joueursPoste.Sort(new Joueur_Composition_Comparator());
-            if (joueursPoste.Count > 0) res.Add(joueursPoste[0]);
-            if (joueursPoste.Count > 1) res.Add(joueursPoste[1]);
+            joueursPosition = ListEligiblePlayersByPosition(Position.Striker);
+            joueursPosition.Sort(new Joueur_Composition_Comparator());
+            if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
+            if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
 
 
             return res;
         }
 
-        public void DefinirPrixBillet()
+        public void SetTicketPrice()
         {
-            int niveau = (int)Niveau();
-            int prix = 0;
+            int level = (int)Level();
+            int price = 0;
 
-            if (niveau < 20) prix = 1;
-            else if (niveau < 30) prix = 2;
-            else if (niveau < 40) prix = 3;
-            else if (niveau < 50) prix = 5;
-            else if (niveau < 60) prix = 10;
-            else if (niveau < 70) prix = 20;
-            else if (niveau < 80) prix = 30;
-            else prix = 45;
-            _prixBillet = prix;
+            if (level < 20) price = 1;
+            else if (level < 30) price = 2;
+            else if (level < 40) price = 3;
+            else if (level < 50) price = 5;
+            else if (level < 60) price = 10;
+            else if (level < 70) price = 20;
+            else if (level < 80) price = 30;
+            else price = 45;
+            _ticketPrice = price;
         }
 
         /// <summary>
-        /// Change l'entraineur du club et met l'ancien entraineur dans les entraineurs libres
+        /// Change the current manager and put the old manager in free managers list
         /// </summary>
-        /// <param name="nouvelEntraineur"></param>
-        public void ChangerEntraineur(Entraineur nouvelEntraineur)
+        /// <param name="newManager">The new manager of the club</param>
+        public void ChangeManager(Entraineur newManager)
         {
-            Session.Instance.Partie.Gestionnaire.EntraineursLibres.Add(_entraineur);
-            _entraineur = nouvelEntraineur;
+            Session.Instance.Partie.Gestionnaire.EntraineursLibres.Add(_manager);
+            _manager = newManager;
         }
 
 
         public override string ToString()
         {
-            return Nom;
+            return name;
         }
 
 

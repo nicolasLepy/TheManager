@@ -28,7 +28,7 @@ namespace TheManager
         public string Commentaire(EvenementMatch em)
         {
             string commentaireBrut = Commentaires[Session.Instance.Random(0, Commentaires.Count - 1)];
-            commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + em.Club.NomCourt + " ");
+            commentaireBrut = commentaireBrut.Replace(" CLUB ", " " + em.Club.shortName + " ");
             commentaireBrut = commentaireBrut.Replace(" JOUEUR ", " " + em.Joueur.Nom + " ");
             return commentaireBrut;
         }
@@ -206,7 +206,7 @@ namespace TheManager
             Club res = null;
             foreach(Club c in _clubs)
             {
-                if (c.Nom == nom) res = c;
+                if (c.name == nom) res = c;
             }
 
             return res;
@@ -237,7 +237,7 @@ namespace TheManager
             }
             foreach(Club c in _clubs)
             {
-                if (c as Club_Ville != null) foreach (Joueur j in c.Joueurs()) if (j.Nationalite == p) res++;
+                if (c as Club_Ville != null) foreach (Joueur j in c.Players()) if (j.Nationalite == p) res++;
             }
             return res;
         }
@@ -251,7 +251,7 @@ namespace TheManager
             }
             foreach (Club c in _clubs)
             {
-                if (c as Club_Ville != null) foreach (Joueur j in c.Joueurs()) if (j.Nationalite == p) res.Add(j);
+                if (c as Club_Ville != null) foreach (Joueur j in c.Players()) if (j.Nationalite == p) res.Add(j);
             }
             return res;
         }

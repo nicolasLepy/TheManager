@@ -211,10 +211,10 @@ namespace TheManager_GUI
         private void BandeauActualites()
         {
             tbActu.Text = "";
-            if (_partie.Club != null && _partie.Club.Championnat != null)
+            if (_partie.Club != null && _partie.Club.Championship != null)
             {
                 //Choix de la compétition à afficher dans le bandeau : compétition du dernier match joué par l'équipe
-                List<Match> matchs = _partie.Club.Matchs;
+                List<Match> matchs = _partie.Club.Games;
                 bool trouve = false;
                 Competition comp = null;
                 int i = 0;
@@ -241,7 +241,7 @@ namespace TheManager_GUI
                         TourChampionnat tc = t as TourChampionnat;
                         foreach (Club c in tc.Classement())
                         {
-                            tbActu.Text += i + " " + c.NomCourt + " " + t.Points(c) + ", " + t.Difference(c) + " / ";
+                            tbActu.Text += i + " " + c.shortName + " " + t.Points(c) + ", " + t.Difference(c) + " / ";
                             i++;
                         }
                     }
@@ -251,7 +251,7 @@ namespace TheManager_GUI
                         tbActu.Text += comp.Nom + ", " + t.Nom + " : ";
                         foreach(Match m in t.Matchs)
                         {
-                            tbActu.Text += m.Domicile.NomCourt + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.NomCourt + ", ";
+                            tbActu.Text += m.Domicile.shortName + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.shortName + ", ";
                         }
                     }
                 }
@@ -261,9 +261,9 @@ namespace TheManager_GUI
         private void ClassementClub()
         {
             dgClubClassement.Items.Clear();
-            if(_partie.Club != null && _partie.Club.Championnat != null)
+            if(_partie.Club != null && _partie.Club.Championship != null)
             {
-                Tour championnat = _partie.Club.Championnat.Tours[0];
+                Tour championnat = _partie.Club.Championship.Tours[0];
                 List<Club> classement = (championnat as TourChampionnat).Classement();
                 int indice = classement.IndexOf(_partie.Club);
                 indice = indice - 2;
@@ -272,7 +272,7 @@ namespace TheManager_GUI
                 for(int i = indice; i<indice+5; i++)
                 {
                     Club c = classement[i];
-                    dgClubClassement.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.NomCourt, Pts = championnat.Points(c), bc = championnat.ButsContre(c), bp = championnat.ButsPour(c), Diff = championnat.Difference(c), G = championnat.Gagnes(c), J = championnat.Joues(c), N = championnat.Nuls(c), P = championnat.Perdus(c) });
+                    dgClubClassement.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = championnat.Points(c), bc = championnat.ButsContre(c), bp = championnat.ButsPour(c), Diff = championnat.Difference(c), G = championnat.Gagnes(c), J = championnat.Joues(c), N = championnat.Nuls(c), P = championnat.Perdus(c) });
                 }
             }
         }
@@ -315,7 +315,7 @@ namespace TheManager_GUI
                         {
                             score = m.Jour.ToShortDateString();
                         }
-                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Competition.NomCourt, Equipe1 = m.Domicile.NomCourt, Equipe2 = m.Exterieur.NomCourt, Score = score, LogoD = Utils.Logo(m.Domicile), LogoE = Utils.Logo(m.Exterieur) });
+                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Competition.NomCourt, Equipe1 = m.Domicile.shortName, Equipe2 = m.Exterieur.shortName, Score = score, LogoD = Utils.Logo(m.Domicile), LogoE = Utils.Logo(m.Exterieur) });
                     }
                 }
             }
@@ -344,11 +344,11 @@ namespace TheManager_GUI
                     if (m.Prolongations) score += " ap";
                     if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
                 }
-                string equipe1 = m.Domicile.NomCourt;
-                string equipe2 = m.Exterieur.NomCourt;
+                string equipe1 = m.Domicile.shortName;
+                string equipe2 = m.Exterieur.shortName;
 
-                Competition champD = m.Domicile.Championnat;
-                Competition champE = m.Exterieur.Championnat;
+                Competition champD = m.Domicile.Championship;
+                Competition champE = m.Exterieur.Championship;
                 if (te != null && champD != null && champE != null)
                 {
                     equipe1 += " (" + champD.NomCourt + ")";

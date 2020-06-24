@@ -515,7 +515,7 @@ namespace TheManager
             switch (methode)
             {
                 case MethodeRecuperation.ALEATOIRE:
-                    clubs = Utils.MelangerListe<Club>(clubs);
+                    clubs = Utils.ShuffleList<Club>(clubs);
                     break;
                 case MethodeRecuperation.MEILLEURS:
                     try

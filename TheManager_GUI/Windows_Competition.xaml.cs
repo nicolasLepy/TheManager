@@ -55,11 +55,11 @@ namespace TheManager_GUI
             
 
             if (_competition.Statistiques.PlusGrandScore != null)
-                lbGrandScore.Content = _competition.Statistiques.PlusGrandScore.Domicile.Nom + " " + _competition.Statistiques.PlusGrandScore.Score1 + "-" + _competition.Statistiques.PlusGrandScore.Score2 + " " + _competition.Statistiques.PlusGrandScore.Exterieur.Nom;
+                lbGrandScore.Content = _competition.Statistiques.PlusGrandScore.Domicile.name + " " + _competition.Statistiques.PlusGrandScore.Score1 + "-" + _competition.Statistiques.PlusGrandScore.Score2 + " " + _competition.Statistiques.PlusGrandScore.Exterieur.name;
             else
                 lbGrandScore.Content = "";
             if (_competition.Statistiques.PlusGrandEcart != null)
-                lbGrosEcart.Content = _competition.Statistiques.PlusGrandEcart.Domicile.Nom + " " + _competition.Statistiques.PlusGrandEcart.Score1 + "-" + _competition.Statistiques.PlusGrandEcart.Score2 + " " + _competition.Statistiques.PlusGrandEcart.Exterieur.Nom;
+                lbGrosEcart.Content = _competition.Statistiques.PlusGrandEcart.Domicile.name + " " + _competition.Statistiques.PlusGrandEcart.Score1 + "-" + _competition.Statistiques.PlusGrandEcart.Score2 + " " + _competition.Statistiques.PlusGrandEcart.Exterieur.name;
             else
                 lbGrosEcart.Content = "";
             Palmares();
@@ -74,7 +74,7 @@ namespace TheManager_GUI
                 Label l = new Label();
                 l.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l.Width = 20;
-                l.Content = Utils.Regle2String(r);
+                l.Content = Utils.Rule2String(r);
                 spBlocClassement.Children.Add(l);
                 nbRegles++;
             }
@@ -133,11 +133,11 @@ namespace TheManager_GUI
                     if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
                     scoreMt = "(" + m.ScoreMT1 + " - " + m.ScoreMT2 + ")";
                 }
-                string equipe1 = m.Domicile.NomCourt;
-                string equipe2 = m.Exterieur.NomCourt;
+                string equipe1 = m.Domicile.shortName;
+                string equipe2 = m.Exterieur.shortName;
 
-                Competition champD = m.Domicile.Championnat;
-                Competition champE = m.Exterieur.Championnat;
+                Competition champD = m.Domicile.Championship;
+                Competition champE = m.Exterieur.Championship;
                 if (te != null && champD != null && champE != null)
                 {
                     equipe1 += " (" + champD.NomCourt + ")";

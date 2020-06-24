@@ -27,7 +27,7 @@ namespace TheManager
                 clubs.Sort(new Club_Localisation_Comparator(position));
                 foreach(Club club in clubs)
                 {
-                    float dist = Utils.Distance(club.Stade.Ville.Position, position);
+                    float dist = Utils.Distance(club.stadium.Ville.Position, position);
                 }
                 for(int j = 0;j<nbClubsParPoule; j++)
                 {

@@ -19,8 +19,8 @@ namespace TheManager.Comparators
         public int Compare(Club x, Club y)
         {
             int res = 0;
-            float distX = Utils.Distance(x.Stade.Ville.Position, _reference);
-            float distY = Utils.Distance(y.Stade.Ville.Position, _reference);
+            float distX = Utils.Distance(x.stadium.Ville.Position, _reference);
+            float distY = Utils.Distance(y.stadium.Ville.Position, _reference);
             if (distX > distY)
                 res = 1;
             else if(distY > distX)

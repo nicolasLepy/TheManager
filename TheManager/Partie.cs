@@ -35,7 +35,7 @@ namespace TheManager
         /// <summary>
         /// Entraîneur représentant le joueur
         /// </summary>
-        public Entraineur Entraineur { get => Club.Entraineur; }
+        public Entraineur Entraineur { get => Club.manager; }
 
         public List<Article> Articles { get => _articles; }
 
@@ -50,7 +50,7 @@ namespace TheManager
 
         public void Exportations(Competition c)
         {
-            if (Utils.ComparerDatesSansAnnee(c.DebutSaison.AddDays(-7), _date) && Options.CompetitionsAExporter.Contains(c))
+            if (Utils.CompareDatesWithoutYear(c.DebutSaison.AddDays(-7), _date) && Options.CompetitionsAExporter.Contains(c))
             {
                 Exporteur.Exporter(c);
             }
@@ -136,7 +136,7 @@ namespace TheManager
                 Club_Ville cv = c as Club_Ville;
                 if (cv != null)
                 {
-                    cv.Historique.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.Budget, cv.CentreFormation));
+                    cv.Historique.Elements.Add(new EntreeHistorique(new DateTime(Date.Year, Date.Month, Date.Day), cv.Budget, cv.formationFacilities));
                     //Prolonger les joueurs
                     List<Contrat> joueursALiberer = new List<Contrat>();
                     foreach (Contrat ct in cv.Contrats)
@@ -334,7 +334,7 @@ namespace TheManager
                     Tour enCours = c.Tours[c.TourActuel];
                     foreach (Match m in enCours.Matchs)
                     {
-                        if (Utils.ComparerDates(m.Jour, _date))
+                        if (Utils.CompareDates(m.Jour, _date))
                         {
                             matchsDuJour.Add(m);
                             m.DefinirCompo();
@@ -361,17 +361,17 @@ namespace TheManager
                 }
                 foreach(Tour t in c.Tours)
                 {
-                    if(Utils.ComparerDatesSansAnnee(t.Programmation.Fin, _date))
+                    if(Utils.CompareDatesWithoutYear(t.Programmation.Fin, _date))
                     {
                         t.QualifierClubs();
                     }
-                    if (Utils.ComparerDatesSansAnnee (t.Programmation.Initialisation, _date))
+                    if (Utils.CompareDatesWithoutYear (t.Programmation.Initialisation, _date))
                     {
                         c.TourSuivant();
                     }
                 }
 
-                if(Utils.ComparerDatesSansAnnee(c.DebutSaison,_date))
+                if(Utils.CompareDatesWithoutYear(c.DebutSaison,_date))
                 {
                     c.RAZ();
                 }
@@ -415,7 +415,7 @@ namespace TheManager
             //20 juillet => les équipes mettent en place le prix des billets
             if(Date.Day == 20 && Date.Month == 7)
             {
-                foreach (Club c in Gestionnaire.Clubs) c.DefinirPrixBillet();
+                foreach (Club c in Gestionnaire.Clubs) c.SetTicketPrice();
             }
 
             //Les équipes sont complétées à la fin de la période de transfert si elles n'ont pas assez de joueurs
@@ -461,7 +461,7 @@ namespace TheManager
             {
                 if(c as Club_Ville != null)
                 {
-                    foreach (Joueur j in c.Joueurs())
+                    foreach (Joueur j in c.Players())
                     {
                         j.Recuperer();
                     }

@@ -54,7 +54,7 @@ namespace TheManager_GUI.VueClassement
                     Label l2 = new Label();
                     l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
                     l2.Width = 150;
-                    l2.Content = c.NomCourt;
+                    l2.Content = c.shortName;
 
                     Label l3 = new Label();
                     l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
@@ -157,7 +157,7 @@ namespace TheManager_GUI.VueClassement
                 foreach (Club c in poule)
                 {
                     i++;
-                    _grille.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Classement = i, Nom = c.NomCourt, Pts = _tour.Points(c), J = _tour.Joues(c), G = _tour.Gagnes(c), N = _tour.Nuls(c), P = _tour.Perdus(c), bp = _tour.ButsPour(c), bc = _tour.ButsContre(c), Diff = _tour.Difference(c) });
+                    _grille.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Classement = i, Nom = c.shortName, Pts = _tour.Points(c), J = _tour.Joues(c), G = _tour.Gagnes(c), N = _tour.Nuls(c), P = _tour.Perdus(c), bp = _tour.ButsPour(c), bc = _tour.ButsContre(c), Diff = _tour.Difference(c) });
                 }
             }
         }
