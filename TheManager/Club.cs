@@ -179,12 +179,12 @@ namespace TheManager
             _musiqueBut = musiqueBut;
         }
 
-        public List<Joueur> ListerJoueurPoste(Poste poste)
+        public List<Joueur> ListerJoueurPoste(Position poste)
         {
             return Utils.JoueursPoste(Joueurs(), poste);
         }
 
-        private List<Joueur> ListerJoueursPosteComposition(Poste poste)
+        private List<Joueur> ListerJoueursPosteComposition(Position poste)
         {
             List<Joueur> res = new List<Joueur>();
             foreach (Joueur j in Joueurs())
@@ -201,12 +201,12 @@ namespace TheManager
         {
             List<Joueur> res = new List<Joueur>();
 
-            List<Joueur> joueursPoste = ListerJoueursPosteComposition(Poste.GARDIEN);
+            List<Joueur> joueursPoste = ListerJoueursPosteComposition(Position.Goalkeeper);
             joueursPoste.Sort(new Joueur_Composition_Comparator());
             if (joueursPoste.Count >= 1)
                 res.Add(joueursPoste[0]);
 
-            joueursPoste = ListerJoueursPosteComposition(Poste.DEFENSEUR);
+            joueursPoste = ListerJoueursPosteComposition(Position.Defender);
             joueursPoste.Sort(new Joueur_Composition_Comparator());
             
             if (joueursPoste.Count > 0) res.Add(joueursPoste[0]);
@@ -215,7 +215,7 @@ namespace TheManager
             if (joueursPoste.Count > 3) res.Add(joueursPoste[3]);
             
 
-            joueursPoste = ListerJoueursPosteComposition(Poste.MILIEU);
+            joueursPoste = ListerJoueursPosteComposition(Position.Midfielder);
             joueursPoste.Sort(new Joueur_Composition_Comparator());
 
             if (joueursPoste.Count > 0) res.Add(joueursPoste[0]);
@@ -224,7 +224,7 @@ namespace TheManager
             if (joueursPoste.Count > 3) res.Add(joueursPoste[3]);
 
 
-            joueursPoste = ListerJoueursPosteComposition(Poste.ATTAQUANT);
+            joueursPoste = ListerJoueursPosteComposition(Position.Striker);
             joueursPoste.Sort(new Joueur_Composition_Comparator());
             if (joueursPoste.Count > 0) res.Add(joueursPoste[0]);
             if (joueursPoste.Count > 1) res.Add(joueursPoste[1]);

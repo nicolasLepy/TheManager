@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace TheManager
 {
-    public enum MethodeTirageAuSort
+    public enum DrawingMethod
     {
-        NIVEAU,
-        GEOGRAPHIQUE
+        Level,
+        Geographic
     }
 }

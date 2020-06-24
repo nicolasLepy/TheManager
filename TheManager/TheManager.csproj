@@ -55,7 +55,7 @@
   <ItemGroup>
     <Compile Include="Article.cs" />
     <Compile Include="Calendrier.cs" />
-    <Compile Include="ChargeurBaseDeDonnees.cs" />
+    <Compile Include="DatabaseLoader.cs" />
     <Compile Include="Club.cs" />
     <Compile Include="Club_Reserve.cs" />
     <Compile Include="Club_Ville.cs" />

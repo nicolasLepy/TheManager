@@ -12,14 +12,14 @@ namespace TheManager
     public class CommentairesEvenementMatch
     {
         [DataMember]
-        private Evenement _evenement;
+        private GameEvent _evenement;
         [DataMember]
         private List<string> _commentaires;
 
         public List<string> Commentaires { get => _commentaires; }
-        public Evenement Evenement { get => _evenement; }
+        public GameEvent Evenement { get => _evenement; }
 
-        public CommentairesEvenementMatch(Evenement evenement)
+        public CommentairesEvenementMatch(GameEvent evenement)
         {
             _evenement = evenement;
             _commentaires = new List<string>();
@@ -90,11 +90,11 @@ namespace TheManager
             _medias = new List<Media>();
             _entraineursLibres = new List<Entraineur>();
             _commentairesMatchs = new List<CommentairesEvenementMatch>();
-            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.BUT));
-            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.BUT_PENALTY));
-            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.CARTON_JAUNE));
-            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.CARTON_ROUGE));
-            _commentairesMatchs.Add(new CommentairesEvenementMatch(Evenement.TIR));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(GameEvent.Goal));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(GameEvent.PenaltyGoal));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(GameEvent.YellowCard));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(GameEvent.RedCard));
+            _commentairesMatchs.Add(new CommentairesEvenementMatch(GameEvent.Shot));
             _journalistesLibres = new List<Journaliste>();
         }
 
@@ -320,7 +320,7 @@ namespace TheManager
             amc.Tours[0].Matchs.Add(m);
         }
 
-        public void AjouterCommmentaireMatch(Evenement evenement, string commentaire)
+        public void AjouterCommmentaireMatch(GameEvent evenement, string commentaire)
         {
             foreach(CommentairesEvenementMatch cem in _commentairesMatchs)
             {

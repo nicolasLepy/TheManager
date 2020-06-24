@@ -279,7 +279,7 @@ namespace TheManager
             {
                 foreach(EvenementMatch em in m.Evenements)
                 {
-                    if(em.Type == Evenement.BUT || em.Type == Evenement.BUT_PENALTY)
+                    if(em.Type == GameEvent.Goal || em.Type == GameEvent.PenaltyGoal)
                     {
                         if (buteurs.ContainsKey(em.Joueur)) buteurs[em.Joueur]++;
                         else buteurs[em.Joueur] = 1;

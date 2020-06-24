@@ -45,7 +45,7 @@ namespace TheManager
             return res;
         }
 
-        public static List<Joueur> JoueursPoste(List<Joueur> joueurs, Poste p)
+        public static List<Joueur> JoueursPoste(List<Joueur> joueurs, Position p)
         {
             List<Joueur> res = new List<Joueur>();
 
@@ -96,7 +96,7 @@ namespace TheManager
             return (float)d;
         }
 
-        public static float Distance(Position a, Position b)
+        public static float Distance(GeographicPosition a, GeographicPosition b)
         {
             float lat1 = a.Latitude;
             float lon1 = a.Longitude;

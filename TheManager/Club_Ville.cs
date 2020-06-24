@@ -146,7 +146,7 @@ namespace TheManager
             return niveau / (total+0.0f);
         }
 
-        public void GenererJoueur(Poste p, int ageMin, int ageMax, int decalagePotentiel = 0)
+        public void GenererJoueur(Position p, int ageMin, int ageMax, int decalagePotentiel = 0)
         {
             string prenom = _ville.Pays().Langue.ObtenirPrenom();
             string nom = _ville.Pays().Langue.ObtenirNom();
@@ -186,11 +186,11 @@ namespace TheManager
 
         public void GenererJoueur(int ageMin, int ageMax)
         {
-            Poste p = Poste.GARDIEN;
+            Position p = Position.Goalkeeper;
             int random = Session.Instance.Random(1, 13);
-            if(random >= 2 && random <= 5) p = Poste.DEFENSEUR;
-            if (random >= 6 && random <= 9) p = Poste.MILIEU;
-            if (random >= 10) p = Poste.ATTAQUANT;
+            if(random >= 2 && random <= 5) p = Position.Defender;
+            if (random >= 6 && random <= 9) p = Position.Midfielder;
+            if (random >= 10) p = Position.Striker;
             GenererJoueur(p,ageMin,ageMax);
         }
 
@@ -430,26 +430,26 @@ namespace TheManager
         /// </summary>
         public void CompleterEquipe()
         {
-            List<Joueur> joueurs = ListerJoueurPoste(Poste.GARDIEN);
+            List<Joueur> joueurs = ListerJoueurPoste(Position.Goalkeeper);
             if(joueurs.Count < 2)
             {
-                for (int i = 0; i < 2 - joueurs.Count; i++) GenererJoueur(Poste.GARDIEN, 18, 22, -(int)(CentreFormation-(CentreFormation * 0.75f)));
+                for (int i = 0; i < 2 - joueurs.Count; i++) GenererJoueur(Position.Goalkeeper, 18, 22, -(int)(CentreFormation-(CentreFormation * 0.75f)));
             }
-            joueurs = ListerJoueurPoste(Poste.DEFENSEUR);
+            joueurs = ListerJoueurPoste(Position.Defender);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.DEFENSEUR, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Defender, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
             }
             
-            joueurs = ListerJoueurPoste(Poste.MILIEU);
+            joueurs = ListerJoueurPoste(Position.Midfielder);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.MILIEU, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Midfielder, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
             }
-            joueurs = ListerJoueurPoste(Poste.ATTAQUANT);
+            joueurs = ListerJoueurPoste(Position.Striker);
             if (joueurs.Count < 5)
             {
-                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Poste.ATTAQUANT, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
+                for (int i = 0; i < 5 - joueurs.Count; i++) GenererJoueur(Position.Striker, 18, 22, -(int)(CentreFormation - (CentreFormation * 0.75f)));
             }
         }
 

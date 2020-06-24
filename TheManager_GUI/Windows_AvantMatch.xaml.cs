@@ -36,10 +36,10 @@ namespace TheManager_GUI
                 StackPanel conteneur = null;
                 switch(j.Poste)
                 {
-                    case Poste.GARDIEN: conteneur = spGardiens;break;
-                    case Poste.DEFENSEUR: conteneur = spDefenseurs; break;
-                    case Poste.MILIEU: conteneur = spMilieux; break;
-                    case Poste.ATTAQUANT: conteneur = spAttaquants; break;
+                    case Position.Goalkeeper: conteneur = spGardiens;break;
+                    case Position.Defender: conteneur = spDefenseurs; break;
+                    case Position.Midfielder: conteneur = spMilieux; break;
+                    case Position.Striker: conteneur = spAttaquants; break;
                 }
 
                 StackPanel conteneurJoueur = new StackPanel();

@@ -8,14 +8,14 @@ using System.Text;
 namespace TheManager
 {
 
-    public enum Evenement
+    public enum GameEvent
     {
-        BUT,
-        BUT_PENALTY,
-        BUT_CSC,
-        CARTON_JAUNE,
-        CARTON_ROUGE,
-        TIR
+        Goal,
+        PenaltyGoal,
+        AgGoal,
+        YellowCard,
+        RedCard,
+        Shot
     }
 
     [DataContract(IsReference =true)]
@@ -23,7 +23,7 @@ namespace TheManager
     {
 
         [DataMember]
-        private Evenement _type;
+        private GameEvent _type;
         [DataMember]
         private int _minute;
         [DataMember]
@@ -33,7 +33,7 @@ namespace TheManager
         [DataMember]
         private Club _club;
 
-        public Evenement Type { get => _type; }
+        public GameEvent Type { get => _type; }
         public int Minute { get => _minute; }
         public int MinuteEv
         {
@@ -69,7 +69,7 @@ namespace TheManager
         public Joueur Joueur { get => _joueur; }
         public Club Club { get => _club; }
 
-        public EvenementMatch(Evenement type, Club club, Joueur joueur, int minute, int mitemps)
+        public EvenementMatch(GameEvent type, Club club, Joueur joueur, int minute, int mitemps)
         {
             _type = type;
             _club = club;

@@ -428,40 +428,40 @@ namespace TheManager
             List<Club> hat = new List<Club>(round.Clubs);
             for (int i = 0; i < round.Clubs.Count / 2; i++)
             {
-                Club dom = DrawClub(hat);
-                Club ext = DrawClub(hat);
-                DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, round.Programmation.JoursDeMatchs[0].Month, round.Programmation.JoursDeMatchs[0].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
-                if (Utils.EstAvantSansAnnee(jour, round.Programmation.Initialisation)) jour = jour.AddYears(1);
+                Club home = DrawClub(hat);
+                Club away = DrawClub(hat);
+                DateTime day = new DateTime(Session.Instance.Partie.Date.Year, round.Programmation.JoursDeMatchs[0].Month, round.Programmation.JoursDeMatchs[0].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
+                if (Utils.EstAvantSansAnnee(day, round.Programmation.Initialisation)) day = day.AddYears(1);
 
                 if(round.Regles.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
-                    Competition champD = dom.Championnat;
-                    Competition champE = ext.Championnat;
-                    if((champD != null && champE != null) && champE.Niveau - champD.Niveau >= 2)
+                    Competition champH = home.Championnat;
+                    Competition champA = away.Championnat;
+                    if((champH != null && champA != null) && champA.Niveau - champH.Niveau >= 2)
                     {
-                        Club temp = dom;
-                        dom = ext;
-                        ext = temp;
+                        Club temp = home;
+                        home = away;
+                        away = temp;
                     }
                 }
 
-                res.Add(new Match(dom, ext, jour, !round.AllerRetour));
+                res.Add(new Match(home, away, day, !round.AllerRetour));
             }
 
             TVSchedule(res, round.Programmation.DecalagesTV,0);
             if(round.AllerRetour)
             {
-                List<Match> matchs = new List<Match>();
-                List<Match> aller = new List<Match>(res);
-                foreach (Match m in aller)
+                List<Match> games = new List<Match>();
+                List<Match> firstRound = new List<Match>(res);
+                foreach (Match m in firstRound)
                 {
-                    DateTime jour = new DateTime(Session.Instance.Partie.Date.Year, round.Programmation.JoursDeMatchs[1].Month, round.Programmation.JoursDeMatchs[1].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
-                    if (Utils.EstAvantSansAnnee(jour, round.Programmation.Initialisation)) jour = jour.AddYears(1);
-                    Match retour = new Match(m.Exterieur, m.Domicile, jour, !round.AllerRetour, m);
-                    matchs.Add(retour);
-                    res.Add(retour);
+                    DateTime day = new DateTime(Session.Instance.Partie.Date.Year, round.Programmation.JoursDeMatchs[1].Month, round.Programmation.JoursDeMatchs[1].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
+                    if (Utils.EstAvantSansAnnee(day, round.Programmation.Initialisation)) day = day.AddYears(1);
+                    Match secondRound = new Match(m.Exterieur, m.Domicile, day, !round.AllerRetour, m);
+                    games.Add(secondRound);
+                    res.Add(secondRound);
                 }
-                TVSchedule(matchs, round.Programmation.DecalagesTV, 0);
+                TVSchedule(games, round.Programmation.DecalagesTV, 0);
             }
             return res;
         }

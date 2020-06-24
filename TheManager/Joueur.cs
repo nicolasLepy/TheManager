@@ -7,16 +7,6 @@ using System.Text;
 
 namespace TheManager
 {
-    public enum Poste
-    {
-        GARDIEN,
-        DEFENSEUR,
-        MILIEU,
-        ATTAQUANT
-    }
-
-    
-
     [DataContract]
     public struct HistoriqueJoueur : IEquatable<HistoriqueJoueur>
     {
@@ -53,7 +43,7 @@ namespace TheManager
         [DataMember]
         private int _potentiel;
         [DataMember]
-        private Poste _poste;
+        private Position _poste;
         [DataMember]
         private bool _suspendu;
         [DataMember]
@@ -65,7 +55,7 @@ namespace TheManager
 
         public int Niveau { get => _niveau; set => _niveau = value; }
         public int Potentiel { get => _potentiel; }
-        public Poste Poste { get => _poste;}
+        public Position Poste { get => _poste;}
         public bool Suspendu { get => _suspendu; set => _suspendu = value; }
         public List<HistoriqueJoueur> Historique { get => _historique; }
         /// <summary>
@@ -113,7 +103,7 @@ namespace TheManager
             }
         }
 
-        public Joueur(string prenom, string nom, DateTime naissance, int niveau, int potentiel, Pays nationalite, Poste poste) : base(prenom,nom,naissance,nationalite)
+        public Joueur(string prenom, string nom, DateTime naissance, int niveau, int potentiel, Pays nationalite, Position poste) : base(prenom,nom,naissance,nationalite)
         {
             
             _niveau = niveau;
@@ -147,12 +137,13 @@ namespace TheManager
             int salaire = (int)(0.292188*Math.Pow(1.1859960,Niveau));
             switch (_poste)
             {
-                case Poste.GARDIEN: salaire = (int)(salaire *0.8f);
+                case Position.Goalkeeper:
+                    salaire = (int)(salaire *0.8f);
                     break;
-                case Poste.DEFENSEUR:
+                case Position.Defender:
                     salaire = (int)(salaire * 0.9f);
                     break;
-                case Poste.ATTAQUANT:
+                case Position.Striker:
                     salaire = (int)(salaire * 1.1f);
                     break;
             }

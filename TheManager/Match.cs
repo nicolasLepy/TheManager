@@ -295,7 +295,7 @@ namespace TheManager
                 int res = 0;
                 foreach(EvenementMatch em in _evenements)
                 {
-                    if (em.Type == Evenement.CARTON_JAUNE)
+                    if (em.Type == GameEvent.YellowCard)
                         res++;
                 }
                 return res;
@@ -331,16 +331,16 @@ namespace TheManager
             {
                 switch (j.Poste)
                 {
-                    case Poste.GARDIEN:
+                    case Position.Goalkeeper:
                         for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
                         break;
-                    case Poste.DEFENSEUR:
+                    case Position.Defender:
                         for (int i = 0; i < j.Niveau * 2; i++) joueurs.Add(j);
                         break;
-                    case Poste.MILIEU:
+                    case Position.Midfielder:
                         for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
                         break;
-                    case Poste.ATTAQUANT:
+                    case Position.Striker:
                         int k = j.Niveau / 2;
                         for (int i = 0; i < k; i++) joueurs.Add(j);
                         break;
@@ -365,14 +365,14 @@ namespace TheManager
             {
                 switch (j.Poste)
                 {
-                    case Poste.DEFENSEUR:
+                    case Position.Defender:
                         int k = j.Niveau / 2;
                         for (int i = 0; i < k; i++) joueurs.Add(j);
                         break;
-                    case Poste.MILIEU:
+                    case Position.Midfielder:
                         for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
                         break;
-                    case Poste.ATTAQUANT:
+                    case Position.Striker:
                         for (int i = 0; i < j.Niveau*2; i++) joueurs.Add(j);
                         break;
                 }
@@ -411,7 +411,7 @@ namespace TheManager
                 int res = 0;
                 foreach(EvenementMatch em in _evenements)
                 {
-                    if (em.Club == Domicile && em.MiTemps == 1 && (em.Type == Evenement.BUT || em.Type == Evenement.BUT_CSC || em.Type == Evenement.BUT_PENALTY))
+                    if (em.Club == Domicile && em.MiTemps == 1 && (em.Type == GameEvent.Goal || em.Type == GameEvent.AgGoal || em.Type == GameEvent.PenaltyGoal))
                         res++;
                 }
                 return res;
@@ -425,7 +425,7 @@ namespace TheManager
                 int res = 0;
                 foreach (EvenementMatch em in _evenements)
                 {
-                    if (em.Club == Exterieur && em.MiTemps == 1 && (em.Type == Evenement.BUT || em.Type == Evenement.BUT_CSC || em.Type == Evenement.BUT_PENALTY))
+                    if (em.Club == Exterieur && em.MiTemps == 1 && (em.Type == GameEvent.Goal || em.Type == GameEvent.AgGoal || em.Type == GameEvent.PenaltyGoal))
                         res++;
                 }
                 return res;
@@ -860,7 +860,7 @@ namespace TheManager
             Joueur j = Buteur(c == Domicile ? Compo1 : Compo2);
             if(j != null)
             {
-                EvenementMatch em = new EvenementMatch(Evenement.BUT, c, j, _minute, _miTemps);
+                EvenementMatch em = new EvenementMatch(GameEvent.Goal, c, j, _minute, _miTemps);
                 if (j != null) j.ButsMarques++;
                 _evenements.Add(em);
                 AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
@@ -874,10 +874,10 @@ namespace TheManager
             {
 
                 bool deuxiemeJaune = false;
-                foreach (EvenementMatch ev in _evenements) if (ev.Joueur == j && ev.Type == Evenement.CARTON_JAUNE) deuxiemeJaune = true;
+                foreach (EvenementMatch ev in _evenements) if (ev.Joueur == j && ev.Type == GameEvent.YellowCard) deuxiemeJaune = true;
 
 
-                EvenementMatch em = new EvenementMatch(Evenement.CARTON_JAUNE, c, j, _minute, _miTemps);
+                EvenementMatch em = new EvenementMatch(GameEvent.YellowCard, c, j, _minute, _miTemps);
                 _evenements.Add(em);
                 AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
 
@@ -887,7 +887,7 @@ namespace TheManager
                     List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
                     compo.Remove(j);
                     CalculerDifferenceNiveau();
-                    em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
+                    em = new EvenementMatch(GameEvent.RedCard, c, j, _minute, _miTemps);
                     _evenements.Add(em);
 
                 }
@@ -902,7 +902,7 @@ namespace TheManager
             {
                 compo.Remove(j);
                 CalculerDifferenceNiveau();
-                EvenementMatch em = new EvenementMatch(Evenement.CARTON_ROUGE, c, j, _minute, _miTemps);
+                EvenementMatch em = new EvenementMatch(GameEvent.RedCard, c, j, _minute, _miTemps);
                 _evenements.Add(em);
                 AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
             }
@@ -914,7 +914,7 @@ namespace TheManager
             Joueur j = Buteur(compo);
             if(j != null)
             {
-                EvenementMatch em = new EvenementMatch(Evenement.TIR, c, j, _minute, _miTemps);
+                EvenementMatch em = new EvenementMatch(GameEvent.Shot, c, j, _minute, _miTemps);
                 _evenements.Add(em);
                 AjouterAction(em.MinuteStr, Session.Instance.Partie.Gestionnaire.Commentaire(em));
             }

@@ -9,9 +9,9 @@ namespace TheManager.Comparators
     public class Club_Localisation_Comparator : IComparer<Club>
     {
 
-        private Position _reference;
+        private GeographicPosition _reference;
 
-        public Club_Localisation_Comparator(Position reference)
+        public Club_Localisation_Comparator(GeographicPosition reference)
         {
             _reference = reference;
         }

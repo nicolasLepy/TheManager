@@ -15,13 +15,13 @@ namespace TheManager
         [DataMember]
         public int Population { get; set; }
         [DataMember]
-        public Position Position { get; set; }
+        public GeographicPosition Position { get; set; }
 
         public Ville(string nom, int population, float latitude, float longitude)
         {
             Nom = nom;
             Population = population;
-            Position = new Position(latitude, longitude);
+            Position = new GeographicPosition(latitude, longitude);
         }
 
         public Pays Pays()

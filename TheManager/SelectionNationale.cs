@@ -47,22 +47,22 @@ namespace TheManager
         public void AppelSelection(List<Joueur> joueurs)
         {
             _selectionnes = new List<Joueur>();
-            List<Joueur> joueursPoste = Utils.JoueursPoste(joueurs,Poste.GARDIEN);
+            List<Joueur> joueursPoste = Utils.JoueursPoste(joueurs,Position.Goalkeeper);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for(int i = 0; i<3; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
-            joueursPoste = Utils.JoueursPoste(joueurs, Poste.DEFENSEUR);
+            joueursPoste = Utils.JoueursPoste(joueurs, Position.Defender);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for (int i = 0; i < 7; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
-            joueursPoste = Utils.JoueursPoste(joueurs, Poste.MILIEU);
+            joueursPoste = Utils.JoueursPoste(joueurs, Position.Midfielder);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for (int i = 0; i < 7; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
-            joueursPoste = Utils.JoueursPoste(joueurs, Poste.ATTAQUANT);
+            joueursPoste = Utils.JoueursPoste(joueurs, Position.Striker);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for (int i = 0; i < 6; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);

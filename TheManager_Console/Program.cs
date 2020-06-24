@@ -16,8 +16,8 @@ namespace TheManager_Console
             Partie partie = new Partie();
             Session.Instance.Partie = partie;
             Gestionnaire g = partie.Gestionnaire;
-            ChargeurBaseDeDonnees cbdd = new ChargeurBaseDeDonnees(g);
-            cbdd.Charger();
+            DatabaseLoader cbdd = new DatabaseLoader(g);
+            cbdd.Load();
 
            
             for (int i = 0; i < 4840; i++)

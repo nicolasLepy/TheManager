@@ -23,7 +23,7 @@ namespace TheManager
             List<Club> clubs = new List<Club>(_tour.Clubs);
             for(int i = 0; i<_tour.NombrePoules; i++)
             {
-                Position position = _tour.LocalisationGroupes[i];
+                GeographicPosition position = _tour.LocalisationGroupes[i];
                 clubs.Sort(new Club_Localisation_Comparator(position));
                 foreach(Club club in clubs)
                 {

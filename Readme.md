@@ -73,6 +73,8 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | **Environment**                                                       |                                                                      |
 | Dynamic dates, from one season to an other                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | A system for transferring players between clubs                       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| **Clubs**                                                             |                                                                      |
+| Generated reserve teams have really bad players                       | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | **Tournaments**                                                       |                                                                      |
 | Odds                                                                  | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Attendance adaptation when a club grow up or down                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

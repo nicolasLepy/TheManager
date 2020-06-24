@@ -197,7 +197,7 @@ namespace TheManager.Exportation
             List<EvenementMatch> cartons = new List<EvenementMatch>();
             foreach (EvenementMatch em in m.Evenements)
             {
-                if (em.Type == Evenement.BUT || em.Type == Evenement.BUT_PENALTY || em.Type == Evenement.BUT_CSC) evenements.Add(em);
+                if (em.Type == GameEvent.Goal || em.Type == GameEvent.PenaltyGoal || em.Type == GameEvent.AgGoal) evenements.Add(em);
                 else cartons.Add(em);
                 
             }

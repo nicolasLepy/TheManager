@@ -42,7 +42,7 @@ namespace TheManager_GUI
                 string icone = "";
                 bool afficherAction = false;
                 
-                if(em.Type == Evenement.BUT || em.Type == Evenement.BUT_PENALTY || em.Type == Evenement.BUT_CSC)
+                if(em.Type == GameEvent.Goal || em.Type == GameEvent.PenaltyGoal || em.Type == GameEvent.AgGoal)
                 {
                     icone = "goal.png";
                     afficherAction = true;
@@ -58,12 +58,12 @@ namespace TheManager_GUI
                     Matchs();
                     Classement();
                 }
-                else if(em.Type == Evenement.CARTON_JAUNE)
+                else if(em.Type == GameEvent.YellowCard)
                 {
                     icone = "yellow_card.png";
                     afficherAction = true;
                 }
-                else if(em.Type == Evenement.CARTON_ROUGE)
+                else if(em.Type == GameEvent.RedCard)
                 {
                     icone = "red_card.png";
                     afficherAction = true;

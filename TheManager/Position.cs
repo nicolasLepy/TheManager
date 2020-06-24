@@ -7,19 +7,32 @@ using System.Text;
 
 namespace TheManager
 {
-    [DataContract(IsReference = true)]
-    public class Position
+    public enum Position
     {
-        [DataMember]
-        private float _longitude;
+        Goalkeeper,
+        Defender,
+        Midfielder,
+        Striker
+    }
 
-        [DataMember]
-        private float _latitude;
+    [DataContract(IsReference = true)]
+    public class GeographicPosition
+    {
+        [DataMember] private float _longitude;
 
-        public float Longitude { get => _longitude; }
-        public float Latitude { get => _latitude; }
+        [DataMember] private float _latitude;
 
-        public Position(float latitude, float longitude)
+        public float Longitude
+        {
+            get => _longitude;
+        }
+
+        public float Latitude
+        {
+            get => _latitude;
+        }
+
+        public GeographicPosition(float latitude, float longitude)
         {
             _longitude = longitude;
             _latitude = latitude;

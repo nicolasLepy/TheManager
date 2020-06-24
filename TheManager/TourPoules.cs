@@ -17,9 +17,9 @@ namespace TheManager
         private List<Club>[] _poules;
 
         [DataMember]
-        private MethodeTirageAuSort _methodeTirageAuSort;
+        private DrawingMethod _methodeTirageAuSort;
         [DataMember]
-        private List<Position> _localisationGroupes;
+        private List<GeographicPosition> _localisationGroupes;
         [DataMember]
         private List<string> _nomGroupes;
         
@@ -28,7 +28,7 @@ namespace TheManager
 
         public int NombrePoules { get { return _nombrePoules; } }
 
-        public List<Position> LocalisationGroupes { get => _localisationGroupes; }
+        public List<GeographicPosition> LocalisationGroupes { get => _localisationGroupes; }
 
         public string NomGroupe(int idGroupe)
         {
@@ -43,14 +43,14 @@ namespace TheManager
             _nomGroupes.Add(nom);
         }
 
-        public TourPoules(string nom, Hour heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, MethodeTirageAuSort methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
+        public TourPoules(string nom, Hour heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, DrawingMethod methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
             _nomGroupes = new List<string>();
             for (int i = 0; i < _nombrePoules; i++) _poules[i] = new List<Club>();
             _methodeTirageAuSort = methodeTirageAuSort;
-            _localisationGroupes = new List<Position>();
+            _localisationGroupes = new List<GeographicPosition>();
         }
 
         public override Tour Copie()
@@ -161,10 +161,10 @@ namespace TheManager
             ITirageAuSort tirage = null;
             switch (_methodeTirageAuSort)
             {
-                case MethodeTirageAuSort.NIVEAU:
+                case DrawingMethod.Level:
                     tirage = new TirageAuSortParNiveau(this);
                     break;
-                case MethodeTirageAuSort.GEOGRAPHIQUE:
+                case DrawingMethod.Geographic:
                     tirage = new TirageAuSortGeographique(this);
                     break;
             }

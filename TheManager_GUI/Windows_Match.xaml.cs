@@ -56,17 +56,17 @@ namespace TheManager_GUI
                 string icone = "";
                 switch (em.Type)
                 {
-                    case Evenement.BUT: icone = "goal.png";
+                    case GameEvent.Goal: icone = "goal.png";
                         break;
-                    case Evenement.BUT_PENALTY: icone = "goal.png";
+                    case GameEvent.PenaltyGoal: icone = "goal.png";
                         break;
-                    case Evenement.BUT_CSC:
+                    case GameEvent.AgGoal:
                         icone = "goal.png";
                         break;
-                    case Evenement.CARTON_JAUNE:
+                    case GameEvent.YellowCard:
                         icone = "yellow_card.png";
                         break;
-                    case Evenement.CARTON_ROUGE:
+                    case GameEvent.RedCard:
                         icone = "red_card.png";
                         break;
                 }
@@ -81,18 +81,18 @@ namespace TheManager_GUI
                     img1 = Utils.Image(icone);
                     c1 = em.MinuteStr;
                     c2 = em.Joueur.Prenom + " " + em.Joueur.Nom;
-                    if (em.Type == Evenement.BUT_PENALTY) c2 += " (sp)";
-                    if (em.Type == Evenement.BUT_CSC) c2 += " (csc)";
+                    if (em.Type == GameEvent.PenaltyGoal) c2 += " (sp)";
+                    if (em.Type == GameEvent.AgGoal) c2 += " (csc)";
                 }
                 else
                 {
                     img2 = Utils.Image(icone);
                     c4 = em.MinuteStr;
                     c3 = em.Joueur.Prenom + " " + em.Joueur.Nom;
-                    if (em.Type == Evenement.BUT_PENALTY) c3 += " (sp)";
-                    if (em.Type == Evenement.BUT_CSC) c3 += " (csc)";
+                    if (em.Type == GameEvent.PenaltyGoal) c3 += " (sp)";
+                    if (em.Type == GameEvent.AgGoal) c3 += " (csc)";
                 }
-                if(em.Type != Evenement.TIR)
+                if(em.Type != GameEvent.Shot)
                 {
 
                     StackPanel spEv = new StackPanel();
@@ -203,7 +203,7 @@ namespace TheManager_GUI
     public struct JoueurElement : IEquatable<JoueurElement>
     {
         public Joueur Joueur { get; set; }
-        public Poste Poste { get; set; }
+        public Position Poste { get; set; }
         public bool Equals(JoueurElement other)
         {
             throw new NotImplementedException();
