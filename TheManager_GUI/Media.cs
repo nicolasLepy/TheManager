@@ -174,8 +174,8 @@ namespace TheManager_GUI
 
         public void But(Match m)
         {
-            if (m.Affluence < 12000) But4000(m.Domicile.goalMusic);
-            else But12000(m.Domicile.goalMusic);
+            if (m.attendance < 12000) But4000(m.home.goalMusic);
+            else But12000(m.home.goalMusic);
         }
 
         public void But4000(string musique)
@@ -295,8 +295,8 @@ namespace TheManager_GUI
 
         public void But(Match m)
         {
-            if (m.Affluence < 12000) But4000(m.Domicile.goalMusic);
-            else But12000(m.Domicile.goalMusic);
+            if (m.attendance < 12000) But4000(m.home.goalMusic);
+            else But12000(m.home.goalMusic);
         }
 
         public void But4000(string musique)

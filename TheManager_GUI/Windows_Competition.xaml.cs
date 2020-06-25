@@ -55,11 +55,11 @@ namespace TheManager_GUI
             
 
             if (_competition.statistics.LargerScore != null)
-                lbGrandScore.Content = _competition.statistics.LargerScore.Domicile.name + " " + _competition.statistics.LargerScore.Score1 + "-" + _competition.statistics.LargerScore.Score2 + " " + _competition.statistics.LargerScore.Exterieur.name;
+                lbGrandScore.Content = _competition.statistics.LargerScore.home.name + " " + _competition.statistics.LargerScore.score1 + "-" + _competition.statistics.LargerScore.score2 + " " + _competition.statistics.LargerScore.away.name;
             else
                 lbGrandScore.Content = "";
             if (_competition.statistics.LargerScore != null)
-                lbGrosEcart.Content = _competition.statistics.LargerScore.Domicile.name + " " + _competition.statistics.LargerScore.Score1 + "-" + _competition.statistics.LargerScore.Score2 + " " + _competition.statistics.LargerScore.Exterieur.name;
+                lbGrosEcart.Content = _competition.statistics.LargerScore.home.name + " " + _competition.statistics.LargerScore.score1 + "-" + _competition.statistics.LargerScore.score2 + " " + _competition.statistics.LargerScore.away.name;
             else
                 lbGrosEcart.Content = "";
             Palmares();
@@ -89,7 +89,7 @@ namespace TheManager_GUI
 
             foreach (KeyValuePair<Player, int> buteur in _competition.Goalscorers())
             {
-                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Name() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
+                dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.nationality.Name() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
             }
         }
 
@@ -106,7 +106,7 @@ namespace TheManager_GUI
             foreach (Match m in matchs)
             {
                 //Nouveau jour
-                if (lastTime != m.Jour.Date)
+                if (lastTime != m.day.Date)
                 {
 
                     StackPanel spJour = new StackPanel();
@@ -114,30 +114,30 @@ namespace TheManager_GUI
                     spJour.HorizontalAlignment = HorizontalAlignment.Left;
 
                     Label labelJour = new Label();
-                    labelJour.Content = m.Jour.ToShortDateString();
+                    labelJour.Content = m.day.ToShortDateString();
                     labelJour.Style = Application.Current.FindResource("StyleLabel1") as Style;
 
                     spJour.Children.Add(labelJour);
                     spMatchs.Children.Add(spJour);
                 }
 
-                lastTime = m.Jour.Date;
+                lastTime = m.day.Date;
                 string score = "A jouer";
                 string scoreMt = "";
                 string affluence = "-";
-                if (m.Joue)
+                if (m.Played)
                 {
-                    score = m.Score1 + " - " + m.Score2;
-                    affluence = m.Affluence.ToString();
-                    if (m.Prolongations) score += " ap";
-                    if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
-                    scoreMt = "(" + m.ScoreMT1 + " - " + m.ScoreMT2 + ")";
+                    score = m.score1 + " - " + m.score2;
+                    affluence = m.attendance.ToString();
+                    if (m.prolongations) score += " ap";
+                    if (m.PenaltyShootout) score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
+                    scoreMt = "(" + m.ScoreHalfTime1 + " - " + m.ScoreHalfTime2 + ")";
                 }
-                string equipe1 = m.Domicile.shortName;
-                string equipe2 = m.Exterieur.shortName;
+                string equipe1 = m.home.shortName;
+                string equipe2 = m.away.shortName;
 
-                Tournament champD = m.Domicile.Championship;
-                Tournament champE = m.Exterieur.Championship;
+                Tournament champD = m.home.Championship;
+                Tournament champE = m.away.Championship;
                 if (te != null && champD != null && champE != null)
                 {
                     equipe1 += " (" + champD.shortName + ")";
@@ -149,7 +149,7 @@ namespace TheManager_GUI
                 spHeureMatch.HorizontalAlignment = HorizontalAlignment.Center;
 
                 Label labelHeure = new Label();
-                labelHeure.Content = m.Jour.ToShortTimeString();
+                labelHeure.Content = m.day.ToShortTimeString();
                 labelHeure.HorizontalContentAlignment = HorizontalAlignment.Center;
                 labelHeure.Width = 50;
                 labelHeure.Style = Application.Current.FindResource("StyleLabel2") as Style;
@@ -222,7 +222,7 @@ namespace TheManager_GUI
                 //If the final round was not inactive, we can make the palmares
                 if (t.Matchs.Count > 0)
                 {
-                    int annee = t.Matchs[t.Matchs.Count - 1].Jour.Year;
+                    int annee = t.Matchs[t.Matchs.Count - 1].day.Year;
                     dgPalmares.Items.Add(new PalmaresElement { Annee = annee, Club = vainqueur });
                 }
             }

@@ -247,9 +247,9 @@ namespace TheManager
                     for(int i= 0;i<numberOfGamesToFollow;i++)
                     {
                         Match m = games[i];
-                        Ville city = null;
-                        if (m.Domicile as CityClub != null) city = (m.Domicile as CityClub).city;
-                        if (m.Domicile as ReserveClub != null) city = (m.Domicile as ReserveClub).FannionClub.city;
+                        City city = null;
+                        if (m.home as CityClub != null) city = (m.home as CityClub).city;
+                        if (m.home as ReserveClub != null) city = (m.home as ReserveClub).FannionClub.city;
                         List<Journalist> j = new List<Journalist>();
                         foreach (Journalist j1 in media.journalists) if (!j1.isTaken) j.Add(j1);
                         Journalist journalist = null;
@@ -264,13 +264,13 @@ namespace TheManager
                         }
                         if(journalist == null)
                         {
-                            Journalist newJournalist = new Journalist(media.country.Langue.GetFirstName(), media.country.Langue.GetLastName(), Session.Instance.Random(28, 60), city, 100);
+                            Journalist newJournalist = new Journalist(media.country.language.GetFirstName(), media.country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100);
                             media.journalists.Add(newJournalist);
                             journalist = newJournalist;
                         }
                         journalist.isTaken = true;
                         KeyValuePair<Media, Journalist> employment = new KeyValuePair<Media, Journalist>(journalist.Media, journalist);
-                        m.Journalistes.Add(employment);
+                        m.journalists.Add(employment);
                     }
                 }
             }
@@ -334,11 +334,11 @@ namespace TheManager
                     Tour currentRound = c.rounds[c.currentRound];
                     foreach (Match m in currentRound.Matchs)
                     {
-                        if (Utils.CompareDates(m.Jour, _date))
+                        if (Utils.CompareDates(m.day, _date))
                         {
                             todayGames.Add(m);
-                            m.DefinirCompo();
-                            if ((m.Domicile == club || m.Exterieur == club) && !options.simulateGames)
+                            m.SetCompo();
+                            if ((m.home == club || m.away == club) && !options.simulateGames)
                             {
                                 clubMatchs.Add(m);
                             }
@@ -347,7 +347,7 @@ namespace TheManager
                                 //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
                                 //m.Jouer();
                                 if (c.isChampionship && (date.Month == 1 || date.Month == 12) && Session.Instance.Random(1, 26) == 2)
-                                    m.Reprogrammer(3);
+                                    m.Reprogram(3);
                                 else
                                 {
                                     toPlay.Add(m);
@@ -385,10 +385,10 @@ namespace TheManager
             bool clubPlayedHaveAMatch = (clubMatchs.Count > 0) ? true : false;
             foreach(Match m in toPlay)
             {
-                if (clubPlayedHaveAMatch && m.Competition == clubMatchs[0].Competition && m.Jour.ToShortTimeString() == clubMatchs[0].Jour.ToShortTimeString())
+                if (clubPlayedHaveAMatch && m.Tournament == clubMatchs[0].Tournament && m.day.ToShortTimeString() == clubMatchs[0].day.ToShortTimeString())
                     clubMatchs.Add(m);
                 else
-                    m.Jouer();
+                    m.Play();
             }
 
 

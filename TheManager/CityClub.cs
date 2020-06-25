@@ -55,7 +55,7 @@ namespace TheManager
         [DataMember]
         private int _budget;
         [DataMember]
-        private Ville _city;
+        private City _city;
         [DataMember]
         private float _sponsor;
         [DataMember]
@@ -70,7 +70,7 @@ namespace TheManager
         private bool _isFannion;
 
         public int budget { get => _budget; }
-        public Ville city { get => _city; }
+        public City city { get => _city; }
         public float sponsor { get => _sponsor; }
         public List<Contract> contracts { get => _players; }
         public ClubHistory history { get => _historic; }
@@ -90,7 +90,7 @@ namespace TheManager
             }
         }
 
-        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, Ville city, string logo, Stade stadium, string goalMusic, bool isFannion) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic)
+        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalMusic, bool isFannion) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic)
         {
             _budget = budget;
             _city = city;
@@ -148,16 +148,16 @@ namespace TheManager
 
         public void GeneratePlayer(Position p, int minAge, int maxAge, int potentialOffset = 0)
         {
-            string firstName = _city.Pays().Langue.GetFirstName();
-            string lastName = _city.Pays().Langue.GetLastName();
-            int birthYear = Session.Instance.Random(Session.Instance.Partie.date.Year - maxAge, Session.Instance.Partie.date.Year - minAge+1);
+            string firstName = _city.Country().language.GetFirstName();
+            string lastName = _city.Country().language.GetLastName();
+            int birthYear = Session.Instance.Random(Session.Instance.Game.date.Year - maxAge, Session.Instance.Game.date.Year - minAge+1);
 
             //Method Level -> Potential
             int level = Session.Instance.Random(formationFacilities - 18, formationFacilities + 18) + potentialOffset;
             if (level < 1) level = 1;
             if (level > 99) level = 99;
 
-            int age = Session.Instance.Partie.date.Year - birthYear;
+            int age = Session.Instance.Game.date.Year - birthYear;
             int diff = 24 - age;
             int potential = level;
             if (diff > 0) potential += 3 * diff;
@@ -179,9 +179,9 @@ namespace TheManager
             if(niveau < 1) niveau = 1;
              */
             
-            Player j = new Player(firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Pays(), p);
-            int year = Session.Instance.Random(Session.Instance.Partie.date.Year + 1, Session.Instance.Partie.date.Year + 5);
-            contracts.Add(new Contract(j, j.EstimateWage(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Partie.date.Year, Session.Instance.Partie.date.Month, Session.Instance.Partie.date.Day)));
+            Player j = new Player(firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Country(), p);
+            int year = Session.Instance.Random(Session.Instance.Game.date.Year + 1, Session.Instance.Game.date.Year + 5);
+            contracts.Add(new Contract(j, j.EstimateWage(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
         }
 
         public void GeneratePlayer(int minAge, int maxAge)
@@ -293,7 +293,7 @@ namespace TheManager
             if(_budget > 12*wage && validAge && enoughGood)
             {
                 res = true;
-                int year = Session.Instance.Random(Session.Instance.Partie.date.Year + 1, Session.Instance.Partie.date.Year + 5);
+                int year = Session.Instance.Random(Session.Instance.Game.date.Year + 1, Session.Instance.Game.date.Year + 5);
                 ct.Update(wage, new DateTime(year, 7, 1));
             }
 
@@ -341,7 +341,7 @@ namespace TheManager
             
             if(championship != null && championship.rounds[0] as TourChampionnat != null)
             {
-                foreach (Club c in Session.Instance.Partie.kernel.Clubs)
+                foreach (Club c in Session.Instance.Game.kernel.Clubs)
                 {
                     CityClub cv = c as CityClub;
                     if (cv != null && Utils.Distance(cv.city, city) < 300)
@@ -356,12 +356,12 @@ namespace TheManager
                 {
                     Club adv = possibleOpponents[Session.Instance.Random(0, possibleOpponents.Count)];
                     possibleOpponents.Remove(adv);
-                    DateTime begin = new DateTime(championship.rounds[0].Matchs[0].Jour.Year, championship.rounds[0].Matchs[0].Jour.Month, championship.rounds[0].Matchs[0].Jour.Day);
+                    DateTime begin = new DateTime(championship.rounds[0].Matchs[0].day.Year, championship.rounds[0].Matchs[0].day.Month, championship.rounds[0].Matchs[0].day.Day);
                     begin = begin.AddDays(Session.Instance.Random(-30, -10));
                     begin = begin.AddHours(Session.Instance.Random(14, 22));
                     Match game = new Match(this, adv, begin, false);
-                    game.Reprogrammer(0);
-                    Session.Instance.Partie.kernel.AddFriendlyGame(game );
+                    game.Reprogram(0);
+                    Session.Instance.Game.kernel.AddFriendlyGame(game );
                 }
             }
         }
@@ -391,7 +391,7 @@ namespace TheManager
             clubTransfersManagement.targetedPlayers.Clear();
 
             float level = Level();
-            Pays countryClub = city.Pays();
+            Country countryClub = city.Country();
 
             int chance = 100 - (int)level;
 
@@ -403,14 +403,14 @@ namespace TheManager
             int playersFound = 0;
             while(pursue)
             {
-                Player j = Session.Instance.Partie.kernel.freePlayers[i];
+                Player j = Session.Instance.Game.kernel.freePlayers[i];
                 //Likely to interest the club
                 if ((Session.Instance.Random(1,chance) == 1) && j.level / level > 0.90f)
                 {
                     //If the player has not a pro level, it has to be on the same country
                     //(unrealistic to have many foreign player in amateur club)
                     bool can = true;
-                    if (j.level < 60 && j.Nationalite != countryClub) can = false;
+                    if (j.level < 60 && j.nationality != countryClub) can = false;
                     if(can)
                     {
                         clubTransfersManagement.targetedPlayers.Add(j);
@@ -418,7 +418,7 @@ namespace TheManager
                     }
                 }
                 i++;
-                if (i == Session.Instance.Partie.kernel.freePlayers.Count || playersFound == playersToResearch)
+                if (i == Session.Instance.Game.kernel.freePlayers.Count || playersFound == playersToResearch)
                     pursue = false;
             }
             clubTransfersManagement.targetedPlayers.Sort(new PlayerLevelComparator());

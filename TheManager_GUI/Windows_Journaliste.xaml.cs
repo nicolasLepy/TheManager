@@ -27,9 +27,9 @@ namespace TheManager_GUI
             lbJournaliste.Content = journaliste.firstName + " " + journaliste.lastName;
             lbMedia.Content = journaliste.Media.name;
             List<Match> matchs = new List<Match>();
-            foreach (Match m in Session.Instance.Partie.kernel.Matchs)
+            foreach (Match m in Session.Instance.Game.kernel.Matchs)
             {
-                foreach(KeyValuePair<TheManager.Media, Journalist> j in m.Journalistes)
+                foreach(KeyValuePair<TheManager.Media, Journalist> j in m.journalists)
                 {
                     if (j.Value == journaliste) matchs.Add(m);
                 }
@@ -38,7 +38,7 @@ namespace TheManager_GUI
 
             foreach(Match m in matchs)
             {
-                dgMatchs.Items.Add(new MatchElement { Date = m.Jour.ToShortDateString(), Heure = m.Jour.ToShortTimeString(), Equipe1 = m.Domicile.name, Equipe2 = m.Exterieur.name });
+                dgMatchs.Items.Add(new MatchElement { Date = m.day.ToShortDateString(), Heure = m.day.ToShortTimeString(), Equipe1 = m.home.name, Equipe2 = m.away.name });
             }
             
         }

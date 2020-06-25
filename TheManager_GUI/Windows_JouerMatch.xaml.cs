@@ -33,12 +33,12 @@ namespace TheManager_GUI
 
         async Task Match(Match match)
         {
-            List<RetourMatch> res = match.MinuteSuivante();
+            List<RetourMatch> res = match.NextMinute();
             if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res)) _enCours[_matchs.IndexOf(match)] = false;
             //Si y a un évenement
             if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
             {
-                MatchEvent em = match.Evenements[match.Evenements.Count - 1];
+                MatchEvent em = match.events[match.events.Count - 1];
                 string icone = "";
                 bool afficherAction = false;
                 
@@ -46,7 +46,7 @@ namespace TheManager_GUI
                 {
                     icone = "goal.png";
                     afficherAction = true;
-                    if (em.club == match.Domicile)
+                    if (em.club == match.home)
                     {
                         _media.But(match);
                     }
@@ -71,7 +71,7 @@ namespace TheManager_GUI
 
                 if (afficherAction)
                 {
-                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteToString, Joueur = em.player.Nom + " (" + em.player.Club.shortName + ")", Evenement = match.Domicile + " - " + match.Exterieur + " : " + match.Score1 + " - " + match.Score2 });
+                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteToString, Joueur = em.player.lastName + " (" + em.player.Club.shortName + ")", Evenement = match.home + " - " + match.away + " : " + match.score1 + " - " + match.score2 });
                 }
                 if (match == _matchs[0]) ActionsMatch();
             }
@@ -80,12 +80,12 @@ namespace TheManager_GUI
             //Refresh
             if (match == _matchs[0])
             {
-                lbTemps.Content = match.Temps;
-                lbScore.Content = match.Score1 + " - " + match.Score2;
-                lbTirs1.Content = match.Statistiques.TirsDomicile;
-                lbTirs2.Content = match.Statistiques.TirsExterieurs;
-                pbTirs.Maximum = match.Statistiques.TirsDomicile + match.Statistiques.TirsExterieurs;
-                pbTirs.Value = match.Statistiques.TirsDomicile;
+                lbTemps.Content = match.Time;
+                lbScore.Content = match.score1 + " - " + match.score2;
+                lbTirs1.Content = match.statistics.HomeShoots;
+                lbTirs2.Content = match.statistics.AwayShoots;
+                pbTirs.Maximum = match.statistics.HomeShoots + match.statistics.AwayShoots;
+                pbTirs.Value = match.statistics.HomeShoots;
             }
             //Thread t = new Thread(new ThreadStart(ThreadClassement));
             //t.Start();
@@ -127,7 +127,7 @@ namespace TheManager_GUI
             _media = new MediaWAV();
             _enCours = new List<bool>();
             _matchs = matchs;
-            _tour = _matchs[0].Tour;
+            _tour = _matchs[0].Round;
             Matchs();
 
             foreach(Match m in _matchs)
@@ -139,12 +139,12 @@ namespace TheManager_GUI
 
             try
             {
-                imgEquipe1.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].Domicile)));
-                imgEquipe2.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].Exterieur)));
+                imgEquipe1.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].home)));
+                imgEquipe2.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].away)));
             }
             catch { }
-            lbEquipe1.Content = _matchs[0].Domicile;
-            lbEquipe2.Content = _matchs[0].Exterieur;
+            lbEquipe1.Content = _matchs[0].home;
+            lbEquipe2.Content = _matchs[0].away;
 
 
             //Thread t = new Thread(new ThreadStart(ThreadMatch));
@@ -160,7 +160,7 @@ namespace TheManager_GUI
         private void ActionsMatch()
         {
             dgActions.Items.Clear();
-            foreach(KeyValuePair<string,string> kvp in _matchs[0].Actions)
+            foreach(KeyValuePair<string,string> kvp in _matchs[0].actions)
             {
                 dgActions.Items.Insert(0,new MatchLiveAction { Minute = kvp.Key, Action = kvp.Value });
             }
@@ -171,7 +171,7 @@ namespace TheManager_GUI
             dgMatchs.Items.Clear();
             foreach(Match match in _matchs)
             {
-                dgMatchs.Items.Add(new MatchLiveElement { Equipe1 = match.Domicile, Equipe2 = match.Exterieur, Score = match.Score1 + " - " + match.Score2 });
+                dgMatchs.Items.Add(new MatchLiveElement { Equipe1 = match.home, Equipe2 = match.away, Score = match.score1 + " - " + match.score2 });
             }
         }
 
@@ -208,7 +208,7 @@ namespace TheManager_GUI
                 bool termine = false;
                 while(!termine)
                 {
-                    List<RetourMatch> rm = match.MinuteSuivante();
+                    List<RetourMatch> rm = match.NextMinute();
                     if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, rm)) termine = true;
                 }
                 //_matchs[i].Jouer();

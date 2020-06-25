@@ -27,31 +27,31 @@ namespace TheManager_GUI
             InitializeComponent();
             try
             {
-                imgCompetition.Source = new BitmapImage(new Uri(Utils.LogoTournament(match.Competition)));
+                imgCompetition.Source = new BitmapImage(new Uri(Utils.LogoTournament(match.Tournament)));
             }
             catch { }
-            lbStade.Content = match.Domicile.stadium.Nom;
-            lbAffluence.Content = match.Affluence + " spectateurs";
-            lbEquipe1.Content = match.Domicile.name;
-            lbEquipe2.Content = match.Exterieur.name;
-            lbScore.Content = match.Score1 + " - " + match.Score2;
-            lbTirs1.Content = match.Statistiques.TirsDomicile;
-            lbTirs2.Content = match.Statistiques.TirsExterieurs;
-            pbTirs.Maximum = match.Statistiques.TirsDomicile + match.Statistiques.TirsExterieurs;
-            pbTirs.Value = match.Statistiques.TirsDomicile;
-            lbPossession1.Content = match.Statistiques.Possession1 + "%";
-            lbPossession2.Content = match.Statistiques.Possession2 + "%";
-            pbPossession.Maximum = match.Statistiques.Possession1 + match.Statistiques.Possession2;
-            pbPossession.Value = match.Statistiques.Possession1;
-            if (match.Prolongations)
+            lbStade.Content = match.home.stadium.name;
+            lbAffluence.Content = match.attendance + " spectateurs";
+            lbEquipe1.Content = match.home.name;
+            lbEquipe2.Content = match.away.name;
+            lbScore.Content = match.score1 + " - " + match.score2;
+            lbTirs1.Content = match.statistics.HomeShoots;
+            lbTirs2.Content = match.statistics.AwayShoots;
+            pbTirs.Maximum = match.statistics.HomeShoots + match.statistics.AwayShoots;
+            pbTirs.Value = match.statistics.HomeShoots;
+            lbPossession1.Content = match.statistics.Possession1 + "%";
+            lbPossession2.Content = match.statistics.Possession2 + "%";
+            pbPossession.Maximum = match.statistics.Possession1 + match.statistics.Possession2;
+            pbPossession.Value = match.statistics.Possession1;
+            if (match.prolongations)
                 lbScore.Content += " a.p.";
-            if(match.TAB)
+            if(match.PenaltyShootout)
             {
-                lbScore.Content += " (" + match.Tab1 + "-" + match.Tab2 + " tab)";
+                lbScore.Content += " (" + match.penaltyShootout1 + "-" + match.penaltyShootout2 + " tab)";
             }
-            lbMT.Content = "(" + match.ScoreMT1 + " - " + match.ScoreMT2 + ")";
+            lbMT.Content = "(" + match.ScoreHalfTime1 + " - " + match.ScoreHalfTime2 + ")";
 
-            foreach(MatchEvent em in match.Evenements)
+            foreach(MatchEvent em in match.events)
             {
                 string icone = "";
                 switch (em.type)
@@ -76,11 +76,11 @@ namespace TheManager_GUI
                 string c4 = "";
                 string img1 = "";
                 string img2 = "";
-                if (em.club == match.Domicile)
+                if (em.club == match.home)
                 {
                     img1 = Utils.Image(icone);
                     c1 = em.MinuteToString;
-                    c2 = em.player.Prenom + " " + em.player.Nom;
+                    c2 = em.player.firstName + " " + em.player.lastName;
                     if (em.type == GameEvent.PenaltyGoal) c2 += " (sp)";
                     if (em.type == GameEvent.AgGoal) c2 += " (csc)";
                 }
@@ -88,7 +88,7 @@ namespace TheManager_GUI
                 {
                     img2 = Utils.Image(icone);
                     c4 = em.MinuteToString;
-                    c3 = em.player.Prenom + " " + em.player.Nom;
+                    c3 = em.player.firstName + " " + em.player.lastName;
                     if (em.type == GameEvent.PenaltyGoal) c3 += " (sp)";
                     if (em.type == GameEvent.AgGoal) c3 += " (csc)";
                 }
@@ -147,17 +147,17 @@ namespace TheManager_GUI
 
             }
 
-            foreach (Player j in match.Compo1)
+            foreach (Player j in match.compo1)
             {
                 dgCompo1.Items.Add(new JoueurElement { Joueur = j, Poste = j.position });
             }
 
-            foreach (Player j in match.Compo2)
+            foreach (Player j in match.compo2)
             {
                 dgCompo2.Items.Add(new JoueurElement { Joueur = j, Poste = j.position });
             }
 
-            foreach (KeyValuePair<TheManager.Media, Journalist> j in match.Journalistes)
+            foreach (KeyValuePair<TheManager.Media, Journalist> j in match.journalists)
             {
                 dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j.Value, Media = j.Key.name });
             }

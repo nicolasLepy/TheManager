@@ -16,7 +16,7 @@ namespace TheManager
         [DataMember]
         private string _lastName;
         [DataMember]
-        private Ville _base;
+        private City _base;
         [DataMember]
         private int _offset;
 
@@ -26,7 +26,7 @@ namespace TheManager
         public int age { get; set; }
         [DataMember]
         public bool isTaken { get; set; }
-        public Ville baseCity { get => _base; }
+        public City baseCity { get => _base; }
         public int offset { get => _offset; }
 
         public Media Media
@@ -34,7 +34,7 @@ namespace TheManager
             get
             {
                 Media res = null;
-                foreach(Media m in Session.Instance.Partie.kernel.medias)
+                foreach(Media m in Session.Instance.Game.kernel.medias)
                 {
                     foreach (Journalist j in m.journalists)
                     {
@@ -57,9 +57,9 @@ namespace TheManager
             {
                 int res = 0;
 
-                foreach(Match m in Session.Instance.Partie.kernel.Matchs)
+                foreach(Match m in Session.Instance.Game.kernel.Matchs)
                 {
-                    foreach(KeyValuePair<Media, Journalist> j in m.Journalistes)
+                    foreach(KeyValuePair<Media, Journalist> j in m.journalists)
                     {
                         if (j.Value == this) res++;
                     }
@@ -69,7 +69,7 @@ namespace TheManager
             }
         }
 
-        public Journalist(string firstName, string lastName, int age, Ville baseCity, int offset)
+        public Journalist(string firstName, string lastName, int age, City baseCity, int offset)
         {
             isTaken = false;
             _firstName = firstName;

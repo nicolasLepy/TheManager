@@ -14,7 +14,7 @@ namespace TheManager_Console
         static void Main(string[] args)
         {
             Game partie = new Game();
-            Session.Instance.Partie = partie;
+            Session.Instance.Game = partie;
             Kernel g = partie.kernel;
             DatabaseLoader cbdd = new DatabaseLoader(g);
             cbdd.Load();

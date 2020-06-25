@@ -36,7 +36,7 @@ namespace TheManager
     }
 
     [DataContract(IsReference =true)]
-    public class Player : Personne
+    public class Player : Person
     {
         [DataMember]
         private int _level;
@@ -87,7 +87,7 @@ namespace TheManager
             get
             {
                 CityClub res = null;
-                foreach(Club c in Session.Instance.Partie.kernel.Clubs)
+                foreach(Club c in Session.Instance.Game.kernel.Clubs)
                 {
                     CityClub cv = c as CityClub;
                     if(cv != null)
@@ -103,7 +103,7 @@ namespace TheManager
             }
         }
 
-        public Player(string firstName, string lastName, DateTime birthday, int level, int potential, Pays nationality, Position position) : base(firstName,lastName,birthday,nationality)
+        public Player(string firstName, string lastName, DateTime birthday, int level, int potential, Country nationality, Position position) : base(firstName,lastName,birthday,nationality)
         {
             
             _level = level;
@@ -171,7 +171,7 @@ namespace TheManager
             {
                 _level -= Session.Instance.Random(1, 5);
             }
-            _history.Add(new PlayerHistory(_level, Session.Instance.Partie.date.Year + 1,goalsScored, playedGames, Club));
+            _history.Add(new PlayerHistory(_level, Session.Instance.Game.date.Year + 1,goalsScored, playedGames, Club));
             goalsScored = 0;
             playedGames = 0;
         }
@@ -203,7 +203,7 @@ namespace TheManager
                     {
                         Club ancien = Club;
                         Club.RemovePlayer(this);
-                        sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Partie.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.date.Year, Session.Instance.Partie.date.Month, Session.Instance.Partie.date.Day)));
+                        sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
                         res = true;
                     }
                 }
@@ -213,7 +213,7 @@ namespace TheManager
                 //If wage proposed is not too bad (at least between 0.7 et 1 of his "real wage value")
                 if ((oc.Wage + 0.0f) / EstimateWage() > (Session.Instance.Random(70, 100) / 100.0f))
                 {
-                    sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Partie.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Partie.date.Year, Session.Instance.Partie.date.Month, Session.Instance.Partie.date.Day)));
+                    sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
                     res = true;
                 }
             }

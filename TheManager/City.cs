@@ -8,30 +8,30 @@ using System.Text;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
-    public class Ville
+    public class City
     {
         [DataMember]
-        public string Nom { get; set; }
+        public string Name { get; set; }
         [DataMember]
         public int Population { get; set; }
         [DataMember]
         public GeographicPosition Position { get; set; }
 
-        public Ville(string nom, int population, float latitude, float longitude)
+        public City(string name, int population, float latitude, float longitude)
         {
-            Nom = nom;
+            Name = name;
             Population = population;
             Position = new GeographicPosition(latitude, longitude);
         }
 
-        public Pays Pays()
+        public Country Country()
         {
-            Pays res = null;
-            foreach(Continent c in Session.Instance.Partie.kernel.continents)
+            Country res = null;
+            foreach(Continent c in Session.Instance.Game.kernel.continents)
             {
-                foreach(Pays p in c.countries)
+                foreach(Country p in c.countries)
                 {
-                    foreach(Ville v in p.Villes)
+                    foreach(City v in p.cities)
                     {
                         if (v == this) res = p;
                     }

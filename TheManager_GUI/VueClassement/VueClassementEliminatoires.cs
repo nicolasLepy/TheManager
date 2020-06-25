@@ -37,23 +37,23 @@ namespace TheManager_GUI.VueClassement
                 spMatch.Orientation = Orientation.Horizontal;
 
                 Label l1 = new Label();
-                l1.Content = m.Jour.ToShortDateString();
+                l1.Content = m.day.ToShortDateString();
                 l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l1.FontSize = 10;
                 l1.Width = 75;
 
                 Label l2 = new Label();
-                l2.Content = m.Jour.ToShortTimeString();
+                l2.Content = m.day.ToShortTimeString();
                 l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l2.FontSize = 10;
                 l2.Width = 50;
 
                 Image img1 = new Image();
                 img1.Width = 20;
-                img1.Source = new BitmapImage(new Uri(Utils.Logo(m.Domicile)));
+                img1.Source = new BitmapImage(new Uri(Utils.Logo(m.home)));
 
                 Label l3 = new Label();
-                l3.Content = m.Domicile.name + (m.Domicile as CityClub != null ? " (" + m.Domicile.Championship.shortName + ")" : "");
+                l3.Content = m.home.name + (m.home as CityClub != null ? " (" + m.home.Championship.shortName + ")" : "");
                 l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l3.FontSize = 10;
                 l3.Width = 100;
@@ -61,20 +61,20 @@ namespace TheManager_GUI.VueClassement
                 Button btnScore = new Button();
                 btnScore.Name = "btnScore_" + index;
                 //btnScore.Click += new RoutedEventHandler(BtnMatch_Click);
-                btnScore.Content = m.Score1 + " - " + m.Score2 + (m.Prolongations ? " ap" : "") + (m.TAB ? " (" + m.Tab1 + "-" + m.Tab2 + " tab)" : "");
+                btnScore.Content = m.score1 + " - " + m.score2 + (m.prolongations ? " ap" : "") + (m.PenaltyShootout ? " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)" : "");
                 btnScore.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
                 btnScore.FontSize = 10;
                 btnScore.Width = 65;
 
                 Label l5 = new Label();
-                l5.Content = m.Exterieur.name + (m.Exterieur as CityClub != null ? " (" + m.Exterieur.Championship.shortName + ")" : "");
+                l5.Content = m.away.name + (m.away as CityClub != null ? " (" + m.away.Championship.shortName + ")" : "");
                 l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l5.FontSize = 10;
                 l5.Width = 100;
 
                 Image img2 = new Image();
                 img2.Width = 20;
-                img2.Source = new BitmapImage(new Uri(Utils.Logo(m.Exterieur)));
+                img2.Source = new BitmapImage(new Uri(Utils.Logo(m.away)));
 
 
                 spMatch.Children.Add(l1);

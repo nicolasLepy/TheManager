@@ -19,8 +19,8 @@ namespace TheManager.Comparators
         public int Compare(Match x, Match y)
         {
             List<Club> ranking = _round.Classement();
-            int nivMatchX = ranking.IndexOf(x.Domicile) + ranking.IndexOf(x.Exterieur);
-            int nivMatchY = ranking.IndexOf(y.Domicile) + ranking.IndexOf(y.Exterieur);
+            int nivMatchX = ranking.IndexOf(x.home) + ranking.IndexOf(x.away);
+            int nivMatchY = ranking.IndexOf(y.home) + ranking.IndexOf(y.away);
 
             return nivMatchX - nivMatchY;
         }

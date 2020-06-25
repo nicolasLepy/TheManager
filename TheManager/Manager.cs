@@ -8,7 +8,7 @@ using System.Text;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
-    public class Manager : Personne
+    public class Manager : Person
     {
 
         [DataMember]
@@ -20,7 +20,7 @@ namespace TheManager
         /// </summary>
         public int level { get => _level; }
 
-        public Manager(string firstName, string lastName, int level, DateTime birthDay, Pays nationality) : base(firstName,lastName,birthDay, nationality)
+        public Manager(string firstName, string lastName, int level, DateTime birthDay, Country nationality) : base(firstName,lastName,birthDay, nationality)
         {
             _level = level;
 

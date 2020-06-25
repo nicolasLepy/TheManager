@@ -46,7 +46,7 @@ namespace TheManager_GUI
                 conteneurJoueur.Orientation = Orientation.Vertical;
 
                 Label label = new Label();
-                label.Content = j.Nom;
+                label.Content = j.lastName;
                 label.HorizontalAlignment = HorizontalAlignment.Center;
                 label.Style = Application.Current.FindResource("StyleLabel2") as Style;
 
@@ -81,7 +81,7 @@ namespace TheManager_GUI
 
             foreach(Match match in _matchs)
             {
-                dgMatchs.Items.Add(new ProgrammeElement { Heure = match.Jour.ToShortTimeString(), Equipe1 = match.Domicile, Equipe2 = match.Exterieur, Score = match.Score1 + " - " + match.Score2 });
+                dgMatchs.Items.Add(new ProgrammeElement { Heure = match.day.ToShortTimeString(), Equipe1 = match.home, Equipe2 = match.away, Score = match.score1 + " - " + match.score2 });
             }
 
 
@@ -90,11 +90,11 @@ namespace TheManager_GUI
                 dgJoueursDispo.Items.Add(new JoueurCompoElement { Poste = j.position.ToString(), Age = j.Age, Energie = j.energy, Niveau = j.level, Nom = j});
             }
 
-            lbMatch.Content = m[0].Domicile + " - " + m[0].Exterieur;
-            lbStade.Content = m[0].Domicile.stadium.Nom;
-            lbCote1.Content = m[0].Cote1.ToString("0.00");
-            lbCoteN.Content = m[0].CoteN.ToString("0.00");
-            lbCote2.Content = m[0].Cote2.ToString("0.00");
+            lbMatch.Content = m[0].home + " - " + m[0].away;
+            lbStade.Content = m[0].home.stadium.name;
+            lbCote1.Content = m[0].odd1.ToString("0.00");
+            lbCoteN.Content = m[0].oddD.ToString("0.00");
+            lbCote2.Content = m[0].odd2.ToString("0.00");
         }
 
         
@@ -143,7 +143,7 @@ namespace TheManager_GUI
                     compo.Add(_joueurs[i]);
                 }
 
-                _matchs[0].DefinirCompo(compo, _club);
+                _matchs[0].SetCompo(compo, _club);
                 Windows_JouerMatch wjm = new Windows_JouerMatch(_matchs);
                 wjm.ShowDialog();
                 Close();
@@ -162,10 +162,10 @@ namespace TheManager_GUI
                     compo.Add(_joueurs[i]);
                 }
 
-                _matchs[0].DefinirCompo(compo, _club);
+                _matchs[0].SetCompo(compo, _club);
                 foreach(Match m in _matchs)
                 {
-                    m.Jouer();
+                    m.Play();
                 }
                 Close();
             }

@@ -37,7 +37,7 @@ namespace TheManager
                 bool matchsAllersTousJoues = true;
                 for(int i = 0;i<res.Count/2; i++)
                 {
-                    if (!Matchs[i].Joue) matchsAllersTousJoues = false;
+                    if (!Matchs[i].Played) matchsAllersTousJoues = false;
                 }
                 int deb = 0;
                 if (matchsAllersTousJoues)
@@ -79,7 +79,7 @@ namespace TheManager
                 {
                     foreach(Match m in matchs)
                     {
-                        CityClub cv = m.Vainqueur as CityClub;
+                        CityClub cv = m.Winner as CityClub;
                         if(cv != null)
                         {
                             cv.ModifyBudget(d.Somme);
@@ -90,7 +90,7 @@ namespace TheManager
                 {
                     foreach (Match m in matchs)
                     {
-                        CityClub cv = m.Perdant as CityClub;
+                        CityClub cv = m.Looser as CityClub;
                         if (cv != null)
                         {
                             cv.ModifyBudget(d.Somme);
@@ -123,14 +123,14 @@ namespace TheManager
                     //Winners
                     if (q.Classement == 1)
                     {
-                        c = m.Vainqueur;
+                        c = m.Winner;
                         if (!q.AnneeSuivante) q.Competition.rounds[q.IDTour].Clubs.Add(c);
                         else q.Competition.AddClubForNextYear(c, q.IDTour);
                     }
                     //Losers
                     else if (q.Classement == 2)
                     {
-                        c = m.Perdant;
+                        c = m.Looser;
                         if (!q.AnneeSuivante) q.Competition.rounds[q.IDTour].Clubs.Add(c);
                         else q.Competition.AddClubForNextYear(c, q.IDTour);
                     }

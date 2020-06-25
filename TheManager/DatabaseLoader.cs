@@ -62,7 +62,7 @@ namespace TheManager
                 int age = int.Parse(joueur[1]);
                 DateTime naissance = new DateTime(2019 - age, 1, 1);
                 string paysNom = joueur[2];
-                Pays pays = _kernel.String2Country(paysNom);
+                Country pays = _kernel.String2Country(paysNom);
                 if (pays == null) pays = _kernel.String2Country("France");
                 int niveau = int.Parse(joueur[3]) - 2;
                 int potentiel = int.Parse(joueur[4]) - 2;
@@ -205,7 +205,7 @@ namespace TheManager
                 foreach (XElement e2 in e.Descendants("Media"))
                 {
                     string name = e2.Attribute("nom").Value;
-                    Pays country = _kernel.String2Country(e2.Attribute("pays").Value);
+                    Country country = _kernel.String2Country(e2.Attribute("pays").Value);
                     Media m = new Media(name, country);
                     _kernel.medias.Add(m);
 
@@ -214,7 +214,7 @@ namespace TheManager
                         string firstName = e3.Attribute("prenom").Value;
                         string lastName = e3.Attribute("nom").Value;
                         int age = int.Parse(e3.Attribute("age").Value);
-                        Ville city = _kernel.String2City(e3.Attribute("ville").Value);
+                        City city = _kernel.String2City(e3.Attribute("ville").Value);
                         int offset = 0;
                         if(e3.Attribute("retrait") != null)
                             offset = int.Parse(e3.Attribute("retrait").Value);
@@ -269,7 +269,7 @@ namespace TheManager
                             break;
                     }
                     Player j = new Player(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Country("France"), position);
-                    club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.date.Year, Session.Instance.Partie.date.Month, Session.Instance.Partie.date.Day)));
+                    club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
                 }
             }
         }
@@ -287,7 +287,7 @@ namespace TheManager
                     string clubName = e2.Attribute("club").Value;
                     CityClub club = _kernel.String2Club(clubName) as CityClub;
                     string countryName = e2.Attribute("nationalite").Value;
-                    Pays country = _kernel.String2Country(countryName);
+                    Country country = _kernel.String2Country(countryName);
                     Manager manager = new Manager(firstName, lastName, level, new DateTime(1970, 1, 1), country);
                     club.manager = manager;
                 }
@@ -305,7 +305,7 @@ namespace TheManager
                     int population = int.Parse(e2.Element("Population").Value);
                     float lat = float.Parse(e2.Element("Latitute").Value, CultureInfo.InvariantCulture);
                     float lon = float.Parse(e2.Element("Longitude").Value, CultureInfo.InvariantCulture);
-                    _kernel.String2Country("France").Villes.Add(new Ville(name, population, lat, lon));
+                    _kernel.String2Country("France").cities.Add(new City(name, population, lat, lon));
 
                 }
             }
@@ -325,7 +325,7 @@ namespace TheManager
                         string countryName = e3.Attribute("nom").Value;
                         string language = e3.Attribute("langue").Value;
                         Language l = _kernel.String2Language(language);
-                        Pays p = new Pays(countryName,l);
+                        Country p = new Country(countryName,l);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -333,8 +333,8 @@ namespace TheManager
                             float lat = float.Parse(e4.Attribute("Latitute").Value);
                             float lon = float.Parse(e4.Attribute("Longitude").Value);
 
-                            Ville v = new Ville(cityName, population, lat, lon);
-                            p.Villes.Add(v);
+                            City v = new City(cityName, population, lat, lon);
+                            p.cities.Add(v);
                         }
                         c.countries.Add(p);
                     }
@@ -353,9 +353,9 @@ namespace TheManager
                     string name = e2.Attribute("nom").Value;
                     int capacity = int.Parse(e2.Attribute("capacite").Value);
                     string cityName = e2.Attribute("ville").Value;
-                    Ville v = _kernel.String2City(cityName);
-                    Stade s = new Stade(name, capacity, v);
-                    v.Pays().Stades.Add(s);
+                    City v = _kernel.String2City(cityName);
+                    Stadium s = new Stadium(name, capacity, v);
+                    v.Country().stadiums.Add(s);
                 }
             }
         }
@@ -377,9 +377,9 @@ namespace TheManager
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
 
                     string cityName = e2.Attribute("ville").Value;
-                    Ville city = _kernel.String2City(cityName);
+                    City city = _kernel.String2City(cityName);
 
-                    Stade stadium = null;
+                    Stadium stadium = null;
                     if (e2.Attribute("stade") != null)
                     {
                         string stadiumName = e2.Attribute("stade").Value;
@@ -388,10 +388,10 @@ namespace TheManager
                         {
                             int capacite = 1000;
                             if (city != null) capacite = city.Population / 10;
-                            stadium = new Stade(stadiumName, capacite, city);
+                            stadium = new Stadium(stadiumName, capacite, city);
                             if (city != null)
                             {
-                                city.Pays().Stades.Add(stadium);
+                                city.Country().stadiums.Add(stadium);
                             }
                             else
                             {
@@ -400,7 +400,7 @@ namespace TheManager
                         }
                     }
                     if (stadium == null)
-                        stadium = new Stade("Stade de " + shortName, city.Population / 10, city);
+                        stadium = new Stadium("Stade de " + shortName, city.Population / 10, city);
 
 
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
@@ -416,8 +416,8 @@ namespace TheManager
                     //Simplification
                     reputation = centreFormation;
 
-                    Pays pays = city.Pays();
-                    Manager entraineur = new Manager(pays.Langue.GetFirstName(), pays.Langue.GetLastName(), centreFormation, new DateTime(1970, 1, 1), pays);
+                    Country pays = city.Country();
+                    Manager entraineur = new Manager(pays.language.GetFirstName(), pays.language.GetLastName(), centreFormation, new DateTime(1970, 1, 1), pays);
 
                     bool equipePremiere = true;
                     Club c = new CityClub(name,entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium,musiqueBut, equipePremiere);
@@ -431,16 +431,16 @@ namespace TheManager
                     string shortName = name;
                     int reputation = int.Parse(e2.Attribute("reputation").Value);
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
-                    Pays country = _kernel.String2Country(e2.Attribute("pays").Value);
+                    Country country = _kernel.String2Country(e2.Attribute("pays").Value);
 
-                    Stade stadium = null;
+                    Stadium stadium = null;
                     if (e2.Attribute("stade") != null)
                     {
                         string nom_stade = e2.Attribute("stade").Value;
                         stadium = _kernel.String2Stadium(nom_stade);
                     }
                     if (stadium == null)
-                        stadium = new Stade("Stade de " + shortName, 15000, null);
+                        stadium = new Stadium("Stade de " + shortName, 15000, null);
                     int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
                     float coefficient = float.Parse(e2.Attribute("coefficient").Value);
@@ -451,9 +451,9 @@ namespace TheManager
                     else
                         goalMusic = "null";
 
-                    Manager entraineur = new Manager(country.Langue.GetFirstName(), country.Langue.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
+                    Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
-                    Club c = new SelectionNationale(name,entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, coefficient,country,goalMusic);
+                    Club c = new NationalTeam(name,entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, coefficient,country,goalMusic);
                     _clubsId[id] = c;
                     _kernel.Clubs.Add(c);
                 }
@@ -745,16 +745,16 @@ namespace TheManager
         {
             foreach(Club c in _kernel.Clubs)
             {
-                SelectionNationale nationalTeam = c as SelectionNationale;
+                NationalTeam nationalTeam = c as NationalTeam;
                 if(nationalTeam != null)
                 {
-                    int gap = 30 - _kernel.NumberPlayersOfCountry(nationalTeam.Pays); 
+                    int gap = 30 - _kernel.NumberPlayersOfCountry(nationalTeam.country); 
                     if(gap > 0)
                     {
                         for(int i =0; i<gap; i++)
                         {
-                            string firstName = nationalTeam.Pays.Langue.GetFirstName();
-                            string lastName = nationalTeam.Pays.Langue.GetLastName();
+                            string firstName = nationalTeam.country.language.GetFirstName();
+                            string lastName = nationalTeam.country.language.GetLastName();
                             DateTime birthday = new DateTime(1990, 1, 1);
                             Position p = Position.Goalkeeper;
                             switch(Session.Instance.Random(1,10))
@@ -763,7 +763,7 @@ namespace TheManager
                                 case 4: case 5: case 6: p = Position.Midfielder;  break;
                                 case 7: case 8: p = Position.Striker;  break;
                             }
-                            Player j = new Player(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.Pays, p);
+                            Player j = new Player(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.country, p);
                             _kernel.freePlayers.Add(j);
                         }
                     }

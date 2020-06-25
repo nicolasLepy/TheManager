@@ -90,9 +90,9 @@ namespace TheManager
             int i = 0;
             foreach (Match m in _matchs)
             {
-                if (!m.Joue && (DateTime.Compare(m.Jour, plusTot) < 0 || plusTot.Year == 2000))
+                if (!m.Played && (DateTime.Compare(m.day, plusTot) < 0 || plusTot.Year == 2000))
                 {
-                    plusTot = m.Jour;
+                    plusTot = m.day;
                     indMatch = i;
                 }
                 i++;

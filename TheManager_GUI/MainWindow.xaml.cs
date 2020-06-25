@@ -49,7 +49,7 @@ namespace TheManager_GUI
             {
                 Game p = new Game();
                 p.Load(openFileDialog.FileName);
-                Session.Instance.Partie = p;
+                Session.Instance.Game = p;
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
             }

@@ -29,7 +29,7 @@ namespace TheManager_GUI
             _checkbox = new List<CheckBox>();
 
             Game partie = new Game();
-            Session.Instance.Partie = partie;
+            Session.Instance.Game = partie;
             Kernel g = partie.kernel;
             DatabaseLoader cbdd = new DatabaseLoader(g);
             cbdd.Load();
@@ -73,7 +73,7 @@ namespace TheManager_GUI
                         _checkbox.Add(cb);
                     }
                 }
-                foreach(Pays p in c.countries)
+                foreach(Country p in c.countries)
                 {
                     if(p.Tournaments().Count > 0)
                     {
@@ -81,7 +81,7 @@ namespace TheManager_GUI
                         lb.Content = p.Name();
                         lb.Style = FindResource("StyleLabel2") as Style;
                         Image i = new Image();
-                        i.Source = new BitmapImage(new Uri( Environment.CurrentDirectory + "/Images/Drapeaux/" + p.Drapeau + ".png", UriKind.RelativeOrAbsolute));
+                        i.Source = new BitmapImage(new Uri( Environment.CurrentDirectory + "/Images/Drapeaux/" + p.Flag + ".png", UriKind.RelativeOrAbsolute));
                         i.Width = 30;
                         i.Height = 15;
                         StackPanel sp = new StackPanel();
@@ -117,7 +117,7 @@ namespace TheManager_GUI
             {
                 if(cb.IsChecked == true)
                 {
-                    Tournament c = Session.Instance.Partie.kernel.String2Tournament(cb.Content.ToString());
+                    Tournament c = Session.Instance.Game.kernel.String2Tournament(cb.Content.ToString());
                     foreach (Club cl in c.rounds[0].Clubs)
                     {
                         nbClubs++;
@@ -142,7 +142,7 @@ namespace TheManager_GUI
                 if(cb.IsChecked == false)
                 {
                     string nom = cb.Content.ToString();
-                    foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
+                    foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                     {
                         if (c.name == nom)
                         {

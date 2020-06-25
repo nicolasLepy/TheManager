@@ -12,13 +12,13 @@ namespace TheManager
     public class Continent : IRecoverableTeams, ILocalisation
     {
         [DataMember]
-        private List<Pays> _countries;
+        private List<Country> _countries;
         [DataMember]
         private List<Tournament> _tournaments;
         [DataMember]
         private string _name;
 
-        public List<Pays> countries => _countries;
+        public List<Country> countries => _countries;
         public List<Tournament> Tournaments()
         {
             return _tournaments;
@@ -33,7 +33,7 @@ namespace TheManager
         public Continent(string name)
         {
             _name = name;
-            _countries = new List<Pays>();
+            _countries = new List<Country>();
             _tournaments = new List<Tournament>();
         }
 
@@ -47,12 +47,12 @@ namespace TheManager
         public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
             List<Club> clubs = new List<Club>();
-            foreach(Club c in Session.Instance.Partie.kernel.Clubs)
+            foreach(Club c in Session.Instance.Game.kernel.Clubs)
             {
-                SelectionNationale sn = c as SelectionNationale;
+                NationalTeam sn = c as NationalTeam;
                 if(sn != null)
                 {
-                    if (_countries.Contains(sn.Pays)) clubs.Add(sn);
+                    if (_countries.Contains(sn.country)) clubs.Add(sn);
                 }
             }
             List<Club> res = new List<Club>();

@@ -24,9 +24,9 @@ namespace TheManager
         {
             if (_level2 == null) ConstructTables();
             List<int> level = _level2;
-            if(match.Domicile.Championship != null)
+            if(match.home.Championship != null)
             {
-                switch(match.Domicile.Championship.level)
+                switch(match.home.Championship.level)
                 {
                     case 1: level = _level2; break;
                     case 2: level = _level2; break;
@@ -42,9 +42,9 @@ namespace TheManager
             int dayOffset = hourInt % 10 - 1;
             int hour = hourInt / 1000;
             int minute = (hourInt / 10) % 100;
-            match.Jour = match.Jour.AddDays(dayOffset);
-            match.Jour = match.Jour.AddHours(hour - match.Jour.Hour);
-            match.Jour = match.Jour.AddMinutes(minute - match.Jour.Minute);
+            match.day = match.day.AddDays(dayOffset);
+            match.day = match.day.AddHours(hour - match.day.Hour);
+            match.day = match.day.AddMinutes(minute - match.day.Minute);
 
         }
 
@@ -318,7 +318,7 @@ namespace TheManager
                         Club e2 = clubs[b - 1];
 
                         //Date du match
-                        DateTime jour = new DateTime(Session.Instance.Partie.date.Year, programmation.JoursDeMatchs[i].Month, programmation.JoursDeMatchs[i].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
+                        DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.JoursDeMatchs[i].Month, programmation.JoursDeMatchs[i].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
                         if (Utils.IsBeforeWithoutYear(jour, programmation.Initialisation)) jour = jour.AddYears(1);
                         Match m = new Match(e1, e2, jour, false);
                         res.Add(m);
@@ -338,9 +338,9 @@ namespace TheManager
                     for(int j = 0; j< gamesPerRound; j++)
                     {
                         Match mbase = res[gamesPerRound * i + j];
-                        DateTime jour = new DateTime(Session.Instance.Partie.date.Year, programmation.JoursDeMatchs[nbGamesFirstRound+i-1].Month, programmation.JoursDeMatchs[nbGamesFirstRound + i-1].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
+                        DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.JoursDeMatchs[nbGamesFirstRound+i-1].Month, programmation.JoursDeMatchs[nbGamesFirstRound + i-1].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
                         if (Utils.IsBeforeWithoutYear(jour, programmation.Initialisation)) jour = jour.AddYears(1);
-                        Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour, false);
+                        Match retour = new Match(mbase.away, mbase.home, jour, false);
                         games.Add(retour);
                         res.Add(retour);
                     }
@@ -352,9 +352,9 @@ namespace TheManager
                 for (int i = 0; i<gamesPerRound; i++)
                 {
                     Match mbase = res[i];
-                    DateTime jour = new DateTime(Session.Instance.Partie.date.Year, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count-1].Month, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count - 1].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
+                    DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count-1].Month, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count - 1].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
                     if (Utils.IsBeforeWithoutYear(jour, programmation.Initialisation)) jour = jour.AddYears(1);
-                    Match retour = new Match(mbase.Exterieur, mbase.Domicile, jour, false);
+                    Match retour = new Match(mbase.away, mbase.home, jour, false);
                     games.Add(retour);
                     res.Add(retour);
                 }
@@ -396,13 +396,13 @@ namespace TheManager
                     if (d.Journee != 0) prisEnCompte = (d.Journee == day) ? true : false;
                     if (indice < games.Count && prisEnCompte)
                     {
-                        games[indice].Jour = games[indice].Jour.AddDays(d.DecalageJours);
+                        games[indice].day = games[indice].day.AddDays(d.DecalageJours);
                         //Set all hours and minutes at 00
-                        games[indice].Jour = games[indice].Jour.AddHours(-games[indice].Jour.Hour);
-                        games[indice].Jour = games[indice].Jour.AddMinutes(-games[indice].Jour.Minute);
+                        games[indice].day = games[indice].day.AddHours(-games[indice].day.Hour);
+                        games[indice].day = games[indice].day.AddMinutes(-games[indice].day.Minute);
                         //New hour affectation
-                        games[indice].Jour = games[indice].Jour.AddHours(d.Heure.Hours);
-                        games[indice].Jour = games[indice].Jour.AddMinutes(d.Heure.Minutes);
+                        games[indice].day = games[indice].day.AddHours(d.Heure.Hours);
+                        games[indice].day = games[indice].day.AddMinutes(d.Heure.Minutes);
                         indice++;
                     }
 
@@ -430,7 +430,7 @@ namespace TheManager
             {
                 Club home = DrawClub(hat);
                 Club away = DrawClub(hat);
-                DateTime day = new DateTime(Session.Instance.Partie.date.Year, round.Programmation.JoursDeMatchs[0].Month, round.Programmation.JoursDeMatchs[0].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
+                DateTime day = new DateTime(Session.Instance.Game.date.Year, round.Programmation.JoursDeMatchs[0].Month, round.Programmation.JoursDeMatchs[0].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
                 if (Utils.IsBeforeWithoutYear(day, round.Programmation.Initialisation)) day = day.AddYears(1);
 
                 if(round.Regles.Contains(Rule.AtHomeIfTwoLevelDifference))
@@ -455,9 +455,9 @@ namespace TheManager
                 List<Match> firstRound = new List<Match>(res);
                 foreach (Match m in firstRound)
                 {
-                    DateTime day = new DateTime(Session.Instance.Partie.date.Year, round.Programmation.JoursDeMatchs[1].Month, round.Programmation.JoursDeMatchs[1].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
+                    DateTime day = new DateTime(Session.Instance.Game.date.Year, round.Programmation.JoursDeMatchs[1].Month, round.Programmation.JoursDeMatchs[1].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
                     if (Utils.IsBeforeWithoutYear(day, round.Programmation.Initialisation)) day = day.AddYears(1);
-                    Match secondRound = new Match(m.Exterieur, m.Domicile, day, !round.AllerRetour, m);
+                    Match secondRound = new Match(m.away, m.home, day, !round.AllerRetour, m);
                     games.Add(secondRound);
                     res.Add(secondRound);
                 }

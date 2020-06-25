@@ -45,14 +45,14 @@ namespace TheManager
         [DataMember]
         private List<TournamentCoverage> _coverages;
         [DataMember]
-        private Pays _country;
+        private Country _country;
 
         public string name { get => _name; }
         public List<Journalist> journalists { get => _journalists; }
         public List<TournamentCoverage> coverages { get => _coverages; }
-        public Pays country { get => _country; }
+        public Country country { get => _country; }
 
-        public Media(string name, Pays country)
+        public Media(string name, Country country)
         {
             _name = name;
             _journalists = new List<Journalist>();

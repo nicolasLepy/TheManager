@@ -162,10 +162,10 @@ namespace TheManager
             switch (_methodeTirageAuSort)
             {
                 case RandomDrawingMethod.Level:
-                    tirage = new TirageAuSortParNiveau(this);
+                    tirage = new RandomDrawingLevel(this);
                     break;
                 case RandomDrawingMethod.Geographic:
-                    tirage = new TirageAuSortGeographique(this);
+                    tirage = new RandomDrawingGeographic(this);
                     break;
             }
             tirage.RandomDrawing();

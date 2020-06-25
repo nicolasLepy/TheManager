@@ -9,7 +9,7 @@ namespace TheManager
     public class Session
     {
 
-        #region GestionSingleton
+        #region SingletonManagement
         private static Session _instance = null;
         public static Session Instance
         {
@@ -31,13 +31,11 @@ namespace TheManager
 
         private Random _random;
 
-        public Game Partie { get; set; }
+        public Game Game { get; set; }
 
         /// <summary>
-        /// Nombre aléatoire appartenant à [min,max[
+        /// Random number in [min,max[
         /// </summary>
-        /// <param name="min">Borne incluse</param>
-        /// <param name="max">Borne excluse</param>
         /// <returns></returns>
         public int Random(int min, int max)
         {
@@ -45,7 +43,7 @@ namespace TheManager
         }
 
         /// <summary>
-        /// Retourne un nombre entre 0.0 et 1.0
+        /// Return a number between 0.0 and 1.0
         /// </summary>
         /// <returns></returns>
         public double Random()

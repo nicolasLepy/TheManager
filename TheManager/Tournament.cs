@@ -153,9 +153,9 @@ namespace TheManager
             {
                 foreach(Match m in r.Matchs)
                 {
-                    if (_statistics.LargerScore == null || Math.Abs(m.Score1 - m.Score2) > Math.Abs(_statistics.LargerScore.Score1 - _statistics.LargerScore.Score2))
+                    if (_statistics.LargerScore == null || Math.Abs(m.score1 - m.score2) > Math.Abs(_statistics.LargerScore.score1 - _statistics.LargerScore.score2))
                         _statistics.LargerScore = m;
-                    if (_statistics.BiggerScore == null || m.Score1 + m.Score2 > _statistics.BiggerScore.Score1 + _statistics.BiggerScore.Score2)
+                    if (_statistics.BiggerScore == null || m.score1 + m.score2 > _statistics.BiggerScore.score1 + _statistics.BiggerScore.score2)
                         _statistics.BiggerScore = m;
                 }
             }
@@ -213,9 +213,9 @@ namespace TheManager
             {
                 foreach(Match m in t.Matchs)
                 {
-                    if((m.Domicile == c) && m.Joue)
+                    if((m.home == c) && m.Played)
                     {
-                        attendance += m.Affluence;
+                        attendance += m.attendance;
                         i++;
                     }
                 }
@@ -285,7 +285,7 @@ namespace TheManager
                 foreach (Rule r in t.Regles) tour.Regles.Add(r);
             }
 
-            foreach(Tournament c in Session.Instance.Partie.kernel.Competitions)
+            foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
             {
                 if(c != this)
                 {

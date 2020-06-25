@@ -90,24 +90,24 @@
     <Compile Include="RandomDrawingMethod.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Game.cs" />
-    <Compile Include="Pays.cs" />
+    <Compile Include="Country.cs" />
     <Compile Include="Continent.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="Personne.cs" />
+    <Compile Include="Person.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectionNationale.cs" />
+    <Compile Include="NationalTeam.cs" />
     <Compile Include="Session.cs" />
-    <Compile Include="Stade.cs" />
-    <Compile Include="TirageAuSortGeographique.cs" />
-    <Compile Include="TirageAuSortParNiveau.cs" />
+    <Compile Include="Stadium.cs" />
+    <Compile Include="RandomDrawingGeographic.cs" />
+    <Compile Include="RandomDrawingLevel.cs" />
     <Compile Include="Tour.cs" />
     <Compile Include="TourChampionnat.cs" />
     <Compile Include="TourElimination.cs" />
     <Compile Include="TourInactif.cs" />
     <Compile Include="TourPoules.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="Ville.cs" />
+    <Compile Include="City.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

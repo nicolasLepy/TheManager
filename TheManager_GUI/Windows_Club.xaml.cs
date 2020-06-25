@@ -52,17 +52,17 @@ namespace TheManager_GUI
                 spMatch.Orientation = Orientation.Horizontal;
 
                 int couleur = 0;
-                if (m.Domicile == _club)
+                if (m.home == _club)
                 {
-                    if (m.Score1 > m.Score2) couleur = 2;
-                    else if (m.Score2 > m.Score1) couleur = 0;
+                    if (m.score1 > m.score2) couleur = 2;
+                    else if (m.score2 > m.score1) couleur = 0;
                 }
-                else if (m.Exterieur == _club)
+                else if (m.away == _club)
                 {
-                    if (m.Score2 > m.Score1) couleur = 2;
-                    else if (m.Score1 > m.Score2) couleur = 0;
+                    if (m.score2 > m.score1) couleur = 2;
+                    else if (m.score1 > m.score2) couleur = 0;
                 }
-                if (m.Score1 == m.Score2)
+                if (m.score1 == m.score2)
                     couleur = 1;
 
                 string fontStyle = "victoireColor";
@@ -78,19 +78,19 @@ namespace TheManager_GUI
 
 
                 Label l1 = new Label();
-                l1.Content = m.Competition.name;
+                l1.Content = m.Tournament.name;
                 l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l1.FontSize = 10;
                 l1.Width = 150;
 
                 Label l2 = new Label();
-                l2.Content = m.Jour.ToShortDateString();
+                l2.Content = m.day.ToShortDateString();
                 l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l2.FontSize = 10;
                 l2.Width = 75;
 
                 Label l3 = new Label();
-                l3.Content = m.Domicile.name;
+                l3.Content = m.home.name;
                 l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l3.FontSize = 10;
                 l3.Width = 100;
@@ -98,13 +98,13 @@ namespace TheManager_GUI
                 Button btnScore = new Button();
                 btnScore.Name = "btnScore_" + index;
                 btnScore.Click += new RoutedEventHandler(BtnMatch_Click);
-                btnScore.Content = m.Score1 + " - " + m.Score2 + (m.Prolongations ? " ap" : "") + (m.TAB ? " (" + m.Tab1 + "-" + m.Tab2 + " tab)" : "");
+                btnScore.Content = m.score1 + " - " + m.score2 + (m.prolongations ? " ap" : "") + (m.PenaltyShootout ? " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)" : "");
                 btnScore.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
                 btnScore.FontSize = 10;
                 btnScore.Width = 50;
 
                 Label l5 = new Label();
-                l5.Content = m.Exterieur.name;
+                l5.Content = m.away.name;
                 l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l5.FontSize = 10;
                 l5.Width = 100;
@@ -121,7 +121,7 @@ namespace TheManager_GUI
 
         public void Palmares(CityClub club)
         {
-            foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
+            foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
             {
                 int nombre = 0;
                 string annees = "";
@@ -179,12 +179,12 @@ namespace TheManager_GUI
             foreach (Contract ct in c.contracts)
             {
                 dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.position.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.level, Potentiel = ct.player.potential, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.energy});
-                if((ct.beginning.Year == Session.Instance.Partie.date.Year-1 && ct.beginning.Month < 7) || (ct.beginning.Year == Session.Instance.Partie.date.Year && ct.beginning.Month >= 7))
+                if((ct.beginning.Year == Session.Instance.Game.date.Year-1 && ct.beginning.Month < 7) || (ct.beginning.Year == Session.Instance.Game.date.Year && ct.beginning.Month >= 7))
                     dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.player, Nom = ct.player.ToString(), Niveau = ct.player.level, Salaire = ct.wage + " €" });
             }
 
             List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();
-            foreach(Tournament competition in Session.Instance.Partie.kernel.Competitions)
+            foreach(Tournament competition in Session.Instance.Game.kernel.Competitions)
             {
                 int annee = 2019;
                 foreach(Tournament ancienne in competition.previousEditions)

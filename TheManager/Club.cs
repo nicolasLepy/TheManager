@@ -11,8 +11,8 @@ namespace TheManager
     [DataContract(IsReference =true)]
     [KnownType(typeof(CityClub))]
     [System.Xml.Serialization.XmlInclude(typeof(CityClub))]
-    [KnownType(typeof(SelectionNationale))]
-    [System.Xml.Serialization.XmlInclude(typeof(SelectionNationale))]
+    [KnownType(typeof(NationalTeam))]
+    [System.Xml.Serialization.XmlInclude(typeof(NationalTeam))]
     [KnownType(typeof(ReserveClub))]
     [System.Xml.Serialization.XmlInclude(typeof(ReserveClub))]
     public abstract class Club
@@ -30,7 +30,7 @@ namespace TheManager
         [DataMember]
         protected int _formationFacilities;
         [DataMember]
-        private Stade _stadium;
+        private Stadium _stadium;
         [DataMember]
         private string _logo;
         [DataMember]
@@ -44,7 +44,7 @@ namespace TheManager
         public int reputation { get => _reputation; }
         public int supporters { get => _supporters; set => _supporters = value; }
         public int formationFacilities { get => _formationFacilities;}
-        public Stade stadium { get => _stadium; }
+        public Stadium stadium { get => _stadium; }
         public string logo { get => _logo; }
         public string shortName { get => _shortName; }
         public int ticketPrice { get => _ticketPrice; }
@@ -59,9 +59,9 @@ namespace TheManager
             {
                 List<Match> res = new List<Match>();
 
-                foreach (Match game in Session.Instance.Partie.kernel.Matchs)
+                foreach (Match game in Session.Instance.Game.kernel.Matchs)
                 {
-                    if (game.Domicile == this || game.Exterieur == this) res.Add(game);
+                    if (game.home == this || game.away == this) res.Add(game);
                 }
                 res.Sort(new MatchDateComparator());
                 return res;
@@ -79,7 +79,7 @@ namespace TheManager
             List<Match> gamesList = Games;
             foreach (Match match in gamesList)
             {
-                int diff = Utils.DaysNumberBetweenTwoDates(date.Date, match.Jour);
+                int diff = Utils.DaysNumberBetweenTwoDates(date.Date, match.day);
                 if (diff < threshold) closeGame = true;
             }
             return closeGame;
@@ -122,7 +122,7 @@ namespace TheManager
             {
                 Tournament res = null;
 
-                foreach(Tournament tournament in Session.Instance.Partie.kernel.Competitions)
+                foreach(Tournament tournament in Session.Instance.Game.kernel.Competitions)
                 {
                     if(tournament.isChampionship)
                     {
@@ -176,7 +176,7 @@ namespace TheManager
             }
         }
 
-        protected Club(string name, Manager manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stade stadium, string goalMusic)
+        protected Club(string name, Manager manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stadium stadium, string goalMusic)
         {
             _name = name;
             _manager = manager;
@@ -191,7 +191,7 @@ namespace TheManager
 
         public List<Player> ListPlayersByPosition(Position position)
         {
-            return Utils.PlayersByPoste(Players(), position);
+            return Utils.PlayersByPosition(Players(), position);
         }
 
         private List<Player> ListEligiblePlayersByPosition(Position position)
@@ -265,7 +265,7 @@ namespace TheManager
         /// <param name="newManager">The new manager of the club</param>
         public void ChangeManager(Manager newManager)
         {
-            Session.Instance.Partie.kernel.freeManagers.Add(_manager);
+            Session.Instance.Game.kernel.freeManagers.Add(_manager);
             _manager = newManager;
         }
 

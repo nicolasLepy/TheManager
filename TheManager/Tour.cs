@@ -229,7 +229,7 @@ namespace TheManager
             {
                 Tournament competition = null;
 
-                foreach(Tournament c in Session.Instance.Partie.kernel.Competitions)
+                foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
                     foreach(Tour t in c.rounds)
                     {
@@ -263,7 +263,7 @@ namespace TheManager
             float res = 0;
             foreach(Match m in _matchs)
             {
-                res += m.Score1 + m.Score2;
+                res += m.score1 + m.score2;
             }
             return res / ( _matchs.Count+0.0f);
         }
@@ -277,7 +277,7 @@ namespace TheManager
             Dictionary<Player, int> buteurs = new Dictionary<Player, int>();
             foreach(Match m in _matchs)
             {
-                foreach(MatchEvent em in m.Evenements)
+                foreach(MatchEvent em in m.events)
                 {
                     if(em.type == GameEvent.Goal || em.type == GameEvent.PenaltyGoal)
                     {
@@ -308,14 +308,14 @@ namespace TheManager
             while (continuer)
             {
                 Match m = _matchs[i];
-                if (!m.Joue)
+                if (!m.Played)
                 {
                     if (date.Year == 2000)
                     {
-                        date = m.Jour;
+                        date = m.day;
                         res.Add(m);
                     }
-                    else if (date.Date == m.Jour.Date)
+                    else if (date.Date == m.day.Date)
                         res.Add(m);
                     else continuer = false;
                 }
@@ -332,20 +332,20 @@ namespace TheManager
             int points = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Joue)
+                if (m.Played)
                 {
-                    if (m.Domicile == c)
+                    if (m.home == c)
                     {
-                        if (m.Score1 > m.Score2)
+                        if (m.score1 > m.score2)
                             points += 3;
-                        else if (m.Score2 == m.Score1)
+                        else if (m.score2 == m.score1)
                             points++;
                     }
-                    else if (m.Exterieur == c)
+                    else if (m.away == c)
                     {
-                        if (m.Score2 > m.Score1)
+                        if (m.score2 > m.score1)
                             points += 3;
-                        else if (m.Score2 == m.Score1)
+                        else if (m.score2 == m.score1)
                             points++;
                     }
                 }
@@ -360,7 +360,7 @@ namespace TheManager
             int joues = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Joue && (m.Domicile == c || m.Exterieur == c)) joues++;
+                if (m.Played && (m.home == c || m.away == c)) joues++;
             }
             return joues;
         }
@@ -370,13 +370,13 @@ namespace TheManager
             int res = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    if (m.Score1 > m.Score2) res++;
+                    if (m.score1 > m.score2) res++;
                 }
-                else if (m.Exterieur == c)
+                else if (m.away == c)
                 {
-                    if (m.Score2 > m.Score1) res++;
+                    if (m.score2 > m.score1) res++;
                 }
             }
             return res;
@@ -387,9 +387,9 @@ namespace TheManager
             int res = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Joue && (m.Domicile == c || m.Exterieur == c))
+                if (m.Played && (m.home == c || m.away == c))
                 {
-                    if (m.Score1 == m.Score2) res++;
+                    if (m.score1 == m.score2) res++;
                 }
             }
             return res;
@@ -400,13 +400,13 @@ namespace TheManager
             int res = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    if (m.Score1 < m.Score2) res++;
+                    if (m.score1 < m.score2) res++;
                 }
-                else if (m.Exterieur == c)
+                else if (m.away == c)
                 {
-                    if (m.Score2 < m.Score1) res++;
+                    if (m.score2 < m.score1) res++;
                 }
             }
             return res;
@@ -417,13 +417,13 @@ namespace TheManager
             int res = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    res += m.Score1;
+                    res += m.score1;
                 }
-                else if (m.Exterieur == c)
+                else if (m.away == c)
                 {
-                    res += m.Score2;
+                    res += m.score2;
                 }
             }
             return res;
@@ -434,13 +434,13 @@ namespace TheManager
             int res = 0;
             foreach (Match m in _matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    res += m.Score2;
+                    res += m.score2;
                 }
-                else if (m.Exterieur == c)
+                else if (m.away == c)
                 {
-                    res += m.Score1;
+                    res += m.score1;
                 }
             }
             return res;

@@ -45,7 +45,7 @@ namespace TheManager
             return res;
         }
 
-        public static List<Player> PlayersByPoste(List<Player> joueurs, Position p)
+        public static List<Player> PlayersByPosition(List<Player> joueurs, Position p)
         {
             List<Player> res = new List<Player>();
 
@@ -80,7 +80,7 @@ namespace TheManager
             return (float)(deg * (Math.PI / 180.0f));
         }
 
-        public static float Distance(Ville a, Ville b)
+        public static float Distance(City a, City b)
         {
             float lat1 = a.Position.Latitude;
             float lon1 = a.Position.Longitude;
@@ -128,17 +128,17 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    if (m.Score1 > m.Score2)
+                    if (m.score1 > m.score2)
                     {
                         res++;
                     }
                 }
 
-                if (m.Exterieur == c)
+                if (m.away == c)
                 {
-                    if (m.Score1 < m.Score2)
+                    if (m.score1 < m.score2)
                     {
                         res++;
                     }
@@ -151,17 +151,17 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    if (m.Score1 < m.Score2)
+                    if (m.score1 < m.score2)
                     {
                         res++;
                     }
                 }
 
-                if (m.Exterieur == c)
+                if (m.away == c)
                 {
-                    if (m.Score1 > m.Score2)
+                    if (m.score1 > m.score2)
                     {
                         res++;
                     }
@@ -174,7 +174,7 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if ((m.Domicile == c || m.Exterieur == c) && m.Score1 == m.Score2)
+                if ((m.home == c || m.away == c) && m.score1 == m.score2)
                 {
                     res++;
                 }
@@ -187,14 +187,14 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    res += m.Score1;
+                    res += m.score1;
                 }
 
-                if (m.Exterieur == c)
+                if (m.away == c)
                 {
-                    res += m.Score2;
+                    res += m.score2;
                 }
             }
             return res;
@@ -205,14 +205,14 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.Domicile == c)
+                if (m.home == c)
                 {
-                    res += m.Score2;
+                    res += m.score2;
                 }
 
-                if (m.Exterieur == c)
+                if (m.away == c)
                 {
-                    res += m.Score1;
+                    res += m.score1;
                 }
             }
             return res;

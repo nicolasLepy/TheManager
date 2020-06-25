@@ -29,7 +29,7 @@ namespace TheManager
         {
             string brutCommentary = commentaries[Session.Instance.Random(0, commentaries.Count - 1)];
             brutCommentary = brutCommentary.Replace(" CLUB ", " " + em.club.shortName + " ");
-            brutCommentary = brutCommentary.Replace(" JOUEUR ", " " + em.player.Nom + " ");
+            brutCommentary = brutCommentary.Replace(" JOUEUR ", " " + em.player.lastName + " ");
             return brutCommentary;
         }
     }
@@ -68,7 +68,7 @@ namespace TheManager
                 foreach(Continent c in _continents)
                 {
                     foreach (Tournament cp in c.Tournaments()) res.Add(cp);
-                    foreach (Pays p in c.countries) foreach (Tournament cp in p.Tournaments()) res.Add(cp);
+                    foreach (Country p in c.countries) foreach (Tournament cp in p.Tournaments()) res.Add(cp);
                 }
                 return res;
             }
@@ -98,16 +98,16 @@ namespace TheManager
             _freeJournalists = new List<Journalist>();
         }
 
-        public Ville String2City(string name)
+        public City String2City(string name)
         {
-            Ville res = null;
+            City res = null;
             foreach(Continent c in _continents)
             {
-                foreach(Pays p in c.countries)
+                foreach(Country p in c.countries)
                 {
-                    foreach(Ville v in p.Villes)
+                    foreach(City v in p.cities)
                     {
-                        if (v.Nom == name) res = v;
+                        if (v.Name == name) res = v;
                     }
                 }
             }
@@ -159,13 +159,13 @@ namespace TheManager
             return players;
         }
 
-        public Pays String2Country(string country)
+        public Country String2Country(string country)
         {
-            Pays res = null;
+            Country res = null;
 
             foreach(Continent c in _continents)
             {
-                foreach(Pays p in c.countries)
+                foreach(Country p in c.countries)
                 {
                     if (p.Name() == country) res = p;
                 }
@@ -173,17 +173,17 @@ namespace TheManager
             return res;
         }
 
-        public Stade String2Stadium(string stadium)
+        public Stadium String2Stadium(string stadium)
         {
-            Stade res = null;
+            Stadium res = null;
 
             foreach (Continent c in _continents)
             {
-                foreach(Pays p in c.countries)
+                foreach(Country p in c.countries)
                 {
-                    foreach(Stade s in p.Stades)
+                    foreach(Stadium s in p.stadiums)
                     {
-                        if (s.Nom == stadium) res = s;
+                        if (s.name == stadium) res = s;
                     }
                 }
             }
@@ -234,12 +234,12 @@ namespace TheManager
             return res;
         }
 
-        public int NumberPlayersOfCountry(Pays p)
+        public int NumberPlayersOfCountry(Country p)
         {
             int res = 0;
             foreach(Player j in _freePlayers)
             {
-                if (j.Nationalite == p)
+                if (j.nationality == p)
                 {
                     res++;
                 }
@@ -250,7 +250,7 @@ namespace TheManager
                 {
                     foreach (Player j in c.Players())
                     {
-                        if (j.Nationalite == p)
+                        if (j.nationality == p)
                         {
                             res++;
                         }
@@ -260,12 +260,12 @@ namespace TheManager
             return res;
         }
 
-        public List<Player> GetPlayersByCountry(Pays country)
+        public List<Player> GetPlayersByCountry(Country country)
         {
             List<Player> res = new List<Player>();
             foreach (Player j in _freePlayers)
             {
-                if (j.Nationalite == country) res.Add(j); ;
+                if (j.nationality == country) res.Add(j); ;
             }
             foreach (Club c in _clubs)
             {
@@ -273,7 +273,7 @@ namespace TheManager
                 {
                     foreach (Player j in c.Players())
                     {
-                        if (j.Nationalite == country) res.Add(j);
+                        if (j.nationality == country) res.Add(j);
                     }
                 }
             }
@@ -284,10 +284,10 @@ namespace TheManager
         {
             foreach(Club c in _clubs)
             {
-                SelectionNationale sn = c as SelectionNationale;
+                NationalTeam sn = c as NationalTeam;
                 if (sn != null)
                 {
-                    sn.AppelSelection(GetPlayersByCountry(sn.Pays));
+                    sn.CallInSelection(GetPlayersByCountry(sn.country));
                 }
             }
         }
@@ -325,7 +325,7 @@ namespace TheManager
             foreach(Continent c in _continents)
             {
                 if (c.Name() == name) res = c;
-                foreach(Pays p in c.countries)
+                foreach(Country p in c.countries)
                 {
                     if (p.Name() == name)
                     {
@@ -346,7 +346,7 @@ namespace TheManager
                     res = c;
                 }
 
-                foreach (Pays p in c.countries)
+                foreach (Country p in c.countries)
                 {
                     if (p.Tournaments().Contains(tournament)) res = p;
                 }

@@ -34,14 +34,14 @@ namespace TheManager_GUI
             imgBtnGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\left.png"));
             imgBtnDroite.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\right.png"));
 
-            _partie = Session.Instance.Partie;
+            _partie = Session.Instance.Game;
 
             imgClub.Source = new BitmapImage(new Uri(Utils.Logo(_partie.club)));
             comboPays.Items.Clear();
             foreach (Continent c in _partie.kernel.continents)
             {
                 if (c.Tournaments().Count > 0) this.comboPays.Items.Add(c);
-                foreach (Pays p in c.countries) if (p.Tournaments().Count > 0) { this.comboPays.Items.Add(p); Console.WriteLine(p); }
+                foreach (Country p in c.countries) if (p.Tournaments().Count > 0) { this.comboPays.Items.Add(p); Console.WriteLine(p); }
             }
             Refresh();
 
@@ -51,7 +51,7 @@ namespace TheManager_GUI
         private void RemplirArticles()
         {
             spNews.Children.Clear();
-            foreach(Article a in Session.Instance.Partie.articles)
+            foreach(Article a in Session.Instance.Game.articles)
             {
                 TextBlock tb = new TextBlock();
                 tb.TextWrapping = TextWrapping.WrapWithOverflow;
@@ -221,9 +221,9 @@ namespace TheManager_GUI
                 if (matchs.Count == 0) trouve = true;
                 while(!trouve)
                 {
-                    if(!matchs[i].Joue)
+                    if(!matchs[i].Played)
                     {
-                        comp = matchs[i].Competition;
+                        comp = matchs[i].Tournament;
                         trouve = true;
                     }
                     i++;
@@ -251,7 +251,7 @@ namespace TheManager_GUI
                         tbActu.Text += comp.name + ", " + t.Nom + " : ";
                         foreach(Match m in t.Matchs)
                         {
-                            tbActu.Text += m.Domicile.shortName + " " + m.Score1 + "-" + m.Score2 + " " + m.Exterieur.shortName + ", ";
+                            tbActu.Text += m.home.shortName + " " + m.score1 + "-" + m.score2 + " " + m.away.shortName + ", ";
                         }
                     }
                 }
@@ -285,14 +285,14 @@ namespace TheManager_GUI
                 List<Match> matchs = new List<Match>();
                 foreach (Match m in _partie.kernel.Matchs)
                 {
-                    if (m.Domicile == _partie.club || m.Exterieur == _partie.club) matchs.Add(m);
+                    if (m.home == _partie.club || m.away == _partie.club) matchs.Add(m);
                 }
                 matchs.Sort(new MatchDateComparator());
                 int diff = -1;
                 int indice = -1;
                 foreach (Match m in matchs)
                 {
-                    TimeSpan ts = m.Jour - _partie.date;
+                    TimeSpan ts = m.day - _partie.date;
 
                     int diffM = Math.Abs(ts.Days);
                     if (diffM < diff || diff == -1)
@@ -310,12 +310,12 @@ namespace TheManager_GUI
                     if(i < matchs.Count && i>=0)
                     {
                         Match m = matchs[i];
-                        string score = m.Score1 + " - " + m.Score2;
-                        if (!m.Joue)
+                        string score = m.score1 + " - " + m.score2;
+                        if (!m.Played)
                         {
-                            score = m.Jour.ToShortDateString();
+                            score = m.day.ToShortDateString();
                         }
-                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Competition.shortName, Equipe1 = m.Domicile.shortName, Equipe2 = m.Exterieur.shortName, Score = score, LogoD = Utils.Logo(m.Domicile), LogoE = Utils.Logo(m.Exterieur) });
+                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Tournament.shortName, Equipe1 = m.home.shortName, Equipe2 = m.away.shortName, Score = score, LogoD = Utils.Logo(m.home), LogoE = Utils.Logo(m.away) });
                     }
                 }
             }
@@ -330,31 +330,31 @@ namespace TheManager_GUI
             TourElimination te = t as TourElimination;
             foreach (Match m in matchs)
             {
-                if (lastTime != m.Jour.Date)
+                if (lastTime != m.day.Date)
                 {
-                    dgMatchs.Items.Add(new CalendrierElement { Heure=m.Jour.ToShortDateString()});
+                    dgMatchs.Items.Add(new CalendrierElement { Heure=m.day.ToShortDateString()});
                 }
-                lastTime = m.Jour.Date;
+                lastTime = m.day.Date;
                 string score = "A jouer";
                 string affluence = "-";
-                if (m.Joue)
+                if (m.Played)
                 {
-                    score = m.Score1 + " - " + m.Score2;
-                    affluence = m.Affluence.ToString();
-                    if (m.Prolongations) score += " ap";
-                    if (m.TAB) score += " (" + m.Tab1 + "-" + m.Tab2 + " tab)";
+                    score = m.score1 + " - " + m.score2;
+                    affluence = m.attendance.ToString();
+                    if (m.prolongations) score += " ap";
+                    if (m.PenaltyShootout) score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
                 }
-                string equipe1 = m.Domicile.shortName;
-                string equipe2 = m.Exterieur.shortName;
+                string equipe1 = m.home.shortName;
+                string equipe2 = m.away.shortName;
 
-                Tournament champD = m.Domicile.Championship;
-                Tournament champE = m.Exterieur.Championship;
+                Tournament champD = m.home.Championship;
+                Tournament champE = m.away.Championship;
                 if (te != null && champD != null && champE != null)
                 {
                     equipe1 += " (" + champD.shortName + ")";
                     equipe2 += " (" + champE.shortName + ")";
                 }
-                dgMatchs.Items.Add(new CalendrierElement { Heure = m.Jour.ToShortTimeString(), Equipe1 = equipe1, Equipe2 = equipe2, Score = score, Affluence = affluence, Match = m, Cote1 = m.Cote1.ToString("0.00"), Cote2 = m.Cote2.ToString("0.00"), CoteN = m.CoteN.ToString("0.00") });
+                dgMatchs.Items.Add(new CalendrierElement { Heure = m.day.ToShortTimeString(), Equipe1 = equipe1, Equipe2 = equipe2, Score = score, Affluence = affluence, Match = m, Cote1 = m.odd1.ToString("0.00"), Cote2 = m.odd2.ToString("0.00"), CoteN = m.oddD.ToString("0.00") });
             }
         }
 
@@ -363,7 +363,7 @@ namespace TheManager_GUI
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             if (saveFileDialog.ShowDialog() == true)
             {
-                Session.Instance.Partie.Save(saveFileDialog.FileName);
+                Session.Instance.Game.Save(saveFileDialog.FileName);
             }
         }
 

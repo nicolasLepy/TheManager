@@ -45,18 +45,18 @@ namespace TheManager
         public string GenerateArticle(Match match)
         {
             string res = "";
-            Club team1 = match.Vainqueur;
-            Club team2 = match.Perdant;
+            Club team1 = match.Winner;
+            Club team2 = match.Looser;
             float niv1 = team1.Level();
             float niv2 = team2.Level();
-            int score1 = match.Score1;
-            int score2 = match.Score2;
+            int score1 = match.score1;
+            int score2 = match.score2;
             
             //Winner is favorite
             if(niv1-niv2 > 8)
             {
                 //Large victoire
-                if ((team1 == match.Domicile && score1 - score2 > 2) || (team1 == match.Exterieur && score2 - score1 > 2))
+                if ((team1 == match.home && score1 - score2 > 2) || (team1 == match.away && score2 - score1 > 2))
                 {
                     res = _gl_f[Session.Instance.Random(0, _gl_f.Count)];
                 }
@@ -76,7 +76,7 @@ namespace TheManager
             else if(niv1-niv2 < -8)
             {
                 //Large victoire
-                if ((team1 == match.Domicile && score1 - score2 > 2) || (team1 == match.Exterieur && score2 - score1 > 2))
+                if ((team1 == match.home && score1 - score2 > 2) || (team1 == match.away && score2 - score1 > 2))
                 {
                     res = _gl_o[Session.Instance.Random(0, _gl_o.Count)];
                 }
@@ -96,7 +96,7 @@ namespace TheManager
             else
             {
                 //Large victoire
-                if ((team1 == match.Domicile && score1 - score2 > 2) || (team1 == match.Exterieur && score2 - score1 > 2))
+                if ((team1 == match.home && score1 - score2 > 2) || (team1 == match.away && score2 - score1 > 2))
                 {
                     res = _gl_e[Session.Instance.Random(0, _gl_e.Count)];
                 }

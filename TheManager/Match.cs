@@ -38,14 +38,14 @@ namespace TheManager
     }
 
     [DataContract(IsReference =true)]
-    public class Statistiques
+    public class Statistics
     {
         [DataMember]
         public int Possession1 { get; set; }
         [DataMember]
         public int Possession2 { get; set; }
 
-        public float PossessionDomicile
+        public float HomePossession
         {
             get
             {
@@ -53,18 +53,18 @@ namespace TheManager
             }
         }
 
-        public float PossessionExterieur { get => 1 - PossessionDomicile; }
+        public float AwayPossession { get => 1 - HomePossession; }
 
         [DataMember]
-        public int TirsDomicile { get; set; }
+        public int HomeShoots { get; set; }
         [DataMember]
-        public int TirsExterieurs { get; set; }
+        public int AwayShoots { get; set; }
 
 
-        public Statistiques()
+        public Statistics()
         {
-            TirsDomicile = 0;
-            TirsExterieurs = 0;
+            HomeShoots = 0;
+            AwayShoots = 0;
             Possession1 = 0;
             Possession2 = 0;
         }
@@ -77,13 +77,13 @@ namespace TheManager
         [DataMember]
         private int _minute;
         [DataMember]
-        private int _miTemps;
+        private int _period;
         [DataMember]
-        private int _tempsAdditionnel;
+        private int _extraTime;
         [DataMember]
-        private int _diffNiveau;
+        private int _levelDifference;
         [DataMember]
-        private float _diffNiveauRatio;
+        private float _levelDifferenceRatio;
         [DataMember]
         private List<Player> _compo1Terrain;
         [DataMember]
@@ -95,11 +95,11 @@ namespace TheManager
         [DataMember]
         private int _score2;
         [DataMember]
-        private List<MatchEvent> _evenements;
+        private List<MatchEvent> _events;
         [DataMember]
         private List<KeyValuePair<string, string>> _actions;
         [DataMember]
-        private Statistiques _statistiques;
+        private Statistics _statistics;
         [DataMember]
         private List<Player> _compo1;
         [DataMember]
@@ -107,52 +107,52 @@ namespace TheManager
         [DataMember]
         private bool _prolongations;
         [DataMember]
-        private int _tab1;
+        private int _penaltyShootout1;
         [DataMember]
-        private int _tab2;
+        private int _penaltyShootout2;
         [DataMember]
-        private bool _prolongationSiNul;
+        private bool _prolongationsIfDraw;
         [DataMember]
-        private Match _matchAller;
+        private Match _firstLeg;
         [DataMember]
-        private int _affluence;
+        private int _attendance;
         [DataMember]
-        private List<KeyValuePair<Media,Journalist>> _journalistes;
+        private List<KeyValuePair<Media,Journalist>> _journalists;
 
-        public int Affluence { get => _affluence; }
+        public int attendance { get => _attendance; }
         [DataMember]
-        public DateTime Jour { get; set; }
+        public DateTime day { get; set; }
         [DataMember]
-        public Club Domicile { get; set; }
+        public Club home { get; set; }
         [DataMember]
-        public Club Exterieur { get; set; }
-        public int Score1 { get => _score1; }
-        public int Score2 { get => _score2; }
-        public List<MatchEvent> Evenements { get => _evenements; }
-        public List<Player> Compo1 { get => _compo1; }
-        public List<Player> Compo2 { get => _compo2; }
-        public bool Prolongations { get => _prolongations; }
-        public int Tab1 { get => _tab1; }
-        public int Tab2 { get => _tab2; }
-        public List<KeyValuePair<Media, Journalist>> Journalistes { get => _journalistes; }
+        public Club away { get; set; }
+        public int score1 { get => _score1; }
+        public int score2 { get => _score2; }
+        public List<MatchEvent> events { get => _events; }
+        public List<Player> compo1 { get => _compo1; }
+        public List<Player> compo2 { get => _compo2; }
+        public bool prolongations { get => _prolongations; }
+        public int penaltyShootout1 { get => _penaltyShootout1; }
+        public int penaltyShootout2 { get => _penaltyShootout2; }
+        public List<KeyValuePair<Media, Journalist>> journalists { get => _journalists; }
         /// <summary>
         /// Description des actions du match [minute , action]
         /// </summary>
-        public List<KeyValuePair<string,string>> Actions { get => _actions; }
-        public Statistiques Statistiques { get => _statistiques; }
+        public List<KeyValuePair<string,string>> actions { get => _actions; }
+        public Statistics statistics { get => _statistics; }
         [DataMember]
-        public float Cote1 { get; set; }
+        public float odd1 { get; set; }
         [DataMember]
-        public float CoteN { get; set; }
+        public float oddD { get; set; }
         [DataMember]
-        public float Cote2 { get; set; }
+        public float odd2 { get; set; }
 
-        public Tournament Competition
+        public Tournament Tournament
         {
             get
             {
                 Tournament res = null;
-                foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
+                foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
                     foreach(Tour t in c.rounds)
                     {
@@ -166,12 +166,12 @@ namespace TheManager
             }
         }
 
-        public Tour Tour
+        public Tour Round
         {
             get
             {
                 Tour res = null;
-                foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
+                foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
                     foreach (Tour t in c.rounds)
                     {
@@ -186,15 +186,15 @@ namespace TheManager
         }
 
         /// <summary>
-        /// Si un match a été joué ou non
+        /// If the game was played or not
         /// </summary>
-        public bool Joue
+        public bool Played
         {
             get
             {
                 bool res = false;
                 //Si la date de la partie est supérieure ou égale au jour du match, alors le match a été joué
-                if (_minute > 0 || _miTemps > 1) res = true;
+                if (_minute > 0 || _period > 1) res = true;
                 /*if(DateTime.Compare(Session.Instance.Partie.Date,Jour) >= 0)
                 {
                     res = true;
@@ -203,14 +203,14 @@ namespace TheManager
             }
         }
 
-        public string Temps
+        public string Time
         {
             get
             {
-                string temps = "";
+                string time = "";
 
                 int tmp = _minute;
-                switch (_miTemps)
+                switch (_period)
                 {
                     case 2: 
                         tmp += 45;
@@ -222,51 +222,51 @@ namespace TheManager
                         tmp += 105;
                         break;
                 }
-                int tmpAdd = _minute - ((_miTemps < 3) ? 45 : 15);
-                temps = tmp.ToString();
-                if (tmpAdd > 0) temps += "+" + tmpAdd;
-                temps += "°";
-                return temps;
+                int tmpAdd = _minute - ((_period < 3) ? 45 : 15);
+                time = tmp.ToString();
+                if (tmpAdd > 0) time += "+" + tmpAdd;
+                time += "°";
+                return time;
             }
         }
 
        /// <summary>
-       /// Donne le vainqueur du match (propriété utile pour les confrontations à élimination directes)
+       /// Give the winner of the game (useful property for direct knockout rounds)
        /// </summary>
-        public Club Vainqueur
+        public Club Winner
         {
             get
             {
                 Club c = null;
-                if (_matchAller == null)
+                if (_firstLeg == null)
                 {
-                    if (Score1 > Score2) c = Domicile;
-                    else if (Score1 < Score2) c = Exterieur;
-                    else if (Prolongations)
+                    if (score1 > score2) c = home;
+                    else if (score1 < score2) c = away;
+                    else if (prolongations)
                     {
-                        if (Tab1 > Tab2) c = Domicile;
-                        else c = Exterieur;
+                        if (penaltyShootout1 > penaltyShootout2) c = home;
+                        else c = away;
                     }
                     if (c == null)
                     {
-                        c = Domicile;
+                        c = home;
                     }
                 }
                 else
                 {
-                    int score1 = Score1 + _matchAller.Score2;
-                    int score2 = Score2 + _matchAller.Score1;
+                    int score1 = this.score1 + _firstLeg.score2;
+                    int score2 = this.score2 + _firstLeg.score1;
                     if(score1 == score2)
                     {
-                        score1 = Score1 + 2 * _matchAller.Score2;
-                        score2 = 2 * Score2 + _matchAller.Score1;
+                        score1 = this.score1 + 2 * _firstLeg.score2;
+                        score2 = 2 * this.score2 + _firstLeg.score1;
                     }
-                    if (score1 > score2) c = Domicile;
-                    else if (score2 > score1) c = Exterieur;
+                    if (score1 > score2) c = home;
+                    else if (score2 > score1) c = away;
                     else
                     {
-                        if (Tab1 > Tab2) c = Domicile;
-                        else c = Exterieur;
+                        if (penaltyShootout1 > penaltyShootout2) c = home;
+                        else c = away;
                     }
 
                 }
@@ -275,25 +275,25 @@ namespace TheManager
             }
         }
 
-        public Club Perdant
+        public Club Looser
         {
             get
             {
                 Club c;
-                if (Vainqueur == Domicile)
-                    c = Exterieur;
+                if (Winner == home)
+                    c = away;
                 else
-                    c = Domicile;
+                    c = home;
                 return c;
             }
         }
         
-        public int CartonsJaunes
+        public int YellowCards
         {
             get
             {
                 int res = 0;
-                foreach(MatchEvent em in _evenements)
+                foreach(MatchEvent em in _events)
                 {
                     if (em.type == GameEvent.YellowCard)
                         res++;
@@ -302,150 +302,150 @@ namespace TheManager
             }
         }
 
-        private float NiveauCompo(Club club)
+        private float CompositionLevel(Club club)
         {
-            List<Player> compo = (club == Domicile) ? _compo1Terrain : _compo2Terrain;
+            List<Player> compo = (club == home) ? _compo1Terrain : _compo2Terrain;
             
             float res = 0;
             foreach(Player j in compo)
             {
                 res += j.level;
             }
-            float nivEquipe = res / (11.0f);
+            float teamLevel = res / (11.0f);
             
-            int niveauEntraineur;
+            int managerLevel;
             if (club.manager != null)
-                niveauEntraineur = club.manager.level;
+                managerLevel = club.manager.level;
             else
-                niveauEntraineur = (int)(nivEquipe * 0.8f);
+                managerLevel = (int)(teamLevel * 0.8f);
 
             //On ajoute le niveau de l'entraîneur
-            nivEquipe = nivEquipe + 0.175f*(niveauEntraineur - nivEquipe);
+            teamLevel = teamLevel + 0.175f*(managerLevel - teamLevel);
             return res / (11.0f);
         }
 
-        private Player Carton(List<Player> compo)
+        private Player Card(List<Player> compo)
         {
-            List<Player> joueurs = new List<Player>();
+            List<Player> players = new List<Player>();
             foreach (Player j in compo)
             {
                 switch (j.position)
                 {
                     case Position.Goalkeeper:
-                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) players.Add(j);
                         break;
                     case Position.Defender:
-                        for (int i = 0; i < j.level * 2; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level * 2; i++) players.Add(j);
                         break;
                     case Position.Midfielder:
-                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) players.Add(j);
                         break;
                     case Position.Striker:
                         int k = j.level / 2;
-                        for (int i = 0; i < k; i++) joueurs.Add(j);
+                        for (int i = 0; i < k; i++) players.Add(j);
                         break;
                     default:
-                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) players.Add(j);
                         break;
                 }
             }
             Player res = null;
-            if(joueurs.Count > 0)
+            if(players.Count > 0)
             {
-                res = joueurs[Session.Instance.Random(0, joueurs.Count)];
+                res = players[Session.Instance.Random(0, players.Count)];
             }
             return res;
             
         }
 
-        private Player Buteur(List<Player> compo)
+        private Player Goalscorer(List<Player> compo)
         {
-            List<Player> joueurs = new List<Player>();
+            List<Player> players = new List<Player>();
             foreach(Player j in compo)
             {
                 switch (j.position)
                 {
                     case Position.Defender:
                         int k = j.level / 2;
-                        for (int i = 0; i < k; i++) joueurs.Add(j);
+                        for (int i = 0; i < k; i++) players.Add(j);
                         break;
                     case Position.Midfielder:
-                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) players.Add(j);
                         break;
                     case Position.Striker:
-                        for (int i = 0; i < j.level*2; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level*2; i++) players.Add(j);
                         break;
                 }
             }
             Player res = null;
-            if(joueurs.Count > 0)
-                res = joueurs[Session.Instance.Random(0, joueurs.Count)];
+            if(players.Count > 0)
+                res = players[Session.Instance.Random(0, players.Count)];
             return res;
 
         }
 
-        public bool TAB
+        public bool PenaltyShootout
         {
             get
             {
                 bool res = false;
-                if (_tab1 != 0 || _tab2 != 0) res = true;
+                if (_penaltyShootout1 != 0 || _penaltyShootout2 != 0) res = true;
                 return res;
             }
         }
 
-        public float PossessionDomicile
+        public float HomePossession
         {
-            get { return _statistiques.PossessionDomicile; }
+            get { return _statistics.HomePossession; }
         }
 
-        public float PossessionExterieur
+        public float AwayPossession
         {
-            get { return _statistiques.PossessionExterieur; }
+            get { return _statistics.AwayPossession; }
         }
 
-        public int ScoreMT1
+        public int ScoreHalfTime1
         {
             get
             {
                 int res = 0;
-                foreach(MatchEvent em in _evenements)
+                foreach(MatchEvent em in _events)
                 {
-                    if (em.club == Domicile && em.period == 1 && (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
+                    if (em.club == home && em.period == 1 && (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
                         res++;
                 }
                 return res;
             }
         }
 
-        public int ScoreMT2
+        public int ScoreHalfTime2
         {
             get
             {
                 int res = 0;
-                foreach (MatchEvent em in _evenements)
+                foreach (MatchEvent em in _events)
                 {
-                    if (em.club == Exterieur && em.period == 1 && (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
+                    if (em.club == away && em.period == 1 && (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
                         res++;
                 }
                 return res;
             }
         }
 
-        private void EtablirCotes()
+        private void SetOdds()
         {
-            float domN = Domicile.Level() * 1.1f;
-            float extN = Exterieur.Level();
+            float homeN = home.Level() * 1.1f;
+            float awayN = away.Level();
             
-            float rapportD = domN / extN;
-            rapportD *= rapportD * rapportD * rapportD;
+            float ratioD = homeN / awayN;
+            ratioD *= ratioD * ratioD * ratioD;
 
-            float rapportE = extN / domN;
-            rapportE *= rapportE * rapportE * rapportE;
+            float ratioE = awayN / homeN;
+            ratioE *= ratioE * ratioE * ratioE;
 
             
-            Cote1 = (float)(1.01f + (1 / Math.Exp((2.5f * rapportD - 3f))));
-            Cote2 = (float)(1.01f + (1 / Math.Exp((2.5f * rapportE - 3f))));
+            odd1 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioD - 3f))));
+            odd2 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioE - 3f))));
             
 
             /*Cote1 = (float)(-1.64266 * Math.Pow(rapportD, 6) + 24.1675 * Math.Pow(rapportD, 5) - 88.8353 * Math.Pow(rapportD, 4) + 117.695 * Math.Pow(rapportD, 3) - 29.6458 * Math.Pow(rapportD, 2) - 49.5219 * rapportD + 30.2832);
@@ -463,7 +463,7 @@ namespace TheManager
                 Cote1 = 1 / (1 - rapportE);
             }*/
 
-            CoteN = (Cote1 + Cote2) / 2;
+            oddD = (odd1 + odd2) / 2;
 
             /*
             if (domN > extN)
@@ -485,49 +485,49 @@ namespace TheManager
             CoteN = (Cote1 + Cote2) / 2;*/
         }
 
-        public Match(Club domicile, Club exterieur, DateTime jour, bool prolongationSiNul, Match matchAller = null)
+        public Match(Club homeTeam, Club awayTeam, DateTime matchDay, bool prolongationsIfDraw, Match firstLeg = null)
         {
-            Domicile = domicile;
-            Exterieur = exterieur;
-            Jour = jour;
+            home = homeTeam;
+            away = awayTeam;
+            day = matchDay;
             _score1 = 0;
             _score2 = 0;
-            _tab2 = 0;
-            _tab1 = 0;
-            _tempsAdditionnel = 0;
-            _statistiques = new Statistiques();
+            _penaltyShootout2 = 0;
+            _penaltyShootout1 = 0;
+            _extraTime = 0;
+            _statistics = new Statistics();
             _prolongations = false;
-            _evenements = new List<MatchEvent>();
+            _events = new List<MatchEvent>();
             _compo1 = new List<Player>();
             _compo2 = new List<Player>();
-            _prolongationSiNul = prolongationSiNul;
-            _matchAller = matchAller;
+            _prolongationsIfDraw = prolongationsIfDraw;
+            _firstLeg = firstLeg;
             _minute = 0;
-            _miTemps = 1;
+            _period = 1;
             _compo1Terrain = new List<Player>();
             _compo2Terrain = new List<Player>();
-            _affluence = 0;
-            _journalistes = new List<KeyValuePair<Media, Journalist>>();
+            _attendance = 0;
+            _journalists = new List<KeyValuePair<Media, Journalist>>();
             _actions = new List<KeyValuePair<string, string>>();
-            EtablirCotes();
+            SetOdds();
         }
 
         /// <summary>
-        /// Reprogrammer un match qui a été reportée à la date qui vient la plus arrangeante pour les deux clubs
-        /// decalage : commence à rechercher une date à partir du jour du match + decalage
+        /// Reprogram a postponed game at the date the most convenient for both clubs
+        /// Offset : start to search a date from the match day + offset
         /// </summary>
-        public void Reprogrammer(int decalage)
+        public void Reprogram(int offset)
         {
-            bool dateTrouvee = false;
-            DateTime dateBase = this.Jour.AddDays(decalage);
-            dateBase.AddHours(-dateBase.Hour + Session.Instance.Random(18,22));
-            while(!dateTrouvee)
+            bool foundDate = false;
+            DateTime dateBase = this.day.AddDays(offset);
+            dateBase = dateBase.AddHours(-dateBase.Hour + Session.Instance.Random(18,22));
+            while(!foundDate)
             {
                 
-                if(!Domicile.CloseGame(dateBase,3) && !Exterieur.CloseGame(dateBase, 3))
+                if(!home.CloseGame(dateBase,3) && !away.CloseGame(dateBase, 3))
                 {
-                    dateTrouvee = true;
-                    this.Jour = dateBase;
+                    foundDate = true;
+                    this.day = dateBase;
                 }
                 else
                 {
@@ -536,182 +536,182 @@ namespace TheManager
             }
         }
 
-        private void EtablirAffluence()
+        private void SetAttendance()
         {
-            _affluence = (int)(Domicile.supporters * (Session.Instance.Random(6, 14) / 10.0f));
-            _affluence = (int)(_affluence * (Exterieur.Level() / (Domicile.Level())));
-            if (_affluence > Domicile.stadium.Capacite) _affluence = Domicile.stadium.Capacite;
-            if(Domicile as CityClub != null)
+            _attendance = (int)(home.supporters * (Session.Instance.Random(6, 14) / 10.0f));
+            _attendance = (int)(_attendance * (away.Level() / (home.Level())));
+            if (_attendance > home.stadium.capacity) _attendance = home.stadium.capacity;
+            if(home as CityClub != null)
             {
-                (Domicile as CityClub).ModifyBudget(_affluence * Domicile.ticketPrice);
+                (home as CityClub).ModifyBudget(_attendance * home.ticketPrice);
             }
         }
 
-        public void DefinirCompo()
+        public void SetCompo()
         {
-            _compo1 = new List<Player>(Domicile.Composition());
-            _compo2 = new List<Player>(Exterieur.Composition());
+            _compo1 = new List<Player>(home.Composition());
+            _compo2 = new List<Player>(away.Composition());
             _compo1Terrain = new List<Player>(_compo1);
             _compo2Terrain = new List<Player>(_compo2);
             
         }
 
         /// <summary>
-        /// Définir une composition en la passant en paramètre
+        /// Set directly a composition by passing it in parameter
         /// </summary>
-        /// <param name="compo">Les joueurs</param>
-        /// <param name="club">Le club</param>
-        public void DefinirCompo(List<Player> compo, Club club)
+        /// <param name="compo">Players</param>
+        /// <param name="club">Club</param>
+        public void SetCompo(List<Player> compo, Club club)
         {
-            if(club == Domicile)
+            if(club == home)
             {
                 _compo1 = new List<Player>(compo);
                 _compo1Terrain = new List<Player>(compo);
             }
-            else if(club == Exterieur)
+            else if(club == away)
             {
                 _compo2 = new List<Player>(compo);
                 _compo2Terrain = new List<Player>(compo);
             }
         }
 
-        public void CalculerDifferenceNiveau()
+        public void CalculateLevelDifference()
         {
-            float diffF = Math.Abs(NiveauCompo(Domicile)*1.05f - NiveauCompo(Exterieur));
+            float diffF = Math.Abs(CompositionLevel(home)*1.05f - CompositionLevel(away));
 
-            this._diffNiveau = (int)diffF;
-            this._diffNiveauRatio = (NiveauCompo(Domicile) * 1.05f) / NiveauCompo(Exterieur);
+            this._levelDifference = (int)diffF;
+            this._levelDifferenceRatio = (CompositionLevel(home) * 1.05f) / CompositionLevel(away);
         }
 
-        public List<RetourMatch> MinuteSuivante()
+        public List<RetourMatch> NextMinute()
         {
-            List<RetourMatch> retours = new List<RetourMatch>();
-            //Au début du match
-            if(_minute == 0 && _miTemps == 1)
+            List<RetourMatch> lookbacks = new List<RetourMatch>();
+            //At the beginning of the game
+            if(_minute == 0 && _period == 1)
             {
-                CalculerDifferenceNiveau();
-                EtablirAffluence();
+                CalculateLevelDifference();
+                SetAttendance();
             }
 
-            Club a = Domicile;
-            Club b = Exterieur;
+            Club a = home;
+            Club b = away;
 
             _minute++;
-            retours = JouerMinute(a, b);
+            lookbacks = PlayMinute(a, b);
 
-            int dureeMiTemps = (_miTemps < 3) ? 45 : 15;
-            //Fin temps réglementaire
-            if (_minute == dureeMiTemps) _tempsAdditionnel = Session.Instance.Random(1, 6);
+            int periodDuration = (_period < 3) ? 45 : 15;
+            //End of regular time
+            if (_minute == periodDuration) _extraTime = Session.Instance.Random(1, 6);
 
-            //Fin miTemps
-            if (_minute == dureeMiTemps + _tempsAdditionnel)
+            //End half-time
+            if (_minute == periodDuration + _extraTime)
             {
-                _miTemps++;
+                _period++;
                 _minute = 0;
-                _tempsAdditionnel = 0;
-                if(_miTemps == 3)
+                _extraTime = 0;
+                if(_period == 3)
                 {
-                    if ((_prolongationSiNul && (_score1 == _score2)) || MatchRetourNul())
+                    if ((_prolongationsIfDraw && (_score1 == _score2)) || SecondLegIsDraw())
                     {
                         _prolongations = true;
                     }
                     else
                     {
-                        retours.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                        lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
                     }
                 }
-                if(_miTemps == 5)
+                if(_period == 5)
                 {
-                    if ((_prolongationSiNul && _score1 == _score2) || MatchRetourNul())
+                    if ((_prolongationsIfDraw && _score1 == _score2) || SecondLegIsDraw())
                     {
-                        JouerTAB();
+                        PlayPenaltyShootout();
                     }
-                    retours.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                    lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
 
                 }
             }
 
             
-            return retours;
+            return lookbacks;
 
         }
 
-        public void Jouer()
+        public void Play()
         {
-            Club a = Domicile;
-            Club b = Exterieur;
-            CalculerDifferenceNiveau();
-            EtablirAffluence();
+            Club a = home;
+            Club b = away;
+            CalculateLevelDifference();
+            SetAttendance();
 
-            for (_miTemps = 1; _miTemps < 3; _miTemps++)
+            for (_period = 1; _period < 3; _period++)
             {
                 for (_minute = 1; _minute < 50; _minute++)
                 {
-                    JouerMinute(a, b);
+                    PlayMinute(a, b);
                 }
             }
 
-            if((_prolongationSiNul && (_score1 == _score2)) || MatchRetourNul())
+            if((_prolongationsIfDraw && (_score1 == _score2)) || SecondLegIsDraw())
             {
                 _prolongations = true;
-                for(_miTemps = 3; _miTemps<5;_miTemps++)
+                for(_period = 3; _period<5;_period++)
                 {
                     for(_minute = 1; _minute<16; _minute++)
                     {
-                        JouerMinute(a, b);
+                        PlayMinute(a, b);
                     }
                 }
-                if((_prolongationSiNul && _score1 == _score2) || MatchRetourNul())
+                if((_prolongationsIfDraw && _score1 == _score2) || SecondLegIsDraw())
                 {
-                    JouerTAB();
+                    PlayPenaltyShootout();
                 }
             }
 
-            if(Domicile == Session.Instance.Partie.club || Exterieur == Session.Instance.Partie.club)
+            if(home == Session.Instance.Game.club || away == Session.Instance.Game.club)
             {
                 string res = ArticleGenerator.Instance.GenerateArticle(this);
-                Article article = new Article(res, "", new DateTime(Jour.Year, Jour.Month, Jour.Day), 2);
-                Session.Instance.Partie.articles.Add(article);
+                Article article = new Article(res, "", new DateTime(day.Year, day.Month, day.Day), 2);
+                Session.Instance.Game.articles.Add(article);
             }
         }
 
-        private bool MatchRetourNul()
+        private bool SecondLegIsDraw()
         {
             bool res = false;
-            if(_matchAller != null)
+            if(_firstLeg != null)
             {
-                int score1 = Score1 + _matchAller.Score2;
-                int score2 = Score2 + _matchAller.Score1;
+                int score1 = this.score1 + _firstLeg.score2;
+                int score2 = this.score2 + _firstLeg.score1;
                 if (score1 == score2)
                 {
-                    score1 = Score1 + 2 * _matchAller.Score2;
-                    score2 = 2 * Score2 + _matchAller.Score1;
+                    score1 = this.score1 + 2 * _firstLeg.score2;
+                    score2 = 2 * this.score2 + _firstLeg.score1;
                 }
                 if (score1 == score2) res = true;
             }
             return res;
         }
 
-        private void JouerTAB()
+        private void PlayPenaltyShootout()
         {
-            _tab1 = 0;
-            _tab2 = 0;
+            _penaltyShootout1 = 0;
+            _penaltyShootout2 = 0;
 
             for(int i = 0; i<5; i++)
             {
-                if (Session.Instance.Random(1, 4) != 1) _tab1++;
-                if (Session.Instance.Random(1, 4) != 1) _tab2++;
+                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout1++;
+                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout2++;
             }
-            while(_tab1 == _tab2)
+            while(_penaltyShootout1 == _penaltyShootout2)
             {
-                if (Session.Instance.Random(1, 4) != 1) _tab1++;
-                if (Session.Instance.Random(1, 4) != 1) _tab2++;
+                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout1++;
+                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout2++;
             }
         }
 
-        private List<RetourMatch> JouerMinute(Club a, Club b)
+        private List<RetourMatch> PlayMinute(Club a, Club b)
         {
-            List<RetourMatch> retours = new List<RetourMatch>();
+            List<RetourMatch> lookbacks = new List<RetourMatch>();
             foreach (Player j in _compo1)
             {
                 if (Session.Instance.Random(2, 7) == 3) j.energy--;
@@ -723,8 +723,8 @@ namespace TheManager
                 j.playedGames++;
             }
 
-            int diff = _diffNiveau;
-            float diffRatio = _diffNiveauRatio;
+            int diff = _levelDifference;
+            float diffRatio = _levelDifferenceRatio;
 
             if(diffRatio > 1)
             {
@@ -734,24 +734,24 @@ namespace TheManager
                 b = temp;
             }
 
-            if (diffRatio < 0.05) retours = IterationMatch(a, b, 22, 22, 208, 295);
-            else if (diffRatio < 0.1) retours = IterationMatch(a, b, 22, 22, 208, 280);
-            else if (diffRatio >= 0.1 && diffRatio < 0.2) retours = IterationMatch(a, b, 22, 22, 208, 256);
-            else if (diffRatio >= 0.2 && diffRatio < 0.3) retours = IterationMatch(a, b, 22, 22, 208, 246);
-            else if (diffRatio >= 0.3 && diffRatio < 0.4) retours = IterationMatch(a, b, 22, 22, 208, 240);
-            else if (diffRatio >= 0.4 && diffRatio < 0.5) retours = IterationMatch(a, b, 22, 23, 208, 235);
-            else if (diffRatio >= 0.5 && diffRatio < 0.6) retours = IterationMatch(a, b, 22, 23, 208, 230);
-            else if (diffRatio >= 0.6 && diffRatio < 0.65) retours = IterationMatch(a, b, 22, 23, 208, 220);
-            else if (diffRatio >= 0.65 && diffRatio < 0.7) retours = IterationMatch(a, b, 21, 23, 208, 219);
-            else if (diffRatio >= 0.7 && diffRatio < 0.74) retours = IterationMatch(a, b, 21, 23, 208, 218);
-            else if (diffRatio >= 0.74 && diffRatio < 0.78) retours = IterationMatch(a, b, 21, 24, 208, 218);
-            else if (diffRatio >= 0.78 && diffRatio < 0.81) retours = IterationMatch(a, b, 21, 24, 208, 217);
-            else if (diffRatio >= 0.81 && diffRatio < 0.85) retours = IterationMatch(a, b, 21, 25, 208, 217);
-            else if (diffRatio >= 0.85 && diffRatio < 0.89) retours = IterationMatch(a, b, 21, 25, 208, 216);
-            else if (diffRatio >= 0.89 && diffRatio < 0.92) retours = IterationMatch(a, b, 21, 25, 208, 215);
-            else if (diffRatio >= 0.92 && diffRatio < 0.95) retours = IterationMatch(a, b, 21, 25, 208, 214);
-            else if (diffRatio >= 0.95 && diffRatio < 0.98) retours = IterationMatch(a, b, 21, 26, 208, 214);
-            else if (diffRatio >= 0.98 && diffRatio < 1.01) retours = IterationMatch(a, b, 21, 26, 208, 213);
+            if (diffRatio < 0.05) lookbacks = MatchIteration(a, b, 22, 22, 208, 295);
+            else if (diffRatio < 0.1) lookbacks = MatchIteration(a, b, 22, 22, 208, 280);
+            else if (diffRatio >= 0.1 && diffRatio < 0.2) lookbacks = MatchIteration(a, b, 22, 22, 208, 256);
+            else if (diffRatio >= 0.2 && diffRatio < 0.3) lookbacks = MatchIteration(a, b, 22, 22, 208, 246);
+            else if (diffRatio >= 0.3 && diffRatio < 0.4) lookbacks = MatchIteration(a, b, 22, 22, 208, 240);
+            else if (diffRatio >= 0.4 && diffRatio < 0.5) lookbacks = MatchIteration(a, b, 22, 23, 208, 235);
+            else if (diffRatio >= 0.5 && diffRatio < 0.6) lookbacks = MatchIteration(a, b, 22, 23, 208, 230);
+            else if (diffRatio >= 0.6 && diffRatio < 0.65) lookbacks = MatchIteration(a, b, 22, 23, 208, 220);
+            else if (diffRatio >= 0.65 && diffRatio < 0.7) lookbacks = MatchIteration(a, b, 21, 23, 208, 219);
+            else if (diffRatio >= 0.7 && diffRatio < 0.74) lookbacks = MatchIteration(a, b, 21, 23, 208, 218);
+            else if (diffRatio >= 0.74 && diffRatio < 0.78) lookbacks = MatchIteration(a, b, 21, 24, 208, 218);
+            else if (diffRatio >= 0.78 && diffRatio < 0.81) lookbacks = MatchIteration(a, b, 21, 24, 208, 217);
+            else if (diffRatio >= 0.81 && diffRatio < 0.85) lookbacks = MatchIteration(a, b, 21, 25, 208, 217);
+            else if (diffRatio >= 0.85 && diffRatio < 0.89) lookbacks = MatchIteration(a, b, 21, 25, 208, 216);
+            else if (diffRatio >= 0.89 && diffRatio < 0.92) lookbacks = MatchIteration(a, b, 21, 25, 208, 215);
+            else if (diffRatio >= 0.92 && diffRatio < 0.95) lookbacks = MatchIteration(a, b, 21, 25, 208, 214);
+            else if (diffRatio >= 0.95 && diffRatio < 0.98) lookbacks = MatchIteration(a, b, 21, 26, 208, 214);
+            else if (diffRatio >= 0.98 && diffRatio < 1.01) lookbacks = MatchIteration(a, b, 21, 26, 208, 213);
             /*if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
             if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
             if (diff >= 3 && diff <= 4) IterationMatch(a, b, 1, 8, 9, 14);
@@ -771,83 +771,83 @@ namespace TheManager
             if (diff >= 80 && diff <= 89) IterationMatch(a, b, 1, 39, 40, 40);
             if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);*/
 
-            return retours;
+            return lookbacks;
         }
 
-        private List<RetourMatch> IterationMatch(Club a, Club b, int min_a, int max_a, int min_b,int max_b)
+        private List<RetourMatch> MatchIteration(Club a, Club b, int aMin, int aMax, int bMin,int bMax)
         {
 
             List<RetourMatch> res = new List<RetourMatch>();
 
-            int hasard = Session.Instance.Random(0, 500);
+            int random = Session.Instance.Random(0, 500);
 
-            //Tirs
-            if (hasard >= min_a && hasard <= max_a + ((max_a + 1 - min_a) * 4))
+            //Shoots
+            if (random >= aMin && random <= aMax + ((aMax + 1 - aMin) * 4))
             {
-                if (a == Domicile)
+                if (a == home)
                 {
-                    _statistiques.TirsDomicile++;
-                    Tir(Domicile);
+                    _statistics.HomeShoots++;
+                    Shot(home);
                     res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
                 }
                 else
                 {
-                    _statistiques.TirsExterieurs++;
-                    Tir(Exterieur);
+                    _statistics.AwayShoots++;
+                    Shot(away);
                     res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
                 }
             }
-            else if (hasard >= min_b && hasard <= max_b + ((max_b + 1 - min_b) * 4))
+            else if (random >= bMin && random <= bMax + ((bMax + 1 - bMin) * 4))
             {
-                if (a == Domicile)
+                if (a == home)
                 {
-                    _statistiques.TirsExterieurs++;
-                    Tir(Exterieur);
+                    _statistics.AwayShoots++;
+                    Shot(away);
                     res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
                 }
                 else
                 {
-                    _statistiques.TirsDomicile++;
-                    Tir(Domicile);
+                    _statistics.HomeShoots++;
+                    Shot(home);
                     res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
                 }
             }
 
-            //Buts
-            if (hasard >= min_a && hasard <= max_a)
+            //Goals
+            if (random >= aMin && random <= aMax)
             {
-                if (a == Domicile) _score1++;
+                if (a == home) _score1++;
                 else _score2++;
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
-                But(a);
+                Goal(a);
             }
-            else if (hasard >= min_b && hasard <= max_b)
+            else if (random >= bMin && random <= bMax)
             {
-                if (a == Domicile) _score2++;
+                if (a == home) _score2++;
                 else _score1++;
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
-                But(b);
+                Goal(b);
             }
-            //Cartons jaunes
-            else if (hasard >= 4 && hasard <= 9)
+            //Yellow cards
+            else if (random >= 4 && random <= 9)
             {
-                CartonJaune(a);
+                YellowCard(a);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
-            else if (hasard >= 14 && hasard <= 19)
+            else if (random >= 14 && random <= 19)
             {
-                CartonJaune(b);
+                YellowCard(b);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
-            //Cartons rouges
-            else if (hasard == 2)
+            //Red cards
+            else if (random == 2)
             {
-                CartonRouge(a);
+                RedCard(a);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
-            else if (hasard == 3)
+            else if (random == 3)
             {
-                CartonRouge(b);
+                RedCard(b);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
             
@@ -855,77 +855,77 @@ namespace TheManager
             return res;
         }
 
-        private void But(Club c)
+        private void Goal(Club c)
         {
-            Player j = Buteur(c == Domicile ? Compo1 : Compo2);
+            Player j = Goalscorer(c == home ? compo1 : compo2);
             if(j != null)
             {
-                MatchEvent em = new MatchEvent(GameEvent.Goal, c, j, _minute, _miTemps);
+                MatchEvent em = new MatchEvent(GameEvent.Goal, c, j, _minute, _period);
                 if (j != null) j.goalsScored++;
-                _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
+                _events.Add(em);
+                AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));
             }
         }
 
-        private void CartonJaune(Club c)
+        private void YellowCard(Club c)
         {
-            Player j = Carton(c == Domicile ? Compo1 : Compo2);
+            Player j = Card(c == home ? compo1 : compo2);
             if(j != null)
             {
 
-                bool deuxiemeJaune = false;
-                foreach (MatchEvent ev in _evenements) if (ev.player == j && ev.type == GameEvent.YellowCard) deuxiemeJaune = true;
+                bool secondYellowCard = false;
+                foreach (MatchEvent ev in _events) if (ev.player == j && ev.type == GameEvent.YellowCard) secondYellowCard = true;
 
 
-                MatchEvent em = new MatchEvent(GameEvent.YellowCard, c, j, _minute, _miTemps);
-                _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
+                MatchEvent em = new MatchEvent(GameEvent.YellowCard, c, j, _minute, _period);
+                _events.Add(em);
+                AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));
 
                 //Si c'est son deuxième jaune, carte rouge attribué
-                if (deuxiemeJaune == true)
+                if (secondYellowCard == true)
                 {
-                    List<Player> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
+                    List<Player> compo = c == home ? _compo1Terrain : _compo2Terrain;
                     compo.Remove(j);
-                    CalculerDifferenceNiveau();
-                    em = new MatchEvent(GameEvent.RedCard, c, j, _minute, _miTemps);
-                    _evenements.Add(em);
+                    CalculateLevelDifference();
+                    em = new MatchEvent(GameEvent.RedCard, c, j, _minute, _period);
+                    _events.Add(em);
 
                 }
             }
         }
 
-        private void CartonRouge(Club c)
+        private void RedCard(Club c)
         {
-            List<Player> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
-            Player j = Carton(compo);
+            List<Player> compo = c == home ? _compo1Terrain : _compo2Terrain;
+            Player j = Card(compo);
             if(j != null)
             {
                 compo.Remove(j);
-                CalculerDifferenceNiveau();
-                MatchEvent em = new MatchEvent(GameEvent.RedCard, c, j, _minute, _miTemps);
-                _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
+                CalculateLevelDifference();
+                MatchEvent em = new MatchEvent(GameEvent.RedCard, c, j, _minute, _period);
+                _events.Add(em);
+                AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));
             }
         }
 
-        private void Tir(Club c)
+        private void Shot(Club c)
         {
-            List<Player> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
-            Player j = Buteur(compo);
+            List<Player> compo = c == home ? _compo1Terrain : _compo2Terrain;
+            Player j = Goalscorer(compo);
             if(j != null)
             {
-                MatchEvent em = new MatchEvent(GameEvent.Shot, c, j, _minute, _miTemps);
-                _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
+                MatchEvent em = new MatchEvent(GameEvent.Shot, c, j, _minute, _period);
+                _events.Add(em);
+                AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));
             }
         }
 
         /// <summary>
-        /// Ajoute la description d'une action dans le match
+        /// Add action description in the match
         /// </summary>
         /// <param name="minute">Minute de l'action</param>
         /// <param name="action">Description de l'action</param>
-        public void AjouterAction(string minute, string action)
+        public void AddAction(string minute, string action)
         {
             _actions.Add(new KeyValuePair<string, string>(minute, action));
         }
