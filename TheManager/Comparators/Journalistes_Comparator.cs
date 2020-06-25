@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TheManager.Comparators
 {
-    public class Journalistes_Comparator : IComparer<Journaliste>
+    public class Journalistes_Comparator : IComparer<Journalist>
     {
         private Ville _ville;
 
@@ -15,10 +15,10 @@ namespace TheManager.Comparators
             _ville = ville;
         }
 
-        public int Compare(Journaliste x, Journaliste y)
+        public int Compare(Journalist x, Journalist y)
         {
-            float distanceX = Math.Abs(Utils.Distance(x.Base, _ville)) + x.Retrait;
-            float distanceY = Math.Abs(Utils.Distance(y.Base, _ville)) + y.Retrait;
+            float distanceX = Math.Abs(Utils.Distance(x.@base, _ville)) + x.offset;
+            float distanceY = Math.Abs(Utils.Distance(y.@base, _ville)) + y.offset;
             return (int)(distanceX - distanceY);
         }
     }

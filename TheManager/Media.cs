@@ -41,21 +41,21 @@ namespace TheManager
         [DataMember]
         private string _name;
         [DataMember]
-        private List<Journaliste> _journalists;
+        private List<Journalist> _journalists;
         [DataMember]
         private List<TournamentCoverage> _coverages;
         [DataMember]
         private Pays _country;
 
         public string name { get => _name; }
-        public List<Journaliste> journalists { get => _journalists; }
+        public List<Journalist> journalists { get => _journalists; }
         public List<TournamentCoverage> coverages { get => _coverages; }
         public Pays country { get => _country; }
 
         public Media(string name, Pays country)
         {
             _name = name;
-            _journalists = new List<Journaliste>();
+            _journalists = new List<Journalist>();
             _coverages = new List<TournamentCoverage>();
             _country = country;
         }
@@ -90,7 +90,7 @@ namespace TheManager
 
         public void FreeJournalists()
         {
-            foreach (Journaliste j in _journalists) j.EstPris = false;
+            foreach (Journalist j in _journalists) j.isTaken = false;
         }
 
     }

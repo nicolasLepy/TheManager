@@ -157,7 +157,7 @@ namespace TheManager_GUI
                 dgCompo2.Items.Add(new JoueurElement { Joueur = j, Poste = j.position });
             }
 
-            foreach (KeyValuePair<TheManager.Media, Journaliste> j in match.Journalistes)
+            foreach (KeyValuePair<TheManager.Media, Journalist> j in match.Journalistes)
             {
                 dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j.Value, Media = j.Key.name });
             }
@@ -211,7 +211,7 @@ namespace TheManager_GUI
 
     public struct JournalisteElement : IEquatable<JournalisteElement>
     {
-        public Journaliste Journaliste { get; set; }
+        public Journalist Journaliste { get; set; }
         public string Media{ get; set; }
         public bool Equals(JournalisteElement other)
         {

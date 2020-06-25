@@ -83,8 +83,8 @@
     <Compile Include="IRecoverableTeams.cs" />
     <Compile Include="ILocalisation.cs" />
     <Compile Include="IRandomDrawing.cs" />
-    <Compile Include="Journaliste.cs" />
-    <Compile Include="Langue.cs" />
+    <Compile Include="Journalist.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="Media.cs" />
     <Compile Include="RandomDrawingMethod.cs" />

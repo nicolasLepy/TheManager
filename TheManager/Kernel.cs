@@ -50,13 +50,13 @@ namespace TheManager
         [DataMember]
         private List<Continent> _continents;
         [DataMember]
-        private List<Langue> _languages;
+        private List<Language> _languages;
         [DataMember]
         private List<Media> _medias;
         [DataMember]
         private List<MatchEventCommentary> _matchCommentaries;
         [DataMember]
-        private List<Journaliste> _freeJournalists;
+        private List<Journalist> _freeJournalists;
 
         public List<Club> Clubs { get => _clubs; }
 
@@ -76,17 +76,17 @@ namespace TheManager
         public List<Player> freePlayers { get => _freePlayers; }
         public List<Manager> freeManagers { get => _freeManagers; }
         public List<Continent> continents { get => _continents; }
-        public List<Langue> languages { get => _languages; }
+        public List<Language> languages { get => _languages; }
         public List<Media> medias { get => _medias; }
         public List<MatchEventCommentary> matchCommentaries { get => _matchCommentaries; }
-        public List<Journaliste> freeJournalists { get => _freeJournalists; }
+        public List<Journalist> freeJournalists { get => _freeJournalists; }
 
         public Kernel()
         {
             _clubs = new List<Club>();
             _freePlayers = new List<Player>();
             _continents = new List<Continent>();
-            _languages = new List<Langue>();
+            _languages = new List<Language>();
             _medias = new List<Media>();
             _freeManagers = new List<Manager>();
             _matchCommentaries = new List<MatchEventCommentary>();
@@ -95,7 +95,7 @@ namespace TheManager
             _matchCommentaries.Add(new MatchEventCommentary(GameEvent.YellowCard));
             _matchCommentaries.Add(new MatchEventCommentary(GameEvent.RedCard));
             _matchCommentaries.Add(new MatchEventCommentary(GameEvent.Shot));
-            _freeJournalists = new List<Journaliste>();
+            _freeJournalists = new List<Journalist>();
         }
 
         public Ville String2City(string name)
@@ -212,13 +212,13 @@ namespace TheManager
             return res;
         }
 
-        public Langue String2Language(string name)
+        public Language String2Language(string name)
         {
-            Langue res = null;
+            Language res = null;
 
-            foreach (Langue l in _languages)
+            foreach (Language l in _languages)
             {
-                if (l.Nom == name) res = l;
+                if (l.name == name) res = l;
             }
 
             return res;

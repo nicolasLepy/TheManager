@@ -220,7 +220,7 @@ namespace TheManager
                             offset = int.Parse(e3.Attribute("retrait").Value);
                         if (city == null)
                             Console.WriteLine(e3.Attribute("ville").Value + " n'est pas une ville.");
-                        Journaliste j = new Journaliste(firstName, lastName, age, city, offset);
+                        Journalist j = new Journalist(firstName, lastName, age, city, offset);
                         m.journalists.Add(j);
                     }
 
@@ -324,7 +324,7 @@ namespace TheManager
                     {
                         string countryName = e3.Attribute("nom").Value;
                         string language = e3.Attribute("langue").Value;
-                        Langue l = _kernel.String2Language(language);
+                        Language l = _kernel.String2Language(language);
                         Pays p = new Pays(countryName,l);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
@@ -417,7 +417,7 @@ namespace TheManager
                     reputation = centreFormation;
 
                     Pays pays = city.Pays();
-                    Manager entraineur = new Manager(pays.Langue.ObtenirPrenom(), pays.Langue.ObtenirNom(), centreFormation, new DateTime(1970, 1, 1), pays);
+                    Manager entraineur = new Manager(pays.Langue.GetFirstName(), pays.Langue.GetLastName(), centreFormation, new DateTime(1970, 1, 1), pays);
 
                     bool equipePremiere = true;
                     Club c = new CityClub(name,entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium,musiqueBut, equipePremiere);
@@ -451,7 +451,7 @@ namespace TheManager
                     else
                         goalMusic = "null";
 
-                    Manager entraineur = new Manager(country.Langue.ObtenirPrenom(), country.Langue.ObtenirNom(), formationFacilities, new DateTime(1970, 1, 1), country);
+                    Manager entraineur = new Manager(country.Langue.GetFirstName(), country.Langue.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
                     Club c = new SelectionNationale(name,entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, coefficient,country,goalMusic);
                     _clubsId[id] = c;
@@ -710,16 +710,16 @@ namespace TheManager
 
         private void LoadLanguage(string languageName, string filename)
         {
-            Langue language = new Langue(languageName);
+            Language language = new Language(languageName);
             string[] text = System.IO.File.ReadAllLines("Donnees/" + filename + "_p.txt");
             foreach(string line in text)
             {
-                language.AjouterPrenom(line);
+                language.AddFirstName(line);
             }
             text = System.IO.File.ReadAllLines("Donnees/" + filename + "_n.txt");
             foreach (string line in text)
             {
-                language.AjouterNom(line);
+                language.AddLastName(line);
             }
             _kernel.languages.Add(language);
         }
@@ -753,8 +753,8 @@ namespace TheManager
                     {
                         for(int i =0; i<gap; i++)
                         {
-                            string firstName = nationalTeam.Pays.Langue.ObtenirPrenom();
-                            string lastName = nationalTeam.Pays.Langue.ObtenirNom();
+                            string firstName = nationalTeam.Pays.Langue.GetFirstName();
+                            string lastName = nationalTeam.Pays.Langue.GetLastName();
                             DateTime birthday = new DateTime(1990, 1, 1);
                             Position p = Position.Goalkeeper;
                             switch(Session.Instance.Random(1,10))

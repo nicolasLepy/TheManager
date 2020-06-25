@@ -21,15 +21,15 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_Journaliste : Window
     {
-        public Windows_Journaliste(Journaliste journaliste)
+        public Windows_Journaliste(Journalist journaliste)
         {
             InitializeComponent();
-            lbJournaliste.Content = journaliste.Prenom + " " + journaliste.Nom;
+            lbJournaliste.Content = journaliste.firstName + " " + journaliste.lastName;
             lbMedia.Content = journaliste.Media.name;
             List<Match> matchs = new List<Match>();
             foreach (Match m in Session.Instance.Partie.kernel.Matchs)
             {
-                foreach(KeyValuePair<TheManager.Media, Journaliste> j in m.Journalistes)
+                foreach(KeyValuePair<TheManager.Media, Journalist> j in m.Journalistes)
                 {
                     if (j.Value == journaliste) matchs.Add(m);
                 }

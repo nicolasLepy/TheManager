@@ -148,8 +148,8 @@ namespace TheManager
 
         public void GeneratePlayer(Position p, int minAge, int maxAge, int potentialOffset = 0)
         {
-            string firstName = _city.Pays().Langue.ObtenirPrenom();
-            string lastName = _city.Pays().Langue.ObtenirNom();
+            string firstName = _city.Pays().Langue.GetFirstName();
+            string lastName = _city.Pays().Langue.GetLastName();
             int birthYear = Session.Instance.Random(Session.Instance.Partie.date.Year - maxAge, Session.Instance.Partie.date.Year - minAge+1);
 
             //Method Level -> Potential

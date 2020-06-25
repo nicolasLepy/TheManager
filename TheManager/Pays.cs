@@ -15,7 +15,7 @@ namespace TheManager
         [DataMember]
         private List<Stade> _stades;
         [DataMember]
-        private Langue _langue;
+        private Language _langue;
         [DataMember]
         private List<Tournament> _competitions;
         [DataMember]
@@ -23,7 +23,7 @@ namespace TheManager
 
         public List<Ville> Villes { get { return _villes; } }
         public List<Stade> Stades { get { return _stades; } }
-        public Langue Langue { get => _langue; }
+        public Language Langue { get => _langue; }
 
         public string Drapeau
         {
@@ -36,7 +36,7 @@ namespace TheManager
             }
         }
 
-        public Pays(string nom, Langue langue)
+        public Pays(string nom, Language langue)
         {
             _nom = nom;
             _langue = langue;
