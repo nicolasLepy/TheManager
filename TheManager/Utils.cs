@@ -231,7 +231,9 @@ namespace TheManager
                 res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png";
             }
             else
+            {
                 Console.WriteLine(c.name + " n'a pas de logo valide");
+            }
             return res;
         }
 

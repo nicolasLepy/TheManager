@@ -91,7 +91,7 @@ namespace TheManager_GUI
             //t.Start();
 
 
-            await Task.Delay((int)sliderVitesseSimulation.Value);
+            await Task.Delay((int)sliderVitesseSimulation.Value).ConfigureAwait(false);
         }
 
         public void ThreadMatch(Match match)
@@ -101,7 +101,7 @@ namespace TheManager_GUI
             {
                 while(_enCours[_matchs.IndexOf(match)] == true)
                 {
-                    await Match(match);
+                    await Match(match).ConfigureAwait(false);
                 }
 
                 if(match == _matchs[0])

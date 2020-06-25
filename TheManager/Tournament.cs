@@ -132,14 +132,20 @@ namespace TheManager
             
                 UpdateRecords();
                 Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears);
-                foreach (Round r in rounds) copyForArchives.rounds.Add(r.Copy());
+                foreach (Round r in rounds)
+                {
+                    copyForArchives.rounds.Add(r.Copy());
+                }
                 copyForArchives.statistics = statistics;
                 _previousEditions.Add(copyForArchives);
                 for (int i = 0; i<rounds.Count; i++)
                 {
                     rounds[i].Reset();
                     List<Club> clubs = new List<Club>(_nextYearQualified[i]);
-                    foreach (Club c in clubs) rounds[i].clubs.Add(c);
+                    foreach (Club c in clubs)
+                    {
+                        rounds[i].clubs.Add(c);
+                    }
                 }
                 InitializeQualificationsNextYearsLists();
                 currentRound = -1;
@@ -153,18 +159,27 @@ namespace TheManager
             {
                 foreach(Match m in r.matches)
                 {
-                    if (_statistics.LargerScore == null || Math.Abs(m.score1 - m.score2) > Math.Abs(_statistics.LargerScore.score1 - _statistics.LargerScore.score2))
+                    if (_statistics.LargerScore == null || Math.Abs(m.score1 - m.score2) >
+                        Math.Abs(_statistics.LargerScore.score1 - _statistics.LargerScore.score2))
+                    {
                         _statistics.LargerScore = m;
-                    if (_statistics.BiggerScore == null || m.score1 + m.score2 > _statistics.BiggerScore.score1 + _statistics.BiggerScore.score2)
+                    }
+
+                    if (_statistics.BiggerScore == null || m.score1 + m.score2 >
+                        _statistics.BiggerScore.score1 + _statistics.BiggerScore.score2)
+                    {
                         _statistics.BiggerScore = m;
+                    }
                 }
             }
         }
 
         public void NextRound()
         {
-            if(currentRound > -1 && currentRound < _rounds.Count)
+            if (currentRound > -1 && currentRound < _rounds.Count)
+            {
                 _rounds[currentRound].DistributeGrants();
+            }
             if (_rounds.Count > currentRound + 1)
             {
                 currentRound++;
@@ -280,9 +295,21 @@ namespace TheManager
                 {
                     tour.recuperedTeams.Add(re);
                 }
-                foreach (Club c in t.clubs) tour.clubs.Add(c);
-                foreach (Prize d in t.prizes) tour.prizes.Add(d);
-                foreach (Rule r in t.rules) tour.rules.Add(r);
+
+                foreach (Club c in t.clubs)
+                {
+                    tour.clubs.Add(c);
+                }
+
+                foreach (Prize d in t.prizes)
+                {
+                    tour.prizes.Add(d);
+                }
+
+                foreach (Rule r in t.rules)
+                {
+                    tour.rules.Add(r);
+                }
             }
 
             foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
@@ -307,7 +334,10 @@ namespace TheManager
             }
 
             _rounds.Clear();
-            foreach (Round t in newRounds) _rounds.Add(t);
+            foreach (Round t in newRounds)
+            {
+                _rounds.Add(t);
+            }
 
             /*
             Tour premierTour = _tours[0];

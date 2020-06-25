@@ -27,7 +27,10 @@ namespace TheManager
         public override List<Player> Players()
         {
             List<Player> res = new List<Player>();
-            foreach (Contract ct in _players) res.Add(ct.player);
+            foreach (Contract ct in _players)
+            {
+                res.Add(ct.player);
+            }
             return res;
         }
 
