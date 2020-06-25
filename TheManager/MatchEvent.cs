@@ -29,7 +29,7 @@ namespace TheManager
         [DataMember]
         private int _period;
         [DataMember]
-        private Joueur _player;
+        private Player _player;
         [DataMember]
         private Club _club;
 
@@ -69,10 +69,10 @@ namespace TheManager
             }
         }
         public int period { get => _period; }
-        public Joueur player { get => _player; }
+        public Player player { get => _player; }
         public Club club { get => _club; }
 
-        public MatchEvent(GameEvent type, Club club, Joueur player, int minute, int period)
+        public MatchEvent(GameEvent type, Club club, Player player, int minute, int period)
         {
             _type = type;
             _club = club;

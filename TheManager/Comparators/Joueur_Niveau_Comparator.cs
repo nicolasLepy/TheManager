@@ -6,11 +6,11 @@ using System.Text;
 
 namespace TheManager.Comparators
 {
-    public class Joueur_Niveau_Comparator : IComparer<Joueur>
+    public class Joueur_Niveau_Comparator : IComparer<Player>
     {
-        public int Compare(Joueur x, Joueur y)
+        public int Compare(Player x, Player y)
         {
-            return y.Niveau - x.Niveau;
+            return y.level - x.level;
         }
     }
 }

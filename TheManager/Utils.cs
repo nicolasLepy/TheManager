@@ -45,13 +45,13 @@ namespace TheManager
             return res;
         }
 
-        public static List<Joueur> PlayersByPoste(List<Joueur> joueurs, Position p)
+        public static List<Player> PlayersByPoste(List<Player> joueurs, Position p)
         {
-            List<Joueur> res = new List<Joueur>();
+            List<Player> res = new List<Player>();
 
-            foreach (Joueur j in joueurs)
+            foreach (Player j in joueurs)
             {
-                if (j.Poste == p)
+                if (j.position == p)
                 {
                     res.Add(j);
                 }

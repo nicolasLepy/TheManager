@@ -8,8 +8,8 @@ using System.Text;
 namespace TheManager
 {
     [DataContract(IsReference = true)]
-    [KnownType(typeof(Joueur))]
-    [System.Xml.Serialization.XmlInclude(typeof(Joueur))]
+    [KnownType(typeof(Player))]
+    [System.Xml.Serialization.XmlInclude(typeof(Player))]
     [KnownType(typeof(Manager))]
     [System.Xml.Serialization.XmlInclude(typeof(Manager))]
     public class Personne
@@ -33,7 +33,7 @@ namespace TheManager
         {
             get
             {
-                DateTime date = Session.Instance.Partie.Date;
+                DateTime date = Session.Instance.Partie.date;
                 int age = date.Year - Naissance.Year;
                 if (date.Month < Naissance.Month)
                 {

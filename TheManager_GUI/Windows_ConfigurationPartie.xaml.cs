@@ -28,9 +28,9 @@ namespace TheManager_GUI
             InitializeComponent();
             _checkbox = new List<CheckBox>();
 
-            Partie partie = new Partie();
+            Game partie = new Game();
             Session.Instance.Partie = partie;
-            Kernel g = partie.Gestionnaire;
+            Kernel g = partie.kernel;
             DatabaseLoader cbdd = new DatabaseLoader(g);
             cbdd.Load();
 
@@ -117,7 +117,7 @@ namespace TheManager_GUI
             {
                 if(cb.IsChecked == true)
                 {
-                    Tournament c = Session.Instance.Partie.Gestionnaire.String2Tournament(cb.Content.ToString());
+                    Tournament c = Session.Instance.Partie.kernel.String2Tournament(cb.Content.ToString());
                     foreach (Club cl in c.rounds[0].Clubs)
                     {
                         nbClubs++;
@@ -142,7 +142,7 @@ namespace TheManager_GUI
                 if(cb.IsChecked == false)
                 {
                     string nom = cb.Content.ToString();
-                    foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
+                    foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
                     {
                         if (c.name == nom)
                         {

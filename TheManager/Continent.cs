@@ -47,7 +47,7 @@ namespace TheManager
         public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
             List<Club> clubs = new List<Club>();
-            foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
+            foreach(Club c in Session.Instance.Partie.kernel.Clubs)
             {
                 SelectionNationale sn = c as SelectionNationale;
                 if(sn != null)

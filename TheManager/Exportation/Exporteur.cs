@@ -16,7 +16,7 @@ namespace TheManager.Exportation
         {
             string output = "<p>Clubs</p>";
 
-            foreach(Club c in Session.Instance.Partie.Gestionnaire.Clubs)
+            foreach(Club c in Session.Instance.Partie.kernel.Clubs)
             {
                 CityClub cv = c as CityClub;
                 if(cv != null)
@@ -37,8 +37,8 @@ namespace TheManager.Exportation
         public static void Exporter(Tournament c)
         {
             ExporterClubs();
-            string dir = "Output\\" + c.name + " " + Session.Instance.Partie.Date.Year;
-            string dir2 = "Output\\" + c.shortName + Session.Instance.Partie.Date.Year;
+            string dir = "Output\\" + c.name + " " + Session.Instance.Partie.date.Year;
+            string dir2 = "Output\\" + c.shortName + Session.Instance.Partie.date.Year;
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             if (!Directory.Exists(dir2)) Directory.CreateDirectory(dir2);
 
@@ -68,7 +68,7 @@ namespace TheManager.Exportation
                     int matchsJournee = (tc.Clubs.Count % 2 == 1) ? tc.Clubs.Count/2+1 : tc.Clubs.Count/2;
                     int nbJournees = (tc.Matchs.Count / tc.Clubs.Count) * 2;
                     int k = 0;
-                    Exporteurs2.ExporterClassementL(tc, "Output\\" + c.shortName + Session.Instance.Partie.Date.Year + "\\" + t.Nom + "\\Matchs\\");
+                    Exporteurs2.ExporterClassementL(tc, "Output\\" + c.shortName + Session.Instance.Partie.date.Year + "\\" + t.Nom + "\\Matchs\\");
                     for (int i = 0; i<nbJournees; i++)
                     {
                         List<Match> journee = new List<Match>();
@@ -79,7 +79,7 @@ namespace TheManager.Exportation
                         journee.Sort(new Match_Date_Comparator());
 
 
-                        Exporteurs2.ExporterL(journee, "Output\\" + c.shortName + Session.Instance.Partie.Date.Year + "\\" + t.Nom, i + 1);
+                        Exporteurs2.ExporterL(journee, "Output\\" + c.shortName + Session.Instance.Partie.date.Year + "\\" + t.Nom, i + 1);
 
                         output += "<p>Journée " + (int)(i + 1) + "</p><table>";
                         DateTime last = new DateTime(2000, 1, 1);
@@ -177,7 +177,7 @@ namespace TheManager.Exportation
                     }
                 }
                 output += "<p>Moyenne de buts : " + t.MoyenneButs() + "</p><p>Buteurs</p><table>";
-                foreach (KeyValuePair<Joueur, int> j in t.Buteurs())
+                foreach (KeyValuePair<Player, int> j in t.Buteurs())
                 {
                     output += "<tr><td>" + j.Key.Prenom + " " + j.Key.Nom + "</td><td>" + j.Value + "</td></tr>";
                 }
@@ -217,15 +217,15 @@ namespace TheManager.Exportation
             output += "</table>";
 
             output += "<p><b>Compo Domicile</b></p>";
-            foreach (Joueur j in m.Compo1) output += "<br>" + j.Prenom + " " + j.Nom + "(" + j.Poste + ")";
+            foreach (Player j in m.Compo1) output += "<br>" + j.Prenom + " " + j.Nom + "(" + j.position + ")";
 
             output += "<p><b>Compo Extérieur</b></p>";
-            foreach (Joueur j in m.Compo2) output += "<br>" + j.Prenom + " " + j.Nom + "(" + j.Poste + ")";
+            foreach (Player j in m.Compo2) output += "<br>" + j.Prenom + " " + j.Nom + "(" + j.position + ")";
 
             output += "<p><b>Médias</b></p>";
             foreach(KeyValuePair<Media,Journaliste> j in m.Journalistes)
             {
-                output += "<p>" + j.Value.Prenom + " " + j.Value.Nom + " (" + j.Key.Nom + ")";
+                output += "<p>" + j.Value.Prenom + " " + j.Value.Nom + " (" + j.Key.name + ")";
             }
             File.WriteAllText(nomFichier,output);
         }

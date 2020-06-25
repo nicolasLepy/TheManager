@@ -121,7 +121,7 @@ namespace TheManager_GUI
 
         public void Palmares(CityClub club)
         {
-            foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
+            foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
             {
                 int nombre = 0;
                 string annees = "";
@@ -178,13 +178,13 @@ namespace TheManager_GUI
             
             foreach (Contract ct in c.contracts)
             {
-                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.Poste.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.Niveau, Potentiel = ct.player.Potentiel, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.Energie});
-                if((ct.beginning.Year == Session.Instance.Partie.Date.Year-1 && ct.beginning.Month < 7) || (ct.beginning.Year == Session.Instance.Partie.Date.Year && ct.beginning.Month >= 7))
-                    dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.player, Nom = ct.player.ToString(), Niveau = ct.player.Niveau, Salaire = ct.wage + " €" });
+                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.position.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.level, Potentiel = ct.player.potential, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.energy});
+                if((ct.beginning.Year == Session.Instance.Partie.date.Year-1 && ct.beginning.Month < 7) || (ct.beginning.Year == Session.Instance.Partie.date.Year && ct.beginning.Month >= 7))
+                    dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.player, Nom = ct.player.ToString(), Niveau = ct.player.level, Salaire = ct.wage + " €" });
             }
 
             List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();
-            foreach(Tournament competition in Session.Instance.Partie.Gestionnaire.Competitions)
+            foreach(Tournament competition in Session.Instance.Partie.kernel.Competitions)
             {
                 int annee = 2019;
                 foreach(Tournament ancienne in competition.previousEditions)
@@ -299,7 +299,7 @@ namespace TheManager_GUI
 
     public struct JoueurClubElement : IEquatable<JoueurClubElement>
     {
-        public Joueur Joueur { get; set; }
+        public Player Joueur { get; set; }
         public string Nom { get; set; }
         public int Age { get; set; }
         public string Poste { get; set; }

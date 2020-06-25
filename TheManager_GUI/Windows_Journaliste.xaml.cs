@@ -25,9 +25,9 @@ namespace TheManager_GUI
         {
             InitializeComponent();
             lbJournaliste.Content = journaliste.Prenom + " " + journaliste.Nom;
-            lbMedia.Content = journaliste.Media.Nom;
+            lbMedia.Content = journaliste.Media.name;
             List<Match> matchs = new List<Match>();
-            foreach (Match m in Session.Instance.Partie.Gestionnaire.Matchs)
+            foreach (Match m in Session.Instance.Partie.kernel.Matchs)
             {
                 foreach(KeyValuePair<TheManager.Media, Journaliste> j in m.Journalistes)
                 {

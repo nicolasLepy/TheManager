@@ -28,7 +28,7 @@ namespace TheManager_GUI
             club = null;
             InitializeComponent();
 
-            foreach (Continent c in Session.Instance.Partie.Gestionnaire.continents)
+            foreach (Continent c in Session.Instance.Partie.kernel.continents)
                 foreach (Pays p in c.countries)
                     cbNationalite.Items.Add(p);
 
@@ -41,7 +41,7 @@ namespace TheManager_GUI
 
             tvClubs.Items.Clear();
 
-            foreach(Continent c in Session.Instance.Partie.Gestionnaire.continents)
+            foreach(Continent c in Session.Instance.Partie.kernel.continents)
             {
                 foreach(Pays p in c.countries)
                 {
@@ -64,7 +64,7 @@ namespace TheManager_GUI
                                 btnClub.Content = club.name;
                                 btnClub.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
                                 btnClub.FontSize = 8;
-                                btnClub.Name = "club_" + Session.Instance.Partie.Gestionnaire.Clubs.IndexOf(club).ToString();
+                                btnClub.Name = "club_" + Session.Instance.Partie.kernel.Clubs.IndexOf(club).ToString();
                                 btnClub.Click += new RoutedEventHandler(BtnClub_Click);
                                 Label lbClub = new Label();
                                 lbClub.Content = club.name;
@@ -95,12 +95,12 @@ namespace TheManager_GUI
         {
             spEffectif.Children.Clear();
             Console.WriteLine("Génération du club - " + c.formationFacilities);
-            foreach (Joueur j in c.Players())
+            foreach (Player j in c.Players())
             {
                 Label l = new Label();
-                l.Content = j.Nom + " - " + j.Niveau + " (" + j.Potentiel + ")";
+                l.Content = j.Nom + " - " + j.level + " (" + j.potential + ")";
                 spEffectif.Children.Add(l);
-                Console.WriteLine(j.Niveau + " (" + j.Potentiel + ") - " + j.Age);
+                Console.WriteLine(j.level + " (" + j.potential + ") - " + j.Age);
             }
         }
 
@@ -140,7 +140,7 @@ namespace TheManager_GUI
         {
             Button btn = sender as Button;
             int id = int.Parse(btn.Name.Split('_')[1]);
-            Club c = Session.Instance.Partie.Gestionnaire.Clubs[id];
+            Club c = Session.Instance.Partie.kernel.Clubs[id];
 
             if (c != null)
             {
@@ -155,15 +155,15 @@ namespace TheManager_GUI
             string nom = tbNom.Text;
             string[] strNaissance = dpNaissance.Text.Split('/');
             DateTime naissance = new DateTime( int.Parse(strNaissance[2]), int.Parse(strNaissance[1]), int.Parse(strNaissance[0]));
-            Pays nationalite = Session.Instance.Partie.Gestionnaire.String2Country("France");
+            Pays nationalite = Session.Instance.Partie.kernel.String2Country("France");
             Pays pays_selected = cbNationalite.SelectedItem as Pays;
             if (pays_selected != null) nationalite = pays_selected;
 
             if(club != null)
             {
-                Session.Instance.Partie.Club = club as CityClub;
+                Session.Instance.Partie.club = club as CityClub;
                 Manager entraineur = new Manager(prenom, nom, 70, naissance, nationalite);
-                Session.Instance.Partie.Club.ChangeManager(entraineur);
+                Session.Instance.Partie.club.ChangeManager(entraineur);
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
                 Close();

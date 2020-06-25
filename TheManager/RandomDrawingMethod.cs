@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheManager
 {
-    public enum DrawingMethod
+    public enum RandomDrawingMethod
     {
         Level,
         Geographic

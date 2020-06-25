@@ -85,9 +85,9 @@ namespace TheManager
         [DataMember]
         private float _diffNiveauRatio;
         [DataMember]
-        private List<Joueur> _compo1Terrain;
+        private List<Player> _compo1Terrain;
         [DataMember]
-        private List<Joueur> _compo2Terrain;
+        private List<Player> _compo2Terrain;
 
 
         [DataMember]
@@ -101,9 +101,9 @@ namespace TheManager
         [DataMember]
         private Statistiques _statistiques;
         [DataMember]
-        private List<Joueur> _compo1;
+        private List<Player> _compo1;
         [DataMember]
-        private List<Joueur> _compo2;
+        private List<Player> _compo2;
         [DataMember]
         private bool _prolongations;
         [DataMember]
@@ -129,8 +129,8 @@ namespace TheManager
         public int Score1 { get => _score1; }
         public int Score2 { get => _score2; }
         public List<MatchEvent> Evenements { get => _evenements; }
-        public List<Joueur> Compo1 { get => _compo1; }
-        public List<Joueur> Compo2 { get => _compo2; }
+        public List<Player> Compo1 { get => _compo1; }
+        public List<Player> Compo2 { get => _compo2; }
         public bool Prolongations { get => _prolongations; }
         public int Tab1 { get => _tab1; }
         public int Tab2 { get => _tab2; }
@@ -152,7 +152,7 @@ namespace TheManager
             get
             {
                 Tournament res = null;
-                foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
                 {
                     foreach(Tour t in c.rounds)
                     {
@@ -171,7 +171,7 @@ namespace TheManager
             get
             {
                 Tour res = null;
-                foreach (Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach (Tournament c in Session.Instance.Partie.kernel.Competitions)
                 {
                     foreach (Tour t in c.rounds)
                     {
@@ -304,12 +304,12 @@ namespace TheManager
 
         private float NiveauCompo(Club club)
         {
-            List<Joueur> compo = (club == Domicile) ? _compo1Terrain : _compo2Terrain;
+            List<Player> compo = (club == Domicile) ? _compo1Terrain : _compo2Terrain;
             
             float res = 0;
-            foreach(Joueur j in compo)
+            foreach(Player j in compo)
             {
-                res += j.Niveau;
+                res += j.level;
             }
             float nivEquipe = res / (11.0f);
             
@@ -324,32 +324,32 @@ namespace TheManager
             return res / (11.0f);
         }
 
-        private Joueur Carton(List<Joueur> compo)
+        private Player Carton(List<Player> compo)
         {
-            List<Joueur> joueurs = new List<Joueur>();
-            foreach (Joueur j in compo)
+            List<Player> joueurs = new List<Player>();
+            foreach (Player j in compo)
             {
-                switch (j.Poste)
+                switch (j.position)
                 {
                     case Position.Goalkeeper:
-                        for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
                         break;
                     case Position.Defender:
-                        for (int i = 0; i < j.Niveau * 2; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level * 2; i++) joueurs.Add(j);
                         break;
                     case Position.Midfielder:
-                        for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
                         break;
                     case Position.Striker:
-                        int k = j.Niveau / 2;
+                        int k = j.level / 2;
                         for (int i = 0; i < k; i++) joueurs.Add(j);
                         break;
                     default:
-                        for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
                         break;
                 }
             }
-            Joueur res = null;
+            Player res = null;
             if(joueurs.Count > 0)
             {
                 res = joueurs[Session.Instance.Random(0, joueurs.Count)];
@@ -358,26 +358,26 @@ namespace TheManager
             
         }
 
-        private Joueur Buteur(List<Joueur> compo)
+        private Player Buteur(List<Player> compo)
         {
-            List<Joueur> joueurs = new List<Joueur>();
-            foreach(Joueur j in compo)
+            List<Player> joueurs = new List<Player>();
+            foreach(Player j in compo)
             {
-                switch (j.Poste)
+                switch (j.position)
                 {
                     case Position.Defender:
-                        int k = j.Niveau / 2;
+                        int k = j.level / 2;
                         for (int i = 0; i < k; i++) joueurs.Add(j);
                         break;
                     case Position.Midfielder:
-                        for (int i = 0; i < j.Niveau; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level; i++) joueurs.Add(j);
                         break;
                     case Position.Striker:
-                        for (int i = 0; i < j.Niveau*2; i++) joueurs.Add(j);
+                        for (int i = 0; i < j.level*2; i++) joueurs.Add(j);
                         break;
                 }
             }
-            Joueur res = null;
+            Player res = null;
             if(joueurs.Count > 0)
                 res = joueurs[Session.Instance.Random(0, joueurs.Count)];
             return res;
@@ -498,14 +498,14 @@ namespace TheManager
             _statistiques = new Statistiques();
             _prolongations = false;
             _evenements = new List<MatchEvent>();
-            _compo1 = new List<Joueur>();
-            _compo2 = new List<Joueur>();
+            _compo1 = new List<Player>();
+            _compo2 = new List<Player>();
             _prolongationSiNul = prolongationSiNul;
             _matchAller = matchAller;
             _minute = 0;
             _miTemps = 1;
-            _compo1Terrain = new List<Joueur>();
-            _compo2Terrain = new List<Joueur>();
+            _compo1Terrain = new List<Player>();
+            _compo2Terrain = new List<Player>();
             _affluence = 0;
             _journalistes = new List<KeyValuePair<Media, Journaliste>>();
             _actions = new List<KeyValuePair<string, string>>();
@@ -549,10 +549,10 @@ namespace TheManager
 
         public void DefinirCompo()
         {
-            _compo1 = new List<Joueur>(Domicile.Composition());
-            _compo2 = new List<Joueur>(Exterieur.Composition());
-            _compo1Terrain = new List<Joueur>(_compo1);
-            _compo2Terrain = new List<Joueur>(_compo2);
+            _compo1 = new List<Player>(Domicile.Composition());
+            _compo2 = new List<Player>(Exterieur.Composition());
+            _compo1Terrain = new List<Player>(_compo1);
+            _compo2Terrain = new List<Player>(_compo2);
             
         }
 
@@ -561,17 +561,17 @@ namespace TheManager
         /// </summary>
         /// <param name="compo">Les joueurs</param>
         /// <param name="club">Le club</param>
-        public void DefinirCompo(List<Joueur> compo, Club club)
+        public void DefinirCompo(List<Player> compo, Club club)
         {
             if(club == Domicile)
             {
-                _compo1 = new List<Joueur>(compo);
-                _compo1Terrain = new List<Joueur>(compo);
+                _compo1 = new List<Player>(compo);
+                _compo1Terrain = new List<Player>(compo);
             }
             else if(club == Exterieur)
             {
-                _compo2 = new List<Joueur>(compo);
-                _compo2Terrain = new List<Joueur>(compo);
+                _compo2 = new List<Player>(compo);
+                _compo2Terrain = new List<Player>(compo);
             }
         }
 
@@ -667,11 +667,11 @@ namespace TheManager
                 }
             }
 
-            if(Domicile == Session.Instance.Partie.Club || Exterieur == Session.Instance.Partie.Club)
+            if(Domicile == Session.Instance.Partie.club || Exterieur == Session.Instance.Partie.club)
             {
                 string res = ArticleGenerator.Instance.GenerateArticle(this);
                 Article article = new Article(res, "", new DateTime(Jour.Year, Jour.Month, Jour.Day), 2);
-                Session.Instance.Partie.Articles.Add(article);
+                Session.Instance.Partie.articles.Add(article);
             }
         }
 
@@ -712,15 +712,15 @@ namespace TheManager
         private List<RetourMatch> JouerMinute(Club a, Club b)
         {
             List<RetourMatch> retours = new List<RetourMatch>();
-            foreach (Joueur j in _compo1)
+            foreach (Player j in _compo1)
             {
-                if (Session.Instance.Random(2, 7) == 3) j.Energie--;
-                j.MatchsJoues++;
+                if (Session.Instance.Random(2, 7) == 3) j.energy--;
+                j.playedGames++;
             }
-            foreach (Joueur j in _compo2)
+            foreach (Player j in _compo2)
             {
-                if (Session.Instance.Random(2, 7) == 3) j.Energie--;
-                j.MatchsJoues++;
+                if (Session.Instance.Random(2, 7) == 3) j.energy--;
+                j.playedGames++;
             }
 
             int diff = _diffNiveau;
@@ -857,19 +857,19 @@ namespace TheManager
 
         private void But(Club c)
         {
-            Joueur j = Buteur(c == Domicile ? Compo1 : Compo2);
+            Player j = Buteur(c == Domicile ? Compo1 : Compo2);
             if(j != null)
             {
                 MatchEvent em = new MatchEvent(GameEvent.Goal, c, j, _minute, _miTemps);
-                if (j != null) j.ButsMarques++;
+                if (j != null) j.goalsScored++;
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
             }
         }
 
         private void CartonJaune(Club c)
         {
-            Joueur j = Carton(c == Domicile ? Compo1 : Compo2);
+            Player j = Carton(c == Domicile ? Compo1 : Compo2);
             if(j != null)
             {
 
@@ -879,12 +879,12 @@ namespace TheManager
 
                 MatchEvent em = new MatchEvent(GameEvent.YellowCard, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
 
                 //Si c'est son deuxième jaune, carte rouge attribué
                 if (deuxiemeJaune == true)
                 {
-                    List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
+                    List<Player> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
                     compo.Remove(j);
                     CalculerDifferenceNiveau();
                     em = new MatchEvent(GameEvent.RedCard, c, j, _minute, _miTemps);
@@ -896,27 +896,27 @@ namespace TheManager
 
         private void CartonRouge(Club c)
         {
-            List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
-            Joueur j = Carton(compo);
+            List<Player> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
+            Player j = Carton(compo);
             if(j != null)
             {
                 compo.Remove(j);
                 CalculerDifferenceNiveau();
                 MatchEvent em = new MatchEvent(GameEvent.RedCard, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
             }
         }
 
         private void Tir(Club c)
         {
-            List<Joueur> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
-            Joueur j = Buteur(compo);
+            List<Player> compo = c == Domicile ? _compo1Terrain : _compo2Terrain;
+            Player j = Buteur(compo);
             if(j != null)
             {
                 MatchEvent em = new MatchEvent(GameEvent.Shot, c, j, _minute, _miTemps);
                 _evenements.Add(em);
-                AjouterAction(em.MinuteToString, Session.Instance.Partie.Gestionnaire.Commentary(em));
+                AjouterAction(em.MinuteToString, Session.Instance.Partie.kernel.Commentary(em));
             }
         }
 

@@ -28,41 +28,41 @@ namespace TheManager_GUI
         public SeriesCollection MatchsCollection { get; set; }
         public string[] LabelsAnnees { get; set; }
 
-        public Windows_Joueur(Joueur joueur)
+        public Windows_Joueur(Player joueur)
         {
             InitializeComponent();
             lbJoueur.Content = joueur.ToString();
             lbAge.Content = joueur.Age + " ans";
 
-            if(joueur.Historique.Count > 0)
+            if(joueur.history.Count > 0)
             {
                 Club precedant = null;
-                int arrivee = joueur.Historique[0].Annee;
-                foreach (HistoriqueJoueur hj in joueur.Historique)
+                int arrivee = joueur.history[0].Year;
+                foreach (PlayerHistory hj in joueur.history)
                 {
                     if (precedant == null) precedant = hj.Club;
                     else if (precedant != hj.Club)
                     {
-                        int depart = hj.Annee;
+                        int depart = hj.Year;
 
                         dgHistorique.Items.Add(new JoueurHistoriqueElement { Club = precedant, AnneeA = arrivee, AnneeD = depart });
 
-                        arrivee = hj.Annee;
+                        arrivee = hj.Year;
                     }
                     precedant = hj.Club;
                 }
-                dgHistorique.Items.Add(new JoueurHistoriqueElement { Club = precedant, AnneeA = arrivee, AnneeD = joueur.Historique[joueur.Historique.Count-1].Annee });
+                dgHistorique.Items.Add(new JoueurHistoriqueElement { Club = precedant, AnneeA = arrivee, AnneeD = joueur.history[joueur.history.Count-1].Year });
 
             }
 
             ChartValues<int> niveaux = new ChartValues<int>();
             ChartValues<int> buts = new ChartValues<int>();
             ChartValues<int> joues = new ChartValues<int>();
-            foreach (HistoriqueJoueur hj in joueur.Historique)
+            foreach (PlayerHistory hj in joueur.history)
             {
-                niveaux.Add(hj.Niveau);
-                buts.Add(hj.Buts);
-                joues.Add(hj.MatchsJoues);
+                niveaux.Add(hj.Level);
+                buts.Add(hj.Goals);
+                joues.Add(hj.GamesPlayed);
             }
 
             NiveauCollection = new SeriesCollection
@@ -92,11 +92,11 @@ namespace TheManager_GUI
                 }
             };
 
-            LabelsAnnees = new string[joueur.Historique.Count];
+            LabelsAnnees = new string[joueur.history.Count];
             int i = 0;
-            foreach (HistoriqueJoueur hj in joueur.Historique)
+            foreach (PlayerHistory hj in joueur.history)
             {
-                LabelsAnnees[i] = hj.Annee.ToString();
+                LabelsAnnees[i] = hj.Year.ToString();
                 i++;
             }
  

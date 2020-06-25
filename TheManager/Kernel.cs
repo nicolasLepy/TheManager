@@ -44,7 +44,7 @@ namespace TheManager
         [DataMember]
         private List<Club> _clubs;
         [DataMember]
-        private List<Joueur> _freePlayers;
+        private List<Player> _freePlayers;
         [DataMember]
         private List<Manager> _freeManagers;
         [DataMember]
@@ -73,7 +73,7 @@ namespace TheManager
                 return res;
             }
         }
-        public List<Joueur> freePlayers { get => _freePlayers; }
+        public List<Player> freePlayers { get => _freePlayers; }
         public List<Manager> freeManagers { get => _freeManagers; }
         public List<Continent> continents { get => _continents; }
         public List<Langue> languages { get => _languages; }
@@ -84,7 +84,7 @@ namespace TheManager
         public Kernel()
         {
             _clubs = new List<Club>();
-            _freePlayers = new List<Joueur>();
+            _freePlayers = new List<Player>();
             _continents = new List<Continent>();
             _languages = new List<Langue>();
             _medias = new List<Media>();
@@ -139,9 +139,9 @@ namespace TheManager
         /// </summary>
         /// <param name="c">The tournament</param>
         /// <returns></returns>
-        public List<Joueur> TransfertList(Tournament c)
+        public List<Player> TransfertList(Tournament c)
         {
-            List<Joueur> players = new List<Joueur>();
+            List<Player> players = new List<Player>();
             Tour tournamentRound = c.rounds[0];
 
             foreach(Club club in tournamentRound.Clubs)
@@ -237,7 +237,7 @@ namespace TheManager
         public int NumberPlayersOfCountry(Pays p)
         {
             int res = 0;
-            foreach(Joueur j in _freePlayers)
+            foreach(Player j in _freePlayers)
             {
                 if (j.Nationalite == p)
                 {
@@ -248,7 +248,7 @@ namespace TheManager
             {
                 if (c as CityClub != null)
                 {
-                    foreach (Joueur j in c.Players())
+                    foreach (Player j in c.Players())
                     {
                         if (j.Nationalite == p)
                         {
@@ -260,10 +260,10 @@ namespace TheManager
             return res;
         }
 
-        public List<Joueur> GetPlayersByCountry(Pays country)
+        public List<Player> GetPlayersByCountry(Pays country)
         {
-            List<Joueur> res = new List<Joueur>();
-            foreach (Joueur j in _freePlayers)
+            List<Player> res = new List<Player>();
+            foreach (Player j in _freePlayers)
             {
                 if (j.Nationalite == country) res.Add(j); ;
             }
@@ -271,7 +271,7 @@ namespace TheManager
             {
                 if (c as CityClub != null)
                 {
-                    foreach (Joueur j in c.Players())
+                    foreach (Player j in c.Players())
                     {
                         if (j.Nationalite == country) res.Add(j);
                     }
@@ -297,8 +297,8 @@ namespace TheManager
         /// </summary>
         public void RetirementOfFreePlayers()
         {
-            List<Joueur> retiredPlayers = new List<Joueur>();
-            foreach(Joueur player in _freePlayers)
+            List<Player> retiredPlayers = new List<Player>();
+            foreach(Player player in _freePlayers)
             {
                 if (player.Age > 33)
                 {
@@ -309,7 +309,7 @@ namespace TheManager
                 }
             }
 
-            foreach (Joueur j in retiredPlayers)
+            foreach (Player j in retiredPlayers)
             {
                 _freePlayers.Remove(j);
             }

@@ -14,9 +14,9 @@ namespace TheManager
     {
         public int Wage { get; set; }
         public int ContractDuration { get; set; }
-        public Joueur Player { get; set; }
+        public Player Player { get; set; }
 
-        public ContractOffer(Joueur player, int wage, int contractDuration)
+        public ContractOffer(Player player, int wage, int contractDuration)
         {
             Player = player;
             Wage = wage;
@@ -33,16 +33,16 @@ namespace TheManager
     public class ClubTransfersManagement
     {
         [DataMember]
-        private List<Joueur> _targetedPlayers;
+        private List<Player> _targetedPlayers;
         [DataMember]
         private List<ContractOffer> _offers;
 
-        public List<Joueur> targetedPlayers { get => _targetedPlayers; }
+        public List<Player> targetedPlayers { get => _targetedPlayers; }
         public List<ContractOffer> offers { get => _offers; }
 
         public ClubTransfersManagement()
         {
-            _targetedPlayers = new List<Joueur>();
+            _targetedPlayers = new List<Player>();
             _offers = new List<ContractOffer>();
         }
     }
@@ -107,7 +107,7 @@ namespace TheManager
             _players.Add(c);
         }
 
-        public void RemovePlayer(Joueur j)
+        public void RemovePlayer(Player j)
         {
             Contract toRemove = null;
 
@@ -117,9 +117,9 @@ namespace TheManager
                 _players.Remove(toRemove);
         }
 
-        public override List<Joueur> Players()
+        public override List<Player> Players()
         {
-            List<Joueur> players = new List<Joueur>();
+            List<Player> players = new List<Player>();
             foreach (Contract c in _players)
                 players.Add(c.player);
             return players;
@@ -130,7 +130,7 @@ namespace TheManager
             float level = 0;
 
             
-            List<Joueur> players = new List<Joueur>();
+            List<Player> players = new List<Player>();
             foreach (Contract c in _players) players.Add(c.player);
             players.Sort(new Joueur_Niveau_Comparator());
 
@@ -139,7 +139,7 @@ namespace TheManager
             {
                 if (players.Count > i)
                 {
-                    level += players[i].Niveau;
+                    level += players[i].level;
                     total++;
                 }
             }
@@ -150,14 +150,14 @@ namespace TheManager
         {
             string firstName = _city.Pays().Langue.ObtenirPrenom();
             string lastName = _city.Pays().Langue.ObtenirNom();
-            int birthYear = Session.Instance.Random(Session.Instance.Partie.Date.Year - maxAge, Session.Instance.Partie.Date.Year - minAge+1);
+            int birthYear = Session.Instance.Random(Session.Instance.Partie.date.Year - maxAge, Session.Instance.Partie.date.Year - minAge+1);
 
             //Method Level -> Potential
             int level = Session.Instance.Random(formationFacilities - 18, formationFacilities + 18) + potentialOffset;
             if (level < 1) level = 1;
             if (level > 99) level = 99;
 
-            int age = Session.Instance.Partie.Date.Year - birthYear;
+            int age = Session.Instance.Partie.date.Year - birthYear;
             int diff = 24 - age;
             int potential = level;
             if (diff > 0) potential += 3 * diff;
@@ -179,9 +179,9 @@ namespace TheManager
             if(niveau < 1) niveau = 1;
              */
             
-            Joueur j = new Joueur(firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Pays(), p);
-            int year = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
-            contracts.Add(new Contract(j, j.EstimerSalaire(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+            Player j = new Player(firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Pays(), p);
+            int year = Session.Instance.Random(Session.Instance.Partie.date.Year + 1, Session.Instance.Partie.date.Year + 5);
+            contracts.Add(new Contract(j, j.EstimateWage(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Partie.date.Year, Session.Instance.Partie.date.Month, Session.Instance.Partie.date.Day)));
         }
 
         public void GeneratePlayer(int minAge, int maxAge)
@@ -276,7 +276,7 @@ namespace TheManager
         public bool Prolong(Contract ct)
         {
             bool res = false;
-            int wage = ct.player.EstimerSalaire();
+            int wage = ct.player.EstimateWage();
             if (wage < ct.wage) wage = ct.wage;
             wage = (int)(wage * (Session.Instance.Random(10, 14) / (10.0f)));
 
@@ -285,15 +285,15 @@ namespace TheManager
                 if (Session.Instance.Random(1, 3) == 1) validAge = false;
 
             bool enoughGood = true;
-            if (ct.player.Age < 25 && ct.player.Potentiel < Level() - 12)
+            if (ct.player.Age < 25 && ct.player.potential < Level() - 12)
                 enoughGood = false;
-            else if (ct.player.Age >= 25 && ct.player.Niveau < Level() - 12)
+            else if (ct.player.Age >= 25 && ct.player.level < Level() - 12)
                 enoughGood = false;
 
             if(_budget > 12*wage && validAge && enoughGood)
             {
                 res = true;
-                int year = Session.Instance.Random(Session.Instance.Partie.Date.Year + 1, Session.Instance.Partie.Date.Year + 5);
+                int year = Session.Instance.Random(Session.Instance.Partie.date.Year + 1, Session.Instance.Partie.date.Year + 5);
                 ct.Update(wage, new DateTime(year, 7, 1));
             }
 
@@ -306,7 +306,7 @@ namespace TheManager
             foreach(Contract ct in _players)
             {
                 //If a player is too bad for the club
-                if (ct.player.Potentiel / clubLevel < 0.80) ct.isTransferable = true;
+                if (ct.player.potential / clubLevel < 0.80) ct.isTransferable = true;
                 else ct.isTransferable = false;
             }
         }
@@ -315,7 +315,7 @@ namespace TheManager
         {
             if(contract.isTransferable)
             {
-                if(amount > contract.player.EstimerValeurTransfert())
+                if(amount > contract.player.EstimateTransferValue())
                 {
                     interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration));
                     //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
@@ -323,7 +323,7 @@ namespace TheManager
             }
             else
             {
-                if(amount > contract.player.EstimerValeurTransfert()*1.2f)
+                if(amount > contract.player.EstimateTransferValue()*1.2f)
                 {
                     interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration));
                     //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
@@ -341,7 +341,7 @@ namespace TheManager
             
             if(championship != null && championship.rounds[0] as TourChampionnat != null)
             {
-                foreach (Club c in Session.Instance.Partie.Gestionnaire.Clubs)
+                foreach (Club c in Session.Instance.Partie.kernel.Clubs)
                 {
                     CityClub cv = c as CityClub;
                     if (cv != null && Utils.Distance(cv.city, city) < 300)
@@ -361,7 +361,7 @@ namespace TheManager
                     begin = begin.AddHours(Session.Instance.Random(14, 22));
                     Match game = new Match(this, adv, begin, false);
                     game.Reprogrammer(0);
-                    Session.Instance.Partie.Gestionnaire.AddFriendlyGame(game );
+                    Session.Instance.Partie.kernel.AddFriendlyGame(game );
                 }
             }
         }
@@ -370,7 +370,7 @@ namespace TheManager
         {
             foreach(ContractOffer oc in clubTransfersManagement.offers)
             {
-                oc.Player.ConsidererOffre(oc, this);
+                oc.Player.ConsiderOffer(oc, this);
             }
 
             clubTransfersManagement.offers.Clear();
@@ -380,8 +380,8 @@ namespace TheManager
         {
             if(clubTransfersManagement.targetedPlayers.Count > 0)
             {
-                Joueur target = clubTransfersManagement.targetedPlayers[0];
-                int wage = (int)(target.EstimerSalaire() * (Session.Instance.Random(80, 120) / 100.0f));
+                Player target = clubTransfersManagement.targetedPlayers[0];
+                int wage = (int)(target.EstimateWage() * (Session.Instance.Random(80, 120) / 100.0f));
                 clubTransfersManagement.offers.Add(new ContractOffer(target, wage, Session.Instance.Random(1, 5)));
             }
         }
@@ -403,14 +403,14 @@ namespace TheManager
             int playersFound = 0;
             while(pursue)
             {
-                Joueur j = Session.Instance.Partie.Gestionnaire.freePlayers[i];
+                Player j = Session.Instance.Partie.kernel.freePlayers[i];
                 //Likely to interest the club
-                if ((Session.Instance.Random(1,chance) == 1) && j.Niveau / level > 0.90f)
+                if ((Session.Instance.Random(1,chance) == 1) && j.level / level > 0.90f)
                 {
                     //If the player has not a pro level, it has to be on the same country
                     //(unrealistic to have many foreign player in amateur club)
                     bool can = true;
-                    if (j.Niveau < 60 && j.Nationalite != countryClub) can = false;
+                    if (j.level < 60 && j.Nationalite != countryClub) can = false;
                     if(can)
                     {
                         clubTransfersManagement.targetedPlayers.Add(j);
@@ -418,7 +418,7 @@ namespace TheManager
                     }
                 }
                 i++;
-                if (i == Session.Instance.Partie.Gestionnaire.freePlayers.Count || playersFound == playersToResearch)
+                if (i == Session.Instance.Partie.kernel.freePlayers.Count || playersFound == playersToResearch)
                     pursue = false;
             }
             clubTransfersManagement.targetedPlayers.Sort(new Joueur_Niveau_Comparator());
@@ -430,7 +430,7 @@ namespace TheManager
         /// </summary>
         public void CompleteSquad()
         {
-            List<Joueur> players = ListPlayersByPosition(Position.Goalkeeper);
+            List<Player> players = ListPlayersByPosition(Position.Goalkeeper);
             if(players.Count < 2)
             {
                 for (int i = 0; i < 2 - players.Count; i++)

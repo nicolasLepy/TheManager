@@ -34,9 +34,9 @@ namespace TheManager
             get
             {
                 Media res = null;
-                foreach(Media m in Session.Instance.Partie.Gestionnaire.medias)
+                foreach(Media m in Session.Instance.Partie.kernel.medias)
                 {
-                    foreach (Journaliste j in m.Journalistes) if (j == this) res = m;
+                    foreach (Journaliste j in m.journalists) if (j == this) res = m;
                 }
                 return res;
             }
@@ -51,7 +51,7 @@ namespace TheManager
             {
                 int res = 0;
 
-                foreach(Match m in Session.Instance.Partie.Gestionnaire.Matchs)
+                foreach(Match m in Session.Instance.Partie.kernel.Matchs)
                 {
                     foreach(KeyValuePair<Media, Journaliste> j in m.Journalistes)
                     {

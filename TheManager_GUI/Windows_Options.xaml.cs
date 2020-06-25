@@ -35,14 +35,14 @@ namespace TheManager_GUI
 
             InitializeComponent();
             _checkbox = new List<CheckBox>();
-            cbExporter.IsChecked = Session.Instance.Partie.Options.Exporter;
-            cbTransferts.IsChecked = Session.Instance.Partie.Options.Transferts;
-            cbSimuler.IsChecked = Session.Instance.Partie.Options.SimulerMatchs;
+            cbExporter.IsChecked = Session.Instance.Partie.options.ExportEnabled;
+            cbTransferts.IsChecked = Session.Instance.Partie.options.transfersEnabled;
+            cbSimuler.IsChecked = Session.Instance.Partie.options.simulateGames;
 
-            foreach(Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
+            foreach(Tournament c in Session.Instance.Partie.kernel.Competitions)
             {
                 CheckBox cb = new CheckBox();
-                cb.IsChecked = Session.Instance.Partie.Options.CompetitionsAExporter.Contains(c);
+                cb.IsChecked = Session.Instance.Partie.options.tournamentsToExport.Contains(c);
                 cb.Content = c.name;
                 cb.Style = FindResource("StyleCheckBox") as Style;
                 spOptions.Children.Add(cb);
@@ -104,16 +104,16 @@ namespace TheManager_GUI
 
         private void BtnValider_Click(object sender, RoutedEventArgs e)
         {
-            Session.Instance.Partie.Options.CompetitionsAExporter.Clear();
+            Session.Instance.Partie.options.tournamentsToExport.Clear();
             foreach(CheckBox cb in _checkbox)
             {
-                Tournament comp = Session.Instance.Partie.Gestionnaire.String2Tournament(cb.Content.ToString());
+                Tournament comp = Session.Instance.Partie.kernel.String2Tournament(cb.Content.ToString());
                 if (cb.IsChecked == true)
-                    Session.Instance.Partie.Options.CompetitionsAExporter.Add(comp);
+                    Session.Instance.Partie.options.tournamentsToExport.Add(comp);
             }
-            Session.Instance.Partie.Options.Exporter = (bool)cbExporter.IsChecked;
-            Session.Instance.Partie.Options.Transferts = (bool)cbTransferts.IsChecked;
-            Session.Instance.Partie.Options.SimulerMatchs = (bool)cbSimuler.IsChecked;
+            Session.Instance.Partie.options.ExportEnabled = (bool)cbExporter.IsChecked;
+            Session.Instance.Partie.options.transfersEnabled = (bool)cbTransferts.IsChecked;
+            Session.Instance.Partie.options.simulateGames = (bool)cbSimuler.IsChecked;
 
             Close();
         }

@@ -47,8 +47,8 @@ namespace TheManager_GUI
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if (openFileDialog.ShowDialog() == true)
             {
-                Partie p = new Partie();
-                p.Charger(openFileDialog.FileName);
+                Game p = new Game();
+                p.Load(openFileDialog.FileName);
                 Session.Instance.Partie = p;
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();

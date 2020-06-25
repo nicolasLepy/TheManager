@@ -17,16 +17,16 @@ namespace TheManager
         [DataMember]
         private DateTime _end;
         [DataMember]
-        private Joueur _player;
+        private Player _player;
 
         public int wage => _wage;
         public DateTime end => _end;
         [DataMember]
         public bool isTransferable { get; set; }
-        public Joueur player { get => _player; }
+        public Player player { get => _player; }
         public DateTime beginning { get => _beginning; }
 
-        public Contract(Joueur player, int wage, DateTime end, DateTime begin)
+        public Contract(Player player, int wage, DateTime end, DateTime begin)
         {
             _player = player;
             _wage = wage;

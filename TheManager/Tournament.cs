@@ -17,7 +17,7 @@ namespace TheManager
         [DataMember]
         public Match LargerScore { get; set; }
         [DataMember]
-        public KeyValuePair<int, Joueur> TopGoalscorerOnOneSeason { get; set; }
+        public KeyValuePair<int, Player> TopGoalscorerOnOneSeason { get; set; }
         [DataMember]
         public KeyValuePair<int, Club> BiggestAttack { get; set; }
         [DataMember]
@@ -31,7 +31,7 @@ namespace TheManager
         {
             BiggerScore = null;
             LargerScore = null;
-            TopGoalscorerOnOneSeason = new KeyValuePair<int, Joueur>(0, null);
+            TopGoalscorerOnOneSeason = new KeyValuePair<int, Player>(0, null);
             BiggestAttack = new KeyValuePair<int, Club>(0, null);
             WeakestAttack = new KeyValuePair<int, Club>(0, null);
             BiggestDefense = new KeyValuePair<int, Club>(0, null);
@@ -235,20 +235,20 @@ namespace TheManager
             }
         }
 
-        public List<KeyValuePair<Joueur, int>> Goalscorers()
+        public List<KeyValuePair<Player, int>> Goalscorers()
         {
-            Dictionary<Joueur, int> goalscorers = new Dictionary<Joueur, int>();
+            Dictionary<Player, int> goalscorers = new Dictionary<Player, int>();
 
             foreach(Tour t in _rounds)
             {
-                foreach(KeyValuePair<Joueur,int> kvp in t.Buteurs())
+                foreach(KeyValuePair<Player,int> kvp in t.Buteurs())
                 {
                     if (goalscorers.ContainsKey(kvp.Key)) goalscorers[kvp.Key] += kvp.Value;
                     else goalscorers[kvp.Key] = kvp.Value;
                 }
             }
 
-            List<KeyValuePair<Joueur, int>> list = goalscorers.ToList();
+            List<KeyValuePair<Player, int>> list = goalscorers.ToList();
 
             list.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
 
@@ -285,7 +285,7 @@ namespace TheManager
                 foreach (Rule r in t.Regles) tour.Regles.Add(r);
             }
 
-            foreach(Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
+            foreach(Tournament c in Session.Instance.Partie.kernel.Competitions)
             {
                 if(c != this)
                 {

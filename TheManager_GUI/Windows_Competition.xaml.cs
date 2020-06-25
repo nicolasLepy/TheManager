@@ -87,7 +87,7 @@ namespace TheManager_GUI
         {
             dgButeurs.Items.Clear();
 
-            foreach (KeyValuePair<Joueur, int> buteur in _competition.Goalscorers())
+            foreach (KeyValuePair<Player, int> buteur in _competition.Goalscorers())
             {
                 dgButeurs.Items.Add(new ButeurElement { Buteur = buteur.Key, Club = buteur.Key.Club == null ? buteur.Key.Nationalite.Name() : Utils.Logo(buteur.Key.Club), NbButs = buteur.Value });
             }

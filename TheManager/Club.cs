@@ -59,7 +59,7 @@ namespace TheManager
             {
                 List<Match> res = new List<Match>();
 
-                foreach (Match game in Session.Instance.Partie.Gestionnaire.Matchs)
+                foreach (Match game in Session.Instance.Partie.kernel.Matchs)
                 {
                     if (game.Domicile == this || game.Exterieur == this) res.Add(game);
                 }
@@ -122,7 +122,7 @@ namespace TheManager
             {
                 Tournament res = null;
 
-                foreach(Tournament tournament in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach(Tournament tournament in Session.Instance.Partie.kernel.Competitions)
                 {
                     if(tournament.isChampionship)
                     {
@@ -143,7 +143,7 @@ namespace TheManager
             }
         }
 
-        public abstract List<Joueur> Players();
+        public abstract List<Player> Players();
         public abstract float Level();
 
         public float Stars
@@ -189,17 +189,17 @@ namespace TheManager
             _goalMusic = goalMusic;
         }
 
-        public List<Joueur> ListPlayersByPosition(Position position)
+        public List<Player> ListPlayersByPosition(Position position)
         {
             return Utils.PlayersByPoste(Players(), position);
         }
 
-        private List<Joueur> ListEligiblePlayersByPosition(Position position)
+        private List<Player> ListEligiblePlayersByPosition(Position position)
         {
-            List<Joueur> res = new List<Joueur>();
-            foreach (Joueur j in Players())
+            List<Player> res = new List<Player>();
+            foreach (Player j in Players())
             {
-                if (j.Poste == position && !j.Suspendu)
+                if (j.position == position && !j.suspended)
                 {
                     res.Add(j);
                 }
@@ -207,11 +207,11 @@ namespace TheManager
             return res;
         }
 
-        public List<Joueur> Composition()
+        public List<Player> Composition()
         {
-            List<Joueur> res = new List<Joueur>();
+            List<Player> res = new List<Player>();
 
-            List<Joueur> joueursPosition = ListEligiblePlayersByPosition(Position.Goalkeeper);
+            List<Player> joueursPosition = ListEligiblePlayersByPosition(Position.Goalkeeper);
             joueursPosition.Sort(new Joueur_Composition_Comparator());
             if (joueursPosition.Count >= 1)
                 res.Add(joueursPosition[0]);
@@ -265,7 +265,7 @@ namespace TheManager
         /// <param name="newManager">The new manager of the club</param>
         public void ChangeManager(Manager newManager)
         {
-            Session.Instance.Partie.Gestionnaire.freeManagers.Add(_manager);
+            Session.Instance.Partie.kernel.freeManagers.Add(_manager);
             _manager = newManager;
         }
 

@@ -147,19 +147,19 @@ namespace TheManager_GUI
 
             }
 
-            foreach (Joueur j in match.Compo1)
+            foreach (Player j in match.Compo1)
             {
-                dgCompo1.Items.Add(new JoueurElement { Joueur = j, Poste = j.Poste });
+                dgCompo1.Items.Add(new JoueurElement { Joueur = j, Poste = j.position });
             }
 
-            foreach (Joueur j in match.Compo2)
+            foreach (Player j in match.Compo2)
             {
-                dgCompo2.Items.Add(new JoueurElement { Joueur = j, Poste = j.Poste });
+                dgCompo2.Items.Add(new JoueurElement { Joueur = j, Poste = j.position });
             }
 
             foreach (KeyValuePair<TheManager.Media, Journaliste> j in match.Journalistes)
             {
-                dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j.Value, Media = j.Key.Nom });
+                dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j.Value, Media = j.Key.name });
             }
         }
 
@@ -201,7 +201,7 @@ namespace TheManager_GUI
 
     public struct JoueurElement : IEquatable<JoueurElement>
     {
-        public Joueur Joueur { get; set; }
+        public Player Joueur { get; set; }
         public Position Poste { get; set; }
         public bool Equals(JoueurElement other)
         {

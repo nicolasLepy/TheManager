@@ -229,7 +229,7 @@ namespace TheManager
             {
                 Tournament competition = null;
 
-                foreach(Tournament c in Session.Instance.Partie.Gestionnaire.Competitions)
+                foreach(Tournament c in Session.Instance.Partie.kernel.Competitions)
                 {
                     foreach(Tour t in c.rounds)
                     {
@@ -272,9 +272,9 @@ namespace TheManager
         /// Liste des buteurs par ordre décroissant
         /// </summary>
         /// <returns>Une liste de KeyValuePair avec le joueur en clé et son nombre de buts en valeur</returns>
-        public List<KeyValuePair<Joueur, int>> Buteurs()
+        public List<KeyValuePair<Player, int>> Buteurs()
         {
-            Dictionary<Joueur, int> buteurs = new Dictionary<Joueur, int>();
+            Dictionary<Player, int> buteurs = new Dictionary<Player, int>();
             foreach(Match m in _matchs)
             {
                 foreach(MatchEvent em in m.Evenements)
@@ -287,7 +287,7 @@ namespace TheManager
                 }
             }
 
-            List<KeyValuePair<Joueur, int>> liste = buteurs.ToList();
+            List<KeyValuePair<Player, int>> liste = buteurs.ToList();
 
             liste.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
 

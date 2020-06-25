@@ -17,7 +17,7 @@ namespace TheManager
         private List<Club>[] _poules;
 
         [DataMember]
-        private DrawingMethod _methodeTirageAuSort;
+        private RandomDrawingMethod _methodeTirageAuSort;
         [DataMember]
         private List<GeographicPosition> _localisationGroupes;
         [DataMember]
@@ -43,7 +43,7 @@ namespace TheManager
             _nomGroupes.Add(nom);
         }
 
-        public TourPoules(string nom, Hour heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, DrawingMethod methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
+        public TourPoules(string nom, Hour heure, List<DateTime> dates, List<DecalagesTV> decalages, int nombrePoules, bool allerRetour, DateTime initialisation, DateTime fin, RandomDrawingMethod methodeTirageAuSort) : base(nom, heure, dates, decalages, initialisation,fin, allerRetour,0)
         {
             _nombrePoules = nombrePoules;
             _poules = new List<Club>[_nombrePoules];
@@ -161,10 +161,10 @@ namespace TheManager
             IRandomDrawing tirage = null;
             switch (_methodeTirageAuSort)
             {
-                case DrawingMethod.Level:
+                case RandomDrawingMethod.Level:
                     tirage = new TirageAuSortParNiveau(this);
                     break;
-                case DrawingMethod.Geographic:
+                case RandomDrawingMethod.Geographic:
                     tirage = new TirageAuSortGeographique(this);
                     break;
             }

@@ -22,7 +22,7 @@ namespace TheManager_GUI
     {
         private List<Match> _matchs;
         private Club _club;
-        private List<Joueur> _joueurs;
+        private List<Player> _joueurs;
 
         public void AfficherComposition()
         {
@@ -31,10 +31,10 @@ namespace TheManager_GUI
             spAttaquants.Children.Clear();
             spGardiens.Children.Clear();
 
-            foreach(Joueur j in _joueurs)
+            foreach(Player j in _joueurs)
             {
                 StackPanel conteneur = null;
-                switch(j.Poste)
+                switch(j.position)
                 {
                     case Position.Goalkeeper: conteneur = spGardiens;break;
                     case Position.Defender: conteneur = spDefenseurs; break;
@@ -51,14 +51,14 @@ namespace TheManager_GUI
                 label.Style = Application.Current.FindResource("StyleLabel2") as Style;
 
                 ProgressBar pb = new ProgressBar();
-                pb.Value = j.Energie;
+                pb.Value = j.energy;
                 pb.Maximum = 100;
                 pb.Height = 5;
                 pb.Width = 40;
 
 
                 Label note = new Label();
-                note.Content = j.Niveau;
+                note.Content = j.level;
                 note.HorizontalAlignment = HorizontalAlignment.Center;
                 note.FontSize = 10;
                 note.Style = Application.Current.FindResource("StyleLabel2") as Style;
@@ -75,7 +75,7 @@ namespace TheManager_GUI
         public Windows_AvantMatch(List<Match> m, Club c)
         {
             InitializeComponent();
-            _joueurs = new List<Joueur>();
+            _joueurs = new List<Player>();
             _matchs = m;
             _club = c;
 
@@ -85,9 +85,9 @@ namespace TheManager_GUI
             }
 
 
-            foreach (Joueur j in c.Players())
+            foreach (Player j in c.Players())
             {
-                dgJoueursDispo.Items.Add(new JoueurCompoElement { Poste = j.Poste.ToString(), Age = j.Age, Energie = j.Energie, Niveau = j.Niveau, Nom = j});
+                dgJoueursDispo.Items.Add(new JoueurCompoElement { Poste = j.position.ToString(), Age = j.Age, Energie = j.energy, Niveau = j.level, Nom = j});
             }
 
             lbMatch.Content = m[0].Domicile + " - " + m[0].Exterieur;
@@ -116,8 +116,8 @@ namespace TheManager_GUI
         {
             _joueurs.Clear();
 
-            List<Joueur> compo = _club.Composition();
-            foreach(Joueur j in compo)
+            List<Player> compo = _club.Composition();
+            foreach(Player j in compo)
             {
                 _joueurs.Add(j);
             }
@@ -137,7 +137,7 @@ namespace TheManager_GUI
            
             if (VerifierComposition())
             {
-                List<Joueur> compo = new List<Joueur>();
+                List<Player> compo = new List<Player>();
                 for (int i = 0; i < _joueurs.Count; i++)
                 {
                     compo.Add(_joueurs[i]);
@@ -156,7 +156,7 @@ namespace TheManager_GUI
             
             if (VerifierComposition())
             {
-                List<Joueur> compo = new List<Joueur>();
+                List<Player> compo = new List<Player>();
                 for (int i = 0; i < _joueurs.Count; i++)
                 {
                     compo.Add(_joueurs[i]);
@@ -190,7 +190,7 @@ namespace TheManager_GUI
     public struct JoueurCompoElement : IEquatable<JoueurCompoElement>
     {
         public string Poste { get; set; }
-        public Joueur Nom { get; set; }
+        public Player Nom { get; set; }
         public int Age { get; set; }
         public int Niveau { get; set; }
         public int Energie { get; set; }

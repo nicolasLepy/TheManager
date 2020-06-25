@@ -221,7 +221,7 @@ namespace TheManager
                         if (city == null)
                             Console.WriteLine(e3.Attribute("ville").Value + " n'est pas une ville.");
                         Journaliste j = new Journaliste(firstName, lastName, age, city, offset);
-                        m.Journalistes.Add(j);
+                        m.journalists.Add(j);
                     }
 
                     foreach (XElement e3 in e2.Descendants("Couvre"))
@@ -232,7 +232,7 @@ namespace TheManager
                         int multiplexMinGames = -1;
                         if (e3.Attribute("matchParMultiplex") != null) averageGames = int.Parse(e3.Attribute("matchParMultiplex").Value);
                         if (e3.Attribute("multiplex") != null) multiplexMinGames = int.Parse(e3.Attribute("multiplex").Value);
-                        m.Couvertures.Add(new CouvertureCompetition(tournament, index, multiplexMinGames, averageGames));
+                        m.coverages.Add(new TournamentCoverage(tournament, index, multiplexMinGames, averageGames));
                     }
                 }
             }
@@ -268,8 +268,8 @@ namespace TheManager
                             position = Position.Defender;
                             break;
                     }
-                    Joueur j = new Joueur(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Country("France"), position);
-                    club.AddPlayer(new Contract(j, j.EstimerSalaire(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.Date.Year, Session.Instance.Partie.Date.Month, Session.Instance.Partie.Date.Day)));
+                    Player j = new Player(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Country("France"), position);
+                    club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Partie.date.Year, Session.Instance.Partie.date.Month, Session.Instance.Partie.date.Day)));
                 }
             }
         }
@@ -536,10 +536,10 @@ namespace TheManager
                         else if(type =="poules")
                         {
                             int groupsNumber = int.Parse(e3.Attribute("nombrePoules").Value);
-                            DrawingMethod method = String2DrawingMethod(e3.Attribute("methode").Value);
+                            RandomDrawingMethod method = String2DrawingMethod(e3.Attribute("methode").Value);
                             round = new TourPoules(nomTour, String2Hour(hourByDefault), dates, new List<DecalagesTV>(), groupsNumber, twoLegged, initialisationDate, endDate, method);
 
-                            if(method == DrawingMethod.Geographic)
+                            if(method == RandomDrawingMethod.Geographic)
                             {
                                 //Lecture position poules
                                 for (int groupNum = 1; groupNum <= groupsNumber; groupNum++)
@@ -763,7 +763,7 @@ namespace TheManager
                                 case 4: case 5: case 6: p = Position.Midfielder;  break;
                                 case 7: case 8: p = Position.Striker;  break;
                             }
-                            Joueur j = new Joueur(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.Pays, p);
+                            Player j = new Player(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.Pays, p);
                             _kernel.freePlayers.Add(j);
                         }
                     }
@@ -788,12 +788,12 @@ namespace TheManager
             return h;
         }
 
-        private DrawingMethod String2DrawingMethod(string method)
+        private RandomDrawingMethod String2DrawingMethod(string method)
         {
-            DrawingMethod res = DrawingMethod.Level;
+            RandomDrawingMethod res = RandomDrawingMethod.Level;
 
-            if (method == "Niveau") res = DrawingMethod.Level;
-            else if (method == "Geographique") res = DrawingMethod.Geographic;
+            if (method == "Niveau") res = RandomDrawingMethod.Level;
+            else if (method == "Geographique") res = RandomDrawingMethod.Geographic;
 
             return res;
         }

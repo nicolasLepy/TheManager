@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace TheManager.Comparators
 {
-    public class Joueur_Composition_Comparator : IComparer<Joueur>
+    public class Joueur_Composition_Comparator : IComparer<Player>
     {
-        public int Compare(Joueur x, Joueur y)
+        public int Compare(Player x, Player y)
         {
-            return (int)(y.Niveau * ((y.Energie/200.0f)+0.5f) - x.Niveau * ((x.Energie/200.0f)+0.5f));
+            return (int)(y.level * ((y.energy/200.0f)+0.5f) - x.level * ((x.energy/200.0f)+0.5f));
         }
     }
 }

@@ -15,7 +15,7 @@ namespace TheManager
         [DataMember]
         private float _coefficient;
         [DataMember]
-        private List<Joueur> _selectionnes;
+        private List<Player> _selectionnes;
         [DataMember]
         private Pays _pays;
 
@@ -25,29 +25,29 @@ namespace TheManager
         public SelectionNationale(string nom, Manager entraineur, string nomCourt,int reputation, int supporters, int centreFormation, string logo, Stade stade, float coefficient, Pays pays, string musiqueBut) : base(nom,entraineur, nomCourt,reputation,supporters,centreFormation,logo,stade,musiqueBut)
         {
             _coefficient = coefficient;
-            _selectionnes = new List<Joueur>();
+            _selectionnes = new List<Player>();
             _pays = pays;
         }
 
-        public override List<Joueur> Players()
+        public override List<Player> Players()
         {
-           return new List<Joueur>(_selectionnes);
+           return new List<Player>(_selectionnes);
         }
 
         public override float Level()
         {
             float res = 0;
-            foreach(Joueur j in _selectionnes)
+            foreach(Player j in _selectionnes)
             {
-                res += j.Niveau;
+                res += j.level;
             }
             return res / (_selectionnes.Count + 0.0f);
         }
 
-        public void AppelSelection(List<Joueur> joueurs)
+        public void AppelSelection(List<Player> joueurs)
         {
-            _selectionnes = new List<Joueur>();
-            List<Joueur> joueursPoste = Utils.PlayersByPoste(joueurs,Position.Goalkeeper);
+            _selectionnes = new List<Player>();
+            List<Player> joueursPoste = Utils.PlayersByPoste(joueurs,Position.Goalkeeper);
             joueursPoste.Sort(new Joueur_Niveau_Comparator());
             for(int i = 0; i<3; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);

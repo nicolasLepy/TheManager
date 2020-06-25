@@ -87,12 +87,12 @@
     <Compile Include="Langue.cs" />
     <Compile Include="Match.cs" />
     <Compile Include="Media.cs" />
-    <Compile Include="MethodeTirageAuSort.cs" />
+    <Compile Include="RandomDrawingMethod.cs" />
     <Compile Include="Options.cs" />
-    <Compile Include="Partie.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="Pays.cs" />
     <Compile Include="Continent.cs" />
-    <Compile Include="Joueur.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Personne.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -24,9 +24,9 @@ namespace TheManager
             _players = new List<Contract>();
         }
 
-        public override List<Joueur> Players()
+        public override List<Player> Players()
         {
-            List<Joueur> res = new List<Joueur>();
+            List<Player> res = new List<Player>();
             foreach (Contract ct in _players) res.Add(ct.player);
             return res;
         }
@@ -36,7 +36,7 @@ namespace TheManager
             float res = 0;
             foreach (Contract ct in _players)
             {
-                res += ct.player.Niveau;
+                res += ct.player.level;
             }
             return res / (_players.Count + 0.0f);
         }

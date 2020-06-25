@@ -9,27 +9,27 @@ namespace TheManager
 {
 
     [DataContract]
-    public struct CouvertureCompetition : IEquatable<CouvertureCompetition>
+    public struct TournamentCoverage : IEquatable<TournamentCoverage>
     {
         [DataMember]
-        public Tournament Competition { get; set; }
+        public Tournament Tournament { get; set; }
         [DataMember]
-        public int IndexDebut { get; set; }
+        public int BeginIndex { get; set; }
         [DataMember]
-        public int NombreMatchsMiniMultiplex { get; set; }
+        public int MinimumGamesNumberOfMultiplex { get; set; }
         [DataMember]
-        public int NombreMatchsParMultiplex { get; set; }
+        public int GamesNumberByMultiplex { get; set; }
 
-        public CouvertureCompetition(Tournament competition, int indexDebut, int nombreMatchsMiniMultiplex, int nombreMatchsParMultiplex)
+        public TournamentCoverage(Tournament tournament, int beginIndex, int minimumGamesNumberOfMultiplex, int gamesNumberByMultiplex)
         {
-            Competition = competition;
-            IndexDebut = indexDebut;
-            NombreMatchsMiniMultiplex = nombreMatchsMiniMultiplex;
-            NombreMatchsParMultiplex = nombreMatchsParMultiplex;
+            Tournament = tournament;
+            BeginIndex = beginIndex;
+            MinimumGamesNumberOfMultiplex = minimumGamesNumberOfMultiplex;
+            GamesNumberByMultiplex = gamesNumberByMultiplex;
 
         }
 
-        public bool Equals(CouvertureCompetition other)
+        public bool Equals(TournamentCoverage other)
         {
             throw new NotImplementedException();
         }
@@ -39,52 +39,58 @@ namespace TheManager
     public class Media
     {
         [DataMember]
-        private string _nom;
+        private string _name;
         [DataMember]
-        private List<Journaliste> _journalistes;
+        private List<Journaliste> _journalists;
         [DataMember]
-        private List<CouvertureCompetition> _couvertures;
+        private List<TournamentCoverage> _coverages;
         [DataMember]
-        private Pays _pays;
+        private Pays _country;
 
-        public string Nom { get => _nom; }
-        public List<Journaliste> Journalistes { get => _journalistes; }
-        public List<CouvertureCompetition> Couvertures { get => _couvertures; }
-        public Pays Pays { get => _pays; }
+        public string name { get => _name; }
+        public List<Journaliste> journalists { get => _journalists; }
+        public List<TournamentCoverage> coverages { get => _coverages; }
+        public Pays country { get => _country; }
 
-        public Media(string nom, Pays pays)
+        public Media(string name, Pays country)
         {
-            _nom = nom;
-            _journalistes = new List<Journaliste>();
-            _couvertures = new List<CouvertureCompetition>();
-            _pays = pays;
+            _name = name;
+            _journalists = new List<Journaliste>();
+            _coverages = new List<TournamentCoverage>();
+            _country = country;
         }
 
-        public bool Couvre(Tournament c, int indexTour)
+        /// <summary>
+        /// If a media cover a tournament's round
+        /// </summary>
+        /// <param name="c">The tournament</param>
+        /// <param name="roundIndex">The index to the round</param>
+        /// <returns>True if yes, False it not</returns>
+        public bool Cover(Tournament c, int roundIndex)
         {
             bool res = false;
-            foreach(CouvertureCompetition cc in Couvertures)
+            foreach(TournamentCoverage cc in coverages)
             {
-                if (cc.Competition == c && cc.IndexDebut <= indexTour) res = true;
+                if (cc.Tournament == c && cc.BeginIndex <= roundIndex) res = true;
             }
             return res;
         }
 
-        public CouvertureCompetition GetCouverture(Tournament competition)
+        public TournamentCoverage GetCoverage(Tournament tournament)
         {
-            CouvertureCompetition res = _couvertures[0];
+            TournamentCoverage res = _coverages[0];
 
-            foreach(CouvertureCompetition c in _couvertures)
+            foreach(TournamentCoverage c in _coverages)
             {
-                if (c.Competition == competition) res = c;
+                if (c.Tournament == tournament) res = c;
             }
 
             return res;
         }
 
-        public void LibererJournalistes()
+        public void FreeJournalists()
         {
-            foreach (Journaliste j in _journalistes) j.EstPris = false;
+            foreach (Journaliste j in _journalists) j.EstPris = false;
         }
 
     }

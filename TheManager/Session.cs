@@ -31,7 +31,7 @@ namespace TheManager
 
         private Random _random;
 
-        public Partie Partie { get; set; }
+        public Game Partie { get; set; }
 
         /// <summary>
         /// Nombre aléatoire appartenant à [min,max[

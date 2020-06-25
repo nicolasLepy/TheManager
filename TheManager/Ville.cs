@@ -27,7 +27,7 @@ namespace TheManager
         public Pays Pays()
         {
             Pays res = null;
-            foreach(Continent c in Session.Instance.Partie.Gestionnaire.continents)
+            foreach(Continent c in Session.Instance.Partie.kernel.continents)
             {
                 foreach(Pays p in c.countries)
                 {

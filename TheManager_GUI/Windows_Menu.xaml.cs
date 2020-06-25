@@ -23,7 +23,7 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_Menu : Window
     {
-        private Partie _partie = null;
+        private Game _partie = null;
 
         private DateTime _calendrierJour;
 
@@ -36,9 +36,9 @@ namespace TheManager_GUI
 
             _partie = Session.Instance.Partie;
 
-            imgClub.Source = new BitmapImage(new Uri(Utils.Logo(_partie.Club)));
+            imgClub.Source = new BitmapImage(new Uri(Utils.Logo(_partie.club)));
             comboPays.Items.Clear();
-            foreach (Continent c in _partie.Gestionnaire.continents)
+            foreach (Continent c in _partie.kernel.continents)
             {
                 if (c.Tournaments().Count > 0) this.comboPays.Items.Add(c);
                 foreach (Pays p in c.countries) if (p.Tournaments().Count > 0) { this.comboPays.Items.Add(p); Console.WriteLine(p); }
@@ -51,7 +51,7 @@ namespace TheManager_GUI
         private void RemplirArticles()
         {
             spNews.Children.Clear();
-            foreach(Article a in Session.Instance.Partie.Articles)
+            foreach(Article a in Session.Instance.Partie.articles)
             {
                 TextBlock tb = new TextBlock();
                 tb.TextWrapping = TextWrapping.WrapWithOverflow;
@@ -69,10 +69,10 @@ namespace TheManager_GUI
 
         private void Avancer()
         {
-            List<Match> matchs = _partie.Avancer();
+            List<Match> matchs = _partie.NextDay();
             if (matchs.Count > 0)
             {
-                Windows_AvantMatch wam = new Windows_AvantMatch(matchs, _partie.Club);
+                Windows_AvantMatch wam = new Windows_AvantMatch(matchs, _partie.club);
                 wam.ShowDialog();
             }
             Refresh();
@@ -162,7 +162,7 @@ namespace TheManager_GUI
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
         {
             Avancer();
-            while (!(_partie.Date.Month == 6 && _partie.Date.Day == 13))
+            while (!(_partie.date.Month == 6 && _partie.date.Day == 13))
             {
                 Avancer();
             }
@@ -172,10 +172,10 @@ namespace TheManager_GUI
         {
             for(int i = 0; i<10;i++)
             {
-                _partie.Avancer();
-                while (!(_partie.Date.Month == 6 && _partie.Date.Day == 13))
+                _partie.NextDay();
+                while (!(_partie.date.Month == 6 && _partie.date.Day == 13))
                 {
-                    _partie.Avancer();
+                    _partie.NextDay();
                 }
                 Refresh();
             }
@@ -198,7 +198,7 @@ namespace TheManager_GUI
 
         private void Refresh()
         {
-            this.labelDate.Content = _partie.Date.ToLongDateString();
+            this.labelDate.Content = _partie.date.ToLongDateString();
             if(cbOpti.IsChecked == false)
             {
                 ProchainsMatchsClub();
@@ -211,10 +211,10 @@ namespace TheManager_GUI
         private void BandeauActualites()
         {
             tbActu.Text = "";
-            if (_partie.Club != null && _partie.Club.Championship != null)
+            if (_partie.club != null && _partie.club.Championship != null)
             {
                 //Choix de la compétition à afficher dans le bandeau : compétition du dernier match joué par l'équipe
-                List<Match> matchs = _partie.Club.Games;
+                List<Match> matchs = _partie.club.Games;
                 bool trouve = false;
                 Tournament comp = null;
                 int i = 0;
@@ -261,11 +261,11 @@ namespace TheManager_GUI
         private void ClassementClub()
         {
             dgClubClassement.Items.Clear();
-            if(_partie.Club != null && _partie.Club.Championship != null)
+            if(_partie.club != null && _partie.club.Championship != null)
             {
-                Tour championnat = _partie.Club.Championship.rounds[0];
+                Tour championnat = _partie.club.Championship.rounds[0];
                 List<Club> classement = (championnat as TourChampionnat).Classement();
-                int indice = classement.IndexOf(_partie.Club);
+                int indice = classement.IndexOf(_partie.club);
                 indice = indice - 2;
                 if (indice < 0) indice = 0;
                 if (indice > classement.Count - 5) indice = classement.Count - 5;
@@ -280,19 +280,19 @@ namespace TheManager_GUI
         private void ProchainsMatchsClub()
         {
             dgClubProchainsMatchs.Items.Clear();
-            if(_partie.Club != null)
+            if(_partie.club != null)
             {
                 List<Match> matchs = new List<Match>();
-                foreach (Match m in _partie.Gestionnaire.Matchs)
+                foreach (Match m in _partie.kernel.Matchs)
                 {
-                    if (m.Domicile == _partie.Club || m.Exterieur == _partie.Club) matchs.Add(m);
+                    if (m.Domicile == _partie.club || m.Exterieur == _partie.club) matchs.Add(m);
                 }
                 matchs.Sort(new Match_Date_Comparator());
                 int diff = -1;
                 int indice = -1;
                 foreach (Match m in matchs)
                 {
-                    TimeSpan ts = m.Jour - _partie.Date;
+                    TimeSpan ts = m.Jour - _partie.date;
 
                     int diffM = Math.Abs(ts.Days);
                     if (diffM < diff || diff == -1)
@@ -363,7 +363,7 @@ namespace TheManager_GUI
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             if (saveFileDialog.ShowDialog() == true)
             {
-                Session.Instance.Partie.Sauvegarder(saveFileDialog.FileName);
+                Session.Instance.Partie.Save(saveFileDialog.FileName);
             }
         }
 
@@ -429,7 +429,7 @@ namespace TheManager_GUI
 
     public struct ButeurElement : IEquatable<ButeurElement>
     {
-        public Joueur Buteur { get; set; }
+        public Player Buteur { get; set; }
         public int NbButs { get; set; }
         public string Club { get; set; }
         public bool Equals(ButeurElement other)
