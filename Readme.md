@@ -4,7 +4,6 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Screenshots
 
-
 ### Menu
 
 ![Alt text](Pics/pic1.png?raw=true "Main menu")
@@ -65,7 +64,6 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Sample GUI                                                                | 
 | Team composition                                                          |
 
-
 ## Features to implement
 
 | Task                                                                  | Status                                                               |
@@ -91,7 +89,6 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | (Data editor)                                                         | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | (Generate Wiki with simulation data)                                  | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 
-
 ## Authors
 Nicolas Lépy
 
@@ -102,7 +99,7 @@ WPF
 Windows Media Player library
 
 ## Credits
-Live Charts for WPF (https://lvcharts.net/)
+Live Charts for WPF ([https://lvcharts.net/])
 MathNet.Numerics
 
 ## License

@@ -22,7 +22,10 @@ namespace TheManager
         /// </summary>
         public static void Hour(Match match)
         {
-            if (_level2 == null) ConstructTables();
+            if (_level2 == null)
+            {
+                ConstructTables();
+            }
             List<int> level = _level2;
             if(match.home.Championship != null)
             {
@@ -344,8 +347,11 @@ namespace TheManager
                         games.Add(retour);
                         res.Add(retour);
                     }
-                    if(nbGamesFirstRound-i >= programmation.lastMatchDaysSameDayNumber)
+
+                    if (nbGamesFirstRound - i >= programmation.lastMatchDaysSameDayNumber)
+                    {
                         TVSchedule(games, programmation.tvScheduling, nbGamesFirstRound + i);
+                    }
                 }
                 //Last journey : first journey inverted
                 games = new List<Match>();

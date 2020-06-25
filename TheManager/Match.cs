@@ -158,7 +158,10 @@ namespace TheManager
                     {
                         foreach(Match m in t.matches)
                         {
-                            if (m == this) res = c;
+                            if (m == this)
+                            {
+                                res = c;
+                            }
                         }
                     }
                 }

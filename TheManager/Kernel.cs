@@ -229,7 +229,10 @@ namespace TheManager
             Continent res = null;
             foreach (Continent c in _continents)
             {
-                if (c.Name() == name) res = c;
+                if (c.Name() == name)
+                {
+                    res = c;
+                }
             }
             return res;
         }

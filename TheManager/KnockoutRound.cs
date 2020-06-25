@@ -112,7 +112,10 @@ namespace TheManager
             if (!twoLegs) matches = new List<Match>(_matches);
             else
             {
-                for (int i = 0; i < _matches.Count / 2; i++) matches.Add(_matches[_matches.Count / 2 + i]);
+                for (int i = 0; i < _matches.Count / 2; i++)
+                {
+                    matches.Add(_matches[_matches.Count / 2 + i]);
+                }
             }
 
             foreach (Qualification q in _qualifications)

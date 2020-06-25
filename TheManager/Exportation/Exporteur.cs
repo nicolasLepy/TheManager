@@ -198,7 +198,10 @@ namespace TheManager.Exportation
             foreach (MatchEvent em in m.events)
             {
                 if (em.type == GameEvent.Goal || em.type == GameEvent.PenaltyGoal || em.type == GameEvent.AgGoal) evenements.Add(em);
-                else cartons.Add(em);
+                else
+                {
+                    cartons.Add(em);
+                }
                 
             }
             evenements.Sort(new GameEventTimeComparator());

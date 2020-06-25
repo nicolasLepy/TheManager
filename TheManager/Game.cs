@@ -105,7 +105,10 @@ namespace TheManager
                         if(commentedGamesNumber < 10)
                         {
                             int chanceToLeave = commentedGamesNumber - 1;
-                            if (chanceToLeave < 1) chanceToLeave = 1;
+                            if (chanceToLeave < 1)
+                            {
+                                chanceToLeave = 1;
+                            }
                             if(Session.Instance.Random(0,chanceToLeave) == 0)
                             {
                                 if(m.journalists.Remove(j))
@@ -385,10 +388,12 @@ namespace TheManager
             bool clubPlayedHaveAMatch = (clubMatchs.Count > 0) ? true : false;
             foreach(Match m in toPlay)
             {
-                if (clubPlayedHaveAMatch && m.Tournament == clubMatchs[0].Tournament && m.day.ToShortTimeString() == clubMatchs[0].day.ToShortTimeString())
+                if (clubPlayedHaveAMatch && m.Tournament == clubMatchs[0].Tournament && m.day.ToShortTimeString() == clubMatchs[0].day.ToShortTimeString()){                
                     clubMatchs.Add(m);
-                else
+                }
+                else{
                     m.Play();
+                }
             }
 
 

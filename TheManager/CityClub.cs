@@ -236,8 +236,9 @@ namespace TheManager
         public void UpdateFormationFacilities()
         {
             _formationFacilities -= Session.Instance.Random(1, 3);
-            if (_formationFacilities < 1)
+            if (_formationFacilities < 1){
                 _formationFacilities = 1;
+            }
             for (int i = 0; i<5; i++)
             {
                 int price = (int)(967.50471* Math.Pow(1.12867,formationFacilities));
@@ -409,8 +410,7 @@ namespace TheManager
                 {
                     //If the player has not a pro level, it has to be on the same country
                     //(unrealistic to have many foreign player in amateur club)
-                    bool can = true;
-                    if (j.level < 60 && j.nationality != countryClub) can = false;
+                    bool can = !(j.level < 60 && j.nationality != countryClub);
                     if(can)
                     {
                         clubTransfersManagement.targetedPlayers.Add(j);
