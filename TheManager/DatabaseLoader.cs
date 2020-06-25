@@ -170,7 +170,7 @@ namespace TheManager
                 {
                     string type = e2.Attribute("type").Value;
                     string content = e2.Value;
-                    GameEvent gameEvent = GameEvent.Goal;
+                    GameEvent gameEvent;
                     switch(type)
                     {
                         case "tir": 

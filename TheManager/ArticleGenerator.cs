@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using LiveCharts.Wpf;
 
 namespace TheManager
 {
@@ -16,8 +17,9 @@ namespace TheManager
         {
             get
             {
-                if (_instance == null)
+                if (_instance == null){
                     _instance = new ArticleGenerator();
+                }
                 return _instance;
             }
         }
@@ -152,7 +154,9 @@ namespace TheManager
                             break;
                         case "NL_E": _nl_e.Add(article); 
                             break;
-                        case "NL_O": _nl_o.Add(article); 
+                        case "NL_O": _nl_o.Add(article);
+                            break;
+                        default:
                             break;
                     }
                 }

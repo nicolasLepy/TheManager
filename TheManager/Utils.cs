@@ -276,6 +276,8 @@ namespace TheManager
                     break;
                 case Rule.ReservesAreNotPromoted:
                     res = "Les réserves ne peuvent pas monter";
+                    break; 
+                default:
                     break;
             }
             return res;

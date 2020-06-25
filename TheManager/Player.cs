@@ -74,8 +74,15 @@ namespace TheManager
             set
             {
                 _energy = value;
-                if (_energy > 100) _energy = 100;
-                if (_energy < 0) _energy = 0;
+                if (_energy > 100)
+                {
+                    _energy = 100;
+                }
+
+                if (_energy < 0)
+                {
+                    _energy = 0;
+                }
             }
         }
 
@@ -145,6 +152,8 @@ namespace TheManager
                     break;
                 case Position.Striker:
                     wage = (int)(wage * 1.1f);
+                    break;
+                default:
                     break;
             }
             return wage;

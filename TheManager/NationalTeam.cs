@@ -49,24 +49,40 @@ namespace TheManager
             _selected = new List<Player>();
             List<Player> playersByPosition = Utils.PlayersByPosition(players,Position.Goalkeeper);
             playersByPosition.Sort(new PlayerLevelComparator());
-            for(int i = 0; i<3; i++)
-                if (playersByPosition.Count > i) _selected.Add(playersByPosition[i]);
+            for(int i = 0; i<3; i++){
+                if (playersByPosition.Count > i)
+                {
+                    _selected.Add(playersByPosition[i]);
+                }
+            }
 
             playersByPosition = Utils.PlayersByPosition(players, Position.Defender);
             playersByPosition.Sort(new PlayerLevelComparator());
-            for (int i = 0; i < 7; i++)
-                if (playersByPosition.Count > i) _selected.Add(playersByPosition[i]);
+            for (int i = 0; i < 7; i++){
+                if (playersByPosition.Count > i)
+                {
+                    _selected.Add(playersByPosition[i]);
+                }
+            }
 
             playersByPosition = Utils.PlayersByPosition(players, Position.Midfielder);
             playersByPosition.Sort(new PlayerLevelComparator());
             for (int i = 0; i < 7; i++)
-                if (playersByPosition.Count > i) _selected.Add(playersByPosition[i]);
+            {
+                if (playersByPosition.Count > i)
+                {
+                    _selected.Add(playersByPosition[i]);
+                }                
+            }
 
             playersByPosition = Utils.PlayersByPosition(players, Position.Striker);
             playersByPosition.Sort(new PlayerLevelComparator());
-            for (int i = 0; i < 6; i++)
-                if (playersByPosition.Count > i) _selected.Add(playersByPosition[i]);
-
+            for (int i = 0; i < 6; i++){
+                if (playersByPosition.Count > i)
+                {
+                    _selected.Add(playersByPosition[i]);
+                }
+            }
         }
     }
 }

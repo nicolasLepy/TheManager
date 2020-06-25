@@ -25,7 +25,10 @@ namespace TheManager.Comparators
                 away = y.away as CityClub;
                 if (home != null && home.Championship != null) Y += (int)Math.Pow(2, 10 - home.Championship.level);
                 if (away != null && away.Championship != null) Y += (int)Math.Pow(2, 10 - away.Championship.level);
-                if (X > Y) res = -1;
+                if (X > Y)
+                {
+                    res = -1;
+                }
             }
             return res;
         }

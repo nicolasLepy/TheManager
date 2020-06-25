@@ -510,8 +510,18 @@ namespace TheManager
             if(onlyFirstTeams)
             {
                 List<Club> toDelete = new List<Club>();
-                foreach (Club c in clubs) if (c as ReserveClub != null) toDelete.Add(c);
-                foreach (Club c in toDelete) clubs.Remove(c);
+                foreach (Club c in clubs)
+                {
+                    if (c as ReserveClub != null)
+                    {
+                        toDelete.Add(c);
+                    }
+                }
+
+                foreach (Club c in toDelete)
+                {
+                    clubs.Remove(c);
+                }
             }
 
 
@@ -524,7 +534,8 @@ namespace TheManager
                     try
                     {
                         clubs.Sort(new ClubLevelComparator());
-                    }catch(Exception e)
+                    }
+                    catch(Exception e)
                     {
                         Console.WriteLine("Erreur sort Club_Niveau_Comparator pour " + name);
                     }

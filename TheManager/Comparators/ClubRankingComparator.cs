@@ -8,9 +8,9 @@ namespace TheManager.Comparators
 {
     public class ClubRankingComparator : IComparer<Club>
     {
-        private List<Match> _round;
+        private readonly List<Match> _round;
 
-        public ClubRankingComparator(/*Tour t*/List<Match> games)
+        public ClubRankingComparator(List<Match> games)
         {
             _round = games;
         }

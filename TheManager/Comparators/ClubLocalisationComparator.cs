@@ -22,9 +22,13 @@ namespace TheManager.Comparators
             float distX = Utils.Distance(x.stadium.city.Position, _reference);
             float distY = Utils.Distance(y.stadium.city.Position, _reference);
             if (distX > distY)
+            {                
                 res = 1;
+            }
             else if(distY > distX)
-                res = -1;
+            {
+                res = -1;            
+            }
             return res;
         }
     }

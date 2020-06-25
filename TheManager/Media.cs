@@ -71,7 +71,10 @@ namespace TheManager
             bool res = false;
             foreach(TournamentCoverage cc in coverages)
             {
-                if (cc.Tournament == c && cc.BeginIndex <= roundIndex) res = true;
+                if (cc.Tournament == c && cc.BeginIndex <= roundIndex)
+                {
+                    res = true;
+                }
             }
             return res;
         }
