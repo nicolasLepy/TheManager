@@ -209,7 +209,14 @@ namespace TheManager.Exportation
             int s2 = 0;
             foreach (MatchEvent em in evenements)
             {
-                if (em.club == m.home) s1++; else s2++;
+                if (em.club == m.home)
+                {
+                    s1++;
+                }
+                else
+                {
+                    s2++;
+                }
                 output += "<tr><td>" + em.EventMinute + "°</td><td>" + em.player.firstName + " " + em.player.lastName + "</td><td>" + s1 + "-" + s2 + "</td></tr>";
             }
             output += "</table><table>";

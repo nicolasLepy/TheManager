@@ -384,7 +384,7 @@ namespace TheManager
                             players.Add(j);
                         }
                         break;
-                    case Position.Striker : default:
+                    case Position.Striker:
                         for (int i = 0; i < j.level * 2; i++)
                         {
                             players.Add(j);

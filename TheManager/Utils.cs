@@ -235,9 +235,9 @@ namespace TheManager
             return res;
         }
 
-        public static string Image(string image)
+        public static string Image(string imageName)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\" + image;
+            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\" + imageName;
         }
 
         public static string LogoTournament(Tournament tournament)

@@ -11,7 +11,7 @@ namespace TheManager
     public class ArticleGenerator
     {
 
-        private static ArticleGenerator _instance = null;
+        private static ArticleGenerator _instance;
 
         public static ArticleGenerator Instance
         {

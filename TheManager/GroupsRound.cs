@@ -62,8 +62,14 @@ namespace TheManager
         public override Round Copy()
         {
             GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod);
-            foreach (Match m in this.matches) t.matches.Add(m);
-            foreach (Club c in this.clubs) t.clubs.Add(c);
+            foreach (Match m in this.matches)
+            {
+                t.matches.Add(m);
+            }
+            foreach (Club c in this.clubs)
+            {
+                t.clubs.Add(c);
+            }
             int i = 0;
             foreach (List<Club> c in _groups)
             {
@@ -129,17 +135,17 @@ namespace TheManager
 
         }
 
-        public List<Match> GamesDay(int gamesday)
+        public List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
             int matchesPerGroups = MatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
             if (twoLegs) matchesPerGroups *= 2;
             for (int i = 0; i < _groupsNumber; i++)
             {
-                int indiceBase = (matchesPerGroups * i) + (MatchesPerGamesDay() * (gamesday - 1));
+                int baseIndex = (matchesPerGroups * i) + (MatchesPerGamesDay() * (journey - 1));
                 for (int j = 0; j < MatchesPerGamesDay(); j++)
                 {
-                    res.Add(_matches[j + indiceBase]);
+                    res.Add(_matches[j + baseIndex]);
                 }
 
             }

@@ -35,6 +35,9 @@ namespace TheManager
         {
         }
 
+        /// <summary>
+        /// Nothing to do because the inactive round show no information on its progress
+        /// </summary>
         public override void Initialise()
         {
             
@@ -67,16 +70,20 @@ namespace TheManager
 
             DateTime fin = new DateTime(programmation.end.Year, programmation.end.Month, programmation.end.Day);
             if (fin.Month < programmation.initialisation.Month)
+            {
                 fin = fin.AddYears(1);
+            }
             else if (fin.Month == programmation.initialisation.Month && fin.Day < programmation.initialisation.Day)
+            {
                 fin = fin.AddYears(1);
-            int nbMatchs = (int)((fin - programmation.initialisation).TotalDays) / 14;
+            }
+            int matchesCount = (int)((fin - programmation.initialisation).TotalDays) / 14;
             foreach (Club c in ranking)
             {
                 CityClub cv = c as CityClub;
                 if(cv != null)
                 {
-                    cv.ModifyBudget(nbMatchs * cv.supporters * cv.ticketPrice);
+                    cv.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice);
                 }
             }
             foreach(Qualification q in _qualifications)

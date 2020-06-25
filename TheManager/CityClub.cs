@@ -154,8 +154,15 @@ namespace TheManager
 
             //Method Level -> Potential
             int level = Session.Instance.Random(formationFacilities - 18, formationFacilities + 18) + potentialOffset;
-            if (level < 1) level = 1;
-            if (level > 99) level = 99;
+            if (level < 1)
+            {
+                level = 1;
+            }
+
+            if (level > 99)
+            {
+                level = 99;
+            }
 
             int age = Session.Instance.Game.date.Year - birthYear;
             int diff = 24 - age;
@@ -188,9 +195,18 @@ namespace TheManager
         {
             Position p = Position.Goalkeeper;
             int random = Session.Instance.Random(1, 13);
-            if(random >= 2 && random <= 5) p = Position.Defender;
-            if (random >= 6 && random <= 9) p = Position.Midfielder;
-            if (random >= 10) p = Position.Striker;
+            if (random >= 2 && random <= 5)
+            {
+                p = Position.Defender;
+            }
+            if (random >= 6 && random <= 9)
+            {
+                p = Position.Midfielder;
+            }
+            if (random >= 10)
+            {
+                p = Position.Striker;
+            }
             GeneratePlayer(p,minAge,maxAge);
         }
 
@@ -216,15 +232,42 @@ namespace TheManager
         {
             int sponsor = 0;
             float level = Level();
-            if (level < 1000) sponsor = Session.Instance.Random(5000, 14000);
-            else if (level < 3000) sponsor = Session.Instance.Random(85000, 323000);
-            else if (level < 4000) sponsor = Session.Instance.Random(200000, 500000);
-            else if (level < 5000) sponsor = Session.Instance.Random(500000, 800000);
-            else if (level < 6000) sponsor = Session.Instance.Random(800000, 2500000);
-            else if (level < 7000) sponsor = Session.Instance.Random(2500000, 6500000);
-            else if (level < 8000) sponsor = Session.Instance.Random(6000000, 14000000);
-            else if (level < 9000) sponsor = Session.Instance.Random(14000000, 23000000);
-            else sponsor = Session.Instance.Random(23000000, 40000000);
+            if (level < 1000)
+            {
+                sponsor = Session.Instance.Random(5000, 14000);
+            }
+            else if (level < 3000)
+            {
+                sponsor = Session.Instance.Random(85000, 323000);
+            }
+            else if (level < 4000)
+            {
+                sponsor = Session.Instance.Random(200000, 500000);
+            }
+            else if (level < 5000)
+            {
+                sponsor = Session.Instance.Random(500000, 800000);
+            }
+            else if (level < 6000)
+            {
+                sponsor = Session.Instance.Random(800000, 2500000);
+            }
+            else if (level < 7000)
+            {
+                sponsor = Session.Instance.Random(2500000, 6500000);
+            }
+            else if (level < 8000)
+            {
+                sponsor = Session.Instance.Random(6000000, 14000000);
+            }
+            else if (level < 9000)
+            {
+                sponsor = Session.Instance.Random(14000000, 23000000);
+            }
+            else
+            {
+                sponsor = Session.Instance.Random(23000000, 40000000);
+            }
             _sponsor = sponsor;
         }
 
@@ -307,8 +350,14 @@ namespace TheManager
             foreach(Contract ct in _players)
             {
                 //If a player is too bad for the club
-                if (ct.player.potential / clubLevel < 0.80) ct.isTransferable = true;
-                else ct.isTransferable = false;
+                if (ct.player.potential / clubLevel < 0.80)
+                {
+                    ct.isTransferable = true;
+                }
+                else
+                {
+                    ct.isTransferable = false;
+                }
             }
         }
 
@@ -397,7 +446,10 @@ namespace TheManager
             int chance = 100 - (int)level;
 
             int playersToResearch = 20 - contracts.Count;
-            if (playersToResearch < 0) playersToResearch = 0;
+            if (playersToResearch < 0)
+            {
+                playersToResearch = 0;
+            }
 
             int i = 0;
             bool pursue = true;
@@ -419,7 +471,9 @@ namespace TheManager
                 }
                 i++;
                 if (i == Session.Instance.Game.kernel.freePlayers.Count || playersFound == playersToResearch)
+                {
                     pursue = false;
+                }
             }
             clubTransfersManagement.targetedPlayers.Sort(new PlayerLevelComparator());
         }

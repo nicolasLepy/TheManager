@@ -75,7 +75,10 @@ namespace TheManager
             List<Club> res = new List<Club>();
             foreach (Club c in _clubs)
             {
-                if ((c as ReserveClub) == null) res.Add(c);
+                if ((c as ReserveClub) == null)
+                {
+                    res.Add(c);
+                }
             }
             ClubRankingComparator comparator = new ClubRankingComparator(this.matches);
             res.Sort(comparator);
@@ -141,14 +144,14 @@ namespace TheManager
         /// <summary>
         /// List the matches of the games day
         /// </summary>
-        /// <param name="journee">The games day</param>
+        /// <param name="journey">The games day</param>
         /// <returns>Matches of game day j</returns>
-        public List<Match> GamesDay(int gamesday)
+        public List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
             int total = MatchesByGamesDay();
-            int indice = gamesday - 1;
-            for (int i = indice * total; i < (indice + 1) * total; i++)
+            int index = journey - 1;
+            for (int i = index * total; i < (index + 1) * total; i++)
             {
                 res.Add(_matches[i]);
             }

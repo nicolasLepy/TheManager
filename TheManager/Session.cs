@@ -10,7 +10,7 @@ namespace TheManager
     {
 
         #region SingletonManagement
-        private static Session _instance = null;
+        private static Session _instance;
         public static Session Instance
         {
             get

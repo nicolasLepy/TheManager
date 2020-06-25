@@ -371,7 +371,10 @@ namespace TheManager
                     int id = int.Parse(e2.Attribute("id").Value);
                     string name = e2.Attribute("nom").Value;
                     string shortName = e2.Attribute("nomCourt").Value;
-                    if (shortName == "") shortName = name;
+                    if (shortName == "")
+                    {
+                        shortName = name;
+                    }
                     int reputation = int.Parse(e2.Attribute("reputation").Value);
                     int budget = int.Parse(e2.Attribute("budget").Value);
                     int supporters = int.Parse(e2.Attribute("supporters").Value);
@@ -581,9 +584,18 @@ namespace TheManager
                                 CityClub firstTeam = _clubsId[int.Parse(e4.Attribute("id").Value)] as CityClub;
                                 string nameAddon = " B";
                                 float divider = 1.5f;
-                                if (firstTeam.reserves.Count == 1) { nameAddon = " C"; divider = 2.5f; }
-                                if (firstTeam.reserves.Count == 2) { nameAddon = " D"; divider = 3.5f; }
-                                if (firstTeam.reserves.Count == 3) { nameAddon = " E"; divider = 4.5f; }
+                                if (firstTeam.reserves.Count == 1)
+                                {
+                                    nameAddon = " C"; divider = 2.5f;
+                                }
+                                if (firstTeam.reserves.Count == 2)
+                                {
+                                    nameAddon = " D"; divider = 3.5f;
+                                }
+                                if (firstTeam.reserves.Count == 3)
+                                {
+                                    nameAddon = " E"; divider = 4.5f;
+                                }
                                 club = new ReserveClub(firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
                                 int newId = NextClubId();
                                 _clubsId[newId] = club;
@@ -592,10 +604,22 @@ namespace TheManager
                                 //A reserve team was generated, let's create same players in base club to populate this reserve team
                                 int averagePotential = (int)(firstTeam.formationFacilities - (firstTeam.formationFacilities / divider));
                                 //Warning for {2,5,5,3} -> 15 is used in team initialisation to determine player number of first team
-                                for (int g = 0; g < 2; g++) firstTeam.GeneratePlayer(Position.Goalkeeper, 16, 23, -averagePotential);
-                                for (int g = 0; g < 5; g++) firstTeam.GeneratePlayer(Position.Defender , 16, 23, -averagePotential);
-                                for (int g = 0; g < 5; g++) firstTeam.GeneratePlayer(Position.Midfielder, 16, 23, -averagePotential);
-                                for (int g = 0; g < 3; g++) firstTeam.GeneratePlayer(Position.Striker, 16, 23, -averagePotential);
+                                for (int g = 0; g < 2; g++)
+                                {
+                                    firstTeam.GeneratePlayer(Position.Goalkeeper, 16, 23, -averagePotential);
+                                }
+                                for (int g = 0; g < 5; g++)
+                                {
+                                    firstTeam.GeneratePlayer(Position.Defender , 16, 23, -averagePotential);
+                                }
+                                for (int g = 0; g < 5; g++)
+                                {
+                                    firstTeam.GeneratePlayer(Position.Midfielder, 16, 23, -averagePotential);
+                                }
+                                for (int g = 0; g < 3; g++)
+                                {
+                                    firstTeam.GeneratePlayer(Position.Striker, 16, 23, -averagePotential);
+                                }
                             }
 
                            

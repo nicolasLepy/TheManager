@@ -327,7 +327,10 @@ namespace TheManager
             ILocalisation res = null;
             foreach(Continent c in _continents)
             {
-                if (c.Name() == name) res = c;
+                if (c.Name() == name)
+                {
+                    res = c;
+                }
                 foreach(Country p in c.countries)
                 {
                     if (p.Name() == name)

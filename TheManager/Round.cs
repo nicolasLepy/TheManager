@@ -540,7 +540,7 @@ namespace TheManager
                         Console.WriteLine("Erreur sort Club_Niveau_Comparator pour " + name);
                     }
                     break;
-                case RecuperationMethod.Worst : default:
+                case RecuperationMethod.Worst :
                     clubs.Sort(new ClubLevelComparator(true));
                     break;
             }
