@@ -24,7 +24,7 @@ namespace TheManager_GUI
     public partial class Windows_JouerMatch : Window
     {
         private List<Match> _matchs;
-        private Tour _tour;
+        private Round _tour;
 
         private MediaWAV _media;
 
@@ -180,14 +180,14 @@ namespace TheManager_GUI
             if(_tour != null)
             {
                 dgClassement.Items.Clear();
-                TourChampionnat tc = _tour as TourChampionnat;
+                ChampionshipRound tc = _tour as ChampionshipRound;
                 if(tc != null)
                 {
                     int i = 1;
-                    List<Club> classement = tc.Classement();
+                    List<Club> classement = tc.Ranking();
                     foreach(Club c in classement)
                     {
-                        dgClassement.Items.Add(new ClassementElement { Classement = i, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = tc.Points(c), J = tc.Joues(c), bc = tc.ButsContre(c), bp = tc.ButsPour(c), Diff = tc.Difference(c), G = tc.Gagnes(c), N = tc.Nuls(c), P = tc.Perdus(c) });
+                        dgClassement.Items.Add(new ClassementElement { Classement = i, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = tc.Points(c), J = tc.Played(c), bc = tc.GoalsAgainst(c), bp = tc.GoalsFor(c), Diff = tc.Difference(c), G = tc.Wins(c), N = tc.Draws(c), P = tc.Loses(c) });
                         i++;
                     }
                 }

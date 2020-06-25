@@ -124,9 +124,9 @@ namespace TheManager
                 List<Match> res = new List<Match>();
                 foreach(Tournament c in Competitions)
                 {
-                    foreach(Tour t in c.rounds)
+                    foreach(Round t in c.rounds)
                     {
-                        foreach (Match m in t.Matchs) res.Add(m);
+                        foreach (Match m in t.matches) res.Add(m);
                     }
                 }
 
@@ -142,9 +142,9 @@ namespace TheManager
         public List<Player> TransfertList(Tournament c)
         {
             List<Player> players = new List<Player>();
-            Tour tournamentRound = c.rounds[0];
+            Round tournamentRound = c.rounds[0];
 
-            foreach(Club club in tournamentRound.Clubs)
+            foreach(Club club in tournamentRound.clubs)
             {
                 CityClub cc = club as CityClub;
                 if(cc != null)
@@ -357,7 +357,7 @@ namespace TheManager
         public void AddFriendlyGame(Match m)
         {
             Tournament amc = String2Tournament("Matchs amicaux");
-            amc.rounds[0].Matchs.Add(m);
+            amc.rounds[0].matches.Add(m);
         }
 
         public void AddMatchCommentary(GameEvent gameEvent, string commentary)

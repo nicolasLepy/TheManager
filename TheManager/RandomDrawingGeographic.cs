@@ -10,20 +10,20 @@ namespace TheManager
     public class RandomDrawingGeographic : IRandomDrawing
     {
 
-        private TourPoules _round;
+        private GroupsRound _round;
 
-        public RandomDrawingGeographic(TourPoules tour)
+        public RandomDrawingGeographic(GroupsRound tour)
         {
             _round = tour;
         }
 
         public void RandomDrawing()
         {
-            int clubsNumberByGroup = _round.Clubs.Count / _round.NombrePoules;
-            List<Club> clubs = new List<Club>(_round.Clubs);
-            for(int i = 0; i<_round.NombrePoules; i++)
+            int clubsNumberByGroup = _round.clubs.Count / _round.groupsCount;
+            List<Club> clubs = new List<Club>(_round.clubs);
+            for(int i = 0; i<_round.groupsCount; i++)
             {
-                GeographicPosition position = _round.LocalisationGroupes[i];
+                GeographicPosition position = _round.groupsLocalisation[i];
                 clubs.Sort(new ClubLocalisationComparator(position));
                 foreach(Club club in clubs)
                 {
@@ -31,7 +31,7 @@ namespace TheManager
                 }
                 for(int j = 0;j<clubsNumberByGroup; j++)
                 {
-                    _round.Poules[i].Add(clubs[0]);
+                    _round.groups[i].Add(clubs[0]);
                     clubs.RemoveAt(0);
                 }
             }

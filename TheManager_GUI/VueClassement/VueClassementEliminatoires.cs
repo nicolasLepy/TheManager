@@ -15,9 +15,9 @@ namespace TheManager_GUI.VueClassement
     {
 
         private DataGrid _grille;
-        private TourElimination _tour;
+        private KnockoutRound _tour;
 
-        public VueClassementEliminatoires(DataGrid grille, TourElimination tour)
+        public VueClassementEliminatoires(DataGrid grille, KnockoutRound tour)
         {
             _grille = grille;
             _tour = tour;
@@ -26,7 +26,7 @@ namespace TheManager_GUI.VueClassement
         public void Remplir(StackPanel spClassement)
         {
             spClassement.Children.Clear();
-            List<Match> matchs = new List<Match>(_tour.Matchs);
+            List<Match> matchs = new List<Match>(_tour.matches);
             matchs.Sort(new MatchDateComparator());
 
             int index = 0;

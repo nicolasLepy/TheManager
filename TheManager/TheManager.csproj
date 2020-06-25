@@ -101,11 +101,11 @@
     <Compile Include="Stadium.cs" />
     <Compile Include="RandomDrawingGeographic.cs" />
     <Compile Include="RandomDrawingLevel.cs" />
-    <Compile Include="Tour.cs" />
-    <Compile Include="TourChampionnat.cs" />
-    <Compile Include="TourElimination.cs" />
-    <Compile Include="TourInactif.cs" />
-    <Compile Include="TourPoules.cs" />
+    <Compile Include="Round.cs" />
+    <Compile Include="ChampionshipRound.cs" />
+    <Compile Include="KnockoutRound.cs" />
+    <Compile Include="InactiveRound.cs" />
+    <Compile Include="GroupsRound.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="City.cs" />
   </ItemGroup>

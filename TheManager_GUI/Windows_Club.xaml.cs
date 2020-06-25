@@ -129,13 +129,13 @@ namespace TheManager_GUI
                 {
                     if(archive.isChampionship)
                     {
-                        if (archive.rounds[0].Vainqueur() == club)
+                        if (archive.rounds[0].Winner() == club)
                             nombre++;
                     }
                     else
                     {
-                        Tour t = archive.rounds[archive.rounds.Count - 1];
-                        if (t.Vainqueur() == club)
+                        Round t = archive.rounds[archive.rounds.Count - 1];
+                        if (t.Winner() == club)
                         {
                             nombre++;
                         }
@@ -189,13 +189,13 @@ namespace TheManager_GUI
                 int annee = 2019;
                 foreach(Tournament ancienne in competition.previousEditions)
                 {
-                    if(ancienne.isChampionship && ancienne.rounds[0].Clubs.Contains(c))
+                    if(ancienne.isChampionship && ancienne.rounds[0].clubs.Contains(c))
                     {
                         int classement = 0;
                         //Si la compétition était active (tour 0 un tour de type championnat, pas inactif)
-                        if((ancienne.rounds[0] as TourChampionnat) != null)
+                        if((ancienne.rounds[0] as ChampionshipRound) != null)
                         {
-                            classement = (ancienne.rounds[0] as TourChampionnat).Classement().IndexOf(c) + 1;
+                            classement = (ancienne.rounds[0] as ChampionshipRound).Ranking().IndexOf(c) + 1;
                         }
                         
                         //int annee = ancienne.Tours[0].Matchs[ancienne.Tours[0].Matchs.Count - 1].Jour.Year;

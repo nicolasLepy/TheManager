@@ -11,16 +11,16 @@ namespace TheManager_GUI.VueClassement
     public class FabriqueVueClassement
     {
 
-        public static IVueClassement CreerVue(DataGrid grille, Tour tour)
+        public static IVueClassement CreerVue(DataGrid grille, Round tour)
         {
             IVueClassement res = null;
 
-            if (tour as TourChampionnat != null)
-                res = new VueCalendrierChampionnat(grille, tour as TourChampionnat);
-            if (tour as TourElimination != null)
-                res = new VueClassementEliminatoires(grille, tour as TourElimination);
-            if (tour as TourPoules != null)
-                res = new VueClassementPoules(grille, tour as TourPoules);
+            if (tour as ChampionshipRound != null)
+                res = new VueCalendrierChampionnat(grille, tour as ChampionshipRound);
+            if (tour as KnockoutRound != null)
+                res = new VueClassementEliminatoires(grille, tour as KnockoutRound);
+            if (tour as GroupsRound != null)
+                res = new VueClassementPoules(grille, tour as GroupsRound);
 
             return res;
         }

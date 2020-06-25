@@ -154,9 +154,9 @@ namespace TheManager
                 Tournament res = null;
                 foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
-                    foreach(Tour t in c.rounds)
+                    foreach(Round t in c.rounds)
                     {
-                        foreach(Match m in t.Matchs)
+                        foreach(Match m in t.matches)
                         {
                             if (m == this) res = c;
                         }
@@ -166,16 +166,16 @@ namespace TheManager
             }
         }
 
-        public Tour Round
+        public Round Round
         {
             get
             {
-                Tour res = null;
+                Round res = null;
                 foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
-                    foreach (Tour t in c.rounds)
+                    foreach (Round t in c.rounds)
                     {
-                        foreach (Match m in t.Matchs)
+                        foreach (Match m in t.matches)
                         {
                             if (m == this) res = t;
                         }

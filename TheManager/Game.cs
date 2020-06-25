@@ -210,10 +210,10 @@ namespace TheManager
                     TournamentCoverage cc = media.GetCoverage(c);
                     if (cc.MinimumGamesNumberOfMultiplex != -1 && games.Count >= cc.MinimumGamesNumberOfMultiplex)
                     {
-                        Tour t = c.rounds[c.currentRound];
-                        int nbMatchsParJournee = t.Clubs.Count/2;
-                        int nbJournees = t.Matchs.Count / nbMatchsParJournee;
-                        int j = (t.Matchs.IndexOf(gamesList[0]) / nbMatchsParJournee) + 1;
+                        Round t = c.rounds[c.currentRound];
+                        int nbMatchsParJournee = t.clubs.Count/2;
+                        int nbJournees = t.matches.Count / nbMatchsParJournee;
+                        int j = (t.matches.IndexOf(gamesList[0]) / nbMatchsParJournee) + 1;
 
 
                         numberOfGamesToFollow = cc.GamesNumberByMultiplex;
@@ -224,19 +224,19 @@ namespace TheManager
 
                         if (nbJournees-j == 1)
                         {
-                            games.Sort(new MatchRankingComparator(t as TourChampionnat));
+                            games.Sort(new MatchRankingComparator(t as ChampionshipRound));
                         }
                         else if (nbJournees - j == 0)
                         {
-                            games.Sort(new MatchRankingComparator(t as TourChampionnat));
+                            games.Sort(new MatchRankingComparator(t as ChampionshipRound));
                         }
                         else if(j<3)
                         {
                             games.Sort(new MatchLevelComparator());
                         }
-                        else if(t as TourChampionnat != null) 
+                        else if(t as ChampionshipRound != null) 
                         {
-                            games.Sort(new MatchRankingComparator(t as TourChampionnat));
+                            games.Sort(new MatchRankingComparator(t as ChampionshipRound));
                         }
                         else
                         {
@@ -331,8 +331,8 @@ namespace TheManager
                 List<Match> todayGames = new List<Match>();
                 if(c.currentRound > -1)
                 {
-                    Tour currentRound = c.rounds[c.currentRound];
-                    foreach (Match m in currentRound.Matchs)
+                    Round currentRound = c.rounds[c.currentRound];
+                    foreach (Match m in currentRound.matches)
                     {
                         if (Utils.CompareDates(m.day, _date))
                         {
@@ -359,13 +359,13 @@ namespace TheManager
                     }
                     SetUpMediasForTournaments(todayGames, c);
                 }
-                foreach(Tour t in c.rounds)
+                foreach(Round t in c.rounds)
                 {
-                    if(Utils.CompareDatesWithoutYear(t.Programmation.Fin, _date))
+                    if(Utils.CompareDatesWithoutYear(t.programmation.end, _date))
                     {
-                        t.QualifierClubs();
+                        t.QualifyClubs();
                     }
-                    if (Utils.CompareDatesWithoutYear (t.Programmation.Initialisation, _date))
+                    if (Utils.CompareDatesWithoutYear (t.programmation.initialisation, _date))
                     {
                         c.NextRound();
                     }

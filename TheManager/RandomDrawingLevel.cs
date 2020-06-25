@@ -9,31 +9,31 @@ namespace TheManager
 {
     public class RandomDrawingLevel : IRandomDrawing
     {
-        private TourPoules _round;
+        private GroupsRound _round;
 
-        public RandomDrawingLevel(TourPoules tour)
+        public RandomDrawingLevel(GroupsRound tour)
         {
             _round = tour;
         }
 
         public void RandomDrawing()
         {
-            List<Club> pot = new List<Club>(_round.Clubs);
+            List<Club> pot = new List<Club>(_round.clubs);
             try
             {
                 pot.Sort(new ClubLevelComparator());
             }
             catch
             {
-                Console.WriteLine("Le tri pour " + _round.Nom + "(" + _round.Competition.name + " de type niveau a echoué");
+                Console.WriteLine("Le tri pour " + _round.name + "(" + _round.Tournament.name + " de type niveau a echoué");
             }
-            int teamsByGroup = _round.Clubs.Count / _round.NombrePoules;
+            int teamsByGroup = _round.clubs.Count / _round.groupsCount;
             List<Club>[] hats = new List<Club>[teamsByGroup];
             int ind = 0;
             for (int i = 0; i < teamsByGroup; i++)
             {
                 hats[i] = new List<Club>();
-                for (int j = 0; j < _round.NombrePoules; j++)
+                for (int j = 0; j < _round.groupsCount; j++)
                 {
                     hats[i].Add(pot[ind]);
                     ind++;
@@ -41,14 +41,14 @@ namespace TheManager
 
             }
             //Foreach groups
-            for (int i = 0; i < _round.NombrePoules; i++)
+            for (int i = 0; i < _round.groupsCount; i++)
             {
                 //Foreach hats
                 for (int j = 0; j < teamsByGroup; j++)
                 {
                     Club c = hats[j][Session.Instance.Random(0, hats[j].Count)];
                     hats[j].Remove(c);
-                    _round.Poules[i].Add(c);
+                    _round.groups[i].Add(c);
                 }
             }
         }

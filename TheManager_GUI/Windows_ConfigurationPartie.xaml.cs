@@ -118,7 +118,7 @@ namespace TheManager_GUI
                 if(cb.IsChecked == true)
                 {
                     Tournament c = Session.Instance.Game.kernel.String2Tournament(cb.Content.ToString());
-                    foreach (Club cl in c.rounds[0].Clubs)
+                    foreach (Club cl in c.rounds[0].clubs)
                     {
                         nbClubs++;
                         nbJoueurs += 21;

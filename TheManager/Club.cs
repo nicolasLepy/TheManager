@@ -127,7 +127,7 @@ namespace TheManager
                     if(tournament.isChampionship)
                     {
                         
-                        foreach (Club cl in tournament.rounds[0].Clubs)
+                        foreach (Club cl in tournament.rounds[0].clubs)
                         {
                             if (cl == this)
                             {

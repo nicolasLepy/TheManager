@@ -15,9 +15,9 @@ namespace TheManager_GUI.VueClassement
     {
 
         private DataGrid _grille;
-        private TourChampionnat _tour;
+        private ChampionshipRound _tour;
 
-        public VueCalendrierChampionnat(DataGrid grille, TourChampionnat tour)
+        public VueCalendrierChampionnat(DataGrid grille, ChampionshipRound tour)
         {
             _grille = grille;
             _tour = tour;
@@ -28,7 +28,7 @@ namespace TheManager_GUI.VueClassement
             spClassement.Children.Clear();
 
             int i = 0;
-            foreach (Club c in _tour.Classement())
+            foreach (Club c in _tour.Ranking())
             {
                 i++;
                 StackPanel sp = new StackPanel();
@@ -56,31 +56,31 @@ namespace TheManager_GUI.VueClassement
                 Label l4 = new Label();
                 l4.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l4.Width = 25;
-                l4.Content = _tour.Joues(c);
+                l4.Content = _tour.Played(c);
 
                 Label l5 = new Label();
                 l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l5.Width = 25;
-                l5.Content = _tour.Gagnes(c);
+                l5.Content = _tour.Wins(c);
 
                 Label l6 = new Label();
                 l6.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l6.Width = 25;
-                l6.Content = _tour.Nuls(c);
+                l6.Content = _tour.Draws(c);
 
                 Label l7 = new Label();
                 l7.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l7.Width = 25;
-                l7.Content = _tour.Perdus(c);
+                l7.Content = _tour.Loses(c);
 
                 Label l8 = new Label();
                 l8.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l8.Width = 25;
-                l8.Content = _tour.ButsPour(c);
+                l8.Content = _tour.GoalsFor(c);
                 Label l9 = new Label();
                 l9.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l9.Width = 25;
-                l9.Content = _tour.ButsContre(c);
+                l9.Content = _tour.GoalsAgainst(c);
                 Label l10 = new Label();
                 l10.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 l10.Width = 25;
@@ -104,20 +104,20 @@ namespace TheManager_GUI.VueClassement
 
             }
 
-            foreach (Qualification q in _tour.Qualifications)
+            foreach (Qualification q in _tour.qualifications)
             {
-                if (q.Competition.isChampionship)
+                if (q.tournament.isChampionship)
                 {
-                    int niveau = _tour.Competition.level;
+                    int niveau = _tour.Tournament.level;
                     string couleur = "backgroundColor";
-                    if (q.Competition.level < niveau)
+                    if (q.tournament.level < niveau)
                         couleur = "promotionColor";
-                    else if (q.Competition.level > niveau)
+                    else if (q.tournament.level > niveau)
                         couleur = "relegationColor";
-                    else if (q.Competition.level == niveau && q.IDTour > _tour.Competition.rounds.IndexOf(_tour))
+                    else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
                         couleur = "barrageColor";
 
-                    int index = q.Classement-1;
+                    int index = q.ranking-1;
 
                     SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
                     (spClassement.Children[index] as StackPanel).Background = color;
@@ -167,10 +167,10 @@ namespace TheManager_GUI.VueClassement
         {
             _grille.Items.Clear();
             int i = 0;
-            foreach (Club c in _tour.Classement())
+            foreach (Club c in _tour.Ranking())
             {
                 i++;
-                _grille.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png", Club = c, Classement = i, Nom = c.shortName, Pts = _tour.Points(c), J = _tour.Joues(c), G = _tour.Gagnes(c), N = _tour.Nuls(c), P = _tour.Perdus(c), bp = _tour.ButsPour(c), bc = _tour.ButsContre(c), Diff = _tour.Difference(c) });
+                _grille.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png", Club = c, Classement = i, Nom = c.shortName, Pts = _tour.Points(c), J = _tour.Played(c), G = _tour.Wins(c), N = _tour.Draws(c), P = _tour.Loses(c), bp = _tour.GoalsFor(c), bc = _tour.GoalsAgainst(c), Diff = _tour.Difference(c) });
             }
             Style s = new Style();
             /*s.Setters.Add(new Setter(){ Property = Control.HeightProperty, Value = height });
@@ -182,23 +182,23 @@ namespace TheManager_GUI.VueClassement
 
 
             //Pour chaque couleur
-            foreach (Qualification q in _tour.Qualifications)
+            foreach (Qualification q in _tour.qualifications)
             {
-                if (q.Competition.isChampionship)
+                if (q.tournament.isChampionship)
                 {
-                    int niveau = _tour.Competition.level;
+                    int niveau = _tour.Tournament.level;
                     string couleur = "backgroundColor";
-                    if (q.Competition.level < niveau)
+                    if (q.tournament.level < niveau)
                         couleur = "promotionColor";
-                    else if (q.Competition.level > niveau)
+                    else if (q.tournament.level > niveau)
                         couleur = "relegationColor";
-                    else if (q.Competition.level == niveau && q.IDTour > _tour.Competition.rounds.IndexOf(_tour))
+                    else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
                         couleur = "barrageColor";
 
                     DataTrigger tg = new DataTrigger()
                     {
                         Binding = new System.Windows.Data.Binding("Classement"),
-                        Value = q.Classement
+                        Value = q.ranking
                     };
                     tg.Setters.Add(new Setter()
                     {

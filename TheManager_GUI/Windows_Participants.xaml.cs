@@ -26,7 +26,7 @@ namespace TheManager_GUI
             if (c.isChampionship)
             {
                 dgClubs.Items.Clear();
-                foreach (Club cl in c.rounds[0].Clubs)
+                foreach (Club cl in c.rounds[0].clubs)
                 {
                     int budget = 0;
                     int masseSalariale = 0;

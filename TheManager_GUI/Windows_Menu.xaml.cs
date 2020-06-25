@@ -92,7 +92,7 @@ namespace TheManager_GUI
                 lbTours.Items.Clear();
                 dgClassement.Items.Clear();
                 dgMatchs.Items.Clear();
-                foreach (Tour t in c.rounds)
+                foreach (Round t in c.rounds)
                 {
                     lbTours.Items.Add(t);
                 }
@@ -102,7 +102,7 @@ namespace TheManager_GUI
 
         private void LbTours_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Tour t = lbTours.SelectedItem as Tour;
+            Round t = lbTours.SelectedItem as Round;
 
             IVueClassement vue = FabriqueVueClassement.CreerVue(dgClassement, t);
             if (vue != null) vue.Afficher();
@@ -232,14 +232,14 @@ namespace TheManager_GUI
 
                 if(comp != null)
                 {
-                    Tour t = null;
+                    Round t = null;
                     if (comp.isChampionship)
                     {
                         t = comp.rounds[0];
                         tbActu.Text = comp.name + " : ";
                         i = 1;
-                        TourChampionnat tc = t as TourChampionnat;
-                        foreach (Club c in tc.Classement())
+                        ChampionshipRound tc = t as ChampionshipRound;
+                        foreach (Club c in tc.Ranking())
                         {
                             tbActu.Text += i + " " + c.shortName + " " + t.Points(c) + ", " + t.Difference(c) + " / ";
                             i++;
@@ -248,8 +248,8 @@ namespace TheManager_GUI
                     else
                     {
                         t = comp.rounds[comp.currentRound];
-                        tbActu.Text += comp.name + ", " + t.Nom + " : ";
-                        foreach(Match m in t.Matchs)
+                        tbActu.Text += comp.name + ", " + t.name + " : ";
+                        foreach(Match m in t.matches)
                         {
                             tbActu.Text += m.home.shortName + " " + m.score1 + "-" + m.score2 + " " + m.away.shortName + ", ";
                         }
@@ -263,8 +263,8 @@ namespace TheManager_GUI
             dgClubClassement.Items.Clear();
             if(_partie.club != null && _partie.club.Championship != null)
             {
-                Tour championnat = _partie.club.Championship.rounds[0];
-                List<Club> classement = (championnat as TourChampionnat).Classement();
+                Round championnat = _partie.club.Championship.rounds[0];
+                List<Club> classement = (championnat as ChampionshipRound).Ranking();
                 int indice = classement.IndexOf(_partie.club);
                 indice = indice - 2;
                 if (indice < 0) indice = 0;
@@ -272,7 +272,7 @@ namespace TheManager_GUI
                 for(int i = indice; i<indice+5; i++)
                 {
                     Club c = classement[i];
-                    dgClubClassement.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = championnat.Points(c), bc = championnat.ButsContre(c), bp = championnat.ButsPour(c), Diff = championnat.Difference(c), G = championnat.Gagnes(c), J = championnat.Joues(c), N = championnat.Nuls(c), P = championnat.Perdus(c) });
+                    dgClubClassement.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = championnat.Points(c), bc = championnat.GoalsAgainst(c), bp = championnat.GoalsFor(c), Diff = championnat.Difference(c), G = championnat.Wins(c), J = championnat.Played(c), N = championnat.Draws(c), P = championnat.Loses(c) });
                 }
             }
         }
@@ -321,13 +321,13 @@ namespace TheManager_GUI
             }
         }
         
-        private void Calendrier(Tour t)
+        private void Calendrier(Round t)
         {
             dgMatchs.Items.Clear();
-            List<Match> matchs = new List<Match>(t.Matchs);
+            List<Match> matchs = new List<Match>(t.matches);
             matchs.Sort(new MatchDateComparator());
             DateTime lastTime = new DateTime(2000, 1, 1);
-            TourElimination te = t as TourElimination;
+            KnockoutRound te = t as KnockoutRound;
             foreach (Match m in matchs)
             {
                 if (lastTime != m.day.Date)

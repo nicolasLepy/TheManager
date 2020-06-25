@@ -339,7 +339,7 @@ namespace TheManager
             Tournament championship = Championship;
             List<Club> possibleOpponents = new List<Club>();
             
-            if(championship != null && championship.rounds[0] as TourChampionnat != null)
+            if(championship != null && championship.rounds[0] as ChampionshipRound != null)
             {
                 foreach (Club c in Session.Instance.Game.kernel.Clubs)
                 {
@@ -356,7 +356,7 @@ namespace TheManager
                 {
                     Club adv = possibleOpponents[Session.Instance.Random(0, possibleOpponents.Count)];
                     possibleOpponents.Remove(adv);
-                    DateTime begin = new DateTime(championship.rounds[0].Matchs[0].day.Year, championship.rounds[0].Matchs[0].day.Month, championship.rounds[0].Matchs[0].day.Day);
+                    DateTime begin = new DateTime(championship.rounds[0].matches[0].day.Year, championship.rounds[0].matches[0].day.Month, championship.rounds[0].matches[0].day.Day);
                     begin = begin.AddDays(Session.Instance.Random(-30, -10));
                     begin = begin.AddHours(Session.Instance.Random(14, 22));
                     Match game = new Match(this, adv, begin, false);

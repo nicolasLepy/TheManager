@@ -51,7 +51,7 @@ namespace TheManager
         [DataMember]
         private string _name;
         [DataMember]
-        private List<Tour> _rounds;
+        private List<Round> _rounds;
         [DataMember]
         private string _logo;
         [DataMember]
@@ -74,7 +74,7 @@ namespace TheManager
         private int _remainingYears;
 
         public string name { get => _name; }
-        public List<Tour> rounds { get => _rounds; }
+        public List<Round> rounds { get => _rounds; }
         public string logo { get => _logo; }
         [DataMember]
         public int currentRound { get; set; }
@@ -97,7 +97,7 @@ namespace TheManager
 
         public Tournament(string name, string logo, DateTime seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears)
         {
-            _rounds = new List<Tour>();
+            _rounds = new List<Round>();
             _name = name;
             _logo = logo;
             _seasonBeginning = seasonBeginning;
@@ -132,14 +132,14 @@ namespace TheManager
             
                 UpdateRecords();
                 Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears);
-                foreach (Tour r in rounds) copyForArchives.rounds.Add(r.Copie());
+                foreach (Round r in rounds) copyForArchives.rounds.Add(r.Copy());
                 copyForArchives.statistics = statistics;
                 _previousEditions.Add(copyForArchives);
                 for (int i = 0; i<rounds.Count; i++)
                 {
-                    rounds[i].RAZ();
+                    rounds[i].Reset();
                     List<Club> clubs = new List<Club>(_nextYearQualified[i]);
-                    foreach (Club c in clubs) rounds[i].Clubs.Add(c);
+                    foreach (Club c in clubs) rounds[i].clubs.Add(c);
                 }
                 InitializeQualificationsNextYearsLists();
                 currentRound = -1;
@@ -149,9 +149,9 @@ namespace TheManager
 
         private void UpdateRecords()
         {
-            foreach(Tour r in _rounds)
+            foreach(Round r in _rounds)
             {
-                foreach(Match m in r.Matchs)
+                foreach(Match m in r.matches)
                 {
                     if (_statistics.LargerScore == null || Math.Abs(m.score1 - m.score2) > Math.Abs(_statistics.LargerScore.score1 - _statistics.LargerScore.score2))
                         _statistics.LargerScore = m;
@@ -164,11 +164,11 @@ namespace TheManager
         public void NextRound()
         {
             if(currentRound > -1 && currentRound < _rounds.Count)
-                _rounds[currentRound].DistribuerDotations();
+                _rounds[currentRound].DistributeGrants();
             if (_rounds.Count > currentRound + 1)
             {
                 currentRound++;
-                _rounds[currentRound].Initialiser();
+                _rounds[currentRound].Initialise();
             }
 
             //Tour 0, championnat -> génère match amicaux
@@ -176,7 +176,7 @@ namespace TheManager
             {
                 if (isChampionship)
                 {
-                    foreach (Club c in rounds[0].Clubs)
+                    foreach (Club c in rounds[0].clubs)
                     {
                         CityClub cv = c as CityClub;
                         if (cv != null)
@@ -209,9 +209,9 @@ namespace TheManager
         {
             int i = 0;
             int attendance = 0;
-            foreach(Tour t in _rounds)
+            foreach(Round t in _rounds)
             {
-                foreach(Match m in t.Matchs)
+                foreach(Match m in t.matches)
                 {
                     if((m.home == c) && m.Played)
                     {
@@ -227,11 +227,11 @@ namespace TheManager
         {
             if(isChampionship)
             {
-                return _rounds[0].Vainqueur();
+                return _rounds[0].Winner();
             }
             else
             {
-                return _rounds[_rounds.Count - 1].Vainqueur();
+                return _rounds[_rounds.Count - 1].Winner();
             }
         }
 
@@ -239,9 +239,9 @@ namespace TheManager
         {
             Dictionary<Player, int> goalscorers = new Dictionary<Player, int>();
 
-            foreach(Tour t in _rounds)
+            foreach(Round t in _rounds)
             {
-                foreach(KeyValuePair<Player,int> kvp in t.Buteurs())
+                foreach(KeyValuePair<Player,int> kvp in t.GoalScorers())
                 {
                     if (goalscorers.ContainsKey(kvp.Key)) goalscorers[kvp.Key] += kvp.Value;
                     else goalscorers[kvp.Key] = kvp.Value;
@@ -262,12 +262,12 @@ namespace TheManager
         public void RendreInactive()
         {
 
-            List<Tour> newRounds = new List<Tour>();
-            foreach(Tour t in _rounds)
+            List<Round> newRounds = new List<Round>();
+            foreach(Round t in _rounds)
             {
-                TourInactif tour = new TourInactif(t.Nom, t.Programmation.HeureParDefaut, t.Programmation.Initialisation, t.Programmation.Fin);
+                InactiveRound tour = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end);
                 newRounds.Add(tour);
-                foreach (Qualification q in t.Qualifications)
+                foreach (Qualification q in t.qualifications)
                 {
 
                     //if(t as TourPoules != null)
@@ -276,27 +276,27 @@ namespace TheManager
                     //else
                     //tour.Qualifications.Add(q);
                 }
-                foreach (RecuperationEquipes re in t.RecuperationEquipes)
+                foreach (RecoverTeams re in t.recuperedTeams)
                 {
-                    tour.RecuperationEquipes.Add(re);
+                    tour.recuperedTeams.Add(re);
                 }
-                foreach (Club c in t.Clubs) tour.Clubs.Add(c);
-                foreach (Dotation d in t.Dotations) tour.Dotations.Add(d);
-                foreach (Rule r in t.Regles) tour.Regles.Add(r);
+                foreach (Club c in t.clubs) tour.clubs.Add(c);
+                foreach (Prize d in t.prizes) tour.prizes.Add(d);
+                foreach (Rule r in t.rules) tour.rules.Add(r);
             }
 
             foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
             {
                 if(c != this)
                 {
-                    foreach (Tour t in c.rounds)
+                    foreach (Round t in c.rounds)
                     {
-                        for(int i = 0; i<t.RecuperationEquipes.Count; i++)
+                        for(int i = 0; i<t.recuperedTeams.Count; i++)
                         {
-                            RecuperationEquipes re = t.RecuperationEquipes[i];
+                            RecoverTeams re = t.recuperedTeams[i];
                             if (_rounds.Contains(re.Source))
                             {
-                                int index = _rounds.IndexOf(re.Source as Tour);
+                                int index = _rounds.IndexOf(re.Source as Round);
                                 re.Source = newRounds[index];
                             }
                         }
@@ -307,7 +307,7 @@ namespace TheManager
             }
 
             _rounds.Clear();
-            foreach (Tour t in newRounds) _rounds.Add(t);
+            foreach (Round t in newRounds) _rounds.Add(t);
 
             /*
             Tour premierTour = _tours[0];

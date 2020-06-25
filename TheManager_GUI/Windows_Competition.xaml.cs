@@ -38,11 +38,11 @@ namespace TheManager_GUI
 
         private List<Match> Journee()
         {
-            List<Match> res = _competition.rounds[_indexTour].Matchs;
-            TourChampionnat tc = _competition.rounds[_indexTour] as TourChampionnat;
+            List<Match> res = _competition.rounds[_indexTour].matches;
+            ChampionshipRound tc = _competition.rounds[_indexTour] as ChampionshipRound;
             if(tc != null)
             {
-                res = tc.Journee(_indexJournee);
+                res = tc.GamesDay(_indexJournee);
             }
             return res;
         }
@@ -50,7 +50,7 @@ namespace TheManager_GUI
         private void InitWidgets()
         {
             lbCompetition.Content = _competition.name;
-            lbNomTour.Content = _competition.rounds[_indexTour].Nom;
+            lbNomTour.Content = _competition.rounds[_indexTour].name;
             dgButeurs.Items.Clear();
             
 
@@ -69,7 +69,7 @@ namespace TheManager_GUI
             vue.Remplir(spClassement);
 
             int nbRegles = 0;
-            foreach (Rule r in _competition.rounds[_indexTour].Regles)
+            foreach (Rule r in _competition.rounds[_indexTour].rules)
             {
                 Label l = new Label();
                 l.Style = Application.Current.FindResource("StyleLabel2") as Style;
@@ -94,14 +94,14 @@ namespace TheManager_GUI
         }
 
 
-        private void Calendrier(Tour t)
+        private void Calendrier(Round t)
         {
             spMatchs.Children.Clear();
 
             List<Match> matchs = Journee();
             matchs.Sort(new MatchDateComparator());
             DateTime lastTime = new DateTime(2000, 1, 1);
-            TourElimination te = t as TourElimination;
+            KnockoutRound te = t as KnockoutRound;
             int i = 0;
             foreach (Match m in matchs)
             {
@@ -218,11 +218,11 @@ namespace TheManager_GUI
                 Club vainqueur = arc.Winner();
 
 
-                Tour t = arc.rounds[arc.rounds.Count - 1];
+                Round t = arc.rounds[arc.rounds.Count - 1];
                 //If the final round was not inactive, we can make the palmares
-                if (t.Matchs.Count > 0)
+                if (t.matches.Count > 0)
                 {
-                    int annee = t.Matchs[t.Matchs.Count - 1].day.Year;
+                    int annee = t.matches[t.matches.Count - 1].day.Year;
                     dgPalmares.Items.Add(new PalmaresElement { Annee = annee, Club = vainqueur });
                 }
             }
@@ -263,10 +263,10 @@ namespace TheManager_GUI
 
         private void BtnJourneeDroite_Click(object sender, RoutedEventArgs e)
         {
-            TourChampionnat tc = _competition.rounds[_indexTour] as TourChampionnat;
+            ChampionshipRound tc = _competition.rounds[_indexTour] as ChampionshipRound;
             if (tc != null)
             {
-                if (_indexJournee < tc.NombreJournees()) _indexJournee++;
+                if (_indexJournee < tc.MatchesDayNumber()) _indexJournee++;
                 InitWidgets();
             }
         }

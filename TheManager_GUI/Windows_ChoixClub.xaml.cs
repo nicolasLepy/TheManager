@@ -52,7 +52,7 @@ namespace TheManager_GUI
                             TreeViewItem tv = new TreeViewItem();
                             tv.Header = cp.name;
 
-                            foreach(Club club in cp.rounds[0].Clubs)
+                            foreach(Club club in cp.rounds[0].clubs)
                             {
                                 StackPanel sp = new StackPanel();
                                 sp.Orientation = Orientation.Horizontal;

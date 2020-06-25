@@ -236,7 +236,7 @@ namespace TheManager
         /// <param name="programmation">TV / Federation schedule for games</param>
         /// <param name="twoLegged">One or two games</param>
         /// <returns></returns>
-        public static List<Match> GenerateCalendar(List<Club> clubs, ProgrammationTour programmation, bool twoLegged)
+        public static List<Match> GenerateCalendar(List<Club> clubs, RoundProgrammation programmation, bool twoLegged)
         {
             List<Match> res = new List<Match>();
             bool ghost = false;
@@ -318,14 +318,14 @@ namespace TheManager
                         Club e2 = clubs[b - 1];
 
                         //Date du match
-                        DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.JoursDeMatchs[i].Month, programmation.JoursDeMatchs[i].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
-                        if (Utils.IsBeforeWithoutYear(jour, programmation.Initialisation)) jour = jour.AddYears(1);
+                        DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.gamesDays[i].Month, programmation.gamesDays[i].Day, programmation.defaultHour.Hours, programmation.defaultHour.Minutes, 0);
+                        if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation)) jour = jour.AddYears(1);
                         Match m = new Match(e1, e2, jour, false);
                         res.Add(m);
                         matchs.Add(m);
                     }
                 }
-                TVSchedule(matchs, programmation.DecalagesTV, i+1);
+                TVSchedule(matchs, programmation.tvScheduling, i+1);
             }
             if(twoLegged)
             {
@@ -338,28 +338,28 @@ namespace TheManager
                     for(int j = 0; j< gamesPerRound; j++)
                     {
                         Match mbase = res[gamesPerRound * i + j];
-                        DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.JoursDeMatchs[nbGamesFirstRound+i-1].Month, programmation.JoursDeMatchs[nbGamesFirstRound + i-1].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
-                        if (Utils.IsBeforeWithoutYear(jour, programmation.Initialisation)) jour = jour.AddYears(1);
+                        DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.gamesDays[nbGamesFirstRound+i-1].Month, programmation.gamesDays[nbGamesFirstRound + i-1].Day, programmation.defaultHour.Hours, programmation.defaultHour.Minutes, 0);
+                        if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation)) jour = jour.AddYears(1);
                         Match retour = new Match(mbase.away, mbase.home, jour, false);
                         games.Add(retour);
                         res.Add(retour);
                     }
-                    if(nbGamesFirstRound-i >= programmation.DernieresJourneesMemeJour)
-                        TVSchedule(games, programmation.DecalagesTV, nbGamesFirstRound + i);
+                    if(nbGamesFirstRound-i >= programmation.lastMatchDaysSameDayNumber)
+                        TVSchedule(games, programmation.tvScheduling, nbGamesFirstRound + i);
                 }
                 //Last journey : first journey inverted
                 games = new List<Match>();
                 for (int i = 0; i<gamesPerRound; i++)
                 {
                     Match mbase = res[i];
-                    DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count-1].Month, programmation.JoursDeMatchs[programmation.JoursDeMatchs.Count - 1].Day, programmation.HeureParDefaut.Hours, programmation.HeureParDefaut.Minutes, 0);
-                    if (Utils.IsBeforeWithoutYear(jour, programmation.Initialisation)) jour = jour.AddYears(1);
+                    DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.gamesDays[programmation.gamesDays.Count-1].Month, programmation.gamesDays[programmation.gamesDays.Count - 1].Day, programmation.defaultHour.Hours, programmation.defaultHour.Minutes, 0);
+                    if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation)) jour = jour.AddYears(1);
                     Match retour = new Match(mbase.away, mbase.home, jour, false);
                     games.Add(retour);
                     res.Add(retour);
                 }
-                if(programmation.DernieresJourneesMemeJour < 1)
-                    TVSchedule(games, programmation.DecalagesTV, nbGamesFirstRound*2);
+                if(programmation.lastMatchDaysSameDayNumber < 1)
+                    TVSchedule(games, programmation.tvScheduling, nbGamesFirstRound*2);
             }
             return res;
         }
@@ -376,7 +376,7 @@ namespace TheManager
         /// <param name="games">List of games</param>
         /// <param name="offsets">List of offsets for TV diffusion</param>
         /// <param name="day">Championship day</param>
-        private static void TVSchedule(List<Match> games, List<DecalagesTV> offsets, int day)
+        private static void TVSchedule(List<Match> games, List<TvOffset> offsets, int day)
         {
             int indice = 0;
             if (offsets.Count>0)
@@ -389,20 +389,20 @@ namespace TheManager
                 {
                     Console.WriteLine("Match_Niveau_Comparator exception pour programme TV");
                 }
-                foreach (DecalagesTV d in offsets)
+                foreach (TvOffset d in offsets)
                 {
                     bool prisEnCompte = true;
-                    if (d.Probabilite != 1) prisEnCompte = (Session.Instance.Random(1, d.Probabilite + 1) == 1) ? true : false;
-                    if (d.Journee != 0) prisEnCompte = (d.Journee == day) ? true : false;
+                    if (d.Probability != 1) prisEnCompte = (Session.Instance.Random(1, d.Probability + 1) == 1) ? true : false;
+                    if (d.GameDay != 0) prisEnCompte = (d.GameDay == day) ? true : false;
                     if (indice < games.Count && prisEnCompte)
                     {
-                        games[indice].day = games[indice].day.AddDays(d.DecalageJours);
+                        games[indice].day = games[indice].day.AddDays(d.DaysOffset);
                         //Set all hours and minutes at 00
                         games[indice].day = games[indice].day.AddHours(-games[indice].day.Hour);
                         games[indice].day = games[indice].day.AddMinutes(-games[indice].day.Minute);
                         //New hour affectation
-                        games[indice].day = games[indice].day.AddHours(d.Heure.Hours);
-                        games[indice].day = games[indice].day.AddMinutes(d.Heure.Minutes);
+                        games[indice].day = games[indice].day.AddHours(d.Hour.Hours);
+                        games[indice].day = games[indice].day.AddMinutes(d.Hour.Minutes);
                         indice++;
                     }
 
@@ -422,18 +422,18 @@ namespace TheManager
         /// </summary>
         /// <param name="round">The round to draw</param>
         /// <returns>The list of games of this round</returns>
-        public static List<Match> Draw(TourElimination round)
+        public static List<Match> Draw(KnockoutRound round)
         {
             List<Match> res = new List<Match>();
-            List<Club> hat = new List<Club>(round.Clubs);
-            for (int i = 0; i < round.Clubs.Count / 2; i++)
+            List<Club> hat = new List<Club>(round.clubs);
+            for (int i = 0; i < round.clubs.Count / 2; i++)
             {
                 Club home = DrawClub(hat);
                 Club away = DrawClub(hat);
-                DateTime day = new DateTime(Session.Instance.Game.date.Year, round.Programmation.JoursDeMatchs[0].Month, round.Programmation.JoursDeMatchs[0].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
-                if (Utils.IsBeforeWithoutYear(day, round.Programmation.Initialisation)) day = day.AddYears(1);
+                DateTime day = new DateTime(Session.Instance.Game.date.Year, round.programmation.gamesDays[0].Month, round.programmation.gamesDays[0].Day, round.programmation.defaultHour.Hours, round.programmation.defaultHour.Minutes, 0);
+                if (Utils.IsBeforeWithoutYear(day, round.programmation.initialisation)) day = day.AddYears(1);
 
-                if(round.Regles.Contains(Rule.AtHomeIfTwoLevelDifference))
+                if(round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
                     Tournament champH = home.Championship;
                     Tournament champA = away.Championship;
@@ -445,23 +445,23 @@ namespace TheManager
                     }
                 }
 
-                res.Add(new Match(home, away, day, !round.AllerRetour));
+                res.Add(new Match(home, away, day, !round.twoLegs));
             }
 
-            TVSchedule(res, round.Programmation.DecalagesTV,0);
-            if(round.AllerRetour)
+            TVSchedule(res, round.programmation.tvScheduling,0);
+            if(round.twoLegs)
             {
                 List<Match> games = new List<Match>();
                 List<Match> firstRound = new List<Match>(res);
                 foreach (Match m in firstRound)
                 {
-                    DateTime day = new DateTime(Session.Instance.Game.date.Year, round.Programmation.JoursDeMatchs[1].Month, round.Programmation.JoursDeMatchs[1].Day, round.Programmation.HeureParDefaut.Hours, round.Programmation.HeureParDefaut.Minutes, 0);
-                    if (Utils.IsBeforeWithoutYear(day, round.Programmation.Initialisation)) day = day.AddYears(1);
-                    Match secondRound = new Match(m.away, m.home, day, !round.AllerRetour, m);
+                    DateTime day = new DateTime(Session.Instance.Game.date.Year, round.programmation.gamesDays[1].Month, round.programmation.gamesDays[1].Day, round.programmation.defaultHour.Hours, round.programmation.defaultHour.Minutes, 0);
+                    if (Utils.IsBeforeWithoutYear(day, round.programmation.initialisation)) day = day.AddYears(1);
+                    Match secondRound = new Match(m.away, m.home, day, !round.twoLegs, m);
                     games.Add(secondRound);
                     res.Add(secondRound);
                 }
-                TVSchedule(games, round.Programmation.DecalagesTV, 0);
+                TVSchedule(games, round.programmation.tvScheduling, 0);
             }
             return res;
         }

@@ -498,7 +498,7 @@ namespace TheManager
                     Tournament c = _kernel.String2Tournament(name);
                     foreach(XElement e3 in e2.Descendants("Tour"))
                     {
-                        Tour round = null;
+                        Round round = null;
                         string type = e3.Attribute("type").Value;
                         string nomTour = e3.Attribute("nom").Value;
                         bool twoLegged = e3.Attribute("allerRetour").Value == "oui";
@@ -527,17 +527,17 @@ namespace TheManager
                         {
                             int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
 
-                            round = new TourChampionnat(nomTour, String2Hour(hourByDefault), dates, twoLegged,new List<DecalagesTV>(), initialisationDate, endDate, dernieresJourneesMemeJour);
+                            round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, twoLegged,new List<TvOffset>(), initialisationDate, endDate, dernieresJourneesMemeJour);
                         }
                         else if(type=="elimination")
                         {
-                            round = new TourElimination(nomTour, String2Hour(hourByDefault), dates, new List<DecalagesTV>(), twoLegged, initialisationDate, endDate);
+                            round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, initialisationDate, endDate);
                         }
                         else if(type =="poules")
                         {
                             int groupsNumber = int.Parse(e3.Attribute("nombrePoules").Value);
                             RandomDrawingMethod method = String2DrawingMethod(e3.Attribute("methode").Value);
-                            round = new TourPoules(nomTour, String2Hour(hourByDefault), dates, new List<DecalagesTV>(), groupsNumber, twoLegged, initialisationDate, endDate, method);
+                            round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, initialisationDate, endDate, method);
 
                             if(method == RandomDrawingMethod.Geographic)
                             {
@@ -547,21 +547,21 @@ namespace TheManager
                                     string[] poulePosition = e3.Attribute("poule" + groupNum).Value.Split(';');
                                     float latitude = float.Parse(poulePosition[0], CultureInfo.InvariantCulture);
                                     float longitude = float.Parse(poulePosition[1], CultureInfo.InvariantCulture);
-                                    TourPoules tp = round as TourPoules;
-                                    tp.LocalisationGroupes.Add(new GeographicPosition(latitude, longitude));
+                                    GroupsRound tp = round as GroupsRound;
+                                    tp.groupsLocalisation.Add(new GeographicPosition(latitude, longitude));
                                 }
                             }
 
                             foreach(XElement eNoms in e3.Descendants("Nom"))
                             {
-                                TourPoules tp = round as TourPoules;
-                                tp.AjouterNomGroupe(eNoms.Value);
+                                GroupsRound tp = round as GroupsRound;
+                                tp.AddGroupName(eNoms.Value);
                             }
                             
                         }
                         else if (type == "inactif")
                         {
-                            round = new TourInactif(nomTour, String2Hour(hourByDefault), initialisationDate, endDate);
+                            round = new InactiveRound(nomTour, String2Hour(hourByDefault), initialisationDate, endDate);
                         }
                         c.rounds.Add(round);
                         foreach (XElement e4 in e3.Descendants("Club"))
@@ -595,7 +595,7 @@ namespace TheManager
                             }
 
                            
-                            round.Clubs.Add(club);
+                            round.clubs.Add(club);
                         }
                         foreach(XElement e4 in e3.Descendants("Participants"))
                         {
@@ -611,7 +611,7 @@ namespace TheManager
                                 string competitionName = e4.Attribute("competition").Value;
                                 int tourIndex = int.Parse(e4.Attribute("idTour").Value);
                                 Tournament comp = _kernel.String2Tournament(competitionName);
-                                Tour r = comp.rounds[tourIndex];
+                                Round r = comp.rounds[tourIndex];
                                 source = r;
                             }
                             RecuperationMethod method;
@@ -630,7 +630,7 @@ namespace TheManager
                                     method = RecuperationMethod.Best;
                                     break;
                             }
-                            round.RecuperationEquipes.Add(new RecuperationEquipes(source, number, method));
+                            round.recuperedTeams.Add(new RecoverTeams(source, number, method));
                         }
                         foreach (XElement e4 in e3.Descendants("Decalage"))
                         {
@@ -642,8 +642,8 @@ namespace TheManager
                             int matchDay = 0;
                             if (e4.Attribute("journee") != null)
                                 matchDay = int.Parse(e4.Attribute("journee").Value);
-                            DecalagesTV dtv = new DecalagesTV(day, hour, probability, matchDay);
-                            round.Programmation.DecalagesTV.Add(dtv);
+                            TvOffset dtv = new TvOffset(day, hour, probability, matchDay);
+                            round.programmation.tvScheduling.Add(dtv);
                         }
                         foreach (XElement e4 in e3.Descendants("Regle"))
                         {
@@ -654,13 +654,13 @@ namespace TheManager
                                 case "EQUIPES_PREMIERES_UNIQUEMENT":rule = Rule.OnlyFirstTeams;break;
                                 case "RESERVES_NE_MONTENT_PAS": rule = Rule.ReservesAreNotPromoted; break;
                             }
-                            round.Regles.Add(rule);
+                            round.rules.Add(rule);
                         }
                         foreach (XElement e4 in e3.Descendants("Dotation"))
                         {
                             int ranking = int.Parse(e4.Attribute("classement").Value);
                             int prize = int.Parse(e4.Attribute("somme").Value);
-                            round.Dotations.Add(new Dotation(ranking, prize));
+                            round.prizes.Add(new Prize(ranking, prize));
                         }
                         foreach (XElement e4 in e3.Descendants("Qualification"))
                         {
@@ -679,7 +679,7 @@ namespace TheManager
                                 int ranking = int.Parse(e4.Attribute("classement").Value);
 
                                 Qualification qu = new Qualification(ranking, tourId, targetedTournament, nextYear);
-                                round.Qualifications.Add(qu);
+                                round.qualifications.Add(qu);
                             }
                             else
                             {
@@ -688,7 +688,7 @@ namespace TheManager
                                 for(int j = from; j<= to; j++)
                                 {
                                     Qualification qu = new Qualification(j, tourId, targetedTournament, nextYear);
-                                    round.Qualifications.Add(qu);
+                                    round.qualifications.Add(qu);
                                 }
                             }
                         }
