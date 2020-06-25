@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TheManager.Comparators
 {
-    public class Article_Comparator : IComparer<Article>
+    public class ArticleComparator : IComparer<Article>
     {
         public int Compare(Article x, Article y)
         {

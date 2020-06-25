@@ -132,7 +132,7 @@ namespace TheManager
             
             List<Player> players = new List<Player>();
             foreach (Contract c in _players) players.Add(c.player);
-            players.Sort(new Joueur_Niveau_Comparator());
+            players.Sort(new PlayerLevelComparator());
 
             int total = 0;
             for(int i = 0;i<16;i++)
@@ -421,7 +421,7 @@ namespace TheManager
                 if (i == Session.Instance.Partie.kernel.freePlayers.Count || playersFound == playersToResearch)
                     pursue = false;
             }
-            clubTransfersManagement.targetedPlayers.Sort(new Joueur_Niveau_Comparator());
+            clubTransfersManagement.targetedPlayers.Sort(new PlayerLevelComparator());
         }
 
         /// <summary>

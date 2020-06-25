@@ -99,7 +99,7 @@ namespace TheManager_GUI
             spMatchs.Children.Clear();
 
             List<Match> matchs = Journee();
-            matchs.Sort(new Match_Date_Comparator());
+            matchs.Sort(new MatchDateComparator());
             DateTime lastTime = new DateTime(2000, 1, 1);
             TourElimination te = t as TourElimination;
             int i = 0;

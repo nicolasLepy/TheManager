@@ -27,7 +27,7 @@ namespace TheManager_GUI.VueClassement
         {
             spClassement.Children.Clear();
             List<Match> matchs = new List<Match>(_tour.Matchs);
-            matchs.Sort(new Match_Date_Comparator());
+            matchs.Sort(new MatchDateComparator());
 
             int index = 0;
             foreach(Match m in matchs)

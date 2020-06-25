@@ -47,7 +47,7 @@ namespace TheManager
 
             try
             {
-                res.Sort(new Match_Date_Comparator());
+                res.Sort(new MatchDateComparator());
             }
             catch
             {

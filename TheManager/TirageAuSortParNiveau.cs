@@ -21,7 +21,7 @@ namespace TheManager
             List<Club> pot = new List<Club>(_tour.Clubs);
             try
             {
-                pot.Sort(new Club_Niveau_Comparator());
+                pot.Sort(new ClubLevelComparator());
             }
             catch
             {

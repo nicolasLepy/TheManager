@@ -383,7 +383,7 @@ namespace TheManager
             {
                 try
                 {
-                    games.Sort(new Match_Niveau_Comparator());
+                    games.Sort(new MatchLevelComparator());
                 }
                 catch
                 {

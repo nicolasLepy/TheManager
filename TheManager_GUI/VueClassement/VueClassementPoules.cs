@@ -149,7 +149,7 @@ namespace TheManager_GUI.VueClassement
             for (int poules = 0; poules < _tour.NombrePoules; poules++)
             {
                 List<Club> poule = new List<Club>(_tour.Poules[poules]);
-                poule.Sort(new Club_Classement_Comparator(_tour.Matchs));
+                poule.Sort(new ClubRankingComparator(_tour.Matchs));
                 int i = 0;
                 _grille.Items.Add(new ClassementElement { Classement = 0, Nom = "" });
                 _grille.Items.Add(new ClassementElement { Classement = i, Nom = "Poule " + (int)(poules + 1) });

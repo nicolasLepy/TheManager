@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TheManager.Comparators
 {
-    public class Club_Classement_Random_Comparator : IComparer<Club>
+    public class ClubRandomRankingComparator : IComparer<Club>
     {
         public int Compare(Club x, Club y)
         {

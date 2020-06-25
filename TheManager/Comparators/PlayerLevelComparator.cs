@@ -6,7 +6,7 @@ using System.Text;
 
 namespace TheManager.Comparators
 {
-    public class Joueur_Niveau_Comparator : IComparer<Player>
+    public class PlayerLevelComparator : IComparer<Player>
     {
         public int Compare(Player x, Player y)
         {

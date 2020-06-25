@@ -6,13 +6,13 @@ using System.Text;
 
 namespace TheManager.Comparators
 {
-    public class Club_Classement_Comparator : IComparer<Club>
+    public class ClubRankingComparator : IComparer<Club>
     {
-        private List<Match> _tour;
+        private List<Match> _round;
 
-        public Club_Classement_Comparator(/*Tour t*/List<Match> matchs)
+        public ClubRankingComparator(/*Tour t*/List<Match> games)
         {
-            _tour = matchs;
+            _round = games;
         }
 
         public int Compare(Club x, Club y)
@@ -31,7 +31,7 @@ namespace TheManager.Comparators
                 }
                 else if (Difference(x) == Difference(y))
                 {
-                    if (ButPour(y) < ButPour(x))
+                    if (GoalFor(y) < GoalFor(x))
                     {
                         res = -1;
                     }
@@ -44,19 +44,19 @@ namespace TheManager.Comparators
 
         private int Points(Club c)
         {
-            return Utils.Points(_tour, c);
+            return Utils.Points(_round, c);
             //return _tour.Points(c);
         }
 
         private int Difference(Club c)
         {
-            return Utils.Difference(_tour, c);
+            return Utils.Difference(_round, c);
             //return _tour.Difference(c);
         }
 
-        private int ButPour(Club c)
+        private int GoalFor(Club c)
         {
-            return Utils.Gf(_tour, c);
+            return Utils.Gf(_round, c);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace TheManager_GUI
                     if (j.Value == journaliste) matchs.Add(m);
                 }
             }
-            matchs.Sort(new Match_Date_Comparator());
+            matchs.Sort(new MatchDateComparator());
 
             foreach(Match m in matchs)
             {

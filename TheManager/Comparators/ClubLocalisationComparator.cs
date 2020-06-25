@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TheManager.Comparators
 {
-    public class Club_Localisation_Comparator : IComparer<Club>
+    public class ClubLocalisationComparator : IComparer<Club>
     {
 
         private GeographicPosition _reference;
 
-        public Club_Localisation_Comparator(GeographicPosition reference)
+        public ClubLocalisationComparator(GeographicPosition reference)
         {
             _reference = reference;
         }

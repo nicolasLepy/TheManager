@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace TheManager.Comparators
 {
-    public class Club_Niveau_Comparator : IComparer<Club>
+    public class ClubLevelComparator : IComparer<Club>
     {
 
         private bool _envers;
 
-        public Club_Niveau_Comparator(bool aLEnvers = false)
+        public ClubLevelComparator(bool aLEnvers = false)
         {
             _envers = aLEnvers;
         }

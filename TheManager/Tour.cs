@@ -520,14 +520,14 @@ namespace TheManager
                 case RecuperationMethod.Best:
                     try
                     {
-                        clubs.Sort(new Club_Niveau_Comparator());
+                        clubs.Sort(new ClubLevelComparator());
                     }catch(Exception e)
                     {
                         Console.WriteLine("Erreur sort Club_Niveau_Comparator pour " + Nom);
                     }
                     break;
                 case RecuperationMethod.Worst:
-                    clubs.Sort(new Club_Niveau_Comparator(true));
+                    clubs.Sort(new ClubLevelComparator(true));
                     break;
             }
             List<Club> res = new List<Club>();

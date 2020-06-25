@@ -139,7 +139,7 @@ namespace TheManager
         public List<Club> Classement(int poule)
         {
             List<Club> res = new List<Club>(_poules[poule]);
-            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.Matchs);
             res.Sort(comparator);
             return res;
         }
@@ -151,7 +151,7 @@ namespace TheManager
             {
                 if ((c as ReserveClub) == null) res.Add(c);
             }
-            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.Matchs);
             res.Sort(comparator);
             return res;
         }

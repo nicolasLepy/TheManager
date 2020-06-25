@@ -48,22 +48,22 @@ namespace TheManager
         {
             _selectionnes = new List<Player>();
             List<Player> joueursPoste = Utils.PlayersByPoste(joueurs,Position.Goalkeeper);
-            joueursPoste.Sort(new Joueur_Niveau_Comparator());
+            joueursPoste.Sort(new PlayerLevelComparator());
             for(int i = 0; i<3; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
             joueursPoste = Utils.PlayersByPoste(joueurs, Position.Defender);
-            joueursPoste.Sort(new Joueur_Niveau_Comparator());
+            joueursPoste.Sort(new PlayerLevelComparator());
             for (int i = 0; i < 7; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
             joueursPoste = Utils.PlayersByPoste(joueurs, Position.Midfielder);
-            joueursPoste.Sort(new Joueur_Niveau_Comparator());
+            joueursPoste.Sort(new PlayerLevelComparator());
             for (int i = 0; i < 7; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 
             joueursPoste = Utils.PlayersByPoste(joueurs, Position.Striker);
-            joueursPoste.Sort(new Joueur_Niveau_Comparator());
+            joueursPoste.Sort(new PlayerLevelComparator());
             for (int i = 0; i < 6; i++)
                 if (joueursPoste.Count > i) _selectionnes.Add(joueursPoste[i]);
 

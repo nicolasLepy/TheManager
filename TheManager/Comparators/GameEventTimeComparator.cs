@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheManager.Comparators
 {
-    public class EvenementMatch_Temps_Comparator : IComparer<MatchEvent>
+    public class GameEventTimeComparator : IComparer<MatchEvent>
     {
         public int Compare(MatchEvent x, MatchEvent y)
         {

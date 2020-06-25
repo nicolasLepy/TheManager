@@ -287,7 +287,7 @@ namespace TheManager_GUI
                 {
                     if (m.Domicile == _partie.club || m.Exterieur == _partie.club) matchs.Add(m);
                 }
-                matchs.Sort(new Match_Date_Comparator());
+                matchs.Sort(new MatchDateComparator());
                 int diff = -1;
                 int indice = -1;
                 foreach (Match m in matchs)
@@ -325,7 +325,7 @@ namespace TheManager_GUI
         {
             dgMatchs.Items.Clear();
             List<Match> matchs = new List<Match>(t.Matchs);
-            matchs.Sort(new Match_Date_Comparator());
+            matchs.Sort(new MatchDateComparator());
             DateTime lastTime = new DateTime(2000, 1, 1);
             TourElimination te = t as TourElimination;
             foreach (Match m in matchs)

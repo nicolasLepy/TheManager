@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheManager.Comparators
 {
-    public class Joueur_Composition_Comparator : IComparer<Player>
+    public class PlayerCompositionComparator : IComparer<Player>
     {
         public int Compare(Player x, Player y)
         {

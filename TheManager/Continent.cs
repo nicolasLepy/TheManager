@@ -57,9 +57,9 @@ namespace TheManager
             }
             List<Club> res = new List<Club>();
             if (method == RecuperationMethod.Best)
-                clubs.Sort(new Club_Niveau_Comparator());
+                clubs.Sort(new ClubLevelComparator());
             else if (method == RecuperationMethod.Worst)
-                clubs.Sort(new Club_Niveau_Comparator(true));
+                clubs.Sort(new ClubLevelComparator(true));
             else if (method == RecuperationMethod.Randomly)
                 clubs = Utils.ShuffleList<Club>(clubs);
 

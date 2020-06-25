@@ -63,7 +63,7 @@ namespace TheManager
                 {
                     if (game.Domicile == this || game.Exterieur == this) res.Add(game);
                 }
-                res.Sort(new Match_Date_Comparator());
+                res.Sort(new MatchDateComparator());
                 return res;
             }
         }
@@ -212,12 +212,12 @@ namespace TheManager
             List<Player> res = new List<Player>();
 
             List<Player> joueursPosition = ListEligiblePlayersByPosition(Position.Goalkeeper);
-            joueursPosition.Sort(new Joueur_Composition_Comparator());
+            joueursPosition.Sort(new PlayerCompositionComparator());
             if (joueursPosition.Count >= 1)
                 res.Add(joueursPosition[0]);
 
             joueursPosition = ListEligiblePlayersByPosition(Position.Defender);
-            joueursPosition.Sort(new Joueur_Composition_Comparator());
+            joueursPosition.Sort(new PlayerCompositionComparator());
             
             if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
             if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
@@ -226,7 +226,7 @@ namespace TheManager
             
 
             joueursPosition = ListEligiblePlayersByPosition(Position.Midfielder);
-            joueursPosition.Sort(new Joueur_Composition_Comparator());
+            joueursPosition.Sort(new PlayerCompositionComparator());
 
             if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
             if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
@@ -235,7 +235,7 @@ namespace TheManager
 
 
             joueursPosition = ListEligiblePlayersByPosition(Position.Striker);
-            joueursPosition.Sort(new Joueur_Composition_Comparator());
+            joueursPosition.Sort(new PlayerCompositionComparator());
             if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
             if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
 

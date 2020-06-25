@@ -76,7 +76,7 @@ namespace TheManager.Exportation
                         {
                             journee.Add(tc.Matchs[i * matchsJournee + j]);
                         }
-                        journee.Sort(new Match_Date_Comparator());
+                        journee.Sort(new MatchDateComparator());
 
 
                         Exporteurs2.ExporterL(journee, "Output\\" + c.shortName + Session.Instance.Partie.date.Year + "\\" + t.Nom, i + 1);
@@ -103,7 +103,7 @@ namespace TheManager.Exportation
                     output += "<table>";
                     int k = 0;
                     List<Match> matchs = new List<Match>(te.Matchs);
-                    matchs.Sort(new Match_Date_Comparator());
+                    matchs.Sort(new MatchDateComparator());
                     DateTime last = new DateTime(2000, 1, 1);
                     Exporteurs2.ExporterD(matchs, dir + "\\" + te.Nom + "\\");
                     foreach (Match m in matchs)
@@ -145,7 +145,7 @@ namespace TheManager.Exportation
                     {
                         if (nbEquipesParPoules < poules.Count) nbEquipesParPoules = poules.Count;
                         List<Club> classement = new List<Club>(poules);
-                        classement.Sort(new Club_Classement_Comparator(t.Matchs));
+                        classement.Sort(new ClubRankingComparator(t.Matchs));
                         output += "<p>Groupe</p><table>";
                         foreach (Club club in classement)
                         {
@@ -164,7 +164,7 @@ namespace TheManager.Exportation
                         {
                             journee.Add(t.Matchs[i * matchsJournee + j]);
                         }
-                        journee.Sort(new Match_Date_Comparator());
+                        journee.Sort(new MatchDateComparator());
 
                         output += "<p>Journée " + (int)(i + 1) + "</p><table>";
                         foreach (Match m in journee)
@@ -201,7 +201,7 @@ namespace TheManager.Exportation
                 else cartons.Add(em);
                 
             }
-            evenements.Sort(new EvenementMatch_Temps_Comparator());
+            evenements.Sort(new GameEventTimeComparator());
             int s1 = 0;
             int s2 = 0;
             foreach (MatchEvent em in evenements)

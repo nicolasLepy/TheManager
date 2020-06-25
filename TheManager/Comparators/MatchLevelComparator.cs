@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TheManager.Comparators
 {
-    public class Match_Niveau_Comparator : IComparer<Match>
+    public class MatchLevelComparator : IComparer<Match>
     {
         public int Compare(Match x, Match y)
         {

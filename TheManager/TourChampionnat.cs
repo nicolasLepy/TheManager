@@ -53,7 +53,7 @@ namespace TheManager
 
         public List<Club> Classement()
         {
-            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.Matchs);
             List<Club> classement = new List<Club>(_clubs);
             classement.Sort(comparator);
             return classement;
@@ -66,7 +66,7 @@ namespace TheManager
             {
                 if ((c as ReserveClub) == null) res.Add(c);
             }
-            Club_Classement_Comparator comparator = new Club_Classement_Comparator(this.Matchs);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.Matchs);
             res.Sort(comparator);
             return res;
         }
@@ -101,7 +101,7 @@ namespace TheManager
             int total = MatchsParJournee();
             int journee = (indMatch / total);
             res = Journee(journee + 1); //+1 car journee va de 0 à n-1
-            res.Sort(new Match_Date_Comparator());
+            res.Sort(new MatchDateComparator());
 
             return res;
         }
@@ -147,7 +147,7 @@ namespace TheManager
         public override void DistribuerDotations()
         {
             List<Club> classement = new List<Club>(_clubs);
-            classement.Sort(new Club_Classement_Comparator(this.Matchs));
+            classement.Sort(new ClubRankingComparator(this.Matchs));
             foreach(Dotation d in _dotations)
             {
                 CityClub cv = classement[d.Classement-1] as CityClub;

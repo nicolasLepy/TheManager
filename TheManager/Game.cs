@@ -224,23 +224,23 @@ namespace TheManager
 
                         if (nbJournees-j == 1)
                         {
-                            games.Sort(new Match_Classement_Comparator(t as TourChampionnat));
+                            games.Sort(new MatchRankingComparator(t as TourChampionnat));
                         }
                         else if (nbJournees - j == 0)
                         {
-                            games.Sort(new Match_Classement_Comparator(t as TourChampionnat));
+                            games.Sort(new MatchRankingComparator(t as TourChampionnat));
                         }
                         else if(j<3)
                         {
-                            games.Sort(new Match_Niveau_Comparator());
+                            games.Sort(new MatchLevelComparator());
                         }
                         else if(t as TourChampionnat != null) 
                         {
-                            games.Sort(new Match_Classement_Comparator(t as TourChampionnat));
+                            games.Sort(new MatchRankingComparator(t as TourChampionnat));
                         }
                         else
                         {
-                            games.Sort(new Match_Niveau_Comparator());
+                            games.Sort(new MatchLevelComparator());
                         }
                     }
 
@@ -255,7 +255,7 @@ namespace TheManager
                         Journalist journalist = null;
                         if(j.Count > 0)
                         {
-                            j.Sort(new Journalistes_Comparator(city));
+                            j.Sort(new JournalistsComparator(city));
 
                             if(Math.Abs(Utils.Distance(j[0].baseCity, city))< 300)
                             {
