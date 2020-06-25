@@ -173,8 +173,11 @@ namespace TheManager
             //First day of the transfers market, clubs create a list of targets
             if (date.Month == 7 && date.Day == 2)
             {
-                foreach (Club c in kernel.Clubs)if (c as CityClub != null)
+                foreach (Club c in kernel.Clubs)
+                    if (c as CityClub != null)
+                    {
                         (c as CityClub).SearchFreePlayers();
+                    }
             }
             if (date.Month == 7 || date.Month == 8)
             {
@@ -251,8 +254,15 @@ namespace TheManager
                     {
                         Match m = games[i];
                         City city = null;
-                        if (m.home as CityClub != null) city = (m.home as CityClub).city;
-                        if (m.home as ReserveClub != null) city = (m.home as ReserveClub).FannionClub.city;
+                        if (m.home as CityClub != null)
+                        {
+                            city = (m.home as CityClub).city;
+                        }
+
+                        if (m.home as ReserveClub != null)
+                        {
+                            city = (m.home as ReserveClub).FannionClub.city;
+                        }
                         List<Journalist> j = new List<Journalist>();
                         foreach (Journalist j1 in media.journalists) if (!j1.isTaken) j.Add(j1);
                         Journalist journalist = null;
@@ -349,8 +359,11 @@ namespace TheManager
                             {
                                 //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
                                 //m.Jouer();
-                                if (c.isChampionship && (date.Month == 1 || date.Month == 12) && Session.Instance.Random(1, 26) == 2)
+                                if (c.isChampionship && (date.Month == 1 || date.Month == 12) &&
+                                    Session.Instance.Random(1, 26) == 2)
+                                {
                                     m.Reprogram(3);
+                                }
                                 else
                                 {
                                     toPlay.Add(m);
@@ -459,8 +472,9 @@ namespace TheManager
                 foreach(Club c in _kernel.Clubs)
                 {
                     CityClub cv = c as CityClub;
-                    if(cv !=  null)
+                    if(cv !=  null){
                         cv.DispatchPlayersInReserveTeams();
+                    }
                 }
             }
 

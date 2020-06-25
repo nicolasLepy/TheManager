@@ -221,9 +221,12 @@ namespace TheManager
                     case 3: 
                         tmp += 90;
                         break;
-                    case 4: 
+                    case 4 : 
                         tmp += 105;
                         break;
+                   default:
+                       tmp += 0;
+                       break;
                 }
                 int tmpAdd = _minute - ((_period < 3) ? 45 : 15);
                 time = tmp.ToString();
@@ -322,8 +325,8 @@ namespace TheManager
             else
                 managerLevel = (int)(teamLevel * 0.8f);
 
-            //On ajoute le niveau de l'entraîneur
-            teamLevel = teamLevel + 0.175f*(managerLevel - teamLevel);
+            //We add the level of the manager
+            res += 0.175f*(managerLevel - teamLevel);
             return res / (11.0f);
         }
 
@@ -370,19 +373,30 @@ namespace TheManager
                 {
                     case Position.Defender:
                         int k = j.level / 2;
-                        for (int i = 0; i < k; i++) players.Add(j);
+                        for (int i = 0; i < k; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
                     case Position.Midfielder:
-                        for (int i = 0; i < j.level; i++) players.Add(j);
+                        for (int i = 0; i < j.level; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
-                    case Position.Striker:
-                        for (int i = 0; i < j.level*2; i++) players.Add(j);
+                    case Position.Striker : default:
+                        for (int i = 0; i < j.level * 2; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
                 }
             }
             Player res = null;
-            if(players.Count > 0)
+            if (players.Count > 0)
+            {
                 res = players[Session.Instance.Random(0, players.Count)];
+            }
             return res;
 
         }
@@ -588,7 +602,6 @@ namespace TheManager
 
         public List<RetourMatch> NextMinute()
         {
-            List<RetourMatch> lookbacks = new List<RetourMatch>();
             //At the beginning of the game
             if(_minute == 0 && _period == 1)
             {
@@ -600,7 +613,7 @@ namespace TheManager
             Club b = away;
 
             _minute++;
-            lookbacks = PlayMinute(a, b);
+            List<RetourMatch> lookbacks = PlayMinute(a, b);
 
             int periodDuration = (_period < 3) ? 45 : 15;
             //End of regular time

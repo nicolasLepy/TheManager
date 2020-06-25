@@ -276,7 +276,7 @@ namespace TheManager_GUI
                 case 1:
                     AjouterSon("Ambiances\\Ambiance_4000",true);
                     break;
-                case 2:
+                case 2 :
                     AjouterSon("Ambiances\\Ambiance_4000_2", true);
                     break;
             }
