@@ -18,8 +18,15 @@ namespace TheManager
         public override Round Copy()
         {
             Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
-            foreach (Match m in this.matches) t.matches.Add(m);
-            foreach (Club c in this.clubs) t.clubs.Add(c);
+            foreach (Match m in this.matches)
+            {
+                t.matches.Add(m);
+            }
+
+            foreach (Club c in this.clubs)
+            {
+                t.clubs.Add(c);
+            }
             return t;
 
         }
@@ -75,14 +82,24 @@ namespace TheManager
             foreach(Qualification q in _qualifications)
             {
                 Club c = ranking[q.ranking - 1];
-                if (!q.isNextYear) q.tournament.rounds[q.roundId].clubs.Add(c);
-                else q.tournament.AddClubForNextYear(c, q.roundId);
+                if (!q.isNextYear)
+                {
+                    q.tournament.rounds[q.roundId].clubs.Add(c);
+                }
+                else
+                {
+                    q.tournament.AddClubForNextYear(c, q.roundId);
+                }
                 if (q.tournament.isChampionship && c.Championship != null)
                 {
                     if (q.tournament.level > c.Championship.level)
-                        c.supporters = (int)(c.supporters * 1.4f);
+                    {
+                        c.supporters = (int)(c.supporters * 1.4f);                        
+                    }
                     else if (q.tournament.level < c.Championship.level)
+                    {
                         c.supporters = (int)(c.supporters / 1.4f);
+                    }
                 }
             }
         }

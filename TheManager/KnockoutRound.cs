@@ -23,8 +23,15 @@ namespace TheManager
         public override Round Copy()
         {
             Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
-            foreach (Match m in this.matches) t.matches.Add(m);
-            foreach (Club c in this.clubs) t.clubs.Add(c);
+            foreach (Match m in this.matches)
+            {
+                t.matches.Add(m);
+            }
+
+            foreach (Club c in this.clubs)
+            {
+                t.clubs.Add(c);
+            }
             return t;
         }
 
@@ -41,7 +48,9 @@ namespace TheManager
                 }
                 int deb = 0;
                 if (firstLegMatchesAreAllPlayed)
+                {
                     deb = res.Count / 2;
+                }
                 res = new List<Match>(res.GetRange(deb, res.Count/2));
             }
 
@@ -109,7 +118,10 @@ namespace TheManager
         public override void QualifyClubs()
         {
             List<Match> matches = new List<Match>();
-            if (!twoLegs) matches = new List<Match>(_matches);
+            if (!twoLegs)
+            {
+                matches = new List<Match>(_matches);
+            }
             else
             {
                 for (int i = 0; i < _matches.Count / 2; i++)

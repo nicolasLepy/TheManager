@@ -33,8 +33,14 @@ namespace TheManager
         public string GroupName(int groupId)
         {
             string res = "";
-            if (_groupsNames.Count > groupId) res = _groupsNames[groupId];
-            else res = "Groupe " + (groupId + 1);
+            if (_groupsNames.Count > groupId)
+            {
+                res = _groupsNames[groupId];
+            }
+            else
+            {
+                res = "Groupe " + (groupId + 1);
+            }
             return res;
         }
 
@@ -93,14 +99,24 @@ namespace TheManager
                 foreach(Qualification q in _qualifications)
                 {
                     Club c = groups[i][q.ranking - 1];
-                    if (!q.isNextYear) q.tournament.rounds[q.roundId].clubs.Add(c);
-                    else q.tournament.AddClubForNextYear(c, q.roundId);
+                    if (!q.isNextYear)
+                    {
+                        q.tournament.rounds[q.roundId].clubs.Add(c);
+                    }
+                    else
+                    {
+                        q.tournament.AddClubForNextYear(c, q.roundId);
+                    }
                     if (q.tournament.isChampionship && c.Championship != null)
                     {
                         if (q.tournament.level > c.Championship.level)
+                        {                            
                             c.supporters = (int)(c.supporters * 1.4f);
+                        }
                         else if (q.tournament.level < c.Championship.level)
+                        {
                             c.supporters = (int)(c.supporters / 1.4f);
+                        }
                     }
                 }
             }

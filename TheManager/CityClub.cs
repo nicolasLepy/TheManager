@@ -434,26 +434,32 @@ namespace TheManager
             if(players.Count < 2)
             {
                 for (int i = 0; i < 2 - players.Count; i++)
-                    GeneratePlayer(Position.Goalkeeper, 18, 22, -(int)(formationFacilities-(formationFacilities * 0.75f)));
+                {
+                    GeneratePlayer(Position.Goalkeeper, 18, 22, -(int)(formationFacilities-(formationFacilities * 0.75f)));                    
+                }
             }
             players = ListPlayersByPosition(Position.Defender);
             if (players.Count < 5)
             {
-                for (int i = 0; i < 5 - players.Count; i++) 
-                    GeneratePlayer(Position.Defender, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));
+                for (int i = 0; i < 5 - players.Count; i++) {
+                    GeneratePlayer(Position.Defender, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));                
+                }
             }
             
             players = ListPlayersByPosition(Position.Midfielder);
             if (players.Count < 5)
             {
-                for (int i = 0; i < 5 - players.Count; i++) 
-                    GeneratePlayer(Position.Midfielder, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));
+                for (int i = 0; i < 5 - players.Count; i++) {
+                    GeneratePlayer(Position.Midfielder, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));                
+                }
             }
             players = ListPlayersByPosition(Position.Striker);
             if (players.Count < 5)
             {
-                for (int i = 0; i < 5 - players.Count; i++) 
+                for (int i = 0; i < 5 - players.Count; i++)
+                {
                     GeneratePlayer(Position.Striker, 18, 22, -(int)(formationFacilities - (formationFacilities * 0.75f)));
+                }
             }
         }
 

@@ -478,11 +478,15 @@ namespace TheManager
                     ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
                     DateTime debut = String2Date(seasonBeginning);
                     int periodicity = 1;
-                    if(e2.Attribute("periodicite") != null)
+                    if (e2.Attribute("periodicite") != null)
+                    {
                         periodicity = int.Parse(e2.Attribute("periodicite").Value);
+                    }
                     int remainingYears = 1;
                     if (e2.Attribute("anneesRestantes") != null)
+                    {
                         remainingYears = int.Parse(e2.Attribute("anneesRestantes").Value);
+                    }
                     Tournament c = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears);
                     localisation.Tournaments().Add(c);
                     //_gestionnaire.Competitions.Add(c);

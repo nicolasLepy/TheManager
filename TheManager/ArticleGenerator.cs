@@ -154,9 +154,7 @@ namespace TheManager
                             break;
                         case "NL_E": _nl_e.Add(article); 
                             break;
-                        case "NL_O": _nl_o.Add(article);
-                            break;
-                        default:
+                        case "NL_O" : _nl_o.Add(article);
                             break;
                     }
                 }

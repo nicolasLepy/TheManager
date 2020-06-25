@@ -398,8 +398,14 @@ namespace TheManager
                 foreach (TvOffset d in offsets)
                 {
                     bool prisEnCompte = true;
-                    if (d.Probability != 1) prisEnCompte = (Session.Instance.Random(1, d.Probability + 1) == 1) ? true : false;
-                    if (d.GameDay != 0) prisEnCompte = (d.GameDay == day) ? true : false;
+                    if (d.Probability != 1)
+                    {
+                        prisEnCompte = (Session.Instance.Random(1, d.Probability + 1) == 1);
+                    }
+                    if (d.GameDay != 0)
+                    {
+                        prisEnCompte = (d.GameDay == day);
+                    }
                     if (indice < games.Count && prisEnCompte)
                     {
                         games[indice].day = games[indice].day.AddDays(d.DaysOffset);

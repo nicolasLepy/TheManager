@@ -248,13 +248,34 @@ namespace TheManager
             int level = (int)Level();
             int price = 0;
 
-            if (level < 20) price = 1;
-            else if (level < 30) price = 2;
-            else if (level < 40) price = 3;
-            else if (level < 50) price = 5;
-            else if (level < 60) price = 10;
-            else if (level < 70) price = 20;
-            else if (level < 80) price = 30;
+            if (level < 20)
+            {
+                price = 1;
+            }
+            else if (level < 30)
+            {
+                price = 2;
+            }
+            else if (level < 40)
+            {
+                price = 3;
+            }
+            else if (level < 50)
+            {
+                price = 5;
+            }
+            else if (level < 60)
+            {
+                price = 10;
+            }
+            else if (level < 70)
+            {
+                price = 20;
+            }
+            else if (level < 80)
+            {
+                price = 30;
+            }
             else price = 45;
             _ticketPrice = price;
         }
