@@ -10,8 +10,8 @@ namespace TheManager_GUI.VueClassement
     public class VueCalendrierChampionnat : IVueClassement
     {
 
-        private DataGrid _grille;
-        private ChampionshipRound _tour;
+        private readonly DataGrid _grille;
+        private readonly ChampionshipRound _tour;
 
         public VueCalendrierChampionnat(DataGrid grille, ChampionshipRound tour)
         {
@@ -19,7 +19,7 @@ namespace TheManager_GUI.VueClassement
             _tour = tour;
         }
 
-        public void ApplyStyle2Label(Label l, int width)
+        private static void ApplyStyle2Label(Label l, int width)
         {
             l.Style = Application.Current.FindResource("StyleLabel2") as Style;
             l.Width = width;
@@ -178,8 +178,8 @@ namespace TheManager_GUI.VueClassement
             s.Setters.Add(new Setter() { Property = Control.FontSizeProperty, Value = 12 });
             s.Setters.Add(new Setter() { Property = Control.BorderThicknessProperty, Value = 1 });*/
 
-            s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-            s.Setters.Add(new Setter() { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
+            s.Setters.Add(new Setter { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
+            s.Setters.Add(new Setter { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
 
 
             //Pour chaque couleur
@@ -202,12 +202,12 @@ namespace TheManager_GUI.VueClassement
                         couleur = "barrageColor";
                     }
 
-                    DataTrigger tg = new DataTrigger()
+                    DataTrigger tg = new DataTrigger
                     {
                         Binding = new System.Windows.Data.Binding("Classement"),
                         Value = q.ranking
                     };
-                    tg.Setters.Add(new Setter()
+                    tg.Setters.Add(new Setter
                     {
                         Property = Control.BackgroundProperty,
                         Value = App.Current.TryFindResource(couleur) as SolidColorBrush

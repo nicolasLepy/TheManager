@@ -36,14 +36,12 @@ namespace TheManager
         /// </summary>
         public override void DistributeGrants()
         {
+            // Not implemented yet
         }
 
-        /// <summary>
-        /// Nothing to do because the inactive round show no information on its progress
-        /// </summary>
         public override void Initialise()
         {
-            
+            // Nothing to do because the inactive round show no information on its progress
         }
 
         public override List<Match> NextMatchesDay()
