@@ -123,19 +123,25 @@ namespace TheManager_GUI
         }
 
 
+        private void SetPlayerClubCompo()
+        {
+            List<Player> compo = new List<Player>();
+            for (int i = 0; i < _joueurs.Count; i++)
+            {
+                compo.Add(_joueurs[i]);
+            }
+
+            _matchs[0].SetCompo(compo, _club);
+   
+        }
+        
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
            
             if (VerifierComposition())
             {
-                List<Player> compo = new List<Player>();
-                for (int i = 0; i < _joueurs.Count; i++)
-                {
-                    compo.Add(_joueurs[i]);
-                }
-
-                _matchs[0].SetCompo(compo, _club);
+                SetPlayerClubCompo();
                 Windows_JouerMatch wjm = new Windows_JouerMatch(_matchs);
                 wjm.ShowDialog();
                 Close();
@@ -148,13 +154,9 @@ namespace TheManager_GUI
             
             if (VerifierComposition())
             {
-                List<Player> compo = new List<Player>();
-                for (int i = 0; i < _joueurs.Count; i++)
-                {
-                    compo.Add(_joueurs[i]);
-                }
-
-                _matchs[0].SetCompo(compo, _club);
+                SetPlayerClubCompo();
+                
+                
                 foreach(Match m in _matchs)
                 {
                     m.Play();
@@ -165,20 +167,20 @@ namespace TheManager_GUI
 
         private bool VerifierComposition()
         {
-            bool continuer = false;
+            bool pursue = false;
             if (_joueurs.Count < 11)
             {
                 MessageBoxResult result = MessageBox.Show("Moins de 11 joueurs sélectionnés. Continuer ?", "Composition", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
-                    continuer = true;
+                    pursue = true;
                 }
             }
             else
             {
-                continuer = true;
+                pursue = true;
             }
-            return continuer;
+            return pursue;
         }
     }
 

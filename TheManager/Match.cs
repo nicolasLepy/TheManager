@@ -288,14 +288,14 @@ namespace TheManager
                 else
                 {
                     int[] cumulativeScores = GetCumulativeScores();
-                    int score1 = cumulativeScores[0];
-                    int score2 = cumulativeScores[1];
+                    int cumulativeScore1 = cumulativeScores[0];
+                    int cumulativeScore2 = cumulativeScores[1];
 
-                    if (score1 > score2)
+                    if (cumulativeScore1 > cumulativeScore2)
                     {
                         c = home;
                     }
-                    else if (score2 > score1)
+                    else if (cumulativeScore2 > cumulativeScore1)
                     {
                         c = away;
                     }
