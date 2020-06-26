@@ -630,7 +630,7 @@ namespace TheManager
             }
             if(home as CityClub != null)
             {
-                (home as CityClub).ModifyBudget(_attendance * home.ticketPrice);
+                (home as CityClub).ModifyBudget(_attendance * home.ticketPrice, BudgetModificationReason.StadiumAttendance);
             }
         }
 

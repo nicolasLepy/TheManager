@@ -95,7 +95,7 @@ namespace TheManager
                         CityClub cv = m.Winner as CityClub;
                         if(cv != null)
                         {
-                            cv.ModifyBudget(d.Amount);
+                            cv.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
                         }
                     }
                 }
@@ -106,7 +106,7 @@ namespace TheManager
                         CityClub cv = m.Looser as CityClub;
                         if (cv != null)
                         {
-                            cv.ModifyBudget(d.Amount);
+                            cv.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
                         }
                     }
                 }

@@ -8,6 +8,30 @@ using System.Runtime.Serialization;
 
 namespace TheManager
 {
+
+    public enum BudgetModificationReason
+    {
+        SponsorGrant,
+        PayWages,
+        StadiumAttendance,
+        TournamentGrant,
+        UpdateFormationFacilities
+    }
+
+    public struct BudgetEntry
+    {
+        public BudgetModificationReason Reason { get; set; }
+        public float Amount { get; set; }
+        public DateTime Date { get; set; }
+
+        public BudgetEntry(DateTime date, float amount, BudgetModificationReason reason)
+        {
+            Date = date;
+            Amount = amount;
+            Reason = reason;
+        }
+    }
+    
     [DataContract(IsReference =true)]
     [KnownType(typeof(CityClub))]
     [System.Xml.Serialization.XmlInclude(typeof(CityClub))]

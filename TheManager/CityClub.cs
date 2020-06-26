@@ -53,6 +53,8 @@ namespace TheManager
     {
 
         [DataMember]
+        private List<BudgetEntry> _budgetHistory;
+        [DataMember]
         private int _budget;
         [DataMember]
         private City _city;
@@ -103,6 +105,7 @@ namespace TheManager
             _clubTransfersManagement = new ClubTransfersManagement();
             _isFannion = isFannion;
             _reserves = new List<ReserveClub>();
+            _budgetHistory = new List<BudgetEntry>();
         }
 
         public void AddPlayer(Contract c)
@@ -234,22 +237,24 @@ namespace TheManager
             GeneratePlayer(p,minAge,maxAge);
         }
 
-        public void ModifyBudget(int somme)
+        public void ModifyBudget(int amount, BudgetModificationReason reason)
         {
-            _budget += somme;
+            BudgetEntry entry = new BudgetEntry(Session.Instance.Game.date, amount, reason);
+            _budgetHistory.Add(entry);
+            _budget += amount;
         }
         
         public void PayWages()
         {
             foreach(Contract ct in contracts)
             {
-                ModifyBudget(-ct.wage);
+                ModifyBudget(-ct.wage, BudgetModificationReason.PayWages);
             }
         }
 
         public void SponsorGrant()
         {
-            ModifyBudget((int)(sponsor / 12));
+            ModifyBudget((int)(sponsor / 12), BudgetModificationReason.SponsorGrant);
         }
 
         public void GetSponsor()
@@ -312,7 +317,7 @@ namespace TheManager
                 int price = (int)(967.50471* Math.Pow(1.12867,formationFacilities));
                 if (_budget/3 > price && formationFacilities<99)
                 {
-                    ModifyBudget(-price);
+                    ModifyBudget(-price,BudgetModificationReason.UpdateFormationFacilities);
                     _formationFacilities++;
                 }
             }

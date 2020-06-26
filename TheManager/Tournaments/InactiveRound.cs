@@ -84,7 +84,7 @@ namespace TheManager
                 CityClub cv = c as CityClub;
                 if(cv != null)
                 {
-                    cv.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice);
+                    cv.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice, BudgetModificationReason.TournamentGrant);
                 }
             }
             foreach(Qualification q in _qualifications)

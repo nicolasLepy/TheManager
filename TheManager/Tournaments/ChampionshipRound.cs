@@ -179,7 +179,7 @@ namespace TheManager
                 CityClub cc = ranking[d.Ranking-1] as CityClub;
                 if (cc != null)
                 {
-                    cc.ModifyBudget(d.Amount);
+                    cc.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
                 }
                     
             }

@@ -214,7 +214,7 @@ namespace TheManager
                     CityClub cv = Ranking(i)[d.Ranking - 1] as CityClub;
                     if (cv != null)
                     {
-                        cv.ModifyBudget(d.Amount);
+                        cv.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
                     }
                 }
 
