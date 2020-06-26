@@ -2,17 +2,9 @@
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using TheManager;
 
 namespace TheManager_GUI
@@ -31,8 +23,6 @@ namespace TheManager_GUI
 
         public Windows_Options()
         {
-           
-
             InitializeComponent();
             _checkbox = new List<CheckBox>();
             cbExporter.IsChecked = Session.Instance.Game.options.ExportEnabled;
