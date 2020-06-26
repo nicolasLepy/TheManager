@@ -47,16 +47,31 @@ namespace TheManager_GUI
                 int couleur = 0;
                 if (m.home == _club)
                 {
-                    if (m.score1 > m.score2) couleur = 2;
-                    else if (m.score2 > m.score1) couleur = 0;
+                    if (m.score1 > m.score2)
+                    {
+                        couleur = 2;
+                    }
+                    else if (m.score2 > m.score1)
+                    {
+                        couleur = 0;
+                    }
                 }
                 else if (m.away == _club)
                 {
-                    if (m.score2 > m.score1) couleur = 2;
-                    else if (m.score1 > m.score2) couleur = 0;
+                    if (m.score2 > m.score1)
+                    {
+                        couleur = 2;
+                    }
+                    else if (m.score1 > m.score2)
+                    {
+                        couleur = 0;
+                    }
                 }
+
                 if (m.score1 == m.score2)
+                {
                     couleur = 1;
+                }
 
                 string fontStyle = "victoireColor";
                 switch (couleur)
@@ -123,7 +138,9 @@ namespace TheManager_GUI
                     if(archive.isChampionship)
                     {
                         if (archive.rounds[0].Winner() == club)
+                        {
                             nombre++;
+                        }
                     }
                     else
                     {
@@ -172,8 +189,11 @@ namespace TheManager_GUI
             foreach (Contract ct in c.contracts)
             {
                 dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.position.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.level, Potentiel = ct.player.potential, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.energy});
-                if((ct.beginning.Year == Session.Instance.Game.date.Year-1 && ct.beginning.Month < 7) || (ct.beginning.Year == Session.Instance.Game.date.Year && ct.beginning.Month >= 7))
+                if ((ct.beginning.Year == Session.Instance.Game.date.Year - 1 && ct.beginning.Month < 7) ||
+                    (ct.beginning.Year == Session.Instance.Game.date.Year && ct.beginning.Month >= 7))
+                {
                     dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.player, Nom = ct.player.ToString(), Niveau = ct.player.level, Salaire = ct.wage + " €" });
+                }
             }
 
             List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();

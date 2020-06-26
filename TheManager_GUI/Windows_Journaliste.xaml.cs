@@ -21,7 +21,10 @@ namespace TheManager_GUI
             {
                 foreach(KeyValuePair<TheManager.Media, Journalist> j in m.journalists)
                 {
-                    if (j.Value == journaliste) matchs.Add(m);
+                    if (j.Value == journaliste)
+                    {
+                        matchs.Add(m);
+                    }
                 }
             }
             matchs.Sort(new MatchDateComparator());

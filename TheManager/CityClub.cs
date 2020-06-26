@@ -159,7 +159,12 @@ namespace TheManager
             return level / (total+0.0f);
         }
 
-        public void GeneratePlayer(Position p, int minAge, int maxAge, int potentialOffset = 0)
+        public void GeneratePlayer(Position p, int minAge, int maxAge)
+        {
+            GeneratePlayer(p, minAge, maxAge, 0);
+        }
+        
+        public void GeneratePlayer(Position p, int minAge, int maxAge, int potentialOffset)
         {
             string firstName = _city.Country().language.GetFirstName();
             string lastName = _city.Country().language.GetLastName();

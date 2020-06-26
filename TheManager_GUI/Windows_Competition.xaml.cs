@@ -44,16 +44,25 @@ namespace TheManager_GUI
             lbCompetition.Content = _competition.name;
             lbNomTour.Content = _competition.rounds[_indexTour].name;
             dgButeurs.Items.Clear();
-            
+
 
             if (_competition.statistics.LargerScore != null)
+            {
                 lbGrandScore.Content = _competition.statistics.LargerScore.home.name + " " + _competition.statistics.LargerScore.score1 + "-" + _competition.statistics.LargerScore.score2 + " " + _competition.statistics.LargerScore.away.name;
+            }
             else
+            {
                 lbGrandScore.Content = "";
+            }
+
             if (_competition.statistics.LargerScore != null)
+            {
                 lbGrosEcart.Content = _competition.statistics.LargerScore.home.name + " " + _competition.statistics.LargerScore.score1 + "-" + _competition.statistics.LargerScore.score2 + " " + _competition.statistics.LargerScore.away.name;
+            }
             else
+            {
                 lbGrosEcart.Content = "";
+            }
             Palmares();
             Buteurs();
             Calendrier(_competition.rounds[_indexTour]);
@@ -237,19 +246,28 @@ namespace TheManager_GUI
 
         private void BtnTourDroite_Click(object sender, RoutedEventArgs e)
         {
-            if (_indexTour < _competition.rounds.Count-1) _indexTour++;
+            if (_indexTour < _competition.rounds.Count - 1)
+            {
+                _indexTour++;
+            }
             InitWidgets();
         }
 
         private void BtnTourGauche_Click(object sender, RoutedEventArgs e)
         {
-            if (_indexTour > 0) _indexTour--;
+            if (_indexTour > 0)
+            {
+                _indexTour--;
+            }
             InitWidgets();
         }
 
         private void BtnJourneeGauche_Click(object sender, RoutedEventArgs e)
         {
-            if (_indexJournee > 1) _indexJournee--;
+            if (_indexJournee > 1)
+            {
+                _indexJournee--;
+            }
             InitWidgets();
         }
 
@@ -258,7 +276,10 @@ namespace TheManager_GUI
             ChampionshipRound tc = _competition.rounds[_indexTour] as ChampionshipRound;
             if (tc != null)
             {
-                if (_indexJournee < tc.MatchesDayNumber()) _indexJournee++;
+                if (_indexJournee < tc.MatchesDayNumber())
+                {
+                    _indexJournee++;
+                }
                 InitWidgets();
             }
         }

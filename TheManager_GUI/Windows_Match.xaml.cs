@@ -37,7 +37,9 @@ namespace TheManager_GUI
             pbPossession.Maximum = match.statistics.Possession1 + match.statistics.Possession2;
             pbPossession.Value = match.statistics.Possession1;
             if (match.prolongations)
+            {
                 lbScore.Content += " a.p.";
+            }
             if(match.PenaltyShootout)
             {
                 lbScore.Content += " (" + match.penaltyShootout1 + "-" + match.penaltyShootout2 + " tab)";
@@ -74,16 +76,30 @@ namespace TheManager_GUI
                     img1 = Utils.Image(icone);
                     c1 = em.MinuteToString;
                     c2 = em.player.firstName + " " + em.player.lastName;
-                    if (em.type == GameEvent.PenaltyGoal) c2 += " (sp)";
-                    if (em.type == GameEvent.AgGoal) c2 += " (csc)";
+                    if (em.type == GameEvent.PenaltyGoal)
+                    {
+                        c2 += " (sp)";
+                    }
+
+                    if (em.type == GameEvent.AgGoal)
+                    {
+                        c2 += " (csc)";
+                    }
                 }
                 else
                 {
                     img2 = Utils.Image(icone);
                     c4 = em.MinuteToString;
                     c3 = em.player.firstName + " " + em.player.lastName;
-                    if (em.type == GameEvent.PenaltyGoal) c3 += " (sp)";
-                    if (em.type == GameEvent.AgGoal) c3 += " (csc)";
+                    if (em.type == GameEvent.PenaltyGoal)
+                    {
+                        c3 += " (sp)";
+                    }
+
+                    if (em.type == GameEvent.AgGoal)
+                    {
+                        c3 += " (csc)";
+                    }
                 }
                 if(em.type != GameEvent.Shot)
                 {

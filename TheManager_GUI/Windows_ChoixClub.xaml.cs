@@ -20,8 +20,12 @@ namespace TheManager_GUI
             InitializeComponent();
 
             foreach (Continent c in Session.Instance.Game.kernel.continents)
+            {
                 foreach (Country p in c.countries)
+                {
                     cbNationalite.Items.Add(p);
+                }
+            }
 
             RemplirTreeView();
 

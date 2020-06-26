@@ -169,7 +169,10 @@ namespace TheManager_GUI
             if (_joueurs.Count < 11)
             {
                 MessageBoxResult result = MessageBox.Show("Moins de 11 joueurs sélectionnés. Continuer ?", "Composition", MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes) continuer = true;
+                if (result == MessageBoxResult.Yes)
+                {
+                    continuer = true;
+                }
             }
             else
             {

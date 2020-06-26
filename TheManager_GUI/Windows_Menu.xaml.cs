@@ -33,8 +33,18 @@ namespace TheManager_GUI
             comboPays.Items.Clear();
             foreach (Continent c in _partie.kernel.continents)
             {
-                if (c.Tournaments().Count > 0) this.comboPays.Items.Add(c);
-                foreach (Country p in c.countries) if (p.Tournaments().Count > 0) { this.comboPays.Items.Add(p); Console.WriteLine(p); }
+                if (c.Tournaments().Count > 0)
+                {
+                    this.comboPays.Items.Add(c);
+                }
+
+                foreach (Country p in c.countries)
+                {
+                    if (p.Tournaments().Count > 0)
+                    {
+                        this.comboPays.Items.Add(p); Console.WriteLine(p);
+                    }
+                }
             }
             Refresh();
 
@@ -73,7 +83,6 @@ namespace TheManager_GUI
 
         private void BtnAvancer_Click(object sender, RoutedEventArgs e)
         {
-
             Avancer();
         }
 
@@ -98,7 +107,10 @@ namespace TheManager_GUI
             Round t = lbTours.SelectedItem as Round;
 
             IVueClassement vue = FabriqueVueClassement.CreerVue(dgClassement, t);
-            if (vue != null) vue.Afficher();
+            if (vue != null)
+            {
+                vue.Afficher();
+            }
             /*
             if (t as TourChampionnat != null)
                 Classement(t as TourChampionnat);
@@ -211,7 +223,10 @@ namespace TheManager_GUI
                 bool trouve = false;
                 Tournament comp = null;
                 int i = 0;
-                if (matchs.Count == 0) trouve = true;
+                if (matchs.Count == 0)
+                {
+                    trouve = true;
+                }
                 while(!trouve)
                 {
                     if(!matchs[i].Played)
@@ -220,7 +235,10 @@ namespace TheManager_GUI
                         trouve = true;
                     }
                     i++;
-                    if (i + 1 == matchs.Count) trouve = true;
+                    if (i + 1 == matchs.Count)
+                    {
+                        trouve = true;
+                    }
                 }
 
                 if(comp != null)
@@ -260,8 +278,15 @@ namespace TheManager_GUI
                 List<Club> classement = (championnat as ChampionshipRound).Ranking();
                 int indice = classement.IndexOf(_partie.club);
                 indice = indice - 2;
-                if (indice < 0) indice = 0;
-                if (indice > classement.Count - 5) indice = classement.Count - 5;
+                if (indice < 0)
+                {
+                    indice = 0;
+                }
+
+                if (indice > classement.Count - 5)
+                {
+                    indice = classement.Count - 5;
+                }
                 for(int i = indice; i<indice+5; i++)
                 {
                     Club c = classement[i];
@@ -295,8 +320,15 @@ namespace TheManager_GUI
                     }
                 }
                 indice = indice - 2;
-                if (indice < 0) indice = 0;
-                if (indice > matchs.Count - 3) indice = matchs.Count - 3;
+                if (indice < 0)
+                {
+                    indice = 0;
+                }
+
+                if (indice > matchs.Count - 3)
+                {
+                    indice = matchs.Count - 3;
+                }
                 for(int i = indice; i<indice+5; i++)
                 {
                     //Cas où si jamais il y a moins de 5 matchs pour le club
@@ -334,8 +366,15 @@ namespace TheManager_GUI
                 {
                     score = m.score1 + " - " + m.score2;
                     affluence = m.attendance.ToString();
-                    if (m.prolongations) score += " ap";
-                    if (m.PenaltyShootout) score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
+                    if (m.prolongations)
+                    {
+                        score += " ap";
+                    }
+
+                    if (m.PenaltyShootout)
+                    {
+                        score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
+                    }
                 }
                 string equipe1 = m.home.shortName;
                 string equipe2 = m.away.shortName;

@@ -29,7 +29,10 @@ namespace TheManager_GUI
                 int arrivee = joueur.history[0].Year;
                 foreach (PlayerHistory hj in joueur.history)
                 {
-                    if (precedant == null) precedant = hj.Club;
+                    if (precedant == null)
+                    {
+                        precedant = hj.Club;
+                    }
                     else if (precedant != hj.Club)
                     {
                         int depart = hj.Year;

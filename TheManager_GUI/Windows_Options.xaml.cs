@@ -99,7 +99,9 @@ namespace TheManager_GUI
             {
                 Tournament comp = Session.Instance.Game.kernel.String2Tournament(cb.Content.ToString());
                 if (cb.IsChecked == true)
+                {
                     Session.Instance.Game.options.tournamentsToExport.Add(comp);
+                }
             }
             Session.Instance.Game.options.ExportEnabled = (bool)cbExporter.IsChecked;
             Session.Instance.Game.options.transfersEnabled = (bool)cbTransferts.IsChecked;

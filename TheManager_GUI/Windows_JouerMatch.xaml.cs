@@ -42,8 +42,11 @@ namespace TheManager_GUI
                     {
                         _media.But(match);
                     }
-                    if(cbJingleBut.IsChecked == true)
+
+                    if (cbJingleBut.IsChecked == true)
+                    {
                         _media.AjouterSon("jingle", false);
+                    }
 
 
                     //Refresh en cas de but
@@ -65,7 +68,11 @@ namespace TheManager_GUI
                 {
                     dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteToString, Joueur = em.player.lastName + " (" + em.player.Club.shortName + ")", Evenement = match.home + " - " + match.away + " : " + match.score1 + " - " + match.score2 });
                 }
-                if (match == _matchs[0]) ActionsMatch();
+
+                if (match == _matchs[0])
+                {
+                    ActionsMatch();
+                }
             }
 
 
@@ -96,8 +103,10 @@ namespace TheManager_GUI
                     await Match(match).ConfigureAwait(false);
                 }
 
-                if(match == _matchs[0])
+                if (match == _matchs[0])
+                {
                     btnTerminer.Visibility = Visibility.Visible;
+                }
             });
             
         }
