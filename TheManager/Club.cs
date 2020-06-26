@@ -234,10 +234,37 @@ namespace TheManager
             return res;
         }
 
+        /// <summary>
+        /// Add players of a position in the composition for a game
+        /// </summary>
+        /// <param name="position">The position needed</param>
+        /// <param name="composition">The current composition to add player</param>
+        /// <param name="playersNumberToTake">Number of players of this position to put in the composition</param>
+        private void BuildComposition(Position position, List<Player> composition, int playersNumberToTake)
+        {
+            List<Player> playersOfPosition = ListEligiblePlayersByPosition(position);
+            playersOfPosition.Sort(new PlayerCompositionComparator());
+
+            for (int i = 0; i < playersNumberToTake; i++)
+            {
+                if (playersOfPosition.Count > i)
+                {
+                    composition.Add(playersOfPosition[i]);
+                }
+
+            }
+        }
+
         public List<Player> Composition()
         {
             List<Player> res = new List<Player>();
 
+            BuildComposition(Position.Goalkeeper, res, 1);
+            BuildComposition(Position.Defender, res, 4);
+            BuildComposition(Position.Midfielder, res, 4);
+            BuildComposition(Position.Striker, res,2);
+            
+            /*
             List<Player> joueursPosition = ListEligiblePlayersByPosition(Position.Goalkeeper);
             joueursPosition.Sort(new PlayerCompositionComparator());
             if (joueursPosition.Count >= 1)
@@ -296,7 +323,7 @@ namespace TheManager
             if (joueursPosition.Count > 1)
             {
                 res.Add(joueursPosition[1]);
-            }
+            }*/
 
 
             return res;
