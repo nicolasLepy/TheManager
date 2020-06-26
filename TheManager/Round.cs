@@ -284,8 +284,14 @@ namespace TheManager
                 {
                     if(em.type == GameEvent.Goal || em.type == GameEvent.PenaltyGoal)
                     {
-                        if (goalscorers.ContainsKey(em.player)) goalscorers[em.player]++;
-                        else goalscorers[em.player] = 1;
+                        if (goalscorers.ContainsKey(em.player))
+                        {
+                            goalscorers[em.player]++;
+                        }
+                        else
+                        {
+                            goalscorers[em.player] = 1;
+                        }
                     }
                 }
             }
@@ -307,7 +313,10 @@ namespace TheManager
             bool pursue = true;
             DateTime date = new DateTime(2000, 1, 1);
             int i = 0;
-            if (_matches.Count == 0) pursue = false;
+            if (_matches.Count == 0)
+            {
+                pursue = false;
+            }
             while (pursue)
             {
                 Match m = _matches[i];
@@ -319,10 +328,19 @@ namespace TheManager
                         res.Add(m);
                     }
                     else if (date.Date == m.day.Date)
+                    {
                         res.Add(m);
-                    else pursue = false;
+                    }
+                    else
+                    {
+                        pursue = false;
+                    }
                 }
-                if (i == _matches.Count - 1) pursue = false;
+
+                if (i == _matches.Count - 1)
+                {
+                    pursue = false;
+                }
                 i++;
             }
 
@@ -340,16 +358,24 @@ namespace TheManager
                     if (m.home == c)
                     {
                         if (m.score1 > m.score2)
+                        {
                             points += 3;
+                        }
                         else if (m.score2 == m.score1)
+                        {
                             points++;
+                        }
                     }
                     else if (m.away == c)
                     {
                         if (m.score2 > m.score1)
+                        {
                             points += 3;
+                        }
                         else if (m.score2 == m.score1)
+                        {
                             points++;
+                        }
                     }
                 }
             }
@@ -363,7 +389,10 @@ namespace TheManager
             int played = 0;
             foreach (Match m in _matches)
             {
-                if (m.Played && (m.home == c || m.away == c)) played++;
+                if (m.Played && (m.home == c || m.away == c))
+                {
+                    played++;
+                }
             }
             return played;
         }
@@ -375,11 +404,17 @@ namespace TheManager
             {
                 if (m.home == c)
                 {
-                    if (m.score1 > m.score2) res++;
+                    if (m.score1 > m.score2)
+                    {
+                        res++;
+                    }
                 }
                 else if (m.away == c)
                 {
-                    if (m.score2 > m.score1) res++;
+                    if (m.score2 > m.score1)
+                    {
+                        res++;
+                    }
                 }
             }
             return res;
@@ -392,7 +427,10 @@ namespace TheManager
             {
                 if (m.Played && (m.home == c || m.away == c))
                 {
-                    if (m.score1 == m.score2) res++;
+                    if (m.score1 == m.score2)
+                    {
+                        res++;
+                    }
                 }
             }
             return res;
@@ -405,11 +443,17 @@ namespace TheManager
             {
                 if (m.home == c)
                 {
-                    if (m.score1 < m.score2) res++;
+                    if (m.score1 < m.score2)
+                    {
+                        res++;
+                    }
                 }
                 else if (m.away == c)
                 {
-                    if (m.score2 < m.score1) res++;
+                    if (m.score2 < m.score1)
+                    {
+                        res++;
+                    }
                 }
             }
             return res;
@@ -545,7 +589,10 @@ namespace TheManager
                     break;
             }
             List<Club> res = new List<Club>();
-            for (int i = 0; i < number; i++) res.Add(clubs[i]);
+            for (int i = 0; i < number; i++)
+            {
+                res.Add(clubs[i]);
+            }
             return res;
         }
 

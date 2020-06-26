@@ -46,8 +46,14 @@ namespace TheManager
             foreach(Qualification q in qualifications)
             {
                 Club c = ranking[q.ranking-1];
-                if (!q.isNextYear) q.tournament.rounds[q.roundId].clubs.Add(c);
-                else q.tournament.AddClubForNextYear(c, q.roundId);
+                if (!q.isNextYear)
+                {
+                    q.tournament.rounds[q.roundId].clubs.Add(c);
+                }
+                else
+                {
+                    q.tournament.AddClubForNextYear(c, q.roundId);
+                }
                 if(q.tournament.isChampionship && c.Championship != null)
                 {
                     if (q.tournament.level > c.Championship.level)
@@ -89,9 +95,15 @@ namespace TheManager
         {
             int nbTeams = clubs.Count;
             int nbMatches = matches.Count;
-            if (nbTeams % 2 == 1) nbTeams++;
+            if (nbTeams % 2 == 1)
+            {
+                nbTeams++;
+            }
             int nbMatchesDays = nbMatches / nbTeams;
-            if (twoLegs) nbMatchesDays *= 2;
+            if (twoLegs)
+            {
+                nbMatchesDays *= 2;
+            }
             return nbMatchesDays ;
         }
         

@@ -54,7 +54,10 @@ namespace TheManager
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
             _groupsNames = new List<string>();
-            for (int i = 0; i < _groupsNumber; i++) _groups[i] = new List<Club>();
+            for (int i = 0; i < _groupsNumber; i++)
+            {
+                _groups[i] = new List<Club>();
+            }
             _randomDrawingMethod = randomDrawingMethod;
             _groupsLocalisation = new List<GeographicPosition>();
         }
@@ -82,7 +85,10 @@ namespace TheManager
         public override void Initialise()
         {
             _groups = new List<Club>[_groupsNumber];
-            for (int i = 0; i < _groupsNumber; i++) _groups[i] = new List<Club>();
+            for (int i = 0; i < _groupsNumber; i++)
+            {
+                _groups[i] = new List<Club>();
+            }
             AddTeamsToRecover();
             SetGroups();
             for (int i = 0; i < _groupsNumber; i++)
@@ -139,7 +145,10 @@ namespace TheManager
         {
             List<Match> res = new List<Match>();
             int matchesPerGroups = MatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
-            if (twoLegs) matchesPerGroups *= 2;
+            if (twoLegs)
+            {
+                matchesPerGroups *= 2;
+            }
             for (int i = 0; i < _groupsNumber; i++)
             {
                 int baseIndex = (matchesPerGroups * i) + (MatchesPerGamesDay() * (journey - 1));
@@ -171,7 +180,10 @@ namespace TheManager
             List<Club> res = new List<Club>();
             foreach(Club c in _groups[ranking])
             {
-                if ((c as ReserveClub) == null) res.Add(c);
+                if ((c as ReserveClub) == null)
+                {
+                    res.Add(c);
+                }
             }
             ClubRankingComparator comparator = new ClubRankingComparator(this.matches);
             res.Sort(comparator);

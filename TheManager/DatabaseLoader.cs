@@ -216,10 +216,15 @@ namespace TheManager
                         int age = int.Parse(e3.Attribute("age").Value);
                         City city = _kernel.String2City(e3.Attribute("ville").Value);
                         int offset = 0;
-                        if(e3.Attribute("retrait") != null)
+                        if (e3.Attribute("retrait") != null)
+                        {
                             offset = int.Parse(e3.Attribute("retrait").Value);
+                        }
+
                         if (city == null)
+                        {
                             Console.WriteLine(e3.Attribute("ville").Value + " n'est pas une ville.");
+                        }
                         Journalist j = new Journalist(firstName, lastName, age, city, offset);
                         m.journalists.Add(j);
                     }
@@ -230,8 +235,15 @@ namespace TheManager
                         Tournament tournament = _kernel.String2Tournament(e3.Attribute("competition").Value);
                         int averageGames = -1;
                         int multiplexMinGames = -1;
-                        if (e3.Attribute("matchParMultiplex") != null) averageGames = int.Parse(e3.Attribute("matchParMultiplex").Value);
-                        if (e3.Attribute("multiplex") != null) multiplexMinGames = int.Parse(e3.Attribute("multiplex").Value);
+                        if (e3.Attribute("matchParMultiplex") != null)
+                        {
+                            averageGames = int.Parse(e3.Attribute("matchParMultiplex").Value);
+                        }
+
+                        if (e3.Attribute("multiplex") != null)
+                        {
+                            multiplexMinGames = int.Parse(e3.Attribute("multiplex").Value);
+                        }
                         m.coverages.Add(new TournamentCoverage(tournament, index, multiplexMinGames, averageGames));
                     }
                 }
@@ -390,7 +402,10 @@ namespace TheManager
                         if(stadium == null)
                         {
                             int capacite = 1000;
-                            if (city != null) capacite = city.Population / 10;
+                            if (city != null)
+                            {
+                                capacite = city.Population / 10;
+                            }
                             stadium = new Stadium(stadiumName, capacite, city);
                             if (city != null)
                             {
@@ -402,19 +417,30 @@ namespace TheManager
                             }
                         }
                     }
+
                     if (stadium == null)
+                    {
                         stadium = new Stadium("Stade de " + shortName, city.Population / 10, city);
+                    }
 
 
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
-                    if (logo == "" || !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + logo + ".png")) logo = "generic";
+                    if (logo == "" ||
+                        !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + logo + ".png"))
+                    {
+                        logo = "generic";
+                    }
 
                     string musiqueBut = "";
                     if (e2.Attribute("musiqueBut") != null)
+                    {
                         musiqueBut = e2.Attribute("musiqueBut").Value ;
+                    }
                     else
+                    {
                         musiqueBut = "null";
+                    }
 
                     //Simplification
                     reputation = centreFormation;
@@ -442,17 +468,24 @@ namespace TheManager
                         string nom_stade = e2.Attribute("stade").Value;
                         stadium = _kernel.String2Stadium(nom_stade);
                     }
+
                     if (stadium == null)
+                    {
                         stadium = new Stadium("Stade de " + shortName, 15000, null);
+                    }
                     int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
                     float coefficient = float.Parse(e2.Attribute("coefficient").Value);
 
                     string goalMusic = "";
                     if (e2.Attribute("musiqueBut") != null)
+                    {
                         goalMusic = e2.Attribute("musiqueBut").Value;
+                    }
                     else
+                    {
                         goalMusic = "null";
+                    }
 
                     Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
@@ -666,10 +699,14 @@ namespace TheManager
                             Hour hour = String2Hour(e4.Attribute("heure").Value);
                             int probability = 1;
                             if (e4.Attribute("probabilite") != null)
+                            {
                                 probability = int.Parse(e4.Attribute("probabilite").Value);
+                            }
                             int matchDay = 0;
                             if (e4.Attribute("journee") != null)
+                            {
                                 matchDay = int.Parse(e4.Attribute("journee").Value);
+                            }
                             TvOffset dtv = new TvOffset(day, hour, probability, matchDay);
                             round.programmation.tvScheduling.Add(dtv);
                         }
@@ -678,9 +715,15 @@ namespace TheManager
                             Rule rule = Rule.AtHomeIfTwoLevelDifference;
                             switch(e4.Attribute("nom").Value)
                             {
-                                case "RECOIT_SI_DEUX_DIVISION_ECART": rule = Rule.AtHomeIfTwoLevelDifference; break;
-                                case "EQUIPES_PREMIERES_UNIQUEMENT":rule = Rule.OnlyFirstTeams;break;
-                                case "RESERVES_NE_MONTENT_PAS": rule = Rule.ReservesAreNotPromoted; break;
+                                case "RECOIT_SI_DEUX_DIVISION_ECART": 
+                                    rule = Rule.AtHomeIfTwoLevelDifference; 
+                                    break;
+                                case "EQUIPES_PREMIERES_UNIQUEMENT":
+                                    rule = Rule.OnlyFirstTeams;
+                                    break;
+                                case "RESERVES_NE_MONTENT_PAS": 
+                                    rule = Rule.ReservesAreNotPromoted; 
+                                    break;
                             }
                             round.rules.Add(rule);
                         }
@@ -694,9 +737,15 @@ namespace TheManager
                         {
                             int tourId = int.Parse(e4.Attribute("id_tour").Value);
                             bool nextYear = false;
-                            if (e4.Attribute("anneeSuivante") != null) nextYear = e4.Attribute("anneeSuivante").Value == "oui" ? true : false;
+                            if (e4.Attribute("anneeSuivante") != null)
+                            {
+                                nextYear = e4.Attribute("anneeSuivante").Value == "oui";
+                            }
                             Tournament targetedTournament = null;
-                            if (e4.Attribute("competition") != null) targetedTournament = _kernel.String2Tournament(e4.Attribute("competition").Value);
+                            if (e4.Attribute("competition") != null)
+                            {
+                                targetedTournament = _kernel.String2Tournament(e4.Attribute("competition").Value);
+                            }
                             else targetedTournament = c;
 
                             //Deux cas
@@ -820,8 +869,14 @@ namespace TheManager
         {
             RandomDrawingMethod res = RandomDrawingMethod.Level;
 
-            if (method == "Niveau") res = RandomDrawingMethod.Level;
-            else if (method == "Geographique") res = RandomDrawingMethod.Geographic;
+            if (method == "Niveau")
+            {
+                res = RandomDrawingMethod.Level;
+            }
+            else if (method == "Geographique")
+            {
+                res = RandomDrawingMethod.Geographic;
+            }
 
             return res;
         }

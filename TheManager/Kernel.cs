@@ -39,8 +39,6 @@ namespace TheManager
     public class Kernel
     {
 
-        
-
         [DataMember]
         private List<Club> _clubs;
         [DataMember]
@@ -67,8 +65,18 @@ namespace TheManager
                 List<Tournament> res = new List<Tournament>();
                 foreach(Continent c in _continents)
                 {
-                    foreach (Tournament cp in c.Tournaments()) res.Add(cp);
-                    foreach (Country p in c.countries) foreach (Tournament cp in p.Tournaments()) res.Add(cp);
+                    foreach (Tournament cp in c.Tournaments())
+                    {
+                        res.Add(cp);
+                    }
+
+                    foreach (Country p in c.countries)
+                    {
+                        foreach (Tournament cp in p.Tournaments())
+                        {
+                            res.Add(cp);
+                        }
+                    }
                 }
                 return res;
             }
@@ -107,7 +115,10 @@ namespace TheManager
                 {
                     foreach(City v in p.cities)
                     {
-                        if (v.Name == name) res = v;
+                        if (v.Name == name)
+                        {
+                            res = v;
+                        }
                     }
                 }
             }
@@ -126,7 +137,10 @@ namespace TheManager
                 {
                     foreach(Round t in c.rounds)
                     {
-                        foreach (Match m in t.matches) res.Add(m);
+                        foreach (Match m in t.matches)
+                        {
+                            res.Add(m);
+                        }
                     }
                 }
 
@@ -151,7 +165,10 @@ namespace TheManager
                 {
                     foreach (Contract ct in cc.contracts)
                     {
-                        if (ct.isTransferable) players.Add(ct.player);
+                        if (ct.isTransferable)
+                        {
+                            players.Add(ct.player);
+                        }
                     }
                 }
             }
@@ -167,7 +184,10 @@ namespace TheManager
             {
                 foreach(Country p in c.countries)
                 {
-                    if (p.Name() == country) res = p;
+                    if (p.Name() == country)
+                    {
+                        res = p;
+                    }
                 }
             }
             return res;
@@ -183,7 +203,10 @@ namespace TheManager
                 {
                     foreach(Stadium s in p.stadiums)
                     {
-                        if (s.name == stadium) res = s;
+                        if (s.name == stadium)
+                        {
+                            res = s;
+                        }
                     }
                 }
             }
@@ -196,7 +219,10 @@ namespace TheManager
             Tournament res = null;
             foreach(Tournament tournament in Competitions)
             {
-                if (tournament.name == name) res = tournament;
+                if (tournament.name == name)
+                {
+                    res = tournament;
+                }
             }
             return res;
         }
@@ -206,7 +232,10 @@ namespace TheManager
             Club res = null;
             foreach(Club c in _clubs)
             {
-                if (c.name == name) res = c;
+                if (c.name == name)
+                {
+                    res = c;
+                }
             }
 
             return res;
@@ -218,7 +247,10 @@ namespace TheManager
 
             foreach (Language l in _languages)
             {
-                if (l.name == name) res = l;
+                if (l.name == name)
+                {
+                    res = l;
+                }
             }
 
             return res;
@@ -268,7 +300,10 @@ namespace TheManager
             List<Player> res = new List<Player>();
             foreach (Player j in _freePlayers)
             {
-                if (j.nationality == country) res.Add(j); ;
+                if (j.nationality == country)
+                {
+                    res.Add(j);
+                }
             }
             foreach (Club c in _clubs)
             {
@@ -276,7 +311,10 @@ namespace TheManager
                 {
                     foreach (Player j in c.Players())
                     {
-                        if (j.nationality == country) res.Add(j);
+                        if (j.nationality == country)
+                        {
+                            res.Add(j);
+                        }
                     }
                 }
             }
@@ -354,7 +392,10 @@ namespace TheManager
 
                 foreach (Country p in c.countries)
                 {
-                    if (p.Tournaments().Contains(tournament)) res = p;
+                    if (p.Tournaments().Contains(tournament))
+                    {
+                        res = p;
+                    }
                 }
             }
             return res;

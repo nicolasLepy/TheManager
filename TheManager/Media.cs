@@ -85,7 +85,10 @@ namespace TheManager
 
             foreach(TournamentCoverage c in _coverages)
             {
-                if (c.Tournament == tournament) res = c;
+                if (c.Tournament == tournament)
+                {
+                    res = c;
+                }
             }
 
             return res;
@@ -93,7 +96,10 @@ namespace TheManager
 
         public void FreeJournalists()
         {
-            foreach (Journalist j in _journalists) j.isTaken = false;
+            foreach (Journalist j in _journalists)
+            {
+                j.isTaken = false;
+            }
         }
 
     }

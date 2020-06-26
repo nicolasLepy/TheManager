@@ -40,9 +40,18 @@ namespace TheManager
             get
             {
                 int minutes = _minute;
-                if (_period == 2) minutes = minutes + 45;
-                else if (_period == 3) minutes = minutes + 90;
-                else if (_period == 4) minutes = minutes + 105;
+                if (_period == 2)
+                {
+                    minutes = minutes + 45;
+                }
+                else if (_period == 3)
+                {
+                    minutes = minutes + 90;
+                }
+                else if (_period == 4)
+                {
+                    minutes = minutes + 105;
+                }
 
                 return minutes;
             }
@@ -55,15 +64,23 @@ namespace TheManager
                 int tAdd = (_minute - 45 > 0) ? _minute - 45 : 0;
                 int minutes = _minute;
                 if (_period == 2)
+                {
                     minutes += 45;
+                }
                 else if (_period == 3)
+                {
                     minutes += 90;
+                }
                 else if (_period == 4)
+                {
                     minutes += 105;
+                }
 
                 string res = (minutes - tAdd).ToString();
                 if (tAdd > 0)
+                {
                     res += "+" + tAdd;
+                }
                 res += "'";
                 return res;
             }

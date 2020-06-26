@@ -16,7 +16,9 @@ namespace TheManager
             get
             {
                 if (_instance == null)
+                {
                     _instance = new Session();
+                }
                 return _instance;
             }
         }

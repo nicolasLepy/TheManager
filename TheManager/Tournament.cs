@@ -258,8 +258,14 @@ namespace TheManager
             {
                 foreach(KeyValuePair<Player,int> kvp in t.GoalScorers())
                 {
-                    if (goalscorers.ContainsKey(kvp.Key)) goalscorers[kvp.Key] += kvp.Value;
-                    else goalscorers[kvp.Key] = kvp.Value;
+                    if (goalscorers.ContainsKey(kvp.Key))
+                    {
+                        goalscorers[kvp.Key] += kvp.Value;
+                    }
+                    else
+                    {
+                        goalscorers[kvp.Key] = kvp.Value;
+                    }
                 }
             }
 

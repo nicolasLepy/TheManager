@@ -147,7 +147,10 @@ namespace TheManager
                         ct.player.UpdateLevel();
                         if (ct.end.Year == date.Year)
                         {
-                            if (!cv.Prolong(ct)) playersToFree.Add(ct);
+                            if (!cv.Prolong(ct))
+                            {
+                                playersToFree.Add(ct);
+                            }
 
                         }
                     }
@@ -225,8 +228,15 @@ namespace TheManager
                         numberOfGamesToFollow = cc.GamesNumberByMultiplex;
                         Normal n = new Normal(3, 1);
                         numberOfGamesToFollow = (int)Math.Round(n.Sample());
-                        if (numberOfGamesToFollow < 0)numberOfGamesToFollow = 0;
-                        if (numberOfGamesToFollow > games.Count) numberOfGamesToFollow = games.Count;
+                        if (numberOfGamesToFollow < 0)
+                        {
+                            numberOfGamesToFollow = 0;
+                        }
+
+                        if (numberOfGamesToFollow > games.Count)
+                        {
+                            numberOfGamesToFollow = games.Count;
+                        }
 
                         if (nbJournees-j == 1)
                         {
@@ -336,7 +346,10 @@ namespace TheManager
             List<Match> toPlay = new List<Match>();
             List<Match> clubMatchs = new List<Match>();
 
-            foreach (Media m in _kernel.medias) m.FreeJournalists();
+            foreach (Media m in _kernel.medias)
+            {
+                m.FreeJournalists();
+            }
 
             
             foreach (Tournament c in _kernel.Competitions)

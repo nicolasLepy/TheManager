@@ -262,7 +262,9 @@ namespace TheManager
                     int away = (teams - 1 - match + round) % (teams - 1);
 
                     if (match == 0)
+                    {
                         away = teams - 1;
+                    }
 
                     rounds[round, match] = (home + 1) + " v " + (away + 1);
 
@@ -322,7 +324,10 @@ namespace TheManager
 
                         //Date du match
                         DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.gamesDays[i].Month, programmation.gamesDays[i].Day, programmation.defaultHour.Hours, programmation.defaultHour.Minutes, 0);
-                        if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation)) jour = jour.AddYears(1);
+                        if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation))
+                        {
+                            jour = jour.AddYears(1);
+                        }
                         Match m = new Match(e1, e2, jour, false);
                         res.Add(m);
                         matchs.Add(m);
@@ -359,13 +364,19 @@ namespace TheManager
                 {
                     Match mbase = res[i];
                     DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.gamesDays[programmation.gamesDays.Count-1].Month, programmation.gamesDays[programmation.gamesDays.Count - 1].Day, programmation.defaultHour.Hours, programmation.defaultHour.Minutes, 0);
-                    if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation)) jour = jour.AddYears(1);
+                    if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation))
+                    {
+                        jour = jour.AddYears(1);
+                    }
                     Match retour = new Match(mbase.away, mbase.home, jour, false);
                     games.Add(retour);
                     res.Add(retour);
                 }
-                if(programmation.lastMatchDaysSameDayNumber < 1)
+
+                if (programmation.lastMatchDaysSameDayNumber < 1)
+                {
                     TVSchedule(games, programmation.tvScheduling, nbGamesFirstRound*2);
+                }
             }
             return res;
         }
@@ -443,7 +454,10 @@ namespace TheManager
                 Club home = DrawClub(hat);
                 Club away = DrawClub(hat);
                 DateTime day = new DateTime(Session.Instance.Game.date.Year, round.programmation.gamesDays[0].Month, round.programmation.gamesDays[0].Day, round.programmation.defaultHour.Hours, round.programmation.defaultHour.Minutes, 0);
-                if (Utils.IsBeforeWithoutYear(day, round.programmation.initialisation)) day = day.AddYears(1);
+                if (Utils.IsBeforeWithoutYear(day, round.programmation.initialisation))
+                {
+                    day = day.AddYears(1);
+                }
 
                 if(round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
@@ -468,7 +482,10 @@ namespace TheManager
                 foreach (Match m in firstRound)
                 {
                     DateTime day = new DateTime(Session.Instance.Game.date.Year, round.programmation.gamesDays[1].Month, round.programmation.gamesDays[1].Day, round.programmation.defaultHour.Hours, round.programmation.defaultHour.Minutes, 0);
-                    if (Utils.IsBeforeWithoutYear(day, round.programmation.initialisation)) day = day.AddYears(1);
+                    if (Utils.IsBeforeWithoutYear(day, round.programmation.initialisation))
+                    {
+                        day = day.AddYears(1);
+                    }
                     Match secondRound = new Match(m.away, m.home, day, !round.twoLegs, m);
                     games.Add(secondRound);
                     res.Add(secondRound);

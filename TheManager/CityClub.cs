@@ -84,7 +84,10 @@ namespace TheManager
             {
                 float res = 0;
 
-                foreach (Contract c in _players) res += c.wage;
+                foreach (Contract c in _players)
+                {
+                    res += c.wage;
+                }
 
                 return res;
             }
@@ -111,17 +114,27 @@ namespace TheManager
         {
             Contract toRemove = null;
 
-            foreach (Contract ct in _players) if (ct.player == j) toRemove = ct;
+            foreach (Contract ct in _players)
+            {
+                if (ct.player == j)
+                {
+                    toRemove = ct;
+                }
+            }
 
             if (toRemove != null)
+            {
                 _players.Remove(toRemove);
+            }
         }
 
         public override List<Player> Players()
         {
             List<Player> players = new List<Player>();
             foreach (Contract c in _players)
+            {
                 players.Add(c.player);
+            }
             return players;
         }
 
@@ -167,9 +180,15 @@ namespace TheManager
             int age = Session.Instance.Game.date.Year - birthYear;
             int diff = 24 - age;
             int potential = level;
-            if (diff > 0) potential += 3 * diff;
+            if (diff > 0)
+            {
+                potential += 3 * diff;
+            }
 
-            if (potential > 99) potential = 99;
+            if (potential > 99)
+            {
+                potential = 99;
+            }
 
             /* Méthode Potentiel -> Niveau
             //Potentiel
@@ -279,7 +298,8 @@ namespace TheManager
         public void UpdateFormationFacilities()
         {
             _formationFacilities -= Session.Instance.Random(1, 3);
-            if (_formationFacilities < 1){
+            if (_formationFacilities < 1)
+            {
                 _formationFacilities = 1;
             }
             for (int i = 0; i<5; i++)
@@ -321,7 +341,10 @@ namespace TheManager
         {
             bool res = false;
             int wage = ct.player.EstimateWage();
-            if (wage < ct.wage) wage = ct.wage;
+            if (wage < ct.wage)
+            {
+                wage = ct.wage;
+            }
             wage = (int)(wage * (Session.Instance.Random(10, 14) / (10.0f)));
 
             bool validAge = true;
@@ -410,7 +433,10 @@ namespace TheManager
 
                 }
                 int nbGames = Session.Instance.Random(3, 6);
-                if (nbGames > possibleOpponents.Count) nbGames = possibleOpponents.Count;
+                if (nbGames > possibleOpponents.Count)
+                {
+                    nbGames = possibleOpponents.Count;
+                }
                 for(int i = 0; i < nbGames; i++)
                 {
                     Club adv = possibleOpponents[Session.Instance.Random(0, possibleOpponents.Count)];

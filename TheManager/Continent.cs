@@ -52,7 +52,10 @@ namespace TheManager
                 NationalTeam sn = c as NationalTeam;
                 if(sn != null)
                 {
-                    if (_countries.Contains(sn.country)) clubs.Add(sn);
+                    if (_countries.Contains(sn.country))
+                    {
+                        clubs.Add(sn);
+                    }
                 }
             }
             List<Club> res = new List<Club>();

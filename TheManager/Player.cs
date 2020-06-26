@@ -102,7 +102,9 @@ namespace TheManager
                         foreach(Contract ct in cv.contracts)
                         {
                             if (ct.player == this)
+                            {
                                 res = cv;
+                            }
                         }
                     }
                 }
@@ -135,8 +137,10 @@ namespace TheManager
 
         public void Recover()
         {
-            if(energy < 100)
+            if (energy < 100)
+            {
                 energy += Session.Instance.Random(2, 6);
+            }
         }
 
         public int EstimateWage()
@@ -154,6 +158,7 @@ namespace TheManager
                     wage = (int)(wage * 1.1f);
                     break;
                 default:
+                    wage *= 1;
                     break;
             }
             return wage;

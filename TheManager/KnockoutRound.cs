@@ -44,7 +44,10 @@ namespace TheManager
                 bool firstLegMatchesAreAllPlayed = true;
                 for(int i = 0;i<res.Count/2; i++)
                 {
-                    if (!matches[i].Played) firstLegMatchesAreAllPlayed = false;
+                    if (!matches[i].Played)
+                    {
+                        firstLegMatchesAreAllPlayed = false;
+                    }
                 }
                 int deb = 0;
                 if (firstLegMatchesAreAllPlayed)
@@ -139,24 +142,40 @@ namespace TheManager
                     if (q.ranking == 1)
                     {
                         c = m.Winner;
-                        if (!q.isNextYear) q.tournament.rounds[q.roundId].clubs.Add(c);
-                        else q.tournament.AddClubForNextYear(c, q.roundId);
+                        if (!q.isNextYear)
+                        {
+                            q.tournament.rounds[q.roundId].clubs.Add(c);
+                        }
+                        else
+                        {
+                            q.tournament.AddClubForNextYear(c, q.roundId);
+                        }
                     }
                     //Losers
                     else if (q.ranking == 2)
                     {
                         c = m.Looser;
-                        if (!q.isNextYear) q.tournament.rounds[q.roundId].clubs.Add(c);
-                        else q.tournament.AddClubForNextYear(c, q.roundId);
+                        if (!q.isNextYear)
+                        {
+                            q.tournament.rounds[q.roundId].clubs.Add(c);
+                        }
+                        else
+                        {
+                            q.tournament.AddClubForNextYear(c, q.roundId);
+                        }
                     }
                     if(c != null)
                     {
                         if (q.tournament.isChampionship && c.Championship != null)
                         {
                             if (q.tournament.level > c.Championship.level)
+                            {
                                 c.supporters = (int)(c.supporters * 1.4f);
+                            }
                             else if (q.tournament.level < c.Championship.level)
+                            {
                                 c.supporters = (int)(c.supporters / 1.4f);
+                            }
                         }
                     }
                 }

@@ -61,7 +61,10 @@ namespace TheManager
 
                 foreach (Match game in Session.Instance.Game.kernel.Matchs)
                 {
-                    if (game.home == this || game.away == this) res.Add(game);
+                    if (game.home == this || game.away == this)
+                    {
+                        res.Add(game);
+                    }
                 }
                 res.Sort(new MatchDateComparator());
                 return res;
@@ -80,7 +83,10 @@ namespace TheManager
             foreach (Match match in gamesList)
             {
                 int diff = Utils.DaysNumberBetweenTwoDates(date.Date, match.day);
-                if (diff < threshold) closeGame = true;
+                if (diff < threshold)
+                {
+                    closeGame = true;
+                }
             }
             return closeGame;
         }
@@ -153,24 +159,45 @@ namespace TheManager
                 float stars = 0.5f;
                 float level = Level();
                 if (level < 40)
+                {
                     stars = 0.5f;
+                }
                 else if (level < 50)
+                {
                     stars = 1f;
+                }
                 else if (level < 57)
+                {
                     stars = 1.5f;
+                }
                 else if (level < 62)
+                {
                     stars = 2f;
+                }
                 else if (level < 66)
+                {
                     stars = 2.5f;
+                }
                 else if (level < 69)
+                {
                     stars = 3f;
+                }
                 else if (level < 72)
+                {
                     stars = 3.5f;
+                }
                 else if (level < 75)
+                {
                     stars = 4f;
+                }
                 else if (level < 79)
+                {
                     stars = 4.5f;
-                else stars = 5f;
+                }
+                else
+                {
+                    stars = 5f;
+                }
                 
                 return stars;
             }
@@ -214,30 +241,62 @@ namespace TheManager
             List<Player> joueursPosition = ListEligiblePlayersByPosition(Position.Goalkeeper);
             joueursPosition.Sort(new PlayerCompositionComparator());
             if (joueursPosition.Count >= 1)
+            {
                 res.Add(joueursPosition[0]);
+            }
 
             joueursPosition = ListEligiblePlayersByPosition(Position.Defender);
             joueursPosition.Sort(new PlayerCompositionComparator());
-            
-            if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
-            if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
-            if (joueursPosition.Count > 2) res.Add(joueursPosition[2]);
-            if (joueursPosition.Count > 3) res.Add(joueursPosition[3]);
+
+            if (joueursPosition.Count > 0)
+            {
+                res.Add(joueursPosition[0]);
+            }
+            if (joueursPosition.Count > 1)
+            {
+                res.Add(joueursPosition[1]);
+            }
+            if (joueursPosition.Count > 2)
+            {
+                res.Add(joueursPosition[2]);
+            }
+            if (joueursPosition.Count > 3)
+            {
+                res.Add(joueursPosition[3]);
+            }
             
 
             joueursPosition = ListEligiblePlayersByPosition(Position.Midfielder);
             joueursPosition.Sort(new PlayerCompositionComparator());
 
-            if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
-            if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
-            if (joueursPosition.Count > 2) res.Add(joueursPosition[2]);
-            if (joueursPosition.Count > 3) res.Add(joueursPosition[3]);
+            if (joueursPosition.Count > 0)
+            {
+                res.Add(joueursPosition[0]);
+            }
+            if (joueursPosition.Count > 1)
+            {
+                res.Add(joueursPosition[1]);
+            }
+            if (joueursPosition.Count > 2)
+            {
+                res.Add(joueursPosition[2]);
+            }
+            if (joueursPosition.Count > 3)
+            {
+                res.Add(joueursPosition[3]);
+            }
 
 
             joueursPosition = ListEligiblePlayersByPosition(Position.Striker);
             joueursPosition.Sort(new PlayerCompositionComparator());
-            if (joueursPosition.Count > 0) res.Add(joueursPosition[0]);
-            if (joueursPosition.Count > 1) res.Add(joueursPosition[1]);
+            if (joueursPosition.Count > 0)
+            {
+                res.Add(joueursPosition[0]);
+            }
+            if (joueursPosition.Count > 1)
+            {
+                res.Add(joueursPosition[1]);
+            }
 
 
             return res;
@@ -276,7 +335,10 @@ namespace TheManager
             {
                 price = 30;
             }
-            else price = 45;
+            else
+            {
+                price = 45;
+            }
             _ticketPrice = price;
         }
 

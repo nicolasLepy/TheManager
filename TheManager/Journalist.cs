@@ -61,7 +61,10 @@ namespace TheManager
                 {
                     foreach(KeyValuePair<Media, Journalist> j in m.journalists)
                     {
-                        if (j.Value == this) res++;
+                        if (j.Value == this)
+                        {
+                            res++;
+                        }
                     }
                 }
 
