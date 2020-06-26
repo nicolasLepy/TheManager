@@ -195,9 +195,8 @@ namespace TheManager
         {
             get
             {
-                bool res = false;
+                bool res = _minute > 0 || _period > 1;
                 //Si la date de la partie est supérieure ou égale au jour du match, alors le match a été joué
-                if (_minute > 0 || _period > 1) res = true;
                 /*if(DateTime.Compare(Session.Instance.Partie.Date,Jour) >= 0)
                 {
                     res = true;
@@ -230,7 +229,10 @@ namespace TheManager
                 }
                 int tmpAdd = _minute - ((_period < 3) ? 45 : 15);
                 time = tmp.ToString();
-                if (tmpAdd > 0) time += "+" + tmpAdd;
+                if (tmpAdd > 0)
+                {
+                    time += "+" + tmpAdd;
+                }
                 time += "°";
                 return time;
             }
@@ -246,11 +248,20 @@ namespace TheManager
                 Club c = null;
                 if (_firstLeg == null)
                 {
-                    if (score1 > score2) c = home;
-                    else if (score1 < score2) c = away;
+                    if (score1 > score2)
+                    {
+                        c = home;
+                    }
+                    else if (score1 < score2)
+                    {
+                        c = away;
+                    }
                     else if (prolongations)
                     {
-                        if (penaltyShootout1 > penaltyShootout2) c = home;
+                        if (penaltyShootout1 > penaltyShootout2)
+                        {
+                            c = home;
+                        }
                         else c = away;
                     }
                     if (c == null)
@@ -267,12 +278,25 @@ namespace TheManager
                         score1 = this.score1 + 2 * _firstLeg.score2;
                         score2 = 2 * this.score2 + _firstLeg.score1;
                     }
-                    if (score1 > score2) c = home;
-                    else if (score2 > score1) c = away;
+
+                    if (score1 > score2)
+                    {
+                        c = home;
+                    }
+                    else if (score2 > score1)
+                    {
+                        c = away;
+                    }
                     else
                     {
-                        if (penaltyShootout1 > penaltyShootout2) c = home;
-                        else c = away;
+                        if (penaltyShootout1 > penaltyShootout2)
+                        {
+                            c = home;
+                        }
+                        else
+                        {
+                            c = away;
+                        }
                     }
 
                 }
@@ -287,9 +311,13 @@ namespace TheManager
             {
                 Club c;
                 if (Winner == home)
+                {
                     c = away;
+                }
                 else
+                {
                     c = home;
+                }
                 return c;
             }
         }
@@ -302,7 +330,9 @@ namespace TheManager
                 foreach(MatchEvent em in _events)
                 {
                     if (em.type == GameEvent.YellowCard)
+                    {
                         res++;
+                    }
                 }
                 return res;
             }
@@ -321,9 +351,13 @@ namespace TheManager
             
             int managerLevel;
             if (club.manager != null)
+            {
                 managerLevel = club.manager.level;
+            }
             else
+            {
                 managerLevel = (int)(teamLevel * 0.8f);
+            }
 
             //We add the level of the manager
             res += 0.175f*(managerLevel - teamLevel);
@@ -338,20 +372,35 @@ namespace TheManager
                 switch (j.position)
                 {
                     case Position.Goalkeeper:
-                        for (int i = 0; i < j.level; i++) players.Add(j);
+                        for (int i = 0; i < j.level; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
                     case Position.Defender:
-                        for (int i = 0; i < j.level * 2; i++) players.Add(j);
+                        for (int i = 0; i < j.level * 2; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
                     case Position.Midfielder:
-                        for (int i = 0; i < j.level; i++) players.Add(j);
+                        for (int i = 0; i < j.level; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
                     case Position.Striker:
                         int k = j.level / 2;
-                        for (int i = 0; i < k; i++) players.Add(j);
+                        for (int i = 0; i < k; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
                     default:
-                        for (int i = 0; i < j.level; i++) players.Add(j);
+                        for (int i = 0; i < j.level; i++)
+                        {
+                            players.Add(j);
+                        }
                         break;
                 }
             }
@@ -428,8 +477,11 @@ namespace TheManager
                 int res = 0;
                 foreach(MatchEvent em in _events)
                 {
-                    if (em.club == home && em.period == 1 && (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
+                    if (em.club == home && em.period == 1 &&
+                        (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
+                    {
                         res++;
+                    }
                 }
                 return res;
             }
@@ -442,8 +494,11 @@ namespace TheManager
                 int res = 0;
                 foreach (MatchEvent em in _events)
                 {
-                    if (em.club == away && em.period == 1 && (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
+                    if (em.club == away && em.period == 1 &&
+                        (em.type == GameEvent.Goal || em.type == GameEvent.AgGoal || em.type == GameEvent.PenaltyGoal))
+                    {
                         res++;
+                    }
                 }
                 return res;
             }
@@ -557,7 +612,10 @@ namespace TheManager
         {
             _attendance = (int)(home.supporters * (Session.Instance.Random(6, 14) / 10.0f));
             _attendance = (int)(_attendance * (away.Level() / (home.Level())));
-            if (_attendance > home.stadium.capacity) _attendance = home.stadium.capacity;
+            if (_attendance > home.stadium.capacity)
+            {
+                _attendance = home.stadium.capacity;
+            }
             if(home as CityClub != null)
             {
                 (home as CityClub).ModifyBudget(_attendance * home.ticketPrice);
@@ -617,7 +675,10 @@ namespace TheManager
 
             int periodDuration = (_period < 3) ? 45 : 15;
             //End of regular time
-            if (_minute == periodDuration) _extraTime = Session.Instance.Random(1, 6);
+            if (_minute == periodDuration)
+            {
+                _extraTime = Session.Instance.Random(1, 6);
+            }
 
             //End half-time
             if (_minute == periodDuration + _extraTime)
@@ -715,13 +776,27 @@ namespace TheManager
 
             for(int i = 0; i<5; i++)
             {
-                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout1++;
-                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout2++;
+                if (Session.Instance.Random(1, 4) != 1)
+                {
+                    _penaltyShootout1++;
+                }
+
+                if (Session.Instance.Random(1, 4) != 1)
+                {
+                    _penaltyShootout2++;
+                }
             }
             while(_penaltyShootout1 == _penaltyShootout2)
             {
-                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout1++;
-                if (Session.Instance.Random(1, 4) != 1) _penaltyShootout2++;
+                if (Session.Instance.Random(1, 4) != 1)
+                {
+                    _penaltyShootout1++;
+                }
+
+                if (Session.Instance.Random(1, 4) != 1)
+                {
+                    _penaltyShootout2++;
+                }
             }
         }
 
@@ -730,12 +805,18 @@ namespace TheManager
             List<RetourMatch> lookbacks = new List<RetourMatch>();
             foreach (Player j in _compo1)
             {
-                if (Session.Instance.Random(2, 7) == 3) j.energy--;
+                if (Session.Instance.Random(2, 7) == 3)
+                {
+                    j.energy--;
+                }
                 j.playedGames++;
             }
             foreach (Player j in _compo2)
             {
-                if (Session.Instance.Random(2, 7) == 3) j.energy--;
+                if (Session.Instance.Random(2, 7) == 3)
+                {
+                    j.energy--;
+                }
                 j.playedGames++;
             }
 
@@ -750,24 +831,78 @@ namespace TheManager
                 b = temp;
             }
 
-            if (diffRatio < 0.05) lookbacks = MatchIteration(a, b, 22, 22, 208, 295);
-            else if (diffRatio < 0.1) lookbacks = MatchIteration(a, b, 22, 22, 208, 280);
-            else if (diffRatio >= 0.1 && diffRatio < 0.2) lookbacks = MatchIteration(a, b, 22, 22, 208, 256);
-            else if (diffRatio >= 0.2 && diffRatio < 0.3) lookbacks = MatchIteration(a, b, 22, 22, 208, 246);
-            else if (diffRatio >= 0.3 && diffRatio < 0.4) lookbacks = MatchIteration(a, b, 22, 22, 208, 240);
-            else if (diffRatio >= 0.4 && diffRatio < 0.5) lookbacks = MatchIteration(a, b, 22, 23, 208, 235);
-            else if (diffRatio >= 0.5 && diffRatio < 0.6) lookbacks = MatchIteration(a, b, 22, 23, 208, 230);
-            else if (diffRatio >= 0.6 && diffRatio < 0.65) lookbacks = MatchIteration(a, b, 22, 23, 208, 220);
-            else if (diffRatio >= 0.65 && diffRatio < 0.7) lookbacks = MatchIteration(a, b, 21, 23, 208, 219);
-            else if (diffRatio >= 0.7 && diffRatio < 0.74) lookbacks = MatchIteration(a, b, 21, 23, 208, 218);
-            else if (diffRatio >= 0.74 && diffRatio < 0.78) lookbacks = MatchIteration(a, b, 21, 24, 208, 218);
-            else if (diffRatio >= 0.78 && diffRatio < 0.81) lookbacks = MatchIteration(a, b, 21, 24, 208, 217);
-            else if (diffRatio >= 0.81 && diffRatio < 0.85) lookbacks = MatchIteration(a, b, 21, 25, 208, 217);
-            else if (diffRatio >= 0.85 && diffRatio < 0.89) lookbacks = MatchIteration(a, b, 21, 25, 208, 216);
-            else if (diffRatio >= 0.89 && diffRatio < 0.92) lookbacks = MatchIteration(a, b, 21, 25, 208, 215);
-            else if (diffRatio >= 0.92 && diffRatio < 0.95) lookbacks = MatchIteration(a, b, 21, 25, 208, 214);
-            else if (diffRatio >= 0.95 && diffRatio < 0.98) lookbacks = MatchIteration(a, b, 21, 26, 208, 214);
-            else if (diffRatio >= 0.98 && diffRatio < 1.01) lookbacks = MatchIteration(a, b, 21, 26, 208, 213);
+            if (diffRatio < 0.05)
+            {
+                lookbacks = MatchIteration(a, b, 22, 22, 208, 295);
+            }
+            else if (diffRatio < 0.1)
+            {
+                lookbacks = MatchIteration(a, b, 22, 22, 208, 280);
+            }
+            else if (diffRatio >= 0.1 && diffRatio < 0.2)
+            {
+                lookbacks = MatchIteration(a, b, 22, 22, 208, 256);
+            }
+            else if (diffRatio >= 0.2 && diffRatio < 0.3)
+            {
+                lookbacks = MatchIteration(a, b, 22, 22, 208, 246);
+            }
+            else if (diffRatio >= 0.3 && diffRatio < 0.4)
+            {
+                lookbacks = MatchIteration(a, b, 22, 22, 208, 240);
+            }
+            else if (diffRatio >= 0.4 && diffRatio < 0.5)
+            {
+                lookbacks = MatchIteration(a, b, 22, 23, 208, 235);
+            }
+            else if (diffRatio >= 0.5 && diffRatio < 0.6)
+            {
+                lookbacks = MatchIteration(a, b, 22, 23, 208, 230);
+            }
+            else if (diffRatio >= 0.6 && diffRatio < 0.65)
+            {
+                lookbacks = MatchIteration(a, b, 22, 23, 208, 220);
+            }
+            else if (diffRatio >= 0.65 && diffRatio < 0.7)
+            {
+                lookbacks = MatchIteration(a, b, 21, 23, 208, 219);
+            }
+            else if (diffRatio >= 0.7 && diffRatio < 0.74)
+            {
+                lookbacks = MatchIteration(a, b, 21, 23, 208, 218);
+            }
+            else if (diffRatio >= 0.74 && diffRatio < 0.78)
+            {
+                lookbacks = MatchIteration(a, b, 21, 24, 208, 218);
+            }
+            else if (diffRatio >= 0.78 && diffRatio < 0.81)
+            {
+                lookbacks = MatchIteration(a, b, 21, 24, 208, 217);
+            }
+            else if (diffRatio >= 0.81 && diffRatio < 0.85)
+            {
+                lookbacks = MatchIteration(a, b, 21, 25, 208, 217);
+            }
+            else if (diffRatio >= 0.85 && diffRatio < 0.89)
+            {
+                lookbacks = MatchIteration(a, b, 21, 25, 208, 216);
+            }
+            else if (diffRatio >= 0.89 && diffRatio < 0.92)
+            {
+                lookbacks = MatchIteration(a, b, 21, 25, 208, 215);
+            }
+            else if (diffRatio >= 0.92 && diffRatio < 0.95)
+            {
+                lookbacks = MatchIteration(a, b, 21, 25, 208, 214);
+            }
+            else if (diffRatio >= 0.95 && diffRatio < 0.98)
+            {
+                lookbacks = MatchIteration(a, b, 21, 26, 208, 214);
+            }
+            else if (diffRatio >= 0.98 && diffRatio < 1.01)
+            {
+                lookbacks = MatchIteration(a, b, 21, 26, 208, 213);
+            }
             /*if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
             if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
             if (diff >= 3 && diff <= 4) IterationMatch(a, b, 1, 8, 9, 14);
@@ -832,15 +967,27 @@ namespace TheManager
             //Goals
             if (random >= aMin && random <= aMax)
             {
-                if (a == home) _score1++;
-                else _score2++;
+                if (a == home)
+                {
+                    _score1++;
+                }
+                else
+                {
+                    _score2++;
+                }
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
                 Goal(a);
             }
             else if (random >= bMin && random <= bMax)
             {
-                if (a == home) _score2++;
-                else _score1++;
+                if (a == home)
+                {
+                    _score2++;
+                }
+                else
+                {
+                    _score1++;
+                }
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
                 Goal(b);
             }
@@ -877,7 +1024,10 @@ namespace TheManager
             if(j != null)
             {
                 MatchEvent em = new MatchEvent(GameEvent.Goal, c, j, _minute, _period);
-                if (j != null) j.goalsScored++;
+                if (j != null)
+                {
+                    j.goalsScored++;
+                }
                 _events.Add(em);
                 AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));
             }
@@ -890,14 +1040,19 @@ namespace TheManager
             {
 
                 bool secondYellowCard = false;
-                foreach (MatchEvent ev in _events) if (ev.player == j && ev.type == GameEvent.YellowCard) secondYellowCard = true;
-
-
+                foreach (MatchEvent ev in _events)
+                {
+                    if (ev.player == j && ev.type == GameEvent.YellowCard)
+                    {
+                        secondYellowCard = true;
+                    }
+                }
+                
                 MatchEvent em = new MatchEvent(GameEvent.YellowCard, c, j, _minute, _period);
                 _events.Add(em);
                 AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));
 
-                //Si c'est son deuxième jaune, carte rouge attribué
+                //If it's a second yellow card, a red card is given
                 if (secondYellowCard == true)
                 {
                     List<Player> compo = c == home ? _compo1Terrain : _compo2Terrain;
@@ -939,8 +1094,8 @@ namespace TheManager
         /// <summary>
         /// Add action description in the match
         /// </summary>
-        /// <param name="minute">Minute de l'action</param>
-        /// <param name="action">Description de l'action</param>
+        /// <param name="minute">Minute of the action</param>
+        /// <param name="action">Description of the action</param>
         public void AddAction(string minute, string action)
         {
             _actions.Add(new KeyValuePair<string, string>(minute, action));

@@ -326,13 +326,22 @@ namespace TheManager
 
             bool validAge = true;
             if (ct.player.Age > 32)
-                if (Session.Instance.Random(1, 3) == 1) validAge = false;
+            {
+                if (Session.Instance.Random(1, 3) == 1)
+                {
+                    validAge = false;
+                }
+            }
 
             bool enoughGood = true;
             if (ct.player.Age < 25 && ct.player.potential < Level() - 12)
+            {
                 enoughGood = false;
+            }
             else if (ct.player.Age >= 25 && ct.player.level < Level() - 12)
+            {
                 enoughGood = false;
+            }
 
             if(_budget > 12*wage && validAge && enoughGood)
             {
