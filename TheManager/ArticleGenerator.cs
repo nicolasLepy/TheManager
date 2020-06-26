@@ -29,18 +29,18 @@ namespace TheManager
             LoadArticles();
         }
 
-        private List<string> _gl_f = new List<string>();
-        private List<string> _gl_e = new List<string>();
-        private List<string> _gl_o = new List<string>();
-        private List<string> _gs_f = new List<string>();
-        private List<string> _gs_e = new List<string>();
-        private List<string> _gs_o = new List<string>();
-        private List<string> _n_f = new List<string>();
-        private List<string> _n_e = new List<string>();
-        private List<string> _n_o = new List<string>();
-        private List<string> _nl_f = new List<string>();
-        private List<string> _nl_e = new List<string>();
-        private List<string> _nl_o = new List<string>();
+        private readonly List<string> _gl_f = new List<string>();
+        private readonly List<string> _gl_e = new List<string>();
+        private readonly List<string> _gl_o = new List<string>();
+        private readonly List<string> _gs_f = new List<string>();
+        private readonly List<string> _gs_e = new List<string>();
+        private readonly List<string> _gs_o = new List<string>();
+        private readonly List<string> _n_f = new List<string>();
+        private readonly List<string> _n_e = new List<string>();
+        private readonly List<string> _n_o = new List<string>();
+        private readonly List<string> _nl_f = new List<string>();
+        private readonly List<string> _nl_e = new List<string>();
+        private readonly List<string> _nl_o = new List<string>();
 
 
 

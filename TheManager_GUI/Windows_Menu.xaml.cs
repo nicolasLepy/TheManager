@@ -303,7 +303,10 @@ namespace TheManager_GUI
                 List<Match> matchs = new List<Match>();
                 foreach (Match m in _partie.kernel.Matchs)
                 {
-                    if (m.home == _partie.club || m.away == _partie.club) matchs.Add(m);
+                    if (m.home == _partie.club || m.away == _partie.club)
+                    {
+                        matchs.Add(m);
+                    }
                 }
                 matchs.Sort(new MatchDateComparator());
                 int diff = -1;

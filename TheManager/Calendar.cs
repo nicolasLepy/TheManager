@@ -347,7 +347,10 @@ namespace TheManager
                     {
                         Match mbase = res[gamesPerRound * i + j];
                         DateTime jour = new DateTime(Session.Instance.Game.date.Year, programmation.gamesDays[nbGamesFirstRound+i-1].Month, programmation.gamesDays[nbGamesFirstRound + i-1].Day, programmation.defaultHour.Hours, programmation.defaultHour.Minutes, 0);
-                        if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation)) jour = jour.AddYears(1);
+                        if (Utils.IsBeforeWithoutYear(jour, programmation.initialisation))
+                        {
+                            jour = jour.AddYears(1);
+                        }
                         Match retour = new Match(mbase.away, mbase.home, jour, false);
                         games.Add(retour);
                         res.Add(retour);

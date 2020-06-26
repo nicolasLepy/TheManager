@@ -152,7 +152,10 @@ namespace TheManager_GUI
             DateTime naissance = new DateTime( int.Parse(strNaissance[2]), int.Parse(strNaissance[1]), int.Parse(strNaissance[0]));
             Country nationalite = Session.Instance.Game.kernel.String2Country("France");
             Country pays_selected = cbNationalite.SelectedItem as Country;
-            if (pays_selected != null) nationalite = pays_selected;
+            if (pays_selected != null)
+            {
+                nationalite = pays_selected;
+            }
 
             if(club != null)
             {

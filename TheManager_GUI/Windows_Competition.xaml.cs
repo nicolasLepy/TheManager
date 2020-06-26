@@ -130,8 +130,14 @@ namespace TheManager_GUI
                 {
                     score = m.score1 + " - " + m.score2;
                     affluence = m.attendance.ToString();
-                    if (m.prolongations) score += " ap";
-                    if (m.PenaltyShootout) score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
+                    if (m.prolongations)
+                    {
+                        score += " ap";
+                    }
+                    if (m.PenaltyShootout)
+                    {
+                        score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
+                    }
                     scoreMt = "(" + m.ScoreHalfTime1 + " - " + m.ScoreHalfTime2 + ")";
                 }
                 string equipe1 = m.home.shortName;

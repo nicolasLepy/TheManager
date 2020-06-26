@@ -119,11 +119,17 @@ namespace TheManager_GUI.VueClassement
                     int niveau = _tour.Tournament.level;
                     string couleur = "backgroundColor";
                     if (q.tournament.level < niveau)
+                    {
                         couleur = "promotionColor";
+                    }
                     else if (q.tournament.level > niveau)
+                    {
                         couleur = "relegationColor";
+                    }
                     else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
+                    {
                         couleur = "barrageColor";
+                    }
 
                     int index = q.ranking - 1;
 

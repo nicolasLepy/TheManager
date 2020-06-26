@@ -26,7 +26,10 @@ namespace TheManager_GUI
         async Task Match(Match match)
         {
             List<RetourMatch> res = match.NextMinute();
-            if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res)) _enCours[_matchs.IndexOf(match)] = false;
+            if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res))
+            {
+                _enCours[_matchs.IndexOf(match)] = false;
+            }
             //Si y a un évenement
             if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
             {
@@ -210,7 +213,10 @@ namespace TheManager_GUI
                 while(!termine)
                 {
                     List<RetourMatch> rm = match.NextMinute();
-                    if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, rm)) termine = true;
+                    if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, rm))
+                    {
+                        termine = true;
+                    }
                 }
                 //_matchs[i].Jouer();
             }

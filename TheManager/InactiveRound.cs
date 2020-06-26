@@ -31,6 +31,9 @@ namespace TheManager
 
         }
 
+        /// <summary>
+        /// TODO: Distribute grants in inactive rounds
+        /// </summary>
         public override void DistributeGrants()
         {
         }

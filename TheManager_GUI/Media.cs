@@ -125,7 +125,9 @@ namespace TheManager_GUI
             foreach(ThreadBut tb in _players)
             {
                 if (tb.Chemin == musique)
+                {
                     res = true;
+                }
             }
 
             return res;
@@ -174,8 +176,14 @@ namespace TheManager_GUI
 
         public void But(Match m)
         {
-            if (m.attendance < 12000) But4000(m.home.goalMusic);
-            else But12000(m.home.goalMusic);
+            if (m.attendance < 12000)
+            {
+                But4000(m.home.goalMusic);
+            }
+            else
+            {
+                But12000(m.home.goalMusic);
+            }
         }
 
         public void But4000(string musique)

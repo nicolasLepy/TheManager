@@ -63,7 +63,10 @@ namespace TheManager
                 DateTime naissance = new DateTime(2019 - age, 1, 1);
                 string paysNom = joueur[2];
                 Country pays = _kernel.String2Country(paysNom);
-                if (pays == null) pays = _kernel.String2Country("France");
+                if (pays == null)
+                {
+                    pays = _kernel.String2Country("France");
+                }
                 int niveau = int.Parse(joueur[3]) - 2;
                 int potentiel = int.Parse(joueur[4]) - 2;
                 int idclub = 0;

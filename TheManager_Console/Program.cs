@@ -13,16 +13,18 @@ namespace TheManager_Console
 
         static void Main(string[] args)
         {
-            Game partie = new Game();
-            Session.Instance.Game = partie;
-            Kernel g = partie.kernel;
-            DatabaseLoader cbdd = new DatabaseLoader(g);
-            cbdd.Load();
+            Game game = new Game();
+            Session.Instance.Game = game;
+            Kernel g = game.kernel;
+            DatabaseLoader loader = new DatabaseLoader(g);
+            loader.Load();
 
-           
+
             for (int i = 0; i < 4840; i++)
-                partie.NextDay();
-            Console.WriteLine(partie.date.ToShortDateString());
+            {
+                game.NextDay();
+            }
+            Console.WriteLine(game.date.ToShortDateString());
             
             Console.ReadLine();
 
