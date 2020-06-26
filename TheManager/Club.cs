@@ -18,7 +18,7 @@ namespace TheManager
         UpdateFormationFacilities
     }
 
-    public struct BudgetEntry
+    public struct BudgetEntry : IEquatable<BudgetEntry>
     {
         public BudgetModificationReason Reason { get; set; }
         public float Amount { get; set; }
@@ -29,6 +29,11 @@ namespace TheManager
             Date = date;
             Amount = amount;
             Reason = reason;
+        }
+
+        public bool Equals(BudgetEntry other)
+        {
+            return Amount > other.Amount;
         }
     }
     
