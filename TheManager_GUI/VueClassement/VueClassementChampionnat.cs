@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -23,6 +19,12 @@ namespace TheManager_GUI.VueClassement
             _tour = tour;
         }
 
+        public void ApplyStyle2Label(Label l, int width)
+        {
+            l.Style = Application.Current.FindResource("StyleLabel2") as Style;
+            l.Width = width;
+        }
+        
         public void Remplir(StackPanel spClassement)
         {
             spClassement.Children.Clear();
@@ -44,46 +46,39 @@ namespace TheManager_GUI.VueClassement
                 image.Width = 30;
 
                 Label l2 = new Label();
-                l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l2.Width = 150;
+                ApplyStyle2Label(l2, 150);
                 l2.Content = c.shortName;
 
                 Label l3 = new Label();
-                l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l3.Width = 25;
+                ApplyStyle2Label(l3, 25);
                 l3.Content = _tour.Points(c);
 
                 Label l4 = new Label();
-                l4.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l4.Width = 25;
+                ApplyStyle2Label(l4, 25);
                 l4.Content = _tour.Played(c);
 
                 Label l5 = new Label();
-                l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l5.Width = 25;
+                ApplyStyle2Label(l5, 25);
                 l5.Content = _tour.Wins(c);
 
                 Label l6 = new Label();
-                l6.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l6.Width = 25;
+                ApplyStyle2Label(l6, 25);
                 l6.Content = _tour.Draws(c);
 
                 Label l7 = new Label();
-                l7.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l7.Width = 25;
+                ApplyStyle2Label(l7, 25);
                 l7.Content = _tour.Loses(c);
 
                 Label l8 = new Label();
-                l8.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l8.Width = 25;
+                ApplyStyle2Label(l8, 25);
                 l8.Content = _tour.GoalsFor(c);
+                
                 Label l9 = new Label();
-                l9.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l9.Width = 25;
+                ApplyStyle2Label(l9, 25);
                 l9.Content = _tour.GoalsAgainst(c);
+
                 Label l10 = new Label();
-                l10.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l10.Width = 25;
+                ApplyStyle2Label(l10, 25);
                 l10.Content = _tour.Difference(c);
 
 
@@ -111,11 +106,17 @@ namespace TheManager_GUI.VueClassement
                     int niveau = _tour.Tournament.level;
                     string couleur = "backgroundColor";
                     if (q.tournament.level < niveau)
+                    {
                         couleur = "promotionColor";
+                    }
                     else if (q.tournament.level > niveau)
+                    {
                         couleur = "relegationColor";
+                    }
                     else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
+                    {
                         couleur = "barrageColor";
+                    }
 
                     int index = q.ranking-1;
 
@@ -189,11 +190,17 @@ namespace TheManager_GUI.VueClassement
                     int niveau = _tour.Tournament.level;
                     string couleur = "backgroundColor";
                     if (q.tournament.level < niveau)
+                    {
                         couleur = "promotionColor";
+                    }
                     else if (q.tournament.level > niveau)
+                    {
                         couleur = "relegationColor";
+                    }
                     else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
+                    {
                         couleur = "barrageColor";
+                    }
 
                     DataTrigger tg = new DataTrigger()
                     {
