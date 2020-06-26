@@ -9,28 +9,27 @@ namespace TheManager.Exportation
 {
     public class Exporteur
     {
-
-
-
+        
         public static void ExporterClubs()
         {
-            string output = "<p>Clubs</p>";
+            StringBuilder sb = new StringBuilder();
+            sb.Append("<p>Clubs</p>");
 
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
             {
                 CityClub cv = c as CityClub;
                 if(cv != null)
                 {
-                    StringBuilder sb = new StringBuilder();
                     sb.Append("<h2>").Append(cv.name).Append("</h2>");
-                    output += "<h2>" + cv.name + "</h2>";
                     foreach(HistoricEntry eh in cv.history.elements)
                     {
-                        output += "<p><b>" + eh.date.ToShortDateString() + "</b><br>Budget : " + eh.budget + "<br>Centre de formation : " + eh.formationFacilities + "</p>";
+                        sb.Append("<p><b>").Append(eh.date.ToShortDateString()).Append("</b><br>Budget : ")
+                            .Append(eh.budget).Append("<br>Centre de formation : ").Append(eh.formationFacilities)
+                            .Append("</p>");
                     }
                 }
             }
-            File.WriteAllText("Output\\Clubs.html", output);
+            File.WriteAllText("Output\\Clubs.html", sb.ToString());
 
         }
 
@@ -39,13 +38,27 @@ namespace TheManager.Exportation
             ExporterClubs();
             string dir = "Output\\" + c.name + " " + Session.Instance.Game.date.Year;
             string dir2 = "Output\\" + c.shortName + Session.Instance.Game.date.Year;
-            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            if (!Directory.Exists(dir2)) Directory.CreateDirectory(dir2);
+            if (!Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+
+            if (!Directory.Exists(dir2))
+            {
+                Directory.CreateDirectory(dir2);
+            }
 
             foreach (Round t in c.rounds)
             {
-                if (!Directory.Exists(dir + "\\" + t.name)) Directory.CreateDirectory(dir + "\\" + t.name);
-                if (!Directory.Exists(dir2 + "\\" + t.name)) Directory.CreateDirectory(dir2 + "\\" + t.name);
+                if (!Directory.Exists(dir + "\\" + t.name))
+                {
+                    Directory.CreateDirectory(dir + "\\" + t.name);
+                }
+
+                if (!Directory.Exists(dir2 + "\\" + t.name))
+                {
+                    Directory.CreateDirectory(dir2 + "\\" + t.name);
+                }
 
                 string output = "<p>" + t.name + "</p><p>";
                 foreach(Club cl in t.clubs)
@@ -117,11 +130,25 @@ namespace TheManager.Exportation
                         Tournament compExt = m.away.Championship;
                         string sCompDom = "";
                         string sCompExt = "";
-                        if (compDom != null) sCompDom = " (" + compDom.shortName + ")";
-                        if (compExt != null) sCompExt = " (" + compExt.shortName + ")";
+                        if (compDom != null)
+                        {
+                            sCompDom = " (" + compDom.shortName + ")";
+                        }
+
+                        if (compExt != null)
+                        {
+                            sCompExt = " (" + compExt.shortName + ")";
+                        }
                         string score = m.score1 + " - " + m.score2;
-                        if (m.prolongations) score += " ap";
-                        if (m.PenaltyShootout) score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
+                        if (m.prolongations)
+                        {
+                            score += " ap";
+                        }
+
+                        if (m.PenaltyShootout)
+                        {
+                            score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
+                        }
                         output += "<tr><td>" + m.day.ToShortTimeString() + "</td><td>" + m.home.name + sCompDom + "</td><td><a href=\"" + te.name + "\\" + k + ".html\">" + score + "</a></td><td>" + m.away.name + sCompExt + "</td></tr>";
                         EcrireMatch(m, dir + "\\" + te.name + "\\" + k + ".html");
                         k++;
@@ -143,7 +170,10 @@ namespace TheManager.Exportation
                     int nbEquipesParPoules = 0;
                     foreach (List<Club> poules in tp.groups)
                     {
-                        if (nbEquipesParPoules < poules.Count) nbEquipesParPoules = poules.Count;
+                        if (nbEquipesParPoules < poules.Count)
+                        {
+                            nbEquipesParPoules = poules.Count;
+                        }
                         List<Club> classement = new List<Club>(poules);
                         classement.Sort(new ClubRankingComparator(t.matches));
                         output += "<p>Groupe</p><table>";
@@ -154,7 +184,10 @@ namespace TheManager.Exportation
                         output += "</table>";
                     }
                     int nbJournees = nbEquipesParPoules-1;
-                    if (t.twoLegs) nbJournees *= 2;
+                    if (t.twoLegs)
+                    {
+                        nbJournees *= 2;
+                    }
                     int matchsJournee = t.matches.Count / nbJournees;
                     int k = 0;
                     for (int i = 0; i < nbJournees; i++)
@@ -197,7 +230,10 @@ namespace TheManager.Exportation
             List<MatchEvent> cartons = new List<MatchEvent>();
             foreach (MatchEvent em in m.events)
             {
-                if (em.type == GameEvent.Goal || em.type == GameEvent.PenaltyGoal || em.type == GameEvent.AgGoal) evenements.Add(em);
+                if (em.type == GameEvent.Goal || em.type == GameEvent.PenaltyGoal || em.type == GameEvent.AgGoal)
+                {
+                    evenements.Add(em);
+                }
                 else
                 {
                     cartons.Add(em);
@@ -227,10 +263,16 @@ namespace TheManager.Exportation
             output += "</table>";
 
             output += "<p><b>Compo Domicile</b></p>";
-            foreach (Player j in m.compo1) output += "<br>" + j.firstName + " " + j.lastName + "(" + j.position + ")";
+            foreach (Player j in m.compo1)
+            {
+                output += "<br>" + j.firstName + " " + j.lastName + "(" + j.position + ")";
+            }
 
             output += "<p><b>Compo Extérieur</b></p>";
-            foreach (Player j in m.compo2) output += "<br>" + j.firstName + " " + j.lastName + "(" + j.position + ")";
+            foreach (Player j in m.compo2)
+            {
+                output += "<br>" + j.firstName + " " + j.lastName + "(" + j.position + ")";
+            }
 
             output += "<p><b>Médias</b></p>";
             foreach(KeyValuePair<Media,Journalist> j in m.journalists)
