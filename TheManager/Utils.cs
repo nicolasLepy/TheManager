@@ -82,18 +82,7 @@ namespace TheManager
 
         public static float Distance(City a, City b)
         {
-            float lat1 = a.Position.Latitude;
-            float lon1 = a.Position.Longitude;
-            float lat2 = b.Position.Latitude;
-            float lon2 = b.Position.Longitude;
-
-            int R = 6371;
-            double dLat = Deg2Rad(lat2 - lat1);
-            double dLon = Deg2Rad(lon2 - lon1);
-            double va = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(Deg2Rad(lat1)) * Math.Cos(Deg2Rad(lat2)) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-            double c = 2 * Math.Atan2(Math.Sqrt(va), Math.Sqrt(1 - va));
-            double d = R * c;
-            return (float)d;
+            return Distance(a.Position, b.Position);
         }
 
         public static float Distance(GeographicPosition a, GeographicPosition b)
