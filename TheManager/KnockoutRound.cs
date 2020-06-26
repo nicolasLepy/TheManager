@@ -23,15 +23,16 @@ namespace TheManager
         public override Round Copy()
         {
             Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
+            
+            foreach (Club c in this.clubs)
+            {
+                t.clubs.Add(c);
+            }
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
             }
 
-            foreach (Club c in this.clubs)
-            {
-                t.clubs.Add(c);
-            }
             return t;
         }
 

@@ -238,6 +238,22 @@ namespace TheManager
             }
         }
 
+        private int[] GetCumulativeScores()
+        {
+            int[] res = new int[2];
+            int cumulativeScore1 = score1 + _firstLeg.score2;
+            int cumulativeScore2 = score2 + _firstLeg.score1;
+            if(score1 == score2)
+            {
+                cumulativeScore1 = score1 + 2 * _firstLeg.score2;
+                cumulativeScore2 = 2 * score2 + _firstLeg.score1;
+            }
+
+            res[0] = cumulativeScore1;
+            res[1] = cumulativeScore2;
+            return res;
+        }
+        
        /// <summary>
        /// Give the winner of the game (useful property for direct knockout rounds)
        /// </summary>
@@ -271,13 +287,9 @@ namespace TheManager
                 }
                 else
                 {
-                    int score1 = this.score1 + _firstLeg.score2;
-                    int score2 = this.score2 + _firstLeg.score1;
-                    if(score1 == score2)
-                    {
-                        score1 = this.score1 + 2 * _firstLeg.score2;
-                        score2 = 2 * this.score2 + _firstLeg.score1;
-                    }
+                    int[] cumulativeScores = GetCumulativeScores();
+                    int score1 = cumulativeScores[0];
+                    int score2 = cumulativeScores[1];
 
                     if (score1 > score2)
                     {
@@ -757,14 +769,12 @@ namespace TheManager
             bool res = false;
             if(_firstLeg != null)
             {
-                int score1 = this.score1 + _firstLeg.score2;
-                int score2 = this.score2 + _firstLeg.score1;
-                if (score1 == score2)
+                int[] cumulativeScores = GetCumulativeScores();
+
+                if (cumulativeScores[0] == cumulativeScores[1])
                 {
-                    score1 = this.score1 + 2 * _firstLeg.score2;
-                    score2 = 2 * this.score2 + _firstLeg.score1;
+                    res = true;
                 }
-                if (score1 == score2) res = true;
             }
             return res;
         }
