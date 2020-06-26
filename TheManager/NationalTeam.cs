@@ -44,48 +44,27 @@ namespace TheManager
             return res / (_selected.Count + 0.0f);
         }
 
+        private void SelectPlayersByPosition(Position position, List<Player> players, int playersNumberToTake)
+        {
+            List<Player> playersByPosition = Utils.PlayersByPosition(players, position);
+            playersByPosition.Sort(new PlayerLevelComparator());
+            for (int i = 0; i < playersNumberToTake; i++)
+            {
+                if (playersByPosition.Count > i)
+                {
+                    _selected.Add(playersByPosition[i]);
+                }
+            }
+   
+        }
+
         public void CallInSelection(List<Player> players)
         {
             _selected = new List<Player>();
-            List<Player> playersByPosition = Utils.PlayersByPosition(players,Position.Goalkeeper);
-            playersByPosition.Sort(new PlayerLevelComparator());
-            for(int i = 0; i<3; i++)
-            {
-                if (playersByPosition.Count > i)
-                {
-                    _selected.Add(playersByPosition[i]);
-                }
-            }
-
-            playersByPosition = Utils.PlayersByPosition(players, Position.Defender);
-            playersByPosition.Sort(new PlayerLevelComparator());
-            for (int i = 0; i < 7; i++)
-            {
-                if (playersByPosition.Count > i)
-                {
-                    _selected.Add(playersByPosition[i]);
-                }
-            }
-
-            playersByPosition = Utils.PlayersByPosition(players, Position.Midfielder);
-            playersByPosition.Sort(new PlayerLevelComparator());
-            for (int i = 0; i < 7; i++)
-            {
-                if (playersByPosition.Count > i)
-                {
-                    _selected.Add(playersByPosition[i]);
-                }                
-            }
-
-            playersByPosition = Utils.PlayersByPosition(players, Position.Striker);
-            playersByPosition.Sort(new PlayerLevelComparator());
-            for (int i = 0; i < 6; i++)
-            {
-                if (playersByPosition.Count > i)
-                {
-                    _selected.Add(playersByPosition[i]);
-                }
-            }
+            SelectPlayersByPosition(Position.Goalkeeper, players, 3);
+            SelectPlayersByPosition(Position.Defender, players, 7);
+            SelectPlayersByPosition(Position.Midfielder, players, 7);
+            SelectPlayersByPosition(Position.Striker, players, 6);
         }
     }
 }
