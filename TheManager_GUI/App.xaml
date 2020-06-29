@@ -6,9 +6,12 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
+		<local:DataGridTournamentColumnConverter x:Key="DataGridTournamentColumnConverter"/>
+
+
 		<Color x:Key="Color1">#1c7435</Color>
 		<Color x:Key="Color2">#a4f17a</Color>
-		<FontFamily x:Key="Font">Arial Narrow</FontFamily>
+		<FontFamily x:Key="Font">Bahnschrift Light</FontFamily>
 		<FontFamily x:Key="FontClassement">Bitstream Vera Sans</FontFamily>
 		<sys:Double x:Key="TailleGrande">15</sys:Double>
 		<sys:Double x:Key="TailleMoyenne">14</sys:Double>

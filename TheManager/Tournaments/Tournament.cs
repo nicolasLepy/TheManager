@@ -1,10 +1,13 @@
-﻿using System;
+﻿using MathNet.Numerics;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Text;
 using TheManager.Exportation;
+using System.Windows.Media;
 
 namespace TheManager
 {
@@ -26,6 +29,7 @@ namespace TheManager
         public KeyValuePair<int, Club> BiggestDefense { get; set; }
         [DataMember]
         public KeyValuePair<int, Club> WeakestDefense { get; set; }
+
 
         public TournamentStatistics(int i)
         {
@@ -72,8 +76,12 @@ namespace TheManager
         private int _periodicity;
         [DataMember]
         private int _remainingYears;
+        [DataMember]
+        private Color _color;
+
 
         public string name { get => _name; }
+        public Color color => _color;
         public List<Round> rounds { get => _rounds; }
         public string logo { get => _logo; }
         [DataMember]
@@ -95,7 +103,7 @@ namespace TheManager
         /// </summary>
         public int level => _level;
 
-        public Tournament(string name, string logo, DateTime seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears)
+        public Tournament(string name, string logo, DateTime seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color)
         {
             _rounds = new List<Round>();
             _name = name;
@@ -109,6 +117,7 @@ namespace TheManager
             _previousEditions = new List<Tournament>();
             _periodicity = periodicity;
             _remainingYears = remainingYears;
+            _color = color;
         }
 
         public void InitializeQualificationsNextYearsLists()
@@ -131,7 +140,7 @@ namespace TheManager
                 _remainingYears = _periodicity;
             
                 UpdateRecords();
-                Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears);
+                Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color);
                 foreach (Round r in rounds)
                 {
                     copyForArchives.rounds.Add(r.Copy());

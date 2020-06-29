@@ -526,8 +526,11 @@ namespace TheManager
                     {
                         remainingYears = int.Parse(e2.Attribute("anneesRestantes").Value);
                     }
-                    Tournament c = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears);
-                    localisation.Tournaments().Add(c);
+                    string[] colorStr = e2.Attribute("color").Value.Split(',');
+                    Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
+
+                    Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color);
+                    localisation.Tournaments().Add(tournament);
                     //_gestionnaire.Competitions.Add(c);
                 }
             }

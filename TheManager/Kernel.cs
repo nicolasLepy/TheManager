@@ -214,6 +214,7 @@ namespace TheManager
             return res;
         }
 
+        
         public Tournament String2Tournament(string name)
         {
             Tournament res = null;

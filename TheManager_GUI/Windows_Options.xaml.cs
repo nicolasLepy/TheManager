@@ -112,11 +112,11 @@ namespace TheManager_GUI
 
         private void Rb_Theme1_Click(object sender, RoutedEventArgs e)
         {
-            Color c1 = Colors.DarkBlue;
+            System.Windows.Media.Color c1 = Colors.DarkBlue;
             c1.R = 28;
             c1.G = 116;
             c1.B = 53;
-            Color c2 = Colors.Cyan;
+            System.Windows.Media.Color c2 = Colors.Cyan;
             c2.R = 164;
             c2.G = 241;
             c2.B = 122;
@@ -127,11 +127,11 @@ namespace TheManager_GUI
 
         private void Rb_Theme2_Click(object sender, RoutedEventArgs e)
         {
-            Color c1 = Colors.DarkBlue;
+            System.Windows.Media.Color c1 = Colors.DarkBlue;
             c1.R = 28;
             c1.G = 88;
             c1.B = 116;
-            Color c2 = Colors.Cyan;
+            System.Windows.Media.Color c2 = Colors.Cyan;
             c2.R = 121;
             c2.G = 237;
             c2.B = 240;

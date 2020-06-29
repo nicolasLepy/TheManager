@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -10,27 +11,71 @@ namespace TheManager_GUI.VueClassement
     public class VueCalendrierChampionnat : IVueClassement
     {
 
-        private readonly DataGrid _grille;
-        private readonly ChampionshipRound _tour;
+        private readonly DataGrid _grid;
+        private readonly ChampionshipRound _round;
+        private readonly double _sizeMultiplier;
+        private readonly bool _focusOnTeam;
+        private readonly Club _team;
 
-        public VueCalendrierChampionnat(DataGrid grille, ChampionshipRound tour)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="grid"></param>
+        /// <param name="round"></param>
+        /// <param name="sizeMultiplier">Width and font size multiplier</param>
+        /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
+        /// <param name="team">The team to focus ranking on</param>
+        public VueCalendrierChampionnat(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null)
         {
-            _grille = grille;
-            _tour = tour;
+            _grid = grid;
+            _round = round;
+            _sizeMultiplier = sizeMultiplier;
+            _focusOnTeam = focusOnTeam;
+            _team = team;
         }
 
-        private static void ApplyStyle2Label(Label l, int width)
+        private void ApplyStyle2Label(Label l, double width)
         {
             l.Style = Application.Current.FindResource("StyleLabel2") as Style;
-            l.Width = width;
+            l.Width = width * _sizeMultiplier;
+            l.FontSize *= _sizeMultiplier;
         }
-        
+
         public void Remplir(StackPanel spClassement)
         {
             spClassement.Children.Clear();
 
             int i = 0;
-            foreach (Club c in _tour.Ranking())
+
+            List<Club> clubs = _round.Ranking();
+
+            //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around
+            if (_focusOnTeam && _team != null)
+            {
+                clubs = new List<Club>();
+                List<Club> ranking = _round.Ranking();
+                int index = ranking.IndexOf(Session.Instance.Game.club);
+                index = index - 2;
+                if (index < 0)
+                {
+                    index = 0;
+                }
+
+                if (index > ranking.Count - 5)
+                {
+                    index = ranking.Count - 5;
+                }
+                i = index;
+                for (int j = index; j < index + 5; j++)
+                {
+                    Club c = ranking[j];
+                    clubs.Add(c);
+                }
+            }
+
+            
+
+            foreach (Club c in clubs)
             {
                 i++;
                 StackPanel sp = new StackPanel();
@@ -38,49 +83,51 @@ namespace TheManager_GUI.VueClassement
 
                 Label l1 = new Label();
                 l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l1.Width = 30;
+                l1.FontSize *= _sizeMultiplier;
+                l1.Width = 30 * _sizeMultiplier;
                 l1.Content = i.ToString();
 
                 Image image = new Image();
                 image.Source = new BitmapImage(new Uri(Utils.Logo(c)));
-                image.Width = 30;
+                image.Width = 30 * _sizeMultiplier;
+
+                double regularCellWidth = 25/* * (1 + ((_sizeMultiplier - 1)/2))*/;
 
                 Label l2 = new Label();
-                ApplyStyle2Label(l2, 150);
+                ApplyStyle2Label(l2, 150 * _sizeMultiplier);
                 l2.Content = c.shortName;
 
                 Label l3 = new Label();
-                ApplyStyle2Label(l3, 25);
-                l3.Content = _tour.Points(c);
+                ApplyStyle2Label(l3, regularCellWidth);
+                l3.Content = _round.Points(c);
 
                 Label l4 = new Label();
-                ApplyStyle2Label(l4, 25);
-                l4.Content = _tour.Played(c);
+                ApplyStyle2Label(l4, regularCellWidth);
+                l4.Content = _round.Played(c);
 
                 Label l5 = new Label();
-                ApplyStyle2Label(l5, 25);
-                l5.Content = _tour.Wins(c);
+                ApplyStyle2Label(l5, regularCellWidth);
+                l5.Content = _round.Wins(c);
 
                 Label l6 = new Label();
-                ApplyStyle2Label(l6, 25);
-                l6.Content = _tour.Draws(c);
+                ApplyStyle2Label(l6, regularCellWidth);
+                l6.Content = _round.Draws(c);
 
                 Label l7 = new Label();
-                ApplyStyle2Label(l7, 25);
-                l7.Content = _tour.Loses(c);
+                ApplyStyle2Label(l7, regularCellWidth);
+                l7.Content = _round.Loses(c);
 
                 Label l8 = new Label();
-                ApplyStyle2Label(l8, 25);
-                l8.Content = _tour.GoalsFor(c);
+                ApplyStyle2Label(l8, regularCellWidth);
+                l8.Content = _round.GoalsFor(c);
                 
                 Label l9 = new Label();
-                ApplyStyle2Label(l9, 25);
-                l9.Content = _tour.GoalsAgainst(c);
+                ApplyStyle2Label(l9, regularCellWidth);
+                l9.Content = _round.GoalsAgainst(c);
 
                 Label l10 = new Label();
-                ApplyStyle2Label(l10, 25);
-                l10.Content = _tour.Difference(c);
-
+                ApplyStyle2Label(l10, regularCellWidth);
+                l10.Content = _round.Difference(c);
 
                 sp.Children.Add(l1);
                 sp.Children.Add(image);
@@ -96,35 +143,40 @@ namespace TheManager_GUI.VueClassement
 
                 spClassement.Children.Add(sp);
 
-
             }
 
-            foreach (Qualification q in _tour.qualifications)
+            //Only show colors when the ranking is not focused on a team
+            if (!_focusOnTeam)
             {
-                if (q.tournament.isChampionship)
+                foreach (Qualification q in _round.qualifications)
                 {
-                    int niveau = _tour.Tournament.level;
-                    string couleur = "backgroundColor";
-                    if (q.tournament.level < niveau)
+                    if (q.tournament.isChampionship)
                     {
-                        couleur = "promotionColor";
-                    }
-                    else if (q.tournament.level > niveau)
-                    {
-                        couleur = "relegationColor";
-                    }
-                    else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
-                    {
-                        couleur = "barrageColor";
+                        int niveau = _round.Tournament.level;
+                        string couleur = "backgroundColor";
+                        if (q.tournament.level < niveau)
+                        {
+                            couleur = "promotionColor";
+                        }
+                        else if (q.tournament.level > niveau)
+                        {
+                            couleur = "relegationColor";
+                        }
+                        else if (q.tournament.level == niveau && q.roundId > _round.Tournament.rounds.IndexOf(_round))
+                        {
+                            couleur = "barrageColor";
+                        }
+
+                        int index = q.ranking - 1;
+
+                        SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
+                        (spClassement.Children[index] as StackPanel).Background = color;
                     }
 
-                    int index = q.ranking-1;
-
-                    SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                    (spClassement.Children[index] as StackPanel).Background = color;
                 }
-
             }
+
+            
 
             /*
             Style s = new Style();
@@ -166,12 +218,12 @@ namespace TheManager_GUI.VueClassement
 
         public void Afficher()
         {
-            _grille.Items.Clear();
+            _grid.Items.Clear();
             int i = 0;
-            foreach (Club c in _tour.Ranking())
+            foreach (Club c in _round.Ranking())
             {
                 i++;
-                _grille.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png", Club = c, Classement = i, Nom = c.shortName, Pts = _tour.Points(c), J = _tour.Played(c), G = _tour.Wins(c), N = _tour.Draws(c), P = _tour.Loses(c), bp = _tour.GoalsFor(c), bc = _tour.GoalsAgainst(c), Diff = _tour.Difference(c) });
+                _grid.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png", Club = c, Classement = i, Nom = c.shortName, Pts = _round.Points(c), J = _round.Played(c), G = _round.Wins(c), N = _round.Draws(c), P = _round.Loses(c), bp = _round.GoalsFor(c), bc = _round.GoalsAgainst(c), Diff = _round.Difference(c) });
             }
             Style s = new Style();
             /*s.Setters.Add(new Setter(){ Property = Control.HeightProperty, Value = height });
@@ -183,11 +235,11 @@ namespace TheManager_GUI.VueClassement
 
 
             //Pour chaque couleur
-            foreach (Qualification q in _tour.qualifications)
+            foreach (Qualification q in _round.qualifications)
             {
                 if (q.tournament.isChampionship)
                 {
-                    int niveau = _tour.Tournament.level;
+                    int niveau = _round.Tournament.level;
                     string couleur = "backgroundColor";
                     if (q.tournament.level < niveau)
                     {
@@ -197,7 +249,7 @@ namespace TheManager_GUI.VueClassement
                     {
                         couleur = "relegationColor";
                     }
-                    else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
+                    else if (q.tournament.level == niveau && q.roundId > _round.Tournament.rounds.IndexOf(_round))
                     {
                         couleur = "barrageColor";
                     }
@@ -214,7 +266,7 @@ namespace TheManager_GUI.VueClassement
                     });
                     s.Triggers.Add(tg);
 
-                    _grille.CellStyle = s;
+                    _grid.CellStyle = s;
                 }
 
             }

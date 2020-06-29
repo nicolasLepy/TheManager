@@ -64,9 +64,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="HomepageWindow.xaml.cs">
+      <DependentUpon>HomepageWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Media.cs" />
+    <Compile Include="VueClassement\DataGridTournamentColumnConverter.cs" />
     <Compile Include="VueClassement\FabriqueVueClassement.cs" />
     <Compile Include="VueClassement\IVueClassement.cs" />
+    <Compile Include="VueClassement\MatchesView.cs" />
     <Compile Include="VueClassement\VueClassementChampionnat.cs" />
     <Compile Include="VueClassement\VueClassementEliminatoires.cs" />
     <Compile Include="VueClassement\VueClassementPoules.cs" />
@@ -106,6 +111,10 @@
     <Compile Include="Windows_Participants.xaml.cs">
       <DependentUpon>Windows_Participants.xaml</DependentUpon>
     </Compile>
+    <Page Include="HomepageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

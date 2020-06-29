@@ -16,6 +16,9 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_Menu : Window
     {
+
+        private IVueClassement vueClassement;
+
         private Game _partie = null;
 
         private DateTime _calendrierJour;
@@ -23,6 +26,8 @@ namespace TheManager_GUI
         public Windows_Menu()
         {
             InitializeComponent();
+            
+
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\close.png"));
             imgBtnGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\left.png"));
             imgBtnDroite.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\right.png"));
@@ -271,7 +276,15 @@ namespace TheManager_GUI
 
         private void ClassementClub()
         {
-            dgClubClassement.Items.Clear();
+
+            if (_partie.club != null && _partie.club.Championship != null)
+            {
+                vueClassement = new VueCalendrierChampionnat(dgClubRanking, _partie.club.Championship.rounds[0] as ChampionshipRound, 0.75, true, _partie.club);
+                vueClassement.Remplir(spRanking);
+            }
+            /*
+
+            dgClubRanking.Items.Clear();
             if(_partie.club != null && _partie.club.Championship != null)
             {
                 Round championnat = _partie.club.Championship.rounds[0];
@@ -290,9 +303,9 @@ namespace TheManager_GUI
                 for(int i = indice; i<indice+5; i++)
                 {
                     Club c = classement[i];
-                    dgClubClassement.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = championnat.Points(c), bc = championnat.GoalsAgainst(c), bp = championnat.GoalsFor(c), Diff = championnat.Difference(c), G = championnat.Wins(c), J = championnat.Played(c), N = championnat.Draws(c), P = championnat.Loses(c) });
+                    dgClubRanking.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = championnat.Points(c), bc = championnat.GoalsAgainst(c), bp = championnat.GoalsFor(c), Diff = championnat.Difference(c), G = championnat.Wins(c), J = championnat.Played(c), N = championnat.Draws(c), P = championnat.Loses(c) });
                 }
-            }
+            }*/
         }
 
         private void ProchainsMatchsClub()
@@ -343,7 +356,7 @@ namespace TheManager_GUI
                         {
                             score = m.day.ToShortDateString();
                         }
-                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Tournament.shortName, Equipe1 = m.home.shortName, Equipe2 = m.away.shortName, Score = score, LogoD = Utils.Logo(m.home), LogoE = Utils.Logo(m.away) });
+                        dgClubProchainsMatchs.Items.Add(new ProchainMatchElement { Match = m, Competition = m.Tournament, ShortName = m.Tournament.shortName, Equipe1 = m.home.shortName, Equipe2 = m.away.shortName, Score = score, LogoD = Utils.Logo(m.home), LogoE = Utils.Logo(m.away) });
                     }
                 }
             }
@@ -512,7 +525,8 @@ namespace TheManager_GUI
 
     public struct ProchainMatchElement : IEquatable<ProchainMatchElement>
     {
-        public string Competition { get; set; }
+        public Tournament Competition { get; set; }
+        public string ShortName { get; set; }
         public string LogoD { get; set; }
         public string LogoE { get; set; }
         public string Equipe1 { get; set; }

@@ -11,7 +11,7 @@ namespace TheManager_GUI.VueClassement
             IVueClassement res = null;
 
             if (tour as ChampionshipRound != null)
-                res = new VueCalendrierChampionnat(grille, tour as ChampionshipRound);
+                res = new VueCalendrierChampionnat(grille, tour as ChampionshipRound, 1);
             if (tour as KnockoutRound != null)
                 res = new VueClassementEliminatoires(grille, tour as KnockoutRound);
             if (tour as GroupsRound != null)
