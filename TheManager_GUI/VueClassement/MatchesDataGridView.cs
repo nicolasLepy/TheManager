@@ -1,15 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Markup;
-using System.Xml;
 using TheManager;
 
 
@@ -124,16 +117,6 @@ namespace TheManager_GUI.VueClassement
             _grid = new DataGrid();
         }
 
-        private DataTemplate CreateImageTemplate(string bindingName)
-        {
-            StringReader stringReader = new StringReader(
-            @"<DataTemplate xmlns=""http://schemas.microsoft.com/winfx/2006/xaml/presentation""> 
-            <Image Source=""{Binding " + bindingName + @"}""/> 
-        </DataTemplate>");
-            XmlReader xmlReader = XmlReader.Create(stringReader);
-            return XamlReader.Load(xmlReader) as DataTemplate;
-        }
-
         public void Refresh()
         {
 
@@ -170,12 +153,12 @@ namespace TheManager_GUI.VueClassement
 
             DataGridTemplateColumn templateLogoHome = new DataGridTemplateColumn();
             templateLogoHome.Width = new DataGridLength(2, DataGridLengthUnitType.Star);
-            DataTemplate cellTemplateHome = CreateImageTemplate("HomeLogo");
+            DataTemplate cellTemplateHome = ViewUtils.CreateImageTemplate("HomeLogo");
             templateLogoHome.CellTemplate = cellTemplateHome;
 
             DataGridTemplateColumn templateLogoAway = new DataGridTemplateColumn();
             templateLogoAway.Width = new DataGridLength(2, DataGridLengthUnitType.Star);
-            DataTemplate cellTemplateAway = CreateImageTemplate("AwayLogo");
+            DataTemplate cellTemplateAway = ViewUtils.CreateImageTemplate("AwayLogo");
             templateLogoAway.CellTemplate = cellTemplateAway;
 
             DataGridTextColumn tcHomeTeamName = new DataGridTextColumn();

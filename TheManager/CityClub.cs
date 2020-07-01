@@ -603,10 +603,10 @@ namespace TheManager
                 }
 
 
-                int[] equipePremiereQuotas = new int[4] { 3, 6, 6, 4 };
-                int[] equipesReservesQuotas = new int[4] { 2, 5, 5, 4 };
+                int[] equipePremiereQuotas = new int[] { 3, 6, 6, 4 };
+                int[] equipesReservesQuotas = new int[] { 2, 5, 5, 4 };
                 
-                Position[] postes = new Position[4] { Position.Goalkeeper, Position.Defender, Position.Midfielder, Position.Striker};
+                Position[] postes = new Position[] { Position.Goalkeeper, Position.Defender, Position.Midfielder, Position.Striker};
 
                 //Pour tous les postes
                 for(int numposte = 0; numposte < 4; numposte++)
@@ -619,20 +619,25 @@ namespace TheManager
                     joueursPoste.Sort(new PlayerLevelComparator());
                     //Equipe première
                     for (int i = 0; i < quotaEquipePremiere; i++)
+                    {
                         if (joueursPoste.Count > 0)
                         {
                             joueurs[0].Add(joueursPoste[0]);
                             joueursPoste.RemoveAt(0);
                         }
+
+                    }
                     //Pour les équipes réserves : 2 gardiens
                     for (int i = 1; i < _reserves.Count + 1; i++)
                     {
                         for (int j = 0; j < quotaEquipeReserve; j++)
+                        {
                             if (joueursPoste.Count > 0)
                             {
                                 joueurs[i].Add(joueursPoste[0]);
                                 joueursPoste.RemoveAt(0);
                             }
+                        }
                     }
 
                     //Les joueurs qui restent
@@ -650,7 +655,13 @@ namespace TheManager
                     foreach(Player j in joueurs[i])
                     {
                         Contract ct = null;
-                        foreach (Contract c in equipeComplete) if (c.player == j) ct = c;
+                        foreach (Contract c in equipeComplete)
+                        {
+                            if (c.player == j)
+                            {
+                                ct = c;
+                            }
+                        }
 
                         contrats[i].Add(ct);
                     }

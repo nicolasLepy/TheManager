@@ -38,7 +38,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Features implemented
 
-| Features                                                                   | 
+| Features                                                                  | 
 | ------------------------------------------------------------------------- |
 | **Environment**                                                           | 
 | Simulation on multiple years                                              |
