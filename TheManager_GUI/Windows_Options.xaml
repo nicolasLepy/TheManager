@@ -17,8 +17,6 @@
 				<StackPanel Orientation="Vertical" Name="spThemesList">
 					
 				</StackPanel>
-				<RadioButton GroupName="grTheme" Content="Thème vert" Name="rb_Theme1" Style="{StaticResource StyleRadioButton}" Click="Rb_Theme1_Click"/>
-				<RadioButton GroupName="grTheme" Content="Thème bleu" Name="rb_Theme2" Style="{StaticResource StyleRadioButton}" Click="Rb_Theme2_Click"/>
 				<StackPanel Orientation="Horizontal">
 					<CheckBox Name="cbTransferts" Click="CbTransferts_Click"/>
 					<Label Content="Activer les transferts" Style="{StaticResource StyleLabel2}"/>
