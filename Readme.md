@@ -56,7 +56,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Hierarchical Competitions (promotion, relegation ...)                     |
 | Domestic Cup                                                              |
 | International tournaments                                                 |
-| Reserves teams can't play domestic cup                                    |
+| Specials rules (no reserves teams, at home if two levels lower...)        |
 | **Database**                                                              | 
 | XML Database                                                              |
 | HTML exportation                                                          |
@@ -72,14 +72,12 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Dynamic dates, from one season to an other                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | A system for transferring players between clubs                       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Clubs**                                                             |                                                                      |
-| Generated reserve teams have really bad players                       | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Budget journal                                                        | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Tournaments**                                                       |                                                                      |
 | Odds                                                                  | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Attendance adaptation when a club grow up or down                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Set up international tournaments on multiples years                   | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Correct unrealistic penalty shout-out scores (5-1 f.e.)               | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Correct negative attendance                                           | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **GUI**                                                               |                                                                      |
 | Add the player's history in their description                         | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Panel to give information (transfers, main results) during simulation | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

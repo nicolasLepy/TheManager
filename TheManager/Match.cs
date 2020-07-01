@@ -628,6 +628,10 @@ namespace TheManager
             {
                 _attendance = home.stadium.capacity;
             }
+            else if(_attendance < 0)
+            {
+                _attendance = 0;
+            }
             if(home as CityClub != null)
             {
                 (home as CityClub).ModifyBudget(_attendance * home.ticketPrice, BudgetModificationReason.StadiumAttendance);

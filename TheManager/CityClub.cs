@@ -569,35 +569,54 @@ namespace TheManager
         /// </summary>
         public void DispatchPlayersInReserveTeams()
         {
-            /*
+            
             if(_reserves.Count > 0)
             {
 
-                List<Joueur>[] joueurs = new List<Joueur>[1+_reserves.Count];
-                for (int i = 0; i < joueurs.Length; i++) joueurs[i] = new List<Joueur>();
+                List<Player>[] joueurs = new List<Player>[1+_reserves.Count];
+                for (int i = 0; i < joueurs.Length; i++)
+                {
+                    joueurs[i] = new List<Player>();
+                }
+                List<Contract>[] contrats = new List<Contract>[1 + _reserves.Count];
+                for (int i = 0; i < contrats.Length; i++)
+                {
+                    contrats[i] = new List<Contract>();
+                }
 
-                List<Contrat>[] contrats = new List<Contrat>[1 + _reserves.Count];
-                for (int i = 0; i < contrats.Length; i++) contrats[i] = new List<Contrat>();
+                List<Contract> equipeComplete = new List<Contract>(_players);
+                foreach (ReserveClub cr in _reserves)
+                {
+                    foreach (Contract ct in cr.Contracts)
+                    {
+                        equipeComplete.Add(ct);
+                    }
+                }
 
-                List<Contrat> equipeComplete = new List<Contrat>(_joueurs);
-                foreach (Club_Reserve cr in _reserves) foreach (Contrat ct in cr.Contrats) equipeComplete.Add(ct);
+                List<Player> joueursComplets = new List<Player>(Players());
+                foreach (ReserveClub cr in _reserves)
+                {
+                    foreach (Player j in cr.Players())
+                    {
+                        joueursComplets.Add(j);
+                    }
+                }
 
-                List<Joueur> joueursComplets = new List<Joueur>(Joueurs());
-                foreach (Club_Reserve cr in _reserves) foreach (Joueur j in cr.Joueurs()) joueursComplets.Add(j);
 
                 int[] equipePremiereQuotas = new int[4] { 3, 6, 6, 4 };
                 int[] equipesReservesQuotas = new int[4] { 2, 5, 5, 4 };
-                Poste[] postes = new Poste[4] { Poste.GARDIEN, Poste.DEFENSEUR, Poste.MILIEU, Poste.ATTAQUANT };
+                
+                Position[] postes = new Position[4] { Position.Goalkeeper, Position.Defender, Position.Midfielder, Position.Striker};
 
                 //Pour tous les postes
                 for(int numposte = 0; numposte < 4; numposte++)
                 {
-                    Poste poste = postes[numposte];
+                    Position poste = postes[numposte];
                     int quotaEquipePremiere = equipePremiereQuotas[numposte];
                     int quotaEquipeReserve = equipesReservesQuotas[numposte];
 
-                    List<Joueur> joueursPoste = Utils.JoueursPoste(joueursComplets, poste);
-                    joueursPoste.Sort(new Joueur_Niveau_Comparator());
+                    List<Player> joueursPoste = Utils.PlayersByPosition(joueursComplets, poste);
+                    joueursPoste.Sort(new PlayerLevelComparator());
                     //Equipe première
                     for (int i = 0; i < quotaEquipePremiere; i++)
                         if (joueursPoste.Count > 0)
@@ -628,27 +647,33 @@ namespace TheManager
                 //Récupérer les contrats associés aux joueurs
                 for(int i = 0; i<joueurs.Length; i++)
                 {
-                    foreach(Joueur j in joueurs[i])
+                    foreach(Player j in joueurs[i])
                     {
-                        Contrat ct = null;
-                        foreach (Contrat c in equipeComplete) if (c.Joueur == j) ct = c;
+                        Contract ct = null;
+                        foreach (Contract c in equipeComplete) if (c.player == j) ct = c;
 
                         contrats[i].Add(ct);
                     }
                 }
 
                 //Répartir les joueurs dans les différentes équipes
-                _joueurs.Clear();
-                foreach(Contrat ct in contrats[0]) _joueurs.Add(ct);
-                
+                _players.Clear();
+                foreach (Contract ct in contrats[0])
+                {
+                    _players.Add(ct);
+                }
+
                 for (int i = 1; i<_reserves.Count+1;i++)
                 {
-                    _reserves[i - 1].Contrats.Clear();
-                    foreach (Contrat ct in contrats[i]) _reserves[i - 1].Contrats.Add(ct);
+                    _reserves[i - 1].Contracts.Clear();
+                    foreach (Contract ct in contrats[i])
+                    {
+                        _reserves[i - 1].Contracts.Add(ct);
+                    }
                 }
 
             }
-            */
+            
         }
 
     }

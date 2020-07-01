@@ -114,29 +114,17 @@ namespace TheManager_GUI
                         im1.Source = new BitmapImage(new Uri(img1));
                     }
 
-                    Label l1 = new Label();
-                    l1.Width = 40;
+                    Label l1 = ViewUtils.CreateLabel(c1, "StyleLabel2", -1, 40);
                     l1.HorizontalContentAlignment = HorizontalAlignment.Center;
-                    l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l1.Content = c1;
 
-                    Label l2 = new Label();
-                    l2.Width = 130;
+                    Label l2 = ViewUtils.CreateLabel(c2, "StyleLabel2", -1, 130);
                     l2.HorizontalContentAlignment = HorizontalAlignment.Left;
-                    l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l2.Content = c2;
 
-                    Label l3 = new Label();
-                    l3.Width = 130;
+                    Label l3 = ViewUtils.CreateLabel(c3, "StyleLabel2", -1, 130);
                     l3.HorizontalContentAlignment = HorizontalAlignment.Right;
-                    l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l3.Content = c3;
 
-                    Label l4 = new Label();
-                    l4.Width = 40;
+                    Label l4 = ViewUtils.CreateLabel(c4, "StyleLabel2", -1, 40);
                     l4.HorizontalContentAlignment = HorizontalAlignment.Center;
-                    l4.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l4.Content = c4;
 
                     Image im2 = new Image();
                     im2.Width = 25;

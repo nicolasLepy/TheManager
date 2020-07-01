@@ -73,6 +73,7 @@
     <Compile Include="VueClassement\IVueClassement.cs" />
     <Compile Include="VueClassement\MatchesDataGridView.cs" />
     <Compile Include="VueClassement\MatchesView.cs" />
+    <Compile Include="VueClassement\ViewUtils.cs" />
     <Compile Include="VueClassement\VueClassementChampionnat.cs" />
     <Compile Include="VueClassement\VueClassementEliminatoires.cs" />
     <Compile Include="VueClassement\VueClassementPoules.cs" />

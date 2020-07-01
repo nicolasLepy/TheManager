@@ -155,25 +155,17 @@ namespace TheManager_GUI
                 spHeureMatch.Orientation = Orientation.Horizontal;
                 spHeureMatch.HorizontalAlignment = HorizontalAlignment.Center;
 
-                Label labelHeure = new Label();
-                labelHeure.Content = m.day.ToShortTimeString();
+                Label labelHeure = ViewUtils.CreateLabel(m.day.ToShortTimeString(), "StyleLabel2", 13, 50);
                 labelHeure.HorizontalContentAlignment = HorizontalAlignment.Center;
-                labelHeure.Width = 50;
-                labelHeure.Style = Application.Current.FindResource("StyleLabel2") as Style;
                 labelHeure.FontWeight = FontWeights.Bold;
-                labelHeure.FontSize = 13;
 
                 spHeureMatch.Children.Add(labelHeure);
 
                 StackPanel spCorps = new StackPanel();
                 spCorps.Orientation = Orientation.Horizontal;
 
-                Label lbEq1 = new Label();
+                Label lbEq1 = ViewUtils.CreateLabel(equipe1, "StyleLabel2", 16, 200);
                 lbEq1.HorizontalContentAlignment = HorizontalAlignment.Left;
-                lbEq1.Content = equipe1;
-                lbEq1.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                lbEq1.FontSize = 16;
-                lbEq1.Width = 200;
 
                 Button btnScore = new Button();
                 btnScore.Name = "btnScore_" + i;
@@ -183,12 +175,8 @@ namespace TheManager_GUI
                 btnScore.FontSize = 16;
                 btnScore.Width = 50;
 
-                Label lbEq2 = new Label();
+                Label lbEq2 = ViewUtils.CreateLabel(equipe2, "StyleLabel2", 16, 200);
                 lbEq2.HorizontalContentAlignment = HorizontalAlignment.Right;
-                lbEq2.Content = equipe2;
-                lbEq2.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                lbEq2.FontSize = 16;
-                lbEq2.Width = 200;
 
                 spCorps.Children.Add(lbEq1);
                 spCorps.Children.Add(btnScore);
@@ -198,12 +186,8 @@ namespace TheManager_GUI
                 spMT.Orientation = Orientation.Horizontal;
                 spMT.HorizontalAlignment = HorizontalAlignment.Center;
 
-                Label labelMT = new Label();
+                Label labelMT = ViewUtils.CreateLabel(scoreMt, "StyleLabel2", 10, 50);
                 labelMT.HorizontalContentAlignment = HorizontalAlignment.Center;
-                labelMT.Content = scoreMt;
-                labelMT.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                labelMT.Width = 50;
-                labelMT.FontSize = 10;
                 labelMT.FontStyle = FontStyles.Italic;
 
                 spMT.Children.Add(labelMT);

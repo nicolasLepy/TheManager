@@ -33,19 +33,6 @@ namespace TheManager_GUI
 
         private Club _club;
 
-        private Label CreateLabel(string content, string style, double fontSize, double width, Brush color = null)
-        {
-            Label label = new Label();
-            label.Content = content;
-            label.Style = Application.Current.FindResource(style) as Style;
-            label.FontSize = fontSize;
-            label.Width = width;
-            if(color != null)
-            {
-                label.Foreground = color;
-            }
-            return label; 
-        }
 
         public void FillBudget()
         {
@@ -57,17 +44,17 @@ namespace TheManager_GUI
                     StackPanel spEntry = new StackPanel();
                     spEntry.Orientation = Orientation.Horizontal;
 
-                    spEntry.Children.Add(CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 11, 70));
+                    spEntry.Children.Add(ViewUtils.CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 11, 70));
                     if(be.Amount < 0)
                     {
-                        spEntry.Children.Add(CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75, Brushes.Red));
+                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75, Brushes.Red));
                     }
                     else
                     {
-                        spEntry.Children.Add(CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75)); ;
+                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75));
                     }
 
-                    spEntry.Children.Add(CreateLabel(be.Reason.ToString(), "StyleLabel2", 10, 100));
+                    spEntry.Children.Add(ViewUtils.CreateLabel(be.Reason.ToString(), "StyleLabel2", 10, 100));
 
                     spBudget.Children.Add(spEntry);
                 }
@@ -126,9 +113,9 @@ namespace TheManager_GUI
                 spMatch.Background = color;
 
 
-                Label l1 = CreateLabel(m.Tournament.name, "StyleLabel2", 10, 150);
-                Label l2 = CreateLabel(m.day.ToShortDateString(), "StyleLabel2", 10, 75);
-                Label l3 = CreateLabel(m.home.name, "StyleLabel2", 10, 100);
+                Label l1 = ViewUtils.CreateLabel(m.Tournament.name, "StyleLabel2", 10, 150);
+                Label l2 = ViewUtils.CreateLabel(m.day.ToShortDateString(), "StyleLabel2", 10, 75);
+                Label l3 = ViewUtils.CreateLabel(m.home.name, "StyleLabel2", 10, 100);
 
                 Button btnScore = new Button();
                 btnScore.Name = "btnScore_" + index;
@@ -138,7 +125,7 @@ namespace TheManager_GUI
                 btnScore.FontSize = 10;
                 btnScore.Width = 50;
 
-                Label l5 = CreateLabel(m.away.name, "StyleLabel2", 10, 100);
+                Label l5 = ViewUtils.CreateLabel(m.away.name, "StyleLabel2", 10, 100);
 
                 spMatch.Children.Add(l1);
                 spMatch.Children.Add(l2);
