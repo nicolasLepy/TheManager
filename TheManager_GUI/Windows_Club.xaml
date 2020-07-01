@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TheManager_GUI"
 		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 		mc:Ignorable="d"
-        Title="Windows_Club" Height="870" Width="900" Style="{StaticResource StyleWindows}" Left="50" Top="50">
+        Title="Windows_Club" Height="870" Width="1300" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
@@ -17,6 +17,15 @@
 			<Label Name="lbEntraineur" Content="Entraineur : Antoine Kombouaré" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
 			<StackPanel Orientation="Horizontal">
 				<!-- partie gauche -->
+				<StackPanel Orientation="Vertical">
+					<Label Content="Evolution du budget" Style="{StaticResource StyleLabel2}"/>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="250" Width="260">
+						<StackPanel Name="spBudget" Orientation="Vertical">
+
+						</StackPanel>
+
+					</ScrollViewer>
+				</StackPanel>
 				<StackPanel Orientation="Vertical">
 					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
 					<DataGrid IsReadOnly="True" Name="dgPalmares" Height="100" MaxHeight="350" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">

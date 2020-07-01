@@ -33,6 +33,47 @@ namespace TheManager_GUI
 
         private Club _club;
 
+        private Label CreateLabel(string content, string style, double fontSize, double width, Brush color = null)
+        {
+            Label label = new Label();
+            label.Content = content;
+            label.Style = Application.Current.FindResource(style) as Style;
+            label.FontSize = fontSize;
+            label.Width = width;
+            if(color != null)
+            {
+                label.Foreground = color;
+            }
+            return label; 
+        }
+
+        public void FillBudget()
+        {
+            CityClub cc = _club as CityClub;
+            if(cc != null)
+            {
+                foreach(BudgetEntry be in cc.budgetHistory)
+                {
+                    StackPanel spEntry = new StackPanel();
+                    spEntry.Orientation = Orientation.Horizontal;
+
+                    spEntry.Children.Add(CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 11, 70));
+                    if(be.Amount < 0)
+                    {
+                        spEntry.Children.Add(CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75, Brushes.Red));
+                    }
+                    else
+                    {
+                        spEntry.Children.Add(CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75)); ;
+                    }
+
+                    spEntry.Children.Add(CreateLabel(be.Reason.ToString(), "StyleLabel2", 10, 100));
+
+                    spBudget.Children.Add(spEntry);
+                }
+            }
+        }
+
         public void RemplirMatchs()
         {
             List<Match> matchs = _club.Games;
@@ -85,23 +126,9 @@ namespace TheManager_GUI
                 spMatch.Background = color;
 
 
-                Label l1 = new Label();
-                l1.Content = m.Tournament.name;
-                l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l1.FontSize = 10;
-                l1.Width = 150;
-
-                Label l2 = new Label();
-                l2.Content = m.day.ToShortDateString();
-                l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l2.FontSize = 10;
-                l2.Width = 75;
-
-                Label l3 = new Label();
-                l3.Content = m.home.name;
-                l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l3.FontSize = 10;
-                l3.Width = 100;
+                Label l1 = CreateLabel(m.Tournament.name, "StyleLabel2", 10, 150);
+                Label l2 = CreateLabel(m.day.ToShortDateString(), "StyleLabel2", 10, 75);
+                Label l3 = CreateLabel(m.home.name, "StyleLabel2", 10, 100);
 
                 Button btnScore = new Button();
                 btnScore.Name = "btnScore_" + index;
@@ -111,11 +138,7 @@ namespace TheManager_GUI
                 btnScore.FontSize = 10;
                 btnScore.Width = 50;
 
-                Label l5 = new Label();
-                l5.Content = m.away.name;
-                l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l5.FontSize = 10;
-                l5.Width = 100;
+                Label l5 = CreateLabel(m.away.name, "StyleLabel2", 10, 100);
 
                 spMatch.Children.Add(l1);
                 spMatch.Children.Add(l2);
@@ -184,6 +207,7 @@ namespace TheManager_GUI
             }
             Palmares(c);
             RemplirMatchs();
+            FillBudget();
 
             
             foreach (Contract ct in c.contracts)

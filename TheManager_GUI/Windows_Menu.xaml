@@ -79,7 +79,10 @@
 									<Image Name="imgBtnDroite" Source="Images/right.png" Width="25" Height="25"/>
 								</Button>
 							</StackPanel>
-							<DataGrid IsReadOnly="True" MouseDoubleClick="DataGridRow_MouseDoubleClick" Height="175" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+							<DockPanel Name="spRoundGames" Height="175" VerticalAlignment="Stretch">
+								
+							</DockPanel>
+							<!--<DataGrid IsReadOnly="True" MouseDoubleClick="DataGridRow_MouseDoubleClick" Height="175" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 								<DataGrid.Columns>
 									<DataGridTextColumn Header="" Binding="{Binding Heure}"/>
 									<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
@@ -90,7 +93,7 @@
 									<DataGridTextColumn Header="" Binding="{Binding CoteN}"/>
 									<DataGridTextColumn Header="" Binding="{Binding Cote2}"/>
 								</DataGrid.Columns>
-							</DataGrid>
+							</DataGrid>-->
 						</StackPanel>
 					</StackPanel>
 				</StackPanel>
@@ -101,7 +104,7 @@
 					</StackPanel>
 					<StackPanel Orientation="Vertical" Width="350">
 						<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
-						<StackPanel Name="spNextMatches" >
+						<StackPanel Name="spNextMatches">
 							
 						</StackPanel>
 						<!--
@@ -154,7 +157,9 @@
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
 							</DataGrid.Columns>
-						</DataGrid>-->
+						</DataGrid>
+						-->
+						
 
 						<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
 						<StackPanel Orientation="Vertical" Name="spRanking" Width="440">

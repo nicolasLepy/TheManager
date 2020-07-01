@@ -98,7 +98,7 @@ namespace TheManager_GUI
             {
                 lbTours.Items.Clear();
                 dgClassement.Items.Clear();
-                dgMatchs.Items.Clear();
+                //dgMatchs.Items.Clear();
                 foreach (Round t in c.rounds)
                 {
                     lbTours.Items.Add(t);
@@ -129,6 +129,7 @@ namespace TheManager_GUI
             }
         }
 
+        /*
         private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if(dgMatchs.SelectedItem != null)
@@ -140,7 +141,7 @@ namespace TheManager_GUI
                     match.Show();
                 }
             }
-        }
+        }*/
 
         private void DgClassement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -365,23 +366,26 @@ namespace TheManager_GUI
                     }
                 }
                 
-                MatchesDataGridView matchesView = new MatchesDataGridView(spNextMatches, matches, false, false, false);
+                MatchesDataGridView matchesView = new MatchesDataGridView(spNextMatches, matches, false, false, false, false, true);
                 matchesView.Refresh();
             }
         }
         
         private void Calendrier(Round t)
         {
-            dgMatchs.Items.Clear();
+
+            //dgMatchs.Items.Clear();
             List<Match> matchs = new List<Match>(t.matches);
             matchs.Sort(new MatchDateComparator());
             DateTime lastTime = new DateTime(2000, 1, 1);
             KnockoutRound te = t as KnockoutRound;
+            MatchesDataGridView view = new MatchesDataGridView(spRoundGames, matchs, true, true, true, true, false);
+            view.Refresh();
             foreach (Match m in matchs)
             {
                 if (lastTime != m.day.Date)
                 {
-                    dgMatchs.Items.Add(new CalendrierElement { Heure=m.day.ToShortDateString()});
+                    //dgMatchs.Items.Add(new CalendrierElement { Heure=m.day.ToShortDateString()});
                 }
                 lastTime = m.day.Date;
                 string score = "A jouer";
@@ -410,7 +414,7 @@ namespace TheManager_GUI
                     equipe1 += " (" + champD.shortName + ")";
                     equipe2 += " (" + champE.shortName + ")";
                 }
-                dgMatchs.Items.Add(new CalendrierElement { Heure = m.day.ToShortTimeString(), Equipe1 = equipe1, Equipe2 = equipe2, Score = score, Affluence = affluence, Match = m, Cote1 = m.odd1.ToString("0.00"), Cote2 = m.odd2.ToString("0.00"), CoteN = m.oddD.ToString("0.00") });
+                //dgMatchs.Items.Add(new CalendrierElement { Heure = m.day.ToShortTimeString(), Equipe1 = equipe1, Equipe2 = equipe2, Score = score, Affluence = affluence, Match = m, Cote1 = m.odd1.ToString("0.00"), Cote2 = m.odd2.ToString("0.00"), CoteN = m.oddD.ToString("0.00") });
             }
         }
 

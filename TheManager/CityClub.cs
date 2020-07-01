@@ -80,6 +80,8 @@ namespace TheManager
         public List<ReserveClub> reserves { get => _reserves; }
         private bool isFannionTeam { get => _isFannion; }
 
+        public List<BudgetEntry> budgetHistory => _budgetHistory;
+
         public float SalaryMass
         {
             get

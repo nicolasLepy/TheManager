@@ -14,10 +14,16 @@ namespace TheManager_GUI
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Tournament tournament = value as Tournament;
-            TheManager.Color color = tournament.color;
-            Console.WriteLine(color.ToHexa());
-            return color.ToHexa();
+            if(value != null)
+            {
+                Tournament tournament = value as Tournament;
+                TheManager.Color color = tournament.color;
+                return color.ToHexa();
+            }
+            else
+            {
+                return "#333333";
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
