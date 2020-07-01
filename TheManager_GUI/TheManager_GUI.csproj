@@ -68,6 +68,7 @@
       <DependentUpon>HomepageWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Media.cs" />
+    <Compile Include="Styles\Theme.cs" />
     <Compile Include="VueClassement\DataGridTournamentColumnConverter.cs" />
     <Compile Include="VueClassement\FabriqueVueClassement.cs" />
     <Compile Include="VueClassement\IVueClassement.cs" />
@@ -205,9 +206,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Styles\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\TheManager\TheManager.csproj">
       <Project>{c87d1486-6d8a-4041-afc6-f7f0f5bc6b4b}</Project>

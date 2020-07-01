@@ -14,6 +14,9 @@
 			</StackPanel>
 			<Label Content="Options" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Vertical">
+				<StackPanel Orientation="Vertical" Name="spThemesList">
+					
+				</StackPanel>
 				<RadioButton GroupName="grTheme" Content="Thème vert" Name="rb_Theme1" Style="{StaticResource StyleRadioButton}" Click="Rb_Theme1_Click"/>
 				<RadioButton GroupName="grTheme" Content="Thème bleu" Name="rb_Theme2" Style="{StaticResource StyleRadioButton}" Click="Rb_Theme2_Click"/>
 				<StackPanel Orientation="Horizontal">

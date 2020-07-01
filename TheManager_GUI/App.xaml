@@ -11,6 +11,7 @@
 
 		<Color x:Key="Color1">#1c7435</Color>
 		<Color x:Key="Color2">#a4f17a</Color>
+		<Color x:Key="BackgroundColor">#1c262b</Color>
 		<FontFamily x:Key="Font">Bahnschrift Light</FontFamily>
 		<FontFamily x:Key="FontClassement">Bitstream Vera Sans</FontFamily>
 		<sys:Double x:Key="TailleGrande">15</sys:Double>
@@ -19,7 +20,7 @@
 		
 		<SolidColorBrush x:Key="color1" Color="{DynamicResource Color1}" />
 		<SolidColorBrush x:Key="color2" Color="{DynamicResource Color2}" />
-		<SolidColorBrush x:Key="backgroundColor" Color="#1c262b"/>
+		<SolidColorBrush x:Key="backgroundColor" Color="{DynamicResource BackgroundColor}"/>
 		<SolidColorBrush x:Key="borderColor" Color="#1a1a1a"/>
 
 		<SolidColorBrush x:Key="promotionColor" Color="#075002"/>

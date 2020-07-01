@@ -21,9 +21,46 @@ namespace TheManager_GUI
 
         public List<CheckBox> _checkbox;
 
+
+        private void BtnTheme_Click(object sender, RoutedEventArgs e)
+        {
+
+            Button btn = sender as Button;
+            int themeId = int.Parse(btn.Name.Split('_')[1]);
+            Theme t = Theme.themes[themeId];
+            System.Windows.Media.Color backgroundColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.backgroundColor);
+            System.Windows.Media.Color mainColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.mainColor);
+            System.Windows.Media.Color secondaryColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.secondaryColor);
+            Application.Current.Resources["BackgroundColor"] = backgroundColor;
+            Application.Current.Resources["Color1"] = mainColor;
+            Application.Current.Resources["Color2"] = secondaryColor;
+            Application.Current.Resources["Font"] = new FontFamily(t.fontFamily);
+
+        }
+
+        private void ListThemes()
+        {
+            int i = 0;
+            foreach(Theme t in Theme.themes)
+            {
+                Button btnTheme = new Button();
+                btnTheme.Name = "btnTheme_" + i;
+                btnTheme.Click += new RoutedEventHandler(BtnTheme_Click);
+                btnTheme.Content = t.name;
+                btnTheme.Style = Application.Current.FindResource("StyleButton1") as Style;
+                btnTheme.FontSize = 16;
+                btnTheme.Width = 100;
+                spThemesList.Children.Add(btnTheme);
+                i++;
+
+
+            }
+        }
+
         public Windows_Options()
         {
             InitializeComponent();
+            ListThemes();
             _checkbox = new List<CheckBox>();
             cbExporter.IsChecked = Session.Instance.Game.options.ExportEnabled;
             cbTransferts.IsChecked = Session.Instance.Game.options.transfersEnabled;
