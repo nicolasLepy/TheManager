@@ -188,6 +188,20 @@
 			</Style.Triggers>
 		</Style>
 
+		<Style x:Key="MatchesDataGridTournamentName" TargetType="{x:Type TextBlock}">
+			<Setter Property="Background" Value="{Binding Tournament, Converter={StaticResource DataGridTournamentColumnConverter}}"/>
+			<Setter Property="Foreground" Value="AntiqueWhite"/>
+		</Style>
 
+		<Style x:Key="MatchesDataGridTeamName" TargetType="{x:Type TextBlock}">
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="FontStyle" Value="Italic"/>
+		</Style>
+
+		<Style x:Key="MatchesDataGridScore" TargetType="{x:Type TextBlock}">
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="Foreground" Value="LightGray"/>
+		</Style>
+		
 	</Application.Resources>
 </Application>

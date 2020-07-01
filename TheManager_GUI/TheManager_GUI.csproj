@@ -71,6 +71,7 @@
     <Compile Include="VueClassement\DataGridTournamentColumnConverter.cs" />
     <Compile Include="VueClassement\FabriqueVueClassement.cs" />
     <Compile Include="VueClassement\IVueClassement.cs" />
+    <Compile Include="VueClassement\MatchesDataGridView.cs" />
     <Compile Include="VueClassement\MatchesView.cs" />
     <Compile Include="VueClassement\VueClassementChampionnat.cs" />
     <Compile Include="VueClassement\VueClassementEliminatoires.cs" />

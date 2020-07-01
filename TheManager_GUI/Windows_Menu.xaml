@@ -101,6 +101,10 @@
 					</StackPanel>
 					<StackPanel Orientation="Vertical" Width="350">
 						<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
+						<StackPanel Name="spNextMatches" >
+							
+						</StackPanel>
+						<!--
 						<DataGrid IsReadOnly="True" MouseDoubleClick="DgClubProchainsMatchs_MouseDoubleClick" Height="100" Name="dgClubProchainsMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 							<DataGrid.Columns>
 								<DataGridTextColumn Binding="{Binding ShortName}" Width="3*">
@@ -150,7 +154,7 @@
 									</DataGridTemplateColumn.CellTemplate>
 								</DataGridTemplateColumn>
 							</DataGrid.Columns>
-						</DataGrid>
+						</DataGrid>-->
 
 						<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
 						<StackPanel Orientation="Vertical" Name="spRanking" Width="440">
