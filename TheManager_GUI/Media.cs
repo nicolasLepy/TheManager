@@ -17,7 +17,7 @@ namespace TheManager_GUI
     public class ThreadDuree
     {
 
-        private WindowsMediaPlayer _player;
+        private readonly WindowsMediaPlayer _player;
         private int _duree;
         private int _decalage;
 
@@ -41,9 +41,9 @@ namespace TheManager_GUI
     public class ThreadDureeWAV
     {
 
-        private SoundPlayer _player;
-        private int _duree;
-        private int _decalage;
+        private readonly SoundPlayer _player;
+        private readonly int _duree;
+        private readonly int _decalage;
 
         public ThreadDureeWAV(SoundPlayer player, int duree, int decalage)
         {
@@ -65,7 +65,7 @@ namespace TheManager_GUI
 
     public class ThreadBut
     {
-        private Thread _thread;
+        private readonly Thread _thread;
 
         private string _chemin;
 
@@ -91,8 +91,10 @@ namespace TheManager_GUI
                 else
                 {
                     double time = c.NaturalDuration.HasTimeSpan ? c.NaturalDuration.TimeSpan.TotalMilliseconds : 15000;
-                    if (time > 15000) time = 15000;
-                    Console.WriteLine(time);
+                    if (time > 15000)
+                    {
+                        time = 15000;
+                    }
                     Thread.Sleep((int)time);
                     c.Stop();
                 }
@@ -114,10 +116,7 @@ namespace TheManager_GUI
 
     public class MediaWAV
     {
-        //System.Media.SoundPlayer player = new System.Media.SoundPlayer(@"c:\mywavfile.wav");
-        //player.Play();
-
-        private List<ThreadBut> _players;
+        private readonly List<ThreadBut> _players;
 
         public bool MusiqueDejaEnCours(string musique)
         {

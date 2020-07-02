@@ -14,7 +14,7 @@ namespace TheManager
         public int Minutes { get; set; }
     }
 
-    public class Calendar
+    public static class Calendar
     {
 
         /// <summary>

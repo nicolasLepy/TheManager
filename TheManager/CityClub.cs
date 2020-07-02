@@ -149,7 +149,10 @@ namespace TheManager
 
             
             List<Player> players = new List<Player>();
-            foreach (Contract c in _players) players.Add(c.player);
+            foreach (Contract c in _players)
+            {
+                players.Add(c.player);
+            }
             players.Sort(new PlayerLevelComparator());
 
             int total = 0;
@@ -603,8 +606,8 @@ namespace TheManager
                 }
 
 
-                int[] equipePremiereQuotas = new int[] { 3, 6, 6, 4 };
-                int[] equipesReservesQuotas = new int[] { 2, 5, 5, 4 };
+                int[] equipePremiereQuotas = new[] { 3, 6, 6, 4 };
+                int[] equipesReservesQuotas = new[] { 2, 5, 5, 4 };
                 
                 Position[] postes = new Position[] { Position.Goalkeeper, Position.Defender, Position.Midfielder, Position.Striker};
 

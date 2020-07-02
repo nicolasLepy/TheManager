@@ -33,7 +33,10 @@ namespace TheManager
                 {
                     foreach(City v in p.cities)
                     {
-                        if (v == this) res = p;
+                        if (v == this)
+                        {
+                            res = p;
+                        }
                     }
                 }
             }
