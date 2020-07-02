@@ -103,9 +103,9 @@ namespace TheManager_GUI.VueClassement
         private readonly bool _showOdds;
         private readonly bool _showHour;
         private readonly bool _showTournament;
-        private readonly List<TheManager.Match> _matches;
+        private readonly List<Match> _matches;
 
-        public MatchesDataGridView(Panel panel, List<TheManager.Match> matches, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament)
+        public MatchesDataGridView(Panel panel, List<Match> matches, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament)
         {
             _panel = panel;
             _showTournament = showTournament;
@@ -218,7 +218,7 @@ namespace TheManager_GUI.VueClassement
             }
 
             DateTime lastTime = new DateTime(2000, 1, 1);
-            foreach (TheManager.Match m in _matches)
+            foreach (Match m in _matches)
             {    
                 if (_showSeparatedDate && lastTime != m.day.Date)
                 {

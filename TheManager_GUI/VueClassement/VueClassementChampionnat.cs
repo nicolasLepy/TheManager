@@ -89,10 +89,10 @@ namespace TheManager_GUI.VueClassement
                 image.Source = new BitmapImage(new Uri(Utils.Logo(c)));
                 image.Width = 30 * _sizeMultiplier;
 
-                double regularCellWidth = 40/* * (1 + ((_sizeMultiplier - 1)/2))*/;
+                double regularCellWidth = 36/* * (1 + ((_sizeMultiplier - 1)/2))*/;
 
                 Label l2 = new Label();
-                ApplyStyle2Label(l2, 150 * _sizeMultiplier);
+                ApplyStyle2Label(l2, 175 * _sizeMultiplier);
                 l2.Content = c.shortName;
 
                 Label l3 = new Label();

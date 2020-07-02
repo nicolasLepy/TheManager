@@ -88,6 +88,11 @@
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
 		</Style>
 
+		<Style x:Key="StyleTextBlockLittle" TargetType="{x:Type TextBlock}">
+			<Setter Property="FontSize" Value="12"/>
+			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
+			<Setter Property="Foreground" Value="{StaticResource color2}" />
+		</Style>
 
 		<Style x:Key="StyleCheckBox" TargetType="{x:Type CheckBox}">
 			<Setter Property="FontSize" Value="13"/>

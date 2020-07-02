@@ -6,35 +6,35 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ### Menu
 
-![Alt text](Pics/pic1.png?raw=true "Main menu")
+![Main menu](Pics/pic1.png?raw=true "Main menu")
 
 ### Simulation configuration
 
-![Alt text](Pics/pic2.png?raw=true "Configuration screen")
+![Configuration screen](Pics/pic2.png?raw=true "Configuration screen")
 
 ### Tournaments screen
 
-![Alt text](Pics/pic3.png?raw=true "Tournaments screen")
+![Menu screen](Pics/pic3.png?raw=true "Menu screen") ![Menu screen](Pics/pic10.png?raw=true "Menu screen")
 
 ### Club screen
 
-![Alt text](Pics/pic4.png?raw=true "Club screen")
+![Club screen](Pics/pic4.png?raw=true "Club screen")
 
 ### Player screen
 
-![Alt text](Pics/pic5.png?raw=true "Player screen")
+![Player screen](Pics/pic5.png?raw=true "Player screen")
 
 ### Match screen
 
-![Alt text](Pics/pic6.png?raw=true "Match screen")
+![Match screen](Pics/pic6.png?raw=true "Match screen")
 
 ### Pre-match screen
 
-![Alt text](Pics/pic8.png?raw=true "Pre-match screen")
+![Pre-match screen](Pics/pic8.png?raw=true "Pre-match screen")
 
 ### Live match screen
 
-![Alt text](Pics/pic7.png?raw=true "Live match")
+![Live match](Pics/pic7.png?raw=true "Live match")
 
 ## Features implemented
 
@@ -43,6 +43,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | **Environment**                                                           | 
 | Simulation on multiple years                                              |
 | Managers                                                                  |
+| Medias                                                                    |
 | **Games**                                                                 | 
 | Match simulation                                                          |
 | Engine to follow games in real-time (ranking, results of others matches)  |
@@ -84,6 +85,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Improve GUI                                                           | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Custom themes                                                         | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | **Miscellaneous**                                                     |                                                                      |
+| Try to reduce savegame size (135mo / year)                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Several journalists on one game                                       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | (Data editor)                                                         | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | (Generate Wiki with simulation data)                                  | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

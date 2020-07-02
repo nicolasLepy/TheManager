@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="The Manager" Height="450" Width="800" Style="{StaticResource StyleWindows}">
-    <Grid>
-		<StackPanel Margin="80">
-			<Label Content="The Manager" Style="{StaticResource StyleLabel1}"/>
+        Title="The Manager" Height="450" Width="800" Style="{StaticResource StyleWindows}" Name="mainWindow" >
+	<Grid>
+		<StackPanel Margin="100">
+			<Label Content="" Style="{StaticResource StyleLabel1}"/>
 			<Button Name="btnNouvellePartie" Click="BtnNouvellePartie_Click" Content="Nouvelle partie" Style="{StaticResource StyleButton1}"/>
 			<Button Name="btnChargerPartie" Click="BtnChargerPartie_Click" Content="Charger partie" Style="{StaticResource StyleButton1}"/>
 			<Button Name="btnQuitter" Click="BtnQuitter_Click" Content="Quitter" Style="{StaticResource StyleButton1}"/>

@@ -62,7 +62,7 @@ namespace TheManager_GUI
                 TextBlock tb = new TextBlock();
                 tb.TextWrapping = TextWrapping.WrapWithOverflow;
                 tb.Text = a.publication.ToShortDateString() + " - " + a.title;
-                tb.Style = Application.Current.FindResource("StyleTextBlock") as Style;
+                tb.Style = Application.Current.FindResource("StyleTextBlockLittle") as Style;
                 spNews.Children.Add(tb);
 
             }
@@ -95,7 +95,7 @@ namespace TheManager_GUI
             if(c != null)
             {
                 lbTours.Items.Clear();
-                dgClassement.Items.Clear();
+                //dgClassement.Items.Clear();
                 foreach (Round t in c.rounds)
                 {
                     lbTours.Items.Add(t);
@@ -108,11 +108,11 @@ namespace TheManager_GUI
         {
             Round t = lbTours.SelectedItem as Round;
 
-            IVueClassement vue = FabriqueVueClassement.CreerVue(dgClassement, t, 0.7);
+            IVueClassement vue = FabriqueVueClassement.CreerVue(/*dgClassement*/null, t, 0.7);
             if (vue != null)
             {
                 vue.Remplir(spRoundRanking);
-                vue.Afficher();
+                //vue.Afficher();
             }
             /*
             if (t as TourChampionnat != null)
@@ -141,6 +141,7 @@ namespace TheManager_GUI
             }
         }*/
 
+        /*
         private void DgClassement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if(dgClassement.SelectedItem != null)
@@ -153,7 +154,7 @@ namespace TheManager_GUI
                 }
                    
             }
-        }
+        }*/
 
         private void BtnOptions_Click(object sender, RoutedEventArgs e)
         {
@@ -380,10 +381,10 @@ namespace TheManager_GUI
             view.Refresh();
             foreach (Match m in matchs)
             {
-                if (lastTime != m.day.Date)
+                /*if (lastTime != m.day.Date)
                 {
-                    //dgMatchs.Items.Add(new CalendrierElement { Heure=m.day.ToShortDateString()});
-                }
+                    dgMatchs.Items.Add(new CalendrierElement { Heure=m.day.ToShortDateString()});
+                }*/
                 lastTime = m.day.Date;
                 string score = "A jouer";
                 string affluence = "-";

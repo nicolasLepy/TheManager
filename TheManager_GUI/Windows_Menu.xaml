@@ -42,12 +42,12 @@
 								<TextBlock Style="{StaticResource StyleTextBlock}" TextWrapping="WrapWithOverflow">Dijon s'impose 4 buts à contre le Paris Saint-Germain</TextBlock>
 							</StackPanel>
 						</StackPanel>
-						<StackPanel Orientation="Vertical">
+						<StackPanel Orientation="Vertical" Width="350">
 							<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
 							<StackPanel x:Name="spRoundRanking">
 								
 							</StackPanel>
-							<DataGrid Margin="10" IsReadOnly="True" Height="300" GridLinesVisibility="None" MouseDoubleClick="DgClassement_MouseDoubleClick" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+							<!--<DataGrid Margin="10" IsReadOnly="True" Height="300" GridLinesVisibility="None" MouseDoubleClick="DgClassement_MouseDoubleClick" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 								<DataGrid.Columns>
 									<DataGridTemplateColumn Width="18">
 										<DataGridTemplateColumn.CellTemplate>
@@ -72,7 +72,8 @@
 
 									</Style>
 								</DataGrid.CellStyle>
-							</DataGrid>
+							</DataGrid>-->
+
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 								<Button Name="btnGauche" Click="BtnGauche_Click">
 									<Image Name="imgBtnGauche" Source="Images/left.png" Width="25" Height="25"/>
@@ -82,9 +83,9 @@
 									<Image Name="imgBtnDroite" Source="Images/right.png" Width="25" Height="25"/>
 								</Button>
 							</StackPanel>
-							<DockPanel Name="spRoundGames" Height="175" VerticalAlignment="Stretch">
-								
-							</DockPanel>
+							<StackPanel Name="spRoundGames">
+
+							</StackPanel>
 							<!--<DataGrid IsReadOnly="True" MouseDoubleClick="DataGridRow_MouseDoubleClick" Height="175" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 								<DataGrid.Columns>
 									<DataGridTextColumn Header="" Binding="{Binding Heure}"/>

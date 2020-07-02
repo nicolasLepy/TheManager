@@ -51,9 +51,16 @@ namespace TheManager_GUI
 
         }
 
+        public void LoadBackgroundImage()
+        {
+            ImageSource imgSource = new BitmapImage(new Uri(Utils.Image("themanager.png")));
+            mainWindow.Background = new ImageBrush(imgSource);
+        }
+
         public MainWindow()
         {
             InitializeComponent();
+            LoadBackgroundImage();
             LoadThemes();
         }
 
