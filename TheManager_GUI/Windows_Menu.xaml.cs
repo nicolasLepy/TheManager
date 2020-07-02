@@ -19,7 +19,7 @@ namespace TheManager_GUI
 
         private IVueClassement vueClassement;
 
-        private Game _partie = null;
+        private readonly Game _partie;
 
 
         public Windows_Menu()
@@ -95,7 +95,7 @@ namespace TheManager_GUI
             if(c != null)
             {
                 lbTours.Items.Clear();
-                //dgClassement.Items.Clear();
+                /*dgClassement.Items.Clear();*/
                 foreach (Round t in c.rounds)
                 {
                     lbTours.Items.Add(t);
@@ -114,47 +114,11 @@ namespace TheManager_GUI
                 vue.Remplir(spRoundRanking);
                 //vue.Afficher();
             }
-            /*
-            if (t as TourChampionnat != null)
-                Classement(t as TourChampionnat);
-            else if (t as TourPoules != null)
-                Classement(t as TourPoules);
-            else
-                dgClassement.Items.Clear();*/
             if (t != null)
             {
                 Calendrier(t);
             }
         }
-
-        /*
-        private void DataGridRow_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if(dgMatchs.SelectedItem != null)
-            {
-                CalendrierElement selected = (CalendrierElement)dgMatchs.SelectedItem;
-                if(selected.Match != null)
-                {
-                    Windows_Match match = new Windows_Match(selected.Match);
-                    match.Show();
-                }
-            }
-        }*/
-
-        /*
-        private void DgClassement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if(dgClassement.SelectedItem != null)
-            {
-                ClassementElement selected = (ClassementElement)dgClassement.SelectedItem;
-                if (selected.Club as CityClub != null)
-                {
-                    Windows_Club club = new Windows_Club(selected.Club as CityClub);
-                    club.Show();
-                }
-                   
-            }
-        }*/
 
         private void BtnOptions_Click(object sender, RoutedEventArgs e)
         {
@@ -282,30 +246,6 @@ namespace TheManager_GUI
                 vueClassement = new VueCalendrierChampionnat(null, _partie.club.Championship.rounds[0] as ChampionshipRound, 0.75, true, _partie.club);
                 vueClassement.Remplir(spRanking);
             }
-            /*
-
-            dgClubRanking.Items.Clear();
-            if(_partie.club != null && _partie.club.Championship != null)
-            {
-                Round championnat = _partie.club.Championship.rounds[0];
-                List<Club> classement = (championnat as ChampionshipRound).Ranking();
-                int indice = classement.IndexOf(_partie.club);
-                indice = indice - 2;
-                if (indice < 0)
-                {
-                    indice = 0;
-                }
-
-                if (indice > classement.Count - 5)
-                {
-                    indice = classement.Count - 5;
-                }
-                for(int i = indice; i<indice+5; i++)
-                {
-                    Club c = classement[i];
-                    dgClubRanking.Items.Add(new ClassementElement { Classement = i + 1, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = championnat.Points(c), bc = championnat.GoalsAgainst(c), bp = championnat.GoalsFor(c), Diff = championnat.Difference(c), G = championnat.Wins(c), J = championnat.Played(c), N = championnat.Draws(c), P = championnat.Loses(c) });
-                }
-            }*/
         }
 
         private void NextGamesOfClub()
@@ -375,44 +315,9 @@ namespace TheManager_GUI
 
             List<Match> matchs = new List<Match>(t.matches);
             matchs.Sort(new MatchDateComparator());
-            DateTime lastTime = new DateTime(2000, 1, 1);
             KnockoutRound te = t as KnockoutRound;
             MatchesDataGridView view = new MatchesDataGridView(spRoundGames, matchs, true, true, true, true, false);
             view.Refresh();
-            foreach (Match m in matchs)
-            {
-                /*if (lastTime != m.day.Date)
-                {
-                    dgMatchs.Items.Add(new CalendrierElement { Heure=m.day.ToShortDateString()});
-                }*/
-                lastTime = m.day.Date;
-                string score = "A jouer";
-                string affluence = "-";
-                if (m.Played)
-                {
-                    score = m.score1 + " - " + m.score2;
-                    affluence = m.attendance.ToString();
-                    if (m.prolongations)
-                    {
-                        score += " ap";
-                    }
-
-                    if (m.PenaltyShootout)
-                    {
-                        score += " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)";
-                    }
-                }
-                string equipe1 = m.home.shortName;
-                string equipe2 = m.away.shortName;
-
-                Tournament champD = m.home.Championship;
-                Tournament champE = m.away.Championship;
-                if (te != null && champD != null && champE != null)
-                {
-                    equipe1 += " (" + champD.shortName + ")";
-                    equipe2 += " (" + champE.shortName + ")";
-                }
-            }
         }
 
         private void BtnSauvegarder_Click(object sender, RoutedEventArgs e)
@@ -434,30 +339,14 @@ namespace TheManager_GUI
             }
         }
 
-        /*
-        private void DgClubProchainsMatchs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            Match m = dgClubProchainsMatchs.SelectedItem as Match;
-            if (m != null)
-            {
-                Windows_Match wm = new Windows_Match(m);
-                wm.Show();
-            }
-        }*/
-
-        private void DgClubClassement_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
         private void BtnDroite_Click(object sender, RoutedEventArgs e)
         {
-
+            //To implement
         }
 
         private void BtnGauche_Click(object sender, RoutedEventArgs e)
         {
-
+            //To implement
         }
 
         private void BtnCompetition_Click(object sender, RoutedEventArgs e)

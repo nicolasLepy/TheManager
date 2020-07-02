@@ -15,9 +15,9 @@ namespace TheManager
     public class DatabaseLoader
     {
 
-        private Dictionary<int, Club> _clubsId;
+        private readonly Dictionary<int, Club> _clubsId;
 
-        private Kernel _kernel;
+        private readonly Kernel _kernel;
         public DatabaseLoader(Kernel kernel)
         {
             _kernel = kernel;
@@ -30,7 +30,10 @@ namespace TheManager
             int res = -1;
             foreach (KeyValuePair<int, Club> kvp in _clubsId)
             {
-                if (kvp.Value == club) res = kvp.Key;
+                if (kvp.Value == club)
+                {
+                    res = kvp.Key;
+                }
             }
             return res;
         }
@@ -41,13 +44,17 @@ namespace TheManager
 
             foreach(KeyValuePair<int,Club> kvp in _clubsId)
             {
-                if (kvp.Key > res) res = kvp.Key;
+                if (kvp.Key > res)
+                {
+                    res = kvp.Key;
+                }
             }
 
             res++;
             return res;
         }
 
+        /*
         public void FIFACSV2Joueurs()
         {
             XDocument d = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
@@ -100,7 +107,7 @@ namespace TheManager
                 }
             }
             d.Save("Donnees/joueursFIFA.xml");
-        }
+        }*/
 
         public void AddIdToClubs()
         {
@@ -266,7 +273,7 @@ namespace TheManager
                     int potential = int.Parse(e2.Attribute("potentiel").Value);
                     int clubId = int.Parse(e2.Attribute("club").Value);
                     CityClub club = _clubsId[clubId] as CityClub;
-                    Position position = Position.Goalkeeper;
+                    Position position;
                     string positionName = e2.Attribute("poste").Value;
                     switch(positionName)
                     {
@@ -280,7 +287,7 @@ namespace TheManager
                             position = Position.Striker; 
                             break;
                         default :
-                            position = Position.Defender;
+                            position = Position.Goalkeeper;
                             break;
                     }
                     Player j = new Player(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Country("France"), position);
@@ -730,6 +737,9 @@ namespace TheManager
                                 case "RESERVES_NE_MONTENT_PAS": 
                                     rule = Rule.ReservesAreNotPromoted; 
                                     break;
+                                default:
+                                    rule = Rule.OnlyFirstTeams;
+                                    break;
                             }
                             round.rules.Add(rule);
                         }
@@ -752,7 +762,10 @@ namespace TheManager
                             {
                                 targetedTournament = _kernel.String2Tournament(e4.Attribute("competition").Value);
                             }
-                            else targetedTournament = c;
+                            else
+                            {
+                                targetedTournament = c;
+                            }
 
                             //Deux cas
                             //1- On a un attribut "classement", avec un classement précis
