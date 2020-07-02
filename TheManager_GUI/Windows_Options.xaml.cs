@@ -19,7 +19,7 @@ namespace TheManager_GUI
         public string[] Labels { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
-        public List<CheckBox> _checkbox;
+        private List<CheckBox> _checkbox;
 
 
         private void BtnTheme_Click(object sender, RoutedEventArgs e)

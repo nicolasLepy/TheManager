@@ -22,7 +22,10 @@ namespace TheManager_GUI
             {
                 imgCompetition.Source = new BitmapImage(new Uri(Utils.LogoTournament(match.Tournament)));
             }
-            catch { }
+            catch
+            {
+                //If there is no image, a empty image is let
+            }
             lbStade.Content = match.home.stadium.name;
             lbAffluence.Content = match.attendance + " spectateurs";
             lbEquipe1.Content = match.home.name;

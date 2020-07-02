@@ -185,7 +185,7 @@ namespace TheManager
         {
             get
             {
-                float stars = 0.5f;
+                float stars;
                 float level = Level();
                 if (level < 40)
                 {

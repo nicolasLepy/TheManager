@@ -852,12 +852,15 @@ namespace TheManager
                             string firstName = nationalTeam.country.language.GetFirstName();
                             string lastName = nationalTeam.country.language.GetLastName();
                             DateTime birthday = new DateTime(1990, 1, 1);
-                            Position p = Position.Goalkeeper;
+                            Position p;
                             switch(Session.Instance.Random(1,10))
                             {
                                 case 1: case 2: case 3: p = Position.Defender;  break;
                                 case 4: case 5: case 6: p = Position.Midfielder;  break;
                                 case 7: case 8: p = Position.Striker;  break;
+                                default:
+                                    p = Position.Goalkeeper;
+                                    break;
                             }
                             Player j = new Player(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.country, p);
                             _kernel.freePlayers.Add(j);

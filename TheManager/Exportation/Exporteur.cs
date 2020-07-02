@@ -259,8 +259,9 @@ namespace TheManager.Exportation
 
         public static void EcrireMatch(Match m, string nomFichier)
         {
-            string output = "<p>" + m.home.name + " " + m.score1 + "-" + m.score2 + " " + m.away.name + "</p><table>";
-            output += "<p>" + m.attendance + " spectateurs.</p>";
+            StringBuilder output = new StringBuilder();
+            output.Append("<p>").Append(m.home.name).Append(" ").Append(m.score1).Append("-").Append(m.score2).Append(" ").Append(m.away.name).Append("</p><table>");
+            output.Append("<p>").Append(m.attendance).Append(" spectateurs.</p>");
             List<MatchEvent> evenements = new List<MatchEvent>();
             List<MatchEvent> cartons = new List<MatchEvent>();
             foreach (MatchEvent em in m.events)
@@ -288,33 +289,33 @@ namespace TheManager.Exportation
                 {
                     s2++;
                 }
-                output += "<tr><td>" + em.EventMinute + "°</td><td>" + em.player.firstName + " " + em.player.lastName + "</td><td>" + s1 + "-" + s2 + "</td></tr>";
+                output.Append("<tr><td>").Append(em.EventMinute).Append("°</td><td>").Append(em.player.firstName).Append(" ").Append(em.player.lastName).Append("</td><td>").Append(s1).Append("-").Append(s2).Append("</td></tr>");
             }
-            output += "</table><table>";
+            output.Append("</table><table>");
             foreach (MatchEvent em in cartons)
             {
-                output += "<tr><td>" + em.EventMinute + "°</td><td>" + em.player.firstName + " " + em.player.lastName + "</td><td>" + em.type + "</td><td>" + em.club.name + "</td></tr>";
+                output.Append("<tr><td>").Append(em.EventMinute).Append("°</td><td>").Append(em.player.firstName).Append(" ").Append(em.player.lastName).Append("</td><td>").Append(em.type).Append("</td><td>").Append(em.club.name).Append("</td></tr>");
             }
-            output += "</table>";
+            output.Append("</table>");
 
-            output += "<p><b>Compo Domicile</b></p>";
+            output.Append("<p><b>Compo Domicile</b></p>");
             foreach (Player j in m.compo1)
             {
-                output += "<br>" + j.firstName + " " + j.lastName + "(" + j.position + ")";
+                output.Append("<br>").Append(j.firstName).Append(" ").Append(j.lastName).Append("(").Append(j.position).Append(")");
             }
 
-            output += "<p><b>Compo Extérieur</b></p>";
+            output.Append("<p><b>Compo Extérieur</b></p>");
             foreach (Player j in m.compo2)
             {
-                output += "<br>" + j.firstName + " " + j.lastName + "(" + j.position + ")";
+                output.Append("<br>").Append(j.firstName).Append(" ").Append(j.lastName).Append("(").Append(j.position).Append(")");
             }
 
-            output += "<p><b>Médias</b></p>";
+            output.Append("<p><b>Médias</b></p>");
             foreach(KeyValuePair<Media,Journalist> j in m.journalists)
             {
-                output += "<p>" + j.Value.firstName + " " + j.Value.lastName + " (" + j.Key.name + ")";
+                output.Append("<p>").Append(j.Value.firstName).Append(" ").Append(j.Value.lastName).Append(" (").Append(j.Key.name).Append(")");
             }
-            File.WriteAllText(nomFichier,output);
+            File.WriteAllText(nomFichier,output.ToString());
         }
     }
 }
