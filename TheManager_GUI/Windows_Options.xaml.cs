@@ -31,9 +31,17 @@ namespace TheManager_GUI
             System.Windows.Media.Color backgroundColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.backgroundColor);
             System.Windows.Media.Color mainColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.mainColor);
             System.Windows.Media.Color secondaryColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.secondaryColor);
+            System.Windows.Media.Color promotionColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.promotionColor);
+            System.Windows.Media.Color upperPlayOffColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.upperPlayOffColor);
+            System.Windows.Media.Color bottomPlayOffColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.bottomPlayOffColor);
+            System.Windows.Media.Color relegationColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.relegationColor);
             Application.Current.Resources["BackgroundColor"] = backgroundColor;
             Application.Current.Resources["Color1"] = mainColor;
             Application.Current.Resources["Color2"] = secondaryColor;
+            Application.Current.Resources["Promotion"] = promotionColor;
+            Application.Current.Resources["UpperPlayOff"] = upperPlayOffColor;
+            Application.Current.Resources["LowerPlayOff"] = bottomPlayOffColor;
+            Application.Current.Resources["Relegation"] = relegationColor;
             Application.Current.Resources["Font"] = new FontFamily(t.fontFamily);
 
         }
@@ -145,36 +153,6 @@ namespace TheManager_GUI
             Session.Instance.Game.options.simulateGames = (bool)cbSimuler.IsChecked;
 
             Close();
-        }
-
-        private void Rb_Theme1_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Media.Color c1 = Colors.DarkBlue;
-            c1.R = 28;
-            c1.G = 116;
-            c1.B = 53;
-            System.Windows.Media.Color c2 = Colors.Cyan;
-            c2.R = 164;
-            c2.G = 241;
-            c2.B = 122;
-            Application.Current.Resources["Color1"] = c1;
-            Application.Current.Resources["Color2"] = c2;
-            Application.Current.Resources["Font"] = new FontFamily("Arial Narrow");
-        }
-
-        private void Rb_Theme2_Click(object sender, RoutedEventArgs e)
-        {
-            System.Windows.Media.Color c1 = Colors.DarkBlue;
-            c1.R = 28;
-            c1.G = 88;
-            c1.B = 116;
-            System.Windows.Media.Color c2 = Colors.Cyan;
-            c2.R = 121;
-            c2.G = 237;
-            c2.B = 240;
-            Application.Current.Resources["Color1"] = c1;
-            Application.Current.Resources["Color2"] = c2;
-            Application.Current.Resources["Font"] = new FontFamily("Montserrat");
         }
 
         private void CbTransferts_Click(object sender, RoutedEventArgs e)

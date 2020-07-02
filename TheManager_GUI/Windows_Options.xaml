@@ -14,9 +14,11 @@
 			</StackPanel>
 			<Label Content="Options" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Vertical">
-				<StackPanel Orientation="Vertical" Name="spThemesList">
-					
-				</StackPanel>
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="50">
+					<StackPanel Orientation="Vertical" Name="spThemesList">
+
+					</StackPanel>
+				</ScrollViewer>
 				<StackPanel Orientation="Horizontal">
 					<CheckBox Name="cbTransferts" Click="CbTransferts_Click"/>
 					<Label Content="Activer les transferts" Style="{StaticResource StyleLabel2}"/>
@@ -30,7 +32,7 @@
 					<Label Content="Exporter les compétitions sous format HTML à la fin de la saison" Style="{StaticResource StyleLabel2}"/>
 				</StackPanel>
 				<Label Content="Compétitions à exporter" Style="{StaticResource StyleLabel2}"/>
-				<ScrollViewer Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="200" CanContentScroll="True">
+				<ScrollViewer Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="150" CanContentScroll="True">
 					<StackPanel Orientation="Vertical" Name="spOptions">
 					</StackPanel>
 				</ScrollViewer>

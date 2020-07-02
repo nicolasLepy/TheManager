@@ -73,8 +73,6 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
-            
-
             foreach (Club c in clubs)
             {
                 i++;
@@ -91,7 +89,7 @@ namespace TheManager_GUI.VueClassement
                 image.Source = new BitmapImage(new Uri(Utils.Logo(c)));
                 image.Width = 30 * _sizeMultiplier;
 
-                double regularCellWidth = 25/* * (1 + ((_sizeMultiplier - 1)/2))*/;
+                double regularCellWidth = 40/* * (1 + ((_sizeMultiplier - 1)/2))*/;
 
                 Label l2 = new Label();
                 ApplyStyle2Label(l2, 150 * _sizeMultiplier);
@@ -126,7 +124,7 @@ namespace TheManager_GUI.VueClassement
                 l9.Content = _round.GoalsAgainst(c);
 
                 Label l10 = new Label();
-                ApplyStyle2Label(l10, regularCellWidth);
+                ApplyStyle2Label(l10, 45);
                 l10.Content = _round.Difference(c);
 
                 sp.Children.Add(l1);
@@ -169,8 +167,11 @@ namespace TheManager_GUI.VueClassement
 
                         int index = q.ranking - 1;
 
-                        SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                        (spClassement.Children[index] as StackPanel).Background = color;
+                        if(couleur != "backgroundColor")
+                        {
+                            SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
+                            (spClassement.Children[index] as StackPanel).Background = color;
+                        }
                     }
 
                 }

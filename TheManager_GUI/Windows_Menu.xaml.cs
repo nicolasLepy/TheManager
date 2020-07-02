@@ -21,8 +21,6 @@ namespace TheManager_GUI
 
         private Game _partie = null;
 
-        private DateTime _calendrierJour;
-
 
         public Windows_Menu()
         {
@@ -110,9 +108,10 @@ namespace TheManager_GUI
         {
             Round t = lbTours.SelectedItem as Round;
 
-            IVueClassement vue = FabriqueVueClassement.CreerVue(dgClassement, t);
+            IVueClassement vue = FabriqueVueClassement.CreerVue(dgClassement, t, 0.7);
             if (vue != null)
             {
+                vue.Remplir(spRoundRanking);
                 vue.Afficher();
             }
             /*

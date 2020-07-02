@@ -12,6 +12,10 @@
 		<Color x:Key="Color1">#1c7435</Color>
 		<Color x:Key="Color2">#a4f17a</Color>
 		<Color x:Key="BackgroundColor">#1c262b</Color>
+		<Color x:Key="Promotion">#075002</Color>
+		<Color x:Key="UpperPlayOff">#5E7004</Color>
+		<Color x:Key="BottomPlayOff">#CA040B</Color>
+		<Color x:Key="Relegation">#7C0004</Color>
 		<FontFamily x:Key="Font">Bahnschrift Light</FontFamily>
 		<FontFamily x:Key="FontClassement">Bitstream Vera Sans</FontFamily>
 		<sys:Double x:Key="TailleGrande">15</sys:Double>
@@ -23,10 +27,10 @@
 		<SolidColorBrush x:Key="backgroundColor" Color="{DynamicResource BackgroundColor}"/>
 		<SolidColorBrush x:Key="borderColor" Color="#1a1a1a"/>
 
-		<SolidColorBrush x:Key="promotionColor" Color="#075002"/>
-		<SolidColorBrush x:Key="barrageColor" Color="#5E7004"/>
-		<SolidColorBrush x:Key="barrageRelegationColor" Color="#CA040B"/>
-		<SolidColorBrush x:Key="relegationColor" Color="#7C0004"/>
+		<SolidColorBrush x:Key="promotionColor" Color="{DynamicResource Promotion}"/>
+		<SolidColorBrush x:Key="barrageColor" Color="{DynamicResource UpperPlayOff}"/>
+		<SolidColorBrush x:Key="barrageRelegationColor" Color="{DynamicResource BottomPlayOff}"/>
+		<SolidColorBrush x:Key="relegationColor" Color="{DynamicResource Relegation}"/>
 
 		<SolidColorBrush x:Key="victoireColor" Color="#033e00"/>
 		<SolidColorBrush x:Key="defaiteColor" Color="#3e1500"/>
@@ -130,7 +134,6 @@
 			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
 		</Style>
-
 
 		<Style x:Key="StyleDataGrid" TargetType="{x:Type DataGrid}">
 			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
