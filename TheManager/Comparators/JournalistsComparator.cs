@@ -8,7 +8,7 @@ namespace TheManager.Comparators
 {
     public class JournalistsComparator : IComparer<Journalist>
     {
-        private City _city;
+        private readonly City _city;
 
         public JournalistsComparator(City city)
         {

@@ -9,7 +9,7 @@ namespace TheManager
 {
     public class RandomDrawingLevel : IRandomDrawing
     {
-        private GroupsRound _round;
+        private readonly GroupsRound _round;
 
         public RandomDrawingLevel(GroupsRound tour)
         {

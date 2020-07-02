@@ -15,7 +15,7 @@ namespace TheManager_GUI
     public partial class Windows_Competition : Window
     {
 
-        private Tournament _competition;
+        private readonly Tournament _competition;
         private int _indexTour;
         private int _indexJournee;
 

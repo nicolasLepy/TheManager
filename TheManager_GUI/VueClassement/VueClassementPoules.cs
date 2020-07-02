@@ -12,8 +12,8 @@ namespace TheManager_GUI.VueClassement
     public class VueClassementPoules : IVueClassement
     {
 
-        private DataGrid _grille;
-        private GroupsRound _tour;
+        private readonly DataGrid _grille;
+        private readonly GroupsRound _tour;
 
         public VueClassementPoules(DataGrid grille, GroupsRound tour)
         {

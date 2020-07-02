@@ -9,7 +9,7 @@ namespace TheManager.Comparators
     public class MatchRankingComparator : IComparer<Match>
     {
 
-        private ChampionshipRound _round;
+        private readonly ChampionshipRound _round;
 
         public MatchRankingComparator(ChampionshipRound round )
         {

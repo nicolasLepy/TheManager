@@ -11,7 +11,7 @@ namespace TheManager_GUI.VueClassement
     public class VueClassementEliminatoires : IVueClassement
     {
 
-        private DataGrid _grille;
+        private readonly DataGrid _grille;
         private readonly KnockoutRound _tour;
 
         public VueClassementEliminatoires(DataGrid grille, KnockoutRound tour)

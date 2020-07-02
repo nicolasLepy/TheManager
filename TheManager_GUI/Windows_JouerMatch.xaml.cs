@@ -15,12 +15,12 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_JouerMatch : Window
     {
-        private List<Match> _matchs;
-        private Round _tour;
+        private readonly List<Match> _matchs;
+        private readonly Round _tour;
 
         private MediaWAV _media;
 
-        private List<bool> _enCours;
+        private readonly List<bool> _enCours;
 
 
         async Task Match(Match game)

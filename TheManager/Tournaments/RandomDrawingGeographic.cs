@@ -10,7 +10,7 @@ namespace TheManager
     public class RandomDrawingGeographic : IRandomDrawing
     {
 
-        private GroupsRound _round;
+        private readonly GroupsRound _round;
 
         public RandomDrawingGeographic(GroupsRound tour)
         {

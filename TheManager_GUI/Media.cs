@@ -18,8 +18,8 @@ namespace TheManager_GUI
     {
 
         private readonly WindowsMediaPlayer _player;
-        private int _duree;
-        private int _decalage;
+        private readonly int _duree;
+        private readonly int _decalage;
 
         public ThreadDuree(WindowsMediaPlayer player, int duree, int decalage)
         {

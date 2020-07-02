@@ -13,7 +13,7 @@ namespace TheManager_GUI
     public partial class Windows_ConfigurationPartie : Window
     {
 
-        private List<CheckBox> _checkbox;
+        private readonly List<CheckBox> _checkbox;
 
         public Windows_ConfigurationPartie()
         {

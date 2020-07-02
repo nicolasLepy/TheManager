@@ -12,9 +12,9 @@ namespace TheManager_GUI
     /// </summary>
     public partial class Windows_AvantMatch : Window
     {
-        private List<Match> _matchs;
-        private Club _club;
-        private List<Player> _joueurs;
+        private readonly List<Match> _matchs;
+        private readonly Club _club;
+        private readonly List<Player> _joueurs;
 
         public void AfficherComposition()
         {

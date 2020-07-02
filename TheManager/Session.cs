@@ -31,7 +31,7 @@ namespace TheManager
         #endregion
 
 
-        private Random _random;
+        private readonly Random _random;
 
         public Game Game { get; set; }
 

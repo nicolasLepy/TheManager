@@ -9,7 +9,7 @@ namespace TheManager.Comparators
     public class ClubLocalisationComparator : IComparer<Club>
     {
 
-        private GeographicPosition _reference;
+        private readonly GeographicPosition _reference;
 
         public ClubLocalisationComparator(GeographicPosition reference)
         {

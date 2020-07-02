@@ -31,7 +31,7 @@ namespace TheManager_GUI
         public string[] LabelsAnnees { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
-        private Club _club;
+        private readonly Club _club;
 
 
         public void FillBudget()

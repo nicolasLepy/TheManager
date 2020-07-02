@@ -9,7 +9,7 @@ namespace TheManager.Comparators
     public class ClubLevelComparator : IComparer<Club>
     {
 
-        private bool _inverted;
+        private readonly bool _inverted;
 
         public ClubLevelComparator() : this(false)
         {
