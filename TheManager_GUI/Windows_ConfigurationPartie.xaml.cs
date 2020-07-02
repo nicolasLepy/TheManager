@@ -28,7 +28,7 @@ namespace TheManager_GUI
 
             foreach(Continent c in g.continents)
             {
-                StackPanel box = spCompEu;
+                StackPanel box;
                 switch (c.Name())
                 {
                     case "Europe":
@@ -45,6 +45,9 @@ namespace TheManager_GUI
                         break;
                     case "Asie":
                         box = spCompAsie;
+                        break;
+                    default:
+                        box = spCompEu;
                         break;
                 }
 

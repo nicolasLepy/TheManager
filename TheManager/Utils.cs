@@ -221,7 +221,7 @@ namespace TheManager
             }
             else
             {
-                Console.WriteLine(c.name + " n'a pas de logo valide");
+                Console.WriteLine("Try to get a logo of club but club is null");
             }
             return res;
         }

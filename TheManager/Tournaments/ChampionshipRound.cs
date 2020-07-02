@@ -109,7 +109,7 @@ namespace TheManager
         
         public override List<Match> NextMatchesDay()
         {
-            List<Match> res = new List<Match>();
+            List<Match> res;
 
             int indMatch = -1;
             DateTime earliest = new DateTime(2000, 1, 1);

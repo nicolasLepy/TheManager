@@ -293,68 +293,6 @@ namespace TheManager
             BuildComposition(Position.Midfielder, res, 4);
             BuildComposition(Position.Striker, res,2);
             
-            /*
-            List<Player> joueursPosition = ListEligiblePlayersByPosition(Position.Goalkeeper);
-            joueursPosition.Sort(new PlayerCompositionComparator());
-            if (joueursPosition.Count >= 1)
-            {
-                res.Add(joueursPosition[0]);
-            }
-
-            joueursPosition = ListEligiblePlayersByPosition(Position.Defender);
-            joueursPosition.Sort(new PlayerCompositionComparator());
-
-            if (joueursPosition.Count > 0)
-            {
-                res.Add(joueursPosition[0]);
-            }
-            if (joueursPosition.Count > 1)
-            {
-                res.Add(joueursPosition[1]);
-            }
-            if (joueursPosition.Count > 2)
-            {
-                res.Add(joueursPosition[2]);
-            }
-            if (joueursPosition.Count > 3)
-            {
-                res.Add(joueursPosition[3]);
-            }
-            
-
-            joueursPosition = ListEligiblePlayersByPosition(Position.Midfielder);
-            joueursPosition.Sort(new PlayerCompositionComparator());
-
-            if (joueursPosition.Count > 0)
-            {
-                res.Add(joueursPosition[0]);
-            }
-            if (joueursPosition.Count > 1)
-            {
-                res.Add(joueursPosition[1]);
-            }
-            if (joueursPosition.Count > 2)
-            {
-                res.Add(joueursPosition[2]);
-            }
-            if (joueursPosition.Count > 3)
-            {
-                res.Add(joueursPosition[3]);
-            }
-
-
-            joueursPosition = ListEligiblePlayersByPosition(Position.Striker);
-            joueursPosition.Sort(new PlayerCompositionComparator());
-            if (joueursPosition.Count > 0)
-            {
-                res.Add(joueursPosition[0]);
-            }
-            if (joueursPosition.Count > 1)
-            {
-                res.Add(joueursPosition[1]);
-            }*/
-
-
             return res;
         }
 

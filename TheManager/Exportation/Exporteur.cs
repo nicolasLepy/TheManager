@@ -106,7 +106,7 @@ namespace TheManager.Exportation
 
                         Exporteurs2.ExporterL(journee, "Output\\" + c.shortName + Session.Instance.Game.date.Year + "\\" + t.name, i + 1);
 
-                        output.Append("<p>Journée ").Append((int) (i + 1)).Append("</p><table>");
+                        output.Append("<p>Journée ").Append((i + 1)).Append("</p><table>");
                         DateTime last = new DateTime(2000, 1, 1);
                         foreach (Match m in journee)
                         {

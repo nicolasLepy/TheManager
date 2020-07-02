@@ -23,17 +23,17 @@ namespace TheManager_GUI
         private List<bool> _enCours;
 
 
-        async Task Match(Match match)
+        async Task Match(Match game)
         {
-            List<RetourMatch> res = match.NextMinute();
+            List<RetourMatch> res = game.NextMinute();
             if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res))
             {
-                _enCours[_matchs.IndexOf(match)] = false;
+                _enCours[_matchs.IndexOf(game)] = false;
             }
             //Si y a un évenement
             if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
             {
-                MatchEvent em = match.events[match.events.Count - 1];
+                MatchEvent em = game.events[game.events.Count - 1];
                 string icone = "";
                 bool afficherAction = false;
                 
@@ -41,9 +41,9 @@ namespace TheManager_GUI
                 {
                     icone = "goal.png";
                     afficherAction = true;
-                    if (em.club == match.home)
+                    if (em.club == game.home)
                     {
-                        _media.But(match);
+                        _media.But(game);
                     }
 
                     if (cbJingleBut.IsChecked == true)
@@ -69,10 +69,10 @@ namespace TheManager_GUI
 
                 if (afficherAction)
                 {
-                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteToString, Joueur = em.player.lastName + " (" + em.player.Club.shortName + ")", Evenement = match.home + " - " + match.away + " : " + match.score1 + " - " + match.score2 });
+                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteToString, Joueur = em.player.lastName + " (" + em.player.Club.shortName + ")", Evenement = game.home + " - " + game.away + " : " + game.score1 + " - " + game.score2 });
                 }
 
-                if (match == _matchs[0])
+                if (game == _matchs[0])
                 {
                     ActionsMatch();
                 }
@@ -80,14 +80,14 @@ namespace TheManager_GUI
 
 
             //Refresh
-            if (match == _matchs[0])
+            if (game == _matchs[0])
             {
-                lbTemps.Content = match.Time;
-                lbScore.Content = match.score1 + " - " + match.score2;
-                lbTirs1.Content = match.statistics.HomeShoots;
-                lbTirs2.Content = match.statistics.AwayShoots;
-                pbTirs.Maximum = match.statistics.HomeShoots + match.statistics.AwayShoots;
-                pbTirs.Value = match.statistics.HomeShoots;
+                lbTemps.Content = game.Time;
+                lbScore.Content = game.score1 + " - " + game.score2;
+                lbTirs1.Content = game.statistics.HomeShoots;
+                lbTirs2.Content = game.statistics.AwayShoots;
+                pbTirs.Maximum = game.statistics.HomeShoots + game.statistics.AwayShoots;
+                pbTirs.Value = game.statistics.HomeShoots;
             }
             //Thread t = new Thread(new ThreadStart(ThreadClassement));
             //t.Start();
@@ -146,7 +146,10 @@ namespace TheManager_GUI
                 imgEquipe1.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].home)));
                 imgEquipe2.Source = new BitmapImage(new Uri(Utils.Logo(_matchs[0].away)));
             }
-            catch { }
+            catch
+            {
+                //So we don't show any logo if club has no logo
+            }
             lbEquipe1.Content = _matchs[0].home;
             lbEquipe2.Content = _matchs[0].away;
 
