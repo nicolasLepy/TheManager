@@ -180,7 +180,10 @@ namespace TheManager
                     {
                         foreach (Match m in t.matches)
                         {
-                            if (m == this) res = t;
+                            if (m == this)
+                            {
+                                res = t;
+                            }
                         }
                     }
                 }
@@ -278,7 +281,10 @@ namespace TheManager
                         {
                             c = home;
                         }
-                        else c = away;
+                        else
+                        {
+                            c = away;
+                        }
                     }
                     if (c == null)
                     {
@@ -467,7 +473,10 @@ namespace TheManager
             get
             {
                 bool res = false;
-                if (_penaltyShootout1 != 0 || _penaltyShootout2 != 0) res = true;
+                if (_penaltyShootout1 != 0 || _penaltyShootout2 != 0)
+                {
+                    res = true;
+                }
                 return res;
             }
         }

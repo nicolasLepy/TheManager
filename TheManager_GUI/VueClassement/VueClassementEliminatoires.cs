@@ -12,7 +12,7 @@ namespace TheManager_GUI.VueClassement
     {
 
         private DataGrid _grille;
-        private KnockoutRound _tour;
+        private readonly KnockoutRound _tour;
 
         public VueClassementEliminatoires(DataGrid grille, KnockoutRound tour)
         {

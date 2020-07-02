@@ -514,7 +514,10 @@ namespace TheManager
             foreach(RecoverTeams re in _recuperedTeams)
             {
                 bool onlyFirstTeams = false;
-                if (rules.Contains(Rule.OnlyFirstTeams)) onlyFirstTeams = true;
+                if (rules.Contains(Rule.OnlyFirstTeams))
+                {
+                    onlyFirstTeams = true;
+                }
                 foreach (Club c in re.Source.RetrieveTeams(re.Number, re.Method, onlyFirstTeams))
                 {
                     _clubs.Add(c);

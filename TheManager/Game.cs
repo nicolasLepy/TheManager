@@ -177,10 +177,12 @@ namespace TheManager
             if (date.Month == 7 && date.Day == 2)
             {
                 foreach (Club c in kernel.Clubs)
+                {
                     if (c as CityClub != null)
                     {
                         (c as CityClub).SearchFreePlayers();
                     }
+                }
             }
             if (date.Month == 7 || date.Month == 8)
             {
@@ -274,7 +276,13 @@ namespace TheManager
                             city = (m.home as ReserveClub).FannionClub.city;
                         }
                         List<Journalist> j = new List<Journalist>();
-                        foreach (Journalist j1 in media.journalists) if (!j1.isTaken) j.Add(j1);
+                        foreach (Journalist j1 in media.journalists)
+                        {
+                            if (!j1.isTaken)
+                            {
+                                j.Add(j1);
+                            }
+                        }
                         Journalist journalist = null;
                         if(j.Count > 0)
                         {
@@ -449,7 +457,10 @@ namespace TheManager
             //July 20th => teams set up tickets price
             if(date.Day == 20 && date.Month == 7)
             {
-                foreach (Club c in kernel.Clubs) c.SetTicketPrice();
+                foreach (Club c in kernel.Clubs)
+                {
+                    c.SetTicketPrice();
+                }
             }
 
             //Teams are completed at the end of the transfers market if they are not enough players

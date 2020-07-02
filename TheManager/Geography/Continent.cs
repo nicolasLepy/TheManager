@@ -72,7 +72,10 @@ namespace TheManager
                 clubs = Utils.ShuffleList<Club>(clubs);
             }
 
-            for (int i = 0; i < number; i++) res.Add(clubs[i]);
+            for (int i = 0; i < number; i++)
+            {
+                res.Add(clubs[i]);
+            }
             return res;
         }
 
