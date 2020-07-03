@@ -44,13 +44,13 @@ namespace TheManager_GUI.VueClassement
 
                 string l3Content = m.home.name + (m.home as CityClub != null ? " (" + m.home.Championship.shortName + ")" : "");
                 Label l3 = ViewUtils.CreateLabel(l3Content, "StyleLabel2", 10 * _sizeMultiplier, 100 * _sizeMultiplier);
-                l3.MouseLeftButtonUp += delegate (object sender, System.Windows.Input.MouseButtonEventArgs e)
+                l3.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
                 { clubNameButtonClick(m.home); };
 
 
                 Button btnScore = new Button();
                 btnScore.Name = "btnScore_" + index;
-                btnScore.Click += delegate (object sender, RoutedEventArgs e)
+                btnScore.Click += (object sender, RoutedEventArgs e) =>
                 { matchButtonClick(m); };
                 btnScore.Content = m.score1 + " - " + m.score2 + (m.prolongations ? " ap" : "") + (m.PenaltyShootout ? " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)" : "");
                 btnScore.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
@@ -59,7 +59,7 @@ namespace TheManager_GUI.VueClassement
 
                 string l5Content = m.away.name + (m.away as CityClub != null ? " (" + m.away.Championship.shortName + ")" : "");
                 Label l5 = ViewUtils.CreateLabel(l5Content, "StyleLabel2", 10 * _sizeMultiplier, 100 * _sizeMultiplier);
-                l5.MouseLeftButtonUp += delegate (object sender, System.Windows.Input.MouseButtonEventArgs e)
+                l5.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
                 { clubNameButtonClick(m.away); };
 
                 Image img2 = new Image();

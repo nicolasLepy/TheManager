@@ -94,8 +94,8 @@ namespace TheManager_GUI.VueClassement
                 Label l2 = new Label();
                 ApplyStyle2Label(l2, 175 * _sizeMultiplier);
                 l2.Content = c.shortName;
-                l2.MouseLeftButtonUp += delegate (object sender, System.Windows.Input.MouseButtonEventArgs e) 
-                { clubNameButtonClick(sender, e, c); };
+                l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+                { clubNameButtonClick(c); };
                 //l2.MouseLeftButtonUp += clubNameButtonClick;
 
                 Label l3 = new Label();
@@ -220,7 +220,7 @@ namespace TheManager_GUI.VueClassement
             }*/
         }
 
-        private void clubNameButtonClick(object sender, System.Windows.Input.MouseButtonEventArgs e, Club c)
+        private void clubNameButtonClick(Club c)
         {
             if(c != null && c as CityClub != null)
             {

@@ -42,8 +42,8 @@ namespace TheManager_GUI.VueClassement
             sp.Children.Add(image);
 
             Label l2 = ViewUtils.CreateLabel(c.shortName, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
-            l2.MouseLeftButtonUp += delegate (object sender, System.Windows.Input.MouseButtonEventArgs e)
-            { clubNameButtonClick(sender, e, c); };
+            l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+            { clubNameButtonClick(c); };
             Label l3 = ViewUtils.CreateLabel(_tour.Points(c).ToString(), "StyleLabel2", fontBase, 25);
             Label l4 = ViewUtils.CreateLabel(_tour.Played(c).ToString(), "StyleLabel2", fontBase, 25);
             Label l5 = ViewUtils.CreateLabel(_tour.Wins(c).ToString(), "StyleLabel2", fontBase, 25);
@@ -179,15 +179,13 @@ namespace TheManager_GUI.VueClassement
             }
         }
 
-        private void clubNameButtonClick(object sender, System.Windows.Input.MouseButtonEventArgs e, Club c)
+        private void clubNameButtonClick(Club c)
         {
             if (c != null && c as CityClub != null)
             {
                 Windows_Club wc = new Windows_Club(c as CityClub);
                 wc.Show();
             }
-
         }
-
     }
 }

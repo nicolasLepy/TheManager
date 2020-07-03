@@ -44,7 +44,7 @@
 						</StackPanel>
 						<StackPanel Orientation="Vertical" Width="350">
 							<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
-							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="300">
+							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="400">
 								<StackPanel x:Name="spRoundRanking">
 
 								</StackPanel>
