@@ -219,10 +219,13 @@ namespace TheManager_GUI
                         tbActu.Text = comp.name + " : ";
                         i = 1;
                         ChampionshipRound tc = t as ChampionshipRound;
-                        foreach (Club c in tc.Ranking())
+                        if (tc != null)
                         {
-                            tbActu.Text += i + " " + c.shortName + " " + t.Points(c) + ", " + t.Difference(c) + " / ";
-                            i++;
+                            foreach (Club c in tc.Ranking())
+                            {
+                                tbActu.Text += i + " " + c.shortName + " " + t.Points(c) + ", " + t.Difference(c) + " / ";
+                                i++;
+                            }
                         }
                     }
                     else
@@ -243,7 +246,8 @@ namespace TheManager_GUI
 
             if (_partie.club != null && _partie.club.Championship != null)
             {
-                vueClassement = new VueCalendrierChampionnat(null, _partie.club.Championship.rounds[0] as ChampionshipRound, 0.75, true, _partie.club);
+                vueClassement = FabriqueVueClassement.CreerVue(null, _partie.club.Championship.rounds[0], 0.75, true, _partie.club);
+                //vueClassement = new VueClassementChampionnat(null, _partie.club.Championship.rounds[0] as ChampionshipRound, 0.75, true, _partie.club);
                 vueClassement.Remplir(spRanking);
             }
         }

@@ -14,134 +14,148 @@ namespace TheManager_GUI.VueClassement
 
         private readonly DataGrid _grille;
         private readonly GroupsRound _tour;
+        private readonly bool _focusOnTeam;
+        private readonly double _sizeMultiplier;
+        private readonly Club _team;
 
-        public VueClassementPoules(DataGrid grille, GroupsRound tour)
+        public VueClassementPoules(DataGrid grille, GroupsRound tour, double sizeMultiplier, bool focusOnTeam, Club team)
         {
             _grille = grille;
             _tour = tour;
+            _focusOnTeam = focusOnTeam;
+            _sizeMultiplier = sizeMultiplier;
+            _team = team;
+        }
+
+        private StackPanel CreateRanking(int index, Club c)
+        {
+            StackPanel sp = new StackPanel();
+            sp.Orientation = Orientation.Horizontal;
+
+            int fontBase = (int)(14 * _sizeMultiplier);
+            Label l1 = ViewUtils.CreateLabel(index.ToString(), "StyleLabel2", fontBase, 30);
+            sp.Children.Add(l1);
+
+            Image image = new Image();
+            image.Source = new BitmapImage(new Uri(Utils.Logo(c)));
+            image.Width = 30 * _sizeMultiplier;
+            sp.Children.Add(image);
+
+            Label l2 = ViewUtils.CreateLabel(c.shortName, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
+            l2.MouseLeftButtonUp += delegate (object sender, System.Windows.Input.MouseButtonEventArgs e)
+            { clubNameButtonClick(sender, e, c); };
+            Label l3 = ViewUtils.CreateLabel(_tour.Points(c).ToString(), "StyleLabel2", fontBase, 25);
+            Label l4 = ViewUtils.CreateLabel(_tour.Played(c).ToString(), "StyleLabel2", fontBase, 25);
+            Label l5 = ViewUtils.CreateLabel(_tour.Wins(c).ToString(), "StyleLabel2", fontBase, 25);
+            Label l6 = ViewUtils.CreateLabel(_tour.Draws(c).ToString(), "StyleLabel2", fontBase, 25);
+            Label l7 = ViewUtils.CreateLabel(_tour.Loses(c).ToString(), "StyleLabel2", fontBase, 25);
+            Label l8 = ViewUtils.CreateLabel(_tour.GoalsFor(c).ToString(), "StyleLabel2", fontBase, 25);
+            Label l9 = ViewUtils.CreateLabel(_tour.GoalsAgainst(c).ToString(), "StyleLabel2", fontBase, 25);
+            Label l10 = ViewUtils.CreateLabel(_tour.Difference(c).ToString(), "StyleLabel2", fontBase, 25);
+
+
+            sp.Children.Add(l2);
+            sp.Children.Add(l3);
+            sp.Children.Add(l4);
+            sp.Children.Add(l5);
+            sp.Children.Add(l6);
+            sp.Children.Add(l7);
+            sp.Children.Add(l8);
+            sp.Children.Add(l9);
+            sp.Children.Add(l10);
+
+            return sp;
+
         }
 
         public void Remplir(StackPanel spClassement)
         {
             spClassement.Children.Clear();
 
-            for(int poule = 0; poule<_tour.groupsCount; poule++)
+            //If focusing on a team, only show five teams around the current team
+            if (_focusOnTeam)
             {
-                Label labelPoule = new Label();
-                labelPoule.Content = _tour.GroupName(poule);
-                labelPoule.Style = Application.Current.FindResource("StyleLabel1") as Style;
-                spClassement.Children.Add(labelPoule);
-
-                int i = 0;
-                foreach (Club c in _tour.Ranking(poule))
+                List<Club> ranking = null;
+                for(int group = 0; group < _tour.groupsCount; group++)
                 {
-                    i++;
-                    StackPanel sp = new StackPanel();
-                    sp.Orientation = Orientation.Horizontal;
-
-                    Label l1 = new Label();
-                    l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l1.Width = 30;
-                    l1.Content = i.ToString();
-
-                    Image image = new Image();
-                    image.Source = new BitmapImage(new Uri(Utils.Logo(c)));
-                    image.Width = 30;
-
-                    Label l2 = new Label();
-                    l2.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l2.Width = 150;
-                    l2.Content = c.shortName;
-
-                    Label l3 = new Label();
-                    l3.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l3.Width = 25;
-                    l3.Content = _tour.Points(c);
-
-                    Label l4 = new Label();
-                    l4.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l4.Width = 25;
-                    l4.Content = _tour.Played(c);
-
-                    Label l5 = new Label();
-                    l5.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l5.Width = 25;
-                    l5.Content = _tour.Wins(c);
-
-                    Label l6 = new Label();
-                    l6.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l6.Width = 25;
-                    l6.Content = _tour.Draws(c);
-
-                    Label l7 = new Label();
-                    l7.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l7.Width = 25;
-                    l7.Content = _tour.Loses(c);
-
-                    Label l8 = new Label();
-                    l8.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l8.Width = 25;
-                    l8.Content = _tour.GoalsFor(c);
-                    Label l9 = new Label();
-                    l9.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l9.Width = 25;
-                    l9.Content = _tour.GoalsAgainst(c);
-                    Label l10 = new Label();
-                    l10.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                    l10.Width = 25;
-                    l10.Content = _tour.Difference(c);
-
-
-                    sp.Children.Add(l1);
-                    sp.Children.Add(image);
-                    sp.Children.Add(l2);
-                    sp.Children.Add(l3);
-                    sp.Children.Add(l4);
-                    sp.Children.Add(l5);
-                    sp.Children.Add(l6);
-                    sp.Children.Add(l7);
-                    sp.Children.Add(l8);
-                    sp.Children.Add(l9);
-                    sp.Children.Add(l10);
-
-                    spClassement.Children.Add(sp);
-
+                    if (_tour.groups[group].Contains(_team))
+                    {
+                        ranking = _tour.Ranking(group);
+                    }
+                }
+                //Never know if not null
+                if(ranking != null)
+                {
+                    int beginningIndex = ranking.IndexOf(_team) - 2;
+                    if(beginningIndex < 0)
+                    {
+                        beginningIndex = 0;
+                    }
+                    else if (beginningIndex > ranking.Count - 5)
+                    {
+                        beginningIndex = ranking.Count - 5;
+                    }
+                    for(int i = beginningIndex; i < beginningIndex + 5; i++)
+                    {
+                        spClassement.Children.Add(CreateRanking(i, ranking[i]));
+                    }
+                }
+            }
+            else
+            {
+                for (int poule = 0; poule < _tour.groupsCount; poule++)
+                {
+                    Label labelPoule = new Label();
+                    labelPoule.Content = _tour.GroupName(poule);
+                    labelPoule.Style = Application.Current.FindResource("StyleLabel1") as Style;
+                    labelPoule.FontSize *= _sizeMultiplier;
+                    spClassement.Children.Add(labelPoule);
+                    int i = 0;
+                    foreach (Club c in _tour.Ranking(poule))
+                    {
+                        i++;
+                        spClassement.Children.Add(CreateRanking(i, c));
+                    }
                 }
 
-                
             }
 
 
-            foreach (Qualification q in _tour.qualifications)
+            //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
+            if (_tour.groups[0].Count > 0 && !_focusOnTeam)
             {
-                if (q.tournament.isChampionship)
+                foreach (Qualification q in _tour.qualifications)
                 {
-                    int niveau = _tour.Tournament.level;
-                    string couleur = "backgroundColor";
-                    if (q.tournament.level < niveau)
+                    if (q.tournament.isChampionship)
                     {
-                        couleur = "promotionColor";
-                    }
-                    else if (q.tournament.level > niveau)
-                    {
-                        couleur = "relegationColor";
-                    }
-                    else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
-                    {
-                        couleur = "barrageColor";
+                        int niveau = _tour.Tournament.level;
+                        string couleur = "backgroundColor";
+                        if (q.tournament.level < niveau)
+                        {
+                            couleur = "promotionColor";
+                        }
+                        else if (q.tournament.level > niveau)
+                        {
+                            couleur = "relegationColor";
+                        }
+                        else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
+                        {
+                            couleur = "barrageColor";
+                        }
+
+                        int index = q.ranking - 1;
+
+                        SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
+                        int nbChildrenParPoule = (_tour.clubs.Count / _tour.groupsCount) + 1;
+                        index++;
+                        for (int j = 0; j < _tour.groupsCount; j++)
+                        {
+                            StackPanel sp = (spClassement.Children[j * nbChildrenParPoule + index] as StackPanel);
+                            sp.Background = color;
+                        }
                     }
 
-                    int index = q.ranking - 1;
-
-                    SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                    int nbChildrenParPoule = (_tour.clubs.Count / _tour.groupsCount)+1;
-                    index++;
-                    for (int j = 0; j < _tour.groupsCount; j++)
-                    {
-                        (spClassement.Children[j* nbChildrenParPoule + index] as StackPanel).Background = color;
-                    }
                 }
-
             }
 
         }
@@ -164,5 +178,16 @@ namespace TheManager_GUI.VueClassement
                 }
             }
         }
+
+        private void clubNameButtonClick(object sender, System.Windows.Input.MouseButtonEventArgs e, Club c)
+        {
+            if (c != null && c as CityClub != null)
+            {
+                Windows_Club wc = new Windows_Club(c as CityClub);
+                wc.Show();
+            }
+
+        }
+
     }
 }

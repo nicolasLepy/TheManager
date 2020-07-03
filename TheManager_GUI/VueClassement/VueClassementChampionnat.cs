@@ -8,7 +8,7 @@ using TheManager;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class VueCalendrierChampionnat : IVueClassement
+    public class VueClassementChampionnat : IVueClassement
     {
 
         private readonly DataGrid _grid;
@@ -25,7 +25,7 @@ namespace TheManager_GUI.VueClassement
         /// <param name="sizeMultiplier">Width and font size multiplier</param>
         /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
         /// <param name="team">The team to focus ranking on</param>
-        public VueCalendrierChampionnat(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null)
+        public VueClassementChampionnat(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null)
         {
             _grid = grid;
             _round = round;

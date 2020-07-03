@@ -60,7 +60,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Team composition                                                          |
 | Custom themes                                                             |
 
-## Features to implement
+## Features to implement and issues to fix
 
 | Task                                                                  | Status                                                               |
 | --------------------------------------------------------------------- | -------------------------------------------------------------------- |
@@ -71,6 +71,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Budget journal                                                        | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Tournaments**                                                       |                                                                      |
 | Odds                                                                  | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
+| Error on ranking when game day is not finished (especially group rnd) | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Attendance adaptation when a club grow up or down                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Set up international tournaments on multiples years                   | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Correct unrealistic penalty shout-out scores (5-1 f.e.)               | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

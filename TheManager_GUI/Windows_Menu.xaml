@@ -44,9 +44,11 @@
 						</StackPanel>
 						<StackPanel Orientation="Vertical" Width="350">
 							<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
-							<StackPanel x:Name="spRoundRanking">
-								
-							</StackPanel>
+							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="300">
+								<StackPanel x:Name="spRoundRanking">
+
+								</StackPanel>
+							</ScrollViewer>
 							<!--<DataGrid Margin="10" IsReadOnly="True" Height="300" GridLinesVisibility="None" MouseDoubleClick="DgClassement_MouseDoubleClick" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 								<DataGrid.Columns>
 									<DataGridTemplateColumn Width="18">
