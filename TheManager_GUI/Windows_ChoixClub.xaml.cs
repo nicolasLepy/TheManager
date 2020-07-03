@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 
@@ -47,28 +48,40 @@ namespace TheManager_GUI
                             TreeViewItem tv = new TreeViewItem();
                             tv.Header = cp.name;
 
-                            foreach(Club club in cp.rounds[0].clubs)
+                            if((cp.rounds[0] as InactiveRound) == null)
                             {
-                                StackPanel sp = new StackPanel();
-                                sp.Orientation = Orientation.Horizontal;
-                                Image logo = new Image();
-                                logo.Width = 20;
-                                logo.Height = 20;
-                                logo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
-                                Button btnClub = new Button();
-                                btnClub.Content = club.name;
-                                btnClub.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
-                                btnClub.FontSize = 8;
-                                btnClub.Name = "club_" + Session.Instance.Game.kernel.Clubs.IndexOf(club).ToString();
-                                btnClub.Click += new RoutedEventHandler(BtnClub_Click);
-                                Label lbClub = new Label();
-                                lbClub.Content = club.name;
-                                lbClub.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                                lbClub.FontSize = 8;
-                                sp.Children.Add(logo);
-                                sp.Children.Add(btnClub);
-                                tv.Items.Add(sp);
+                                foreach (Club club in cp.rounds[0].clubs)
+                                {
+                                    StackPanel sp = new StackPanel();
+                                    sp.Orientation = Orientation.Horizontal;
+                                    Image logo = new Image();
+                                    logo.Width = 20;
+                                    logo.Height = 20;
+                                    logo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
+                                    Button btnClub = new Button();
+                                    btnClub.Content = club.name;
+                                    btnClub.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
+                                    btnClub.FontSize = 11;
+                                    btnClub.Foreground = Brushes.Black;
+                                    btnClub.Name = "club_" + Session.Instance.Game.kernel.Clubs.IndexOf(club).ToString();
+                                    if (club as CityClub != null)
+                                    {
+                                        btnClub.Click += new RoutedEventHandler(BtnClub_Click);
+                                    }
+                                    else
+                                    {
+                                        btnClub.Foreground = Brushes.DarkGray;
+                                    }
+                                    sp.Children.Add(logo);
+                                    sp.Children.Add(btnClub);
+                                    tv.Items.Add(sp);
+                                }
                             }
+                            else
+                            {
+                                tv.Items.Add(ViewUtils.CreateLabel("Compétition inactive", "StyleLabel2", 12, 100, Brushes.DarkGray));
+                            }
+
                             tvClubs.Items.Add(tv);
                         }
                     }
@@ -89,13 +102,15 @@ namespace TheManager_GUI
         private void RemplirEffectif(Club c)
         {
             spEffectif.Children.Clear();
-            Console.WriteLine("Génération du club - " + c.formationFacilities);
             foreach (Player j in c.Players())
             {
-                Label l = new Label();
-                l.Content = j.lastName + " - " + j.level + " (" + j.potential + ")";
-                spEffectif.Children.Add(l);
-                Console.WriteLine(j.level + " (" + j.potential + ") - " + j.Age);
+                StackPanel spPlayer = new StackPanel();
+                spPlayer.Orientation = Orientation.Horizontal;
+                spPlayer.Children.Add(ViewUtils.CreateLabel(j.lastName, "StyleLabel2", 10, 100));
+                spPlayer.Children.Add(ViewUtils.CreateLabel(j.position.ToString(), "StyleLabel2", 10, 80));
+                spPlayer.Children.Add(ViewUtils.CreateLabel(j.Age + "ans", "StyleLabel2", 10, 70));
+                spPlayer.Children.Add(ViewUtils.CreateStarNotation(j.Stars, 15));
+                spEffectif.Children.Add(spPlayer);
             }
         }
 
@@ -111,6 +126,10 @@ namespace TheManager_GUI
             {
                 Console.WriteLine("Pas de logo disponible pour " + club.logo);
             }
+
+            spEtoiles.Children.Add(ViewUtils.CreateStarNotation(club.Stars, 20));
+
+            /*
             float etoiles = club.Stars;
             int etoilesEntieres = (int)Math.Floor(etoiles);
             for (int i = 1; i <= etoilesEntieres; i++)
@@ -128,7 +147,7 @@ namespace TheManager_GUI
                 img.Height = 20;
                 img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
                 spEtoiles.Children.Add(img);
-            }
+            }*/
         }
         
         private void BtnClub_Click(object sender, RoutedEventArgs e)

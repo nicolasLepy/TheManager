@@ -16,6 +16,55 @@ namespace TheManager
             return Math.Abs(ts.Days);
         }
 
+        public static float GetStars(float notation)
+        {
+            float stars;
+            float level = notation;
+            if (level < 40)
+            {
+                stars = 0.5f;
+            }
+            else if (level < 50)
+            {
+                stars = 1f;
+            }
+            else if (level < 57)
+            {
+                stars = 1.5f;
+            }
+            else if (level < 62)
+            {
+                stars = 2f;
+            }
+            else if (level < 66)
+            {
+                stars = 2.5f;
+            }
+            else if (level < 69)
+            {
+                stars = 3f;
+            }
+            else if (level < 72)
+            {
+                stars = 3.5f;
+            }
+            else if (level < 75)
+            {
+                stars = 4f;
+            }
+            else if (level < 79)
+            {
+                stars = 4.5f;
+            }
+            else
+            {
+                stars = 5f;
+            }
+
+            return stars;
+
+        }
+
         public static bool CompareDates(DateTime a, DateTime b)
         {
             bool res = a.Year == b.Year && a.Month == b.Month && a.Day == b.Day;

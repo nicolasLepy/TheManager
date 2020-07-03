@@ -69,6 +69,19 @@
 			</Style.Triggers>
 		</Style>
 
+		<Style x:Key="StyleTextBox" TargetType="{x:Type TextBox}">
+			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
+			<Setter Property="Foreground" Value="{StaticResource color1}" />
+			<Setter Property="Background" Value="{StaticResource color2}" />
+		</Style>
+
+		<Style x:Key="StyleDatePicker" TargetType="{x:Type DatePicker}">
+			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
+			<Setter Property="Foreground" Value="{StaticResource color1}" />
+			<Setter Property="Background" Value="{StaticResource color2}" />
+		</Style>
+
+
 		<Style x:Key="StyleLabel1" TargetType="{x:Type Label}">
 			<Setter Property="FontSize" Value="18"/>
 			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>

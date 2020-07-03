@@ -156,6 +156,7 @@ namespace TheManager
 
         public void Load()
         {
+            /*
             LoadLanguages();
             LoadGeography();
             LoadCities();
@@ -168,6 +169,8 @@ namespace TheManager
             InitPlayers();
             LoadMedias();
             LoadGamesComments();
+
+            */
             //FIFACSV2Joueurs();
         }
 
@@ -262,7 +265,8 @@ namespace TheManager
 
         public void LoadPlayers()
         {
-            XDocument doc = XDocument.Load("Donnees/joueurs.xml");
+            StreamReader reader = new StreamReader("Donnees/joueurs.xml", Encoding.UTF8);
+            XDocument doc = XDocument.Load(reader);
             foreach (XElement e in doc.Descendants("Joueurs"))
             {
                 foreach (XElement e2 in e.Descendants("Joueur"))
@@ -807,12 +811,12 @@ namespace TheManager
         private void LoadLanguage(string languageName, string filename)
         {
             Language language = new Language(languageName);
-            string[] text = System.IO.File.ReadAllLines("Donnees/" + filename + "_p.txt");
+            string[] text = System.IO.File.ReadAllLines("Donnees/" + filename + "_p.txt", Encoding.UTF8);
             foreach(string line in text)
             {
                 language.AddFirstName(line);
             }
-            text = System.IO.File.ReadAllLines("Donnees/" + filename + "_n.txt");
+            text = System.IO.File.ReadAllLines("Donnees/" + filename + "_n.txt", Encoding.UTF8);
             foreach (string line in text)
             {
                 language.AddLastName(line);

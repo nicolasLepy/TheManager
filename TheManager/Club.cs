@@ -185,50 +185,7 @@ namespace TheManager
         {
             get
             {
-                float stars;
-                float level = Level();
-                if (level < 40)
-                {
-                    stars = 0.5f;
-                }
-                else if (level < 50)
-                {
-                    stars = 1f;
-                }
-                else if (level < 57)
-                {
-                    stars = 1.5f;
-                }
-                else if (level < 62)
-                {
-                    stars = 2f;
-                }
-                else if (level < 66)
-                {
-                    stars = 2.5f;
-                }
-                else if (level < 69)
-                {
-                    stars = 3f;
-                }
-                else if (level < 72)
-                {
-                    stars = 3.5f;
-                }
-                else if (level < 75)
-                {
-                    stars = 4f;
-                }
-                else if (level < 79)
-                {
-                    stars = 4.5f;
-                }
-                else
-                {
-                    stars = 5f;
-                }
-                
-                return stars;
+                return Utils.GetStars(Level());
             }
         }
 

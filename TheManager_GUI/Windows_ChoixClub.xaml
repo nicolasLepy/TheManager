@@ -5,27 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ChoixClub" Height="400" Width="600" Style="{StaticResource StyleWindows}">
+        Title="Windows_ChoixClub" Height="550" Width="600" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
 			
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="225">
-					<TreeView Name="tvClubs" Style="{StaticResource StyleTreeView}" >
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="350">
+					<TreeView Name="tvTournaments" Style="{StaticResource StyleTreeView}" >
 					</TreeView>
+				</ScrollViewer>
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="350">
+					<ListBox Name="tvClubs" Style="{StaticResource StyleListBox}">
+					</ListBox>
 				</ScrollViewer>
 				<StackPanel Orientation="Vertical">
 					<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
-					<StackPanel Orientation="Horizontal" Name="spEtoiles">
-						<Image Name="imgEtoile1" Width="20" Height="20" Source="generic.png"></Image>
-						<Image Name="imgEtoile2" Width="20" Height="20" Source="generic.png"></Image>
-						<Image Name="imgEtoile3" Width="20" Height="20" Source="generic.png"></Image>
-						<Image Name="imgEtoile4" Width="20" Height="20" Source="generic.png"></Image>
-						<Image Name="imgEtoile5" Width="20" Height="20" Source="generic.png"></Image>
+					<StackPanel Orientation="Horizontal" Name="spEtoiles" HorizontalAlignment="Center">
 					</StackPanel>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Width="170" Height="70">
-						<StackPanel Height="50" Width="150" Name="spEffectif" Orientation="Vertical">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Width="350" Height="150">
+						<StackPanel Name="spEffectif" Orientation="Vertical">
 							
 						</StackPanel>
 					</ScrollViewer>
@@ -33,15 +32,15 @@
 			</StackPanel>
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Prénom" Width="100" Style="{StaticResource StyleLabel2}"/>
-				<TextBox Name="tbPrenom" Width="125"/>
+				<TextBox Name="tbPrenom" Width="125" Style="{StaticResource StyleTextBox}"/>
 			</StackPanel>
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Nom" Width="100" Style="{StaticResource StyleLabel2}"/>
-				<TextBox Name="tbNom" Width="125"/>
+				<TextBox Name="tbNom" Width="125" Style="{StaticResource StyleTextBox}"/>
 			</StackPanel>
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Naissance" Width="100" Style="{StaticResource StyleLabel2}"/>
-				<DatePicker Name="dpNaissance" Width="125"/>
+				<DatePicker Name="dpNaissance" Width="125" Style="{StaticResource StyleDatePicker}"/>
 			</StackPanel>
 			<StackPanel Orientation="Horizontal">
 				<Label Content="Nationalité" Width="100" Style="{StaticResource StyleLabel2}"/>

@@ -86,6 +86,8 @@ namespace TheManager
             }
         }
 
+        public float Stars => Utils.GetStars(_level);
+
         /// <summary>
         /// Current club of the player
         /// </summary>

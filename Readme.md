@@ -10,7 +10,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ### Simulation configuration
 
-<img src="Pics/pic2.png" alt="Configuration screen" width="600"/>
+<img src="Pics/pic2.png" alt="Configuration screen" width="400"/> <img src="Pics/pic11.png" alt="Team selection" width="400"/> 
 
 ### Tournaments screen
 

@@ -1,9 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Xml;
+using TheManager;
 
 namespace TheManager_GUI
 {
@@ -45,6 +48,32 @@ namespace TheManager_GUI
                 label.Foreground = color;
             }
             return label;
+        }
+
+        public static StackPanel CreateStarNotation(float notation, float starsSize)
+        {
+            StackPanel res = new StackPanel();
+            res.Orientation = Orientation.Horizontal;
+
+            int entireStars = (int)Math.Floor(notation);
+            for (int i = 1; i <= entireStars; i++)
+            {
+                Image img = new Image();
+                img.Width = starsSize;
+                img.Height = starsSize;
+                img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
+                res.Children.Add(img);
+            }
+            if (notation - entireStars != 0)
+            {
+                Image img = new Image();
+                img.Width = starsSize;
+                img.Height = starsSize;
+                img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
+                res.Children.Add(img);
+            }
+
+            return res;
         }
 
 

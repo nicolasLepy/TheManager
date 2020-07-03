@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 
@@ -20,42 +21,19 @@ namespace TheManager_GUI
             InitializeComponent();
             _checkbox = new List<CheckBox>();
 
-            Game partie = new Game();
-            Session.Instance.Game = partie;
-            Kernel g = partie.kernel;
-            DatabaseLoader cbdd = new DatabaseLoader(g);
-            cbdd.Load();
-
+            Kernel g = Session.Instance.Game.kernel;
+            
             foreach(Continent c in g.continents)
             {
-                StackPanel box;
-                switch (c.Name())
-                {
-                    case "Europe":
-                        box = spCompEu;
-                        break;
-                    case "Amérique du Nord":
-                        box = spCompAmN;
-                        break;
-                    case "Amérique du Sud":
-                        box = spCompAmS;
-                        break;
-                    case "Océanie":
-                        box = spCompOc;
-                        break;
-                    case "Asie":
-                        box = spCompAsie;
-                        break;
-                    default:
-                        box = spCompEu;
-                        break;
-                }
-
+                StackPanel box = new StackPanel();
+                box.Orientation = Orientation.Vertical;
+                
                 if (c.Tournaments().Count>0)
                 {
                     Label lb = new Label();
                     lb.Content = c.Name();
                     lb.Style = FindResource("StyleLabel2") as Style;
+                    lb.FontWeight = FontWeights.Bold;
                     box.Children.Add(lb);
                     foreach(Tournament cp in c.Tournaments())
                     {
@@ -64,6 +42,7 @@ namespace TheManager_GUI
                         cb.Content = cp.name;
                         cb.Style = FindResource("StyleCheckBox") as Style;
                         cb.Click += new RoutedEventHandler(CheckboxComp_Click);
+                        cb.Foreground = Brushes.LightGreen;
                         box.Children.Add(cb);
                         _checkbox.Add(cb);
                     }
@@ -88,18 +67,32 @@ namespace TheManager_GUI
                         {
                             if(cp.isChampionship)
                             {
+                                StackPanel spTournament = new StackPanel();
+                                spTournament.Orientation = Orientation.Horizontal;
+
+                                TextBlock l = new TextBlock();
+                                l.Text = "   ";
+                                l.Margin = new Thickness(0, 0, 5, 0);
+                                l.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(cp.color.ToHexa()));
+                                spTournament.Children.Add(l);
+
                                 CheckBox cb = new CheckBox();
                                 cb.IsChecked = true;
                                 cb.Content = cp.name;
                                 cb.Style = FindResource("StyleCheckBox") as Style;
-                                box.Children.Add(cb);
+                                cb.Foreground = Brushes.LightGreen;
+                                
                                 _checkbox.Add(cb);
+
+                                spTournament.Children.Add(cb);
+                                box.Children.Add(spTournament);
 
                             }
 
                         }
                     }
                 }
+                spContinents.Children.Add(box);
             }
 
         }

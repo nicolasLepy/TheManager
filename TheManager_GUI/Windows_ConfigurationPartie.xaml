@@ -5,25 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ConfigurationPartie" Height="500" Width="800" Style="{StaticResource StyleWindows}">
+        Title="Windows_ConfigurationPartie" Height="550" Width="1000" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
 			</StackPanel>
 			<Label  Content="Configuration de la partie" Style="{StaticResource StyleLabel1}"/>
-			<ScrollViewer Margin="30 10 30 0" Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="300" CanContentScroll="True">
-				<StackPanel Orientation="Horizontal">
-					<StackPanel Name="spCompEu" Orientation="Vertical" Grid.Column="2">
-					</StackPanel>
-					<StackPanel Name="spCompAmS" Orientation="Vertical" Grid.Column="2">
-					</StackPanel>
-					<StackPanel Name="spCompAmN" Orientation="Vertical" Grid.Column="2">
-					</StackPanel>
-					<StackPanel Name="spCompAsie" Orientation="Vertical" Grid.Column="2">
-					</StackPanel>
-					<StackPanel Name="spCompOc" Orientation="Vertical" Grid.Column="2">
-					</StackPanel>
+			<ScrollViewer Margin="30 10 30 0" Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="350" CanContentScroll="True">
+				<StackPanel Name="spContinents" Orientation="Horizontal">
 				</StackPanel>
 			</ScrollViewer>
 
