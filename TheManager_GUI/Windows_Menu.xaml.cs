@@ -327,6 +327,7 @@ namespace TheManager_GUI
         private void BtnSauvegarder_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "The Manager Save|*.save";
             if (saveFileDialog.ShowDialog() == true)
             {
                 Session.Instance.Game.Save(saveFileDialog.FileName);
