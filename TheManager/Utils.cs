@@ -78,6 +78,26 @@ namespace TheManager
             return res;
         }
 
+        public static bool IsBefore(DateTime a, DateTime b)
+        {
+            bool res = false;
+
+            if (a.Year < b.Year)
+            {
+                res = true;
+            }
+            else if (a.Year == b.Year && a.Month < b.Month)
+            {
+                res = true;
+            }
+            else if (a.Year == b.Year && a.Month == b.Month && a.Day < b.Day)
+            {
+                res = true;
+            }
+
+            return res;
+        }
+
         public static bool IsBeforeWithoutYear(DateTime a, DateTime b)
         {
             bool res = false;

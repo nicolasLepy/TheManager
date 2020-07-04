@@ -72,15 +72,17 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | **Environment**                                                       |                                                                      |
 | Dynamic dates, from one season to an other                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | A system for transferring players between clubs                       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| **Matches**                                                           |                                                                      |
+| In-game substitution                                                  | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Tournaments**                                                       |                                                                      |
 | Odds                                                                  | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| Error on ranking when game day is not finished (especially group rnd) | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Ranking error when game day is not finished (especially group rnd)    | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Attendance adaptation when a club grow up or down                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Set up international tournaments on multiples years                   | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Correct unrealistic penalty shout-out scores (5-1 f.e.)               | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **GUI**                                                               |                                                                      |
 | Add the player's history in their description                         | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Panel to give information (transfers, main results) during simulation | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Panel to give infos (transfers, main results) during simulation       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Improve GUI                                                           | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | **Miscellaneous**                                                     |                                                                      |
 | Try to reduce savegame size (135mo / year)                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

@@ -120,6 +120,29 @@ namespace TheManager
             return closeGame;
         }
 
+        public Match NextGame
+        {
+            get
+            {
+                Match res = null;
+                List<Match> games = new List<Match>(this.Games);
+                games.Sort(new MatchDateComparator());
+                bool pursue = true;
+                int i = 0;
+                while (pursue && i < games.Count)
+                {
+                    Match g = games[i];
+                    if(Utils.IsBefore(Session.Instance.Game.date, g.day))
+                    {
+                        pursue = false;
+                        res = g;
+                    }
+                    i++;
+                }
+                return res;
+            }
+        }
+
         /// <summary>
         /// Donne le nombre de jours entre la date et le match le plus proche joué
         /// </summary>

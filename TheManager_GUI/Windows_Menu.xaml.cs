@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 using TheManager.Comparators;
@@ -179,6 +180,7 @@ namespace TheManager_GUI
                 ClassementClub();
                 BandeauActualites();
                 RemplirArticles();
+                FillNextMatchPanel();
             }
         }
 
@@ -313,7 +315,66 @@ namespace TheManager_GUI
                 matchesView.Refresh();
             }
         }
-        
+
+        private void FillNextMatchPanel()
+        {
+            spNextMatch.Children.Clear();
+            spNextMatchBox.Children.Clear();
+
+            Match next = Session.Instance.Game.club.NextGame;
+            if(next != null)
+            {
+                Round r = next.Round;
+                Tournament trn = r.Tournament;
+
+                TextBox tbTournament = new TextBox();
+                tbTournament.Text = next.Round.Tournament.name;
+                tbTournament.Style = FindResource("StyleTextBox") as Style;
+                tbTournament.IsEnabled = false;
+                tbTournament.FontSize = 14;
+                tbTournament.HorizontalAlignment = HorizontalAlignment.Center;
+                tbTournament.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(trn.color.ToHexa()));
+                tbTournament.Foreground = Brushes.AntiqueWhite;
+
+                Label lbRound = ViewUtils.CreateLabel(r.name, "StyleLabel2", -1, 100);
+
+                StackPanel spLeftTeam = new StackPanel();
+                spLeftTeam.Orientation = Orientation.Vertical;
+                spLeftTeam.HorizontalAlignment = HorizontalAlignment.Center;
+                Image imgHome = new Image();
+                imgHome.Width = 60;
+                imgHome.Height = 60;
+                imgHome.Source = new BitmapImage(new Uri(Utils.Logo(next.home)));
+                spLeftTeam.Children.Add(imgHome);
+                Label homeLabel = ViewUtils.CreateLabel(next.home.shortName, "StyleLabel2", 14, 150);
+                homeLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                spLeftTeam.Children.Add(homeLabel);
+                StackPanel homeStars = ViewUtils.CreateStarNotation(next.home.Stars, 20);
+                homeStars.HorizontalAlignment = HorizontalAlignment.Center;
+                spLeftTeam.Children.Add(homeStars);
+
+                StackPanel spRightTeam = new StackPanel();
+                spRightTeam.Orientation = Orientation.Vertical;
+                spRightTeam.HorizontalAlignment = HorizontalAlignment.Center;
+                Image imgAway = new Image();
+                imgAway.Width = 60;
+                imgAway.Height = 60;
+                imgAway.Source = new BitmapImage(new Uri(Utils.Logo(next.away)));
+                spRightTeam.Children.Add(imgAway);
+                Label awayLabel = ViewUtils.CreateLabel(next.away.shortName, "StyleLabel2", 14, 150);
+                awayLabel.HorizontalAlignment = HorizontalAlignment.Center;
+                spRightTeam.Children.Add(awayLabel);
+                StackPanel awayStars = ViewUtils.CreateStarNotation(next.away.Stars, 20);
+                awayStars.HorizontalAlignment = HorizontalAlignment.Center;
+                spRightTeam.Children.Add(awayStars);
+
+                spNextMatchBox.Children.Add(tbTournament);
+                spNextMatchBox.Children.Add(lbRound);
+                spNextMatch.Children.Add(spLeftTeam);
+                spNextMatch.Children.Add(spRightTeam);
+            }
+        }
+
         private void Calendrier(Round t)
         {
 

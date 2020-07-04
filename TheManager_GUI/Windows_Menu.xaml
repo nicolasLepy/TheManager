@@ -113,65 +113,17 @@
 						<StackPanel Name="spNextMatches">
 							
 						</StackPanel>
-						<!--
-						<DataGrid IsReadOnly="True" MouseDoubleClick="DgClubProchainsMatchs_MouseDoubleClick" Height="100" Name="dgClubProchainsMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-							<DataGrid.Columns>
-								<DataGridTextColumn Binding="{Binding ShortName}" Width="3*">
-									<DataGridTextColumn.ElementStyle>
-										<Style TargetType="{x:Type TextBlock}">
-											<Setter Property="Background" Value="{Binding Competition, Converter={StaticResource DataGridTournamentColumnConverter}}"/>
-											<Setter Property="Foreground" Value="AntiqueWhite"/>
-										</Style>
-									</DataGridTextColumn.ElementStyle>
-								</DataGridTextColumn>
-								<DataGridTemplateColumn Width="2*">
-									<DataGridTemplateColumn.CellTemplate>
-										<DataTemplate>
-											<Image Source="{Binding LogoD}" />
-										</DataTemplate>
-									</DataGridTemplateColumn.CellTemplate>
-								</DataGridTemplateColumn>
-								<DataGridTextColumn Header="" Binding="{Binding Equipe1}" FontStyle="Italic" Width="9*">
-									<DataGridTextColumn.ElementStyle>
-										<Style TargetType="TextBlock">
-											<Setter Property="HorizontalAlignment" Value="Center"/>
-											<Setter Property="FontStyle" Value="Italic"/>
-										</Style>
-									</DataGridTextColumn.ElementStyle>
-								</DataGridTextColumn>
-								<DataGridTextColumn Header="" Binding="{Binding Score}" Width="5*">
-									<DataGridTextColumn.ElementStyle>
-										<Style TargetType="TextBlock">
-											<Setter Property="HorizontalAlignment" Value="Center"/>
-											<Setter Property="Foreground" Value="LightGray"/>
-										</Style>
-									</DataGridTextColumn.ElementStyle>
-								</DataGridTextColumn>
-								<DataGridTextColumn Header="" Binding="{Binding Equipe2}" FontStyle="Italic" Width="9*">
-									<DataGridTextColumn.ElementStyle>
-										<Style TargetType="TextBlock">
-											<Setter Property="HorizontalAlignment" Value="Center"/>
-											<Setter Property="FontStyle" Value="Italic"/>
-										</Style>
-									</DataGridTextColumn.ElementStyle>
-								</DataGridTextColumn>
-								<DataGridTemplateColumn Width="2*">
-									<DataGridTemplateColumn.CellTemplate>
-										<DataTemplate>
-											<Image Source="{Binding LogoE}" />
-										</DataTemplate>
-									</DataGridTemplateColumn.CellTemplate>
-								</DataGridTemplateColumn>
-							</DataGrid.Columns>
-						</DataGrid>
-						-->
-						
 
 						<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
 						<StackPanel Orientation="Vertical" Name="spRanking" Width="440">
 						</StackPanel>
 						
-						<Label Content="Stats en tout genre (à venir)" Style="{StaticResource StyleLabel2}"/>
+						<Label Content="Prochain match" Style="{StaticResource StyleLabel2}"/>
+						<StackPanel Orientation="Vertical" Name="spNextMatchBox" HorizontalAlignment="Center">
+
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Name="spNextMatch" HorizontalAlignment="Center">
+						</StackPanel>
 					</StackPanel>
 				</StackPanel>
 			</StackPanel>
