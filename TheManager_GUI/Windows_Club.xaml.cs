@@ -28,6 +28,7 @@ namespace TheManager_GUI
 
         public SeriesCollection BudgetsCollection { get; set; }
         public SeriesCollection CFCollection { get; set; }
+        public SeriesCollection AttendanceCollection { get; set; }
         public string[] LabelsAnnees { get; set; }
         public Func<double, string> YFormatter { get; set; }
 
@@ -237,10 +238,12 @@ namespace TheManager_GUI
             
             ChartValues<int> budgets = new ChartValues<int>();
             ChartValues<int> centreFormation = new ChartValues<int>();
+            ChartValues<int> attendance = new ChartValues<int>();
             foreach (HistoricEntry eh in c.history.elements)
             {
                 budgets.Add(eh.budget);
                 centreFormation.Add(eh.formationFacilities);
+                attendance.Add(eh.averageAttendance);
             }
 
             BudgetsCollection = new SeriesCollection
@@ -252,7 +255,7 @@ namespace TheManager_GUI
                 }
             };
 
-            //Centre de formation
+            //Formation facilities
             
             CFCollection = new SeriesCollection
             {
@@ -260,6 +263,17 @@ namespace TheManager_GUI
                 {
                     Title = "Niveau",
                     Values = centreFormation,
+                }
+            };
+
+            //Average attendance
+
+            AttendanceCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = "Affluence moyenne",
+                    Values = attendance,
                 }
             };
 
@@ -315,6 +329,7 @@ namespace TheManager_GUI
         public int Annee { get; set; }
         public Tournament Competition { get; set; }
         public int Classement { get; set; }
+
         public bool Equals(HistoriqueClubElement other)
         {
             throw new NotImplementedException();

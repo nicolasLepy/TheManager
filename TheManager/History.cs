@@ -17,11 +17,14 @@ namespace TheManager
         public int budget { get; set; }
         [DataMember]
         public int formationFacilities { get; set; }
+        [DataMember]
+        public int averageAttendance { get; set; }
 
-        public HistoricEntry(DateTime date, int budget, int formation)
+        public HistoricEntry(DateTime date, int budget, int formation, int averageAttendance)
         {
             this.date = date;
             this.budget = budget;
+            this.averageAttendance = averageAttendance;
             formationFacilities = formation;
         }
 

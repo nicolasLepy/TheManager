@@ -25,16 +25,6 @@
 						</StackPanel>
 
 					</ScrollViewer>
-				</StackPanel>
-				<StackPanel Orientation="Vertical">
-					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" Name="dgPalmares" Height="100" MaxHeight="350" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Nombre}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Annees}"/>
-						</DataGrid.Columns>
-					</DataGrid>
 					<Label Content="Budget" Style="{StaticResource StyleLabel2}"/>
 					<lvc:CartesianChart Width="350" Height="150" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
@@ -45,6 +35,26 @@
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
 
+				</StackPanel>
+				<StackPanel Orientation="Vertical">
+					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" Name="dgPalmares" Height="100" MaxHeight="350" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Nombre}"/>
+							<DataGridTextColumn Header="" Binding="{Binding Annees}"/>
+						</DataGrid.Columns>
+					</DataGrid>
+					<Label Content="Affluence moyenne" Style="{StaticResource StyleLabel2}"/>
+					<lvc:CartesianChart Width="350" Height="100" Series="{Binding AttendanceCollection}" LegendLocation="Right" >
+						<lvc:CartesianChart.AxisY>
+							<lvc:Axis Title="Affluence"></lvc:Axis>
+						</lvc:CartesianChart.AxisY>
+						<lvc:CartesianChart.AxisX>
+							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+						</lvc:CartesianChart.AxisX>
+					</lvc:CartesianChart>
+					
 					<Label Content="Centre de formation" Style="{StaticResource StyleLabel2}"/>
 					<lvc:CartesianChart Width="350" Height="150" Series="{Binding CFCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
@@ -60,6 +70,7 @@
 							<DataGridTextColumn Header="" Binding="{Binding Annee}"/>
 							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
 							<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
+							<DataGridTextColumn Header="" Binding="{Binding AverageAttendance}"/>
 						</DataGrid.Columns>
 					</DataGrid>
 				</StackPanel>

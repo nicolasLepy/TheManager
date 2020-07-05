@@ -57,12 +57,14 @@ namespace TheManager
                 if(q.tournament.isChampionship && c.Championship != null)
                 {
                     if (q.tournament.level > c.Championship.level)
-                    {                        
-                        c.supporters = (int)(c.supporters * 1.9f);
+                    {
+                        Console.WriteLine(c.Championship.name + "(" + c.Championship.level + ") -> " + q.tournament.name + "(" + q.tournament.level + ")");
+                        c.supporters = (int)(c.supporters * 1.8f);
                     }
                     else if (q.tournament.level < c.Championship.level)
                     {
-                        c.supporters = (int)(c.supporters / 1.9f);                    
+                        Console.WriteLine(c.Championship.name + "(" + c.Championship.level + ") -> " + q.tournament.name + "(" + q.tournament.level + ")");
+                        c.supporters = (int)(c.supporters / 1.8f);                    
                     }
                 }
             }

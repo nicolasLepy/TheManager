@@ -394,7 +394,6 @@ namespace TheManager_GUI
         {
 
             List<Match> matchs = t.GetMatchesByDate(_resultsCurrentDate);
-            //List<Match> matchs = new List<Match>(t.matches);
             matchs.Sort(new MatchDateComparator());
             lbRoundDate.Content = _resultsCurrentDate.ToLongDateString();
             MatchesDataGridView view = new MatchesDataGridView(spRoundGames, matchs, true, true, true, true, false);

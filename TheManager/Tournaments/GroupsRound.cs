@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -122,12 +123,12 @@ namespace TheManager
                     if (q.tournament.isChampionship && c.Championship != null)
                     {
                         if (q.tournament.level > c.Championship.level)
-                        {                            
-                            c.supporters = (int)(c.supporters * 1.4f);
+                        {
+                            c.supporters = (int)(c.supporters * 1.8f);
                         }
                         else if (q.tournament.level < c.Championship.level)
                         {
-                            c.supporters = (int)(c.supporters / 1.4f);
+                            c.supporters = (int)(c.supporters / 1.8f);
                         }
                     }
                 }

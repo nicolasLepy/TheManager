@@ -139,7 +139,21 @@ namespace TheManager
                 CityClub cv = c as CityClub;
                 if (cv != null)
                 {
-                    cv.history.elements.Add(new HistoricEntry(new DateTime(date.Year, date.Month, date.Day), cv.budget, cv.formationFacilities));
+                    int totalGames = 0;
+                    int totalAttendance = 0;
+                    foreach(Match m in cv.Games)
+                    {
+                        if (m.home == cv)
+                        {
+                            totalGames++;
+                            totalAttendance += m.attendance;
+                        }
+                    }
+                    if(totalGames > 0)
+                    {
+                        totalAttendance /= totalGames;
+                    }
+                    cv.history.elements.Add(new HistoricEntry(new DateTime(date.Year, date.Month, date.Day), cv.budget, cv.formationFacilities, totalAttendance));
                     //Prolong the players
                     List<Contract> playersToFree = new List<Contract>();
                     foreach (Contract ct in cv.contracts)

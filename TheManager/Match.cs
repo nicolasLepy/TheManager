@@ -632,7 +632,8 @@ namespace TheManager
         private void SetAttendance()
         {
             _attendance = (int)(home.supporters * (Session.Instance.Random(6, 14) / 10.0f));
-            _attendance = (int)(_attendance * (away.Level() / (home.Level())));
+            float prestigeModifier = (away.Level() / home.Level()) + ((1-(away.Level() / home.Level()))/2f);
+            _attendance = (int)(_attendance * prestigeModifier);
             if (_attendance > home.stadium.capacity)
             {
                 _attendance = home.stadium.capacity;
