@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Menu" Height="695" Width="1400" Style="{StaticResource StyleWindows}" WindowStartupLocation="Manual" Left="50" Top="50">
+        Title="Windows_Menu" Height="750" Width="1400" Style="{StaticResource StyleWindows}" WindowStartupLocation="Manual" Left="50" Top="50">
     <Grid>
 		<StackPanel Margin="3" Orientation="Vertical">
 
@@ -42,9 +42,9 @@
 								<TextBlock Style="{StaticResource StyleTextBlock}" TextWrapping="WrapWithOverflow">Dijon s'impose 4 buts à contre le Paris Saint-Germain</TextBlock>
 							</StackPanel>
 						</StackPanel>
-						<StackPanel Orientation="Vertical" Width="350">
+						<StackPanel Orientation="Vertical" Width="380">
 							<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
-							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="400">
+							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="450">
 								<StackPanel x:Name="spRoundRanking">
 
 								</StackPanel>
@@ -80,7 +80,7 @@
 								<Button Name="btnGauche" Click="BtnGauche_Click">
 									<Image Name="imgBtnGauche" Source="Images/left.png" Width="25" Height="25"/>
 								</Button>
-								<Label Content="Samedi 20 janvier 2019" HorizontalContentAlignment="Center" Width="150" Style="{StaticResource StyleLabel2}"/>
+								<Label Name="lbRoundDate" Content="" HorizontalContentAlignment="Center" Width="150" Style="{StaticResource StyleLabel2}" FontSize="12"/>
 								<Button Name="btnDroite" Click="BtnDroite_Click">
 									<Image Name="imgBtnDroite" Source="Images/right.png" Width="25" Height="25"/>
 								</Button>

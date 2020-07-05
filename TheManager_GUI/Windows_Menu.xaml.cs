@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,10 +23,16 @@ namespace TheManager_GUI
 
         private readonly Game _partie;
 
+        private DateTime _resultsCurrentDate;
+        private DateTime _firstDateOfRound;
+        private DateTime _lastDateOfRound;
+
 
         public Windows_Menu()
         {
             InitializeComponent();
+
+            _resultsCurrentDate = new DateTime();
 
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\close.png"));
             imgBtnGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\Images\\left.png"));
@@ -109,15 +116,23 @@ namespace TheManager_GUI
         {
             Round t = lbTours.SelectedItem as Round;
 
-            IVueClassement vue = FabriqueVueClassement.CreerVue(/*dgClassement*/null, t, 0.7);
-            if (vue != null)
-            {
-                vue.Remplir(spRoundRanking);
-                //vue.Afficher();
-            }
             if (t != null)
             {
-                Calendrier(t);
+                IVueClassement vue = FabriqueVueClassement.CreerVue(/*dgClassement*/null, t, 0.7);
+                if (vue != null)
+                {
+                    vue.Remplir(spRoundRanking);
+                    //vue.Afficher();
+                }
+                List<Match> matches = new List<Match>(t.matches);
+                if (matches.Count > 0)
+                {
+                    matches.Sort(new MatchDateComparator());
+                    _resultsCurrentDate = t.NextMatchesDate();
+                    _firstDateOfRound = matches[0].day;
+                    _lastDateOfRound = matches[matches.Count - 1].day;
+                    Calendrier(t);
+                }
             }
         }
 
@@ -378,9 +393,10 @@ namespace TheManager_GUI
         private void Calendrier(Round t)
         {
 
-            List<Match> matchs = new List<Match>(t.matches);
+            List<Match> matchs = t.GetMatchesByDate(_resultsCurrentDate);
+            //List<Match> matchs = new List<Match>(t.matches);
             matchs.Sort(new MatchDateComparator());
-            KnockoutRound te = t as KnockoutRound;
+            lbRoundDate.Content = _resultsCurrentDate.ToLongDateString();
             MatchesDataGridView view = new MatchesDataGridView(spRoundGames, matchs, true, true, true, true, false);
             view.Refresh();
         }
@@ -407,12 +423,42 @@ namespace TheManager_GUI
 
         private void BtnDroite_Click(object sender, RoutedEventArgs e)
         {
-            //To implement
+            Round r = lbTours.SelectedItem as Round;
+            if(r != null)
+            {
+                if(!Utils.CompareDates(_resultsCurrentDate, _lastDateOfRound)){
+                    bool pursue = true;
+                    while (pursue)
+                    {
+                        _resultsCurrentDate = _resultsCurrentDate.AddDays(1);
+                        if (r.GetMatchesByDate(_resultsCurrentDate).Count > 0)
+                        {
+                            pursue = false;
+                        }
+                    }
+                }
+                Calendrier(r);
+            }
         }
 
         private void BtnGauche_Click(object sender, RoutedEventArgs e)
         {
-            //To implement
+            Round r = lbTours.SelectedItem as Round;
+            if (r != null)
+            {
+                if (!Utils.CompareDates(_resultsCurrentDate, _firstDateOfRound)){
+                    bool pursue = true;
+                    while (pursue)
+                    {
+                        _resultsCurrentDate = _resultsCurrentDate.AddDays(-1);
+                        if (r.GetMatchesByDate(_resultsCurrentDate).Count > 0)
+                        {
+                            pursue = false;
+                        }
+                    }
+                }
+                Calendrier(r);
+            }
         }
 
         private void BtnCompetition_Click(object sender, RoutedEventArgs e)

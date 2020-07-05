@@ -304,6 +304,45 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Get a list of matches with a specific date
+        /// </summary>
+        /// <param name="date">The date of matches to get</param>
+        /// <returns>A list of matches</returns>
+        public List<Match> GetMatchesByDate(DateTime date)
+        {
+            List<Match> res = new List<Match>();
+            foreach(Match m in _matches)
+            {
+                if(Utils.CompareDates(date, m.day))
+                {
+                    res.Add(m);
+                }
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Return the date of the next matches day
+        /// If all the matches were played, the date of the last match is returned
+        /// Return 01/01/2000 if there is no matches planned for the round
+        /// </summary>
+        /// <returns></returns>
+        public DateTime NextMatchesDate()
+        {
+            DateTime res = new DateTime(2000,1,1);
+            List<Match> nextMatches = NextMatches();
+            if (nextMatches.Count > 0)
+            {
+                res = nextMatches[0].day;
+            }
+            else if (matches.Count > 0)
+            {
+                res = matches[matches.Count - 1].day;
+            }
+            return res;
+        }
+
+        /// <summary>
         /// Return list to next matches to be played according to the date
         /// </summary>
         /// <returns></returns>

@@ -286,7 +286,12 @@ namespace TheManager
             string res = "";
             if (c != null)
             {
-                res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png";
+                string logoString = c.logo;
+                if(logoString == "")
+                {
+                    logoString = "generic";
+                }
+                res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + logoString + ".png";
             }
             else
             {
