@@ -41,19 +41,8 @@
 						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
 						<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 					</StackPanel>
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo1_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo1" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-							<DataGrid.Columns>
-								<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
-								<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
-							</DataGrid.Columns>
-						</DataGrid>
-						<DataGrid IsReadOnly="True" MouseDoubleClick="DgCompo2_MouseDoubleClick" MaxHeight="175" Margin="20" Name="dgCompo2" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-							<DataGrid.Columns>
-								<DataGridTextColumn Header="" Binding="{Binding Poste}"/>
-								<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
-							</DataGrid.Columns>
-						</DataGrid>
+					<StackPanel Orientation="Horizontal" Name="spCompositions" Height="200" HorizontalAlignment="Center">
+						
 					</StackPanel>
 					<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick" HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>

@@ -49,7 +49,10 @@ namespace TheManager_GUI
             }
             lbMT.Content = "(" + match.ScoreHalfTime1 + " - " + match.ScoreHalfTime2 + ")";
 
-            foreach(MatchEvent em in match.events)
+            spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo1, false));
+            spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo2, false));
+
+            foreach (MatchEvent em in match.events)
             {
                 string icone = "";
                 switch (em.type)
@@ -147,16 +150,6 @@ namespace TheManager_GUI
 
             }
 
-            foreach (Player j in match.compo1)
-            {
-                dgCompo1.Items.Add(new JoueurElement { Joueur = j, Poste = j.position });
-            }
-
-            foreach (Player j in match.compo2)
-            {
-                dgCompo2.Items.Add(new JoueurElement { Joueur = j, Poste = j.position });
-            }
-
             foreach (KeyValuePair<TheManager.Media, Journalist> j in match.journalists)
             {
                 dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j.Value, Media = j.Key.name });
@@ -178,25 +171,6 @@ namespace TheManager_GUI
             }
         }
 
-        private void DgCompo1_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if(dgCompo1.SelectedItem != null)
-            {
-                JoueurElement je = (JoueurElement)dgCompo1.SelectedItem;
-                Windows_Joueur wj = new Windows_Joueur(je.Joueur);
-                wj.Show();
-            }
-        }
-
-        private void DgCompo2_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (dgCompo2.SelectedItem != null)
-            {
-                JoueurElement je = (JoueurElement)dgCompo2.SelectedItem;
-                Windows_Joueur wj = new Windows_Joueur(je.Joueur);
-                wj.Show();
-            }
-        }
     }
 
     public struct JoueurElement : IEquatable<JoueurElement>
