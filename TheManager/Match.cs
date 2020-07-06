@@ -652,7 +652,18 @@ namespace TheManager
             _compo2 = new List<Player>(away.Composition());
             _compo1Terrain = new List<Player>(_compo1);
             _compo2Terrain = new List<Player>(_compo2);
-            
+
+            UpdatePlayersMatchPlayedStat(_compo1);
+            UpdatePlayersMatchPlayedStat(_compo2);
+
+        }
+
+        private void UpdatePlayersMatchPlayedStat(List<Player> compo)
+        {
+            foreach(Player p in compo)
+            {
+                p.playedGames++;
+            }
         }
 
         /// <summary>
@@ -672,6 +683,7 @@ namespace TheManager
                 _compo2 = new List<Player>(compo);
                 _compo2Terrain = new List<Player>(compo);
             }
+            UpdatePlayersMatchPlayedStat(compo);
         }
 
         public void CalculateLevelDifference()
@@ -831,7 +843,6 @@ namespace TheManager
                 {
                     j.energy--;
                 }
-                j.playedGames++;
             }
             foreach (Player j in _compo2)
             {
@@ -839,7 +850,6 @@ namespace TheManager
                 {
                     j.energy--;
                 }
-                j.playedGames++;
             }
 
             int diff = _levelDifference;

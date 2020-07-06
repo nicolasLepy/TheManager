@@ -55,13 +55,11 @@
 							</lvc:CartesianChart>
 						</StackPanel>
 					</StackPanel>
-					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" MaxHeight="150" Name="dgHistorique"  Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Arrivée" Binding="{Binding AnneeA}"/>
-							<DataGridTextColumn Header="Départ" Binding="{Binding AnneeD}"/>
-							<DataGridTextColumn Header="Club" Binding="{Binding Club}"/>
-						</DataGrid.Columns>
-					</DataGrid>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="150">
+						<StackPanel x:Name="spPlayerHistory" Orientation="Vertical">
+							
+						</StackPanel>
+					</ScrollViewer>
 				</StackPanel>
 			</StackPanel>
 
