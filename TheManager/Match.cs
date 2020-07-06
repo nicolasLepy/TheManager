@@ -212,8 +212,6 @@ namespace TheManager
         {
             get
             {
-                string time = "";
-
                 int tmp = _minute;
                 switch (_period)
                 {
@@ -231,7 +229,7 @@ namespace TheManager
                        break;
                 }
                 int tmpAdd = _minute - ((_period < 3) ? 45 : 15);
-                time = tmp.ToString();
+                string time = tmp.ToString();
                 if (tmpAdd > 0)
                 {
                     time += "+" + tmpAdd;
@@ -246,7 +244,7 @@ namespace TheManager
             int[] res = new int[2];
             int cumulativeScore1 = score1 + _firstLeg.score2;
             int cumulativeScore2 = score2 + _firstLeg.score1;
-            if(score1 == score2)
+            if(cumulativeScore1 == cumulativeScore2)
             {
                 cumulativeScore1 = score1 + 2 * _firstLeg.score2;
                 cumulativeScore2 = 2 * score2 + _firstLeg.score1;
