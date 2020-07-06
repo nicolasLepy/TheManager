@@ -441,7 +441,7 @@ namespace TheManager
                     int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
                     if (logo == "" ||
-                        !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + logo + ".png"))
+                        !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\"+Utils.imagesFolderName+"\\"+Utils.clubLogoFolderName+"\\" + logo + ".png"))
                     {
                         logo = "generic";
                     }
@@ -489,6 +489,7 @@ namespace TheManager
                     }
                     int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
                     string logo = e2.Attribute("logo").Value;
+                    logo = country.Flag;
                     float coefficient = float.Parse(e2.Attribute("coefficient").Value);
 
                     string goalMusic = "";

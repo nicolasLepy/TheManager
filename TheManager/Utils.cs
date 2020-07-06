@@ -9,6 +9,10 @@ namespace TheManager
     public class Utils
     {
 
+        public readonly static string imagesFolderName = "Images";
+        public readonly static string tournamentLogoFolderName = "Logo";
+        public readonly static string clubLogoFolderName = "Logos";
+        public readonly static string nationalFlagsFolderName = "Drapeaux";
         public static int DaysNumberBetweenTwoDates(DateTime a, DateTime b)
         {
             TimeSpan ts = a - b;
@@ -291,7 +295,16 @@ namespace TheManager
                 {
                     logoString = "generic";
                 }
-                res = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + logoString + ".png";
+                string folder = clubLogoFolderName;
+                if(c as NationalTeam != null)
+                {
+                    folder = nationalFlagsFolderName;
+                }
+                res = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\"+folder+"\\" + logoString + ".png";
+                if (!File.Exists(res))
+                {
+                    res = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+                }
             }
             else
             {
@@ -302,12 +315,12 @@ namespace TheManager
 
         public static string Image(string imageName)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\" + imageName;
+            return System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\" + imageName;
         }
 
         public static string LogoTournament(Tournament tournament)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Images\\Logo\\" + tournament.logo + ".png";
+            return System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\"+Utils.tournamentLogoFolderName+"\\" + tournament.logo + ".png";
         }
 
         public static string PathSong(string song)

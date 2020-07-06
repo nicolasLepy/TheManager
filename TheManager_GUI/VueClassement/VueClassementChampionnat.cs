@@ -237,7 +237,7 @@ namespace TheManager_GUI.VueClassement
             foreach (Club c in _round.Ranking())
             {
                 i++;
-                _grid.Items.Add(new ClassementElement { Logo = System.IO.Directory.GetCurrentDirectory() + "\\Output\\Logos\\" + c.logo + ".png", Club = c, Classement = i, Nom = c.shortName, Pts = _round.Points(c), J = _round.Played(c), G = _round.Wins(c), N = _round.Draws(c), P = _round.Loses(c), bp = _round.GoalsFor(c), bc = _round.GoalsAgainst(c), Diff = _round.Difference(c) });
+                _grid.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Club = c, Classement = i, Nom = c.shortName, Pts = _round.Points(c), J = _round.Played(c), G = _round.Wins(c), N = _round.Draws(c), P = _round.Loses(c), bp = _round.GoalsFor(c), bc = _round.GoalsAgainst(c), Diff = _round.Difference(c) });
             }
             Style s = new Style();
             /*s.Setters.Add(new Setter(){ Property = Control.HeightProperty, Value = height });

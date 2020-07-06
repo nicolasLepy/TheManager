@@ -30,8 +30,19 @@ namespace TheManager
             get
             {
                 string flag = _name;
-                flag = flag.Replace(" ", "");
                 flag = flag.ToLower();
+                flag = flag.Replace(" ", "");
+                flag = flag.Replace("î", "i");
+                flag = flag.Replace("é", "e");
+                flag = flag.Replace("è", "e");
+                flag = flag.Replace("ê", "e");
+                flag = flag.Replace("ô", "o");
+                flag = flag.Replace("ö", "o");
+                flag = flag.Replace("ï", "i");
+                flag = flag.Replace("ë", "e");
+                flag = flag.Replace("à", "a");
+                flag = flag.Replace("ä", "a");
+                flag = flag.Replace("-", "");
                 return flag;
             }
         }
