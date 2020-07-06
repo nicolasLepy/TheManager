@@ -18,36 +18,14 @@ namespace TheManager_GUI
         public SeriesCollection MatchsCollection { get; set; }
         public string[] LabelsAnnees { get; set; }
 
+        private Player _player;
+
         public Windows_Joueur(Player joueur)
         {
+            _player = joueur;
             InitializeComponent();
             lbJoueur.Content = joueur.ToString();
             lbAge.Content = joueur.Age + " ans";
-
-            if(joueur.history.Count > 0)
-            {
-                /*
-                Club precedant = null;
-                int arrivee = joueur.history[0].Year;
-                foreach (PlayerHistory hj in joueur.history)
-                {
-                    if (precedant == null)
-                    {
-                        precedant = hj.Club;
-                    }
-                    else if (precedant != hj.Club)
-                    {
-                        int depart = hj.Year;
-
-                        dgHistorique.Items.Add(new JoueurHistoriqueElement { Club = precedant, AnneeA = arrivee, AnneeD = depart });
-
-                        arrivee = hj.Year;
-                    }
-                    precedant = hj.Club;
-                }
-                dgHistorique.Items.Add(new JoueurHistoriqueElement { Club = precedant, AnneeA = arrivee, AnneeD = joueur.history[joueur.history.Count-1].Year });
-                */
-            }
 
             ChartValues<int> niveaux = new ChartValues<int>();
             ChartValues<int> buts = new ChartValues<int>();
@@ -96,7 +74,7 @@ namespace TheManager_GUI
  
             DataContext = this;
 
-            FillPlayerHistory(joueur);
+            FillPlayerHistory();
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
@@ -104,7 +82,7 @@ namespace TheManager_GUI
             Close();
         }
 
-        private void FillPlayerHistory(Player player)
+        private void FillPlayerHistory()
         {
 
             StackPanel firstLine = new StackPanel();
@@ -118,23 +96,19 @@ namespace TheManager_GUI
             int cumulativeGoals = 0;
             int cumulativeMatchesPlayed = 0;
 
-            if(player.history.Count > 0)
+            if(_player.history.Count > 0)
             {
                 Club last = null;
-                int arrival = player.history[0].Year;
-                foreach (PlayerHistory hj in player.history)
+                int arrival = _player.history[0].Year;
+                foreach (PlayerHistory hj in _player.history)
                 {
-                    if (last == null)
-                    {
-                        last = hj.Club;
-                    }
-                    else if (last != hj.Club)
+                    if (last != hj.Club)
                     {
                         int depart = hj.Year;
 
                         StackPanel line = new StackPanel();
                         line.Orientation = Orientation.Horizontal;
-                        line.Children.Add(ViewUtils.CreateLabel((arrival - 1).ToString() + " - " + player.history[player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
+                        line.Children.Add(ViewUtils.CreateLabel((arrival - 1).ToString() + " - " + _player.history[_player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
                         line.Children.Add(ViewUtils.CreateLabel(last.name, "StyleLabel2", 11, 100));
                         line.Children.Add(ViewUtils.CreateLabel(cumulativeMatchesPlayed.ToString(), "StyleLabel2", 11, 40));
                         line.Children.Add(ViewUtils.CreateLabel(cumulativeGoals.ToString(), "StyleLabel2", 11, 40));
@@ -151,7 +125,7 @@ namespace TheManager_GUI
 
                 StackPanel lastLine = new StackPanel();
                 lastLine.Orientation = Orientation.Horizontal;
-                lastLine.Children.Add(ViewUtils.CreateLabel((arrival-1).ToString() + " - " + player.history[player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
+                lastLine.Children.Add(ViewUtils.CreateLabel((arrival-1).ToString() + " - " + _player.history[_player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
                 lastLine.Children.Add(ViewUtils.CreateLabel(last.name, "StyleLabel2", 11, 100));
                 lastLine.Children.Add(ViewUtils.CreateLabel(cumulativeMatchesPlayed.ToString(), "StyleLabel2", 11, 40));
                 lastLine.Children.Add(ViewUtils.CreateLabel(cumulativeGoals.ToString(), "StyleLabel2", 11, 40));

@@ -240,9 +240,6 @@ namespace TheManager_GUI.VueClassement
                 _grid.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Club = c, Classement = i, Nom = c.shortName, Pts = _round.Points(c), J = _round.Played(c), G = _round.Wins(c), N = _round.Draws(c), P = _round.Loses(c), bp = _round.GoalsFor(c), bc = _round.GoalsAgainst(c), Diff = _round.Difference(c) });
             }
             Style s = new Style();
-            /*s.Setters.Add(new Setter(){ Property = Control.HeightProperty, Value = height });
-            s.Setters.Add(new Setter() { Property = Control.FontSizeProperty, Value = 12 });
-            s.Setters.Add(new Setter() { Property = Control.BorderThicknessProperty, Value = 1 });*/
 
             s.Setters.Add(new Setter { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
             s.Setters.Add(new Setter { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });

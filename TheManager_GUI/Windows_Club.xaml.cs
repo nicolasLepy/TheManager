@@ -309,7 +309,11 @@ namespace TheManager_GUI
             if (dgHistorique.SelectedItem != null)
             {
                 HistoriqueClubElement hce = (HistoriqueClubElement)dgHistorique.SelectedItem;
-                //Afficher une fenêtre compétition
+                if(hce.Competition != null)
+                {
+                    Windows_Competition wc = new Windows_Competition(hce.Competition);
+                    wc.Show();
+                }
             }
         }
 
