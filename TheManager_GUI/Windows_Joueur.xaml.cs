@@ -18,7 +18,7 @@ namespace TheManager_GUI
         public SeriesCollection MatchsCollection { get; set; }
         public string[] LabelsAnnees { get; set; }
 
-        private Player _player;
+        private readonly Player _player;
 
         public Windows_Joueur(Player joueur)
         {

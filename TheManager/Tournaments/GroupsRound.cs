@@ -99,6 +99,18 @@ namespace TheManager
 
         }
 
+        public Qualification[] SwapQualifications(Qualification[] qualifications)
+        {
+            Qualification[] res = new Qualification[2];
+            if(qualifications.Length > 1)
+            {
+                res[0] = qualifications[0];
+                res[1] = qualifications[1];
+                res[0].ranking = qualifications[1].ranking;
+                res[1].ranking = qualifications[0].ranking;
+            }
+            return res;
+        }
         public override void QualifyClubs()
         {
            
@@ -109,7 +121,60 @@ namespace TheManager
             }
             for (int i = 0; i < _groupsNumber; i++)
             {
-                foreach(Qualification q in _qualifications)
+
+                List<Qualification> qualifications = new List<Qualification>(_qualifications);
+                qualifications.Sort(new QualificationComparator());
+
+                Console.WriteLine("================");
+                Console.WriteLine(Tournament.name + " - groupe " + i);
+                Console.WriteLine("================");
+
+                //If reserves can't be promoted
+                if (_rules.Contains(Rule.ReservesAreNotPromoted))
+                {
+                    for (int j = 0; j<qualifications.Count; j++)
+                    {
+                        Qualification q = qualifications[j];
+                        //If the two tournaments involved are championship and the level of the destination is higher in league structure than the current league
+                        if(Tournament.isChampionship && q.tournament.isChampionship && q.tournament.level < Tournament.level)
+                        {
+                            Console.WriteLine("check for the " + q.ranking + " place");
+                            int offset = 0;
+                            bool pursue = true;
+                            while (pursue && j+offset < qualifications.Count)
+                            {
+                                //This is a reserve club so it must not be promoted
+                                if (groups[i][q.ranking - 1 + offset] as ReserveClub != null)
+                                {
+                                    offset++;
+                                }
+                                else
+                                {
+                                    pursue = false;
+                                    //If there is an offset, make a swap
+                                    if(offset > 0)
+                                    {
+                                        Console.WriteLine("swap " + j + " and " + (j + offset));
+                                        Qualification first = qualifications[j];
+                                        Qualification second = qualifications[j + offset];
+                                        int tempRanking = second.ranking;
+                                        second.ranking = first.ranking;
+                                        first.ranking = tempRanking;
+                                        qualifications[j] = second;
+                                        qualifications[j + offset] = first;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foreach (Qualification q in qualifications)
+                {
+                    Console.WriteLine(q.ranking + " - " + q.tournament.name);
+                }
+
+                foreach (Qualification q in qualifications)
                 {
                     Club c = groups[i][q.ranking - 1];
                     if (!q.isNextYear)

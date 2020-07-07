@@ -72,6 +72,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | **Environment**                                                       |                                                                      |
 | Dynamic dates, from one season to an other                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | A system for transferring players between clubs                       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| National Directorate of Management Control (DNCG)                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Matches**                                                           |                                                                      |
 | In-game substitution                                                  | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Tournaments**                                                       |                                                                      |

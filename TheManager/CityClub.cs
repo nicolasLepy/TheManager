@@ -573,7 +573,7 @@ namespace TheManager
         public void DispatchPlayersInReserveTeams()
         {
 
-            /*
+            
             if(_reserves.Count > 0)
             {
 
@@ -687,7 +687,7 @@ namespace TheManager
                     }
                 }
 
-            }*/
+            }
 
         }
 
