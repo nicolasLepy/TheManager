@@ -44,6 +44,7 @@
 							<DataGridTextColumn Header="" Binding="{Binding NbButs}"/>
 						</DataGrid.Columns>
 					</DataGrid>
+					<Button Content="Historique" Name="btnHistoric" Width="100" Click="BtnHistoric_Click" Style="{StaticResource StyleButton1}"/>
 				</StackPanel>
 				<StackPanel Orientation="Vertical">
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

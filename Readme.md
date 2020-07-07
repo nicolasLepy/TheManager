@@ -55,6 +55,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Attendance adaptation when a club grow up or down                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Set up international tournaments on multiples years                   | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Correct unrealistic penalty shout-out scores (5-1 f.e.)               | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Fix crash when trying to access game sheet of previous season         | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | **GUI**                                                               |                                                                      |
 | Panel to give infos (transfers, main results) during simulation       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Improve GUI                                                           | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |

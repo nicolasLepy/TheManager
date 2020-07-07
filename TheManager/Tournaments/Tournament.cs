@@ -71,7 +71,7 @@ namespace TheManager
         [DataMember]
         private TournamentStatistics _statistics;
         [DataMember]
-        private List<Tournament> _previousEditions;
+        private Dictionary<int,Tournament> _previousEditions;
         [DataMember]
         private int _periodicity;
         [DataMember]
@@ -89,7 +89,7 @@ namespace TheManager
 
         public DateTime seasonBeginning => _seasonBeginning;
         public string shortName => _shortName;
-        public List<Tournament> previousEditions => _previousEditions;
+        public Dictionary<int, Tournament> previousEditions => _previousEditions;
         public TournamentStatistics statistics { get => _statistics; set => _statistics = value; }
 
         /// <summary>
@@ -114,7 +114,7 @@ namespace TheManager
             _isChampionship = isChampionship;
             _level = level;
             _statistics = new TournamentStatistics(0);
-            _previousEditions = new List<Tournament>();
+            _previousEditions = new Dictionary<int, Tournament>();
             _periodicity = periodicity;
             _remainingYears = remainingYears;
             _color = color;
@@ -146,7 +146,7 @@ namespace TheManager
                     copyForArchives.rounds.Add(r.Copy());
                 }
                 copyForArchives.statistics = statistics;
-                _previousEditions.Add(copyForArchives);
+                _previousEditions.Add(Session.Instance.Game.date.Year, copyForArchives);
                 for (int i = 0; i<rounds.Count; i++)
                 {
                     rounds[i].Reset();

@@ -9,6 +9,7 @@ namespace TheManager
     public class Utils
     {
 
+        public readonly static int beginningYear = 2019;
         public readonly static string imagesFolderName = "Images";
         public readonly static string tournamentLogoFolderName = "Logo";
         public readonly static string clubLogoFolderName = "Logos";

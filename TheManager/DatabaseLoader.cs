@@ -295,7 +295,7 @@ namespace TheManager
                             break;
                     }
                     Player j = new Player(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Country("France"), position);
-                    club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(2019,2024), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                    club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear,Utils.beginningYear+5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
                 }
             }
         }

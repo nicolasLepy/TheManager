@@ -204,16 +204,16 @@ namespace TheManager_GUI
         private void Palmares()
         {
             dgPalmares.Items.Clear();
-            foreach (Tournament arc in _competition.previousEditions)
+            foreach (KeyValuePair<int,Tournament> arc in _competition.previousEditions)
             {
-                Club vainqueur = arc.Winner();
+                Club vainqueur = arc.Value.Winner();
 
 
-                Round t = arc.rounds[arc.rounds.Count - 1];
+                Round t = arc.Value.rounds[arc.Value.rounds.Count - 1];
                 //If the final round was not inactive, we can make the palmares
                 if (t.matches.Count > 0)
                 {
-                    int annee = t.matches[t.matches.Count - 1].day.Year;
+                    int annee = arc.Key;
                     dgPalmares.Items.Add(new PalmaresElement { Annee = annee, Club = vainqueur });
                 }
             }
@@ -272,6 +272,13 @@ namespace TheManager_GUI
                 }
                 InitWidgets();
             }
+        }
+
+        private void BtnHistoric_Click(object sender, RoutedEventArgs e)
+        {
+
+            TournamentHistoryWindow thw = new TournamentHistoryWindow(_competition);
+            thw.Show();
         }
 
         private void BtnMatch_Click(object sender, RoutedEventArgs e)

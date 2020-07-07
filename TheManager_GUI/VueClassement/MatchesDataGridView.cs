@@ -231,8 +231,14 @@ namespace TheManager_GUI.VueClassement
                 {
                     score = m.day.ToShortDateString();
                 }
-                dg.Items.Add(new MatchElement { Hour = m.day.ToShortTimeString(), Match = m, Tournament = m.Tournament, ShortName = m.Tournament.shortName, HomeTeam = m.home.shortName, AwayTeam = m.away.shortName, Score = score, HomeLogo = Utils.Logo(m.home), AwayLogo = Utils.Logo(m.away), Attendance = m.attendance, Odd1 = m.odd1.ToString("0.00"), OddN = m.oddD.ToString("0.00"), Odd2 = m.odd2.ToString("0.00") });
-
+                MatchElement me = new MatchElement() { Hour = m.day.ToShortTimeString(), Match = m, HomeTeam = m.home.shortName, AwayTeam = m.away.shortName, Score = score, HomeLogo = Utils.Logo(m.home), AwayLogo = Utils.Logo(m.away), Attendance = m.attendance, Odd1 = m.odd1.ToString("0.00"), OddN = m.oddD.ToString("0.00"), Odd2 = m.odd2.ToString("0.00") };
+                if (_showTournament)
+                {
+                    me.Tournament = m.Tournament;
+                    me.ShortName = m.Tournament.shortName;
+                }
+                //dg.Items.Add(new MatchElement { Hour = m.day.ToShortTimeString(), Match = m, Tournament = m.Tournament, ShortName = m.Tournament.shortName, HomeTeam = m.home.shortName, AwayTeam = m.away.shortName, Score = score, HomeLogo = Utils.Logo(m.home), AwayLogo = Utils.Logo(m.away), Attendance = m.attendance, Odd1 = m.odd1.ToString("0.00"), OddN = m.oddD.ToString("0.00"), Odd2 = m.odd2.ToString("0.00") });
+                dg.Items.Add(me);
             }
             _panel.Children.Clear();
             _panel.Children.Add(dg);

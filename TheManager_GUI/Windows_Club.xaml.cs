@@ -144,18 +144,18 @@ namespace TheManager_GUI
             {
                 int nombre = 0;
                 string annees = "";
-                foreach(Tournament archive in c.previousEditions)
+                foreach(KeyValuePair<int,Tournament> archive in c.previousEditions)
                 {
-                    if(archive.isChampionship)
+                    if(archive.Value.isChampionship)
                     {
-                        if (archive.rounds[0].Winner() == club)
+                        if (archive.Value.rounds[0].Winner() == club)
                         {
                             nombre++;
                         }
                     }
                     else
                     {
-                        Round t = archive.rounds[archive.rounds.Count - 1];
+                        Round t = archive.Value.rounds[archive.Value.rounds.Count - 1];
                         if (t.Winner() == club)
                         {
                             nombre++;
@@ -211,21 +211,19 @@ namespace TheManager_GUI
             List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();
             foreach(Tournament competition in Session.Instance.Game.kernel.Competitions)
             {
-                int annee = 2019;
-                foreach(Tournament ancienne in competition.previousEditions)
+                foreach(KeyValuePair<int,Tournament> ancienne in competition.previousEditions)
                 {
-                    if(ancienne.isChampionship && ancienne.rounds[0].clubs.Contains(c))
+                    if(ancienne.Value.isChampionship && ancienne.Value.rounds[0].clubs.Contains(c))
                     {
                         int classement = 0;
                         //Si la compétition était active (tour 0 un tour de type championnat, pas inactif)
-                        if((ancienne.rounds[0] as ChampionshipRound) != null)
+                        if((ancienne.Value.rounds[0] as ChampionshipRound) != null)
                         {
-                            classement = (ancienne.rounds[0] as ChampionshipRound).Ranking().IndexOf(c) + 1;
+                            classement = (ancienne.Value.rounds[0] as ChampionshipRound).Ranking().IndexOf(c) + 1;
                         }
                         
                         //int annee = ancienne.Tours[0].Matchs[ancienne.Tours[0].Matchs.Count - 1].Jour.Year;
-                        lhce.Add(new HistoriqueClubElement { Competition = ancienne, Classement = classement, Annee = annee });
-                        annee++;
+                        lhce.Add(new HistoriqueClubElement { Competition = ancienne.Value, Classement = classement, Annee = ancienne.Key });
                     }
                 }
             }
