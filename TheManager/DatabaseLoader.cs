@@ -634,7 +634,7 @@ namespace TheManager
                             {
                                 CityClub firstTeam = _clubsId[int.Parse(e4.Attribute("id").Value)] as CityClub;
                                 string nameAddon = " B";
-                                float divider = 1.5f;
+                                float divider = 1.75f;
                                 if (firstTeam.reserves.Count == 1)
                                 {
                                     nameAddon = " C"; divider = 2.5f;

@@ -96,7 +96,6 @@ namespace TheManager_GUI.VueClassement
                 l2.Content = c.shortName;
                 l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
                 { clubNameButtonClick(c); };
-                //l2.MouseLeftButtonUp += clubNameButtonClick;
 
                 Label l3 = new Label();
                 ApplyStyle2Label(l3, regularCellWidth);
@@ -180,44 +179,6 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
-            
-
-            /*
-            Style s = new Style();
-            s.Setters.Add(new Setter() { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-            s.Setters.Add(new Setter() { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-
-
-            //Pour chaque couleur
-            foreach (Qualification q in _tour.Qualifications)
-            {
-                if (q.Competition.Championnat)
-                {
-                    int niveau = _tour.Competition.Niveau;
-                    string couleur = "backgroundColor";
-                    if (q.Competition.Niveau < niveau)
-                        couleur = "promotionColor";
-                    else if (q.Competition.Niveau > niveau)
-                        couleur = "relegationColor";
-                    else if (q.Competition.Niveau == niveau && q.IDTour > _tour.Competition.Tours.IndexOf(_tour))
-                        couleur = "barrageColor";
-
-                    DataTrigger tg = new DataTrigger()
-                    {
-                        Binding = new System.Windows.Data.Binding("Classement"),
-                        Value = q.Classement
-                    };
-                    tg.Setters.Add(new Setter()
-                    {
-                        Property = Control.BackgroundProperty,
-                        Value = App.Current.TryFindResource(couleur) as SolidColorBrush
-                    });
-                    s.Triggers.Add(tg);
-
-                    _grille.CellStyle = s;
-                }
-
-            }*/
         }
 
         private void clubNameButtonClick(Club c)

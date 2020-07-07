@@ -43,7 +43,13 @@ namespace TheManager
             List<Club> ranking = Ranking();
 
             List<Club> qualifies = new List<Club>();
-            foreach(Qualification q in qualifications)
+            List<Qualification> adjustedQualifications = new List<Qualification>(qualifications);
+            adjustedQualifications.Sort(new QualificationComparator());
+            if (rules.Contains(Rule.ReservesAreNotPromoted))
+            {
+                adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(qualifications, ranking, Tournament);
+            }
+            foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking-1];
                 if (!q.isNextYear)

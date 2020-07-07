@@ -87,7 +87,18 @@ namespace TheManager
                     cv.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice, BudgetModificationReason.TournamentGrant);
                 }
             }
-            foreach(Qualification q in _qualifications)
+
+
+            List<Qualification> adjustedQualifications = new List<Qualification>(_qualifications);
+            adjustedQualifications.Sort(new QualificationComparator());
+
+            if (_rules.Contains(Rule.ReservesAreNotPromoted))
+            {
+                adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(_qualifications, ranking, Tournament);
+            }
+
+
+            foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking - 1];
                 if (!q.isNextYear)
