@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -124,38 +125,107 @@ namespace TheManager_GUI.VueClassement
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
             if (_tour.groups[0].Count > 0 && !_focusOnTeam)
             {
-                foreach (Qualification q in _tour.qualifications)
+
+                //Split qualifications in several list because according to group qualifications can be differents (if reserves are not promoted for instance)
+
+                List<Qualification>[] qualifications = new List<Qualification>[_tour.groupsCount];
+
+                List<Club>[] groups = new List<Club>[_tour.groupsCount];
+                for (int i = 0; i < _tour.groupsCount; i++)
                 {
-                    if (q.tournament.isChampionship)
+                    groups[i] = new List<Club>(_tour.Ranking(i));
+                }
+
+                for (int i = 0; i< _tour.groupsCount; i++)
+                {
+                    qualifications[i] = new List<Qualification>(_tour.qualifications);
+                    qualifications[i].Sort(new QualificationComparator());
+
+                    //If reserves can't be promoted
+                    if (_tour.rules.Contains(Rule.ReservesAreNotPromoted))
                     {
-                        int niveau = _tour.Tournament.level;
-                        string couleur = "backgroundColor";
-                        if (q.tournament.level < niveau)
+                        for (int j = 0; j < qualifications[i].Count; j++)
                         {
-                            couleur = "promotionColor";
-                        }
-                        else if (q.tournament.level > niveau)
-                        {
-                            couleur = "relegationColor";
-                        }
-                        else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
-                        {
-                            couleur = "barrageColor";
-                        }
-
-                        int index = q.ranking - 1;
-
-                        SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                        int nbChildrenParPoule = (_tour.clubs.Count / _tour.groupsCount) + 1;
-                        index++;
-                        for (int j = 0; j < _tour.groupsCount; j++)
-                        {
-                            StackPanel sp = (spClassement.Children[j * nbChildrenParPoule + index] as StackPanel);
-                            sp.Background = color;
+                            Qualification q = qualifications[i][j];
+                            //If the two tournaments involved are championship and the level of the destination is higher in league structure than the current league
+                            if (_tour.Tournament.isChampionship && q.tournament.isChampionship && q.tournament.level < _tour.Tournament.level)
+                            {
+                                Console.WriteLine("check " + q.ranking);
+                                int offset = 0;
+                                bool pursue = true;
+                                while (pursue && j + offset < qualifications[i].Count)
+                                {
+                                    Console.WriteLine("check " + groups[i][q.ranking - 1 + offset].name);
+                                    //This is a reserve club so it must not be promoted
+                                    if (groups[i][q.ranking - 1 + offset] as ReserveClub != null)
+                                    {
+                                        offset++;
+                                    }
+                                    else
+                                    {
+                                        pursue = false;
+                                        //If there is an offset, make a swap
+                                        if (offset > 0)
+                                        {
+                                            Console.WriteLine("swap " + j + " and " + (j + offset));
+                                            Qualification first = qualifications[i][j];
+                                            Qualification second = qualifications[i][j + offset];
+                                            int tempRanking = second.ranking;
+                                            second.ranking = first.ranking;
+                                            first.ranking = tempRanking;
+                                            qualifications[i][j] = second;
+                                            qualifications[i][j + offset] = first;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
 
+                    Console.WriteLine("Groupe " + i);
+                    foreach (Qualification q in qualifications[i])
+                    {
+                        Console.WriteLine(q.ranking + " - " + q.tournament.name);
+                    }
+
                 }
+
+
+
+                for (int j = 0; j<_tour.groupsCount; j++)
+                {
+                    foreach (Qualification q in qualifications[j])
+                    {
+                        if (q.tournament.isChampionship)
+                        {
+                            int niveau = _tour.Tournament.level;
+                            string couleur = "backgroundColor";
+                            if (q.tournament.level < niveau)
+                            {
+                                couleur = "promotionColor";
+                            }
+                            else if (q.tournament.level > niveau)
+                            {
+                                couleur = "relegationColor";
+                            }
+                            else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
+                            {
+                                couleur = "barrageColor";
+                            }
+
+                            int index = q.ranking - 1;
+
+                            SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
+                            int nbChildrenParPoule = (_tour.clubs.Count / _tour.groupsCount) + 1;
+                            index++;
+
+                            StackPanel sp = (spClassement.Children[j * nbChildrenParPoule + index] as StackPanel);
+                            sp.Background = color;
+                        }
+
+                    }
+                }
+                
             }
 
         }
