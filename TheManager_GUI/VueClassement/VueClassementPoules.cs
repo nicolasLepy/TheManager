@@ -144,6 +144,8 @@ namespace TheManager_GUI.VueClassement
                     //If reserves can't be promoted
                     if (_tour.rules.Contains(Rule.ReservesAreNotPromoted))
                     {
+                        qualifications[i] = Utils.AdjustQualificationsToNotPromoteReserves(qualifications[i], groups[i], _tour.Tournament);
+                        /*
                         for (int j = 0; j < qualifications[i].Count; j++)
                         {
                             Qualification q = qualifications[i][j];
@@ -179,15 +181,8 @@ namespace TheManager_GUI.VueClassement
                                     }
                                 }
                             }
-                        }
+                        }*/
                     }
-
-                    Console.WriteLine("Groupe " + i);
-                    foreach (Qualification q in qualifications[i])
-                    {
-                        Console.WriteLine(q.ranking + " - " + q.tournament.name);
-                    }
-
                 }
 
 

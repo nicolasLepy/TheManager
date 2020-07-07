@@ -125,10 +125,12 @@ namespace TheManager
                 List<Qualification> qualifications = new List<Qualification>(_qualifications);
                 qualifications.Sort(new QualificationComparator());
 
-                Console.WriteLine("================");
-                Console.WriteLine(Tournament.name + " - groupe " + i);
-                Console.WriteLine("================");
+                if (_rules.Contains(Rule.ReservesAreNotPromoted))
+                {
+                    qualifications = Utils.AdjustQualificationsToNotPromoteReserves(qualifications, groups[i], Tournament);
+                }
 
+                /*
                 //If reserves can't be promoted
                 if (_rules.Contains(Rule.ReservesAreNotPromoted))
                 {
@@ -167,7 +169,7 @@ namespace TheManager
                             }
                         }
                     }
-                }
+                }*/
 
                 foreach (Qualification q in qualifications)
                 {

@@ -360,5 +360,48 @@ namespace TheManager
             }
             return res;
         }
+
+        public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, Tournament from)
+        {
+            List<Qualification> qualifications = new List<Qualification>(initialQualifications);
+
+            for (int j = 0; j < qualifications.Count; j++)
+            {
+                Qualification q = qualifications[j];
+                //If the two tournaments involved are championship and the level of the destination is higher in league structure than the current league
+                if (from.isChampionship && q.tournament.isChampionship && q.tournament.level < from.level)
+                {
+                    int offset = 0;
+                    bool pursue = true;
+                    while (pursue && j + offset < qualifications.Count)
+                    {
+                        //This is a reserve club so it must not be promoted
+                        if (ranking[q.ranking - 1 + offset] as ReserveClub != null)
+                        {
+                            offset++;
+                        }
+                        else
+                        {
+                            pursue = false;
+                            //If there is an offset, make a swap
+                            if (offset > 0)
+                            {
+                                Qualification first = qualifications[j];
+                                Qualification second = qualifications[j + offset];
+                                int tempRanking = second.ranking;
+                                second.ranking = first.ranking;
+                                first.ranking = tempRanking;
+                                qualifications[j] = second;
+                                qualifications[j + offset] = first;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+
+            return qualifications;
+        }
     }
 }
