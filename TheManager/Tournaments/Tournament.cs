@@ -156,6 +156,17 @@ namespace TheManager
                 _previousEditions.Add(Session.Instance.Game.date.Year, copyForArchives);
                 for (int i = 0; i<rounds.Count; i++)
                 {
+
+                    //Delete compo if we chose to reduce size of the savegame
+                    if (Session.Instance.Game.options.reduceSaveSize)
+                    {
+                        foreach(Match m in rounds[i].matches)
+                        {
+                            m.compo1.Clear();
+                            m.compo2.Clear();
+                        }
+                    }
+
                     rounds[i].Reset();
                     List<Club> clubs = new List<Club>(_nextYearQualified[i]);
                     foreach (Club c in clubs)

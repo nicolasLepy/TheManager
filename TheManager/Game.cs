@@ -181,8 +181,15 @@ namespace TheManager
                     //Put undesirable players on transfers list
                     cv.UpdateTransfertList();
 
+                    //If savegame size is alleged, we delete all the budget change entry history
+                    if (Session.Instance.Game.options.reduceSaveSize)
+                    {
+                        cv.budgetHistory.Clear();
+                    }
+
                 }
             }
+
         }
 
         public void Transfers()

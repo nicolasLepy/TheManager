@@ -27,12 +27,18 @@ namespace TheManager
         private bool _simulateGames;
         public bool simulateGames { get => _simulateGames; set => _simulateGames = value; }
 
+        [DataMember]
+        private bool _reduceSaveSize;
+        public bool reduceSaveSize { get => _reduceSaveSize; set => _reduceSaveSize = value; }
+
+
         public Options()
         {
             ExportEnabled = false;
             _tournamentsToExport = new List<Tournament>();
             _transfersEnabled = false;
             _simulateGames = false;
+            _reduceSaveSize = false;
         }
 
 

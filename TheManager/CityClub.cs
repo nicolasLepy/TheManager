@@ -251,9 +251,21 @@ namespace TheManager
         
         public void PayWages()
         {
+            int wage = 0;
             foreach(Contract ct in contracts)
             {
-                ModifyBudget(-ct.wage, BudgetModificationReason.PayWages);
+                wage += ct.wage;
+            }
+            foreach(ReserveClub rc in reserves)
+            {
+                foreach(Contract ct in rc.Contracts)
+                {
+                    wage += ct.wage;
+                }
+            }
+            if(wage > 0)
+            {
+                ModifyBudget(-wage, BudgetModificationReason.PayWages);
             }
         }
 

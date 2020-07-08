@@ -73,8 +73,9 @@ namespace TheManager_GUI
             cbExporter.IsChecked = Session.Instance.Game.options.ExportEnabled;
             cbTransferts.IsChecked = Session.Instance.Game.options.transfersEnabled;
             cbSimuler.IsChecked = Session.Instance.Game.options.simulateGames;
+            cbReduceSave.IsChecked = Session.Instance.Game.options.reduceSaveSize;
 
-            foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
+            foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
             {
                 CheckBox cb = new CheckBox();
                 cb.IsChecked = Session.Instance.Game.options.tournamentsToExport.Contains(c);
@@ -151,6 +152,7 @@ namespace TheManager_GUI
             Session.Instance.Game.options.ExportEnabled = (bool)cbExporter.IsChecked;
             Session.Instance.Game.options.transfersEnabled = (bool)cbTransferts.IsChecked;
             Session.Instance.Game.options.simulateGames = (bool)cbSimuler.IsChecked;
+            Session.Instance.Game.options.reduceSaveSize = (bool)cbReduceSave.IsChecked;
 
             Close();
         }

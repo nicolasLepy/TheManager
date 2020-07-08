@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Options" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+        Title="Windows_Options" Height="550" Width="800" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
@@ -20,19 +20,26 @@
 					</StackPanel>
 				</ScrollViewer>
 				<StackPanel Orientation="Horizontal">
+					<CheckBox Name="cbReduceSave" Click="CbTransferts_Click"/>
+					<Label Content="Alléger la sauvegarde" Style="{StaticResource StyleLabel2}"/>
+				</StackPanel>
+				<Label Content="Supprimer la composition des équipes des matchs des années précédantes" FontSize="10" Style="{StaticResource StyleLabel2}"/>
+				<StackPanel Orientation="Horizontal">
 					<CheckBox Name="cbTransferts" Click="CbTransferts_Click"/>
 					<Label Content="Activer les transferts" Style="{StaticResource StyleLabel2}"/>
 				</StackPanel>
+				<Label Content="Les équipes peuvent acheter et vendre des joueurs durant la période des transferts" FontSize="10" Style="{StaticResource StyleLabel2}"/>
 				<StackPanel Orientation="Horizontal">
 					<CheckBox Name="cbSimuler" Click="CbSimuler_Click"/>
 					<Label Content="Simuler les matchs" Style="{StaticResource StyleLabel2}"/>
 				</StackPanel>
+				<Label Content="Résultats automatique" FontSize="10" Style="{StaticResource StyleLabel2}"/>
 				<StackPanel Orientation="Horizontal">
 					<CheckBox Name="cbExporter" Click="CbExporter_Click"/>
-					<Label Content="Exporter les compétitions sous format HTML à la fin de la saison" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="Exporter les compétitions au format HTML à la fin de la saison" Style="{StaticResource StyleLabel2}"/>
 				</StackPanel>
 				<Label Content="Compétitions à exporter" Style="{StaticResource StyleLabel2}"/>
-				<ScrollViewer Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="150" CanContentScroll="True">
+				<ScrollViewer Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="175" CanContentScroll="True">
 					<StackPanel Orientation="Vertical" Name="spOptions">
 					</StackPanel>
 				</ScrollViewer>
