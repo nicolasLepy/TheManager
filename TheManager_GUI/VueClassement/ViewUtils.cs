@@ -52,7 +52,7 @@ namespace TheManager_GUI
             return label;
         }
 
-        public static StackPanel CreateCompositionPanel(List<Player> players, bool showEnergy)
+        public static StackPanel CreateCompositionPanel(List<Player> players, bool showEnergy, Match match)
         {
             StackPanel res = new StackPanel();
             res.Orientation = Orientation.Vertical;
@@ -89,6 +89,21 @@ namespace TheManager_GUI
                 label.Content = j.lastName;
                 label.HorizontalAlignment = HorizontalAlignment.Center;
                 label.Style = Application.Current.FindResource("StyleLabel2") as Style;
+
+                bool hasRed = false;
+                foreach(MatchEvent me in match.events)
+                {
+                    if(me.type == GameEvent.RedCard && me.player == j)
+                    {
+                        label.Foreground = Brushes.Red;
+                        hasRed = true;
+                    }
+                    else if (!hasRed && me.type == GameEvent.YellowCard && me.player == j)
+                    {
+                        label.Foreground = Brushes.Yellow;
+                    }
+                }
+
                 conteneurJoueur.Children.Add(label);
 
                 if (showEnergy)

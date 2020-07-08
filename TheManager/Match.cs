@@ -1100,7 +1100,7 @@ namespace TheManager
 
         private void YellowCard(Club c)
         {
-            Player j = Card(c == home ? compo1 : compo2);
+            Player j = Card(c == home ? _compo1Terrain : _compo2Terrain);
             if(j != null)
             {
 
