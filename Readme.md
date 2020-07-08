@@ -5,34 +5,47 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Features implemented
 
-| Features                                                                  | 
+| Environment                                                               | 
 | ------------------------------------------------------------------------- |
-| **Environment**                                                           | 
 | Simulation on multiple years                                              |
 | Managers                                                                  |
 | Medias                                                                    |
-| **Games**                                                                 | 
+
+| Games                                                                     | 
+| ------------------------------------------------------------------------- |
 | Match simulation                                                          |
 | Follow games in real-time (ranking, live results)                         |
-| **Players**                                                               | 
+
+| Players                                                                   | 
+| ------------------------------------------------------------------------- |
 | Players generation                                                        |
 | Players evolution                                                         |
-| **Clubs**                                                                 | 
+
+| Clubs                                                                     | 
+| ------------------------------------------------------------------------- |
 | Evolution of club training facilities                                     |
 | Reserves teams                                                            |
-| **Tournaments**                                                           |
+
+| Tournaments                                                               | 
+| ------------------------------------------------------------------------- |
 | Hierarchical Competitions (promotion, relegation ...)                     |
 | Domestic Cup                                                              |
 | International tournaments                                                 |
 | Specials rules (lower team at home for domestic cups...)                  |
 | Reserves teams can't go too high in league structure                      |
-| **Database**                                                              | 
+
+| Database                                                                  | 
+| ------------------------------------------------------------------------- |
+| Savegame                                                                  |
 | XML Database                                                              |
 | HTML exportation                                                          |
-| **GUI**                                                                   |
+
+| GUI                                                                       | 
+| ------------------------------------------------------------------------- |
 | Sample GUI                                                                | 
 | Team composition                                                          |
 | Custom themes                                                             |
+
 
 ## Features to implement and issues to fix
 
@@ -60,7 +73,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Panel to give infos (transfers, main results) during simulation       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Improve GUI                                                           | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | **Miscellaneous**                                                     |                                                                      |
-| Try to reduce savegame size (135mo / year)                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Try to reduce savegame size (135mo / year)                            | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Manage memory for long games                                          | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Several journalists on one game                                       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | (Data editor)                                                         | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="TournamentHistoryWindow" Height="800" Width="900" Style="{StaticResource StyleWindows}">
+        Title="TournamentHistoryWindow" Height="750" Width="900" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Button Content="Fermer" Name="btnQuit" Width="100" Click="BtnQuit_Click" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}"/>
 			<StackPanel Orientation="Horizontal" Margin="20">
 				<ListBox Name="lbSeasons" Style="{StaticResource StyleListBox}" SelectionChanged="lbSeasons_SelectionChanged" Width="100">
 				</ListBox>
-				<StackPanel Orientation="Vertical" Width="400">
+				<StackPanel Orientation="Vertical" Width="500">
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 						<Button Content="Previous round" FontSize="10" Name="btnPreviousRound" Click="BtnPreviousRound_Click" Style="{StaticResource StyleButton1}"/>
 						<Label Content="Round name" Name="lbRoundName" Style="{StaticResource StyleLabel2}"/>
@@ -29,6 +29,38 @@
 					<StackPanel x:Name="spGames">
 
 					</StackPanel>
+				</StackPanel>
+				<StackPanel Orientation="Vertical" Width="250">
+					<Label HorizontalAlignment="Center" Style="{StaticResource StyleLabel2}" Content="Statistiques de cette année"/>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Moyenne de buts" Width="120" Style="{StaticResource StyleLabel2}"/>
+						<Label Name="lbStatsGoals"  Content="2.50" Width="130" HorizontalContentAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Nombre de buts" Width="120" Style="{StaticResource StyleLabel2}"/>
+						<Label Name="lbStatsGoalsNumber"  Content="250" Width="130" HorizontalContentAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Cartons jaunes" Width="120" Style="{StaticResource StyleLabel2}"/>
+						<Label Name="lbStatsYellowCards"  Content="250" Width="130" HorizontalContentAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Cartons rouge" Width="120" Style="{StaticResource StyleLabel2}"/>
+						<Label Name="lbStatsRedCards"  Content="250" Width="130" HorizontalContentAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+					</StackPanel>
+					<Label HorizontalAlignment="Center" Style="{StaticResource StyleLabel2}" Content="Statistiques all-time"/>
+					<Label Content="Plus grosse victoire" Width="250" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="" Name="lbStatsBiggestScore" Width="250" Style="{StaticResource StyleLabel2}" FontSize="11"/>
+					<Label Content="Plus grosse score" Width="250" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="" Name="lbStatsHigherResult" Width="250" Style="{StaticResource StyleLabel2}" FontSize="11"/>
+					<Label Content="Meilleure attaque" Width="250" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="" Name="lbStatsAllTimeBestAttack" Width="250" Style="{StaticResource StyleLabel2}" FontSize="11"/>
+					<Label Content="Meilleure défense" Width="250" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="" Name="lbStatsAllTimeBestDefense" Width="250" Style="{StaticResource StyleLabel2}" FontSize="11"/>
+					<Label Content="Pire attaque" Width="250" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="" Name="lbStatsAllTimeWorstAttack" Width="250" Style="{StaticResource StyleLabel2}" FontSize="11"/>
+					<Label Content="Pire défense" Width="250" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="" Name="lbStatsAllTimeWorstDefense" Width="250" Style="{StaticResource StyleLabel2}" FontSize="11"/>
 				</StackPanel>
 			</StackPanel>
 		</StackPanel>

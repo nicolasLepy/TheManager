@@ -29,6 +29,11 @@ namespace TheManager
         public KeyValuePair<int, Club> BiggestDefense { get; set; }
         [DataMember]
         public KeyValuePair<int, Club> WeakestDefense { get; set; }
+        [DataMember]
+        public KeyValuePair<int, Club> MostPoints { get; set; }
+        [DataMember]
+        public KeyValuePair<int, Club> LowestPoints { get; set; }
+
 
 
         public TournamentStatistics(int i)
@@ -40,8 +45,10 @@ namespace TheManager
             WeakestAttack = new KeyValuePair<int, Club>(0, null);
             BiggestDefense = new KeyValuePair<int, Club>(0, null);
             WeakestDefense = new KeyValuePair<int, Club>(0, null);
+            LowestPoints = new KeyValuePair<int, Club>(0, null);
+            MostPoints = new KeyValuePair<int, Club>(0, null);
         }
-        
+
         public bool Equals(TournamentStatistics other)
         {
             throw new NotImplementedException();
@@ -178,6 +185,46 @@ namespace TheManager
                         _statistics.BiggerScore.score1 + _statistics.BiggerScore.score2)
                     {
                         _statistics.BiggerScore = m;
+                    }
+                }
+            }
+            if (_isChampionship)
+            {
+                Round championship = _rounds[0];
+                foreach(Club c in championship.clubs)
+                {
+                    int goalsFor = championship.GoalsFor(c);
+                    int goalsAgainst = championship.GoalsAgainst(c);
+                    int points = championship.Points(c);
+                    if(_statistics.MostPoints.Value == null || _statistics.MostPoints.Key < points)
+                    {
+                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(points, c);
+                        _statistics.MostPoints = newRecord;
+                    }
+                    if (_statistics.LowestPoints.Value == null || _statistics.LowestPoints.Key > points)
+                    {
+                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(points, c);
+                        _statistics.LowestPoints = newRecord;
+                    }
+                    if (_statistics.BiggestAttack.Value == null || _statistics.BiggestAttack.Key < goalsFor)
+                    {
+                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsFor, c);
+                        _statistics.BiggestAttack = newRecord;
+                    }
+                    if (_statistics.WeakestAttack.Value == null || _statistics.WeakestAttack.Key > goalsFor)
+                    {
+                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsFor, c);
+                        _statistics.WeakestAttack = newRecord;
+                    }
+                    if (_statistics.BiggestDefense.Value == null || _statistics.BiggestDefense.Key > goalsAgainst)
+                    {
+                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsAgainst, c);
+                        _statistics.BiggestDefense = newRecord;
+                    }
+                    if (_statistics.WeakestDefense.Value == null || _statistics.WeakestDefense.Key < goalsAgainst)
+                    {
+                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsAgainst, c);
+                        _statistics.WeakestDefense = newRecord;
                     }
                 }
             }

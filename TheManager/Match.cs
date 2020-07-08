@@ -371,6 +371,22 @@ namespace TheManager
             }
         }
 
+        public int RedCards
+        {
+            get
+            {
+                int res = 0;
+                foreach (MatchEvent em in _events)
+                {
+                    if (em.type == GameEvent.RedCard)
+                    {
+                        res++;
+                    }
+                }
+                return res;
+            }
+        }
+
         private float CompositionLevel(Club club)
         {
             List<Player> compo = (club == home) ? _compo1Terrain : _compo2Terrain;

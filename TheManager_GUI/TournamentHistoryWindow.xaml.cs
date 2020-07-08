@@ -130,7 +130,80 @@ namespace TheManager_GUI
                 _firstDateOfRound = matches[0].day;
                 _lastDateOfRound = matches[matches.Count - 1].day;
                 DisplayDay();
+
+                //Display stats
+                int goals = 0;
+                int yellowCards = 0;
+                int redCards = 0;
+                foreach(Match m in matches)
+                {
+                    goals += m.score1 + m.score2;
+                    yellowCards += m.YellowCards;
+                    redCards += m.RedCards;
+                }
+                lbStatsGoals.Content = goals.ToString();
+                lbStatsRedCards.Content = redCards.ToString();
+                lbStatsYellowCards.Content = yellowCards.ToString();
+                lbStatsGoalsNumber.Content = (goals / (matches.Count + 0.0f)).ToString("0.00");
+
+                if (_currentArchive.statistics.LargerScore != null)
+                {
+                    lbStatsBiggestScore.Content = _currentArchive.statistics.LargerScore.home.name + " " + _currentArchive.statistics.LargerScore.score1 + "-" + _currentArchive.statistics.LargerScore.score2 + " " + _currentArchive.statistics.LargerScore.away.name;
+                }
+                else
+                {
+                    lbStatsBiggestScore.Content = "";
+                }
+
+                if (_currentArchive.statistics.BiggerScore != null)
+                {
+                    lbStatsHigherResult.Content = _currentArchive.statistics.LargerScore.home.name + " " + _currentArchive.statistics.LargerScore.score1 + "-" + _currentArchive.statistics.LargerScore.score2 + " " + _currentArchive.statistics.LargerScore.away.name;
+                }
+                else
+                {
+                    lbStatsHigherResult.Content = "";
+                }
+
+                if (_currentArchive.statistics.BiggestAttack.Value != null)
+                {
+                    lbStatsAllTimeBestAttack.Content = _currentArchive.statistics.BiggestAttack.Value.name + " (" + _currentArchive.statistics.BiggestAttack.Key + ")";
+                }
+                else
+                {
+                    lbStatsAllTimeBestAttack.Content = "";
+                }
+
+                if (_currentArchive.statistics.BiggestDefense.Value != null)
+                {
+                    lbStatsAllTimeBestDefense.Content = _currentArchive.statistics.BiggestDefense.Value.name + " (" + _currentArchive.statistics.BiggestDefense.Key + ")";
+                }
+                else
+                {
+                    lbStatsAllTimeBestDefense.Content = "";
+                }
+
+                if (_currentArchive.statistics.WeakestAttack.Value != null)
+                {
+                    lbStatsAllTimeWorstAttack.Content = _currentArchive.statistics.WeakestAttack.Value.name + " (" + _currentArchive.statistics.WeakestAttack.Key + ")";
+                }
+                else
+                {
+                    lbStatsAllTimeWorstAttack.Content = "";
+                }
+
+                if (_currentArchive.statistics.WeakestDefense.Value != null)
+                {
+                    lbStatsAllTimeWorstDefense.Content = _currentArchive.statistics.WeakestDefense.Value.name + " (" + _currentArchive.statistics.WeakestDefense.Key + ")";
+                }
+                else
+                {
+                    lbStatsAllTimeWorstDefense.Content = "";
+                }
+
+
+
             }
+
 
         }
 
