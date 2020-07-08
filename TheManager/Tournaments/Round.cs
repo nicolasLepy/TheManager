@@ -230,7 +230,7 @@ namespace TheManager
         {
             get
             {
-                Tournament competition = null;
+                Tournament tournament = null;
 
                 foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
@@ -238,12 +238,27 @@ namespace TheManager
                     {
                         if(t == this)
                         {
-                            competition = c;
+                            tournament = c;
                         }
                     }
                 }
 
-                return competition;
+                //If tournament is null we search in the archives
+                if(tournament == null)
+                {
+                    foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
+                    {
+                        foreach(KeyValuePair<int,Tournament> t in c.previousEditions)
+                        {
+                            if (t.Value.rounds.Contains(this))
+                            {
+                                tournament = t.Value;
+                            }
+                        }
+                    }
+                }
+
+                return tournament;
             }
         }
 

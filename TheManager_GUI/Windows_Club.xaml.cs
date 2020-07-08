@@ -221,7 +221,17 @@ namespace TheManager_GUI
                         {
                             classement = (ancienne.Value.rounds[0] as ChampionshipRound).Ranking().IndexOf(c) + 1;
                         }
-                        
+                        else if ((ancienne.Value.rounds[0] as GroupsRound) != null)
+                        {
+                            GroupsRound rnd = (ancienne.Value.rounds[0] as GroupsRound);
+                            for (int j = 0; j<rnd.groupsCount; j++)
+                            {
+                                if (rnd.groups[j].Contains(c))
+                                {
+                                    classement = rnd.Ranking(j).IndexOf(c);
+                                }
+                            }
+                        }
                         //int annee = ancienne.Tours[0].Matchs[ancienne.Tours[0].Matchs.Count - 1].Jour.Year;
                         lhce.Add(new HistoriqueClubElement { Competition = ancienne.Value, Classement = classement, Annee = ancienne.Key });
                     }
