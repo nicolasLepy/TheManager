@@ -165,6 +165,23 @@ namespace TheManager
                         }
                     }
                 }
+                //If res is always null, we check in archival tournaments
+                if(res == null)
+                {
+                    foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
+                    {
+                        foreach(KeyValuePair<int, Tournament> archive in t.previousEditions)
+                        {
+                            foreach(Round rnd in archive.Value.rounds)
+                            {
+                                if (rnd.matches.Contains(this))
+                                {
+                                    res = t;
+                                }
+                            }
+                        }
+                    }
+                }
                 return res;
             }
         }
