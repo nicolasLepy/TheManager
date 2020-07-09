@@ -60,6 +60,12 @@ namespace TheManager_GUI
             return res;
         }
 
+        private void playerNameClick(Player p)
+        {
+            Windows_Joueur wj = new Windows_Joueur(p);
+            wj.Show();
+        }
+
         private void FillPlayersList()
         {
             List<Player> players = FilterPlayers(_currentPlayersBase);
@@ -77,7 +83,11 @@ namespace TheManager_GUI
                 {
                     StackPanel spPlayer = new StackPanel();
                     spPlayer.Orientation = Orientation.Horizontal;
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(p.firstName + " " + p.lastName, "StyleLabel2", 11, 150));
+                    Label lbName = ViewUtils.CreateLabel(p.firstName + " " + p.lastName, "StyleLabel2", 11, 150);
+                    spPlayer.Children.Add(lbName);
+                    lbName.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+                    { playerNameClick(p); };
+
                     spPlayer.Children.Add(ViewUtils.CreateLabel(p.position.ToString(), "StyleLabel2", 11, 70));
                     spPlayer.Children.Add(ViewUtils.CreateLabel(p.Age.ToString() + " ans", "StyleLabel2", 11, 70));
 
