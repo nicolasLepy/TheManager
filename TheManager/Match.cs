@@ -843,14 +843,20 @@ namespace TheManager
 
             for(int i = 0; i<5; i++)
             {
-                if (Session.Instance.Random(1, 4) != 1)
+                if(Math.Abs(_penaltyShootout2-_penaltyShootout1) <= 5-i)
                 {
-                    _penaltyShootout1++;
+                    if (Session.Instance.Random(1, 4) != 1)
+                    {
+                        _penaltyShootout1++;
+                    }
                 }
 
-                if (Session.Instance.Random(1, 4) != 1)
+                if (Math.Abs(_penaltyShootout2 - _penaltyShootout1) <= 5-i)
                 {
-                    _penaltyShootout2++;
+                    if (Session.Instance.Random(1, 4) != 1)
+                    {
+                        _penaltyShootout2++;
+                    }
                 }
             }
             while(_penaltyShootout1 == _penaltyShootout2)

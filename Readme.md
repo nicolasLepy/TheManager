@@ -1,3 +1,5 @@
+![The Manager](Pics/themanager.png?raw=true "The manager")
+
 The Manager is a soccer simulator aiming to simulate tournaments, matchs, and clubs/players evolution, inspired by games such as Football Manager, FIFA Manager.
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/981285a9e5e542f79c39d71e14b04c59)](https://app.codacy.com/manual/lepynicolas/TheManager?utm_source=github.com&utm_medium=referral&utm_content=nicolasLepy/TheManager&utm_campaign=Badge_Grade_Dashboard)
@@ -67,8 +69,6 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Ranking error when game day is not finished (especially group rnd)    | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Attendance adaptation when a club grow up or down                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Set up international tournaments on multiples years                   | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Correct unrealistic penalty shout-out scores (5-1 f.e.)               | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Fix crash when trying to access game sheet of previous season         | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | **GUI**                                                               |                                                                      |
 | Panel to give infos (transfers, main results) during simulation       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Improve GUI                                                           | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
