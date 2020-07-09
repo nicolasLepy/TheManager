@@ -10,6 +10,13 @@
 		<StackPanel Orientation="Vertical">
 			<Button Content="Fermer" Name="btnQuit" Width="100" Click="BtnQuit_Click" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}"/>
 			<Label Content="Recherche de joueurs" Name="lbCompetition" Style="{StaticResource StyleLabel1}"/>
+			<Label Content="Filtres" Style="{StaticResource StyleLabel2}" Margin="5 20 0 0"/>
+			<StackPanel Orientation="Horizontal">
+				<RadioButton Checked="RbNoConstraintChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbNoConstraint">Aucune contrainte</RadioButton>
+				<RadioButton Checked="RbTransfertListChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbTransferList">Liste des transferts</RadioButton>
+				<RadioButton Checked="RbFreePlayersChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbFreePlayers">Joueurs libres</RadioButton>
+			</StackPanel>
+			<Label Content="" Name="lbPlayersCount" Style="{StaticResource StyleLabel2}" FontSize="12"/>
 			<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600">
 				<StackPanel Orientation="Vertical" Name="spPlayers">
 					
