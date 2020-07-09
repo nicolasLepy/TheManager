@@ -15,6 +15,13 @@
 				<RadioButton Checked="RbNoConstraintChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbNoConstraint">Aucune contrainte</RadioButton>
 				<RadioButton Checked="RbTransfertListChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbTransferList">Liste des transferts</RadioButton>
 				<RadioButton Checked="RbFreePlayersChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbFreePlayers">Joueurs libres</RadioButton>
+				<Label Style="{StaticResource StyleLabel2}" Content="Age" FontSize="12"/>
+				<TextBox Name="tbMinAge" TextChanged="tbChanged" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="15" PreviewTextInput="AgeValidationTextBox" Width="20" Style="{StaticResource StyleTextBox}"/>
+				<TextBox Name="tbMaxAge" TextChanged="tbChanged" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="60" PreviewTextInput="AgeValidationTextBox" Width="20" Style="{StaticResource StyleTextBox}"/>
+				<CheckBox Checked="cbChanged" Unchecked="cbChanged" Style="{StaticResource StyleCheckBox}" Content="G" Name="cbGoalkeeper" IsChecked="True"/>
+				<CheckBox Checked="cbChanged" Unchecked="cbChanged" Style="{StaticResource StyleCheckBox}" Content="D" Name="cbDefender" IsChecked="True"/>
+				<CheckBox Checked="cbChanged" Unchecked="cbChanged" Style="{StaticResource StyleCheckBox}" Content="M" Name="cbMidfielder" IsChecked="True"/>
+				<CheckBox Checked="cbChanged" Unchecked="cbChanged" Style="{StaticResource StyleCheckBox}" Content="A" Name="cbStriker" IsChecked="True"/>
 			</StackPanel>
 			<Label Content="" Name="lbPlayersCount" Style="{StaticResource StyleLabel2}" FontSize="12"/>
 			<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600">

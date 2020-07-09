@@ -14,7 +14,7 @@
 			</StackPanel>
 			<Label Content="Options" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Vertical">
-				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="50">
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="100">
 					<StackPanel Orientation="Vertical" Name="spThemesList">
 
 					</StackPanel>
@@ -39,7 +39,7 @@
 					<Label Content="Exporter les compétitions au format HTML à la fin de la saison" Style="{StaticResource StyleLabel2}"/>
 				</StackPanel>
 				<Label Content="Compétitions à exporter" Style="{StaticResource StyleLabel2}"/>
-				<ScrollViewer Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="175" CanContentScroll="True">
+				<ScrollViewer Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="125" CanContentScroll="True">
 					<StackPanel Orientation="Vertical" Name="spOptions">
 					</StackPanel>
 				</ScrollViewer>

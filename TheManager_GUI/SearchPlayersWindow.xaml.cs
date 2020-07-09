@@ -1,17 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Text.RegularExpressions;
 using TheManager;
+using System.Windows.Documents;
 
 namespace TheManager_GUI
 {
@@ -20,13 +15,54 @@ namespace TheManager_GUI
     /// </summary>
     public partial class SearchPlayersWindow : Window
     {
+
+        private List<Player> _currentPlayersBase;
+
         public SearchPlayersWindow()
         {
             InitializeComponent();
+            _currentPlayersBase = new List<Player>();
         }
 
-        private void FillPlayersList(List<Player> players)
+        private void AgeValidationTextBox(object sender, TextCompositionEventArgs e)
         {
+            Regex regex = new Regex("[^0-9]+");
+            bool ok = false;
+            if (int.TryParse(e.Text, out int age) && age < 100)
+            {
+                ok = true;
+            }
+
+            e.Handled = regex.IsMatch(e.Text) && ok;
+        }
+        
+        private List<Player> FilterPlayers(List<Player> players)
+        {
+            List<Player> res = new List<Player>();
+            foreach(Player p in players)
+            {
+                if(p.Age <= int.Parse(tbMaxAge.Text) && p.Age >= int.Parse(tbMinAge.Text))
+                {
+                    bool add = true;
+                    if((!cbGoalkeeper.IsChecked.Value && p.position == Position.Goalkeeper) ||
+                        (!cbDefender.IsChecked.Value && p.position == Position.Defender) ||
+                        (!cbMidfielder.IsChecked.Value && p.position == Position.Midfielder) ||
+                        (!cbStriker.IsChecked.Value && p.position == Position.Striker) )
+                    {
+                        add = false;
+                    }
+                    if (add)
+                    {
+                        res.Add(p);
+                    }
+                }
+            }
+            return res;
+        }
+
+        private void FillPlayersList()
+        {
+            List<Player> players = FilterPlayers(_currentPlayersBase);
             spPlayers.Children.Clear();
             lbPlayersCount.Content = players.Count + " joueurs";
             if(players.Count > 1000)
@@ -36,7 +72,8 @@ namespace TheManager_GUI
             int i = 0;
             foreach (Player p in players)
             {
-                if (i < 1000)
+                int age = p.Age;
+                if (i < 1000 && p.Age <= int.Parse(tbMaxAge.Text) && p.Age >= int.Parse(tbMinAge.Text))
                 {
                     StackPanel spPlayer = new StackPanel();
                     spPlayer.Orientation = Orientation.Horizontal;
@@ -85,27 +122,43 @@ namespace TheManager_GUI
 
         private void RbNoConstraintChecked(object sender, RoutedEventArgs e)
         {
-            List<Player> p = new List<Player>();
-            FillPlayersList(p);
+            _currentPlayersBase = new List<Player>();
+            FillPlayersList();
         }
 
         private void RbTransfertListChecked(object sender, RoutedEventArgs e)
         {
-            List<Player> p = new List<Player>();
+            _currentPlayersBase = new List<Player>();
             foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
             {
                 if (t.isChampionship)
                 {
-                    p.AddRange(Session.Instance.Game.kernel.TransfertList(t));
+                    _currentPlayersBase.AddRange(Session.Instance.Game.kernel.TransfertList(t));
                 }
             }
-            FillPlayersList(p);
+            FillPlayersList();
         }
 
         private void RbFreePlayersChecked(object sender, RoutedEventArgs e)
         {
-            FillPlayersList(Session.Instance.Game.kernel.freePlayers);
+            _currentPlayersBase = Session.Instance.Game.kernel.freePlayers;
+            FillPlayersList();
         }
 
+        private void cbChanged(object sender, RoutedEventArgs e)
+        {
+            if (_currentPlayersBase != null)
+            {
+                FillPlayersList();
+            }
+        }
+
+        private void tbChanged(object sender, TextChangedEventArgs e)
+        {
+            if(_currentPlayersBase != null)
+            {
+                FillPlayersList();
+            }
+        }
     }
 }
