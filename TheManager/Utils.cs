@@ -286,6 +286,16 @@ namespace TheManager
             return Gf(games, c) - Ga(games, c);
         }
 
+        public static string Flag(Country c)
+        {
+            string flag = Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\"+ nationalFlagsFolderName + "\\" + c.Flag + ".png";
+            if (!File.Exists(flag))
+            {
+                flag = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+            }
+            return flag;
+        }
+
         public static string Logo(Club c)
         {
             string res = "";

@@ -849,14 +849,14 @@ namespace TheManager
                 NationalTeam nationalTeam = c as NationalTeam;
                 if(nationalTeam != null)
                 {
-                    int gap = 30 - _kernel.NumberPlayersOfCountry(nationalTeam.country); 
+                    int gap = 25 - _kernel.NumberPlayersOfCountry(nationalTeam.country); 
                     if(gap > 0)
                     {
                         for(int i =0; i<gap; i++)
                         {
                             string firstName = nationalTeam.country.language.GetFirstName();
                             string lastName = nationalTeam.country.language.GetLastName();
-                            DateTime birthday = new DateTime(1990, 1, 1);
+                            DateTime birthday = new DateTime(Session.Instance.Random(Utils.beginningYear-30, Utils.beginningYear - 18) , Session.Instance.Random(1,13), Session.Instance.Random(1,29));
                             Position p;
                             switch(Session.Instance.Random(1,10))
                             {
@@ -867,7 +867,16 @@ namespace TheManager
                                     p = Position.Goalkeeper;
                                     break;
                             }
-                            Player j = new Player(firstName, lastName, birthday, nationalTeam.formationFacilities, nationalTeam.formationFacilities + 2, nationalTeam.country, p);
+                            int level = nationalTeam.formationFacilities + Session.Instance.Random(-5, 5);
+                            if(level < 0)
+                            {
+                                level = 0;
+                            }
+                            if(level > 99)
+                            {
+                                level = 99;
+                            }
+                            Player j = new Player(firstName, lastName, birthday, level, level + 2, nationalTeam.country, p);
                             _kernel.freePlayers.Add(j);
                         }
                     }

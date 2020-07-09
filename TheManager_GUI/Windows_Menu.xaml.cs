@@ -96,6 +96,11 @@ namespace TheManager_GUI
         {
             Avancer();
         }
+        private void BtnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            SearchPlayersWindow spw = new SearchPlayersWindow();
+            spw.Show();
+        }
 
         private void LbChampionnats_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

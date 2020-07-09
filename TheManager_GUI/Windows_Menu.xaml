@@ -16,6 +16,7 @@
 						<Image Name="imgBtnQuitter" Source="Images/close.png" Width="25" Height="25"/>
 					</Button>
 					<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Avancer" Click="BtnAvancer_Click"/>
+					<Button Name="btnSearch" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Recherche" Click="BtnSearch_Click"/>
 					<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Simuler fin saison" Click="BtnSimuler_Click"/>
 					<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Simuler 10 ans" Click="BtnSimuler2_Click"/>
 					<Button Name="btnOptions" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Options" Click="BtnOptions_Click"/>

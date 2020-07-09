@@ -55,7 +55,7 @@ namespace TheManager_GUI
                         lb.Content = p.Name();
                         lb.Style = FindResource("StyleLabel2") as Style;
                         Image i = new Image();
-                        i.Source = new BitmapImage(new Uri( Environment.CurrentDirectory + "/" + Utils.imagesFolderName + "/Drapeaux/" + p.Flag + ".png", UriKind.RelativeOrAbsolute));
+                        i.Source = new BitmapImage(new Uri( Utils.Flag(p), UriKind.RelativeOrAbsolute));
                         i.Width = 30;
                         i.Height = 15;
                         StackPanel sp = new StackPanel();
