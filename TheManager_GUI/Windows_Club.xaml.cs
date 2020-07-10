@@ -232,7 +232,6 @@ namespace TheManager_GUI
                                 }
                             }
                         }
-                        //int annee = ancienne.Tours[0].Matchs[ancienne.Tours[0].Matchs.Count - 1].Jour.Year;
                         lhce.Add(new HistoriqueClubElement { Competition = ancienne.Value, Classement = classement, Annee = ancienne.Key });
                     }
                 }

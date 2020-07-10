@@ -399,8 +399,6 @@ namespace TheManager
                             }
                             else
                             {
-                                //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, m.MinuteSuivante())) ;
-                                //m.Jouer();
                                 if (c.isChampionship && (date.Month == 1 || date.Month == 12) &&
                                     Session.Instance.Random(1, 26) == 2)
                                 {
@@ -409,11 +407,10 @@ namespace TheManager
                                 else
                                 {
                                     toPlay.Add(m);
-                                    //EtablirMediasPourMatch(m, c);
                                 }
                             }
                             
-                        }       
+                        }
                     }
                     SetUpMediasForTournaments(todayGames, c);
                 }
