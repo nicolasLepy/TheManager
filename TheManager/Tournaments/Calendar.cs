@@ -138,10 +138,6 @@ namespace TheManager
             {
                 _level2.Add(20002);
             }
-            for (int i = 0; i < 1; i++)
-            {
-                _level2.Add(20452);
-            }
             for (int i = 0; i < 10; i++)
             {
                 _level6.Add(15001);

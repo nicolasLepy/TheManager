@@ -248,7 +248,6 @@ namespace TheManager
                         int j = (t.matches.IndexOf(gamesList[0]) / nbMatchsParJournee) + 1;
 
 
-                        numberOfGamesToFollow = cc.GamesNumberByMultiplex;
                         Normal n = new Normal(3, 1);
                         numberOfGamesToFollow = (int)Math.Round(n.Sample());
                         if (numberOfGamesToFollow < 0)
@@ -286,43 +285,56 @@ namespace TheManager
                     for(int i= 0;i<numberOfGamesToFollow;i++)
                     {
                         Match m = games[i];
-                        City city = null;
-                        if (m.home as CityClub != null)
-                        {
-                            city = (m.home as CityClub).city;
-                        }
 
-                        if (m.home as ReserveClub != null)
+                        bool followGame = true;
+                        CityClub homeCityClub = m.home as CityClub;
+                        CityClub awayCityClub = m.away as CityClub;
+                        if (cc.MinimumLevel != -1 && homeCityClub != null && homeCityClub.Championship != null && homeCityClub.Championship.level > cc.MinimumLevel
+                            && awayCityClub != null && awayCityClub.Championship != null && awayCityClub.Championship.level > cc.MinimumLevel)
                         {
-                            city = (m.home as ReserveClub).FannionClub.city;
+                            followGame = false;
                         }
-                        List<Journalist> j = new List<Journalist>();
-                        foreach (Journalist j1 in media.journalists)
+                        
+                        if (followGame)
                         {
-                            if (!j1.isTaken)
+                            City city = null;
+                            if (m.home as CityClub != null)
                             {
-                                j.Add(j1);
+                                city = (m.home as CityClub).city;
                             }
-                        }
-                        Journalist journalist = null;
-                        if(j.Count > 0)
-                        {
-                            j.Sort(new JournalistsComparator(city));
 
-                            if(Math.Abs(Utils.Distance(j[0].baseCity, city))< 300)
+                            if (m.home as ReserveClub != null)
                             {
-                                journalist = j[0];
+                                city = (m.home as ReserveClub).FannionClub.city;
                             }
+                            List<Journalist> j = new List<Journalist>();
+                            foreach (Journalist j1 in media.journalists)
+                            {
+                                if (!j1.isTaken)
+                                {
+                                    j.Add(j1);
+                                }
+                            }
+                            Journalist journalist = null;
+                            if (j.Count > 0)
+                            {
+                                j.Sort(new JournalistsComparator(city));
+
+                                if (Math.Abs(Utils.Distance(j[0].baseCity, city)) < 300)
+                                {
+                                    journalist = j[0];
+                                }
+                            }
+                            if (journalist == null)
+                            {
+                                Journalist newJournalist = new Journalist(media.country.language.GetFirstName(), media.country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100);
+                                media.journalists.Add(newJournalist);
+                                journalist = newJournalist;
+                            }
+                            journalist.isTaken = true;
+                            KeyValuePair<Media, Journalist> employment = new KeyValuePair<Media, Journalist>(journalist.Media, journalist);
+                            m.journalists.Add(employment);
                         }
-                        if(journalist == null)
-                        {
-                            Journalist newJournalist = new Journalist(media.country.language.GetFirstName(), media.country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100);
-                            media.journalists.Add(newJournalist);
-                            journalist = newJournalist;
-                        }
-                        journalist.isTaken = true;
-                        KeyValuePair<Media, Journalist> employment = new KeyValuePair<Media, Journalist>(journalist.Media, journalist);
-                        m.journalists.Add(employment);
                     }
                 }
             }

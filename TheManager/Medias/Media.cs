@@ -19,14 +19,16 @@ namespace TheManager
         public int MinimumGamesNumberOfMultiplex { get; set; }
         [DataMember]
         public int GamesNumberByMultiplex { get; set; }
+        [DataMember]
+        public int MinimumLevel { get; set; }
 
-        public TournamentCoverage(Tournament tournament, int beginIndex, int minimumGamesNumberOfMultiplex, int gamesNumberByMultiplex)
+        public TournamentCoverage(Tournament tournament, int beginIndex, int minimumGamesNumberOfMultiplex, int gamesNumberByMultiplex, int minimumLevel)
         {
             Tournament = tournament;
             BeginIndex = beginIndex;
             MinimumGamesNumberOfMultiplex = minimumGamesNumberOfMultiplex;
             GamesNumberByMultiplex = gamesNumberByMultiplex;
-
+            MinimumLevel = minimumLevel;
         }
 
         public bool Equals(TournamentCoverage other)

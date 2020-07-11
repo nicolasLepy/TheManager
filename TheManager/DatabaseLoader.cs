@@ -248,6 +248,7 @@ namespace TheManager
                         Tournament tournament = _kernel.String2Tournament(e3.Attribute("competition").Value);
                         int averageGames = -1;
                         int multiplexMinGames = -1;
+                        int level = -1;
                         if (e3.Attribute("matchParMultiplex") != null)
                         {
                             averageGames = int.Parse(e3.Attribute("matchParMultiplex").Value);
@@ -257,7 +258,12 @@ namespace TheManager
                         {
                             multiplexMinGames = int.Parse(e3.Attribute("multiplex").Value);
                         }
-                        m.coverages.Add(new TournamentCoverage(tournament, index, multiplexMinGames, averageGames));
+                        if (e3.Attribute("level") != null)
+                        {
+                            level = int.Parse(e3.Attribute("level").Value);
+                        }
+
+                        m.coverages.Add(new TournamentCoverage(tournament, index, multiplexMinGames, averageGames, level));
                     }
                 }
             }
