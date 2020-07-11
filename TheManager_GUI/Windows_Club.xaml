@@ -34,6 +34,11 @@
 							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
+					<Label Content="Records" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="Plus grande victoire" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbBiggestWin" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="Plus grande défaite" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbBiggestLose" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
 
 				</StackPanel>
 				<StackPanel Orientation="Vertical">

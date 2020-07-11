@@ -5,9 +5,21 @@ using System.Linq;
 using System.Text;
 using TheManager.Comparators;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace TheManager
 {
+
+    [DataContract]
+    public struct ClubRecords
+    {
+
+        [DataMember]
+        public Match BiggestWin { get; set; }
+        [DataMember]
+        public Match BiggestLose { get; set; }
+       
+    }
 
     public enum BudgetModificationReason
     {
@@ -64,6 +76,8 @@ namespace TheManager
         private string _logo;
         [DataMember]
         private int _ticketPrice;
+        [DataMember]
+        private ClubRecords _records = new ClubRecords();
 
         [DataMember]
         private string _goalMusic;
@@ -78,6 +92,7 @@ namespace TheManager
         public string shortName { get => _shortName; }
         public int ticketPrice { get => _ticketPrice; }
         public string goalMusic { get => _goalMusic; }
+        public ClubRecords records { get => _records; }
 
         /// <summary>
         /// List of games played by the club
@@ -324,6 +339,21 @@ namespace TheManager
         {
             Session.Instance.Game.kernel.freeManagers.Add(_manager);
             _manager = newManager;
+        }
+
+        public void UpdateRecords(Match g)
+        {
+            if (g.Tournament.name != Utils.friendlyTournamentName)
+            {
+                if (_records.BiggestWin == null || g.Winner == this && Math.Abs(g.score1 - g.score2) > Math.Abs(_records.BiggestWin.score1 - _records.BiggestWin.score2))
+                {
+                    _records.BiggestWin = g;
+                }
+                if (_records.BiggestLose == null || g.Looser == this && Math.Abs(g.score1 - g.score2) > Math.Abs(_records.BiggestLose.score1 - _records.BiggestLose.score2))
+                {
+                    _records.BiggestLose = g;
+                }
+            }
         }
 
 

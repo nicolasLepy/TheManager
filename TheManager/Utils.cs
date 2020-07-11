@@ -14,6 +14,8 @@ namespace TheManager
         public readonly static string tournamentLogoFolderName = "Logo";
         public readonly static string clubLogoFolderName = "Logos";
         public readonly static string nationalFlagsFolderName = "Drapeaux";
+
+        public readonly static string friendlyTournamentName = "Matchs amicaux";
         public static int DaysNumberBetweenTwoDates(DateTime a, DateTime b)
         {
             TimeSpan ts = a - b;

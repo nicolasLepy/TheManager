@@ -45,13 +45,11 @@ namespace TheManager.Comparators
         private int Points(Club c)
         {
             return Utils.Points(_round, c);
-            //return _tour.Points(c);
         }
 
         private int Difference(Club c)
         {
             return Utils.Difference(_round, c);
-            //return _tour.Difference(c);
         }
 
         private int GoalFor(Club c)

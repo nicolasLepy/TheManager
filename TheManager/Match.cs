@@ -330,6 +330,10 @@ namespace TheManager
                         {
                             c = away;
                         }
+                        if(c == null)
+                        {
+                            c = home;
+                        }
                     }
 
                 }
@@ -719,12 +723,18 @@ namespace TheManager
             UpdatePlayersMatchPlayedStat(compo);
         }
 
+        public void UpdateRecords()
+        {
+            home.UpdateRecords(this);
+            away.UpdateRecords(this);
+        }
+
         public void CalculateLevelDifference()
         {
-            float diffF = Math.Abs(CompositionLevel(home)*1.05f - CompositionLevel(away));
+            float diffF = Math.Abs(CompositionLevel(home)*1.04f - CompositionLevel(away));
 
             this._levelDifference = (int)diffF;
-            this._levelDifferenceRatio = (CompositionLevel(home) * 1.05f) / CompositionLevel(away);
+            this._levelDifferenceRatio = (CompositionLevel(home) * 1.04f) / CompositionLevel(away);
         }
 
         public List<RetourMatch> NextMinute()
@@ -764,6 +774,8 @@ namespace TheManager
                     else
                     {
                         lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                        UpdateRecords();
+
                     }
                 }
                 if(_period == 5)
@@ -773,7 +785,7 @@ namespace TheManager
                         PlayPenaltyShootout();
                     }
                     lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
-
+                    UpdateRecords();
                 }
             }
 
@@ -819,6 +831,7 @@ namespace TheManager
                 Article article = new Article(res, "", new DateTime(day.Year, day.Month, day.Day), 2);
                 Session.Instance.Game.articles.Add(article);
             }
+            UpdateRecords();
         }
 
         private bool SecondLegIsDraw()
@@ -932,33 +945,45 @@ namespace TheManager
             }
             else if (diffRatio >= 0.6 && diffRatio < 0.65)
             {
-                lookbacks = MatchIteration(a, b, 22, 23, 208, 220);
+                lookbacks = MatchIteration(a, b, 22, 23, 208, 224);
             }
             else if (diffRatio >= 0.65 && diffRatio < 0.7)
             {
-                lookbacks = MatchIteration(a, b, 21, 23, 208, 219);
+                lookbacks = MatchIteration(a, b, 21, 23, 208, 222);
             }
             else if (diffRatio >= 0.7 && diffRatio < 0.74)
             {
-                lookbacks = MatchIteration(a, b, 21, 23, 208, 218);
+                lookbacks = MatchIteration(a, b, 21, 23, 208, 221);
             }
             else if (diffRatio >= 0.74 && diffRatio < 0.78)
             {
-                lookbacks = MatchIteration(a, b, 21, 24, 208, 218);
+                lookbacks = MatchIteration(a, b, 21, 23, 208, 220);
             }
             else if (diffRatio >= 0.78 && diffRatio < 0.81)
             {
-                lookbacks = MatchIteration(a, b, 21, 24, 208, 217);
+                lookbacks = MatchIteration(a, b, 21, 24, 208, 220);
             }
-            else if (diffRatio >= 0.81 && diffRatio < 0.85)
+            else if (diffRatio >= 0.81 && diffRatio < 0.83)
+            {
+                lookbacks = MatchIteration(a, b, 21, 24, 208, 219);
+            }
+            else if (diffRatio >= 0.83 && diffRatio < 0.89)
+            {
+                lookbacks = MatchIteration(a, b, 21, 24, 208, 218);
+            }
+            else if (diffRatio >= 0.85 && diffRatio < 0.87)
+            {
+                lookbacks = MatchIteration(a, b, 21, 25, 208, 218);
+            }
+            else if (diffRatio >= 0.87 && diffRatio < 0.89)
             {
                 lookbacks = MatchIteration(a, b, 21, 25, 208, 217);
             }
-            else if (diffRatio >= 0.85 && diffRatio < 0.89)
+            else if (diffRatio >= 0.89 && diffRatio < 0.90)
             {
                 lookbacks = MatchIteration(a, b, 21, 25, 208, 216);
             }
-            else if (diffRatio >= 0.89 && diffRatio < 0.92)
+            else if (diffRatio >= 0.90 && diffRatio < 0.92)
             {
                 lookbacks = MatchIteration(a, b, 21, 25, 208, 215);
             }
@@ -1074,12 +1099,13 @@ namespace TheManager
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
             //Red cards
-            else if (random == 2)
+            //Second random to reduce chance to have a red card
+            else if (random == 2 && Session.Instance.Random(1, 10) < 6)
             {
                 RedCard(a);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
             }
-            else if (random == 3)
+            else if (random == 3 && Session.Instance.Random(1, 10) < 6)
             {
                 RedCard(b);
                 res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));

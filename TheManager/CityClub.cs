@@ -9,11 +9,14 @@ using TheManager.Comparators;
 namespace TheManager
 {
 
-    [DataContract]
+    [DataContract(IsReference = true)]
     public struct ContractOffer : IEquatable<ContractOffer>
     {
+        [DataMember]
         public int Wage { get; set; }
+        [DataMember]
         public int ContractDuration { get; set; }
+        [DataMember]
         public Player Player { get; set; }
 
         public ContractOffer(Player player, int wage, int contractDuration)

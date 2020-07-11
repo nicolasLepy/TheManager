@@ -123,7 +123,7 @@ namespace TheManager_GUI
 
             if (t != null)
             {
-                IVueClassement vue = FabriqueVueClassement.CreerVue(/*dgClassement*/null, t, 0.7);
+                IVueClassement vue = FabriqueVueClassement.CreerVue(null, t, 0.7);
                 if (vue != null)
                 {
                     vue.Remplir(spRoundRanking);
@@ -269,7 +269,6 @@ namespace TheManager_GUI
             if (_partie.club != null && _partie.club.Championship != null)
             {
                 vueClassement = FabriqueVueClassement.CreerVue(null, _partie.club.Championship.rounds[0], 0.75, true, _partie.club);
-                //vueClassement = new VueClassementChampionnat(null, _partie.club.Championship.rounds[0] as ChampionshipRound, 0.75, true, _partie.club);
                 vueClassement.Remplir(spRanking);
             }
         }
@@ -278,7 +277,6 @@ namespace TheManager_GUI
         {
 
 
-            //dgClubProchainsMatchs.Items.Clear();
             if(_partie.club != null)
             {
                 List<Match> matches = new List<Match>();

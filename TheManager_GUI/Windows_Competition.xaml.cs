@@ -168,8 +168,8 @@ namespace TheManager_GUI
                 lbEq1.HorizontalContentAlignment = HorizontalAlignment.Left;
 
                 Button btnScore = new Button();
-                btnScore.Name = "btnScore_" + i;
-                btnScore.Click += new RoutedEventHandler(BtnMatch_Click);
+                btnScore.Click += (object sender, RoutedEventArgs e) =>
+                { BtnMatchClick(m); };
                 btnScore.Content = score;
                 btnScore.Style = Application.Current.FindResource("StyleButton1") as Style;
                 btnScore.FontSize = 16;
@@ -281,13 +281,9 @@ namespace TheManager_GUI
             thw.Show();
         }
 
-        private void BtnMatch_Click(object sender, RoutedEventArgs e)
+        private void BtnMatchClick(Match m)
         {
-
-            Button btn = sender as Button;
-            int idMatch = int.Parse(btn.Name.Split('_')[1]);
-            Match match = Journee()[idMatch];
-            Windows_Match wm = new Windows_Match(match);
+            Windows_Match wm = new Windows_Match(m);
             wm.Show();
         }
     }

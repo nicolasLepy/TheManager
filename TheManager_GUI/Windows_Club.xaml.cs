@@ -294,6 +294,15 @@ namespace TheManager_GUI
             YFormatter = value => value.ToString("C");
             
             DataContext = this;
+
+            if(c.records.BiggestWin != null)
+            {
+                lbBiggestWin.Content = c.records.BiggestWin.home.name + " " + c.records.BiggestWin.score1 + " - " + c.records.BiggestWin.score2 + " " + c.records.BiggestWin.away.name;
+            }
+            if (c.records.BiggestLose != null)
+            {
+                lbBiggestLose.Content = c.records.BiggestLose.home.name + " " + c.records.BiggestLose.score1 + " - " + c.records.BiggestLose.score2 + " " + c.records.BiggestLose.away.name;
+            }
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
