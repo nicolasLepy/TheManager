@@ -11,14 +11,19 @@ namespace TheManager
 {
 
     [DataContract]
-    public struct ClubRecords
+    public struct ClubRecords : IEquatable<ClubRecords>
     {
 
         [DataMember]
         public Match BiggestWin { get; set; }
         [DataMember]
         public Match BiggestLose { get; set; }
-       
+
+        public bool Equals(ClubRecords other)
+        {
+            return false;
+        }
+
     }
 
     public enum BudgetModificationReason
