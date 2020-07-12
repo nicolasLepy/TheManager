@@ -26,6 +26,8 @@ namespace TheManager_GUI
             {
                 //If there is no image, a empty image is let
             }
+            imgLogoHome.Source = new BitmapImage(new Uri(Utils.Logo(match.home)));
+            imgLogoAway.Source = new BitmapImage(new Uri(Utils.Logo(match.away)));
             lbStade.Content = match.home.stadium.name;
             lbAffluence.Content = match.attendance + " spectateurs";
             lbEquipe1.Content = match.home.name;
@@ -39,6 +41,9 @@ namespace TheManager_GUI
             lbPossession2.Content = match.statistics.Possession2 + "%";
             pbPossession.Maximum = match.statistics.Possession1 + match.statistics.Possession2;
             pbPossession.Value = match.statistics.Possession1;
+            lbOdd1.Content = match.odd1.ToString("0.00");
+            lbOddD.Content = match.oddD.ToString("0.00");
+            lbOdd2.Content = match.odd2.ToString("0.00");
             if (match.prolongations)
             {
                 lbScore.Content += " a.p.";

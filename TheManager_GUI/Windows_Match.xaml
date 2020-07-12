@@ -5,21 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Match" Height="650" Width="800" Style="{StaticResource StyleWindows}" Left="50" Top="50">
+        Title="Windows_Match" Height="700" Width="800" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
 			</StackPanel>
-			<Image Source="image.png" Name="imgCompetition" Height="75" Width="75"/>
+			<Image Source="image.png" Name="imgCompetition" Height="50" Width="50"/>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<Label Name="lbEquipe1" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
-				<Label Name="lbScore" Content="4 - 0" Margin="40 0 40 0" Style="{StaticResource StyleLabel1}"/>
-				<Label Name="lbEquipe2" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
+				<StackPanel Orientation="Vertical">
+					<Image Source="image.png" Name="imgLogoHome" Height="50" Width="50" Margin="100 0 100 0"/>
+					<Label Name="lbEquipe1" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
+				</StackPanel>
+				<Label Name="lbScore" VerticalContentAlignment="Bottom" Content="4 - 0" Margin="40 0 40 0" Style="{StaticResource StyleLabel1}"/>
+				<StackPanel Orientation="Vertical">
+					<Image Source="image.png" Name="imgLogoAway" Height="50" Width="50" Margin="100 0 100 0"/>
+					<Label Name="lbEquipe2" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
+				</StackPanel>
 			</StackPanel>
 			<Label Name="lbMT" Content="(2 - 0)" Style="{StaticResource StyleLabel1}"/>
 			<Label Name="lbStade" Content="Stade du Pré Fleuri" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
 			<Label Name="lbAffluence" Content="28500 spectateurs" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+				<Label Name="lbOdd1" Width="50" Content="12.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
+				<Label Name="lbOddD" Width="50" Content="10.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
+				<Label Name="lbOdd2" Width="50" Content="12.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
+			</StackPanel>
 
 			<ScrollViewer VerticalScrollBarVisibility="Auto" Height="400" >
 
