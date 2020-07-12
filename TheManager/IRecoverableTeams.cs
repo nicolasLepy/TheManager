@@ -9,5 +9,6 @@ namespace TheManager
     public interface IRecoverableTeams
     {
         List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams);
+        int CountWithoutReserves();
     }
 }

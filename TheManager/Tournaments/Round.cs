@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -275,7 +276,22 @@ namespace TheManager
             _prizes = new List<Prize>();
         }
 
-
+        /// <summary>
+        /// Give the number of first team in the round
+        /// </summary>
+        /// <returns></returns>
+        public int CountWithoutReserves()
+        {
+            int total = 0;
+            foreach(Club c in _clubs)
+            {
+                if(c as ReserveClub == null)
+                {
+                    total++;
+                }
+            }
+            return total;
+        }
         public float GoalsAverage()
         {
             float res = 0;
@@ -565,17 +581,31 @@ namespace TheManager
         /// </summary>
         public void AddTeamsToRecover()
         {
-            foreach(RecoverTeams re in _recuperedTeams)
+
+            for (int i = 0; i< _recuperedTeams.Count; i++)
             {
-                bool onlyFirstTeams = false;
-                if (rules.Contains(Rule.OnlyFirstTeams))
+                RecoverTeams re = _recuperedTeams[i];
+                int teamsToGrab = re.Number;
+                int regularCount = 0;
+                int currentCount = _clubs.Count;
+                for (int j = 0; j<i; j++)
                 {
-                    onlyFirstTeams = true;
+                    regularCount += _recuperedTeams[j].Number;
                 }
-                foreach (Club c in re.Source.RetrieveTeams(re.Number, re.Method, onlyFirstTeams))
+                int diff = regularCount - currentCount;
+                if(diff > 0)
+                {
+                    teamsToGrab += diff;
+                }
+                if (teamsToGrab > re.Source.CountWithoutReserves())
+                {
+                    teamsToGrab = re.Source.CountWithoutReserves();
+                }
+                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams)))
                 {
                     _clubs.Add(c);
                 }
+
             }
         }
 

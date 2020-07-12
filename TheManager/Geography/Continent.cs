@@ -79,6 +79,11 @@ namespace TheManager
             return res;
         }
 
+        public int CountWithoutReserves()
+        {
+            return _countries.Count;
+        }
+
         public override string ToString()
         {
             return _name;
