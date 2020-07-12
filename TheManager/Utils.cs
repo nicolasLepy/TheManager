@@ -193,19 +193,22 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.home == c)
+                if (m.Played)
                 {
-                    if (m.score1 > m.score2)
+                    if (m.home == c)
                     {
-                        res++;
+                        if (m.score1 > m.score2)
+                        {
+                            res++;
+                        }
                     }
-                }
 
-                if (m.away == c)
-                {
-                    if (m.score1 < m.score2)
+                    if (m.away == c)
                     {
-                        res++;
+                        if (m.score1 < m.score2)
+                        {
+                            res++;
+                        }
                     }
                 }
             }
@@ -216,19 +219,22 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if (m.home == c)
+                if (m.Played)
                 {
-                    if (m.score1 < m.score2)
+                    if (m.home == c)
                     {
-                        res++;
+                        if (m.score1 < m.score2)
+                        {
+                            res++;
+                        }
                     }
-                }
 
-                if (m.away == c)
-                {
-                    if (m.score1 > m.score2)
+                    if (m.away == c)
                     {
-                        res++;
+                        if (m.score1 > m.score2)
+                        {
+                            res++;
+                        }
                     }
                 }
             }
@@ -239,9 +245,12 @@ namespace TheManager
             int res = 0;
             foreach (Match m in matchs)
             {
-                if ((m.home == c || m.away == c) && m.score1 == m.score2)
+                if (m.Played)
                 {
-                    res++;
+                    if ((m.home == c || m.away == c) && m.score1 == m.score2)
+                    {
+                        res++;
+                    }
                 }
             }
             return res;
