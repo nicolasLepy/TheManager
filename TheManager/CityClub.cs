@@ -18,12 +18,18 @@ namespace TheManager
         public int ContractDuration { get; set; }
         [DataMember]
         public Player Player { get; set; }
+        [DataMember]
+        public int TransferIndemnity { get; set; }
 
-        public ContractOffer(Player player, int wage, int contractDuration)
+        public bool Successful { get; set; }
+
+        public ContractOffer(Player player, int wage, int contractDuration, int transferIndemnity)
         {
             Player = player;
             Wage = wage;
             ContractDuration = contractDuration;
+            TransferIndemnity = transferIndemnity;
+            Successful = true;
         }
 
         public bool Equals(ContractOffer other)
@@ -32,24 +38,27 @@ namespace TheManager
         }
     }
 
-    [DataContract(IsReference =true)]
+    [DataContract(IsReference = true)]
     public class ClubTransfersManagement
     {
         [DataMember]
         private List<Player> _targetedPlayers;
         [DataMember]
         private List<ContractOffer> _offers;
+        [DataMember]
+        private List<ContractOffer> _offersHistory;
 
         public List<Player> targetedPlayers { get => _targetedPlayers; }
         public List<ContractOffer> offers { get => _offers; }
+        public List<ContractOffer> offersHistory { get => _offersHistory; }
 
         public ClubTransfersManagement()
         {
             _targetedPlayers = new List<Player>();
             _offers = new List<ContractOffer>();
+            _offersHistory = new List<ContractOffer>();
         }
     }
-
 
     [DataContract(IsReference =true)]
     public class CityClub : Club
@@ -429,7 +438,7 @@ namespace TheManager
             {
                 if(amount > contract.player.EstimateTransferValue())
                 {
-                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration));
+                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration, amount));
                     //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
                 }
             }
@@ -437,7 +446,7 @@ namespace TheManager
             {
                 if(amount > contract.player.EstimateTransferValue()*1.2f)
                 {
-                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration));
+                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration, amount));
                     //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
                 }
             }
@@ -488,6 +497,7 @@ namespace TheManager
                 oc.Player.ConsiderOffer(oc, this);
             }
 
+            clubTransfersManagement.offersHistory.AddRange(clubTransfersManagement.offers);
             clubTransfersManagement.offers.Clear();
         }
 
@@ -497,10 +507,14 @@ namespace TheManager
             {
                 Player target = clubTransfersManagement.targetedPlayers[0];
                 int wage = (int)(target.EstimateWage() * (Session.Instance.Random(80, 120) / 100.0f));
-                clubTransfersManagement.offers.Add(new ContractOffer(target, wage, Session.Instance.Random(1, 5)));
+                clubTransfersManagement.offers.Add(new ContractOffer(target, wage, Session.Instance.Random(1, 5), 0));
+                clubTransfersManagement.targetedPlayers.RemoveAt(0);
             }
         }
 
+        /// <summary>
+        /// Search for free players and list them
+        /// </summary>
         public void SearchFreePlayers()
         {
             clubTransfersManagement.targetedPlayers.Clear();

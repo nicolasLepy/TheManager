@@ -104,12 +104,21 @@ namespace TheManager_GUI
                 {
                     if (last != hj.Club)
                     {
+                        string nameClub = "";
+                        if(last == null)
+                        {
+                            nameClub = "Libre";
+                        }
+                        else
+                        {
+                            nameClub = last.name;
+                        }
                         int depart = hj.Year;
 
                         StackPanel line = new StackPanel();
                         line.Orientation = Orientation.Horizontal;
                         line.Children.Add(ViewUtils.CreateLabel((arrival - 1).ToString() + " - " + _player.history[_player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
-                        line.Children.Add(ViewUtils.CreateLabel(last.name, "StyleLabel2", 11, 100));
+                        line.Children.Add(ViewUtils.CreateLabel(nameClub, "StyleLabel2", 11, 100));
                         line.Children.Add(ViewUtils.CreateLabel(cumulativeMatchesPlayed.ToString(), "StyleLabel2", 11, 40));
                         line.Children.Add(ViewUtils.CreateLabel(cumulativeGoals.ToString(), "StyleLabel2", 11, 40));
                         spPlayerHistory.Children.Add(line);
@@ -123,10 +132,21 @@ namespace TheManager_GUI
                     last = hj.Club;
                 }
 
+                string clubName = "";
+                if (last == null)
+                {
+                    clubName = "Libre";
+                }
+                else
+                {
+                    clubName = last.name;
+                }
+
+
                 StackPanel lastLine = new StackPanel();
                 lastLine.Orientation = Orientation.Horizontal;
                 lastLine.Children.Add(ViewUtils.CreateLabel((arrival-1).ToString() + " - " + _player.history[_player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
-                lastLine.Children.Add(ViewUtils.CreateLabel(last.name, "StyleLabel2", 11, 100));
+                lastLine.Children.Add(ViewUtils.CreateLabel(clubName, "StyleLabel2", 11, 100));
                 lastLine.Children.Add(ViewUtils.CreateLabel(cumulativeMatchesPlayed.ToString(), "StyleLabel2", 11, 40));
                 lastLine.Children.Add(ViewUtils.CreateLabel(cumulativeGoals.ToString(), "StyleLabel2", 11, 40));
                 spPlayerHistory.Children.Add(lastLine);

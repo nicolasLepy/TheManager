@@ -72,6 +72,11 @@
 					<StackPanel Orientation="Horizontal" Width="700">
 						<StackPanel Orientation="Vertical" Width="310">
 							<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
+							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="500">
+								<StackPanel Orientation="Vertical" Name="spTransferList">
+									
+								</StackPanel>
+							</ScrollViewer>
 						</StackPanel>
 						<StackPanel Orientation="Vertical" Width="350">
 							<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>

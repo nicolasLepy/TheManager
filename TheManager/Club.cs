@@ -32,7 +32,8 @@ namespace TheManager
         PayWages,
         StadiumAttendance,
         TournamentGrant,
-        UpdateFormationFacilities
+        UpdateFormationFacilities,
+        TransferIndemnity
     }
 
     public struct BudgetEntry : IEquatable<BudgetEntry>
@@ -83,6 +84,7 @@ namespace TheManager
         private int _ticketPrice;
         [DataMember]
         private ClubRecords _records = new ClubRecords();
+        
 
         [DataMember]
         private string _goalMusic;

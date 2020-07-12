@@ -8,6 +8,30 @@ using MathNet.Numerics.Distributions;
 
 namespace TheManager
 {
+
+    public struct Transfer : IEquatable<Transfer>
+    {
+        private readonly CityClub _from;
+        private readonly CityClub _to;
+        private readonly DateTime _date;
+
+        public CityClub From => _from;
+        public CityClub To => _to;
+        public DateTime Date => _date;
+
+        public Transfer(CityClub from, CityClub to, DateTime date)
+        {
+            _from = from;
+            _to = to;
+            _date = date;
+        }
+
+        public bool Equals(Transfer other)
+        {
+            return false;
+        }
+    }
+
     [DataContract(IsReference =true)]
     public class Game
     {
@@ -340,46 +364,6 @@ namespace TheManager
             }
         }
 
-       /*
-        private void EtablirMediasPourMatch(Match m, Competition c)
-        {
-            Club_Ville cv = m.Domicile as Club_Ville;
-            Club_Ville ce = m.Exterieur as Club_Ville;
-            if (cv != null && ce != null && (cv.Championnat != null && cv.Championnat.Niveau <= 2 || ce.Championnat != null && ce.Championnat.Niveau <= 2))
-            {
-                foreach (Media media in _gestionnaire.Medias)
-                {
-                    if (media.Couvre(c, c.TourActuel))
-                    {
-                        List<Journaliste> j = new List<Journaliste>();
-                        foreach (Journaliste j1 in media.Journalistes) if (!j1.EstPris) j.Add(j1);
-
-                        Journaliste commentateur = null;
-                        if (j.Count > 0)
-                        {
-                            j.Sort(new Journalistes_Comparator(cv.Ville));
-
-                            if (Math.Abs(Utils.Distance(j[0].Base, cv.Ville)) < 300)
-                            {
-                                commentateur = j[0];
-                            }
-                        }
-                        if (commentateur == null)
-                        {
-                            Journaliste nouveau = new Journaliste(media.Pays.Langue.ObtenirPrenom(), media.Pays.Langue.ObtenirNom(), Session.Instance.Random(28, 60), cv.Ville, 100);
-                            media.Journalistes.Add(nouveau);
-                            commentateur = nouveau;
-                        }
-
-                        commentateur.EstPris = true;
-                        m.Journalistes.Add(commentateur);
-
-
-                    }
-                }
-            }
-        }*/
-
         public List<Match> NextDay()
         {
             _date = _date.AddDays(1);
@@ -432,7 +416,7 @@ namespace TheManager
                     {
                         t.QualifyClubs();
                     }
-                    if (Utils.CompareDatesWithoutYear (t.programmation.initialisation, _date))
+                    if (Utils.CompareDatesWithoutYear(t.programmation.initialisation, _date))
                     {
                         c.NextRound();
                     }

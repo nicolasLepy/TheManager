@@ -56,7 +56,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | **Managing**                                                          |                                                                      |
 | Staff management                                                      | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | Youth team management                                                 | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Search / observe players                                              | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Search / observe players                                              | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Negociate contracts / transferts with other clubs                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | **Environment**                                                       |                                                                      |
 | Dynamic dates, from one season to an other                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

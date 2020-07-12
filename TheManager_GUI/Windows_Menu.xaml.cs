@@ -62,6 +62,33 @@ namespace TheManager_GUI
             
         }
 
+        private void RefreshTransferListPanel()
+        {
+            spTransferList.Children.Clear();
+            foreach(Club c in Session.Instance.Game.kernel.Clubs)
+            {
+                CityClub cc = c as CityClub;
+                if(cc != null)
+                {
+                    foreach(ContractOffer co in cc.clubTransfersManagement.offersHistory)
+                    {
+                        StackPanel spT = new StackPanel();
+                        spT.Orientation = Orientation.Horizontal;
+                        spT.Children.Add(ViewUtils.CreateLabel(co.Player.lastName, "StyleLabel2", 10, 50));
+                        Label labelClub = ViewUtils.CreateLabel(cc.shortName, "StyleLabel2", 10, 70);
+                        labelClub.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+                        { Windows_Club wc = new Windows_Club(cc);wc.Show(); };
+                        spT.Children.Add(labelClub);
+
+
+
+                        spT.Children.Add(ViewUtils.CreateLabel(co.Successful.ToString(), "StyleLabel2", 10, 40));
+                        spTransferList.Children.Add(spT);
+                    }
+                }
+            }
+        }
+
         private void RemplirArticles()
         {
             spNews.Children.Clear();
@@ -201,6 +228,7 @@ namespace TheManager_GUI
                 BandeauActualites();
                 RemplirArticles();
                 FillNextMatchPanel();
+                RefreshTransferListPanel();
             }
         }
 

@@ -52,6 +52,8 @@ namespace TheManager
         private List<PlayerHistory> _history;
         [DataMember]
         private List<ContractOffer> _offers;
+        [DataMember]
+        private bool _foundANewClubThisSeason;
 
         public int level { get => _level; set => _level = value; }
         public int potential { get => _potential; }
@@ -126,6 +128,7 @@ namespace TheManager
             goalsScored = 0;
             playedGames = 0;
             _offers = new List<ContractOffer>();
+            _foundANewClubThisSeason = false;
 
         }
 
@@ -190,6 +193,8 @@ namespace TheManager
             _history.Add(new PlayerHistory(_level, Session.Instance.Game.date.Year + 1,goalsScored, playedGames, Club));
             goalsScored = 0;
             playedGames = 0;
+
+            _foundANewClubThisSeason = false;
         }
 
 
@@ -201,38 +206,50 @@ namespace TheManager
         public bool ConsiderOffer(ContractOffer oc, CityClub sender)
         {
             bool res = false;
-            //If the player have a club
-            if (Club != null)
+            if (!_foundANewClubThisSeason)
             {
-                if (sender.Level() - Club.Level() > Session.Instance.Random(-10, -5))
+                //If the player have a club
+                if (Club != null)
                 {
-                    Contract hisContract = null;
-                    foreach (Contract ct in Club.contracts)
+                    if (sender.Level() - Club.Level() > Session.Instance.Random(-10, -5))
                     {
-                        if (ct.player == this)
+                        Contract hisContract = null;
+                        foreach (Contract ct in Club.contracts)
                         {
-                            hisContract = ct;
+                            if (ct.player == this)
+                            {
+                                hisContract = ct;
+                            }
+                        }
+                        //If proposed wage is a little bit increasing in relation to his current wage
+                        if ((oc.Wage + 0.0f) / hisContract.wage > (Session.Instance.Random(100, 120) / 100.0f))
+                        {
+                            CityClub ancien = Club as CityClub;
+                            Club.ModifyBudget(oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
+                            sender.ModifyBudget(-oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
+                            Club.RemovePlayer(this);
+                            sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                            res = true;
+                            _foundANewClubThisSeason = true;
                         }
                     }
-                    //If proposed wage is a little bit increasing in relation to his current wage
-                    if ((oc.Wage + 0.0f) / hisContract.wage > (Session.Instance.Random(100, 120) / 100.0f))
+                }
+                //It was a free player
+                else
+                {
+                    //If wage proposed is not too bad (at least between 0.7 et 1 of his "real wage value")
+                    if ((oc.Wage + 0.0f) / EstimateWage() > (Session.Instance.Random(70, 100) / 100.0f))
                     {
-                        Club ancien = Club;
-                        Club.RemovePlayer(this);
-                        sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                        Session.Instance.Game.kernel.freePlayers.Remove(this);
+                        Contract ct = new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day));
+                        sender.AddPlayer(ct);
                         res = true;
+                        _foundANewClubThisSeason = true;
+                        Console.WriteLine(lastName + "->" + sender.shortName + "(" + sender.contracts.Contains(ct) + ")");
                     }
                 }
             }
-            else
-            {
-                //If wage proposed is not too bad (at least between 0.7 et 1 of his "real wage value")
-                if ((oc.Wage + 0.0f) / EstimateWage() > (Session.Instance.Random(70, 100) / 100.0f))
-                {
-                    sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
-                    res = true;
-                }
-            }
+            oc.Successful = res;
             return res;
         }
 

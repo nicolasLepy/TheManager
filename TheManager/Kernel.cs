@@ -56,6 +56,8 @@ namespace TheManager
         [DataMember]
         private List<Journalist> _freeJournalists;
 
+        
+
         public List<Club> Clubs { get => _clubs; }
 
         public List<Tournament> Competitions

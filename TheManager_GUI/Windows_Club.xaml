@@ -102,7 +102,7 @@
 						</DataGrid.Columns>
 					</DataGrid>
 					<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="250" Width="475">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="225" Width="475">
 						<StackPanel Name="spMatchs" Orientation="Vertical">
 
 						</StackPanel>
