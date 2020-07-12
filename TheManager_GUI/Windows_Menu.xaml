@@ -45,7 +45,7 @@
 									<TextBlock Style="{StaticResource StyleTextBlock}" TextWrapping="WrapWithOverflow">Dijon s'impose 4 buts à contre le Paris Saint-Germain</TextBlock>
 								</StackPanel>
 							</StackPanel>
-							<StackPanel Orientation="Vertical" Width="380">
+							<StackPanel Orientation="Vertical" Width="400">
 								<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
 								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="450">
 									<StackPanel x:Name="spRoundRanking">

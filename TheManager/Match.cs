@@ -562,16 +562,15 @@ namespace TheManager
 
         private void SetOdds()
         {
-            float homeN = home.Level() * 1.1f;
+            float homeN = home.Level() * 1.05f;
             float awayN = away.Level();
             
             float ratioD = homeN / awayN;
-            ratioD *= ratioD * ratioD * ratioD;
+            ratioD *= ratioD * ratioD * ratioD * ratioD;
 
             float ratioE = awayN / homeN;
-            ratioE *= ratioE * ratioE * ratioE;
+            ratioE *= ratioE * ratioE * ratioE * ratioE;
 
-            
             odd1 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioD - 3f))));
             odd2 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioE - 3f))));
             
