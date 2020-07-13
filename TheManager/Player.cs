@@ -224,7 +224,6 @@ namespace TheManager
                         //If proposed wage is a little bit increasing in relation to his current wage
                         if ((oc.Wage + 0.0f) / hisContract.wage > (Session.Instance.Random(100, 120) / 100.0f))
                         {
-                            CityClub ancien = Club as CityClub;
                             Club.ModifyBudget(oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
                             sender.ModifyBudget(-oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
                             Club.RemovePlayer(this);
