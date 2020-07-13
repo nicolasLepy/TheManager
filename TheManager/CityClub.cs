@@ -537,7 +537,7 @@ namespace TheManager
             {
                 Player j = Session.Instance.Game.kernel.freePlayers[i];
                 //Likely to interest the club
-                if ((Session.Instance.Random(1,chance) == 1) && j.level / level > 0.90f)
+                if ((Session.Instance.Random(1,chance) == 1) && j.level / level > 0.90f && j.EstimateWage() < (_budget/18))
                 {
                     //If the player has not a pro level, it has to be on the same country
                     //(unrealistic to have many foreign player in amateur club)

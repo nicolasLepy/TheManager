@@ -245,7 +245,6 @@ namespace TheManager
                         sender.AddPlayer(ct);
                         res = true;
                         _foundANewClubThisSeason = true;
-                        Console.WriteLine(lastName + "->" + sender.shortName + "(" + sender.contracts.Contains(ct) + ")");
                     }
                 }
             }

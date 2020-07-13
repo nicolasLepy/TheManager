@@ -48,11 +48,11 @@ namespace TheManager_GUI
                     spEntry.Children.Add(ViewUtils.CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 11, 70));
                     if(be.Amount < 0)
                     {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75, Brushes.Red));
+                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("F") + "€", "StyleLabel2", 11, 75, Brushes.Red));
                     }
                     else
                     {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString() + "€", "StyleLabel2", 11, 75));
+                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("F") + "€", "StyleLabel2", 11, 75));
                     }
 
                     spEntry.Children.Add(ViewUtils.CreateLabel(be.Reason.ToString(), "StyleLabel2", 10, 100));
