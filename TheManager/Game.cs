@@ -163,6 +163,7 @@ namespace TheManager
                 CityClub cv = c as CityClub;
                 if (cv != null)
                 {
+                    DNCGPassage(cv);
                     int totalGames = 0;
                     int totalAttendance = 0;
                     foreach(Match m in cv.Games)
@@ -217,6 +218,21 @@ namespace TheManager
 
         }
 
+        /// <summary>
+        /// All clubs finances are examined. If the situation is critical, DNCG can prevent clubs to recruit during the transfers market
+        /// </summary>
+        public void DNCGPassage(CityClub cc)
+        {
+            bool noRecruiting = false;
+            if((cc.budget < 0) && cc.history.elements.Count > 0 && cc.budget + (cc.budget - cc.history.elements[cc.history.elements.Count-1].budget) < 0)
+            {
+                noRecruiting = true;
+                Console.WriteLine(cc.name + " est interdit de recrutement (budget : " + cc.budget + ")");
+            }
+            cc.isForbiddenToRecruit = noRecruiting;
+                
+        }
+
         public void Transfers()
         {
             //First day of the transfers market, clubs create a list of targets
@@ -224,9 +240,10 @@ namespace TheManager
             {
                 foreach (Club c in kernel.Clubs)
                 {
-                    if (c as CityClub != null)
+                    CityClub cc = c as CityClub;
+                    if (cc != null && !cc.isForbiddenToRecruit)
                     {
-                        (c as CityClub).SearchFreePlayers();
+                        cc.SearchFreePlayers();
                     }
                 }
             }

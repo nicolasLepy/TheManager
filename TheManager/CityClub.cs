@@ -82,10 +82,13 @@ namespace TheManager
         private List<ReserveClub> _reserves;
         [DataMember]
         private bool _isFannion;
+        [DataMember]
+        private bool _isForbiddenToRecruit;
 
         public int budget { get => _budget; }
         public City city { get => _city; }
         public float sponsor { get => _sponsor; }
+        public bool isForbiddenToRecruit { get => _isForbiddenToRecruit; set => _isForbiddenToRecruit = value; }
         public List<Contract> contracts { get => _players; }
 
         /// <summary>
@@ -136,6 +139,7 @@ namespace TheManager
             _isFannion = isFannion;
             _reserves = new List<ReserveClub>();
             _budgetHistory = new List<BudgetEntry>();
+            _isForbiddenToRecruit = false;
         }
 
         public void AddPlayer(Contract c)
