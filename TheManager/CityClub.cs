@@ -9,7 +9,7 @@ using TheManager.Comparators;
 namespace TheManager
 {
 
-    [DataContract(IsReference = true)]
+    [DataContract]
     public struct ContractOffer : IEquatable<ContractOffer>
     {
         [DataMember]
