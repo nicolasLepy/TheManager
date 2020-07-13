@@ -180,7 +180,7 @@ namespace TheManager
                     cv.history.elements.Add(new HistoricEntry(new DateTime(date.Year, date.Month, date.Day), cv.budget, cv.formationFacilities, totalAttendance));
                     //Prolong the players
                     List<Contract> playersToFree = new List<Contract>();
-                    foreach (Contract ct in cv.contracts)
+                    foreach (Contract ct in cv.allContracts)
                     {
                         ct.player.UpdateLevel();
                         if (ct.end.Year == date.Year)

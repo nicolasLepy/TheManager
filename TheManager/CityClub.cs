@@ -87,6 +87,22 @@ namespace TheManager
         public City city { get => _city; }
         public float sponsor { get => _sponsor; }
         public List<Contract> contracts { get => _players; }
+
+        /// <summary>
+        /// Get the list of contracts of the club, including contracts in reserves teams
+        /// </summary>
+        public List<Contract> allContracts
+        {
+            get
+            {
+                List<Contract> res = new List<Contract>(_players);
+                foreach(ReserveClub rc in _reserves)
+                {
+                    res.AddRange(rc.Contracts);
+                }
+                return res;
+            }
+        }
         public ClubHistory history { get => _historic; }
         public ClubTransfersManagement clubTransfersManagement { get => _clubTransfersManagement; }
         public List<ReserveClub> reserves { get => _reserves; }
@@ -405,7 +421,9 @@ namespace TheManager
                 enoughGood = false;
             }
 
-            if(_budget > 12*wage && validAge && enoughGood)
+            float newSalaryMassForYear = (SalaryMass - ct.wage + wage)*12;
+
+            if(_budget > newSalaryMassForYear && validAge && enoughGood)
             {
                 res = true;
                 int year = Session.Instance.Random(Session.Instance.Game.date.Year + 1, Session.Instance.Game.date.Year + 5);
