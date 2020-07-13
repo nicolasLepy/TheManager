@@ -143,6 +143,7 @@ namespace TheManager
             _players.Add(c);
         }
 
+
         public void RemovePlayer(Player j)
         {
             Contract toRemove = null;
@@ -154,11 +155,29 @@ namespace TheManager
                     toRemove = ct;
                 }
             }
-
             if (toRemove != null)
             {
                 _players.Remove(toRemove);
             }
+
+
+            foreach (ReserveClub rc in _reserves)
+            {
+                toRemove = null;
+
+                foreach (Contract ct in rc.Contracts)
+                {
+                    if (ct.player == j)
+                    {
+                        toRemove = ct;
+                    }
+                }
+                if (toRemove != null)
+                {
+                    rc.Contracts.Remove(toRemove);
+                }
+            }
+
         }
 
         public override List<Player> Players()

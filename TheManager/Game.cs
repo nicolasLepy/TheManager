@@ -195,7 +195,8 @@ namespace TheManager
                     //Free not prolonged player
                     foreach (Contract ct in playersToFree)
                     {
-                        cv.contracts.Remove(ct);
+                        cv.RemovePlayer(ct.player);
+                        //cv.contracts.Remove(ct);
                         _kernel.freePlayers.Add(ct.player);
                     }
 
