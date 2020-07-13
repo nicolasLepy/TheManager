@@ -241,6 +241,7 @@ namespace TheManager_GUI.VueClassement
                 dg.Items.Add(me);
             }
             _panel.Children.Clear();
+            dg.Height = _panel.Height;
             _panel.Children.Add(dg);
             dg.UpdateLayout();
 
