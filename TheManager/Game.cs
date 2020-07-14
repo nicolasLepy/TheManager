@@ -205,7 +205,7 @@ namespace TheManager
                     cv.UpdateFormationFacilities();
                     cv.GenerateJuniors();
                     //Put undesirable players on transfers list
-                    cv.UpdateTransfertList();
+                    //cv.UpdateTransfertList();
 
                     //If savegame size is alleged, we delete all the budget change entry history
                     if (Session.Instance.Game.options.reduceSaveSize)
@@ -238,15 +238,28 @@ namespace TheManager
             //First day of the transfers market, clubs create a list of targets
             if (date.Month == 7 && date.Day == 2)
             {
+                //Put undesirable players on transfers list
+                foreach (Club c in kernel.Clubs)
+                {
+                    CityClub cc = c as CityClub;
+                    if (cc != null && !cc.isForbiddenToRecruit)
+                    {
+                        cc.UpdateTransfertList();
+                    }
+                }
+
+
                 foreach (Club c in kernel.Clubs)
                 {
                     CityClub cc = c as CityClub;
                     if (cc != null && !cc.isForbiddenToRecruit)
                     {
                         cc.SearchFreePlayers();
+                        cc.SearchInTransferList();
                     }
                 }
             }
+
             if (date.Month == 7 || date.Month == 8)
             {
                 //Clubs search for free players

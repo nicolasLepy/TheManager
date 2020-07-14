@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
@@ -64,6 +65,9 @@ namespace TheManager
         private List<ContractOffer> _offersHistory;
 
         public List<Player> targetedPlayers { get => _targetedPlayers; }
+        /// <summary>
+        /// List of offers send by the club
+        /// </summary>
         public List<ContractOffer> offers { get => _offers; }
         public List<ContractOffer> receivedOffers => _receivedOffers;
         public List<ContractOffer> offersHistory { get => _offersHistory; }
@@ -73,6 +77,7 @@ namespace TheManager
             _targetedPlayers = new List<Player>();
             _offers = new List<ContractOffer>();
             _offersHistory = new List<ContractOffer>();
+            _receivedOffers = new List<ContractOffer>();
         }
     }
 
@@ -290,6 +295,19 @@ namespace TheManager
             contracts.Add(new Contract(j, j.EstimateWage(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
         }
 
+        public Contract FindContract(Player p)
+        {
+            Contract res = null;
+            foreach(Contract c in allContracts)
+            {
+                if(c.player == p)
+                {
+                    res = c;
+                }
+            }
+            return res;
+        }
+
         public void GeneratePlayer(int minAge, int maxAge)
         {
             Position p = Position.Goalkeeper;
@@ -475,10 +493,18 @@ namespace TheManager
         public void UpdateTransfertList()
         {
             float clubLevel = Level();
+
+            double ratioLimit = 0.80;
+            //If the financial situation of the club is complicated, they will try to sell more players
+            if(budget < 0)
+            {
+                ratioLimit = 0.92;
+            }
+
             foreach(Contract ct in _players)
             {
                 //If a player is too bad for the club
-                if (ct.player.potential / clubLevel < 0.80)
+                if (ct.player.potential / clubLevel < ratioLimit)
                 {
                     ct.isTransferable = true;
                 }
@@ -489,13 +515,15 @@ namespace TheManager
             }
         }
 
-        public void ReceiveOffer(Contract contract, CityClub interestedClub, int amount, int wage, int contractDuration)
+        public bool ReceiveOffer(Contract contract, CityClub interestedClub, int amount, int wage, int contractDuration)
         {
+            bool accepted = false;
             if(contract.isTransferable)
             {
-                if(amount > contract.player.EstimateTransferValue())
+                if(amount >= contract.player.EstimateTransferValue())
                 {
                     interestedClub.clubTransfersManagement.receivedOffers.Add(new ContractOffer(contract.player, wage, contractDuration, amount, this));
+                    accepted = true;
                 }
             }
             else
@@ -503,8 +531,10 @@ namespace TheManager
                 if(amount > contract.player.EstimateTransferValue()*1.2f)
                 {
                     interestedClub.clubTransfersManagement.receivedOffers.Add(new ContractOffer(contract.player, wage, contractDuration, amount, this));
+                    accepted = true;
                 }
             }
+            return accepted;
         }
 
         /// <summary>
@@ -526,7 +556,7 @@ namespace TheManager
                     }
 
                 }
-                int nbGames = Session.Instance.Random(3, 6);
+                int nbGames = Session.Instance.Random(2, 5);
                 if (nbGames > possibleOpponents.Count)
                 {
                     nbGames = possibleOpponents.Count;
@@ -599,6 +629,59 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Evaluate a player and determine if it is worth to try to recruit him
+        /// </summary>
+        /// <param name="player">The player to evaluate</param>
+        private void EvaluatePlayer(Player player)
+        {
+            
+        }
+
+        /// <summary>
+        /// Search player in transfer list
+        /// </summary>
+        public void SearchInTransferList()
+        {
+            int cumulatedTransferValue = 0;
+            float level = Level();
+            int playersToResearch = GetPlayersToResearch(level);
+            int playersFound = 0;
+            int chance = 150 - (int)level;
+            List<Player> transferables = Session.Instance.Game.kernel.TransfertList(Championship);
+            transferables.Sort(new PlayerLevelComparator());
+            int i = 0;
+            while(i < transferables.Count && playersFound < playersToResearch)
+            {
+                Player p = transferables[i];
+                int wage = p.EstimateWage();
+                int transferValue = p.EstimateTransferValue();
+                if(p.level / level > 1 && cumulatedTransferValue + transferValue < (_budget/2) && Session.Instance.Random(1, chance) == 1 && wage < (_budget / 18)){
+                    cumulatedTransferValue += transferValue;
+                    clubTransfersManagement.targetedPlayers.Add(p);
+                    playersFound++;
+                    int contractDuration = Session.Instance.Random(1, 5);
+                    Console.WriteLine("offer ? ");
+                    if (p.Club.ReceiveOffer(p.Club.FindContract(p), this, transferValue, wage, contractDuration))
+                    {
+                        clubTransfersManagement.offers.Add(new ContractOffer(p, wage, contractDuration, transferValue, p.Club));
+                        Console.WriteLine("offer ! ");
+                    }
+                }
+                i++;
+            }
+        }
+
+        private int GetPlayersToResearch(float level)
+        {
+            int playersToResearch = 20 - PlayerWithAcceptableLevel(level);
+            if (playersToResearch < 0)
+            {
+                playersToResearch = 0;
+            }
+            return playersToResearch;
+        }
+
+        /// <summary>
         /// Search for free players and list them
         /// </summary>
         public void SearchFreePlayers()
@@ -610,18 +693,15 @@ namespace TheManager
 
             int chance = 100 - (int)level;
 
-            int playersToResearch = 20 - PlayerWithAcceptableLevel(level);
-            if (playersToResearch < 0)
-            {
-                playersToResearch = 0;
-            }
+            int playersToResearch = GetPlayersToResearch(level);
 
             int i = 0;
             bool pursue = true;
             int playersFound = 0;
-            while(pursue)
+            List<Player> freePlayers = Session.Instance.Game.kernel.freePlayers;
+            while (pursue)
             {
-                Player j = Session.Instance.Game.kernel.freePlayers[i];
+                Player j = freePlayers[i];
                 //Likely to interest the club
                 if ((Session.Instance.Random(1,chance) == 1) && j.level / level > 0.90f && j.EstimateWage() < (_budget/18))
                 {

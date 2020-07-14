@@ -65,6 +65,10 @@ namespace TheManager_GUI
         private void RefreshTransferListPanel()
         {
             spTransferList.Children.Clear();
+            foreach(Player p in Session.Instance.Game.kernel.TransfertList(Session.Instance.Game.club.Championship))
+            {
+                spTransferList.Children.Add(ViewUtils.CreateLabel(p.lastName + " - " + p.level + " - " + p.potential + " - " + p.EstimateTransferValue(), "StyleLabel2", 8,100));
+            }
             foreach(Club c in Session.Instance.Game.club.Championship.rounds[0].clubs)
             {
                 CityClub cc = c as CityClub;
@@ -116,16 +120,6 @@ namespace TheManager_GUI
                 tb.Style = Application.Current.FindResource("StyleTextBlockLittle") as Style;
                 spNews.Children.Add(tb);
             }
-            /*
-            foreach (Article a in Session.Instance.Game.articles)
-            {
-                TextBlock tb = new TextBlock();
-                tb.TextWrapping = TextWrapping.WrapWithOverflow;
-                tb.Text = a.publication.ToShortDateString() + " - " + a.title;
-                tb.Style = Application.Current.FindResource("StyleTextBlockLittle") as Style;
-                spNews.Children.Add(tb);
-
-            }*/
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
