@@ -570,8 +570,21 @@ namespace TheManager
                 int wage = (int)(target.EstimateWage() * (Session.Instance.Random(80, 120) / 100.0f));
                 clubTransfersManagement.offers.Add(new ContractOffer(target, wage, Session.Instance.Random(1, 5), 0, target.Club));
                 clubTransfersManagement.targetedPlayers.RemoveAt(0);
-                Console.WriteLine("targetted " + target.Club?.name);
             }
+        }
+
+        public int PlayerWithAcceptableLevel(float level)
+        {
+            int res = 0;
+            foreach(Contract c in allContracts)
+            {
+                if(c.player.level > level - 6)
+                {
+                    res++;
+                }
+            }
+
+            return res;
         }
 
         /// <summary>
@@ -586,7 +599,7 @@ namespace TheManager
 
             int chance = 100 - (int)level;
 
-            int playersToResearch = 20 - contracts.Count;
+            int playersToResearch = 20 - PlayerWithAcceptableLevel(level);
             if (playersToResearch < 0)
             {
                 playersToResearch = 0;
@@ -607,7 +620,6 @@ namespace TheManager
                     if(can)
                     {
                         clubTransfersManagement.targetedPlayers.Add(j);
-                        Console.WriteLine(j.Club);
                         playersFound++;
                     }
                 }

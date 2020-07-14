@@ -244,22 +244,12 @@ namespace TheManager
                     if (cc != null && !cc.isForbiddenToRecruit)
                     {
                         cc.SearchFreePlayers();
+                        Console.WriteLine(cc.shortName + " - " + cc.clubTransfersManagement.targetedPlayers.Count);
                     }
                 }
             }
             if (date.Month == 7 || date.Month == 8)
             {
-
-                //Joueurs checks leurs offres
-                /*foreach (Club c in Gestionnaire.Clubs) if ((c as Club_Ville) != null) foreach (Joueur j in c.Joueurs()) j.ConsidererOffres();
-                List<Joueur> aRetirer = new List<Joueur>();
-                foreach (Joueur j in Gestionnaire.JoueursLibres)
-                {
-                    j.ConsidererOffres();
-                    if (j.Club != null) aRetirer.Add(j);
-                }
-                foreach (Joueur j in aRetirer) Gestionnaire.JoueursLibres.Remove(j);
-                */
                 //Clubs search for free players
                 foreach (Club c in kernel.Clubs)
                 {
