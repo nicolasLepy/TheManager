@@ -43,6 +43,33 @@ namespace TheManager
         private readonly List<string> _nl_o = new List<string>();
 
 
+        public string GenerateArticle(ContractOffer co, CityClub to)
+        {
+            string res = "";
+            string priceStr = "";
+
+            if(co.TransferIndemnity > 0)
+            {
+                priceStr = "Pour " + co.TransferIndemnity + " €";
+            }
+
+            switch (co.Result)
+            {
+                case ContractOfferResult.Successful:
+                    res = co.Player.lastName + " rejoint " + to.shortName + " " + priceStr + ".";
+                    if(co.Origin == null)
+                    {
+                        res += " Le joueur était libre.";
+                    }
+                    break;
+                case ContractOfferResult.NoAgreementWithPlayer:
+                    res = to.shortName + " n'arrive pas à s'entendre avec " + co.Player.lastName + ".";
+                    break;
+
+            }
+            return res;
+
+        }
 
         public string GenerateArticle(Match match)
         {

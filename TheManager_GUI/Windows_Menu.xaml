@@ -41,9 +41,7 @@
 								</StackPanel>
 								<Button Name="btnCompetition" Content="Ouvrir" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
 								<Label Content="News" Style="{StaticResource StyleLabel1}"/>
-								<StackPanel Orientation="Vertical" Name="spNews">
-									<TextBlock Style="{StaticResource StyleTextBlock}" TextWrapping="WrapWithOverflow">Dijon s'impose 4 buts à contre le Paris Saint-Germain</TextBlock>
-								</StackPanel>
+								
 							</StackPanel>
 							<StackPanel Orientation="Vertical" Width="425">
 								<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
@@ -69,33 +67,41 @@
 						</StackPanel>
 					</StackPanel>
 					<!-- côté droit, info sur le club contrôlé -->
-					<StackPanel Orientation="Horizontal" Width="675">
-						<StackPanel Orientation="Vertical" Width="285">
-							<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
-							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="500">
-								<StackPanel Orientation="Vertical" Name="spTransferList">
-									
+					<StackPanel Orientation="Vertical" Width="675">
+						<StackPanel Orientation="Horizontal" Width="675" Height="475">
+							<StackPanel Orientation="Vertical" Width="285">
+								<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
+								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
+									<StackPanel Orientation="Vertical" Name="spTransferList">
+
+									</StackPanel>
+								</ScrollViewer>
+							</StackPanel>
+							<StackPanel Orientation="Vertical" Width="350">
+								<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
+								<StackPanel Name="spNextMatches">
+
 								</StackPanel>
-							</ScrollViewer>
-						</StackPanel>
-						<StackPanel Orientation="Vertical" Width="350">
-							<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
-							<StackPanel Name="spNextMatches">
 
-							</StackPanel>
+								<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
+								<StackPanel Orientation="Vertical" Name="spRanking" Width="440">
+								</StackPanel>
 
-							<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
-							<StackPanel Orientation="Vertical" Name="spRanking" Width="440">
-							</StackPanel>
+								<Label Content="Prochain match" Style="{StaticResource StyleLabel2}"/>
+								<StackPanel Orientation="Vertical" Name="spNextMatchBox" HorizontalAlignment="Center">
 
-							<Label Content="Prochain match" Style="{StaticResource StyleLabel2}"/>
-							<StackPanel Orientation="Vertical" Name="spNextMatchBox" HorizontalAlignment="Center">
-
-							</StackPanel>
-							<StackPanel Orientation="Horizontal" Name="spNextMatch" HorizontalAlignment="Center">
+								</StackPanel>
+								<StackPanel Orientation="Horizontal" Name="spNextMatch" HorizontalAlignment="Center">
+								</StackPanel>
 							</StackPanel>
 						</StackPanel>
+						<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
+							<StackPanel Orientation="Vertical" Name="spNews">
+
+							</StackPanel>
+						</ScrollViewer>
 					</StackPanel>
+					
 				</StackPanel>
 
 			</StackPanel>

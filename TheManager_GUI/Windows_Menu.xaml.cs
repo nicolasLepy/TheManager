@@ -103,10 +103,21 @@ namespace TheManager_GUI
             }
         }
 
-        private void RemplirArticles()
+        private void FillNews()
         {
             spNews.Children.Clear();
-            foreach(Article a in Session.Instance.Game.articles)
+            //Read article in inverted sense, the last news will appear on top
+            for(int i = Session.Instance.Game.articles.Count-1; i>=0; i--)
+            {
+                Article a = Session.Instance.Game.articles[i];
+                TextBlock tb = new TextBlock();
+                tb.TextWrapping = TextWrapping.WrapWithOverflow;
+                tb.Text = a.publication.ToShortDateString() + " - " + a.title;
+                tb.Style = Application.Current.FindResource("StyleTextBlockLittle") as Style;
+                spNews.Children.Add(tb);
+            }
+            /*
+            foreach (Article a in Session.Instance.Game.articles)
             {
                 TextBlock tb = new TextBlock();
                 tb.TextWrapping = TextWrapping.WrapWithOverflow;
@@ -114,7 +125,7 @@ namespace TheManager_GUI
                 tb.Style = Application.Current.FindResource("StyleTextBlockLittle") as Style;
                 spNews.Children.Add(tb);
 
-            }
+            }*/
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
@@ -240,7 +251,7 @@ namespace TheManager_GUI
                 NextGamesOfClub();
                 ClassementClub();
                 BandeauActualites();
-                RemplirArticles();
+                FillNews();
                 FillNextMatchPanel();
                 RefreshTransferListPanel();
             }

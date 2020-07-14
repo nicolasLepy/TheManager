@@ -28,6 +28,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | ------------------------------------------------------------------------- |
 | Evolution of club training facilities                                     |
 | Reserves teams                                                            |
+| Can be forbidden to recruit if their finances are bad                     |
 
 | Tournaments                                                               | 
 | ------------------------------------------------------------------------- |

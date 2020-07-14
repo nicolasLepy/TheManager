@@ -556,6 +556,17 @@ namespace TheManager
                 ContractOffer oc = clubTransfersManagement.offers[i];
                 oc.Result = oc.Player.ConsiderOffer(oc, this);
                 clubTransfersManagement.offers[i] = oc;
+
+                if (Session.Instance.Game.club.Championship.rounds[0].clubs.Contains(this))
+                {
+                    string res = ArticleGenerator.Instance.GenerateArticle(oc, this);
+                    if (res != "")
+                    {
+                        Article article = new Article(res, "", new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day), 2);
+                        Session.Instance.Game.articles.Add(article);
+                    }
+                }
+
             }
 
             clubTransfersManagement.offersHistory.AddRange(clubTransfersManagement.offers);

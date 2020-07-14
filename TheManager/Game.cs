@@ -244,7 +244,6 @@ namespace TheManager
                     if (cc != null && !cc.isForbiddenToRecruit)
                     {
                         cc.SearchFreePlayers();
-                        Console.WriteLine(cc.shortName + " - " + cc.clubTransfersManagement.targetedPlayers.Count);
                     }
                 }
             }
