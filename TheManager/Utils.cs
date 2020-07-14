@@ -10,10 +10,13 @@ namespace TheManager
     {
 
         public readonly static int beginningYear = 2019;
-        public readonly static string imagesFolderName = "Images";
-        public readonly static string tournamentLogoFolderName = "Logo";
-        public readonly static string clubLogoFolderName = "Logos";
-        public readonly static string nationalFlagsFolderName = "Drapeaux";
+        public readonly static string imagesFolderName = "images";
+        public readonly static string tournamentLogoFolderName = "tournaments";
+        public readonly static string clubLogoFolderName = "clubs";
+        public readonly static string nationalFlagsFolderName = "flags";
+        public readonly static string namesSubfolderName = "names";
+        public readonly static string dataFolderName = "data";
+        public readonly static string musicFolderName = "music";
 
         public readonly static string friendlyTournamentName = "Matchs amicaux";
         public static int DaysNumberBetweenTwoDates(DateTime a, DateTime b)
@@ -347,7 +350,7 @@ namespace TheManager
 
         public static string PathSong(string song)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\Musiques\\" + song + ".wav";
+            return System.IO.Directory.GetCurrentDirectory() + "\\"+ musicFolderName + "\\" + song + ".wav";
         }
 
         public static bool RetoursContient(RetourMatchEvenement evenement, List<RetourMatch> retours)

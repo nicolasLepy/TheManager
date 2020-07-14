@@ -113,7 +113,7 @@ namespace TheManager
         {
             int id = 0;
 
-            XDocument doc = XDocument.Load("Donnees/clubs.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs.xml");
 
             foreach(XElement x in doc.Descendants("Clubs"))
             {
@@ -134,13 +134,13 @@ namespace TheManager
 
             }
 
-            doc.Save("Donnees/clubs_id.xml");
+            doc.Save(Utils.dataFolderName + "/clubs_id.xml");
 
         }
 
         private void ReplaceCompetitionId()
         {
-            XDocument doc = XDocument.Load("Donnees/competitions.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/competitions.xml");
 
             foreach(XElement x in doc.Descendants("Club"))
             {
@@ -151,7 +151,7 @@ namespace TheManager
                 x.Add(new XAttribute("id", id_club));
             }
 
-            doc.Save("Donnees/competitions_id.xml");
+            doc.Save(Utils.dataFolderName + "/competitions_id.xml");
         }
 
         public void Load()
@@ -176,7 +176,7 @@ namespace TheManager
 
         public void LoadGamesComments()
         {
-            XDocument doc = XDocument.Load("Donnees/actions.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/actions.xml");
             foreach (XElement e in doc.Descendants("Actions"))
             {
                 foreach (XElement e2 in e.Descendants("Action"))
@@ -212,7 +212,7 @@ namespace TheManager
 
         public void LoadMedias()
         {
-            XDocument doc = XDocument.Load("Donnees/medias.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/medias.xml");
             foreach (XElement e in doc.Descendants("Medias"))
             {
                 foreach (XElement e2 in e.Descendants("Media"))
@@ -271,7 +271,7 @@ namespace TheManager
 
         public void LoadPlayers()
         {
-            StreamReader reader = new StreamReader("Donnees/joueurs.xml", Encoding.UTF8);
+            StreamReader reader = new StreamReader(Utils.dataFolderName + "/joueurs.xml", Encoding.UTF8);
             XDocument doc = XDocument.Load(reader);
             foreach (XElement e in doc.Descendants("Joueurs"))
             {
@@ -308,7 +308,7 @@ namespace TheManager
 
         public void LoadManagers()
         {
-            XDocument doc = XDocument.Load("Donnees/entraineurs.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/entraineurs.xml");
             foreach (XElement e in doc.Descendants("Entraineurs"))
             {
                 foreach (XElement e2 in e.Descendants("Entraineur"))
@@ -328,7 +328,7 @@ namespace TheManager
 
         public void LoadCities()
         {
-            XDocument doc = XDocument.Load("Donnees/villes.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/villes.xml");
             foreach (XElement e in doc.Descendants("Villes"))
             {
                 foreach (XElement e2 in e.Descendants("Ville"))
@@ -345,7 +345,7 @@ namespace TheManager
 
         public void LoadGeography()
         {
-            XDocument doc = XDocument.Load("Donnees/continents.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/continents.xml");
             foreach (XElement e in doc.Descendants("Monde"))
             {
                 foreach (XElement e2 in e.Descendants("Continent"))
@@ -377,7 +377,7 @@ namespace TheManager
 
         public void LoadStadiums()
         {
-            XDocument doc = XDocument.Load("Donnees/stades.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/stades.xml");
             foreach (XElement e in doc.Descendants("Stades"))
             {
                 foreach (XElement e2 in e.Descendants("Stade"))
@@ -394,7 +394,7 @@ namespace TheManager
 
         public void LoadClubs()
         {
-            XDocument doc = XDocument.Load("Donnees/clubs.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs.xml");
             
             foreach(XElement e in doc.Descendants("Clubs"))
             {
@@ -519,7 +519,7 @@ namespace TheManager
         
         public void LoadTournaments()
         {
-            XDocument doc = XDocument.Load("Donnees/competitions.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/competitions.xml");
 
             //Chargement préliminaire de toutes les compétitons pour les référancer
             foreach (XElement e in doc.Descendants("Competitions"))
@@ -818,12 +818,12 @@ namespace TheManager
         private void LoadLanguage(string languageName, string filename)
         {
             Language language = new Language(languageName);
-            string[] text = System.IO.File.ReadAllLines("Donnees/" + filename + "_p.txt", Encoding.UTF8);
+            string[] text = System.IO.File.ReadAllLines(Utils.dataFolderName + "/" + Utils.namesSubfolderName + "/" + filename + "_p.txt", Encoding.UTF8);
             foreach(string line in text)
             {
                 language.AddFirstName(line);
             }
-            text = System.IO.File.ReadAllLines("Donnees/" + filename + "_n.txt", Encoding.UTF8);
+            text = System.IO.File.ReadAllLines(Utils.dataFolderName + "/" + Utils.namesSubfolderName + "/" + filename + "_n.txt", Encoding.UTF8);
             foreach (string line in text)
             {
                 language.AddLastName(line);

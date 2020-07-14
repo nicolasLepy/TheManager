@@ -122,7 +122,7 @@ namespace TheManager
 
         private void LoadArticles()
         {
-            XDocument doc = XDocument.Load("Donnees/articles.xml");
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/articles.xml");
             foreach (XElement e in doc.Descendants("Articles"))
             {
                 foreach (XElement e2 in e.Descendants("Article"))
