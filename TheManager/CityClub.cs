@@ -9,6 +9,16 @@ using TheManager.Comparators;
 namespace TheManager
 {
 
+    public enum ContractOfferResult
+    {
+        Waiting,
+        Successful,
+        OtherOfferAlreadyAccepted,
+        NoAgreementWithPlayer,
+        NoAgreementWithClub
+
+    }
+
     [DataContract]
     public struct ContractOffer : IEquatable<ContractOffer>
     {
@@ -20,16 +30,19 @@ namespace TheManager
         public Player Player { get; set; }
         [DataMember]
         public int TransferIndemnity { get; set; }
+        [DataMember]
+        public ContractOfferResult Result { get; set; }
+        [DataMember]
+        public CityClub Origin { get; set; }
 
-        public bool Successful { get; set; }
-
-        public ContractOffer(Player player, int wage, int contractDuration, int transferIndemnity)
+        public ContractOffer(Player player, int wage, int contractDuration, int transferIndemnity, CityClub origin)
         {
             Player = player;
             Wage = wage;
             ContractDuration = contractDuration;
             TransferIndemnity = transferIndemnity;
-            Successful = true;
+            Result = ContractOfferResult.Waiting;
+            Origin = origin;
         }
 
         public bool Equals(ContractOffer other)
@@ -46,10 +59,13 @@ namespace TheManager
         [DataMember]
         private List<ContractOffer> _offers;
         [DataMember]
+        private List<ContractOffer> _receivedOffers;
+        [DataMember]
         private List<ContractOffer> _offersHistory;
 
         public List<Player> targetedPlayers { get => _targetedPlayers; }
         public List<ContractOffer> offers { get => _offers; }
+        public List<ContractOffer> receivedOffers => _receivedOffers;
         public List<ContractOffer> offersHistory { get => _offersHistory; }
 
         public ClubTransfersManagement()
@@ -479,16 +495,14 @@ namespace TheManager
             {
                 if(amount > contract.player.EstimateTransferValue())
                 {
-                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration, amount));
-                    //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
+                    interestedClub.clubTransfersManagement.receivedOffers.Add(new ContractOffer(contract.player, wage, contractDuration, amount, this));
                 }
             }
             else
             {
                 if(amount > contract.player.EstimateTransferValue()*1.2f)
                 {
-                    interestedClub.clubTransfersManagement.offers.Add(new ContractOffer(contract.player, wage, contractDuration, amount));
-                    //contrat.Joueur.Offres.Add(new OffreContrat(interessee, salaire, dureeContrat));
+                    interestedClub.clubTransfersManagement.receivedOffers.Add(new ContractOffer(contract.player, wage, contractDuration, amount, this));
                 }
             }
         }
@@ -531,11 +545,17 @@ namespace TheManager
             }
         }
 
-        public void ConsiderateOffers()
+        public void ConsiderateReceivedOffers()
         {
-            foreach(ContractOffer oc in clubTransfersManagement.offers)
-            {
-                oc.Player.ConsiderOffer(oc, this);
+            //To be implemented
+        }
+
+        public void ConsiderateSendOffers()
+        {
+            for(int i = 0; i< clubTransfersManagement.offers.Count; i++){
+                ContractOffer oc = clubTransfersManagement.offers[i];
+                oc.Result = oc.Player.ConsiderOffer(oc, this);
+                clubTransfersManagement.offers[i] = oc;
             }
 
             clubTransfersManagement.offersHistory.AddRange(clubTransfersManagement.offers);
@@ -548,8 +568,9 @@ namespace TheManager
             {
                 Player target = clubTransfersManagement.targetedPlayers[0];
                 int wage = (int)(target.EstimateWage() * (Session.Instance.Random(80, 120) / 100.0f));
-                clubTransfersManagement.offers.Add(new ContractOffer(target, wage, Session.Instance.Random(1, 5), 0));
+                clubTransfersManagement.offers.Add(new ContractOffer(target, wage, Session.Instance.Random(1, 5), 0, target.Club));
                 clubTransfersManagement.targetedPlayers.RemoveAt(0);
+                Console.WriteLine("targetted " + target.Club?.name);
             }
         }
 
@@ -586,6 +607,7 @@ namespace TheManager
                     if(can)
                     {
                         clubTransfersManagement.targetedPlayers.Add(j);
+                        Console.WriteLine(j.Club);
                         playersFound++;
                     }
                 }

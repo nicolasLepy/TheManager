@@ -53,7 +53,7 @@ namespace TheManager_GUI
                 {
                     if (p.Tournaments().Count > 0)
                     {
-                        this.comboPays.Items.Add(p); Console.WriteLine(p);
+                        this.comboPays.Items.Add(p);
                     }
                 }
             }
@@ -65,7 +65,7 @@ namespace TheManager_GUI
         private void RefreshTransferListPanel()
         {
             spTransferList.Children.Clear();
-            foreach(Club c in Session.Instance.Game.kernel.Clubs)
+            foreach(Club c in Session.Instance.Game.club.Championship.rounds[0].clubs)
             {
                 CityClub cc = c as CityClub;
                 if(cc != null)
@@ -74,15 +74,29 @@ namespace TheManager_GUI
                     {
                         StackPanel spT = new StackPanel();
                         spT.Orientation = Orientation.Horizontal;
-                        spT.Children.Add(ViewUtils.CreateLabel(co.Player.lastName, "StyleLabel2", 10, 50));
-                        Label labelClub = ViewUtils.CreateLabel(cc.shortName, "StyleLabel2", 10, 70);
+                        Label lbPlayer = ViewUtils.CreateLabel(co.Player.lastName, "StyleLabel2", 8, 40);
+                        lbPlayer.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+                        { Windows_Joueur wj = new Windows_Joueur(co.Player); wj.Show(); };
+                        spT.Children.Add(lbPlayer);
+                        string from = "Libre";
+                        if(co.Origin != null)
+                        {
+                            from = co.Origin.shortName;
+                        }
+                        spT.Children.Add(ViewUtils.CreateLabel(from, "StyleLabel2", 8, 50));
+                        spT.Children.Add(ViewUtils.CreateLabel("->", "StyleLabel2", 8, 10));
+                        Label labelClub = ViewUtils.CreateLabel(cc.shortName, "StyleLabel2", 8, 50);
                         labelClub.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
                         { Windows_Club wc = new Windows_Club(cc);wc.Show(); };
                         spT.Children.Add(labelClub);
+                        if(co.Player.Club != null)
+                        {
+                            spT.Children.Add(ViewUtils.CreateLabel(co.Player.Club.shortName, "StyleLabel2", 8, 30));
+                        }
+                        spT.Children.Add(ViewUtils.CreateLabel(co.TransferIndemnity + "€", "StyleLabel2", 8, 30));
 
-
-
-                        spT.Children.Add(ViewUtils.CreateLabel(co.Successful.ToString(), "StyleLabel2", 10, 40));
+                        
+                        spT.Children.Add(ViewUtils.CreateLabel(co.Result.ToString(), "StyleLabel2", 8, 30));
                         spTransferList.Children.Add(spT);
                     }
                 }

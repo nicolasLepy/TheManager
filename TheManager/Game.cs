@@ -266,7 +266,7 @@ namespace TheManager
                     CityClub cv = c as CityClub;
                     if (cv != null)
                     {
-                        cv.ConsiderateOffers();
+                        cv.ConsiderateSendOffers();
                         cv.SendOfferToPlayers();
                     }
                 }

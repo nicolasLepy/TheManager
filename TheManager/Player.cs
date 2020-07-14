@@ -202,10 +202,10 @@ namespace TheManager
         /// Consider a contract offer
         /// </summary>
         /// <param name="oc">The offer to consider</param>
-        /// <returns>True if the offer was accepted by the player, False if not</returns>
-        public bool ConsiderOffer(ContractOffer oc, CityClub sender)
+        /// <returns>Return the result of the negocations (Successful if was accepted by the player, NoAgreement or AlreadyTransfered if not)</returns>
+        public ContractOfferResult ConsiderOffer(ContractOffer oc, CityClub sender)
         {
-            bool res = false;
+            ContractOfferResult res = ContractOfferResult.NoAgreementWithPlayer;
             if (!_foundANewClubThisSeason)
             {
                 //If the player have a club
@@ -228,7 +228,7 @@ namespace TheManager
                             sender.ModifyBudget(-oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
                             Club.RemovePlayer(this);
                             sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
-                            res = true;
+                            res = ContractOfferResult.Successful;
                             _foundANewClubThisSeason = true;
                         }
                     }
@@ -242,12 +242,15 @@ namespace TheManager
                         Session.Instance.Game.kernel.freePlayers.Remove(this);
                         Contract ct = new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day));
                         sender.AddPlayer(ct);
-                        res = true;
+                        res = ContractOfferResult.Successful;
                         _foundANewClubThisSeason = true;
                     }
                 }
             }
-            oc.Successful = res;
+            else
+            {
+                res = ContractOfferResult.OtherOfferAlreadyAccepted;
+            }
             return res;
         }
 

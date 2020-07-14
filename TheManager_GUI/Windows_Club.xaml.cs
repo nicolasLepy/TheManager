@@ -48,11 +48,11 @@ namespace TheManager_GUI
                     spEntry.Children.Add(ViewUtils.CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 11, 70));
                     if(be.Amount < 0)
                     {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("F") + "€", "StyleLabel2", 11, 75, Brushes.Red));
+                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("0") + "€", "StyleLabel2", 11, 75, Brushes.Red));
                     }
                     else
                     {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("F") + "€", "StyleLabel2", 11, 75));
+                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("0") + "€", "StyleLabel2", 11, 75));
                     }
 
                     spEntry.Children.Add(ViewUtils.CreateLabel(be.Reason.ToString(), "StyleLabel2", 10, 100));
@@ -198,7 +198,7 @@ namespace TheManager_GUI
             FillBudget();
 
             
-            foreach (Contract ct in c.contracts)
+            foreach (Contract ct in c.allContracts)
             {
                 dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.position.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.level, Potentiel = ct.player.potential, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.energy});
                 if ((ct.beginning.Year == Session.Instance.Game.date.Year - 1 && ct.beginning.Month < 7) ||
