@@ -65,10 +65,6 @@ namespace TheManager_GUI
         private void RefreshTransferListPanel()
         {
             spTransferList.Children.Clear();
-            foreach(Player p in Session.Instance.Game.kernel.TransfertList(Session.Instance.Game.club.Championship))
-            {
-                spTransferList.Children.Add(ViewUtils.CreateLabel(p.lastName + " - " + p.level + " - " + p.potential + " - " + p.EstimateTransferValue(), "StyleLabel2", 8,100));
-            }
             foreach(Club c in Session.Instance.Game.club.Championship.rounds[0].clubs)
             {
                 CityClub cc = c as CityClub;
@@ -76,32 +72,30 @@ namespace TheManager_GUI
                 {
                     foreach(ContractOffer co in cc.clubTransfersManagement.offersHistory)
                     {
-                        StackPanel spT = new StackPanel();
-                        spT.Orientation = Orientation.Horizontal;
-                        Label lbPlayer = ViewUtils.CreateLabel(co.Player.lastName, "StyleLabel2", 8, 40);
-                        lbPlayer.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
-                        { Windows_Joueur wj = new Windows_Joueur(co.Player); wj.Show(); };
-                        spT.Children.Add(lbPlayer);
-                        string from = "Libre";
-                        if(co.Origin != null)
+                        if (co.TransferIndemnity > 0)
                         {
-                            from = co.Origin.shortName;
-                        }
-                        spT.Children.Add(ViewUtils.CreateLabel(from, "StyleLabel2", 8, 50));
-                        spT.Children.Add(ViewUtils.CreateLabel("->", "StyleLabel2", 8, 10));
-                        Label labelClub = ViewUtils.CreateLabel(cc.shortName, "StyleLabel2", 8, 50);
-                        labelClub.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
-                        { Windows_Club wc = new Windows_Club(cc);wc.Show(); };
-                        spT.Children.Add(labelClub);
-                        if(co.Player.Club != null)
-                        {
-                            spT.Children.Add(ViewUtils.CreateLabel(co.Player.Club.shortName, "StyleLabel2", 8, 30));
-                        }
-                        spT.Children.Add(ViewUtils.CreateLabel(co.TransferIndemnity + "€", "StyleLabel2", 8, 30));
+                            StackPanel spT = new StackPanel();
+                            spT.Orientation = Orientation.Horizontal;
+                            Label lbPlayer = ViewUtils.CreateLabel(co.Player.lastName, "StyleLabel2", 8, 40);
+                            lbPlayer.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+                            { Windows_Joueur wj = new Windows_Joueur(co.Player); wj.Show(); };
+                            spT.Children.Add(lbPlayer);
+                            string from = "Libre";
+                            if (co.Origin != null)
+                            {
+                                from = co.Origin.shortName;
+                            }
+                            spT.Children.Add(ViewUtils.CreateLabel(from, "StyleLabel2", 8, 55));
+                            Label labelClub = ViewUtils.CreateLabel(cc.shortName, "StyleLabel2", 8, 55);
+                            labelClub.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
+                            { Windows_Club wc = new Windows_Club(cc); wc.Show(); };
+                            spT.Children.Add(labelClub);
+                            spT.Children.Add(ViewUtils.CreateLabel(co.TransferIndemnity + "€", "StyleLabel2", 8, 60));
 
-                        
-                        spT.Children.Add(ViewUtils.CreateLabel(co.Result.ToString(), "StyleLabel2", 8, 30));
-                        spTransferList.Children.Add(spT);
+
+                            spT.Children.Add(ViewUtils.CreateLabel(co.Result.ToString(), "StyleLabel2", 8, 60));
+                            spTransferList.Children.Add(spT);
+                        }
                     }
                 }
             }

@@ -504,7 +504,7 @@ namespace TheManager
             foreach(Contract ct in _players)
             {
                 //If a player is too bad for the club
-                if (ct.player.potential / clubLevel < ratioLimit)
+                if ((ct.player.potential / clubLevel) < ratioLimit)
                 {
                     ct.isTransferable = true;
                 }
@@ -647,7 +647,7 @@ namespace TheManager
             int playersToResearch = GetPlayersToResearch(level);
             int playersFound = 0;
             int chance = 150 - (int)level;
-            List<Player> transferables = Session.Instance.Game.kernel.TransfertList(Championship);
+            List<Player> transferables = Session.Instance.Game.kernel.TransferList(Championship.level, city.Country());
             transferables.Sort(new PlayerLevelComparator());
             int i = 0;
             while(i < transferables.Count && playersFound < playersToResearch)
@@ -655,16 +655,14 @@ namespace TheManager
                 Player p = transferables[i];
                 int wage = p.EstimateWage();
                 int transferValue = p.EstimateTransferValue();
-                if(p.level / level > 1 && cumulatedTransferValue + transferValue < (_budget/2) && Session.Instance.Random(1, chance) == 1 && wage < (_budget / 18)){
+                if(p.level / level > 1 && cumulatedTransferValue + transferValue < (_budget/1.5) && Session.Instance.Random(1, chance) == 1 && wage < (_budget / 18)){
                     cumulatedTransferValue += transferValue;
                     clubTransfersManagement.targetedPlayers.Add(p);
                     playersFound++;
                     int contractDuration = Session.Instance.Random(1, 5);
-                    Console.WriteLine("offer ? ");
                     if (p.Club.ReceiveOffer(p.Club.FindContract(p), this, transferValue, wage, contractDuration))
                     {
                         clubTransfersManagement.offers.Add(new ContractOffer(p, wage, contractDuration, transferValue, p.Club));
-                        Console.WriteLine("offer ! ");
                     }
                 }
                 i++;

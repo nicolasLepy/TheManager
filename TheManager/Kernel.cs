@@ -150,12 +150,29 @@ namespace TheManager
             }
         }
 
+        public List<Player> TransferList(int clubChampionshipLevel, Country country)
+        {
+            List<Player> players = new List<Player>();
+
+            foreach(Tournament c in Competitions)
+            {
+                if (c.isChampionship && c.level <= clubChampionshipLevel)
+                {
+                    if((LocalisationTournament(c).Name() == country.Name() && c.level <= 2) || c.level == 1)
+                    {
+                        players.AddRange(TransferList(c));
+                    }
+                }
+            }
+            return players;
+        }
+
         /// <summary>
         /// List of all transferable players of a tournament
         /// </summary>
         /// <param name="c">The tournament</param>
         /// <returns></returns>
-        public List<Player> TransfertList(Tournament c)
+        public List<Player> TransferList(Tournament c)
         {
             List<Player> players = new List<Player>();
             Round tournamentRound = c.rounds[0];

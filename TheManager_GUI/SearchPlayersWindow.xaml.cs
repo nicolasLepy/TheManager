@@ -143,7 +143,7 @@ namespace TheManager_GUI
             {
                 if (t.isChampionship)
                 {
-                    _currentPlayersBase.AddRange(Session.Instance.Game.kernel.TransfertList(t));
+                    _currentPlayersBase.AddRange(Session.Instance.Game.kernel.TransferList(t));
                 }
             }
             FillPlayersList();
