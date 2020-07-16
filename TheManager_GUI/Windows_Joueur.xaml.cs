@@ -25,6 +25,15 @@ namespace TheManager_GUI
             _player = joueur;
             InitializeComponent();
             lbJoueur.Content = joueur.ToString();
+            Club c = joueur.Club;
+            if(c != null)
+            {
+                lbClub.Content = c.name;
+            }
+            else
+            {
+                lbClub.Content = "Libre";
+            }
             lbAge.Content = joueur.Age + " ans";
 
             ChartValues<int> niveaux = new ChartValues<int>();
@@ -84,7 +93,6 @@ namespace TheManager_GUI
 
         private void FillPlayerHistory()
         {
-
             StackPanel firstLine = new StackPanel();
             firstLine.Orientation = Orientation.Horizontal;
             firstLine.Children.Add(ViewUtils.CreateLabel("Durée", "StyleLabel2", 11, 80));

@@ -158,7 +158,7 @@ namespace TheManager
             {
                 if (c.isChampionship && c.level <= clubChampionshipLevel)
                 {
-                    if((LocalisationTournament(c).Name() == country.Name() && c.level <= 2) || c.level == 1)
+                    if(c.level == 1 || (LocalisationTournament(c).Name() == country.Name() && c.level <= 2))
                     {
                         players.AddRange(TransferList(c));
                     }

@@ -103,7 +103,7 @@ namespace TheManager
                     CityClub cv = c as CityClub;
                     if(cv != null)
                     {
-                        foreach(Contract ct in cv.contracts)
+                        foreach(Contract ct in cv.allContracts)
                         {
                             if (ct.player == this)
                             {
@@ -211,13 +211,11 @@ namespace TheManager
                 //If the player have a club
                 if (Club != null)
                 {
-                    Console.WriteLine("ah ? " + sender.Level() + " " + Club.Level());
                     //If the new club is not too bad compared as his old club, or he was too weak for his current club
                     if (sender.Level() - Club.Level() > Session.Instance.Random(-10, -5) || _level / Club.Level() < 0.75)
                     {
-                        Console.WriteLine("c'est bon");
                         Contract hisContract = null;
-                        foreach (Contract ct in Club.contracts)
+                        foreach (Contract ct in Club.allContracts)
                         {
                             if (ct.player == this)
                             {
@@ -225,15 +223,15 @@ namespace TheManager
                             }
                         }
                         //If proposed wage is a little bit increasing in relation to his current wage
-                        //if ((oc.Wage + 0.0f) / hisContract.wage > (Session.Instance.Random(100, 120) / 100.0f))
-                        //{
+                        if (hisContract.wage < oc.Wage * (Session.Instance.Random(100, 120) / 100.0f))
+                        {
                             Club.ModifyBudget(oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
                             sender.ModifyBudget(-oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
                             Club.RemovePlayer(this);
                             sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
                             res = ContractOfferResult.Successful;
                             _foundANewClubThisSeason = true;
-                        //}
+                        }
                     }
                 }
                 //It was a free player

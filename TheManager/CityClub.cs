@@ -653,7 +653,7 @@ namespace TheManager
             while(i < transferables.Count && playersFound < playersToResearch)
             {
                 Player p = transferables[i];
-                int wage = p.EstimateWage();
+                int wage = (int)(p.EstimateWage() * (Session.Instance.Random(100, 120) / 100f));
                 int transferValue = p.EstimateTransferValue();
                 if(p.level / level > 1 && cumulatedTransferValue + transferValue < (_budget/1.5) && Session.Instance.Random(1, chance) == 1 && wage < (_budget / 18)){
                     cumulatedTransferValue += transferValue;
