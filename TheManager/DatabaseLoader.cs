@@ -730,6 +730,7 @@ namespace TheManager
                             int day = int.Parse(e4.Attribute("jour").Value);
                             Hour hour = String2Hour(e4.Attribute("heure").Value);
                             int probability = 1;
+                            bool isPrimeTime = false;
                             if (e4.Attribute("probabilite") != null)
                             {
                                 probability = int.Parse(e4.Attribute("probabilite").Value);
@@ -739,7 +740,14 @@ namespace TheManager
                             {
                                 matchDay = int.Parse(e4.Attribute("journee").Value);
                             }
-                            TvOffset dtv = new TvOffset(day, hour, probability, matchDay);
+                            if (e4.Attribute("prime_time") != null)
+                            {
+                                if(e4.Attribute("prime_time").Value == "oui")
+                                {
+                                    isPrimeTime = true;
+                                }
+                            }
+                            TvOffset dtv = new TvOffset(day, hour, probability, matchDay, isPrimeTime);
                             round.programmation.tvScheduling.Add(dtv);
                         }
                         foreach (XElement e4 in e3.Descendants("Regle"))

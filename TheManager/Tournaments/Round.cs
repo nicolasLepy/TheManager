@@ -96,12 +96,16 @@ namespace TheManager
         [DataMember]
         public int GameDay { get; set; }
 
-        public TvOffset(int daysOffset, Hour hour, int probability, int gameDay)
+        [DataMember]
+        public bool isPrimeTime { get; set; }
+
+        public TvOffset(int daysOffset, Hour hour, int probability, int gameDay, bool primeTime)
         {
             DaysOffset = daysOffset;
             Hour = hour;
             Probability = probability;
             GameDay = gameDay;
+            isPrimeTime = primeTime;
         }
 
         public bool Equals(TvOffset other)
