@@ -152,12 +152,12 @@ namespace TheManager_GUI.VueClassement
                             //If the two tournaments involved are championship and the level of the destination is higher in league structure than the current league
                             if (_tour.Tournament.isChampionship && q.tournament.isChampionship && q.tournament.level < _tour.Tournament.level)
                             {
-                                Console.WriteLine("check " + q.ranking);
+                                Utils.Debug("check " + q.ranking);
                                 int offset = 0;
                                 bool pursue = true;
                                 while (pursue && j + offset < qualifications[i].Count)
                                 {
-                                    Console.WriteLine("check " + groups[i][q.ranking - 1 + offset].name);
+                                    Utils.Debug("check " + groups[i][q.ranking - 1 + offset].name);
                                     //This is a reserve club so it must not be promoted
                                     if (groups[i][q.ranking - 1 + offset] as ReserveClub != null)
                                     {
@@ -169,7 +169,7 @@ namespace TheManager_GUI.VueClassement
                                         //If there is an offset, make a swap
                                         if (offset > 0)
                                         {
-                                            Console.WriteLine("swap " + j + " and " + (j + offset));
+                                            Utils.Debug("swap " + j + " and " + (j + offset));
                                             Qualification first = qualifications[i][j];
                                             Qualification second = qualifications[i][j + offset];
                                             int tempRanking = second.ranking;

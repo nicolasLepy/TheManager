@@ -333,7 +333,7 @@ namespace TheManager
             }
             else
             {
-                Console.WriteLine("Try to get a logo of club but club is null");
+                Utils.Debug("Try to get a logo of club but club is null");
             }
             return res;
         }
@@ -384,6 +384,11 @@ namespace TheManager
                     break;
             }
             return res;
+        }
+
+        public static void Debug(string str)
+        {
+            Console.WriteLine(str);
         }
 
         public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, Tournament from)

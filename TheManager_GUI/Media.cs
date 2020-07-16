@@ -234,7 +234,7 @@ namespace TheManager_GUI
                 {
                     p.Stop();
                 }
-                catch { Console.WriteLine("Impossible de fermer le thread"); }
+                catch { Utils.Debug("Impossible de fermer le thread"); }
             }
         }
     }
@@ -256,7 +256,7 @@ namespace TheManager_GUI
             WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
             wplayer.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(Player_MediaError);
             wplayer.URL = Utils.PathSong(chemin);
-            Console.WriteLine(wplayer.URL);
+            Utils.Debug(wplayer.URL);
             if(boucle)
             {
                 wplayer.settings.setMode("loop", true);

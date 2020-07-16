@@ -24,7 +24,7 @@ namespace TheManager_Console
             {
                 game.NextDay();
             }
-            Console.WriteLine(game.date.ToShortDateString());
+            Utils.Debug(game.date.ToShortDateString());
             
             Console.ReadLine();
 

@@ -95,7 +95,7 @@ namespace TheManager
                 }
                 if(idclub != 0)
                 {
-                    Console.WriteLine(nom);
+                    Utils.Debug(nom);
                     XElement e = new XElement("Joueur");
                     e.Add(new XAttribute("prenom", ""));
                     e.Add(new XAttribute("nom", nom));
@@ -229,16 +229,24 @@ namespace TheManager
                         int age = int.Parse(e3.Attribute("age").Value);
                         City city = _kernel.String2City(e3.Attribute("ville").Value);
                         int offset = 0;
+                        bool isNational = false;
                         if (e3.Attribute("retrait") != null)
                         {
                             offset = int.Parse(e3.Attribute("retrait").Value);
                         }
+                        if (e3.Attribute("national") != null)
+                        {
+                            if(e3.Attribute("national").Value == "oui")
+                            {
+                                isNational = true;
+                            }
+                        }
 
                         if (city == null)
                         {
-                            Console.WriteLine(e3.Attribute("ville").Value + " n'est pas une ville.");
+                            Utils.Debug(e3.Attribute("ville").Value + " n'est pas une ville.");
                         }
-                        Journalist j = new Journalist(firstName, lastName, age, city, offset);
+                        Journalist j = new Journalist(firstName, lastName, age, city, offset, isNational);
                         m.journalists.Add(j);
                     }
 
@@ -433,7 +441,7 @@ namespace TheManager
                             }
                             else
                             {
-                                Console.WriteLine("La ville " + stadiumName + " n'existe pas.");
+                                Utils.Debug("La ville " + stadiumName + " n'existe pas.");
                             }
                         }
                     }

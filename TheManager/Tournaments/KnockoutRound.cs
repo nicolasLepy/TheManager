@@ -64,7 +64,7 @@ namespace TheManager
             }
             catch
             {
-                Console.WriteLine("TourElimination : match date comparator failed");
+                Utils.Debug("TourElimination : match date comparator failed");
             }
 
             return res;

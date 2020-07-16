@@ -227,7 +227,7 @@ namespace TheManager
             if((cc.budget < 0) && cc.history.elements.Count > 0 && cc.budget + (cc.budget - cc.history.elements[cc.history.elements.Count-1].budget) < 0)
             {
                 noRecruiting = true;
-                Console.WriteLine(cc.name + " est interdit de recrutement (budget : " + cc.budget + ")");
+                Utils.Debug(cc.name + " est interdit de recrutement (budget : " + cc.budget + ")");
             }
             cc.isForbiddenToRecruit = noRecruiting;
                 
@@ -371,7 +371,7 @@ namespace TheManager
                             }
                             if (journalist == null)
                             {
-                                Journalist newJournalist = new Journalist(media.country.language.GetFirstName(), media.country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100);
+                                Journalist newJournalist = new Journalist(media.country.language.GetFirstName(), media.country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100, false);
                                 media.journalists.Add(newJournalist);
                                 journalist = newJournalist;
                             }

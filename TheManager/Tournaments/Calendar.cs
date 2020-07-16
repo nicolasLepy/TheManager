@@ -403,7 +403,7 @@ namespace TheManager
                 }
                 catch
                 {
-                    Console.WriteLine("Match_Niveau_Comparator exception pour programme TV");
+                    Utils.Debug("Match_Niveau_Comparator exception pour programme TV");
                 }
                 foreach (TvOffset d in offsets)
                 {

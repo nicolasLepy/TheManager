@@ -63,7 +63,7 @@ namespace TheManager
             }
             catch
             {
-                Console.WriteLine("Le classement aléatoire n'a pu être généré");
+                Utils.Debug("Le classement aléatoire n'a pu être généré");
             }
 
             //Simuler des gains d'argent de matchs pour les clubs (affluence)

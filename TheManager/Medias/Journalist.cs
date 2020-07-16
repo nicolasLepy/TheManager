@@ -26,6 +26,8 @@ namespace TheManager
         public int age { get; set; }
         [DataMember]
         public bool isTaken { get; set; }
+        [DataMember]
+        public bool isNationalReporter { get; set; }
         public City baseCity { get => _base; }
         public int offset { get => _offset; }
 
@@ -72,7 +74,16 @@ namespace TheManager
             }
         }
 
-        public Journalist(string firstName, string lastName, int age, City baseCity, int offset)
+        /// <summary>
+        /// Create a journalist
+        /// </summary>
+        /// <param name="firstName">His first name</param>
+        /// <param name="lastName">His last name</param>
+        /// <param name="age">His age</param>
+        /// <param name="baseCity">His assigned city</param>
+        /// <param name="offset">His "offset" : he is more a replacement journalist</param>
+        /// <param name="nationalReporter">Can intervene everywhere for prime time matches</param>
+        public Journalist(string firstName, string lastName, int age, City baseCity, int offset, bool nationalReporter)
         {
             isTaken = false;
             _firstName = firstName;
@@ -80,6 +91,7 @@ namespace TheManager
             this.age = age;
             this._base = baseCity;
             _offset = offset;
+            isNationalReporter = nationalReporter;
         }
 
         public override string ToString()

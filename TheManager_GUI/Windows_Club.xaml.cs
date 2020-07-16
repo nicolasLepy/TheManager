@@ -193,7 +193,7 @@ namespace TheManager_GUI
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Utils.Debug(e.ToString());
             }
             Palmares(c);
             RemplirMatchs();

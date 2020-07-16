@@ -140,7 +140,7 @@ namespace TheManager
                         //If the two tournaments involved are championship and the level of the destination is higher in league structure than the current league
                         if(Tournament.isChampionship && q.tournament.isChampionship && q.tournament.level < Tournament.level)
                         {
-                            Console.WriteLine("check for the " + q.ranking + " place");
+                            Utils.Debug("check for the " + q.ranking + " place");
                             int offset = 0;
                             bool pursue = true;
                             while (pursue && j+offset < qualifications.Count)
@@ -156,7 +156,7 @@ namespace TheManager
                                     //If there is an offset, make a swap
                                     if(offset > 0)
                                     {
-                                        Console.WriteLine("swap " + j + " and " + (j + offset));
+                                        Utils.Debug("swap " + j + " and " + (j + offset));
                                         Qualification first = qualifications[j];
                                         Qualification second = qualifications[j + offset];
                                         int tempRanking = second.ranking;
@@ -173,7 +173,7 @@ namespace TheManager
 
                 foreach (Qualification q in qualifications)
                 {
-                    Console.WriteLine(q.ranking + " - " + q.tournament.name);
+                    Utils.Debug(q.ranking + " - " + q.tournament.name);
                 }
 
                 foreach (Qualification q in qualifications)

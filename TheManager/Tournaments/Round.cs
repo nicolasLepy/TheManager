@@ -668,7 +668,7 @@ namespace TheManager
                     }
                     catch(Exception e)
                     {
-                        Console.WriteLine("Erreur sort Club_Niveau_Comparator pour " + name);
+                        Utils.Debug("Erreur sort Club_Niveau_Comparator pour " + name);
                     }
                     break;
                 case RecuperationMethod.Worst :

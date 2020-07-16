@@ -124,7 +124,7 @@ namespace TheManager_GUI
             }
             catch
             {
-                Console.WriteLine("Pas de logo disponible pour " + club.logo);
+                Utils.Debug("Pas de logo disponible pour " + club.logo);
             }
 
             spEtoiles.Children.Add(ViewUtils.CreateStarNotation(club.Stars, 20));

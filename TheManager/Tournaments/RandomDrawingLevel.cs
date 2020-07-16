@@ -25,7 +25,7 @@ namespace TheManager
             }
             catch
             {
-                Console.WriteLine("Le tri pour " + _round.name + "(" + _round.Tournament.name + " de type niveau a echoué");
+                Utils.Debug("Le tri pour " + _round.name + "(" + _round.Tournament.name + " de type niveau a echoué");
             }
             int teamsByGroup = _round.clubs.Count / _round.groupsCount;
             List<Club>[] hats = new List<Club>[teamsByGroup];
