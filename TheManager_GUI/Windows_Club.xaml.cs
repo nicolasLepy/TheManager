@@ -185,6 +185,8 @@ namespace TheManager_GUI
                 lbEntraineur.Content = "Aucun entraîneur";
             }
 
+            lbBudget.Content = "Budget : " + c.budget + " €";
+
             try
             {
                 imgLogo.Source = new BitmapImage(new Uri(Utils.Logo(c)));
