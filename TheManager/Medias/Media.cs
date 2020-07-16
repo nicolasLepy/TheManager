@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -102,6 +104,26 @@ namespace TheManager
             {
                 j.isTaken = false;
             }
+        }
+
+        public Journalist GetNationalJournalist()
+        {
+            Journalist res = null;
+            List<Journalist> list = new List<Journalist>();
+            foreach(Journalist j in journalists)
+            {
+                if (j.isNationalReporter && !j.isTaken)
+                {
+                    list.Add(j);
+                }
+            }
+            list.Sort(new JournalistOffsetComparator());
+            if (list.Count > 0)
+            {
+                res = list[0];
+            }
+            return res;
+
         }
 
     }

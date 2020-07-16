@@ -76,7 +76,6 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | **Miscellaneous**                                                     |                                                                      |
 | Try to reduce savegame size (135mo / year)                            | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
 | Manage memory for long games                                          | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Several journalists on one game                                       | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | (Data editor)                                                         | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | (Generate Wiki with simulation data)                                  | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
 | (3D Engine for games)                                                 | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |

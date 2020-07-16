@@ -418,6 +418,7 @@ namespace TheManager
                     }
                     if (indice < games.Count && prisEnCompte)
                     {
+                        games[indice].primeTimeGame = d.isPrimeTime;
                         games[indice].day = games[indice].day.AddDays(d.DaysOffset);
                         //Set all hours and minutes at 00
                         games[indice].day = games[indice].day.AddHours(-games[indice].day.Hour);

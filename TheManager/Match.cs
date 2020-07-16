@@ -147,6 +147,10 @@ namespace TheManager
         [DataMember]
         public float odd2 { get; set; }
 
+        [DataMember]
+        public bool primeTimeGame { get; set; }
+
+
         public Tournament Tournament
         {
             get
@@ -637,6 +641,7 @@ namespace TheManager
             _journalists = new List<KeyValuePair<Media, Journalist>>();
             _actions = new List<KeyValuePair<string, string>>();
             SetOdds();
+            primeTimeGame = false;
         }
 
         /// <summary>

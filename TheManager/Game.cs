@@ -329,7 +329,7 @@ namespace TheManager
                     for(int i= 0;i<numberOfGamesToFollow;i++)
                     {
                         Match m = games[i];
-
+                        
                         bool followGame = true;
                         CityClub homeCityClub = m.home as CityClub;
                         CityClub awayCityClub = m.away as CityClub;
@@ -351,22 +351,22 @@ namespace TheManager
                             {
                                 city = (m.home as ReserveClub).FannionClub.city;
                             }
-                            List<Journalist> j = new List<Journalist>();
-                            foreach (Journalist j1 in media.journalists)
+                            List<Journalist> availableJournalists = new List<Journalist>();
+                            foreach (Journalist j in media.journalists)
                             {
-                                if (!j1.isTaken)
+                                if (!j.isTaken)
                                 {
-                                    j.Add(j1);
+                                    availableJournalists.Add(j);
                                 }
                             }
                             Journalist journalist = null;
-                            if (j.Count > 0)
+                            if (availableJournalists.Count > 0)
                             {
-                                j.Sort(new JournalistsComparator(city));
+                                availableJournalists.Sort(new JournalistsComparator(city));
 
-                                if (Math.Abs(Utils.Distance(j[0].baseCity, city)) < 300)
+                                if (Math.Abs(Utils.Distance(availableJournalists[0].baseCity, city)) < 300)
                                 {
-                                    journalist = j[0];
+                                    journalist = availableJournalists[0];
                                 }
                             }
                             if (journalist == null)
@@ -376,6 +376,16 @@ namespace TheManager
                                 journalist = newJournalist;
                             }
                             journalist.isTaken = true;
+
+                            if (m.primeTimeGame)
+                            {
+                                Journalist second = media.GetNationalJournalist();
+                                KeyValuePair<Media, Journalist> nationalEmployment = new KeyValuePair<Media, Journalist>(journalist.Media, second);
+                                second.isTaken = true;
+                                m.journalists.Add(nationalEmployment);
+
+                            }
+
                             KeyValuePair<Media, Journalist> employment = new KeyValuePair<Media, Journalist>(journalist.Media, journalist);
                             m.journalists.Add(employment);
                         }
