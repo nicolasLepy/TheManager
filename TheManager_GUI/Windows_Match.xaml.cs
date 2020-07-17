@@ -54,8 +54,8 @@ namespace TheManager_GUI
             }
             lbMT.Content = "(" + match.ScoreHalfTime1 + " - " + match.ScoreHalfTime2 + ")";
 
-            spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo1, false, match));
-            spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo2, false, match));
+            spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo1, false, match, match.Subs1));
+            spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo2, false, match, match.Subs2));
 
             foreach (MatchEvent em in match.events)
             {

@@ -286,6 +286,46 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Get subs for a game
+        /// </summary>
+        /// <param name="composition">List of players starting the game on the ground</param>
+        public List<Player> Subs(List<Player> composition, int nbSubs)
+        {
+            List<Player> subs = new List<Player>();
+            List<Player> allPlayersAvailable = new List<Player>();
+            foreach(Player p in Players())
+            {
+                if (!composition.Contains(p))
+                {
+                    allPlayersAvailable.Add(p);
+                }
+            }
+
+            //Get the sub goalkeeper
+            List<Player> goalkeppers = Utils.PlayersByPosition(allPlayersAvailable, Position.Goalkeeper);
+            if(goalkeppers.Count > 0)
+            {
+                subs.Add(goalkeppers[0]);
+            }
+            foreach(Player p in goalkeppers)
+            {
+                allPlayersAvailable.Remove(p);
+            }
+            int remainingPlayers = nbSubs - subs.Count;
+
+            allPlayersAvailable.Sort(new PlayerCompositionComparator());
+            for(int i = 0; i < remainingPlayers; i++)
+            {
+                if(allPlayersAvailable.Count > i)
+                {
+                    subs.Add(allPlayersAvailable[i]);
+                }
+            }
+
+            return subs;
+        }
+
         public List<Player> Composition()
         {
             List<Player> res = new List<Player>();

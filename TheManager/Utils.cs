@@ -124,11 +124,11 @@ namespace TheManager
             return res;
         }
 
-        public static List<Player> PlayersByPosition(List<Player> joueurs, Position p)
+        public static List<Player> PlayersByPosition(List<Player> players, Position p)
         {
             List<Player> res = new List<Player>();
 
-            foreach (Player j in joueurs)
+            foreach (Player j in players)
             {
                 if (j.position == p)
                 {

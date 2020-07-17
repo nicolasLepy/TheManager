@@ -52,7 +52,7 @@
 						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
 						<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 					</StackPanel>
-					<StackPanel Orientation="Horizontal" Name="spCompositions" Height="200" HorizontalAlignment="Center">
+					<StackPanel Orientation="Horizontal" Name="spCompositions" Height="250" HorizontalAlignment="Center">
 						
 					</StackPanel>
 					<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick" HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">

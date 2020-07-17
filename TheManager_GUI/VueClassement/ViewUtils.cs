@@ -52,7 +52,54 @@ namespace TheManager_GUI
             return label;
         }
 
-        public static StackPanel CreateCompositionPanel(List<Player> players, bool showEnergy, Match match)
+        private static StackPanel GeneratePlayerIcon(Player p, Match match, bool showEnergy, double sizeMultiplier)
+        {
+            StackPanel playerPanel = new StackPanel();
+            playerPanel.Orientation = Orientation.Vertical;
+
+            Label label = new Label();
+            label.Content = p.lastName;
+            label.HorizontalAlignment = HorizontalAlignment.Center;
+            label.Style = Application.Current.FindResource("StyleLabel2") as Style;
+            label.FontSize *= sizeMultiplier;
+
+            bool hasRed = false;
+            foreach (MatchEvent me in match.events)
+            {
+                if (me.type == GameEvent.RedCard && me.player == p)
+                {
+                    label.Foreground = Brushes.Red;
+                    hasRed = true;
+                }
+                else if (!hasRed && me.type == GameEvent.YellowCard && me.player == p)
+                {
+                    label.Foreground = Brushes.Yellow;
+                }
+            }
+
+            playerPanel.Children.Add(label);
+
+            if (showEnergy)
+            {
+                ProgressBar pb = new ProgressBar();
+                pb.Value = p.energy;
+                pb.Maximum = 100;
+                pb.Height = 5 * sizeMultiplier;
+                pb.Width = 40 * sizeMultiplier;
+                playerPanel.Children.Add(pb);
+            }
+
+            Label note = new Label();
+            note.Content = p.level;
+            note.HorizontalAlignment = HorizontalAlignment.Center;
+            note.FontSize = 10 * sizeMultiplier;
+            note.Style = Application.Current.FindResource("StyleLabel2") as Style;
+
+            playerPanel.Children.Add(note);
+            return playerPanel;
+        }
+
+        public static StackPanel CreateCompositionPanel(List<Player> players, bool showEnergy, Match match, List<Player> subs)
         {
             StackPanel res = new StackPanel();
             res.Orientation = Orientation.Vertical;
@@ -70,6 +117,15 @@ namespace TheManager_GUI
             StackPanel spStrickers = new StackPanel();
             spStrickers.Orientation = Orientation.Horizontal;
             spStrickers.HorizontalAlignment = HorizontalAlignment.Center;
+            StackPanel spSubs = new StackPanel();
+            spSubs.Orientation = Orientation.Horizontal;
+            spSubs.HorizontalAlignment = HorizontalAlignment.Center;
+
+            foreach(Player p in subs)
+            {
+                StackPanel playerPanel = GeneratePlayerIcon(p, match, showEnergy, 0.8);
+                spSubs.Children.Add(playerPanel);
+            }
 
             foreach (Player j in players)
             {
@@ -82,55 +138,15 @@ namespace TheManager_GUI
                     case Position.Striker: conteneur = spStrickers; break;
                 }
 
-                StackPanel conteneurJoueur = new StackPanel();
-                conteneurJoueur.Orientation = Orientation.Vertical;
-
-                Label label = new Label();
-                label.Content = j.lastName;
-                label.HorizontalAlignment = HorizontalAlignment.Center;
-                label.Style = Application.Current.FindResource("StyleLabel2") as Style;
-
-                bool hasRed = false;
-                foreach(MatchEvent me in match.events)
-                {
-                    if(me.type == GameEvent.RedCard && me.player == j)
-                    {
-                        label.Foreground = Brushes.Red;
-                        hasRed = true;
-                    }
-                    else if (!hasRed && me.type == GameEvent.YellowCard && me.player == j)
-                    {
-                        label.Foreground = Brushes.Yellow;
-                    }
-                }
-
-                conteneurJoueur.Children.Add(label);
-
-                if (showEnergy)
-                {
-                    ProgressBar pb = new ProgressBar();
-                    pb.Value = j.energy;
-                    pb.Maximum = 100;
-                    pb.Height = 5;
-                    pb.Width = 40;
-                    conteneurJoueur.Children.Add(pb);
-                }
-
-                Label note = new Label();
-                note.Content = j.level;
-                note.HorizontalAlignment = HorizontalAlignment.Center;
-                note.FontSize = 10;
-                note.Style = Application.Current.FindResource("StyleLabel2") as Style;
-
-                conteneurJoueur.Children.Add(note);
-
-                conteneur.Children.Add(conteneurJoueur);
+                conteneur.Children.Add(GeneratePlayerIcon(j, match, showEnergy, 1));
             }
 
             res.Children.Add(spGardiens);
             res.Children.Add(spDefender);
             res.Children.Add(spMidfielder);
             res.Children.Add(spStrickers);
+            res.Children.Add(spSubs);
+
             return res;
         }
 

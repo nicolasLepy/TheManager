@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using LiveCharts.Wpf;
 using TheManager.Comparators;
@@ -89,6 +91,10 @@ namespace TheManager
         [DataMember]
         private List<Player> _compo2Terrain;
 
+        [DataMember]
+        private List<Player> _subs1;
+        [DataMember]
+        private List<Player> _subs2;
 
         [DataMember]
         private int _score1;
@@ -131,6 +137,8 @@ namespace TheManager
         public List<MatchEvent> events { get => _events; }
         public List<Player> compo1 { get => _compo1; }
         public List<Player> compo2 { get => _compo2; }
+        public List<Player> Subs1 => _subs1;
+        public List<Player> Subs2 => _subs2;
         public bool prolongations { get => _prolongations; }
         public int penaltyShootout1 { get => _penaltyShootout1; }
         public int penaltyShootout2 { get => _penaltyShootout2; }
@@ -642,6 +650,8 @@ namespace TheManager
             _actions = new List<KeyValuePair<string, string>>();
             SetOdds();
             primeTimeGame = false;
+            _subs1 = new List<Player>();
+            _subs2 = new List<Player>();
         }
 
         /// <summary>
@@ -687,12 +697,31 @@ namespace TheManager
             }
         }
 
+        public void Replacements(Club c)
+        {
+            List<Player> terrain;
+            List<Player> availableForReplacements;
+
+            if(c == home)
+            {
+                terrain = _compo1Terrain;
+                availableForReplacements = _compo1;
+            }
+            else
+            {
+                terrain = _compo2Terrain;
+                availableForReplacements = _compo2;
+            }
+        }
+
         public void SetCompo()
         {
             _compo1 = new List<Player>(home.Composition());
             _compo2 = new List<Player>(away.Composition());
             _compo1Terrain = new List<Player>(_compo1);
             _compo2Terrain = new List<Player>(_compo2);
+            _subs1 = new List<Player>(home.Subs(_compo1, 7));
+            _subs2 = new List<Player>(away.Subs(_compo2, 7));
 
             UpdatePlayersMatchPlayedStat(_compo1);
             UpdatePlayersMatchPlayedStat(_compo2);
@@ -712,7 +741,7 @@ namespace TheManager
         /// </summary>
         /// <param name="compo">Players</param>
         /// <param name="club">Club</param>
-        public void SetCompo(List<Player> compo, Club club)
+        public void SetCompo(List<Player> compo, List<Player> subs, Club club)
         {
             if(club == home)
             {

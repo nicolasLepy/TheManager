@@ -131,7 +131,7 @@ namespace TheManager_GUI
                 compo.Add(_joueurs[i]);
             }
 
-            _matchs[0].SetCompo(compo, _club);
+            _matchs[0].SetCompo(compo, new List<Player>(), _club);
    
         }
         
