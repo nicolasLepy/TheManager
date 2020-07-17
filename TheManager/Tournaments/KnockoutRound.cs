@@ -171,11 +171,11 @@ namespace TheManager
                         {
                             if (q.tournament.level > c.Championship.level)
                             {
-                                c.supporters = (int)(c.supporters * 1.8f);
+                                c.supporters = (int)(c.supporters / 1.8f);
                             }
                             else if (q.tournament.level < c.Championship.level)
                             {
-                                c.supporters = (int)(c.supporters / 1.8f);
+                                c.supporters = (int)(c.supporters * 1.8f);
                             }
                         }
                     }
