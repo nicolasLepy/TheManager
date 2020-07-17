@@ -351,39 +351,18 @@ namespace TheManager
                             {
                                 city = (m.home as ReserveClub).FannionClub.city;
                             }
-                            List<Journalist> availableJournalists = new List<Journalist>();
-                            foreach (Journalist j in media.journalists)
-                            {
-                                if (!j.isTaken)
-                                {
-                                    availableJournalists.Add(j);
-                                }
-                            }
-                            Journalist journalist = null;
-                            if (availableJournalists.Count > 0)
-                            {
-                                availableJournalists.Sort(new JournalistsComparator(city));
-
-                                if (Math.Abs(Utils.Distance(availableJournalists[0].baseCity, city)) < 300)
-                                {
-                                    journalist = availableJournalists[0];
-                                }
-                            }
-                            if (journalist == null)
-                            {
-                                Journalist newJournalist = new Journalist(media.country.language.GetFirstName(), media.country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100, false);
-                                media.journalists.Add(newJournalist);
-                                journalist = newJournalist;
-                            }
-                            journalist.isTaken = true;
+                            Journalist journalist = media.GetJournalist(city);
 
                             if (m.primeTimeGame)
                             {
                                 Journalist second = media.GetNationalJournalist();
+                                if(second == null)
+                                {
+                                    second = media.GetJournalist(city);
+                                }
                                 KeyValuePair<Media, Journalist> nationalEmployment = new KeyValuePair<Media, Journalist>(journalist.Media, second);
                                 second.isTaken = true;
                                 m.journalists.Add(nationalEmployment);
-
                             }
 
                             KeyValuePair<Media, Journalist> employment = new KeyValuePair<Media, Journalist>(journalist.Media, journalist);
