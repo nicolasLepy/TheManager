@@ -70,6 +70,12 @@ namespace TheManager
         /// </summary>
         [DataMember]
         public int goalsScored { get; set; }
+
+        /// <summary>
+        /// Level of the player taking into consideration his energy
+        /// </summary>
+        public float effectiveLevel => level * ((energy / 200.0f) + 0.5f);
+
         public int energy
         {
             get => _energy;

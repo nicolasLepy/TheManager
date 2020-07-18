@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 
@@ -155,10 +156,13 @@ namespace TheManager_GUI
 
             }
 
+            FillSubstitutions(match);
+
             foreach (KeyValuePair<TheManager.Media, Journalist> j in match.journalists)
             {
                 dgJournalistes.Items.Add(new JournalisteElement { Journaliste = j.Value, Media = j.Key.name });
             }
+
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
@@ -173,6 +177,27 @@ namespace TheManager_GUI
                 JournalisteElement selected = (JournalisteElement)dgJournalistes.SelectedItem;
                 Windows_Journaliste wj = new Windows_Journaliste(selected.Journaliste);
                 wj.Show();
+            }
+        }
+
+        private void FillSubstitutions(Match match)
+        {
+            foreach(Substitution s in match.substitutions)
+            {
+
+                StackPanel spSub = new StackPanel();
+                spSub.Orientation = Orientation.Horizontal;
+                spSub.Children.Add(ViewUtils.CreateLabel(s.PlayerOut.firstName + " " + s.PlayerOut.lastName, "StyleLabel2", 11, 120, Brushes.Red));
+                spSub.Children.Add(ViewUtils.CreateLabel(s.PlayerIn.firstName + " " + s.PlayerIn.lastName, "StyleLabel2", 11, 120, Brushes.Green));
+                spSub.Children.Add(ViewUtils.CreateLabel((s.Minute + 45).ToString() + "°", "StyleLabel2", 11, 30));
+                if (match.compo1.Contains(s.PlayerOut))
+                {
+                    spHomeSubstitutions.Children.Add(spSub);
+                }
+                else
+                {
+                    spAwaySubstitutions.Children.Add(spSub);
+                }
             }
         }
 

@@ -55,6 +55,15 @@
 					<StackPanel Orientation="Horizontal" Name="spCompositions" Height="250" HorizontalAlignment="Center">
 						
 					</StackPanel>
+					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Remplacements"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<StackPanel Orientation="Vertical" Name="spHomeSubstitutions" Width="300" HorizontalAlignment="Left">
+
+						</StackPanel>
+						<StackPanel Orientation="Vertical" Name="spAwaySubstitutions" Width="300" HorizontalAlignment="Right">
+
+						</StackPanel>
+					</StackPanel>
 					<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick" HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
 							<DataGridTextColumn Header="" Binding="{Binding Media}"/>

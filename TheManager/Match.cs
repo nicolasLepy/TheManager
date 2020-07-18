@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,6 +13,31 @@ using TheManager.Comparators;
 namespace TheManager
 {
 
+    [DataContract]
+    public struct Substitution : IEquatable<Substitution>
+    {
+        [DataMember]
+        public Player PlayerOut { get; set; }
+        [DataMember]
+        public Player PlayerIn { get; set; }
+        [DataMember]
+        public int Minute { get; set; }
+        [DataMember]
+        public int Period { get; set; }
+
+        public Substitution(Player playerOut, Player playerIn, int minute, int period)
+        {
+            PlayerOut = playerOut;
+            PlayerIn = playerIn;
+            Minute = minute;
+            Period = period;
+        }
+
+        public bool Equals(Substitution other)
+        {
+            return Minute > other.Minute;
+        }
+    }
 
     public struct RetourMatch : IEquatable<RetourMatch>
     {
@@ -95,6 +121,10 @@ namespace TheManager
         private List<Player> _subs1;
         [DataMember]
         private List<Player> _subs2;
+        [DataMember]
+        private List<Player> _subs1OnBench;
+        [DataMember]
+        private List<Player> _subs2OnBench;
 
         [DataMember]
         private int _score1;
@@ -124,6 +154,8 @@ namespace TheManager
         private int _attendance;
         [DataMember]
         private List<KeyValuePair<Media,Journalist>> _journalists;
+        [DataMember]
+        private List<Substitution> _substitutions;
 
         public int attendance { get => _attendance; }
         [DataMember]
@@ -135,10 +167,13 @@ namespace TheManager
         public int score1 { get => _score1; }
         public int score2 { get => _score2; }
         public List<MatchEvent> events { get => _events; }
+        public List<Substitution> substitutions => _substitutions;
         public List<Player> compo1 { get => _compo1; }
         public List<Player> compo2 { get => _compo2; }
         public List<Player> Subs1 => _subs1;
         public List<Player> Subs2 => _subs2;
+        public List<Player> Subs1OnBench => _subs1OnBench;
+        public List<Player> Subs2OnBench => _subs2OnBench;
         public bool prolongations { get => _prolongations; }
         public int penaltyShootout1 { get => _penaltyShootout1; }
         public int penaltyShootout2 { get => _penaltyShootout2; }
@@ -652,6 +687,9 @@ namespace TheManager
             primeTimeGame = false;
             _subs1 = new List<Player>();
             _subs2 = new List<Player>();
+            _subs1OnBench = new List<Player>();
+            _subs2OnBench = new List<Player>();
+            _substitutions = new List<Substitution>();
         }
 
         /// <summary>
@@ -699,19 +737,62 @@ namespace TheManager
 
         public void Replacements(Club c)
         {
+            List<Player> initialCompo;
+            List<Player> compoOnGroud;
             List<Player> terrain;
-            List<Player> availableForReplacements;
+            List<Player> subs;
+            List<Player> originalSubs;
 
-            if(c == home)
+            if (c == home)
             {
-                terrain = _compo1Terrain;
-                availableForReplacements = _compo1;
+                terrain = new List<Player>(_compo1Terrain);
+                subs = new List<Player>(_subs1OnBench);
+                compoOnGroud = _compo1Terrain;
+                originalSubs = _subs1OnBench;
+                initialCompo = _compo1;
             }
             else
             {
-                terrain = _compo2Terrain;
-                availableForReplacements = _compo2;
+                terrain = new List<Player>(_compo2Terrain);
+                subs = new List<Player>(_subs2OnBench);
+                compoOnGroud = _compo2Terrain;
+                originalSubs = _subs2OnBench;
+                initialCompo = _compo2;
             }
+
+            terrain.Sort(new PlayerCompositionComparator());
+            subs.Sort(new PlayerCompositionComparator());
+            int nbSubs = 0;
+            foreach (Substitution s in _substitutions)
+            {
+                if (initialCompo.Contains(s.PlayerOut))
+                {
+                    nbSubs++;
+                }
+            }
+
+            bool pursue = nbSubs < 3;
+
+            int i = terrain.Count - 1;
+            while (pursue)
+            {
+                Player weakest = terrain[i];
+                List<Player> subsForThisPlayer = Utils.PlayersByPosition(subs, weakest.position);
+                if(subsForThisPlayer.Count > 0 && subsForThisPlayer[0].effectiveLevel > weakest.effectiveLevel)
+                {
+                    compoOnGroud.Remove(weakest);
+                    compoOnGroud.Add(subsForThisPlayer[0]);
+                    originalSubs.Remove(subsForThisPlayer[0]);
+                    _substitutions.Add(new Substitution(weakest, subsForThisPlayer[0], _minute, _period));
+                    pursue = false;
+                }
+                i--;
+                if(i < 0)
+                {
+                    pursue = false;
+                }
+            }
+            
         }
 
         public void SetCompo()
@@ -722,6 +803,8 @@ namespace TheManager
             _compo2Terrain = new List<Player>(_compo2);
             _subs1 = new List<Player>(home.Subs(_compo1, 7));
             _subs2 = new List<Player>(away.Subs(_compo2, 7));
+            _subs1OnBench = new List<Player>(_subs1);
+            _subs2OnBench = new List<Player>(_subs2);
 
             UpdatePlayersMatchPlayedStat(_compo1);
             UpdatePlayersMatchPlayedStat(_compo2);
@@ -747,11 +830,13 @@ namespace TheManager
             {
                 _compo1 = new List<Player>(compo);
                 _compo1Terrain = new List<Player>(compo);
+                _subs1 = new List<Player>(subs);
             }
             else if(club == away)
             {
                 _compo2 = new List<Player>(compo);
                 _compo2Terrain = new List<Player>(compo);
+                _subs2 = new List<Player>(subs);
             }
             UpdatePlayersMatchPlayedStat(compo);
         }
@@ -783,6 +868,7 @@ namespace TheManager
             Club b = away;
 
             _minute++;
+            
             List<RetourMatch> lookbacks = PlayMinute(a, b);
 
             int periodDuration = (_period < 3) ? 45 : 15;
@@ -922,6 +1008,14 @@ namespace TheManager
         private List<RetourMatch> PlayMinute(Club a, Club b)
         {
             List<RetourMatch> lookbacks = new List<RetourMatch>();
+
+            //Every 10 minutes from second periods, clubs do substitutions
+            if (_minute % 10 == 0 && _period > 1)
+            {
+                Replacements(home);
+                Replacements(away);
+            }
+
             foreach (Player j in _compo1)
             {
                 if (Session.Instance.Random(2, 7) == 3)
