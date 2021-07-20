@@ -115,9 +115,15 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 The simulation is currently not very stable: money circulating in the game varies too much, and the more the years pass, the more the average level of the players decreases.
 
-![Menu screen](Pics/graph_budget.png?raw=true "Total money in game by simulation year") ![Menu screen](Pics/graph_level.png?raw=true "Average level by year")
+<p float="left">
+  <img src="Pics/graph_budget.png" />
+  <img src="Pics/graph_level.png" />
+</p>
 
-![Menu screen](Pics/graph_players.png?raw=true "Players in game by simulation year") ![Menu screen](Pics/graph_goals.png?raw=true "Average game goals by simulation year")
+<p float="left">
+  <img src="Pics/graph_players.png" />
+  <img src="Pics/graph_goals.png" />
+</p>
 
 
 ## Authors
