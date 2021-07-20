@@ -53,29 +53,31 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Features to implement and issues to fix
 
-| Task                                                                  | Status                                                               |
-| --------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| **Managing**                                                          |                                                                      |
-| Staff management                                                      | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Youth team management                                                 | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| Search / observe players                                              | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| Negociate contracts / transferts with other clubs                     | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| **Environment**                                                       |                                                                      |
-| Dynamic dates, from one season to an other                            | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| A system for transferring players between clubs                       | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| National Directorate of Management Control (DNCG)                     | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| **Tournaments**                                                       |                                                                      |
-| Set up international tournaments on multiples years                   | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| **GUI**                                                               |                                                                      |
-| Panel to give infos (transfers, main results) during simulation       | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| Make player search table faster                                       | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| Improve GUI                                                           | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| **Miscellaneous**                                                     |                                                                      |
-| Try to reduce savegame size (135mo / year)                            | ![#ffa500](https://placehold.it/15/ffa500/000000?text=+) In progress |
-| Manage memory for long games                                          | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| (Data editor)                                                         | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| (Generate Wiki with simulation data)                                  | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
-| (3D Engine for games)                                                 | ![#f03c15](https://placehold.it/15/f03c15/000000?text=+) Not started |
+| Task                                                                  | Status           |
+| --------------------------------------------------------------------- | ---------------- |
+| **Stability**                                                         |                  |
+| Improve world stability                                               | 🔴 Not started |
+| **Managing**                                                          |                 |
+| Staff management                                                      | 🔴 Not started |
+| Youth team management                                                 | 🔴 Not started |
+| Search / observe players                                              | 🟡 In progress |
+| Negociate contracts / transferts with other clubs                     | 🔴 Not started |
+| **Environment**                                                       |                 |
+| Dynamic dates, from one season to an other                            | 🔴 Not started |
+| A system for transferring players between clubs                       | 🟡 In progress |
+| National Directorate of Management Control (DNCG)                     | 🟡 In progress |
+| **Tournaments**                                                       |                 |
+| Set up international tournaments on multiples years                   | 🔴 Not started |
+| **GUI**                                                               |                 |
+| Panel to give infos (transfers, main results) during simulation       | 🟡 In progress |
+| Make player search table faster                                       | 🟡 In progress |
+| Improve GUI                                                           | 🟡 In progress |
+| **Miscellaneous**                                                     |				  |
+| Try to reduce savegame size (135mo / year)                            | 🟡 In progress |
+| Manage memory for long games                                          | 🔴 Not started |
+| (Data editor)                                                         | 🔴 Not started |
+| (Generate Wiki with simulation data)                                  | 🔴 Not started |
+| (3D Engine for games)                                                 | 🔴 Not started |
 
 ## Screenshots
 
@@ -108,6 +110,15 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 ### Live match screen
 
 ![Live match](Pics/pic7.png?raw=true "Live match")
+
+## Simulation stability
+
+The simulation is currently not very stable: money circulating in the game varies too much, and the more the years pass, the more the average level of the players decreases.
+
+![Menu screen](Pics/graph_budget.png?raw=true "Total money in game by simulation year") ![Menu screen](Pics/graph_level.png?raw=true "Average level by year")
+
+![Menu screen](Pics/graph_players.png?raw=true "Players in game by simulation year") ![Menu screen](Pics/graph_goals.png?raw=true "Average game goals by simulation year")
+
 
 ## Authors
 Nicolas Lépy

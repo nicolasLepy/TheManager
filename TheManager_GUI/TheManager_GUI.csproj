@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{78924484-F096-4D2F-92FC-C53A6A397027}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>TheManager_GUI</RootNamespace>
     <AssemblyName>TheManager_GUI</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -84,41 +84,41 @@
     <Compile Include="VueClassement\VueClassementChampionnat.cs" />
     <Compile Include="VueClassement\VueClassementEliminatoires.cs" />
     <Compile Include="VueClassement\VueClassementPoules.cs" />
-    <Compile Include="Windows_AvantMatch.xaml.cs">
-      <DependentUpon>Windows_AvantMatch.xaml</DependentUpon>
+    <Compile Include="PregameWindow.xaml.cs">
+      <DependentUpon>PregameWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_ChoixClub.xaml.cs">
-      <DependentUpon>Windows_ChoixClub.xaml</DependentUpon>
+    <Compile Include="ClubChoiceWindow.xaml.cs">
+      <DependentUpon>ClubChoiceWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Club.xaml.cs">
-      <DependentUpon>Windows_Club.xaml</DependentUpon>
+    <Compile Include="ClubWindow.xaml.cs">
+      <DependentUpon>ClubWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Competition.xaml.cs">
-      <DependentUpon>Windows_Competition.xaml</DependentUpon>
+    <Compile Include="CompetitionWindow.xaml.cs">
+      <DependentUpon>CompetitionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_ConfigurationPartie.xaml.cs">
-      <DependentUpon>Windows_ConfigurationPartie.xaml</DependentUpon>
+    <Compile Include="GameConfigurationWindow.xaml.cs">
+      <DependentUpon>GameConfigurationWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_JouerMatch.xaml.cs">
-      <DependentUpon>Windows_JouerMatch.xaml</DependentUpon>
+    <Compile Include="PlayGameWindow.xaml.cs">
+      <DependentUpon>PlayGameWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Joueur.xaml.cs">
-      <DependentUpon>Windows_Joueur.xaml</DependentUpon>
+    <Compile Include="PlayerWindow.xaml.cs">
+      <DependentUpon>PlayerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Journaliste.xaml.cs">
-      <DependentUpon>Windows_Journaliste.xaml</DependentUpon>
+    <Compile Include="JournalistWindow.xaml.cs">
+      <DependentUpon>JournalistWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Match.xaml.cs">
-      <DependentUpon>Windows_Match.xaml</DependentUpon>
+    <Compile Include="GameWindow.xaml.cs">
+      <DependentUpon>GameWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Menu.xaml.cs">
-      <DependentUpon>Windows_Menu.xaml</DependentUpon>
+    <Compile Include="MenuWindow.xaml.cs">
+      <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Options.xaml.cs">
-      <DependentUpon>Windows_Options.xaml</DependentUpon>
+    <Compile Include="OptionsWindow.xaml.cs">
+      <DependentUpon>OptionsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Windows_Participants.xaml.cs">
-      <DependentUpon>Windows_Participants.xaml</DependentUpon>
+    <Compile Include="TournamentClubWindow.xaml.cs">
+      <DependentUpon>TournamentClubWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="HomepageWindow.xaml">
       <SubType>Designer</SubType>
@@ -144,51 +144,51 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_AvantMatch.xaml">
+    <Page Include="PregameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_ChoixClub.xaml">
+    <Page Include="ClubChoiceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Club.xaml">
+    <Page Include="ClubWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Competition.xaml">
+    <Page Include="CompetitionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_ConfigurationPartie.xaml">
+    <Page Include="GameConfigurationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_JouerMatch.xaml">
+    <Page Include="PlayGameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Joueur.xaml">
+    <Page Include="PlayerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Journaliste.xaml">
+    <Page Include="JournalistWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Match.xaml">
+    <Page Include="GameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Menu.xaml">
+    <Page Include="MenuWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Options.xaml">
+    <Page Include="OptionsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Windows_Participants.xaml">
+    <Page Include="TournamentClubWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

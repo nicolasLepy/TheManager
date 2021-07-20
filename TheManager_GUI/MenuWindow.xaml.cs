@@ -193,11 +193,18 @@ namespace TheManager_GUI
 
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine("Simulation started");
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             Avancer();
             while (!(_partie.date.Month == 6 && _partie.date.Day == 13))
             {
                 Avancer();
             }
+            watch.Stop();
+            var elapsedMs = watch.ElapsedMilliseconds;
+            Console.WriteLine("Total execution " + elapsedMs + "ms");
+
         }
 
         private void BtnSimuler2_Click(object sender, RoutedEventArgs e)

@@ -771,9 +771,10 @@ namespace TheManager
                 }
             }
 
-            bool pursue = nbSubs < 3;
-
             int i = terrain.Count - 1;
+
+            bool pursue = nbSubs < 3 && i > 0;
+
             while (pursue)
             {
                 Player weakest = terrain[i];

@@ -9,6 +9,47 @@ using MathNet.Numerics.Distributions;
 namespace TheManager
 {
 
+    /// <summary>
+    /// Store data about game universe to verify its long-term stability (budgets, players ...)
+    /// </summary>
+    [DataContract]
+    public class GameWorld
+    {
+        private List<int> _totalBudgetInGame;
+        private List<float> _averagePlayerLevelInGame;
+        private List<float> _averageClubLevelInGame;
+        private List<int> _playersInGame;
+        private List<float> _averageGoals;
+
+        public List<int> TotalBudgetInGame => _totalBudgetInGame;
+
+        public List<float> AveragePlayerLevelInGame => _averagePlayerLevelInGame;
+
+        public List<float> AverageClubLevelInGame => _averageClubLevelInGame;
+
+        public List<int> PlayersInGame => _playersInGame;
+
+        public List<float> AverageGoals => _averageGoals;
+
+        public void AddInfo(int totalBudgetInGame, float averagePlayerLevelInGame, int playersInGame, float averageClubLevelInGame, float averageGoals)
+        {
+            _totalBudgetInGame.Add(totalBudgetInGame);
+            _averagePlayerLevelInGame.Add(averagePlayerLevelInGame);
+            _playersInGame.Add(playersInGame);
+            _averageClubLevelInGame.Add(averageClubLevelInGame);
+            _averageGoals.Add(averageGoals);
+        }
+
+        public GameWorld()
+        {
+            _totalBudgetInGame = new List<int>();
+            _averagePlayerLevelInGame = new List<float>();
+            _playersInGame = new List<int>();
+            _averageClubLevelInGame = new List<float>();
+            _averageGoals = new List<float>();
+        }
+    }
+
     public struct Transfer : IEquatable<Transfer>
     {
         private readonly CityClub _from;
@@ -45,6 +86,8 @@ namespace TheManager
         private CityClub _club;
         [DataMember]
         private List<Article> _articles;
+        [DataMember]
+        private GameWorld _gameUniverse;
 
         /// <summary>
         /// Date of the day
@@ -70,6 +113,7 @@ namespace TheManager
             _kernel = new Kernel();
             _options = new Options();
             _club = null;
+            _gameUniverse = new GameWorld();
         }
 
         public void Exports(Tournament t)
@@ -146,6 +190,40 @@ namespace TheManager
 
                 }
             }
+        }
+
+        public void UpdateGameUniverseData()
+        {
+            int totalBudgetInGame = 0;
+            float averagePlayerLevelInGame = 0;
+            int playersInGame = 0;
+            float averageClubLevelInGame = 0;
+            float averageGoals = 0;
+            
+            int clubsCount = 0;
+            int playersCount = 0;
+
+            foreach(Club club in _kernel.Clubs)
+                if (club is CityClub)
+                {
+                    clubsCount++;
+                    totalBudgetInGame += (club as CityClub).budget;
+                    playersCount += (club as CityClub).Players().Count;
+                    playersInGame += (club as CityClub).Players().Count;
+                    foreach (Player p in (club as CityClub).Players())
+                        averagePlayerLevelInGame += p.level;
+                    
+                    averageClubLevelInGame += (club as CityClub).Level();
+                }
+
+            foreach (Match m in _kernel.Matchs)
+                averageGoals += m.score1 + m.score2;
+            averageGoals /= _kernel.Matchs.Count;
+
+            averageClubLevelInGame = averageClubLevelInGame / (clubsCount+0.0f);
+            averagePlayerLevelInGame = averagePlayerLevelInGame / (playersCount+0.0f);
+
+            _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageGoals);
         }
 
         public void UpdateClubs()
@@ -462,6 +540,7 @@ namespace TheManager
             //Yearly update of clubs (sponsors, formation facilities, contracts)
             if (date.Day == 1 && date.Month == 7)
             {
+                UpdateGameUniverseData();
                 UpdateClubs();
             }
 
