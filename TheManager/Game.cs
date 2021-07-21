@@ -15,11 +15,11 @@ namespace TheManager
     [DataContract]
     public class GameWorld
     {
-        private List<int> _totalBudgetInGame;
-        private List<float> _averagePlayerLevelInGame;
-        private List<float> _averageClubLevelInGame;
-        private List<int> _playersInGame;
-        private List<float> _averageGoals;
+        private readonly List<int> _totalBudgetInGame;
+        private readonly List<float> _averagePlayerLevelInGame;
+        private readonly List<float> _averageClubLevelInGame;
+        private readonly List<int> _playersInGame;
+        private readonly List<float> _averageGoals;
 
         public List<int> TotalBudgetInGame => _totalBudgetInGame;
 
@@ -203,21 +203,27 @@ namespace TheManager
             int clubsCount = 0;
             int playersCount = 0;
 
-            foreach(Club club in _kernel.Clubs)
-                if (club is CityClub)
+            foreach (Club c in _kernel.Clubs)
+            {
+                if (c is CityClub)
                 {
                     clubsCount++;
-                    totalBudgetInGame += (club as CityClub).budget;
-                    playersCount += (club as CityClub).Players().Count;
-                    playersInGame += (club as CityClub).Players().Count;
-                    foreach (Player p in (club as CityClub).Players())
+                    totalBudgetInGame += (c as CityClub).budget;
+                    playersCount += (c as CityClub).Players().Count;
+                    playersInGame += (c as CityClub).Players().Count;
+                    foreach (Player p in (c as CityClub).Players())
+                    {
                         averagePlayerLevelInGame += p.level;
+                    }
                     
-                    averageClubLevelInGame += (club as CityClub).Level();
+                    averageClubLevelInGame += (c as CityClub).Level();
                 }
+            }
 
             foreach (Match m in _kernel.Matchs)
+            {
                 averageGoals += m.score1 + m.score2;
+            }
             averageGoals /= _kernel.Matchs.Count;
 
             averageClubLevelInGame = averageClubLevelInGame / (clubsCount+0.0f);
@@ -523,7 +529,8 @@ namespace TheManager
             bool clubPlayedHaveAMatch = (clubMatchs.Count > 0) ? true : false;
             foreach(Match m in toPlay)
             {
-                if (clubPlayedHaveAMatch && m.Tournament == clubMatchs[0].Tournament && m.day.ToShortTimeString() == clubMatchs[0].day.ToShortTimeString()){                
+                if (clubPlayedHaveAMatch && m.Tournament == clubMatchs[0].Tournament && m.day.ToShortTimeString() == clubMatchs[0].day.ToShortTimeString())
+                {
                     clubMatchs.Add(m);
                 }
                 else{

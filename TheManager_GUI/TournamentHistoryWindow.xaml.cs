@@ -13,7 +13,6 @@ namespace TheManager_GUI
     /// </summary>
     public partial class TournamentHistoryWindow : Window
     {
-
         private readonly Tournament _tournament;
 
         private Tournament _currentArchive;

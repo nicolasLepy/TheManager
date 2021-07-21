@@ -193,7 +193,6 @@ namespace TheManager_GUI
 
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
         {
-            Console.WriteLine("Simulation started");
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             Avancer();

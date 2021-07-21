@@ -61,7 +61,6 @@ namespace TheManager_GUI
         private DatabaseLoader _loader;
         public MainWindow()
         {
-            Console.WriteLine("Simulation started");
             InitializeComponent();
             LoadBackgroundImage();
             LoadThemes();
