@@ -73,11 +73,16 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | Make player search table faster                                       | 🟡 In progress |
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
+| Implement Machine Learning solution for transferts management         | 🔴 Not started |
+| Pre-game competitions selection                                       | 🟡 In progress |
 | Try to reduce savegame size (135mo / year)                            | 🟡 In progress |
 | Manage memory for long games                                          | 🔴 Not started |
-| (Data editor)                                                         | 🔴 Not started |
-| (Generate Wiki with simulation data)                                  | 🔴 Not started |
-| (3D Engine for games)                                                 | 🔴 Not started |
+
+## Next Features
+
+|  Data editor                                                          | 🔴 Not started |
+|  Generate Wiki with simulation data                                   | 🔴 Not started |
+|  3D Engine for games                                                  | 🔴 Not started |
 
 ## Screenshots
 
