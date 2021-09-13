@@ -118,8 +118,8 @@ namespace TheManager_GUI
         {
             Round rnd = _currentArchive.rounds[_currentRound];
             lbRoundName.Content = rnd.name;
-            IVueClassement vc = FabriqueVueClassement.CreerVue(null, rnd, 0.75);
-            vc.Remplir(spRoundRanking);
+            IViewRanking vc = FactoryViewRanking.CreerVue(null, rnd, 0.75);
+            vc.Full(spRoundRanking);
 
             List<Match> matches = new List<Match>(rnd.matches);
             if (matches.Count > 0)

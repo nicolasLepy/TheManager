@@ -8,23 +8,23 @@ using System.Windows.Media.Imaging;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class VueClassementEliminatoires : IVueClassement
+    public class ViewRankingElimination : IViewRanking
     {
 
         private readonly DataGrid _grille;
         private readonly KnockoutRound _tour;
         private readonly double _sizeMultiplier;
 
-        public VueClassementEliminatoires(DataGrid grille, KnockoutRound tour, double sizeMultiplier)
+        public ViewRankingElimination(DataGrid grille, KnockoutRound tour, double sizeMultiplier)
         {
             _grille = grille;
             _tour = tour;
             _sizeMultiplier = sizeMultiplier;
         }
 
-        public void Remplir(StackPanel spClassement)
+        public void Full(StackPanel spRanking)
         {
-            spClassement.Children.Clear();
+            spRanking.Children.Clear();
             List<Match> matchs = new List<Match>(_tour.matches);
             matchs.Sort(new MatchDateComparator());
 
@@ -75,12 +75,12 @@ namespace TheManager_GUI.VueClassement
                 spMatch.Children.Add(l5);
                 spMatch.Children.Add(img2);
 
-                spClassement.Children.Add(spMatch);
+                spRanking.Children.Add(spMatch);
             }
 
         }
 
-        public void Afficher()
+        public void Show()
         {
             _grille.Items.Clear();
         }

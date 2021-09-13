@@ -66,8 +66,8 @@ namespace TheManager_GUI
             Palmares();
             Buteurs();
             Calendrier(_competition.rounds[_indexTour]);
-            IVueClassement vue = FabriqueVueClassement.CreerVue(null, _competition.rounds[_indexTour]);
-            vue.Remplir(spClassement);
+            IViewRanking vue = FactoryViewRanking.CreerVue(null, _competition.rounds[_indexTour]);
+            vue.Full(spClassement);
 
             int nbRegles = 0;
             foreach (Rule r in _competition.rounds[_indexTour].rules)

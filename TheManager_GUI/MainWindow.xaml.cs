@@ -61,6 +61,7 @@ namespace TheManager_GUI
         private DatabaseLoader _loader;
         public MainWindow()
         {
+            Style = (Style) Resources["StyleWindows"];
             InitializeComponent();
             LoadBackgroundImage();
             LoadThemes();

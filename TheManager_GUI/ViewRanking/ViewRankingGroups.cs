@@ -10,7 +10,7 @@ using TheManager.Comparators;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class VueClassementPoules : IVueClassement
+    public class ViewRankingGroups : IViewRanking
     {
 
         private readonly DataGrid _grille;
@@ -19,7 +19,7 @@ namespace TheManager_GUI.VueClassement
         private readonly double _sizeMultiplier;
         private readonly Club _team;
 
-        public VueClassementPoules(DataGrid grille, GroupsRound tour, double sizeMultiplier, bool focusOnTeam, Club team)
+        public ViewRankingGroups(DataGrid grille, GroupsRound tour, double sizeMultiplier, bool focusOnTeam, Club team)
         {
             _grille = grille;
             _tour = tour;
@@ -69,9 +69,9 @@ namespace TheManager_GUI.VueClassement
 
         }
 
-        public void Remplir(StackPanel spClassement)
+        public void Full(StackPanel spRanking)
         {
-            spClassement.Children.Clear();
+            spRanking.Children.Clear();
 
             //If focusing on a team, only show five teams around the current team
             if (_focusOnTeam)
@@ -98,7 +98,7 @@ namespace TheManager_GUI.VueClassement
                     }
                     for(int i = beginningIndex; i < beginningIndex + 5; i++)
                     {
-                        spClassement.Children.Add(CreateRanking(i, ranking[i]));
+                        spRanking.Children.Add(CreateRanking(i, ranking[i]));
                     }
                 }
             }
@@ -110,12 +110,12 @@ namespace TheManager_GUI.VueClassement
                     labelPoule.Content = _tour.GroupName(poule);
                     labelPoule.Style = Application.Current.FindResource("StyleLabel1") as Style;
                     labelPoule.FontSize *= _sizeMultiplier;
-                    spClassement.Children.Add(labelPoule);
+                    spRanking.Children.Add(labelPoule);
                     int i = 0;
                     foreach (Club c in _tour.Ranking(poule))
                     {
                         i++;
-                        spClassement.Children.Add(CreateRanking(i, c));
+                        spRanking.Children.Add(CreateRanking(i, c));
                     }
                 }
 
@@ -214,7 +214,7 @@ namespace TheManager_GUI.VueClassement
                             int nbChildrenParPoule = (_tour.clubs.Count / _tour.groupsCount) + 1;
                             index++;
 
-                            StackPanel sp = (spClassement.Children[j * nbChildrenParPoule + index] as StackPanel);
+                            StackPanel sp = (spRanking.Children[j * nbChildrenParPoule + index] as StackPanel);
                             sp.Background = color;
                         }
 
@@ -225,7 +225,7 @@ namespace TheManager_GUI.VueClassement
 
         }
 
-        public void Afficher()
+        public void Show()
         {
             _grille.Items.Clear();
             for (int poules = 0; poules < _tour.groupsCount; poules++)

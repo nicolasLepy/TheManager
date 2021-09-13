@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="The Manager" Height="450" Width="800" Style="{StaticResource StyleWindows}" Name="mainWindow" >
+        Title="The Manager" Height="450" Width="800" Name="mainWindow" >
 	<Grid>
 		<StackPanel Margin="100">
 			<Label Content="" Style="{StaticResource StyleLabel1}"/>

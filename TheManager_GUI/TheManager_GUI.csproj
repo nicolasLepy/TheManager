@@ -75,15 +75,15 @@
     <Compile Include="TournamentHistoryWindow.xaml.cs">
       <DependentUpon>TournamentHistoryWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VueClassement\DataGridTournamentColumnConverter.cs" />
-    <Compile Include="VueClassement\FabriqueVueClassement.cs" />
-    <Compile Include="VueClassement\IVueClassement.cs" />
-    <Compile Include="VueClassement\MatchesDataGridView.cs" />
-    <Compile Include="VueClassement\MatchesView.cs" />
-    <Compile Include="VueClassement\ViewUtils.cs" />
-    <Compile Include="VueClassement\VueClassementChampionnat.cs" />
-    <Compile Include="VueClassement\VueClassementEliminatoires.cs" />
-    <Compile Include="VueClassement\VueClassementPoules.cs" />
+    <Compile Include="ViewRanking\DataGridTournamentColumnConverter.cs" />
+    <Compile Include="ViewRanking\FactoryViewRanking.cs" />
+    <Compile Include="ViewRanking\IViewRanking.cs" />
+    <Compile Include="ViewRanking\ViewMatchesDataGrid.cs" />
+    <Compile Include="ViewRanking\ViewMatches.cs" />
+    <Compile Include="ViewRanking\ViewUtils.cs" />
+    <Compile Include="ViewRanking\ViewRankingChampionship.cs" />
+    <Compile Include="ViewRanking\ViewRankingElimination.cs" />
+    <Compile Include="ViewRanking\ViewRankingGroups.cs" />
     <Compile Include="PregameWindow.xaml.cs">
       <DependentUpon>PregameWindow.xaml</DependentUpon>
     </Compile>

@@ -19,7 +19,7 @@ namespace TheManager_GUI
     public partial class Windows_Menu : Window
     {
 
-        private IVueClassement vueClassement;
+        private IViewRanking _viewRanking;
 
         private readonly Game _partie;
 
@@ -160,10 +160,10 @@ namespace TheManager_GUI
 
             if (t != null)
             {
-                IVueClassement vue = FabriqueVueClassement.CreerVue(null, t, 0.7);
+                IViewRanking vue = FactoryViewRanking.CreerVue(null, t, 0.7);
                 if (vue != null)
                 {
-                    vue.Remplir(spRoundRanking);
+                    vue.Full(spRoundRanking);
                     //vue.Afficher();
                 }
                 List<Match> matches = new List<Match>(t.matches);
@@ -312,8 +312,8 @@ namespace TheManager_GUI
 
             if (_partie.club != null && _partie.club.Championship != null)
             {
-                vueClassement = FabriqueVueClassement.CreerVue(null, _partie.club.Championship.rounds[0], 0.75, true, _partie.club);
-                vueClassement.Remplir(spRanking);
+                _viewRanking = FactoryViewRanking.CreerVue(null, _partie.club.Championship.rounds[0], 0.75, true, _partie.club);
+                _viewRanking.Full(spRanking);
             }
         }
 

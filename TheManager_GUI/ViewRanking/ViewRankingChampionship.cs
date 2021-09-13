@@ -9,7 +9,7 @@ using TheManager;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class VueClassementChampionnat : IVueClassement
+    public class ViewRankingChampionship : IViewRanking
     {
 
         private readonly DataGrid _grid;
@@ -26,7 +26,7 @@ namespace TheManager_GUI.VueClassement
         /// <param name="sizeMultiplier">Width and font size multiplier</param>
         /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
         /// <param name="team">The team to focus ranking on</param>
-        public VueClassementChampionnat(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null)
+        public ViewRankingChampionship(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null)
         {
             _grid = grid;
             _round = round;
@@ -42,9 +42,9 @@ namespace TheManager_GUI.VueClassement
             l.FontSize *= _sizeMultiplier;
         }
 
-        public void Remplir(StackPanel spClassement)
+        public void Full(StackPanel spRanking)
         {
-            spClassement.Children.Clear();
+            spRanking.Children.Clear();
 
             int i = 0;
 
@@ -142,7 +142,7 @@ namespace TheManager_GUI.VueClassement
                 sp.Children.Add(l9);
                 sp.Children.Add(l10);
 
-                spClassement.Children.Add(sp);
+                spRanking.Children.Add(sp);
 
             }
 
@@ -173,7 +173,7 @@ namespace TheManager_GUI.VueClassement
                         if(couleur != "backgroundColor")
                         {
                             SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                            (spClassement.Children[index] as StackPanel).Background = color;
+                            (spRanking.Children[index] as StackPanel).Background = color;
                         }
                     }
 
@@ -192,7 +192,7 @@ namespace TheManager_GUI.VueClassement
  
         }
 
-        public void Afficher()
+        public void Show()
         {
             _grid.Items.Clear();
             int i = 0;

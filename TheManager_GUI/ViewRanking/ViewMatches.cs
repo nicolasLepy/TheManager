@@ -8,23 +8,23 @@ using System.Windows.Controls;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class MatchesView : IVueClassement
+    public class ViewMatches : IViewRanking
     {
 
         private readonly DataGrid _grid;
         private readonly List<Match> _matches;
-        public MatchesView(DataGrid grid, List<Match> matches)
+        public ViewMatches(DataGrid grid, List<Match> matches)
         {
             _grid = grid;
             _matches = matches;
         }
 
-        public void Afficher()
+        public void Show()
         {
             throw new NotImplementedException();
         }
 
-        public void Remplir(StackPanel spClassement)
+        public void Full(StackPanel spRanking)
         {
 
             _grid.Items.Clear();
