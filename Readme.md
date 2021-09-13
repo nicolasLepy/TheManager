@@ -80,6 +80,8 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Next Features
 
+| Task                                                                  | Status           |
+| --------------------------------------------------------------------- | ---------------- |
 |  Data editor                                                          | 🔴 Not started |
 |  Generate Wiki with simulation data                                   | 🔴 Not started |
 |  3D Engine for games                                                  | 🔴 Not started |
