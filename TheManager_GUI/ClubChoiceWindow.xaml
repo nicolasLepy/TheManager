@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ChoixClub" Height="550" Width="600" Style="{StaticResource StyleWindows}">
+        Title="Windows_ChoixClub" Height="550" Width="800" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
@@ -23,7 +23,7 @@
 					<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
 					<StackPanel Orientation="Horizontal" Name="spEtoiles" HorizontalAlignment="Center">
 					</StackPanel>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Width="350" Height="150">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Width="450" Height="150">
 						<StackPanel Name="spEffectif" Orientation="Vertical">
 							
 						</StackPanel>

@@ -75,6 +75,7 @@
     <Compile Include="TournamentHistoryWindow.xaml.cs">
       <DependentUpon>TournamentHistoryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewMisc\ViewPlayers.cs" />
     <Compile Include="ViewRanking\DataGridTournamentColumnConverter.cs" />
     <Compile Include="ViewRanking\FactoryViewRanking.cs" />
     <Compile Include="ViewRanking\IViewRanking.cs" />
@@ -220,7 +221,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Stats\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TheManager\TheManager.csproj">
       <Project>{c87d1486-6d8a-4041-afc6-f7f0f5bc6b4b}</Project>

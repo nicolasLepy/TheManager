@@ -4,11 +4,13 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Xml;
 using TheManager;
+using TheManager.Comparators;
 
 namespace TheManager_GUI
 {
@@ -26,6 +28,8 @@ namespace TheManager_GUI
         }
 
 
+        public delegate void SortActionOnButtonClick(object sender, MouseButtonEventArgs e, PlayerAttribute attribute);
+
         /// <summary>
         /// Create a WPF label object
         /// </summary>
@@ -35,7 +39,7 @@ namespace TheManager_GUI
         /// <param name="width">Width of the label box</param>
         /// <param name="color">Color of the label</param>
         /// <returns></returns>
-        public static Label CreateLabel(string content, string style, double fontSize, double width, Brush color = null)
+        public static Label CreateLabel(string content, string style, double fontSize, double width, Brush color = null, SortActionOnButtonClick onClick = null, PlayerAttribute attribute = PlayerAttribute.LEVEL)
         {
             Label label = new Label();
             label.Content = content;
@@ -49,7 +53,21 @@ namespace TheManager_GUI
             {
                 label.Foreground = color;
             }
+            if (onClick != null)
+                label.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(s, e, attribute));
+
             return label;
+        }
+
+        public static ProgressBar CreateProgressBar(float value, float minimum = 0, float maximum = 100)
+        {
+            ProgressBar progressBar = new ProgressBar();
+            progressBar.Minimum = minimum;
+            progressBar.Maximum = maximum;
+            progressBar.Value = value;
+            progressBar.Width = 60;
+            return progressBar;
+
         }
 
         private static StackPanel GeneratePlayerIcon(Player p, Match match, bool showEnergy, double sizeMultiplier)
@@ -150,6 +168,22 @@ namespace TheManager_GUI
             return res;
         }
 
+        public static string PlayerPositionOneLetter(Player p)
+        {
+            switch (p.position)
+            {
+                case Position.Goalkeeper:
+                    return "G";
+                case Position.Defender:
+                    return "D";
+                case Position.Midfielder:
+                    return "M";
+                case Position.Striker:
+                    return "S";
+            }
+            return "-";
+        }
+
         public static StackPanel CreateStarNotation(float notation, float starsSize)
         {
             StackPanel res = new StackPanel();
@@ -172,6 +206,8 @@ namespace TheManager_GUI
                 img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
                 res.Children.Add(img);
             }
+
+            res.Width = starsSize * 6;
 
             return res;
         }

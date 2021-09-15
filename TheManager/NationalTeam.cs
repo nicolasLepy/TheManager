@@ -47,7 +47,7 @@ namespace TheManager
         private void SelectPlayersByPosition(Position position, List<Player> players, int playersNumberToTake)
         {
             List<Player> playersByPosition = Utils.PlayersByPosition(players, position);
-            playersByPosition.Sort(new PlayerLevelComparator());
+            playersByPosition.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
             for (int i = 0; i < playersNumberToTake; i++)
             {
                 if (playersByPosition.Count > i)

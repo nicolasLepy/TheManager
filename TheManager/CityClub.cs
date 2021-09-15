@@ -225,7 +225,7 @@ namespace TheManager
             {
                 players.Add(c.player);
             }
-            players.Sort(new PlayerLevelComparator());
+            players.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
 
             int total = 0;
             for(int i = 0;i<16;i++)
@@ -648,7 +648,7 @@ namespace TheManager
             int playersFound = 0;
             int chance = 150 - (int)level;
             List<Player> transferables = Session.Instance.Game.kernel.TransferList(Championship.level, city.Country());
-            transferables.Sort(new PlayerLevelComparator());
+            transferables.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
             int i = 0;
             while(i < transferables.Count && playersFound < playersToResearch)
             {
@@ -718,7 +718,7 @@ namespace TheManager
                     pursue = false;
                 }
             }
-            clubTransfersManagement.targetedPlayers.Sort(new PlayerLevelComparator());
+            clubTransfersManagement.targetedPlayers.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
         }
 
         /// <summary>
@@ -813,7 +813,7 @@ namespace TheManager
                     int quotaEquipeReserve = equipesReservesQuotas[numposte];
 
                     List<Player> joueursPoste = Utils.PlayersByPosition(joueursComplets, poste);
-                    joueursPoste.Sort(new PlayerLevelComparator());
+                    joueursPoste.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
                     //Equipe première
                     for (int i = 0; i < quotaEquipePremiere; i++)
                     {

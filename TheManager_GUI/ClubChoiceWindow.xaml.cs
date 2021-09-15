@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
+using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
 {
@@ -101,17 +102,9 @@ namespace TheManager_GUI
 
         private void RemplirEffectif(Club c)
         {
-            spEffectif.Children.Clear();
-            foreach (Player j in c.Players())
-            {
-                StackPanel spPlayer = new StackPanel();
-                spPlayer.Orientation = Orientation.Horizontal;
-                spPlayer.Children.Add(ViewUtils.CreateLabel(j.lastName, "StyleLabel2", 10, 100));
-                spPlayer.Children.Add(ViewUtils.CreateLabel(j.position.ToString(), "StyleLabel2", 10, 80));
-                spPlayer.Children.Add(ViewUtils.CreateLabel(j.Age + "ans", "StyleLabel2", 10, 70));
-                spPlayer.Children.Add(ViewUtils.CreateStarNotation(j.Stars, 15));
-                spEffectif.Children.Add(spPlayer);
-            }
+            ViewPlayers view = new ViewPlayers(c.Players(), 10, true, true, false, true, true, true, true, true, true, true, false, false, false, false, false) ;
+            view.Full(spEffectif);
+
         }
 
         private void ClubSelectionne()

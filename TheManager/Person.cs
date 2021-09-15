@@ -24,6 +24,7 @@ namespace TheManager
         private Country _nationality;
 
 
+        public string Name { get => _firstName + " " + _lastName; }
         public string lastName { get => _lastName; }
         public string firstName { get => _firstName; }
         public DateTime birthday { get => _birthDay; }
