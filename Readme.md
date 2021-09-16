@@ -69,6 +69,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 | **Tournaments**                                                       |                 |
 | Set up international tournaments on multiples years                   | 🔴 Not started |
 | **GUI**                                                               |                 |
+| View system                                                           | 🟡 In progress |
 | Panel to give infos (transfers, main results) during simulation       | 🟡 In progress |
 | Make player search table faster                                       | 🟡 In progress |
 | Improve GUI                                                           | 🟡 In progress |
