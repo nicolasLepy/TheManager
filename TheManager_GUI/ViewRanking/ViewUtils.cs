@@ -40,12 +40,14 @@ namespace TheManager_GUI
         /// <param name="width">Width of the label box</param>
         /// <param name="color">Color of the label</param>
         /// <returns></returns>
-        public static Label CreateLabel(string content, string style, double fontSize, double width, Brush color = null, SortActionOnButtonClick onClick = null, PlayerAttribute attribute = PlayerAttribute.LEVEL)
+        public static Label CreateLabel(string content, string styleName, double fontSize, double width, Brush color = null, SortActionOnButtonClick onClick = null, PlayerAttribute attribute = PlayerAttribute.LEVEL, Brush backgroundColor = null)
         {
             Label label = new Label();
             label.Content = content;
-            label.Style = Application.Current.FindResource(style) as Style;
-            if(fontSize > -1)
+            Style style = Application.Current.FindResource(styleName) as Style;
+            label.Style = style;
+
+            if (fontSize > -1)
             {
                 label.FontSize = fontSize;
             }
@@ -54,8 +56,14 @@ namespace TheManager_GUI
             {
                 label.Foreground = color;
             }
+            if(backgroundColor != null)
+            {
+                label.Background = backgroundColor;
+            }
             if (onClick != null)
+            {
                 label.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(attribute));
+            }
 
             return label;
         }

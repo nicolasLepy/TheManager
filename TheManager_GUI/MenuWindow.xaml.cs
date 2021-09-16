@@ -374,8 +374,9 @@ namespace TheManager_GUI
                     }
                 }
                 
-                MatchesDataGridView matchesView = new MatchesDataGridView(spNextMatches, matches, false, false, false, false, true);
-                matchesView.Refresh();
+                
+                ViewMatches viewMatches = new ViewMatches(matches, true, false, false, false, false, true);
+                viewMatches.Full(spNextMatches);
             }
         }
 

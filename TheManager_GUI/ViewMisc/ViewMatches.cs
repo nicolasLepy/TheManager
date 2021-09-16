@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Media;
 using TheManager;
 using TheManager_GUI.VueClassement;
 
@@ -62,13 +63,15 @@ namespace TheManager_GUI.ViewMisc
                 StackPanel spLine = new StackPanel();
                 spLine.Orientation = Orientation.Horizontal;
 
-                if(showHour)
+                if(!showDateSeparated && showDate)
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortDateString(), "StyleLabel2", fontSize * 0.9, 55));
+                if (showHour)
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortTimeString(), "StyleLabel2", fontSize * 0.9, 35));
                 }
                 if(showTournament)
                 {
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30));   
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), null, TheManager.Comparators.PlayerAttribute.LEVEL, new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
                 }
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize, 70));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20, 20));
