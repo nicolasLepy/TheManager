@@ -28,7 +28,8 @@ namespace TheManager_GUI
         }
 
 
-        public delegate void SortActionOnButtonClick(object sender, MouseButtonEventArgs e, PlayerAttribute attribute);
+        public delegate void SortActionOnButtonClick(PlayerAttribute attribute);
+        public delegate void OpenPlayerWindowOnButtonClick(Player p);
 
         /// <summary>
         /// Create a WPF label object
@@ -54,9 +55,17 @@ namespace TheManager_GUI
                 label.Foreground = color;
             }
             if (onClick != null)
-                label.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(s, e, attribute));
+                label.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(attribute));
 
             return label;
+        }
+
+        public static Label CreateLabelOpenPlayer(Player p, OpenPlayerWindowOnButtonClick onClick, string content, string style, double fontSize, double width, Brush color = null)
+        {
+            Label res = CreateLabel(content, style, fontSize, width);
+            res.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(p));
+            return res;
+
         }
 
         public static ProgressBar CreateProgressBar(float value, float minimum = 0, float maximum = 100)
@@ -68,6 +77,16 @@ namespace TheManager_GUI
             progressBar.Width = 60;
             return progressBar;
 
+        }
+
+        
+        public static Image CreateFlag(Country country, float width, float height)
+        {
+            Image sprite = new Image();
+            sprite.Source = new BitmapImage(new Uri(Utils.Flag(country), UriKind.RelativeOrAbsolute));
+            sprite.Width = width;
+            sprite.Height = height;
+            return sprite;
         }
 
         private static StackPanel GeneratePlayerIcon(Player p, Match match, bool showEnergy, double sizeMultiplier)
@@ -210,6 +229,21 @@ namespace TheManager_GUI
             res.Width = starsSize * 6;
 
             return res;
+        }
+
+        public static string FormatMoney(float money)
+        {
+            float i = (float)Math.Pow(10, (int)Math.Max(0, Math.Log10(money) - 2));
+            money = money / i * i;
+
+            if (money >= 1000000000)
+                return (money / 1000000000D).ToString("0.##") + "B €";
+            if (money >= 1000000)
+                return (money / 1000000D).ToString("0.##") + "M €";
+            if (money >= 1000)
+                return (money / 1000D).ToString("0.##") + "K €";
+
+            return money.ToString("#,0") + " €";
         }
 
 

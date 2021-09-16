@@ -73,31 +73,31 @@ namespace TheManager_GUI.ViewMisc
             if (Age)
                 spLine.Children.Add(ViewUtils.CreateLabel("Age", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.AGE));
             if (Level)
-                spLine.Children.Add(ViewUtils.CreateLabel("Glo", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.LEVEL));
+                spLine.Children.Add(ViewUtils.CreateLabel("Glo", "StyleLabel2", FontSize, FontSize * 1.5f * 6, null, sortPlayers, PlayerAttribute.LEVEL));
             if (Potential)
-                spLine.Children.Add(ViewUtils.CreateLabel("Pot", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.POTENTIAL));
+                spLine.Children.Add(ViewUtils.CreateLabel("Pot", "StyleLabel2", FontSize, FontSize * 1.5f * 6, null, sortPlayers, PlayerAttribute.POTENTIAL));
             if (Condition)
                 spLine.Children.Add(ViewUtils.CreateLabel("Cond.", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.CONDITION));
             if (Nationality)
-                spLine.Children.Add(ViewUtils.CreateLabel("Nat.", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.NATIONALITY));
+                spLine.Children.Add(ViewUtils.CreateLabel("Nat.", "StyleLabel2", FontSize, 40, null, sortPlayers, PlayerAttribute.NATIONALITY));
             if (Value)
                 spLine.Children.Add(ViewUtils.CreateLabel("Value", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.VALUE));
             if (Wage)
                 spLine.Children.Add(ViewUtils.CreateLabel("Wage", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.WAGE));
             if (IsInjuried)
-                spLine.Children.Add(ViewUtils.CreateLabel("Inj.", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.IS_INJURIED));
+                spLine.Children.Add(ViewUtils.CreateLabel("Inj.", "StyleLabel2", FontSize, 30, null, sortPlayers, PlayerAttribute.IS_INJURIED));
             if (Games)
-                spLine.Children.Add(ViewUtils.CreateLabel("Games", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.GAMES));
+                spLine.Children.Add(ViewUtils.CreateLabel("Games", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.GAMES));
             if (Goals)
-                spLine.Children.Add(ViewUtils.CreateLabel("Goals", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.GOALS));
+                spLine.Children.Add(ViewUtils.CreateLabel("Goals", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.GOALS));
             if (IsSuspended)
-                spLine.Children.Add(ViewUtils.CreateLabel("Sus", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.IS_SUSPENDED));
+                spLine.Children.Add(ViewUtils.CreateLabel("Sus", "StyleLabel2", FontSize, 30, null, sortPlayers, PlayerAttribute.IS_SUSPENDED));
             if (IsInternational)
-                spLine.Children.Add(ViewUtils.CreateLabel("Int.", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.IS_INTERNATIONAL));
+                spLine.Children.Add(ViewUtils.CreateLabel("Int.", "StyleLabel2", FontSize, 30, null, sortPlayers, PlayerAttribute.IS_INTERNATIONAL));
             if (InternationalSelections)
-                spLine.Children.Add(ViewUtils.CreateLabel("Int. S", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.INTERNATIONAL_SELECTIONS));
+                spLine.Children.Add(ViewUtils.CreateLabel("Int. S", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.INTERNATIONAL_SELECTIONS));
             if (InternationalGoals)
-                spLine.Children.Add(ViewUtils.CreateLabel("Int. G", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.INTERNATIONAL_GOALS));
+                spLine.Children.Add(ViewUtils.CreateLabel("Int. G", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.INTERNATIONAL_GOALS));
 
             spRanking.Children.Add(spLine);
 
@@ -105,7 +105,7 @@ namespace TheManager_GUI.ViewMisc
             {
                 StackPanel spPlayer = new StackPanel();
                 spPlayer.Orientation = Orientation.Horizontal;
-                spPlayer.Children.Add(ViewUtils.CreateLabel(player.Name, "StyleLabel2", FontSize, 100));
+                spPlayer.Children.Add(ViewUtils.CreateLabelOpenPlayer(player, showPlayer, player.Name, "StyleLabel2", FontSize, 100));
 
                 if (Position)
                     spPlayer.Children.Add(ViewUtils.CreateLabel(ViewUtils.PlayerPositionOneLetter(player), "StyleLabel2", FontSize, 30));
@@ -118,17 +118,17 @@ namespace TheManager_GUI.ViewMisc
                 if (Condition)
                     spPlayer.Children.Add(ViewUtils.CreateProgressBar(player.energy));
                 if (Nationality)
-                    throw new NotImplementedException();
+                    spPlayer.Children.Add(ViewUtils.CreateFlag(player.nationality, 30, 15));
                 if (Value)
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.EstimateTransferValue() + " €", "StyleLabel2", FontSize, 60));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(ViewUtils.FormatMoney(player.EstimateTransferValue()), "StyleLabel2", FontSize, 60));
                 if (Wage)
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.EstimateWage() + " €", "StyleLabel2", FontSize, 60));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(ViewUtils.FormatMoney(player.EstimateWage()) + "/m", "StyleLabel2", FontSize, 60));
                 if (IsInjuried)
                     throw new NotImplementedException();
                 if (Games)
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.playedGames.ToString(), "StyleLabel2", FontSize, 60));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.playedGames.ToString(), "StyleLabel2", FontSize, 50));
                 if (Goals)
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.goalsScored.ToString(), "StyleLabel2", FontSize, 60));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.goalsScored.ToString(), "StyleLabel2", FontSize, 50));
                 if (IsSuspended)
                     throw new NotImplementedException();
                 if (IsInternational)
@@ -142,11 +142,17 @@ namespace TheManager_GUI.ViewMisc
             }
         }
 
-        public void sortPlayers(object sender, MouseButtonEventArgs e, PlayerAttribute attribute)
+        public void sortPlayers(PlayerAttribute attribute)
         {
             sortOrder = !sortOrder;
             Players.Sort(new PlayerComparator(sortOrder, attribute));
             Full(spRanking);
+        }
+
+        public void showPlayer(Player p)
+        {
+            Windows_Joueur wj = new Windows_Joueur(p);
+            wj.Show();
         }
 
         public void Show()

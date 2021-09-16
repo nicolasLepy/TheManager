@@ -7,6 +7,7 @@ using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
 using TheManager;
 using System.Windows.Documents;
+using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
 {
@@ -39,9 +40,10 @@ namespace TheManager_GUI
         private List<Player> FilterPlayers(List<Player> players)
         {
             List<Player> res = new List<Player>();
+            int i = 0;
             foreach(Player p in players)
             {
-                if(p.Age <= int.Parse(tbMaxAge.Text) && p.Age >= int.Parse(tbMinAge.Text))
+                if(i < 1000 && p.Age <= int.Parse(tbMaxAge.Text) && p.Age >= int.Parse(tbMinAge.Text))
                 {
                     bool add = true;
                     if((!cbGoalkeeper.IsChecked.Value && p.position == Position.Goalkeeper) ||
@@ -56,6 +58,7 @@ namespace TheManager_GUI
                         res.Add(p);
                     }
                 }
+                i++;
             }
             return res;
         }
@@ -69,60 +72,16 @@ namespace TheManager_GUI
         private void FillPlayersList()
         {
             List<Player> players = FilterPlayers(_currentPlayersBase);
-            spPlayers.Children.Clear();
+            ViewPlayers view = new ViewPlayers(players, 11, true, true, true, true, true, true, true, false, true, true, false, false, false, false, false);
+            view.Full(spPlayers);
+            
+
             lbPlayersCount.Content = players.Count + " joueurs";
             if(players.Count > 1000)
             {
                 lbPlayersCount.Content = "Trop de joueurs trouvés. Seuls les 1000 premiers affichés";
             }
-            int i = 0;
-            foreach (Player p in players)
-            {
-                int age = p.Age;
-                if (i < 1000 && p.Age <= int.Parse(tbMaxAge.Text) && p.Age >= int.Parse(tbMinAge.Text))
-                {
-                    StackPanel spPlayer = new StackPanel();
-                    spPlayer.Orientation = Orientation.Horizontal;
-                    Label lbName = ViewUtils.CreateLabel(p.firstName + " " + p.lastName, "StyleLabel2", 11, 150);
-                    spPlayer.Children.Add(lbName);
-                    lbName.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
-                    { playerNameClick(p); };
 
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(p.position.ToString(), "StyleLabel2", 11, 70));
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(p.Age.ToString() + " ans", "StyleLabel2", 11, 70));
-
-                    Image imgFlag = new Image();
-
-                    imgFlag.Source = new BitmapImage(new Uri(Utils.Flag(p.nationality), UriKind.RelativeOrAbsolute));
-                    imgFlag.Width = 30;
-                    imgFlag.Height = 15;
-                    StackPanel spFlag = new StackPanel();
-                    spFlag.HorizontalAlignment = HorizontalAlignment.Center;
-                    spFlag.Width = 100;
-                    spFlag.Children.Add(imgFlag);
-
-                    spPlayer.Children.Add(spFlag);
-                    StackPanel spStarsLevel = ViewUtils.CreateStarNotation(Utils.GetStars(p.level), 15);
-                    spStarsLevel.Width = 100;
-                    spPlayer.Children.Add(spStarsLevel);
-                    StackPanel spStarsPotential = ViewUtils.CreateStarNotation(Utils.GetStars(p.potential), 15);
-                    spStarsPotential.Width = 100;
-                    spPlayer.Children.Add(spStarsPotential);
-
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(p.EstimateTransferValue().ToString() + " €", "StyleLabel2", 11, 100));
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(p.EstimateWage().ToString() + " €/m", "StyleLabel2", 11, 100));
-
-
-                    Club c = p.Club;
-                    if (c != null)
-                    {
-                        spPlayer.Children.Add(ViewUtils.CreateLabel(c.shortName, "StyleLabel2", 11, 150));
-                    }
-
-                    spPlayers.Children.Add(spPlayer);
-                }
-                i++;
-            }
         }
 
         private void BtnQuit_Click(object sender, RoutedEventArgs e)
