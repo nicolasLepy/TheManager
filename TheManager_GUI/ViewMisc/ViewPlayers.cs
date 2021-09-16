@@ -11,7 +11,7 @@ using TheManager_GUI.VueClassement;
 
 namespace TheManager_GUI.ViewMisc
 {
-    public class ViewPlayers : IViewRanking
+    public class ViewPlayers : View
     {
 
         private readonly bool Age;
@@ -59,7 +59,7 @@ namespace TheManager_GUI.ViewMisc
             sortOrder = false;
         }
 
-        public void Full(StackPanel spRanking)
+        public override void Full(StackPanel spRanking)
         {
             this.spRanking = spRanking;
             spRanking.Children.Clear();
@@ -105,7 +105,7 @@ namespace TheManager_GUI.ViewMisc
             {
                 StackPanel spPlayer = new StackPanel();
                 spPlayer.Orientation = Orientation.Horizontal;
-                spPlayer.Children.Add(ViewUtils.CreateLabelOpenPlayer(player, showPlayer, player.Name, "StyleLabel2", FontSize, 100));
+                spPlayer.Children.Add(ViewUtils.CreateLabelOpenWindow<Player>(player, OpenPlayer, player.Name, "StyleLabel2", FontSize, 100));
 
                 if (Position)
                     spPlayer.Children.Add(ViewUtils.CreateLabel(ViewUtils.PlayerPositionOneLetter(player), "StyleLabel2", FontSize, 30));
@@ -149,13 +149,7 @@ namespace TheManager_GUI.ViewMisc
             Full(spRanking);
         }
 
-        public void showPlayer(Player p)
-        {
-            Windows_Joueur wj = new Windows_Joueur(p);
-            wj.Show();
-        }
-
-        public void Show()
+        public override void Show()
         {
             
         }

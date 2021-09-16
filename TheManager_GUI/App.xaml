@@ -95,6 +95,10 @@
 			<Setter Property="Foreground" Value="{StaticResource color2}" />
 		</Style>
 
+		<Style x:Key="StyleLabel2Center" TargetType="{x:Type Label}" BasedOn="{StaticResource StyleLabel2}">
+			<Setter Property="HorizontalContentAlignment" Value="Center" />
+		</Style>
+
 		<Style x:Key="StyleTextBlock" TargetType="{x:Type TextBlock}">
 			<Setter Property="FontSize" Value="14"/>
 			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>

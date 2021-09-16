@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 using TheManager.Comparators;
+using TheManager_GUI.ViewMisc;
 using TheManager_GUI.VueClassement;
 
 namespace TheManager_GUI
@@ -19,7 +20,7 @@ namespace TheManager_GUI
     public partial class Windows_Menu : Window
     {
 
-        private IViewRanking _viewRanking;
+        private View _viewRanking;
 
         private readonly Game _partie;
 
@@ -160,7 +161,7 @@ namespace TheManager_GUI
 
             if (t != null)
             {
-                IViewRanking vue = FactoryViewRanking.CreerVue(null, t, 0.7);
+                View vue = FactoryViewRanking.CreerVue(null, t, 0.7);
                 if (vue != null)
                 {
                     vue.Full(spRoundRanking);
@@ -443,8 +444,8 @@ namespace TheManager_GUI
             List<Match> matchs = t.GetMatchesByDate(_resultsCurrentDate);
             matchs.Sort(new MatchDateComparator());
             lbRoundDate.Content = _resultsCurrentDate.ToLongDateString();
-            MatchesDataGridView view = new MatchesDataGridView(spRoundGames, matchs, true, true, true, true, false);
-            view.Refresh();
+            ViewMatches view = new ViewMatches(matchs, false, true, true, true, true, false);
+            view.Full(spRoundGames);
         }
 
         private void BtnSauvegarder_Click(object sender, RoutedEventArgs e)

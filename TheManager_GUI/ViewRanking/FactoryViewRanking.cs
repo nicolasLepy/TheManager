@@ -6,9 +6,9 @@ namespace TheManager_GUI.VueClassement
     public class FactoryViewRanking
     {
 
-        public static IViewRanking CreerVue(DataGrid grid, Round round, double sizeMultiplier = 1, bool focusOnTeam = false, Club team = null)
+        public static View CreerVue(DataGrid grid, Round round, double sizeMultiplier = 1, bool focusOnTeam = false, Club team = null)
         {
-            IViewRanking res = null;
+            View res = null;
 
             if (round as ChampionshipRound != null)
             {

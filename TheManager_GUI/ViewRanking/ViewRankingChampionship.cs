@@ -9,7 +9,7 @@ using TheManager;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class ViewRankingChampionship : IViewRanking
+    public class ViewRankingChampionship : View
     {
 
         private readonly DataGrid _grid;
@@ -42,7 +42,7 @@ namespace TheManager_GUI.VueClassement
             l.FontSize *= _sizeMultiplier;
         }
 
-        public void Full(StackPanel spRanking)
+        public override void Full(StackPanel spRanking)
         {
             spRanking.Children.Clear();
 
@@ -192,7 +192,7 @@ namespace TheManager_GUI.VueClassement
  
         }
 
-        public void Show()
+        public override void Show()
         {
             _grid.Items.Clear();
             int i = 0;

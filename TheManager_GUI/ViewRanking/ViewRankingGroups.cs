@@ -10,7 +10,7 @@ using TheManager.Comparators;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class ViewRankingGroups : IViewRanking
+    public class ViewRankingGroups : View
     {
 
         private readonly DataGrid _grille;
@@ -69,7 +69,7 @@ namespace TheManager_GUI.VueClassement
 
         }
 
-        public void Full(StackPanel spRanking)
+        public override void Full(StackPanel spRanking)
         {
             spRanking.Children.Clear();
 
@@ -225,7 +225,7 @@ namespace TheManager_GUI.VueClassement
 
         }
 
-        public void Show()
+        public override void Show()
         {
             _grille.Items.Clear();
             for (int poules = 0; poules < _tour.groupsCount; poules++)

@@ -29,7 +29,7 @@ namespace TheManager_GUI
 
 
         public delegate void SortActionOnButtonClick(PlayerAttribute attribute);
-        public delegate void OpenPlayerWindowOnButtonClick(Player p);
+        public delegate void OpenWindowOnButtonClick<T>(T element);
 
         /// <summary>
         /// Create a WPF label object
@@ -60,12 +60,11 @@ namespace TheManager_GUI
             return label;
         }
 
-        public static Label CreateLabelOpenPlayer(Player p, OpenPlayerWindowOnButtonClick onClick, string content, string style, double fontSize, double width, Brush color = null)
+        public static Label CreateLabelOpenWindow<T>(T t, OpenWindowOnButtonClick<T> onClick, string content, string style, double fontSize, double width, Brush color = null)
         {
-            Label res = CreateLabel(content, style, fontSize, width);
-            res.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(p));
+            Label res = CreateLabel(content, style, fontSize, width, color);
+            res.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(t));
             return res;
-
         }
 
         public static ProgressBar CreateProgressBar(float value, float minimum = 0, float maximum = 100)
@@ -88,6 +87,15 @@ namespace TheManager_GUI
             sprite.Height = height;
             return sprite;
         }
+        public static Image CreateLogo(Club club, float width, float height)
+        {
+            Image sprite = new Image();
+            sprite.Source = new BitmapImage(new Uri(Utils.Logo(club), UriKind.RelativeOrAbsolute));
+            sprite.Width = width;
+            sprite.Height = height;
+            return sprite;
+        }
+
 
         private static StackPanel GeneratePlayerIcon(Player p, Match match, bool showEnergy, double sizeMultiplier)
         {

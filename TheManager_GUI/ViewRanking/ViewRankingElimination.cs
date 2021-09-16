@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class ViewRankingElimination : IViewRanking
+    public class ViewRankingElimination : View
     {
 
         private readonly DataGrid _grille;
@@ -22,7 +22,7 @@ namespace TheManager_GUI.VueClassement
             _sizeMultiplier = sizeMultiplier;
         }
 
-        public void Full(StackPanel spRanking)
+        public override void Full(StackPanel spRanking)
         {
             spRanking.Children.Clear();
             List<Match> matchs = new List<Match>(_tour.matches);
@@ -80,7 +80,7 @@ namespace TheManager_GUI.VueClassement
 
         }
 
-        public void Show()
+        public override void Show()
         {
             _grille.Items.Clear();
         }

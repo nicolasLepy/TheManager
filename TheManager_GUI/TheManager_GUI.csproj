@@ -75,12 +75,12 @@
     <Compile Include="TournamentHistoryWindow.xaml.cs">
       <DependentUpon>TournamentHistoryWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewMisc\ViewMatches.cs" />
     <Compile Include="ViewMisc\ViewPlayers.cs" />
     <Compile Include="ViewRanking\DataGridTournamentColumnConverter.cs" />
     <Compile Include="ViewRanking\FactoryViewRanking.cs" />
     <Compile Include="ViewRanking\IViewRanking.cs" />
     <Compile Include="ViewRanking\ViewMatchesDataGrid.cs" />
-    <Compile Include="ViewRanking\ViewMatches.cs" />
     <Compile Include="ViewRanking\ViewUtils.cs" />
     <Compile Include="ViewRanking\ViewRankingChampionship.cs" />
     <Compile Include="ViewRanking\ViewRankingElimination.cs" />
