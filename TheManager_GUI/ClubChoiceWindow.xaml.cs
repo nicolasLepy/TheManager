@@ -100,16 +100,17 @@ namespace TheManager_GUI
              */
         }
 
-        private void RemplirEffectif(Club c)
+        private void FillSquad(Club c)
         {
+            
             ViewPlayers view = new ViewPlayers(c.Players(), 10, true, true, true, true, true, false, false, true, true, true, false, false, false, false, false) ;
             view.Full(spEffectif);
 
         }
 
-        private void ClubSelectionne()
+        private void ClubIsSelected()
         {
-            RemplirEffectif(club);
+            FillSquad(club);
             spEtoiles.Children.Clear();
             try
             {
@@ -120,27 +121,8 @@ namespace TheManager_GUI
                 Utils.Debug("Pas de logo disponible pour " + club.logo);
             }
 
-            spEtoiles.Children.Add(ViewUtils.CreateStarNotation(club.Stars, 20));
+            spEtoiles.Children.Add(ViewUtils.CreateStarNotation(club.Stars, 25));
 
-            /*
-            float etoiles = club.Stars;
-            int etoilesEntieres = (int)Math.Floor(etoiles);
-            for (int i = 1; i <= etoilesEntieres; i++)
-            {
-                Image img = new Image();
-                img.Width = 20;
-                img.Height = 20;
-                img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
-                spEtoiles.Children.Add(img);
-            }
-            if (etoiles - etoilesEntieres != 0)
-            {
-                Image img = new Image();
-                img.Width = 20;
-                img.Height = 20;
-                img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
-                spEtoiles.Children.Add(img);
-            }*/
         }
         
         private void BtnClub_Click(object sender, RoutedEventArgs e)
@@ -152,7 +134,7 @@ namespace TheManager_GUI
             if (c != null)
             {
                 club = c;
-                ClubSelectionne();
+                ClubIsSelected();
             }
         }
 
@@ -160,20 +142,20 @@ namespace TheManager_GUI
         {
             string prenom = tbPrenom.Text;
             string nom = tbNom.Text;
-            string[] strNaissance = dpNaissance.Text.Split('/');
-            DateTime naissance = new DateTime( int.Parse(strNaissance[2]), int.Parse(strNaissance[1]), int.Parse(strNaissance[0]));
-            Country nationalite = Session.Instance.Game.kernel.String2Country("France");
-            Country pays_selected = cbNationalite.SelectedItem as Country;
-            if (pays_selected != null)
+            string[] strBirthday = dpNaissance.Text.Split('/');
+            DateTime birthday = new DateTime( int.Parse(strBirthday[2]), int.Parse(strBirthday[1]), int.Parse(strBirthday[0]));
+            Country nationality = Session.Instance.Game.kernel.String2Country("France");
+            Country selectedCountry = cbNationalite.SelectedItem as Country;
+            if (selectedCountry != null)
             {
-                nationalite = pays_selected;
+                nationality = selectedCountry;
             }
 
             if(club != null)
             {
                 Session.Instance.Game.club = club as CityClub;
-                Manager entraineur = new Manager(prenom, nom, 70, naissance, nationalite);
-                Session.Instance.Game.club.ChangeManager(entraineur);
+                Manager manager = new Manager(prenom, nom, 70, birthday, nationality);
+                Session.Instance.Game.club.ChangeManager(manager);
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
                 Close();

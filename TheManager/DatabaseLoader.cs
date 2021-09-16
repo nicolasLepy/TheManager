@@ -666,7 +666,7 @@ namespace TheManager
                                 _clubsId[newId] = club;
                                 _kernel.Clubs.Add(club);
                                 firstTeam.reserves.Add(club as ReserveClub);
-                                //A reserve team was generated, let's create same players in base club to populate this reserve team
+                                //A reserve team was generated, let's create some players in base club to populate this reserve team
                                 int averagePotential = (int)(firstTeam.formationFacilities - (firstTeam.formationFacilities / divider));
                                 //Warning for {2,5,5,3} -> 15 is used in team initialisation to determine player number of first team
                                 for (int g = 0; g < 2; g++)
@@ -860,6 +860,7 @@ namespace TheManager
                     {
                         cityClub.GeneratePlayer(24,33);
                     }
+                    cityClub.DispatchPlayersInReserveTeams();
                 }
             }
         }

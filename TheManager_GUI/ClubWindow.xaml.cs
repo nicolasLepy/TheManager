@@ -199,7 +199,7 @@ namespace TheManager_GUI
             RemplirMatchs();
             FillBudget();
 
-            
+
             foreach (Contract ct in c.allContracts)
             {
                 dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.position.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.level, Potentiel = ct.player.potential, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.energy});

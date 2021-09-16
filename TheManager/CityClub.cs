@@ -766,7 +766,7 @@ namespace TheManager
         public void DispatchPlayersInReserveTeams()
         {
 
-            
+            int countPlayers = this.Players().Count;
             if(_reserves.Count > 0)
             {
 
