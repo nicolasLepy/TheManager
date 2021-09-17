@@ -146,7 +146,7 @@ Windows Media Player library
 ## Credits
 [Live Charts for WPF](https://www.google.com)
 MathNet.Numerics
-[beauty png from pngtree.com](https://pngtree.com/so/beauty)
+[pngtree.com](https://pngtree.com)
 
 ## License
 
