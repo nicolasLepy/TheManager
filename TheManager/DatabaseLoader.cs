@@ -345,7 +345,14 @@ namespace TheManager
                     int population = int.Parse(e2.Element("Population").Value);
                     float lat = float.Parse(e2.Element("Latitute").Value, CultureInfo.InvariantCulture);
                     float lon = float.Parse(e2.Element("Longitude").Value, CultureInfo.InvariantCulture);
-                    _kernel.String2Country("France").cities.Add(new City(name, population, lat, lon));
+                    if(e2.Element("Pays") != null)
+                    {
+                        _kernel.String2Country(e2.Element("Pays").Value).cities.Add(new City(name, population, lat, lon));
+                    }
+                    else
+                    {
+                        _kernel.String2Country("France").cities.Add(new City(name, population, lat, lon));
+                    }
 
                 }
             }

@@ -454,5 +454,10 @@ namespace TheManager
 
         }
 
+        public bool IsInternational()
+        {
+            return Session.Instance.Game.kernel.LocalisationTournament(this) as Continent != null;
+        }
+
     }
 }

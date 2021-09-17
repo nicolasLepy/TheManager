@@ -75,7 +75,7 @@ namespace TheManager_GUI.ViewMisc
                 }
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize, 70));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20, 20));
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.Played ? match.score1 + "-" + match.score2 : "", "StyleLabel2Center", fontSize, 40));
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(), "StyleLabel2Center", fontSize, 85));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.away, 20, 20));
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.away, OpenClub, match.away.shortName, "StyleLabel2", fontSize, 70));
 

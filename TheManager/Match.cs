@@ -1325,5 +1325,19 @@ namespace TheManager
         {
             _actions.Add(new KeyValuePair<string, string>(minute, action));
         }
+
+        public string ScoreToString()
+        {
+            string res = Played ? score1 + " - " + score2 : "";
+            if(prolongations)
+            {
+                res = res + " ap";
+            }
+            if(PenaltyShootout)
+            {
+                res = res + " (" + penaltyShootout1 + "-" + penaltyShootout2 + " t.)";
+            }
+            return res;
+        }
     }
 }

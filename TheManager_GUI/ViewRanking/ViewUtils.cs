@@ -40,7 +40,7 @@ namespace TheManager_GUI
         /// <param name="width">Width of the label box</param>
         /// <param name="color">Color of the label</param>
         /// <returns></returns>
-        public static Label CreateLabel(string content, string styleName, double fontSize, double width, Brush color = null, SortActionOnButtonClick onClick = null, PlayerAttribute attribute = PlayerAttribute.LEVEL, Brush backgroundColor = null)
+        public static Label CreateLabel(string content, string styleName, double fontSize, double width, Brush color = null, SortActionOnButtonClick onClick = null, PlayerAttribute attribute = PlayerAttribute.LEVEL, Brush backgroundColor = null, bool bold = false)
         {
             Label label = new Label();
             label.Content = content;
@@ -65,6 +65,12 @@ namespace TheManager_GUI
                 label.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(attribute));
             }
 
+            if(bold)
+            {
+                label.FontFamily = App.Current.TryFindResource("BoldFont") as FontFamily;
+                //label.FontWeight = FontWeights.Bold;
+            }
+ 
             return label;
         }
 
@@ -87,7 +93,7 @@ namespace TheManager_GUI
         }
 
         
-        public static Image CreateFlag(Country country, float width, float height)
+        public static Image CreateFlag(Country country, double width, double height)
         {
             Image sprite = new Image();
             sprite.Source = new BitmapImage(new Uri(Utils.Flag(country), UriKind.RelativeOrAbsolute));
@@ -95,7 +101,7 @@ namespace TheManager_GUI
             sprite.Height = height;
             return sprite;
         }
-        public static Image CreateLogo(Club club, float width, float height)
+        public static Image CreateLogo(Club club, double width, double height)
         {
             Image sprite = new Image();
             sprite.Source = new BitmapImage(new Uri(Utils.Logo(club), UriKind.RelativeOrAbsolute));

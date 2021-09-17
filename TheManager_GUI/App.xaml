@@ -17,6 +17,7 @@
 		<Color x:Key="BottomPlayOff">#CA040B</Color>
 		<Color x:Key="Relegation">#7C0004</Color>
 		<FontFamily x:Key="Font">Bahnschrift Light</FontFamily>
+		<FontFamily x:Key="BoldFont">Bahnschrift SemiBold</FontFamily>
 		<FontFamily x:Key="FontClassement">Bitstream Vera Sans</FontFamily>
 		<sys:Double x:Key="TailleGrande">15</sys:Double>
 		<sys:Double x:Key="TailleMoyenne">14</sys:Double>
