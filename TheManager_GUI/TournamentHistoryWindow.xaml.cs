@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TheManager;
 using TheManager.Comparators;
+using TheManager_GUI.ViewMisc;
 using TheManager_GUI.VueClassement;
 
 namespace TheManager_GUI
@@ -110,8 +111,8 @@ namespace TheManager_GUI
             List<Match> matches = _currentArchive.rounds[_currentRound].GetMatchesByDate(_resultsCurrentDate);
             matches.Sort(new MatchDateComparator());
             lbDay.Content = _resultsCurrentDate.ToLongDateString();
-            MatchesDataGridView view = new MatchesDataGridView(spGames, matches, true, true, true, true, false);
-            view.Refresh();
+            ViewMatches view = new ViewMatches(matches, false, true, false, true, true, false);
+            view.Full(spGames);
         }
 
         private void DisplayRound()
