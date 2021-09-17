@@ -31,6 +31,5 @@ namespace TheManager_GUI.VueClassement
         }
 
 
-
     }
 }

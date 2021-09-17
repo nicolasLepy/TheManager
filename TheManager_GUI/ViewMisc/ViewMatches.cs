@@ -71,7 +71,7 @@ namespace TheManager_GUI.ViewMisc
                 }
                 if(showTournament)
                 {
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), null, TheManager.Comparators.PlayerAttribute.LEVEL, new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
                 }
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize, 70));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20, 20));

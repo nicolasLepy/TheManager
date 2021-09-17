@@ -69,7 +69,7 @@ namespace TheManager_GUI.VueClassement
                     {
                         StackPanel spMatch = new StackPanel();
                         spMatch.Orientation = Orientation.Horizontal;
-                        spMatch.Children.Add(ViewUtils.CreateLabel(m.home.shortName, "StyleLabel2", 10 * _sizeMultiplier, 125 * _sizeMultiplier, null, null, PlayerAttribute.AGE, null, i > 0 && m.Winner == m.home ? true : false));
+                        spMatch.Children.Add(ViewUtils.CreateLabel(m.home.shortName, "StyleLabel2", 10 * _sizeMultiplier, 125 * _sizeMultiplier, null, null, i > 0 && m.Winner == m.home ? true : false));
 
                         if(internationalTournament)
                         {
@@ -95,7 +95,7 @@ namespace TheManager_GUI.VueClassement
                             spMatch.Children.Add(ViewUtils.CreateLabel(m.away.Championship.shortName, "StyleLabel2", 10 * _sizeMultiplier, 50 * _sizeMultiplier));
                         }
 
-                        spMatch.Children.Add(ViewUtils.CreateLabel(m.away.shortName, "StyleLabel2", 10 * _sizeMultiplier, 125 * _sizeMultiplier, null, null, PlayerAttribute.AGE, null, i > 0 && m.Winner == m.away ? true : false));
+                        spMatch.Children.Add(ViewUtils.CreateLabel(m.away.shortName, "StyleLabel2", 10 * _sizeMultiplier, 125 * _sizeMultiplier, null, null, i > 0 && m.Winner == m.away ? true : false));
                         spRanking.Children.Add(spMatch);
                         i++;
                     }

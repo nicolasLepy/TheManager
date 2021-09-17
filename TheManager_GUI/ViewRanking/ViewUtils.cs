@@ -28,7 +28,6 @@ namespace TheManager_GUI
         }
 
 
-        public delegate void SortActionOnButtonClick(PlayerAttribute attribute);
         public delegate void OpenWindowOnButtonClick<T>(T element);
 
         /// <summary>
@@ -40,7 +39,7 @@ namespace TheManager_GUI
         /// <param name="width">Width of the label box</param>
         /// <param name="color">Color of the label</param>
         /// <returns></returns>
-        public static Label CreateLabel(string content, string styleName, double fontSize, double width, Brush color = null, SortActionOnButtonClick onClick = null, PlayerAttribute attribute = PlayerAttribute.LEVEL, Brush backgroundColor = null, bool bold = false)
+        public static Label CreateLabel(string content, string styleName, double fontSize, double width, Brush color = null, Brush backgroundColor = null, bool bold = false)
         {
             Label label = new Label();
             label.Content = content;
@@ -59,10 +58,6 @@ namespace TheManager_GUI
             if(backgroundColor != null)
             {
                 label.Background = backgroundColor;
-            }
-            if (onClick != null)
-            {
-                label.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(attribute));
             }
 
             if(bold)

@@ -66,38 +66,69 @@ namespace TheManager_GUI.ViewMisc
 
             StackPanel spLine = new StackPanel();
             spLine.Orientation = Orientation.Horizontal;
-            spLine.Children.Add(ViewUtils.CreateLabel("Nom", "StyleLabel2", FontSize, 100, null, sortPlayers, PlayerAttribute.NAME));
+            spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.NAME, sortPlayers, "Nom", "StyleLabel2", FontSize, 100));
 
             if (Position)
-                spLine.Children.Add(ViewUtils.CreateLabel("Pos", "StyleLabel2", FontSize, 30, null, sortPlayers, PlayerAttribute.POSITION));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.POSITION, sortPlayers, "Pos", "StyleLabel2", FontSize, 30));
+            }
             if (Age)
-                spLine.Children.Add(ViewUtils.CreateLabel("Age", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.AGE));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.AGE, sortPlayers, "Age", "StyleLabel2", FontSize, 60));
+            }
             if (Level)
-                spLine.Children.Add(ViewUtils.CreateLabel("Glo", "StyleLabel2", FontSize, FontSize * 1.5f * 6, null, sortPlayers, PlayerAttribute.LEVEL));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.LEVEL, sortPlayers, "GLO", "StyleLabel2", FontSize, FontSize * 1.5f * 6));
+            }
             if (Potential)
-                spLine.Children.Add(ViewUtils.CreateLabel("Pot", "StyleLabel2", FontSize, FontSize * 1.5f * 6, null, sortPlayers, PlayerAttribute.POTENTIAL));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.POTENTIAL, sortPlayers, "Pot", "StyleLabel2", FontSize, FontSize * 1.5f * 6));
+
+            }
             if (Condition)
-                spLine.Children.Add(ViewUtils.CreateLabel("Cond.", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.CONDITION));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.CONDITION, sortPlayers, "Cond.", "StyleLabel2", FontSize, 60));
+            }
             if (Nationality)
-                spLine.Children.Add(ViewUtils.CreateLabel("Nat.", "StyleLabel2", FontSize, 40, null, sortPlayers, PlayerAttribute.NATIONALITY));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.NATIONALITY, sortPlayers, "Nat.", "StyleLabel2", FontSize, 40));
+            }
             if (Value)
-                spLine.Children.Add(ViewUtils.CreateLabel("Value", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.VALUE));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.VALUE, sortPlayers, "Value", "StyleLabel2", FontSize, 60));
+            }
             if (Wage)
-                spLine.Children.Add(ViewUtils.CreateLabel("Wage", "StyleLabel2", FontSize, 60, null, sortPlayers, PlayerAttribute.WAGE));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.WAGE, sortPlayers, "Wage", "StyleLabel2", FontSize, 60));
+            }
             if (IsInjuried)
-                spLine.Children.Add(ViewUtils.CreateLabel("Inj.", "StyleLabel2", FontSize, 30, null, sortPlayers, PlayerAttribute.IS_INJURIED));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.IS_INJURIED, sortPlayers, "Inj.", "StyleLabel2", FontSize, 30));
+            }
             if (Games)
-                spLine.Children.Add(ViewUtils.CreateLabel("Games", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.GAMES));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.GAMES, sortPlayers, "Games", "StyleLabel2", FontSize, 50));
+            }
             if (Goals)
-                spLine.Children.Add(ViewUtils.CreateLabel("Goals", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.GOALS));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.GOALS, sortPlayers, "Goals", "StyleLabel2", FontSize, 50));
+            }
             if (IsSuspended)
-                spLine.Children.Add(ViewUtils.CreateLabel("Sus", "StyleLabel2", FontSize, 30, null, sortPlayers, PlayerAttribute.IS_SUSPENDED));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.IS_SUSPENDED, sortPlayers, "Sus", "StyleLabel2", FontSize, 30));
+            }
             if (IsInternational)
-                spLine.Children.Add(ViewUtils.CreateLabel("Int.", "StyleLabel2", FontSize, 30, null, sortPlayers, PlayerAttribute.IS_INTERNATIONAL));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.IS_INTERNATIONAL, sortPlayers, "Int.", "StyleLabel2", FontSize, 30));
+            }
             if (InternationalSelections)
-                spLine.Children.Add(ViewUtils.CreateLabel("Int. S", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.INTERNATIONAL_SELECTIONS));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.INTERNATIONAL_SELECTIONS, sortPlayers, "Int. S", "StyleLabel2", FontSize, 50));
+            }
             if (InternationalGoals)
-                spLine.Children.Add(ViewUtils.CreateLabel("Int. G", "StyleLabel2", FontSize, 50, null, sortPlayers, PlayerAttribute.INTERNATIONAL_GOALS));
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.INTERNATIONAL_GOALS, sortPlayers, "Int. G", "StyleLabel2", FontSize, 50));
+            }
 
             spRanking.Children.Add(spLine);
 
