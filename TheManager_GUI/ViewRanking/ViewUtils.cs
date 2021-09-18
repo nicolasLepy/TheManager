@@ -79,13 +79,14 @@ namespace TheManager_GUI
             return res;
         }
 
-        public static ProgressBar CreateProgressBar(float value, float minimum = 0, float maximum = 100)
+        public static ProgressBar CreateProgressBar(float value, float minimum = 0, float maximum = 100, float width = 60, float height = 10)
         {
             ProgressBar progressBar = new ProgressBar();
             progressBar.Minimum = minimum;
             progressBar.Maximum = maximum;
             progressBar.Value = value;
-            progressBar.Width = 60;
+            progressBar.Width = width;
+            progressBar.Height = height;
             return progressBar;
 
         }
@@ -300,20 +301,6 @@ namespace TheManager_GUI
             return res;
         }
 
-        public static string FormatMoney(float money)
-        {
-            float i = (float)Math.Pow(10, (int)Math.Max(0, Math.Log10(money) - 2));
-            money = money / i * i;
-
-            if (money >= 1000000000)
-                return (money / 1000000000D).ToString("0.##") + "B €";
-            if (money >= 1000000)
-                return (money / 1000000D).ToString("0.##") + "M €";
-            if (money >= 1000)
-                return (money / 1000D).ToString("0.##") + "K €";
-
-            return money.ToString("#,0") + " €";
-        }
 
 
     }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace TheManager
 {
-    public class Utils
+    public static class Utils
     {
 
         public readonly static int beginningYear = 2019;
@@ -433,5 +435,40 @@ namespace TheManager
 
             return qualifications;
         }
+
+        public static string FormatMoney(float money)
+        {
+            float i = (float)Math.Pow(10, (int)Math.Max(0, Math.Log10(money) - 2));
+            money = money / i * i;
+
+            if (money >= 1000000000)
+                return (money / 1000000000D).ToString("0.##") + "B €";
+            if (money >= 1000000)
+                return (money / 1000000D).ToString("0.##") + "M €";
+            if (money >= 1000)
+                return (money / 1000D).ToString("0.##") + "K €";
+
+            return money.ToString("#,0") + " €";
+        }
+
+        public static string GetDescription(this Enum value)
+        {
+            Type type = value.GetType();
+            string name = Enum.GetName(type, value);
+            if (name != null)
+            {
+                FieldInfo field = type.GetField(name);
+                if (field != null)
+                {
+                    DescriptionAttribute attr = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) as DescriptionAttribute;
+                    if (attr != null)
+                    {
+                        return attr.Description;
+                    }
+                }
+            }
+            return null;
+        }
+
     }
 }

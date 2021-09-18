@@ -6,6 +6,8 @@ using System.Text;
 using TheManager.Comparators;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace TheManager
 {
@@ -28,11 +30,17 @@ namespace TheManager
 
     public enum BudgetModificationReason
     {
+        [Description("Sponsor")]
         SponsorGrant,
+        [Description("Salaires")]
         PayWages,
+        [Description("Jour de match")]
         StadiumAttendance,
+        [Description("Compétition")]
         TournamentGrant,
+        [Description("Centre de formation")]
         UpdateFormationFacilities,
+        [Description("Transfert")]
         TransferIndemnity
     }
 

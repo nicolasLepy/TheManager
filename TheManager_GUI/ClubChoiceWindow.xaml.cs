@@ -103,7 +103,7 @@ namespace TheManager_GUI
         private void FillSquad(Club c)
         {
             
-            ViewPlayers view = new ViewPlayers(c.Players(), 10, true, true, true, true, true, false, false, true, true, true, false, false, false, false, false) ;
+            ViewPlayers view = new ViewPlayers(c.Players(), 10, true, true, true, true, true, false, false, true, true, true, false, false, false, false, false, false, false) ;
             view.Full(spEffectif);
 
         }

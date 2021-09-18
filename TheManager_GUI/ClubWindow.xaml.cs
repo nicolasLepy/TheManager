@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
+using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
 {
@@ -48,14 +49,14 @@ namespace TheManager_GUI
                     spEntry.Children.Add(ViewUtils.CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 11, 70));
                     if(be.Amount < 0)
                     {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("0") + "€", "StyleLabel2", 11, 75, Brushes.Red));
+                        spEntry.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(be.Amount), "StyleLabel2", 11, 75, Brushes.Red));
                     }
                     else
                     {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(be.Amount.ToString("0") + "€", "StyleLabel2", 11, 75));
+                        spEntry.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(be.Amount), "StyleLabel2", 11, 75));
                     }
 
-                    spEntry.Children.Add(ViewUtils.CreateLabel(be.Reason.ToString(), "StyleLabel2", 10, 100));
+                    spEntry.Children.Add(ViewUtils.CreateLabel(Utils.GetDescription(be.Reason), "StyleLabel2", 10, 100));
 
                     spBudget.Children.Add(spEntry);
                 }
@@ -65,77 +66,8 @@ namespace TheManager_GUI
         public void RemplirMatchs()
         {
             List<Match> matchs = _club.Games;
-            int j = -1;
-            for (int index = matchs.Count - 1; index >= 0; index--, j++)
-            {
-                Match m = matchs[index];
-
-                StackPanel spMatch = new StackPanel();
-                spMatch.Orientation = Orientation.Horizontal;
-
-                int couleur = 0;
-                if (m.home == _club)
-                {
-                    if (m.score1 > m.score2)
-                    {
-                        couleur = 2;
-                    }
-                    else if (m.score2 > m.score1)
-                    {
-                        couleur = 0;
-                    }
-                }
-                else if (m.away == _club)
-                {
-                    if (m.score2 > m.score1)
-                    {
-                        couleur = 2;
-                    }
-                    else if (m.score1 > m.score2)
-                    {
-                        couleur = 0;
-                    }
-                }
-
-                if (m.score1 == m.score2)
-                {
-                    couleur = 1;
-                }
-
-                string fontStyle = "victoireColor";
-                switch (couleur)
-                {
-                    case 0: fontStyle = "defaiteColor"; break;
-                    case 1: fontStyle = "nulColor"; break;
-                    case 2: fontStyle = "victoireColor"; break;
-                }
-
-                SolidColorBrush color = Application.Current.TryFindResource(fontStyle) as SolidColorBrush;
-                spMatch.Background = color;
-
-
-                Label l1 = ViewUtils.CreateLabel(m.Tournament.name, "StyleLabel2", 10, 150);
-                Label l2 = ViewUtils.CreateLabel(m.day.ToShortDateString(), "StyleLabel2", 10, 75);
-                Label l3 = ViewUtils.CreateLabel(m.home.name, "StyleLabel2", 10, 100);
-
-                Button btnScore = new Button();
-                btnScore.Name = "btnScore_" + index;
-                btnScore.Click += new RoutedEventHandler(BtnMatch_Click);
-                btnScore.Content = m.score1 + " - " + m.score2 + (m.prolongations ? " ap" : "") + (m.PenaltyShootout ? " (" + m.penaltyShootout1 + "-" + m.penaltyShootout2 + " tab)" : "");
-                btnScore.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
-                btnScore.FontSize = 10;
-                btnScore.Width = 50;
-
-                Label l5 = ViewUtils.CreateLabel(m.away.name, "StyleLabel2", 10, 100);
-
-                spMatch.Children.Add(l1);
-                spMatch.Children.Add(l2);
-                spMatch.Children.Add(l3);
-                spMatch.Children.Add(btnScore);
-                spMatch.Children.Add(l5);
-
-                spMatchs.Children.Add(spMatch);
-            }
+            ViewMatches view = new ViewMatches(matchs, true, true, false, true, false, true, 12, true, _club);
+            view.Full(spMatchs);
         }
 
         public void Palmares(CityClub club)
@@ -185,7 +117,7 @@ namespace TheManager_GUI
                 lbEntraineur.Content = "Aucun entraîneur";
             }
 
-            lbBudget.Content = "Budget : " + c.budget + " €";
+            lbBudget.Content = "Budget : " + Utils.FormatMoney(c.budget);
 
             try
             {
@@ -199,16 +131,22 @@ namespace TheManager_GUI
             RemplirMatchs();
             FillBudget();
 
+            
 
+            List<Player> newContracts = new List<Player>();
+            
             foreach (Contract ct in c.allContracts)
             {
-                dgJoueurs.Items.Add(new JoueurClubElement { Joueur=ct.player , Age = ct.player.Age, Contrat = ct.end.ToShortDateString(), Poste = ct.player.position.ToString(), Nom = ct.player.ToString(), Niveau = ct.player.level, Potentiel = ct.player.potential, Salaire = ct.wage + " €", DebutContrat = ct.beginning.ToShortDateString(), Energie = ct.player.energy});
                 if ((ct.beginning.Year == Session.Instance.Game.date.Year - 1 && ct.beginning.Month < 7) ||
                     (ct.beginning.Year == Session.Instance.Game.date.Year && ct.beginning.Month >= 7))
                 {
-                    dgArrivees.Items.Add(new JoueurClubElement { Joueur = ct.player, Nom = ct.player.ToString(), Niveau = ct.player.level, Salaire = ct.wage + " €" });
+                    newContracts.Add(ct.player);
                 }
             }
+            ViewPlayers viewNewPlayers = new ViewPlayers(newContracts, 11, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false);
+            viewNewPlayers.Full(spArrivees);
+            ViewPlayers viewPlayers = new ViewPlayers(c.Players(), 12, true, true, true, true, true, false, false, true, false, true, false, false, false, false, false, true, true, true);
+            viewPlayers.Full(spPlayers);
 
             List<HistoriqueClubElement> lhce = new List<HistoriqueClubElement>();
             foreach(Tournament competition in Session.Instance.Game.kernel.Competitions)
@@ -310,16 +248,6 @@ namespace TheManager_GUI
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
         {
             Close();
-        }
-
-        private void DgJoueurs_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if(dgJoueurs.SelectedItem != null)
-            {
-                JoueurClubElement jce = (JoueurClubElement)dgJoueurs.SelectedItem;
-                Windows_Joueur wj = new Windows_Joueur(jce.Joueur);
-                wj.Show();
-            }
         }
 
         private void DgHistorique_MouseDoubleClick(object sender, MouseButtonEventArgs e)

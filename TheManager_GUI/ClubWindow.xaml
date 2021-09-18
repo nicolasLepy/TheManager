@@ -85,25 +85,10 @@
 				<!-- partie droite -->
 				<StackPanel Orientation="Vertical">
 					<Label Content="Effectif" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="200" Name="dgJoueurs" MouseDoubleClick="DgJoueurs_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
-							<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
-							<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
-							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
-							<DataGridTextColumn Header="Potentiel" Binding="{Binding Potentiel}"/>
-							<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
-							<DataGridTextColumn Header="Début du contrat" Binding="{Binding DebutContrat}"/>
-							<DataGridTextColumn Header="Fin du contrat" Binding="{Binding Contrat}"/>
-							<DataGridTemplateColumn Header="Energie" Width="100">
-								<DataGridTemplateColumn.CellTemplate>
-									<DataTemplate>
-										<ProgressBar Value="{Binding Energie}" Minimum="0" Maximum="100"/>
-									</DataTemplate>
-								</DataGridTemplateColumn.CellTemplate>
-							</DataGridTemplateColumn>
-						</DataGrid.Columns>
-					</DataGrid>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="190">
+						<StackPanel Orientation="Vertical" Name="spPlayers">
+						</StackPanel>
+					</ScrollViewer>
 					<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
 					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="225" Width="475">
 						<StackPanel Name="spMatchs" Orientation="Vertical">
@@ -113,13 +98,10 @@
 					</ScrollViewer>
 					
 					<Label Content="Arrivées cette année" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="150" Name="dgArrivees"  Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
-							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
-							<DataGridTextColumn Header="Salaire" Binding="{Binding Salaire}"/>
-						</DataGrid.Columns>
-					</DataGrid>
+					<ScrollViewer Height="150"  VerticalScrollBarVisibility="Auto">
+						<StackPanel Orientation="Vertical" Name="spArrivees">
+						</StackPanel>
+					</ScrollViewer>
 				</StackPanel>
 			</StackPanel>
 			

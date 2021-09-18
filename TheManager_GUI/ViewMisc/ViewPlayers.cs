@@ -29,7 +29,10 @@ namespace TheManager_GUI.ViewMisc
         private readonly bool IsInternational;
         private readonly bool InternationalSelections;
         private readonly bool InternationalGoals;
+        private readonly bool ContractBegin;
+        private readonly bool ContractEnd;
         private readonly float FontSize;
+        private readonly bool LevelsInNumbers;
 
         private List<Player> Players;
 
@@ -37,7 +40,7 @@ namespace TheManager_GUI.ViewMisc
 
         private bool sortOrder;
 
-        public ViewPlayers(List<Player> players, float fontSize, bool age, bool position, bool nationality, bool level, bool potential, bool games, bool goals, bool condition, bool value, bool wage, bool isInjuried, bool isSuspended, bool isInternational, bool internationalSelections, bool internationalGoals)
+        public ViewPlayers(List<Player> players, float fontSize, bool age, bool position, bool nationality, bool level, bool potential, bool games, bool goals, bool condition, bool value, bool wage, bool isInjuried, bool isSuspended, bool isInternational, bool internationalSelections, bool internationalGoals, bool contractBegin, bool contractEnd, bool levelsInNumbers = false)
         {
             Age = age;
             Position = position;
@@ -56,7 +59,10 @@ namespace TheManager_GUI.ViewMisc
             InternationalGoals = internationalGoals;
             Players = players;
             FontSize = fontSize;
+            ContractBegin = contractBegin;
+            ContractEnd = contractEnd;
             sortOrder = false;
+            LevelsInNumbers = levelsInNumbers;
         }
 
         public override void Full(StackPanel spRanking)
@@ -78,16 +84,16 @@ namespace TheManager_GUI.ViewMisc
             }
             if (Level)
             {
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.LEVEL, sortPlayers, "GLO", "StyleLabel2", FontSize, FontSize * 1.5f * 6));
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.LEVEL, sortPlayers, "GLO", "StyleLabel2", FontSize, LevelsInNumbers ? 40 : FontSize * 1.5f * 6));
             }
             if (Potential)
             {
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.POTENTIAL, sortPlayers, "Pot", "StyleLabel2", FontSize, FontSize * 1.5f * 6));
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.POTENTIAL, sortPlayers, "Pot", "StyleLabel2", FontSize, LevelsInNumbers ? 40 : FontSize * 1.5f * 6));
 
             }
             if (Condition)
             {
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.CONDITION, sortPlayers, "Cond.", "StyleLabel2", FontSize, 60));
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.CONDITION, sortPlayers, "Cond.", "StyleLabel2", FontSize, 40));
             }
             if (Nationality)
             {
@@ -100,6 +106,14 @@ namespace TheManager_GUI.ViewMisc
             if (Wage)
             {
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.WAGE, sortPlayers, "Wage", "StyleLabel2", FontSize, 60));
+            }
+            if (ContractBegin)
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.CONTRACT_BEGIN, sortPlayers, "Begin", "StyleLabel2", FontSize, 80));
+            }
+            if (ContractEnd)
+            {
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.CONTRACT_END, sortPlayers, "End", "StyleLabel2", FontSize, 80));
             }
             if (IsInjuried)
             {
@@ -139,35 +153,92 @@ namespace TheManager_GUI.ViewMisc
                 spPlayer.Children.Add(ViewUtils.CreateLabelOpenWindow<Player>(player, OpenPlayer, player.Name, "StyleLabel2", FontSize, 100));
 
                 if (Position)
+                {
                     spPlayer.Children.Add(ViewUtils.CreateLabel(ViewUtils.PlayerPositionOneLetter(player), "StyleLabel2", FontSize, 30));
-                if(Age)
+                }
+                if (Age)
+                {
                     spPlayer.Children.Add(ViewUtils.CreateLabel(player.Age + " ans", "StyleLabel2", FontSize, 60));
-                if(Level)
-                    spPlayer.Children.Add(ViewUtils.CreateStarNotation(player.Stars, FontSize * 1.5f));
+                }
+                if (Level)
+                {
+                    if(!LevelsInNumbers)
+                    {
+                        spPlayer.Children.Add(ViewUtils.CreateStarNotation(player.Stars, FontSize * 1.5f));
+                    }
+                    else
+                    {
+                        spPlayer.Children.Add(ViewUtils.CreateLabel(player.level.ToString(), "StyleLabel2", FontSize, 40, null, null, true));
+                    }
+                }
                 if (Potential)
-                    spPlayer.Children.Add(ViewUtils.CreateStarNotation(player.StarsPotential, FontSize * 1.5f));
+                {
+                    if (!LevelsInNumbers)
+                    {
+                        spPlayer.Children.Add(ViewUtils.CreateStarNotation(player.StarsPotential, FontSize * 1.5f));
+                    }
+                    else
+                    {
+                        spPlayer.Children.Add(ViewUtils.CreateLabel(player.potential.ToString(), "StyleLabel2", FontSize, 40));
+                    }
+                }
                 if (Condition)
-                    spPlayer.Children.Add(ViewUtils.CreateProgressBar(player.energy));
+                {
+                    ProgressBar pb = ViewUtils.CreateProgressBar(player.energy, 0, 100, 40, 10);
+                    spPlayer.Children.Add(pb);
+                }
                 if (Nationality)
+                {
                     spPlayer.Children.Add(ViewUtils.CreateFlag(player.nationality, 30, 15));
+                }
                 if (Value)
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(ViewUtils.FormatMoney(player.EstimateTransferValue()), "StyleLabel2", FontSize, 60));
+                {
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(player.EstimateTransferValue()), "StyleLabel2", FontSize, 60));
+                }
                 if (Wage)
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(ViewUtils.FormatMoney(player.EstimateWage()) + "/m", "StyleLabel2", FontSize, 60));
+                {
+                    string wageStr = player.Club != null ? Utils.FormatMoney(player.Club.FindContract(player).wage) + "/m" : "-";
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(wageStr, "StyleLabel2", FontSize, 60));
+                }
+                if(ContractBegin)
+                {
+                    string contractBegin = player.Club != null ? player.Club.FindContract(player).beginning.ToShortDateString() : "-";
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(contractBegin, "StyleLabel2", FontSize, 80));
+                }
+                if (ContractEnd)
+                {
+                    string contractEnd = player.Club != null ? player.Club.FindContract(player).beginning.ToShortDateString() : "-";
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(contractEnd, "StyleLabel2", FontSize, 80));
+
+                }
                 if (IsInjuried)
+                {
                     throw new NotImplementedException();
+                }
                 if (Games)
+                {
                     spPlayer.Children.Add(ViewUtils.CreateLabel(player.playedGames.ToString(), "StyleLabel2", FontSize, 50));
+                }
                 if (Goals)
+                {
                     spPlayer.Children.Add(ViewUtils.CreateLabel(player.goalsScored.ToString(), "StyleLabel2", FontSize, 50));
+                }
                 if (IsSuspended)
+                {
                     throw new NotImplementedException();
+                }
                 if (IsInternational)
+                {
                     throw new NotImplementedException();
+                }
                 if (InternationalSelections)
+                {
                     throw new NotImplementedException();
+                }
                 if (InternationalGoals)
+                {
                     throw new NotImplementedException();
+                }
 
                 spRanking.Children.Add(spPlayer);
             }

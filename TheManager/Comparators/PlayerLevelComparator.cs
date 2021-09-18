@@ -24,7 +24,9 @@ namespace TheManager.Comparators
         IS_INJURIED,
         IS_INTERNATIONAL,
         INTERNATIONAL_SELECTIONS,
-        INTERNATIONAL_GOALS
+        INTERNATIONAL_GOALS,
+        CONTRACT_BEGIN,
+        CONTRACT_END
     }
 
     public class PlayerComparator : IComparer<Player>
@@ -75,6 +77,40 @@ namespace TheManager.Comparators
                     throw new NotImplementedException();
                 case PlayerAttribute.INTERNATIONAL_GOALS:
                     throw new NotImplementedException();
+                case PlayerAttribute.CONTRACT_BEGIN:
+                    if(y.Club == null && x.Club == null)
+                    {
+                        return -1;
+                    }
+                    else if (y.Club == null && x.Club != null)
+                    {
+                        return -1;
+                    }
+                    else if (y.Club != null && x.Club == null)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return y.Club.FindContract(y).beginning.CompareTo(x.Club.FindContract(x).beginning);
+                    }
+                case PlayerAttribute.CONTRACT_END:
+                    if (y.Club == null && x.Club == null)
+                    {
+                        return -1;
+                    }
+                    else if (y.Club == null && x.Club != null)
+                    {
+                        return -1;
+                    }
+                    else if (y.Club != null && x.Club == null)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return y.Club.FindContract(y).end.CompareTo(x.Club.FindContract(x).end);
+                    }
                 default:
                     return y.level - x.level;
             }

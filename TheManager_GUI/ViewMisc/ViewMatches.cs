@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using TheManager;
@@ -24,8 +25,10 @@ namespace TheManager_GUI.ViewMisc
         private bool showTournament;
         private bool showDate;
         private float fontSize;
+        private bool colorizeResult;
+        private Club club;
 
-        public ViewMatches(List<Match> matches, bool showDate, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament, float fontSize = 12)
+        public ViewMatches(List<Match> matches, bool showDate, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament, float fontSize = 12, bool colorizeResult = false, Club club = null)
         {
             this.matches = matches;
             this.showDate = showDate;
@@ -35,6 +38,8 @@ namespace TheManager_GUI.ViewMisc
             this.showOdds = showOdds;
             this.showTournament = showTournament;
             this.fontSize = fontSize;
+            this.colorizeResult = colorizeResult;
+            this.club = club;
         }
 
         public override void Full(StackPanel spRanking)
@@ -77,7 +82,25 @@ namespace TheManager_GUI.ViewMisc
                 }
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize * 0.85, 70));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20, 20));
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(), "StyleLabel2Center", fontSize, 85));
+                Label labelScore = ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(), "StyleLabel2Center", fontSize, 85);
+                string fontColor = "defaiteColor";
+                if (colorizeResult)
+                {
+
+                    if( (club == match.home && match.score1 > match.score2) || (club == match.away && match.score1 < match.score2))
+                    {
+                        fontColor = "victoireColor";
+                    }
+                    else if(match.score1 == match.score2)
+                    {
+                        fontColor = "nulColor";
+                    }
+                    SolidColorBrush color = Application.Current.TryFindResource(fontColor) as SolidColorBrush;
+                    labelScore.Background = color;
+                }
+
+
+                spLine.Children.Add(labelScore);
                 spLine.Children.Add(ViewUtils.CreateLogo(match.away, 20, 20));
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.away, OpenClub, match.away.shortName, "StyleLabel2", fontSize * 0.85, 70));
 
