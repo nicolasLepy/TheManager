@@ -4,6 +4,51 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/981285a9e5e542f79c39d71e14b04c59)](https://app.codacy.com/manual/lepynicolas/TheManager?utm_source=github.com&utm_medium=referral&utm_content=nicolasLepy/TheManager&utm_campaign=Badge_Grade_Dashboard)
 
+## Screenshots
+
+### Menu
+
+![Main menu](Pics/pic1.png?raw=true "Main menu")
+
+### Simulation configuration
+
+<img src="Pics/pic2.png" alt="Configuration screen" width="400"/> <img src="Pics/pic11.png" alt="Team selection" width="400"/> 
+
+### Tournaments screen
+
+![Menu screen](Pics/pic3.png?raw=true "Menu screen") ![Menu screen](Pics/pic10.png?raw=true "Menu screen")
+
+### Record screens
+
+<img src="Pics/pic5.png" alt="Player screen" width="400"/> <img src="Pics/pic6.png" alt="Match screen" width="400"/> 
+
+<img src="Pics/pic4.png" alt="Club screen"/>
+
+### Search players screen
+
+<img src="Pics/pic12.png" alt="Search players screen"/>
+
+### Pre-match screen
+
+![Pre-match screen](Pics/pic8.png?raw=true "Pre-match screen")
+
+### Live match screen
+
+![Live match](Pics/pic7.png?raw=true "Live match")
+
+## Simulation stability
+
+The simulation is currently not very stable: money circulating in the game varies too much, and the more the years pass, the more the average level of the players decreases.
+
+<p float="left">
+  <img src="Pics/graph_budget.png" width="35%" />
+  <img src="Pics/graph_level.png" width="35%" />
+</p>
+
+<p float="left">
+  <img src="Pics/graph_players.png" width="35%" />
+  <img src="Pics/graph_goals.png" width="35%" />
+</p>
 
 ## Features implemented
 
@@ -86,52 +131,6 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 |  Data editor                                                          | 🔴 Not started |
 |  Generate Wiki with simulation data                                   | 🔴 Not started |
 |  3D Engine for games                                                  | 🔴 Not started |
-
-## Screenshots
-
-### Menu
-
-![Main menu](Pics/pic1.png?raw=true "Main menu")
-
-### Simulation configuration
-
-<img src="Pics/pic2.png" alt="Configuration screen" width="400"/> <img src="Pics/pic11.png" alt="Team selection" width="400"/> 
-
-### Tournaments screen
-
-![Menu screen](Pics/pic3.png?raw=true "Menu screen") ![Menu screen](Pics/pic10.png?raw=true "Menu screen")
-
-### Record screens
-
-<img src="Pics/pic5.png" alt="Player screen" width="400"/> <img src="Pics/pic6.png" alt="Match screen" width="400"/> 
-
-<img src="Pics/pic4.png" alt="Club screen"/>
-
-### Search players screen
-
-<img src="Pics/pic12.png" alt="Search players screen"/>
-
-### Pre-match screen
-
-![Pre-match screen](Pics/pic8.png?raw=true "Pre-match screen")
-
-### Live match screen
-
-![Live match](Pics/pic7.png?raw=true "Live match")
-
-## Simulation stability
-
-The simulation is currently not very stable: money circulating in the game varies too much, and the more the years pass, the more the average level of the players decreases.
-
-<p float="left">
-  <img src="Pics/graph_budget.png" width="35%" />
-  <img src="Pics/graph_level.png" width="35%" />
-</p>
-
-<p float="left">
-  <img src="Pics/graph_players.png" width="35%" />
-  <img src="Pics/graph_goals.png" width="35%" />
-</p>
 
 
 ## Authors
