@@ -32,12 +32,14 @@ namespace TheManager_GUI
             System.Windows.Media.Color mainColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.mainColor);
             System.Windows.Media.Color secondaryColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.secondaryColor);
             System.Windows.Media.Color promotionColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.promotionColor);
+            System.Windows.Media.Color dateColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.DateColor);
             System.Windows.Media.Color upperPlayOffColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.upperPlayOffColor);
             System.Windows.Media.Color bottomPlayOffColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.bottomPlayOffColor);
             System.Windows.Media.Color relegationColor = (System.Windows.Media.Color)ColorConverter.ConvertFromString(t.relegationColor);
             Application.Current.Resources["BackgroundColor"] = backgroundColor;
             Application.Current.Resources["Color1"] = mainColor;
             Application.Current.Resources["Color2"] = secondaryColor;
+            Application.Current.Resources["ColorDate"] = dateColor;
             Application.Current.Resources["Promotion"] = promotionColor;
             Application.Current.Resources["UpperPlayOff"] = upperPlayOffColor;
             Application.Current.Resources["LowerPlayOff"] = bottomPlayOffColor;

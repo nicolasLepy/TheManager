@@ -64,7 +64,9 @@ namespace TheManager_GUI.ViewMisc
                 spLine.Orientation = Orientation.Horizontal;
 
                 if(!showDateSeparated && showDate)
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortDateString(), "StyleLabel2", fontSize * 0.9, 55));
+                {
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToString("dd/MM"), "StyleLabel2", fontSize * 0.9, 40));
+                }
                 if (showHour)
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortTimeString(), "StyleLabel2", fontSize * 0.9, 35));
@@ -73,11 +75,11 @@ namespace TheManager_GUI.ViewMisc
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
                 }
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize, 70));
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize * 0.85, 70));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20, 20));
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(), "StyleLabel2Center", fontSize, 85));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.away, 20, 20));
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.away, OpenClub, match.away.shortName, "StyleLabel2", fontSize, 70));
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.away, OpenClub, match.away.shortName, "StyleLabel2", fontSize * 0.85, 70));
 
                 if(showAttendance)
                 {

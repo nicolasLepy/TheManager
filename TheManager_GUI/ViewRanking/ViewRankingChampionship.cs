@@ -17,6 +17,7 @@ namespace TheManager_GUI.VueClassement
         private readonly double _sizeMultiplier;
         private readonly bool _focusOnTeam;
         private readonly Club _team;
+        private readonly bool _reduced;
 
         /// <summary>
         /// 
@@ -26,20 +27,14 @@ namespace TheManager_GUI.VueClassement
         /// <param name="sizeMultiplier">Width and font size multiplier</param>
         /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
         /// <param name="team">The team to focus ranking on</param>
-        public ViewRankingChampionship(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null)
+        public ViewRankingChampionship(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false)
         {
             _grid = grid;
             _round = round;
             _sizeMultiplier = sizeMultiplier;
             _focusOnTeam = focusOnTeam;
             _team = team;
-        }
-
-        private void ApplyStyle2Label(Label l, double width)
-        {
-            l.Style = Application.Current.FindResource("StyleLabel2") as Style;
-            l.Width = width * _sizeMultiplier;
-            l.FontSize *= _sizeMultiplier;
+            _reduced = reduced;
         }
 
         public override void Full(StackPanel spRanking)
@@ -51,6 +46,7 @@ namespace TheManager_GUI.VueClassement
             List<Club> clubs = _round.Ranking();
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around
+            int indexTeam = -1;
             if (_focusOnTeam && _team != null)
             {
                 clubs = new List<Club>();
@@ -61,7 +57,6 @@ namespace TheManager_GUI.VueClassement
                 {
                     index = 0;
                 }
-
                 if (index > ranking.Count - 5)
                 {
                     index = ranking.Count - 5;
@@ -71,8 +66,31 @@ namespace TheManager_GUI.VueClassement
                 {
                     Club c = ranking[j];
                     clubs.Add(c);
+                    if(c == Session.Instance.Game.club)
+                    {
+                        indexTeam = j-index;
+                    }
                 }
             }
+
+            double fontSize = (double)Application.Current.FindResource("TailleMoyenne");
+            double regularCellWidth = 36 * _sizeMultiplier;
+
+            StackPanel spTitle = new StackPanel();
+            spTitle.Orientation = Orientation.Horizontal;
+            spTitle.Children.Add(ViewUtils.CreateLabel("", "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth/1.25 + regularCellWidth / 1.5 + regularCellWidth*3.5));
+            spTitle.Children.Add(ViewUtils.CreateLabel("Pts", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+            spTitle.Children.Add(ViewUtils.CreateLabel("J", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+            if(!_reduced)
+            {
+                spTitle.Children.Add(ViewUtils.CreateLabel("G", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+                spTitle.Children.Add(ViewUtils.CreateLabel("N", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+                spTitle.Children.Add(ViewUtils.CreateLabel("P", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+                spTitle.Children.Add(ViewUtils.CreateLabel("p.", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+                spTitle.Children.Add(ViewUtils.CreateLabel("c.", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+            }
+            spTitle.Children.Add(ViewUtils.CreateLabel("Diff", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth * 1.25));
+            spRanking.Children.Add(spTitle);
 
             foreach (Club c in clubs)
             {
@@ -80,67 +98,21 @@ namespace TheManager_GUI.VueClassement
                 StackPanel sp = new StackPanel();
                 sp.Orientation = Orientation.Horizontal;
 
-                Label l1 = new Label();
-                l1.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l1.FontSize *= _sizeMultiplier;
-                l1.Width = 30 * _sizeMultiplier;
-                l1.Content = i.ToString();
 
-                Image image = new Image();
-                image.Source = new BitmapImage(new Uri(Utils.Logo(c)));
-                image.Width = 30 * _sizeMultiplier;
-
-                double regularCellWidth = 36/* * (1 + ((_sizeMultiplier - 1)/2))*/;
-
-                Label l2 = new Label();
-                ApplyStyle2Label(l2, 175 * _sizeMultiplier);
-                l2.Content = c.shortName;
-                l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
-                { clubNameButtonClick(c); };
-
-                Label l3 = new Label();
-                ApplyStyle2Label(l3, regularCellWidth);
-                l3.Content = _round.Points(c);
-
-                Label l4 = new Label();
-                ApplyStyle2Label(l4, regularCellWidth);
-                l4.Content = _round.Played(c);
-
-                Label l5 = new Label();
-                ApplyStyle2Label(l5, regularCellWidth);
-                l5.Content = _round.Wins(c);
-
-                Label l6 = new Label();
-                ApplyStyle2Label(l6, regularCellWidth);
-                l6.Content = _round.Draws(c);
-
-                Label l7 = new Label();
-                ApplyStyle2Label(l7, regularCellWidth);
-                l7.Content = _round.Loses(c);
-
-                Label l8 = new Label();
-                ApplyStyle2Label(l8, regularCellWidth);
-                l8.Content = _round.GoalsFor(c);
-                
-                Label l9 = new Label();
-                ApplyStyle2Label(l9, regularCellWidth);
-                l9.Content = _round.GoalsAgainst(c);
-
-                Label l10 = new Label();
-                ApplyStyle2Label(l10, 45);
-                l10.Content = _round.Difference(c);
-
-                sp.Children.Add(l1);
-                sp.Children.Add(image);
-                sp.Children.Add(l2);
-                sp.Children.Add(l3);
-                sp.Children.Add(l4);
-                sp.Children.Add(l5);
-                sp.Children.Add(l6);
-                sp.Children.Add(l7);
-                sp.Children.Add(l8);
-                sp.Children.Add(l9);
-                sp.Children.Add(l10);
+                sp.Children.Add(ViewUtils.CreateLabel(i.ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth/1.25));
+                sp.Children.Add(ViewUtils.CreateLogo(c, regularCellWidth / 1.5, regularCellWidth / 1.5));
+                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, c.shortName,"StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
+                sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
+                sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                if(!_reduced)
+                {
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.Wins(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.Draws(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.Loses(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsFor(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsAgainst(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                }
+                sp.Children.Add(ViewUtils.CreateLabel(_round.Difference(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 1.25));
 
                 spRanking.Children.Add(sp);
 
@@ -168,7 +140,7 @@ namespace TheManager_GUI.VueClassement
                             couleur = "barrageColor";
                         }
 
-                        int index = q.ranking - 1;
+                        int index = q.ranking;
 
                         if(couleur != "backgroundColor")
                         {
@@ -179,7 +151,13 @@ namespace TheManager_GUI.VueClassement
 
                 }
             }
+            else
+            {
 
+                SolidColorBrush color = new SolidColorBrush((System.Windows.Media.Color)Application.Current.TryFindResource("ColorDate"));
+                color.Opacity = 0.6;
+                (spRanking.Children[indexTeam+1] as StackPanel).Background = color;
+            }
         }
 
         private void clubNameButtonClick(Club c)

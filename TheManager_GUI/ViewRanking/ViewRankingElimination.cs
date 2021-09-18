@@ -73,7 +73,10 @@ namespace TheManager_GUI.VueClassement
 
                         if(internationalTournament)
                         {
-                            spMatch.Children.Add(ViewUtils.CreateFlag((m.home as CityClub).city.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
+                            if(m.home as CityClub != null)
+                            {
+                                spMatch.Children.Add(ViewUtils.CreateFlag((m.home as CityClub).city.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
+                            }
                         }
                         else if (m.home as CityClub != null)
                         {
@@ -88,7 +91,10 @@ namespace TheManager_GUI.VueClassement
 
                         if(internationalTournament)
                         {
-                            spMatch.Children.Add(ViewUtils.CreateFlag((m.away as CityClub).city.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
+                            if(m.away as CityClub != null)
+                            {
+                                spMatch.Children.Add(ViewUtils.CreateFlag((m.away as CityClub).city.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
+                            }
                         }
                         else if (m.away as CityClub != null)
                         {

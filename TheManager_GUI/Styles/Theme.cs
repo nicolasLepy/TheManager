@@ -21,6 +21,7 @@ namespace TheManager_GUI
         private readonly string _bottomPlayOffColor;
         private readonly string _relegationColor;
         private readonly string _fontFamily;
+        private readonly string _dateColor;
 
         public string name => _name;
         public string backgroundColor => _backgroundColor;
@@ -33,6 +34,8 @@ namespace TheManager_GUI
         public string upperPlayOffColor => _upperPlayOffColor;
         public string bottomPlayOffColor => _bottomPlayOffColor;
 
+        public string DateColor => _dateColor;
+
         /// <summary>
         /// Create a new theme
         /// </summary>
@@ -41,7 +44,8 @@ namespace TheManager_GUI
         /// <param name="mainColor">Main hexa color</param>
         /// <param name="secondaryColor">Secondary hexa color</param>
         /// <param name="fontFamily">Font family of the theme</param>
-        public Theme(string name, string backgroundColor, string mainColor, string secondaryColor, string promotionColor, string upperPlayOffColor, string bottomPlayOffColor, string relagationColor, string fontFamily)
+        /// <param name="dateColor">Tertiary color for dates</param>
+        public Theme(string name, string backgroundColor, string mainColor, string secondaryColor, string promotionColor, string upperPlayOffColor, string bottomPlayOffColor, string relagationColor, string fontFamily, string dateColor)
         {
             _name = name;
             _backgroundColor = backgroundColor;
@@ -52,6 +56,7 @@ namespace TheManager_GUI
             _bottomPlayOffColor = bottomPlayOffColor;
             _relegationColor = relagationColor;
             _fontFamily = fontFamily;
+            _dateColor = dateColor;
         }
 
 

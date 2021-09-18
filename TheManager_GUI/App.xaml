@@ -11,6 +11,7 @@
 
 		<Color x:Key="Color1">#1c7435</Color>
 		<Color x:Key="Color2">#a4f17a</Color>
+		<Color x:Key="ColorDate">#D3D3D3</Color>
 		<Color x:Key="BackgroundColor">#1c262b</Color>
 		<Color x:Key="Promotion">#075002</Color>
 		<Color x:Key="UpperPlayOff">#5E7004</Color>
@@ -22,11 +23,14 @@
 		<sys:Double x:Key="TailleGrande">15</sys:Double>
 		<sys:Double x:Key="TailleMoyenne">14</sys:Double>
 		<sys:Double x:Key="TaillePetite">13</sys:Double>
-		
+
 		<SolidColorBrush x:Key="color1" Color="{DynamicResource Color1}" />
 		<SolidColorBrush x:Key="color2" Color="{DynamicResource Color2}" />
 		<SolidColorBrush x:Key="backgroundColor" Color="{DynamicResource BackgroundColor}"/>
 		<SolidColorBrush x:Key="borderColor" Color="#1a1a1a"/>
+		<SolidColorBrush x:Key="brushBackgroundStackPanel" Color="LightGray" Opacity="0.3" />
+		<SolidColorBrush x:Key="brushBackgroundCalendar" Color="LightGray" Opacity="0.6" />
+		<SolidColorBrush x:Key="brushBackgroundCalendarToday" Color="LightSalmon" Opacity="0.6" />
 
 		<SolidColorBrush x:Key="promotionColor" Color="{DynamicResource Promotion}"/>
 		<SolidColorBrush x:Key="barrageColor" Color="{DynamicResource UpperPlayOff}"/>
@@ -36,7 +40,157 @@
 		<SolidColorBrush x:Key="victoireColor" Color="#033e00"/>
 		<SolidColorBrush x:Key="defaiteColor" Color="#3e1500"/>
 		<SolidColorBrush x:Key="nulColor" Color="#813e00"/>
+
+		<Style TargetType="{x:Type ScrollBar}">
+			<Setter Property="Stylus.IsFlicksEnabled"
+            Value="false" />
+			<Setter Property="Foreground"
+            Value="{DynamicResource color2}" />
+			<Setter Property="Background"
+            Value="Transparent" />
+			<Setter Property="Width"
+            Value="7" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ScrollBar}">
+						<Grid x:Name="GridRoot"
+                        Width="7"
+                        Background="{TemplateBinding Background}">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="0.00001*" />
+							</Grid.RowDefinitions>
+							<Track x:Name="PART_Track"
+                            Grid.Row="0"
+                            IsDirectionReversed="true"
+                            Focusable="false">
+								<Track.Thumb>
+									<Thumb x:Name="Thumb"
+                                    Background="{TemplateBinding Foreground}"
+                                    Style="{DynamicResource ScrollBarTrackThumb}" />
+								</Track.Thumb>
+								<Track.IncreaseRepeatButton>
+									<RepeatButton x:Name="PageUp"
+                                            Command="ScrollBar.PageDownCommand"
+                                            Opacity="0"
+                                            Focusable="false" />
+								</Track.IncreaseRepeatButton>
+								<Track.DecreaseRepeatButton>
+									<RepeatButton x:Name="PageDown"
+                                            Command="ScrollBar.PageUpCommand"
+                                            Opacity="0"
+                                            Focusable="false" />
+								</Track.DecreaseRepeatButton>
+							</Track>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger SourceName="Thumb"
+                                Property="IsMouseOver"
+                                Value="true">
+								<Setter Value="{DynamicResource ButtonSelectBrush}"
+                                TargetName="Thumb"
+                                Property="Background" />
+							</Trigger>
+							<Trigger SourceName="Thumb"
+                                Property="IsDragging"
+                                Value="true">
+								<Setter Value="{DynamicResource DarkBrush}"
+                                TargetName="Thumb"
+                                Property="Background" />
+							</Trigger>
+
+							<Trigger Property="IsEnabled"
+                                Value="false">
+								<Setter TargetName="Thumb"
+                                Property="Visibility"
+                                Value="Collapsed" />
+							</Trigger>
+							<Trigger Property="Orientation"
+                                Value="Horizontal">
+								<Setter TargetName="GridRoot"
+                                Property="LayoutTransform">
+									<Setter.Value>
+										<RotateTransform Angle="-90" />
+									</Setter.Value>
+								</Setter>
+								<Setter TargetName="PART_Track"
+                                Property="LayoutTransform">
+									<Setter.Value>
+										<RotateTransform Angle="-90" />
+									</Setter.Value>
+								</Setter>
+								<Setter Property="Width"
+                                Value="Auto" />
+								<Setter Property="Height"
+                                Value="8" />
+								<Setter TargetName="Thumb"
+                                Property="Tag"
+                                Value="Horizontal" />
+								<Setter TargetName="PageDown"
+                                Property="Command"
+                                Value="ScrollBar.PageLeftCommand" />
+								<Setter TargetName="PageUp"
+                                Property="Command"
+                                Value="ScrollBar.PageRightCommand" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+		<Style x:Key="ScrollBarTrackThumb"
+        TargetType="{x:Type Thumb}">
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Thumb}">
+						<Grid x:Name="Grid">
+							<Rectangle HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Width="Auto"
+                                Height="Auto"
+                                Fill="Transparent" />
+							<Border x:Name="CornerScrollBarRectangle"
+                            CornerRadius="5"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Width="Auto"
+                            Height="Auto"
+                            Margin="0,1,0,1"
+                            Background="{TemplateBinding Background}" />
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="Tag"
+                                Value="Horizontal">
+								<Setter TargetName="CornerScrollBarRectangle"
+                                Property="Width"
+                                Value="Auto" />
+								<Setter TargetName="CornerScrollBarRectangle"
+                                Property="Height"
+                                Value="6" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 		
+
+		<Style x:Key="StyleBorderStackPanel" TargetType="{x:Type Border}">
+			<Setter Property="Background" Value="{StaticResource brushBackgroundStackPanel}"/>
+			<Setter Property="CornerRadius" Value="15"/>
+			<Setter Property="Padding" Value="8"/>
+		</Style>
+
+		<Style x:Key="StyleBorderCalendar" TargetType="{x:Type Border}">
+			<Setter Property="Background" Value="{StaticResource brushBackgroundCalendar}"/>
+			<Setter Property="CornerRadius" Value="10"/>
+			<Setter Property="Padding" Value="5"/>
+		</Style>
+
+		<Style x:Key="StyleBorderCalendarToday" BasedOn="{StaticResource StyleBorderCalendar}" TargetType="{x:Type Border}">
+			<Setter Property="Background" Value="{StaticResource brushBackgroundCalendarToday}"/>
+		</Style>
+
 		<Style x:Key="StyleWindows" TargetType="{x:Type Window}">
 			<Setter Property="WindowStyle" Value="None"/>
 			<Setter Property="AllowsTransparency" Value="True"/>

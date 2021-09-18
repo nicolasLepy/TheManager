@@ -50,7 +50,10 @@ namespace TheManager_GUI
             {
                 label.FontSize = fontSize;
             }
-            label.Width = width;
+            if(width > -1)
+            {
+                label.Width = width;
+            }
             if (color != null)
             {
                 label.Foreground = color;
@@ -105,6 +108,55 @@ namespace TheManager_GUI
             return sprite;
         }
 
+        public static Border CreateCalendarItem(DateTime time, bool today, Match match = null)
+        {
+
+            Border res = new Border();
+            res.Margin = new Thickness(2);
+            string styleName = today ? "StyleBorderCalendarToday" : "StyleBorderCalendar";
+            Style style = Application.Current.FindResource(styleName) as Style;
+            res.Style = style;
+
+            StackPanel main = new StackPanel();
+            main.Width = 83;
+            main.Height = 83;
+            main.Orientation = Orientation.Vertical;
+
+            main.Children.Add(CreateLabel(time.ToString("dddd dd"), "StyleLabel2", 10, -1));
+
+            if(match != null)
+            {
+                StackPanel spMatch = new StackPanel();
+                spMatch.Orientation = Orientation.Horizontal;
+                main.Children.Add(spMatch);
+                spMatch.Children.Add(CreateLogo(match.home, 26, 26));
+                if(match.Played)
+                {
+                    spMatch.Children.Add(CreateLabel(match.ScoreToString(), "StyleLabel2", 9, -1));
+                }
+                spMatch.Children.Add(CreateLogo(match.away, 26, 26));
+            }
+
+            res.Child = main;
+
+            return res;
+        }
+
+        public static StackPanel CreateNewsItem(Article a)
+        {
+            StackPanel spNews = new StackPanel();
+            spNews.Orientation = Orientation.Horizontal;
+            int days = Utils.DaysNumberBetweenTwoDates(Session.Instance.Game.date, a.publication);
+
+            string dateString = days == 0 ? "Aujourd'hui" : "Il y a " + days + " jour" + (days == 1 ? "" : "s");
+
+            System.Windows.Media.Color color = (System.Windows.Media.Color)Application.Current.FindResource("ColorDate");
+            SolidColorBrush brush = new SolidColorBrush(color);
+            brush.Opacity = 0.6;
+            spNews.Children.Add(CreateLabel(dateString, "StyleLabel2", 11, 100, brush, null, true));
+            spNews.Children.Add(CreateLabel(a.title, "StyleLabel2", 11, -1));
+            return spNews;
+        }
 
         private static StackPanel GeneratePlayerIcon(Player p, Match match, bool showEnergy, double sizeMultiplier)
         {

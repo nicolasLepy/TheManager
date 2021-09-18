@@ -6,13 +6,13 @@ namespace TheManager_GUI.VueClassement
     public class FactoryViewRanking
     {
 
-        public static View CreerVue(DataGrid grid, Round round, double sizeMultiplier = 1, bool focusOnTeam = false, Club team = null)
+        public static View CreerVue(DataGrid grid, Round round, double sizeMultiplier = 1, bool focusOnTeam = false, Club team = null, bool reduced = false)
         {
             View res = null;
 
             if (round as ChampionshipRound != null)
             {
-                res = new ViewRankingChampionship(grid, round as ChampionshipRound, sizeMultiplier, focusOnTeam, team);
+                res = new ViewRankingChampionship(grid, round as ChampionshipRound, sizeMultiplier, focusOnTeam, team, reduced);
             }
             if (round as KnockoutRound != null)
             {

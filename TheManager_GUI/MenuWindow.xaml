@@ -5,70 +5,135 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Menu" Height="800" Width="1400" Style="{StaticResource StyleWindows}" WindowStartupLocation="Manual" Left="50" Top="50">
+        Title="Windows_Menu" Height="900" Width="1400" Style="{StaticResource StyleWindows}" WindowStartupLocation="Manual" Left="50" Top="50">
     <Grid>
 		<DockPanel Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
-			<StackPanel Margin="3" Orientation="Vertical" DockPanel.Dock="Top" Height="670">
+			<StackPanel Margin="3" Orientation="Vertical" DockPanel.Dock="Top" Height="820">
 
 				<StackPanel Orientation="Horizontal">
-					<Button Name="btnQuitter" Click="BtnQuitter_Click">
-						<Image Name="imgBtnQuitter" Source="Images/close.png" Width="25" Height="25"/>
-					</Button>
-					<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Avancer" Click="BtnAvancer_Click"/>
-					<Button Name="btnSearch" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Recherche" Click="BtnSearch_Click"/>
-					<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Simuler fin saison" Click="BtnSimuler_Click"/>
-					<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Simuler 10 ans" Click="BtnSimuler2_Click"/>
-					<Button Name="btnOptions" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Options" Click="BtnOptions_Click"/>
-					<Button Name="btnSauvegarder" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="100" Content="Sauvegarder" Click="BtnSauvegarder_Click"/>
-					<CheckBox Name="cbOpti" Style="{StaticResource StyleCheckBox}" VerticalAlignment="Center"/>
-					<Label Content="Optimiser durée simulation" Style="{StaticResource StyleLabel2}"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="1245">
+						<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content="Avancer" Click="BtnAvancer_Click"/>
+						<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 15 juin" Click="BtnSimuler_Click"/>
+						<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 10 ans" Click="BtnSimuler2_Click"/>
+						<CheckBox Name="cbOpti" Style="{StaticResource StyleCheckBox}" VerticalAlignment="Center"/>
+						<Label Content="Optimiser durée simulation" Style="{StaticResource StyleLabel2}"/>
 
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+						<Button Name="btnSearch" Click="BtnSearch_Click">
+							<Image Name="imgBtnSearch" Source="Images/search.png" Width="25" Height="25" Margin="3"/>
+						</Button>
+						<Button Name="btnOptions" Click="BtnOptions_Click">
+							<Image Name="imgBtnOptions" Source="Images/options.png" Width="25" Height="25" Margin="3"/>
+						</Button>
+						<Button Name="btnSauvegarder" Click="BtnSauvegarder_Click">
+							<Image Name="imgBtnSave" Source="Images/save.png" Width="25" Height="25" Margin="3"/>
+						</Button>
+						<Button Name="btnQuitter" Click="BtnQuitter_Click">
+							<Image Name="imgBtnQuitter" Source="Images/close.png" Width="25" Height="25" Margin="3"/>
+						</Button>
+					</StackPanel>
+					
 				</StackPanel>
 				<StackPanel Orientation="Horizontal">
 					<!-- côté gauche, infos générales -->
-					<StackPanel Orientation="Vertical" Width="725">
-						<Label Name="labelDate" Style="{StaticResource StyleLabel2}" Content="10/10/2010"/>
-						<StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-							<StackPanel Orientation="Vertical" Width="250">
-								<ComboBox Name="comboPays" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboPays_SelectionChanged" Width="200" HorizontalAlignment="Left">
-								</ComboBox>
-								<StackPanel Orientation="Horizontal">
-									<ListBox Name="lbChampionnats" Height="100" Width="125" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
-									</ListBox>
-									<ListBox Name="lbTours" HorizontalAlignment="Left" Height="100" Width="125" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged">
-									</ListBox>
-								</StackPanel>
-								<Button Name="btnCompetition" Content="Ouvrir" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
-								<Label Content="News" Style="{StaticResource StyleLabel1}"/>
-								
+					<StackPanel Orientation="Vertical" Width="400">
+						<StackPanel Orientation="Vertical" Width="350" Margin="20">
+							<ComboBox Name="comboPays" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboPays_SelectionChanged" Margin="5" Width="200" HorizontalAlignment="Left"/>
+							<StackPanel Orientation="Horizontal">
+								<ListBox Name="lbChampionnats" Width="165" HorizontalAlignment="Left" Height="60" Margin="5" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
+								</ListBox>
+								<ListBox Name="lbTours" Width="165" HorizontalAlignment="Left" Margin="5" Height="60" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged"></ListBox>
+
 							</StackPanel>
-							<StackPanel Orientation="Vertical" Width="425">
-								<Button Name="btnParticipants" Width="100" Style="{StaticResource StyleButton1}" Content="Participants" Click="BtnParticipants_Click"/>
-								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="450">
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+								<Button Name="btnCompetition" Margin="5" Content="Voir plus" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
+								<Button Name="btnParticipants" Margin="5" Width="135" Style="{StaticResource StyleButton1}" Content="Equipes engagées" Click="BtnParticipants_Click"/>
+
+							</StackPanel>
+							<Border Style="{StaticResource StyleBorderStackPanel}">
+								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="430">
 									<StackPanel x:Name="spRoundRanking">
 
 									</StackPanel>
 								</ScrollViewer>
 
-								<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-									<Button Name="btnGauche" Click="BtnGauche_Click">
-										<Image Name="imgBtnGauche" Source="Images/left.png" Width="20" Height="20"/>
-									</Button>
-									<Label Name="lbRoundDate" Content="" HorizontalContentAlignment="Center" Width="150" Style="{StaticResource StyleLabel2}" FontSize="12"/>
-									<Button Name="btnDroite" Click="BtnDroite_Click">
-										<Image Name="imgBtnDroite" Source="Images/right.png" Width="20" Height="20"/>
-									</Button>
+							</Border>
+
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="0,10,0,0">
+								<StackPanel Orientation="Vertical">
+									
+								
+									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+										<Button Name="btnGauche" Click="BtnGauche_Click">
+											<Image Name="imgBtnGauche" Source="Images/left.png" Width="20" Height="20"/>
+										</Button>
+										<Label Name="lbRoundDate" Content="" HorizontalContentAlignment="Center" Width="200" Style="{StaticResource StyleLabel2}" FontSize="12"/>
+										<Button Name="btnDroite" Click="BtnDroite_Click">
+											<Image Name="imgBtnDroite" Source="Images/right.png" Width="20" Height="20"/>
+										</Button>
+									</StackPanel>
+									<StackPanel Name="spRoundGames" Height="120">
+
+									</StackPanel>
 								</StackPanel>
-								<StackPanel Name="spRoundGames" Height="175">
+							</Border>
+
+						</StackPanel>
+
+						<StackPanel Orientation="Vertical" Width="425">
+								
+							</StackPanel>
+					</StackPanel>
+
+					<StackPanel Orientation="Vertical" Width="700">
+						<StackPanel Orientation="Vertical" Height="600">
+							<StackPanel Orientation="Horizontal" Name="spCalendar" HorizontalAlignment="Center">
+							</StackPanel>
+
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="10">
+								<StackPanel Orientation="Horizontal" Height="270" HorizontalAlignment="Center" >
+									<StackPanel Orientation="Horizontal" Name="spNextMatch" HorizontalAlignment="Center" >
+									</StackPanel>
+								</StackPanel>
+							</Border>
+							<Border Style="{StaticResource StyleBorderStackPanel}" Height="180" Margin="10">
+								<StackPanel Orientation="Vertical">
+									<Label HorizontalAlignment="Center" Content="NEWS" FontSize="16" Style="{StaticResource StyleLabel2}"/>
+									<ScrollViewer VerticalScrollBarVisibility="Auto" Height="135">
+										<StackPanel Orientation="Vertical" Name="spNews">
+										</StackPanel>
+									</ScrollViewer>
 
 								</StackPanel>
-							</StackPanel>
+							</Border>
+
+
+						</StackPanel>
+						<StackPanel Orientation="Horizontal" Height="180">
+							<Border Style="{StaticResource StyleBorderStackPanel}">
+								<StackPanel Orientation="Vertical" Width="400">
+									<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
+									<StackPanel Name="spNextMatches">
+
+									</StackPanel>
+								</StackPanel>
+							</Border>
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="15,0,0,0">
+								<StackPanel Orientation="Vertical" Width="240">
+									<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
+									<StackPanel Orientation="Vertical" Name="spRanking" Width="270">
+									</StackPanel>
+								</StackPanel>
+							</Border>
+
 						</StackPanel>
 					</StackPanel>
+
 					<!-- côté droit, info sur le club contrôlé -->
-					<StackPanel Orientation="Vertical" Width="675">
-						<StackPanel Orientation="Horizontal" Width="675" Height="475">
+					<StackPanel Orientation="Vertical" Width="285">
+						<StackPanel Orientation="Horizontal" Width="285" Height="475">
 							<StackPanel Orientation="Vertical" Width="285">
 								<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
 								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
@@ -77,34 +142,13 @@
 									</StackPanel>
 								</ScrollViewer>
 							</StackPanel>
-							<StackPanel Orientation="Vertical" Width="350">
-								<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
-								<StackPanel Name="spNextMatches">
-
-								</StackPanel>
-
-								<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
-								<StackPanel Orientation="Vertical" Name="spRanking" Width="440">
-								</StackPanel>
-
-								<Label Content="Prochain match" Style="{StaticResource StyleLabel2}"/>
-								<StackPanel Orientation="Vertical" Name="spNextMatchBox" HorizontalAlignment="Center">
-
-								</StackPanel>
-								<StackPanel Orientation="Horizontal" Name="spNextMatch" HorizontalAlignment="Center">
-								</StackPanel>
-							</StackPanel>
 						</StackPanel>
-						<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
-							<StackPanel Orientation="Vertical" Name="spNews">
-
-							</StackPanel>
-						</ScrollViewer>
 					</StackPanel>
 					
 				</StackPanel>
 
 			</StackPanel>
+			
 			<StackPanel DockPanel.Dock="Bottom" Margin="20" VerticalAlignment="Bottom" Background="DarkGreen">
 				<TextBlock Name="tbActu" Grid.Row="2" FontSize="18" Style="{StaticResource StyleTextBlock}">
 					<TextBlock.RenderTransform>

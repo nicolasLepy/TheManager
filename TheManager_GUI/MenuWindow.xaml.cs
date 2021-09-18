@@ -38,6 +38,9 @@ namespace TheManager_GUI
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\close.png"));
             imgBtnGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\left.png"));
             imgBtnDroite.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\right.png"));
+            imgBtnSave.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\save.png"));
+            imgBtnSearch.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\search.png"));
+            imgBtnOptions.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\options.png"));
 
             _partie = Session.Instance.Game;
 
@@ -106,11 +109,7 @@ namespace TheManager_GUI
             for(int i = Session.Instance.Game.articles.Count-1; i>=0; i--)
             {
                 Article a = Session.Instance.Game.articles[i];
-                TextBlock tb = new TextBlock();
-                tb.TextWrapping = TextWrapping.WrapWithOverflow;
-                tb.Text = a.publication.ToShortDateString() + " - " + a.title;
-                tb.Style = Application.Current.FindResource("StyleTextBlockLittle") as Style;
-                spNews.Children.Add(tb);
+                spNews.Children.Add(ViewUtils.CreateNewsItem(a));
             }
         }
 
@@ -237,7 +236,6 @@ namespace TheManager_GUI
 
         private void Refresh()
         {
-            this.labelDate.Content = _partie.date.ToLongDateString();
             if(cbOpti.IsChecked == false)
             {
                 NextGamesOfClub();
@@ -245,6 +243,7 @@ namespace TheManager_GUI
                 BandeauActualites();
                 FillNews();
                 FillNextMatchPanel();
+                FillCalendar();
                 RefreshTransferListPanel();
             }
         }
@@ -313,7 +312,7 @@ namespace TheManager_GUI
 
             if (_partie.club != null && _partie.club.Championship != null)
             {
-                _viewRanking = FactoryViewRanking.CreerVue(null, _partie.club.Championship.rounds[0], 0.75, true, _partie.club);
+                _viewRanking = FactoryViewRanking.CreerVue(null, _partie.club.Championship.rounds[0], 0.75, true, _partie.club, true);
                 _viewRanking.Full(spRanking);
             }
         }
@@ -380,14 +379,46 @@ namespace TheManager_GUI
             }
         }
 
+        private void FillCalendar()
+        {
+            spCalendar.Children.Clear();
+            for(int i = -3; i<4; i++)
+            {
+
+                //TODO: Not efficient way (function in club if has a game this day ?)
+                Match match = null;
+                foreach(Match m in _partie.club.Games)
+                {
+                    if (Utils.CompareDates(m.day, _partie.date.AddDays(i)))
+                    {
+                        match = m;
+                    }
+                }
+                spCalendar.Children.Add(ViewUtils.CreateCalendarItem(_partie.date.AddDays(i), i==0, match));
+            }
+        }
+
         private void FillNextMatchPanel()
         {
             spNextMatch.Children.Clear();
-            spNextMatchBox.Children.Clear();
 
             Match next = Session.Instance.Game.club.NextGame;
             if(next != null)
             {
+
+                //Create the 3 stacks panels
+                StackPanel spHomeTeam = new StackPanel();
+                spHomeTeam.Orientation = Orientation.Vertical;
+                spHomeTeam.HorizontalAlignment = HorizontalAlignment.Center;
+                StackPanel spAwayTeam = new StackPanel();
+                spAwayTeam.Orientation = Orientation.Vertical;
+                spAwayTeam.HorizontalAlignment = HorizontalAlignment.Center;
+                StackPanel spInfos = new StackPanel();
+                spInfos.Orientation = Orientation.Vertical;
+                spInfos.HorizontalAlignment = HorizontalAlignment.Center;
+                spInfos.Width = 150;
+
+                //Infos stack panel
                 Round r = next.Round;
                 Tournament trn = r.Tournament;
 
@@ -395,47 +426,37 @@ namespace TheManager_GUI
                 tbTournament.Text = next.Round.Tournament.name;
                 tbTournament.Style = FindResource("StyleTextBox") as Style;
                 tbTournament.IsEnabled = false;
-                tbTournament.FontSize = 14;
+                tbTournament.FontSize = 16;
                 tbTournament.HorizontalAlignment = HorizontalAlignment.Center;
                 tbTournament.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(trn.color.ToHexa()));
                 tbTournament.Foreground = Brushes.AntiqueWhite;
 
-                Label lbRound = ViewUtils.CreateLabel(r.name, "StyleLabel2", -1, 100);
+                spInfos.Children.Add(tbTournament);
+                spInfos.Children.Add(ViewUtils.CreateLabel(r.name, "StyleLabel2Center", -1, -1));
+                spInfos.Children.Add(ViewUtils.CreateLabel(next.day.ToShortTimeString(), "StyleLabel2Center", -1, -1));
+                spInfos.Children.Add(ViewUtils.CreateLabel(next.home.stadium.name, "StyleLabel2Center", -1, -1));
 
-                StackPanel spLeftTeam = new StackPanel();
-                spLeftTeam.Orientation = Orientation.Vertical;
-                spLeftTeam.HorizontalAlignment = HorizontalAlignment.Center;
-                Image imgHome = new Image();
-                imgHome.Width = 60;
-                imgHome.Height = 60;
-                imgHome.Source = new BitmapImage(new Uri(Utils.Logo(next.home)));
-                spLeftTeam.Children.Add(imgHome);
-                Label homeLabel = ViewUtils.CreateLabel(next.home.shortName, "StyleLabel2", 14, 150);
+                //Home team stack panel
+                spHomeTeam.Children.Add(ViewUtils.CreateLogo(next.home, 125, 125));
+                Label homeLabel = ViewUtils.CreateLabel(next.home.shortName, "StyleLabel2Center", 16, -1);
                 homeLabel.HorizontalAlignment = HorizontalAlignment.Center;
-                spLeftTeam.Children.Add(homeLabel);
-                StackPanel homeStars = ViewUtils.CreateStarNotation(next.home.Stars, 20);
+                spHomeTeam.Children.Add(homeLabel);
+                StackPanel homeStars = ViewUtils.CreateStarNotation(next.home.Stars, 25);
                 homeStars.HorizontalAlignment = HorizontalAlignment.Center;
-                spLeftTeam.Children.Add(homeStars);
+                spHomeTeam.Children.Add(homeStars);
 
-                StackPanel spRightTeam = new StackPanel();
-                spRightTeam.Orientation = Orientation.Vertical;
-                spRightTeam.HorizontalAlignment = HorizontalAlignment.Center;
-                Image imgAway = new Image();
-                imgAway.Width = 60;
-                imgAway.Height = 60;
-                imgAway.Source = new BitmapImage(new Uri(Utils.Logo(next.away)));
-                spRightTeam.Children.Add(imgAway);
-                Label awayLabel = ViewUtils.CreateLabel(next.away.shortName, "StyleLabel2", 14, 150);
+                //Away team stack panel
+                spAwayTeam.Children.Add(ViewUtils.CreateLogo(next.away, 125, 125));
+                Label awayLabel = ViewUtils.CreateLabel(next.away.shortName, "StyleLabel2Center", 16, -1);
                 awayLabel.HorizontalAlignment = HorizontalAlignment.Center;
-                spRightTeam.Children.Add(awayLabel);
-                StackPanel awayStars = ViewUtils.CreateStarNotation(next.away.Stars, 20);
+                spAwayTeam.Children.Add(awayLabel);
+                StackPanel awayStars = ViewUtils.CreateStarNotation(next.away.Stars, 25);
                 awayStars.HorizontalAlignment = HorizontalAlignment.Center;
-                spRightTeam.Children.Add(awayStars);
+                spAwayTeam.Children.Add(awayStars);
 
-                spNextMatchBox.Children.Add(tbTournament);
-                spNextMatchBox.Children.Add(lbRound);
-                spNextMatch.Children.Add(spLeftTeam);
-                spNextMatch.Children.Add(spRightTeam);
+                spNextMatch.Children.Add(spHomeTeam);
+                spNextMatch.Children.Add(spInfos);
+                spNextMatch.Children.Add(spAwayTeam);
             }
         }
 

@@ -40,12 +40,13 @@ namespace TheManager_GUI
                     string backgroundColor = e2.Descendants("BackgroundColor").First().Attribute("color").Value;
                     string mainColor = e2.Descendants("MainColor").First().Attribute("color").Value;
                     string secondaryColor = e2.Descendants("SecondaryColor").First().Attribute("color").Value;
+                    string dateColor = e2.Descendants("DateColor").First().Attribute("color").Value;
                     string promotionColor = e2.Descendants("PromotionColor").First().Attribute("color").Value;
                     string relegationColor = e2.Descendants("RelegationColor").First().Attribute("color").Value;
                     string upperPlayOffColor = e2.Descendants("UpperPlayOffColor").First().Attribute("color").Value;
                     string bottomPlayOffColor = e2.Descendants("BottomPlayOffColor").First().Attribute("color").Value;
                     string fontFamily = e2.Descendants("FontFamily").First().Attribute("name").Value;
-                    Theme t = new Theme(name, backgroundColor, mainColor, secondaryColor, promotionColor, upperPlayOffColor, bottomPlayOffColor, relegationColor, fontFamily);
+                    Theme t = new Theme(name, backgroundColor, mainColor, secondaryColor, promotionColor, upperPlayOffColor, bottomPlayOffColor, relegationColor, fontFamily, dateColor);
                     Theme.themes.Add(t);
                 }
             }
