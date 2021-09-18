@@ -438,6 +438,11 @@ namespace TheManager
 
         public static string FormatMoney(float money)
         {
+            bool negative = money < 0;
+            if(money < 0)
+            {
+                money = -money;
+            }
             float i = (float)Math.Pow(10, (int)Math.Max(0, Math.Log10(money) - 2));
             money = money / i * i;
 
@@ -448,7 +453,7 @@ namespace TheManager
             if (money >= 1000)
                 return (money / 1000D).ToString("0.##") + "K €";
 
-            return money.ToString("#,0") + " €";
+            return negative ? "-" : "" + money.ToString("#,0") + " €";
         }
 
         public static string GetDescription(this Enum value)

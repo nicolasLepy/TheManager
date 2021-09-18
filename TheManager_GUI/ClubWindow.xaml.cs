@@ -105,6 +105,11 @@ namespace TheManager_GUI
         public Windows_Club(CityClub c)
         {
             InitializeComponent();
+
+            imgBudget.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\budget.png"));
+            imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
+            imgManager.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\manager.png"));
+
             _club = c;
             lbClub.Content = c.name;
 
@@ -117,7 +122,7 @@ namespace TheManager_GUI
                 lbEntraineur.Content = "Aucun entraîneur";
             }
 
-            lbBudget.Content = "Budget : " + Utils.FormatMoney(c.budget);
+            lbBudget.Content = Utils.FormatMoney(c.budget);
 
             try
             {

@@ -207,7 +207,7 @@ namespace TheManager_GUI.ViewMisc
                 }
                 if (ContractEnd)
                 {
-                    string contractEnd = player.Club != null ? player.Club.FindContract(player).beginning.ToShortDateString() : "-";
+                    string contractEnd = player.Club != null ? player.Club.FindContract(player).end.ToShortDateString() : "-";
                     spPlayer.Children.Add(ViewUtils.CreateLabel(contractEnd, "StyleLabel2", FontSize, 80));
 
                 }

@@ -6,30 +6,44 @@
         xmlns:local="clr-namespace:TheManager_GUI"
 		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 		mc:Ignorable="d"
-        Title="Windows_Club" Height="870" Width="1300" Style="{StaticResource StyleWindows}" Left="50" Top="50">
+        Title="Windows_Club" Height="900" Width="1300" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
 		<StackPanel Orientation="Vertical">
-			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
-				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			<StackPanel Margin="20" Orientation="Vertical" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Click="BtnQuitter_Click">
+					<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
+				</Button>
+
 			</StackPanel>
-			<Image Name="imgLogo" Width="75" Height="75"/>
-			<Label Name="lbClub"  Content="Club" Style="{StaticResource StyleLabel1}"/>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<Label Name="lbEntraineur" Content="Entraineur : Antoine Kombouaré" Margin="0 0 25 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
-				<Label Name="lbBudget" Content="Budget : 4500000€" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
+				<Image Name="imgLogo" Width="120" Height="120"/>
+				<Label Name="lbClub"  Content="Club" Style="{StaticResource StyleLabel1}" FontSize="30" Margin="50,0,0,0" VerticalAlignment="Center"/>
+
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 			</StackPanel>
 			<StackPanel Orientation="Horizontal">
 				<!-- partie gauche -->
 				<StackPanel Orientation="Vertical">
-					<Label Content="Evolution du budget" Style="{StaticResource StyleLabel2}"/>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="250" Width="260">
-						<StackPanel Name="spBudget" Orientation="Vertical">
+					<StackPanel Orientation="Horizontal">
+						<Image Name="imgManager" Width="50" Height="50"/>
+						<Label Name="lbEntraineur" Content="Antoine Kombouaré" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Image Name="imgBudget" Width="50" Height="50"/>
+						<Label Name="lbBudget" Content="45M€" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</StackPanel>
+					<Label Content="Opérations" Style="{StaticResource StyleLabel2}"/>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<ScrollViewer VerticalScrollBarVisibility="Auto" Height="250" Width="260">
+							<StackPanel Name="spBudget" Orientation="Vertical">
 
-						</StackPanel>
+							</StackPanel>
 
-					</ScrollViewer>
-					<Label Content="Budget" Style="{StaticResource StyleLabel2}"/>
-					<lvc:CartesianChart Width="350" Height="150" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
+						</ScrollViewer>
+					</Border>
+					<Label Content="Evolution du solde" Style="{StaticResource StyleLabel2}"/>
+					<lvc:CartesianChart Width="300" Height="150" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
 							<lvc:Axis Title="Budget" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
 						</lvc:CartesianChart.AxisY>
@@ -37,23 +51,90 @@
 							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
-					<Label Content="Records" Style="{StaticResource StyleLabel2}"/>
-					<Label Content="Plus grande victoire" Style="{StaticResource StyleLabel2}"/>
-					<Label Name="lbBiggestWin" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
-					<Label Content="Plus grande défaite" Style="{StaticResource StyleLabel2}"/>
-					<Label Name="lbBiggestLose" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
 
 				</StackPanel>
+				<!--Partie centrale-->
+				<StackPanel Orientation="Vertical" Width="600">
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Vertical">
+							<Label Content="Effectif" Style="{StaticResource StyleLabel2}"/>
+							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="190">
+								<StackPanel Orientation="Vertical" Name="spPlayers">
+								</StackPanel>
+							</ScrollViewer>
+						</StackPanel>
+					</Border>
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Vertical">
+							<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
+							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200" Width="500">
+								<StackPanel Name="spMatchs" Orientation="Vertical">
+								</StackPanel>
+							</ScrollViewer>
+						</StackPanel>
+					</Border>
+
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Vertical">
+							<Label Content="Centre de formation" Style="{StaticResource StyleLabel2}"/>
+							<lvc:CartesianChart Width="300" Height="150" Series="{Binding CFCollection}" LegendLocation="Right" >
+								<lvc:CartesianChart.AxisY>
+									<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
+								</lvc:CartesianChart.AxisY>
+								<lvc:CartesianChart.AxisX>
+									<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+								</lvc:CartesianChart.AxisX>
+							</lvc:CartesianChart>
+						</StackPanel>
+						<StackPanel Orientation="Vertical">
+							<Label Content="Arrivées cette année" Style="{StaticResource StyleLabel2}"/>
+							<ScrollViewer Height="150"  VerticalScrollBarVisibility="Auto">
+								<StackPanel Orientation="Vertical" Name="spArrivees">
+								</StackPanel>
+							</ScrollViewer>
+						</StackPanel>
+					</StackPanel>
+
+				</StackPanel>
+				<!-- partie droite -->
 				<StackPanel Orientation="Vertical">
-					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" Name="dgPalmares" Height="100" MaxHeight="350" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Nombre}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Annees}"/>
-						</DataGrid.Columns>
-					</DataGrid>
-					<Label Content="Affluence moyenne" Style="{StaticResource StyleLabel2}"/>
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Vertical">
+							<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
+							<DataGrid IsReadOnly="True" Name="dgPalmares" Height="100" MaxHeight="350" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+								<DataGrid.Columns>
+									<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Nombre}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Annees}"/>
+								</DataGrid.Columns>
+							</DataGrid>
+
+							<Label Content="Histoire" Style="{StaticResource StyleLabel2}"/>
+							<DataGrid IsReadOnly="True" Name="dgHistorique" Height="150" MaxHeight="350" Width="150" MouseDoubleClick="DgHistorique_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+								<DataGrid.Columns>
+									<DataGridTextColumn Header="" Binding="{Binding Annee}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
+									<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
+									<DataGridTextColumn Header="" Binding="{Binding AverageAttendance}"/>
+								</DataGrid.Columns>
+							</DataGrid>
+						</StackPanel>
+					</Border>
+
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Vertical">
+							<Label Content="Plus grande victoire" Style="{StaticResource StyleLabel2}"/>
+							<Label Name="lbBiggestWin" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
+							<Label Content="Plus grande défaite" Style="{StaticResource StyleLabel2}"/>
+							<Label Name="lbBiggestLose" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
+						</StackPanel>
+					</Border>
+
+					<Label Content="Evolution de l'affluence moyenne" Style="{StaticResource StyleLabel2}"/>
 					<lvc:CartesianChart Width="350" Height="100" Series="{Binding AttendanceCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
 							<lvc:Axis Title="Affluence"></lvc:Axis>
@@ -62,46 +143,8 @@
 							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
-					
-					<Label Content="Centre de formation" Style="{StaticResource StyleLabel2}"/>
-					<lvc:CartesianChart Width="350" Height="150" Series="{Binding CFCollection}" LegendLocation="Right" >
-						<lvc:CartesianChart.AxisY>
-							<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
-						</lvc:CartesianChart.AxisY>
-						<lvc:CartesianChart.AxisX>
-							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
-						</lvc:CartesianChart.AxisX>
-					</lvc:CartesianChart>
-					<Label Content="Histoire" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid IsReadOnly="True" Name="dgHistorique" Height="150" MaxHeight="350" Width="150" MouseDoubleClick="DgHistorique_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Annee}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
-							<DataGridTextColumn Header="" Binding="{Binding AverageAttendance}"/>
-						</DataGrid.Columns>
-					</DataGrid>
-				</StackPanel>
-				<!-- partie droite -->
-				<StackPanel Orientation="Vertical">
-					<Label Content="Effectif" Style="{StaticResource StyleLabel2}"/>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="190">
-						<StackPanel Orientation="Vertical" Name="spPlayers">
-						</StackPanel>
-					</ScrollViewer>
-					<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="225" Width="475">
-						<StackPanel Name="spMatchs" Orientation="Vertical">
 
-						</StackPanel>
 
-					</ScrollViewer>
-					
-					<Label Content="Arrivées cette année" Style="{StaticResource StyleLabel2}"/>
-					<ScrollViewer Height="150"  VerticalScrollBarVisibility="Auto">
-						<StackPanel Orientation="Vertical" Name="spArrivees">
-						</StackPanel>
-					</ScrollViewer>
 				</StackPanel>
 			</StackPanel>
 			
