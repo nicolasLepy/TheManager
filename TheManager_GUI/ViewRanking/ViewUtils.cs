@@ -100,6 +100,16 @@ namespace TheManager_GUI
             return sprite;
         }
 
+        public static Image CreateImage(string path, double width, double height)
+        {
+            Image sprite = new Image();
+            sprite.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
+            sprite.Width = width;
+            sprite.Height = height;
+            return sprite;
+
+        }
+
         public static Image CreateFlag(Country country, double width, double height)
         {
             Image sprite = new Image();

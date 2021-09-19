@@ -19,89 +19,65 @@
 			<StackPanel Orientation="Horizontal">
 				<!-- mon match -->
 				<StackPanel Orientation="Vertical">
-					<StackPanel Orientation="Horizontal">
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 						<Image Name="imgEquipe1" Width="50" Height="50" Source="generic.png"></Image>
-						<Label Name="lbEquipe1" VerticalAlignment="Center" Content="SC Amiens" Style="{StaticResource StyleLabel1}"/>
-						<Label Name="lbEquipe2" VerticalAlignment="Center" Content="Dijon FCO" Style="{StaticResource StyleLabel1}"/>
+						<Label Name="lbEquipe1" VerticalAlignment="Center" FontSize="16" Content="SC Amiens" Width="125" Style="{StaticResource StyleLabel1}"/>
+						<Label Name="lbEquipe2" VerticalAlignment="Center" FontSize="16" Content="Valenciennes FC" Width="125" Style="{StaticResource StyleLabel1}"/>
 						<Image Name="imgEquipe2" Width="50" Height="50" Source="generic.png"></Image>
 					</StackPanel>
-					<Label Name="lbScore" Content="1 - 0" Style="{StaticResource StyleLabel1}"/>
-					<Label Name="lbTemps" Content="45°" Style="{StaticResource StyleLabel1}"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<Border Style="{StaticResource StyleBorderCalendarToday}" Width="40" Height="40" CornerRadius="5" Margin="0,0,5,0">
+							<Label Name="lbScore1" Content="4" Style="{StaticResource StyleLabel2}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+						</Border>
+						<Label Name="lbTemps" Content="45°" Style="{StaticResource StyleLabel1}" VerticalAlignment="Center"/>
+						<Border Style="{StaticResource StyleBorderCalendarToday}" Width="40" Height="40" CornerRadius="5" Margin="5,0,0,0">
+							<Label Name="lbScore2" Content="4" Style="{StaticResource StyleLabel2}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+						</Border>
+					</StackPanel>
+
 					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 						<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
 						<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 					</StackPanel>
-					<DataGrid IsReadOnly="True" Height="250" Width="350" Name="dgActions" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Minute}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Action}">
-								<DataGridTextColumn.EditingElementStyle>
-									<Style TargetType="TextBox">
-										<Setter Property="TextWrapping" Value="Wrap" />
-										<Setter Property="AcceptsReturn" Value="true" />
-									</Style>
-								</DataGridTextColumn.EditingElementStyle>
-							</DataGridTextColumn>
-						</DataGrid.Columns>
-					</DataGrid>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5" Height="250" Width="350">
+						<ScrollViewer VerticalScrollBarVisibility="Auto">
+							<StackPanel Orientation="Vertical" Name="spActions">
+
+							</StackPanel>
+						</ScrollViewer>
+					</Border>
 					<Button Name="btnSimuler" Content="Abandonner et simuler match" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
 					<Button Name="btnTerminer" Content="Quitter" Visibility="Hidden" Width="200" Click="BtnTerminer_Click" Style="{StaticResource StyleButton1}"/>
 				</StackPanel>
 				<!-- infos compet -->
 				<StackPanel Orientation="Vertical">
-					<DataGrid IsReadOnly="True" Height="150" MaxWidth="250" Name="dgMatchs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Equipe1}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Score}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Equipe2}"/>
-						</DataGrid.Columns>
-					</DataGrid>
-					<DataGrid Margin="10" IsReadOnly="True" Height="300" GridLinesVisibility="None" Name="dgClassement" Style="{StaticResource StyleDataGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTemplateColumn Width="18">
-								<DataGridTemplateColumn.CellTemplate>
-									<DataTemplate>
-										<Image Source="{Binding Logo}" />
-									</DataTemplate>
-								</DataGridTemplateColumn.CellTemplate>
-							</DataGridTemplateColumn>
-							<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
-							<DataGridTextColumn Header="Club" Binding="{Binding Nom}"/>
-							<DataGridTextColumn Header="Pts" Binding="{Binding Pts}"/>
-							<DataGridTextColumn Header="J" Binding="{Binding J}"/>
-							<DataGridTextColumn Header="G" Binding="{Binding G}"/>
-							<DataGridTextColumn Header="N" Binding="{Binding N}"/>
-							<DataGridTextColumn Header="P" Binding="{Binding P}"/>
-							<DataGridTextColumn Header="Bp" Binding="{Binding bp}"/>
-							<DataGridTextColumn Header="Bc" Binding="{Binding bc}"/>
-							<DataGridTextColumn Header="Diff" Binding="{Binding Diff}"/>
-						</DataGrid.Columns>
-						<DataGrid.CellStyle>
-							<Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource StyleDataCellGrid}">
 
-							</Style>
-						</DataGrid.CellStyle>
-					</DataGrid>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<ScrollViewer VerticalScrollBarVisibility="Auto" Height="150">
+							<StackPanel x:Name="spGames" Orientation="Vertical" Width="250">
+
+							</StackPanel>
+						</ScrollViewer>
+					</Border>
+					
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<ScrollViewer VerticalScrollBarVisibility="Auto" Height="300">
+							<StackPanel x:Name="spRanking" Orientation="Vertical" Width="250">
+
+							</StackPanel>
+						</ScrollViewer>
+
+					</Border>
 				</StackPanel>
 				<!-- info autres matchs -->
-				<StackPanel Orientation="Vertical">
-					<DataGrid GridLinesVisibility="None" IsReadOnly="True" Height="450" Width="400" Name="dgEvenements" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTemplateColumn Width="18">
-								<DataGridTemplateColumn.CellTemplate>
-									<DataTemplate>
-										<Image Source="{Binding Logo}" />
-									</DataTemplate>
-								</DataGridTemplateColumn.CellTemplate>
-							</DataGridTemplateColumn>
-							<DataGridTextColumn Header="" Binding="{Binding Minute}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Evenement}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Joueur}"/>
-						</DataGrid.Columns>
-					</DataGrid>
-				</StackPanel>
+				<Border Style="{StaticResource StyleBorderStackPanel}" Width="380" Margin="5">
+					<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Height="470">
+						<StackPanel Orientation="Vertical" Name="spOtherActions">
+						</StackPanel>
+					</ScrollViewer>
+				</Border>
 			</StackPanel>
 			
 		</StackPanel>

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using TheManager;
+using TheManager_GUI.ViewMisc;
+using TheManager_GUI.VueClassement;
 
 namespace TheManager_GUI
 {
@@ -69,7 +72,14 @@ namespace TheManager_GUI
 
                 if (afficherAction)
                 {
-                    dgEvenements.Items.Insert(0, new MatchLiveEvenementElement { Logo = Utils.Image(icone), Minute = em.MinuteToString, Joueur = em.player.lastName + " (" + em.player.Club.shortName + ")", Evenement = game.home + " - " + game.away + " : " + game.score1 + " - " + game.score2 });
+                    StackPanel spAction = new StackPanel();
+                    spAction.Orientation = Orientation.Horizontal;
+
+                    spAction.Children.Add(ViewUtils.CreateImage(Utils.Image(icone), 20, 20));
+                    spAction.Children.Add(ViewUtils.CreateLabel(em.MinuteToString, "StyleLabel2", 11, 25, System.Windows.Media.Brushes.LightSalmon, null, true));
+                    spAction.Children.Add(ViewUtils.CreateLabel(game.home.shortName + " - " + game.away.shortName + " : " + game.score1 + " - " + game.score2, "StyleLabel2", 11, 210, icone == "red_card.png" ? System.Windows.Media.Brushes.LightSalmon : null, null, icone == "goal.png" || icone == "red_card.png"));
+                    spAction.Children.Add(ViewUtils.CreateLabel(em.player.lastName + " (" + em.player.Club.shortName + ")", "StyleLabel2", 11, 125, null, null, icone == "goal.png"));
+                    spOtherActions.Children.Insert(0,spAction);
                 }
 
                 if (game == _matchs[0])
@@ -83,7 +93,8 @@ namespace TheManager_GUI
             if (game == _matchs[0])
             {
                 lbTemps.Content = game.Time;
-                lbScore.Content = game.score1 + " - " + game.score2;
+                lbScore1.Content = game.score1;
+                lbScore2.Content = game.score2;
                 lbTirs1.Content = game.statistics.HomeShoots;
                 lbTirs2.Content = game.statistics.AwayShoots;
                 pbTirs.Maximum = game.statistics.HomeShoots + game.statistics.AwayShoots;
@@ -166,38 +177,32 @@ namespace TheManager_GUI
 
         private void ActionsMatch()
         {
-            dgActions.Items.Clear();
-            foreach(KeyValuePair<string,string> kvp in _matchs[0].actions)
+
+            List<KeyValuePair<string, string>> reversedActions = new List<KeyValuePair<string, string>>(_matchs[0].actions);
+            reversedActions.Reverse();
+            spActions.Children.Clear();
+            foreach (KeyValuePair<string, string> kvp in reversedActions)
             {
-                dgActions.Items.Insert(0,new MatchLiveAction { Minute = kvp.Key, Action = kvp.Value });
+                StackPanel spAction = new StackPanel();
+                spAction.Orientation = Orientation.Horizontal;
+                spAction.Children.Add(ViewUtils.CreateLabel(kvp.Key, "StyleLabel2", 11, 30, System.Windows.Media.Brushes.Salmon, null, true));
+                spAction.Children.Add(ViewUtils.CreateLabel(kvp.Value, "StyleLabel2", 11, -1));
+                spActions.Children.Add(spAction);
             }
         }
 
         private void Matchs()
         {
-            dgMatchs.Items.Clear();
-            foreach(Match match in _matchs)
-            {
-                dgMatchs.Items.Add(new MatchLiveElement { Equipe1 = match.home, Equipe2 = match.away, Score = match.score1 + " - " + match.score2 });
-            }
+            ViewMatches view = new ViewMatches(_matchs, false, false, false, false, false, false);
+            view.Full(spGames);
         }
 
         private void Classement()
         {
             if(_tour != null)
             {
-                dgClassement.Items.Clear();
-                ChampionshipRound tc = _tour as ChampionshipRound;
-                if(tc != null)
-                {
-                    int i = 1;
-                    List<Club> classement = tc.Ranking();
-                    foreach(Club c in classement)
-                    {
-                        dgClassement.Items.Add(new ClassementElement { Classement = i, Club = c, Logo = Utils.Logo(c), Nom = c.shortName, Pts = tc.Points(c), J = tc.Played(c), bc = tc.GoalsAgainst(c), bp = tc.GoalsFor(c), Diff = tc.Difference(c), G = tc.Wins(c), N = tc.Draws(c), P = tc.Loses(c) });
-                        i++;
-                    }
-                }
+                View view = FactoryViewRanking.CreerVue(null, _tour, 0.65, false, null, false) ;
+                view.Full(spRanking);
             }
         }
 

@@ -302,6 +302,7 @@ namespace TheManager
                 string time = tmp.ToString();
                 if (tmpAdd > 0)
                 {
+                    time = _period == 1 ? "45" : _period == 2 ? "90" : _period == 3 ? "105" : "120"; 
                     time += "+" + tmpAdd;
                 }
                 time += "°";
