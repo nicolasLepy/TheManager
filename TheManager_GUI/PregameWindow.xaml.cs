@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using TheManager;
+using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
 {
@@ -71,11 +73,8 @@ namespace TheManager_GUI
             _matchs = m;
             _club = c;
 
-            foreach(Match match in _matchs)
-            {
-                dgMatchs.Items.Add(new ProgrammeElement { Heure = match.day.ToShortTimeString(), Equipe1 = match.home, Equipe2 = match.away, Score = match.score1 + " - " + match.score2 });
-            }
-
+            ViewMatches view = new ViewMatches(_matchs, false, true, false, false, true, false, 10);
+            view.Full(spGames);
 
             foreach (Player j in c.Players())
             {
@@ -87,9 +86,19 @@ namespace TheManager_GUI
             lbCote1.Content = m[0].odd1.ToString("0.00");
             lbCoteN.Content = m[0].oddD.ToString("0.00");
             lbCote2.Content = m[0].odd2.ToString("0.00");
+            try
+            {
+                imgEquipe1.Source = new BitmapImage(new Uri(Utils.Logo(m[0].home)));
+                imgEquipe2.Source = new BitmapImage(new Uri(Utils.Logo(m[0].away)));
+            }
+            catch
+            {
+                //We don't show any logo if one club has no logo
+            }
+
         }
 
-        
+
         private void DgJoueursDispo_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if(_joueurs.Count < 11)
