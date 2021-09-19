@@ -5,73 +5,109 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Match" Height="700" Width="800" Style="{StaticResource StyleWindows}" Left="50" Top="50">
+        Title="Windows_Match" Height="700" Width="850" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
-		<StackPanel Orientation="Vertical">
+		<StackPanel Orientation="Vertical" Name="spMain">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
 			</StackPanel>
-			<Image Source="image.png" Name="imgCompetition" Height="50" Width="50"/>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spScoreLine">
 				<StackPanel Orientation="Vertical">
-					<Image Source="image.png" Name="imgLogoHome" Height="50" Width="50" Margin="100 0 100 0"/>
-					<Label Name="lbEquipe1" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
+					<Image Source="image.png" Name="imgCompetition" Height="75" Width="75"/>
+					<Label Name="lbCompetition" Style="{StaticResource StyleLabel2}" Content="Ligue 1"/>
 				</StackPanel>
-				<Label Name="lbScore" VerticalContentAlignment="Bottom" Content="4 - 0" Margin="40 0 40 0" Style="{StaticResource StyleLabel1}"/>
 				<StackPanel Orientation="Vertical">
-					<Image Source="image.png" Name="imgLogoAway" Height="50" Width="50" Margin="100 0 100 0"/>
-					<Label Name="lbEquipe2" Content="Club" Width="250" Style="{StaticResource StyleLabel1}"/>
+					<Image Source="image.png" Name="imgLogoHome" Height="50" Width="50" Margin="75 0 75 0"/>
+					<Label Name="lbEquipe1" Content="Club" Width="200" Style="{StaticResource StyleLabel1}"/>
+				</StackPanel>
+				<StackPanel Orientation="Vertical" Margin="0,0,10,0">
+					<Border Style="{StaticResource StyleBorderStackPanel}" Width="50" Height="50" CornerRadius="5">
+						<Label Name="lbScore1" Content="4" Style="{StaticResource StyleLabel2}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+					</Border>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Width="35" Height="35" CornerRadius="5" Margin="0,15,0,0">
+						<Label Name="lbScoreMt1" Content="4" Style="{StaticResource StyleLabel2}" FontSize="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+					</Border>
+				</StackPanel>
+				
+				<StackPanel Orientation="Vertical" Margin="10,0,0,0">
+					<Border Style="{StaticResource StyleBorderStackPanel}" Width="50" Height="50" CornerRadius="5">
+						<Label Name="lbScore2" Content="4" Style="{StaticResource StyleLabel2}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+					</Border>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Width="35" Height="35" CornerRadius="5" Margin="0,15,0,0">
+						<Label Name="lbScoreMt2" Content="4" Style="{StaticResource StyleLabel2}" FontSize="10" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+					</Border>
+				</StackPanel>
+				<StackPanel Orientation="Vertical">
+					<Image Source="image.png" Name="imgLogoAway" Height="50" Width="50" Margin="75 0 75 0"/>
+					<Label Name="lbEquipe2" Content="Club" Width="200" Style="{StaticResource StyleLabel1}"/>
+				</StackPanel>
+				<StackPanel Orientation="Vertical">
+					<Label Name="lbStade" Content="Stade du Pré Fleuri" FontSize="12" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbAffluence" Content="28500 spectateurs" FontSize="12" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+						<Label Name="lbOdd1" Width="50" Content="12.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
+						<Label Name="lbOddD" Width="50" Content="10.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
+						<Label Name="lbOdd2" Width="50" Content="12.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
+					</StackPanel>
 				</StackPanel>
 			</StackPanel>
-			<Label Name="lbMT" Content="(2 - 0)" Style="{StaticResource StyleLabel1}"/>
-			<Label Name="lbStade" Content="Stade du Pré Fleuri" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
-			<Label Name="lbAffluence" Content="28500 spectateurs" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-				<Label Name="lbOdd1" Width="50" Content="12.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
-				<Label Name="lbOddD" Width="50" Content="10.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
-				<Label Name="lbOdd2" Width="50" Content="12.25" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}" FontSize="10"/>
-			</StackPanel>
 
-			<ScrollViewer VerticalScrollBarVisibility="Auto" Height="400" >
+			<ScrollViewer VerticalScrollBarVisibility="Auto" Height="525" >
 
 				<StackPanel Orientation="Vertical">
 
-					<StackPanel Orientation="Vertical" Name="spEvenements">
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<Canvas x:Name="canvasEvents" Height="100">
 
-					</StackPanel>
+						</Canvas>
+					</Border>
 
-					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Possession"/>
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<Label Name="lbPossession1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-						<ProgressBar Name="pbPossession" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
-						<Label Name="lbPossession2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-					</StackPanel>
-					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
-						<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
-					</StackPanel>
-					<StackPanel Orientation="Horizontal" Name="spCompositions" Height="250" HorizontalAlignment="Center">
-						
-					</StackPanel>
-					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Remplacements"/>
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<StackPanel Orientation="Vertical" Name="spHomeSubstitutions" Width="300" HorizontalAlignment="Left">
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Vertical" Name="spEvenements">
+						</StackPanel>
+					</Border>
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Vertical">
+							<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Possession"/>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+								<Label Name="lbPossession1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+								<ProgressBar Name="pbPossession" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
+								<Label Name="lbPossession2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+							</StackPanel>
+							<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+								<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+								<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
+								<Label Name="lbTirs2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+							</StackPanel>
+						</StackPanel>
+					</Border>
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Horizontal" Name="spCompositions" Height="250" HorizontalAlignment="Center">
+						</StackPanel>
+					</Border>
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Vertical">
+							<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Remplacements"/>
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+								<StackPanel Orientation="Vertical" Name="spHomeSubstitutions" Width="300" HorizontalAlignment="Left">
+
+								</StackPanel>
+								<StackPanel Orientation="Vertical" Name="spAwaySubstitutions" Width="300" HorizontalAlignment="Right">
+
+								</StackPanel>
+							</StackPanel>
+						</StackPanel>
+					</Border>
+
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+						<StackPanel Orientation="Horizontal" Name="spMedias" Height="100" HorizontalAlignment="Center">
 
 						</StackPanel>
-						<StackPanel Orientation="Vertical" Name="spAwaySubstitutions" Width="300" HorizontalAlignment="Right">
-
-						</StackPanel>
-					</StackPanel>
-					<DataGrid IsReadOnly="True" MouseDoubleClick="DgJournalistes_MouseDoubleClick" HorizontalAlignment="Left" Margin="20" Name="dgJournalistes" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="" Binding="{Binding Media}"/>
-							<DataGridTextColumn Header="" Binding="{Binding Journaliste}"/>
-						</DataGrid.Columns>
-
-					</DataGrid>
-
+					</Border>
 
 				</StackPanel>
 				

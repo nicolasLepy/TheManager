@@ -16,6 +16,7 @@ namespace TheManager
         public readonly static string tournamentLogoFolderName = "tournaments";
         public readonly static string clubLogoFolderName = "clubs";
         public readonly static string nationalFlagsFolderName = "flags";
+        public readonly static string mediaLogoFolderName = "medias";
         public readonly static string namesSubfolderName = "names";
         public readonly static string dataFolderName = "data";
         public readonly static string musicFolderName = "music";
@@ -300,6 +301,11 @@ namespace TheManager
         public static int Difference(List<Match> games, Club c)
         {
             return Gf(games, c) - Ga(games, c);
+        }
+
+        public static string MediaLogo(Media m)
+        {
+            return Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\" + mediaLogoFolderName + "\\" + m.name.Replace(" ","") + ".png";
         }
 
         public static string Flag(Country c)

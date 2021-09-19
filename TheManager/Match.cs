@@ -147,6 +147,10 @@ namespace TheManager
         [DataMember]
         private int _penaltyShootout2;
         [DataMember]
+        private List<bool> _penaltyShoots1;
+        [DataMember]
+        private List<bool> _penaltyShoots2;
+        [DataMember]
         private bool _prolongationsIfDraw;
         [DataMember]
         private Match _firstLeg;
@@ -177,6 +181,8 @@ namespace TheManager
         public bool prolongations { get => _prolongations; }
         public int penaltyShootout1 { get => _penaltyShootout1; }
         public int penaltyShootout2 { get => _penaltyShootout2; }
+        public List<bool> penaltyShoots1 { get => _penaltyShoots1; }
+        public List<bool> penaltyShoots2 { get => _penaltyShoots2; }
         public List<KeyValuePair<Media, Journalist>> journalists { get => _journalists; }
         /// <summary>
         /// Description des actions du match [minute , action]
@@ -690,6 +696,8 @@ namespace TheManager
             _subs1OnBench = new List<Player>();
             _subs2OnBench = new List<Player>();
             _substitutions = new List<Substitution>();
+            _penaltyShoots1 = new List<bool>();
+            _penaltyShoots2 = new List<bool>();
         }
 
         /// <summary>
@@ -981,6 +989,11 @@ namespace TheManager
                     if (Session.Instance.Random(1, 4) != 1)
                     {
                         _penaltyShootout1++;
+                        _penaltyShoots1.Add(true);
+                    }
+                    else
+                    {
+                        _penaltyShoots1.Add(false);
                     }
                 }
 
@@ -989,6 +1002,11 @@ namespace TheManager
                     if (Session.Instance.Random(1, 4) != 1)
                     {
                         _penaltyShootout2++;
+                        _penaltyShoots2.Add(true);
+                    }
+                    else
+                    {
+                        _penaltyShoots2.Add(false);
                     }
                 }
             }
@@ -997,11 +1015,21 @@ namespace TheManager
                 if (Session.Instance.Random(1, 4) != 1)
                 {
                     _penaltyShootout1++;
+                    _penaltyShoots1.Add(true);
+                }
+                else
+                {
+                    _penaltyShoots1.Add(false);
                 }
 
                 if (Session.Instance.Random(1, 4) != 1)
                 {
                     _penaltyShootout2++;
+                    _penaltyShoots2.Add(true);
+                }
+                else
+                {
+                    _penaltyShoots2.Add(false);
                 }
             }
         }

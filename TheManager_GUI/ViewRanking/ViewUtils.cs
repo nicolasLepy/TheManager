@@ -36,7 +36,7 @@ namespace TheManager_GUI
         /// <param name="content">Text of the label</param>
         /// <param name="style">Style of the label</param>
         /// <param name="fontSize">Font size (-1 to let style default font size)</param>
-        /// <param name="width">Width of the label box</param>
+        /// <param name="width">Width of the label box (-1 to define no width)</param>
         /// <param name="color">Color of the label</param>
         /// <returns></returns>
         public static Label CreateLabel(string content, string styleName, double fontSize, double width, Brush color = null, Brush backgroundColor = null, bool bold = false)
@@ -91,7 +91,15 @@ namespace TheManager_GUI
 
         }
 
-        
+        public static Image CreateMediaLogo(Media media, double width, double height)
+        {
+            Image sprite = new Image();
+            sprite.Source = new BitmapImage(new Uri(Utils.MediaLogo(media), UriKind.RelativeOrAbsolute));
+            sprite.Width = width;
+            sprite.Height = height;
+            return sprite;
+        }
+
         public static Image CreateFlag(Country country, double width, double height)
         {
             Image sprite = new Image();
