@@ -5,49 +5,64 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ChoixClub" Height="550" Width="900" Style="{StaticResource StyleWindows}">
+        Title="Windows_ChoixClub" Height="570" Width="900" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
 			
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="350">
-					<TreeView Name="tvTournaments" Style="{StaticResource StyleTreeView}" >
-					</TreeView>
-				</ScrollViewer>
-				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="350">
-					<ListBox Name="tvClubs" Style="{StaticResource StyleListBox}">
-					</ListBox>
-				</ScrollViewer>
+			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Vertical">
-					<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
-					<StackPanel Orientation="Horizontal" Name="spEtoiles" HorizontalAlignment="Center">
-					</StackPanel>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Width="600" Height="150">
-						<StackPanel Name="spEffectif" Orientation="Vertical">
-							
-						</StackPanel>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="350">
+						<ListBox Name="tvClubs" Style="{StaticResource StyleListBox}">
+						</ListBox>
 					</ScrollViewer>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Prénom" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<TextBox Name="tbPrenom" Width="125" Style="{StaticResource StyleTextBox}"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Nom" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<TextBox Name="tbNom" Width="125" Style="{StaticResource StyleTextBox}"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Naissance" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<DatePicker Name="dpNaissance" Width="125" Style="{StaticResource StyleDatePicker}"/>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal">
+						<Label Content="Nationalité" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<ComboBox Name="cbNationalite" Style="{StaticResource StyleComboBox}" Width="125"/>
+					</StackPanel>
+
+				</StackPanel>
+				
+				<StackPanel Orientation="Vertical">
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Vertical" Width="375">
+							<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
+							<Label Name="lbClub" Style="{StaticResource StyleLabel2Center}" Content="" FontSize="18"/>
+							<StackPanel Orientation="Horizontal" Name="spEtoiles" HorizontalAlignment="Center">
+							</StackPanel>
+						</StackPanel>
+						<Border Style="{StaticResource StyleBorderStackPanel}" Margin="10" Width="275">
+							<StackPanel Orientation="Vertical" VerticalAlignment="Center">
+								<Label Name="lbBudget" Style="{StaticResource StyleLabel2}" Content=""/>
+								<Label Name="lbStadium" Style="{StaticResource StyleLabel2}" Content=""/>
+							</StackPanel>
+						</Border>
+
+					</StackPanel>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="10">
+						
+						<ScrollViewer VerticalScrollBarVisibility="Auto" Width="630" Height="250">
+							<StackPanel Name="spEffectif" Orientation="Vertical">
+							
+							</StackPanel>
+						</ScrollViewer>
+					</Border>
 				</StackPanel>
 			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<Label Content="Prénom" Width="100" Style="{StaticResource StyleLabel2}"/>
-				<TextBox Name="tbPrenom" Width="125" Style="{StaticResource StyleTextBox}"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<Label Content="Nom" Width="100" Style="{StaticResource StyleLabel2}"/>
-				<TextBox Name="tbNom" Width="125" Style="{StaticResource StyleTextBox}"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<Label Content="Naissance" Width="100" Style="{StaticResource StyleLabel2}"/>
-				<DatePicker Name="dpNaissance" Width="125" Style="{StaticResource StyleDatePicker}"/>
-			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<Label Content="Nationalité" Width="100" Style="{StaticResource StyleLabel2}"/>
-				<ComboBox Name="cbNationalite" Style="{StaticResource StyleComboBox}" Width="125"/>
-			</StackPanel>
 
-			<Button Content="Valider" Style="{StaticResource StyleButton1}" Width="150" Click="Button_Click"/>
+			<Button Content="Valider" Style="{StaticResource StyleButton1}" Width="150" Margin="15" Click="Button_Click"/>
 		</StackPanel>
     </Grid>
 </Window>
