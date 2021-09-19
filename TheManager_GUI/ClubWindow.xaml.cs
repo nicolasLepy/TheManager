@@ -115,7 +115,7 @@ namespace TheManager_GUI
 
             if(c.manager != null)
             {
-                lbEntraineur.Content = "Entraîneur : " + c.manager.ToString();
+                lbEntraineur.Content = c.manager.ToString();
             }
             else
             {

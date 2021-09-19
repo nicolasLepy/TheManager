@@ -3,7 +3,9 @@ using LiveCharts.Wpf;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using TheManager;
+using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
 {
@@ -29,12 +31,14 @@ namespace TheManager_GUI
             if(c != null)
             {
                 lbClub.Content = c.name;
+                imgClub.Source = new BitmapImage(new Uri(Utils.Logo(c)));
             }
             else
             {
                 lbClub.Content = "Libre";
             }
-            lbAge.Content = joueur.Age + " ans";
+            lbAge.Content = "Né le " + joueur.birthday.ToShortDateString() + " (" + joueur.Age + " ans)";
+            imgFlag.Source = new BitmapImage(new Uri(Utils.Flag(joueur.nationality)));
 
             ChartValues<int> niveaux = new ChartValues<int>();
             ChartValues<int> buts = new ChartValues<int>();
@@ -84,11 +88,31 @@ namespace TheManager_GUI
             DataContext = this;
 
             FillPlayerHistory();
+            FillPlayerGames();
+            lbValue.Content = "Valeur : " + Utils.FormatMoney(_player.EstimateTransferValue());
+            Contract ct = _player.Club == null ? null : _player.Club.FindContract(_player);
+            if(ct != null)
+            {
+                lbContract.Content = "Sous contrat jusqu'au " + ct.end.ToShortDateString() + " (salaire de " + Utils.FormatMoney(ct.wage) + "/m)";
+            }
+            else
+            {
+                lbContract.Content = "Sans contrat";
+            }
+            spLevel.Children.Add(ViewUtils.CreateStarNotation(_player.Stars, 15));
+            spPotentiel.Children.Add(ViewUtils.CreateStarNotation(_player.StarsPotential, 15));
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
         {
             Close();
+        }
+
+        private void FillPlayerGames()
+        {
+            //spPlayerGames
+            ViewMatches view = new ViewMatches(_player.PlayedGamesThisYear(), true, false, false, false, false, true);
+            view.Full(spPlayerGames);
         }
 
         private void FillPlayerHistory()

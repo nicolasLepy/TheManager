@@ -6,15 +6,63 @@
         xmlns:local="clr-namespace:TheManager_GUI"
 		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 		mc:Ignorable="d"
-        Title="Windows_Joueur" Height="450" Width="800" Style="{StaticResource StyleWindows}">
+        Title="Windows_Joueur" Height="600" Width="800" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
 			</StackPanel>
+
+			<StackPanel Orientation="Horizontal">
+				<Grid Width="800">
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+						<StackPanel Orientation="Vertical">
+							<Image Name="imgClub" Width="100" Height="100"/>
+							<Label Name="lbClub" Content="Club" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
+
+						</StackPanel>
+						<StackPanel Orientation="Vertical">
+							<Label Name="lbJoueur" Content="Joueur" FontSize="22" Style="{StaticResource StyleLabel1}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+							<StackPanel Orientation="Horizontal">
+								<Image Name="imgFlag" Width="40" Height="30"/>
+								<Label Name="lbAge" Content="Né le 10/10/1990 (20 ans)" FontSize="12" Style="{StaticResource StyleLabel2}" VerticalAlignment="Center"/>
+
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" Name="spLevel">
+								<Label Content="Niveau" Style="{StaticResource StyleLabel2}" Width="75"/>
+							</StackPanel>
+							<StackPanel Orientation="Horizontal" Name="spPotentiel">
+								<Label Content="Potentiel" Style="{StaticResource StyleLabel2}" Width="75"/>
+							</StackPanel>
+						</StackPanel>
+
+					</StackPanel>
+					<StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+						<Label Name="lbValue" Content="Valeur : 30M" Style="{StaticResource StyleLabel2}" FontSize="12" VerticalAlignment="Bottom"/>
+						<Label Name="lbContract" Content="Contrat jusqu'au 07/07/2020" Style="{StaticResource StyleLabel2}" FontSize="12" VerticalAlignment="Bottom"/>
+					</StackPanel>
+				</Grid>
+
+			</StackPanel>
+
+			<StackPanel Orientation="Horizontal">
+				<Border Style="{StaticResource StyleBorderStackPanel}" Width="450" Margin="5">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="150">
+						<StackPanel x:Name="spPlayerGames" Orientation="Vertical">
+
+						</StackPanel>
+					</ScrollViewer>
+
+				</Border>
+				<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="150">
+						<StackPanel x:Name="spPlayerHistory" Orientation="Vertical">
+
+						</StackPanel>
+					</ScrollViewer>
+				</Border>
+			</StackPanel>
 			
-			<Label Name="lbJoueur" Content="Joueur" Style="{StaticResource StyleLabel1}"/>
-			<Label Name="lbClub" Content="Club" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center"/>
 
 
 			<StackPanel Orientation="Horizontal">
@@ -30,7 +78,6 @@
 					</lvc:CartesianChart>
 				</StackPanel>
 				<StackPanel Orientation="Vertical" Width="425">
-					<Label Name="lbAge" Content="Age" HorizontalAlignment="Right" Style="{StaticResource StyleLabel2}"/>
 					<!-- ICI AGE, NIVEAU, POTENTIEL, HISTORIQUE -->
 					<StackPanel Orientation="Horizontal">
 						<StackPanel Orientation="Vertical">
@@ -56,11 +103,6 @@
 							</lvc:CartesianChart>
 						</StackPanel>
 					</StackPanel>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="150">
-						<StackPanel x:Name="spPlayerHistory" Orientation="Vertical">
-							
-						</StackPanel>
-					</ScrollViewer>
 				</StackPanel>
 			</StackPanel>
 

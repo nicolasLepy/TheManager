@@ -262,6 +262,21 @@ namespace TheManager
             return res;
         }
 
+        public List<Match> PlayedGamesThisYear()
+        {
+            List<Match> res = new List<Match>();
+
+            foreach(Match match in Session.Instance.Game.kernel.Matchs)
+            {
+                if(match.compo1.Contains(this) || match.compo2.Contains(this))
+                {
+                    res.Add(match);
+                }
+            }
+
+            return res;
+        }
+
         /*
         /// <summary>
         /// Le joueur considère toutes ses offres de contrats
