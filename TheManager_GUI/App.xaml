@@ -9,7 +9,7 @@
 		<local:DataGridTournamentColumnConverter x:Key="DataGridTournamentColumnConverter"/>
 
 
-		<Color x:Key="Color1">#1c7435</Color>
+		<Color x:Key="Color1">#20833c</Color> 
 		<Color x:Key="Color2">#a4f17a</Color>
 		<Color x:Key="ColorDate">#D3D3D3</Color>
 		<Color x:Key="BackgroundColor">#1c262b</Color>

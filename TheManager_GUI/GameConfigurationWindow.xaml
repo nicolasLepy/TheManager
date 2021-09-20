@@ -5,20 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ConfigurationPartie" Height="550" Width="1000" Style="{StaticResource StyleWindows}">
+        Title="Windows_ConfigurationPartie" Height="550" Width="1050" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
 				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
 			</StackPanel>
 			<Label  Content="Configuration de la partie" Style="{StaticResource StyleLabel1}"/>
+			<Label  Content="Sélection des championnats" Style="{StaticResource StyleLabel2Center}"/>
 			<ScrollViewer Margin="30 10 30 0" Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="350" CanContentScroll="True">
-				<StackPanel Name="spContinents" Orientation="Horizontal">
+				<StackPanel Orientation="Horizontal" Name="spWorld">
+					<Border Style="{StaticResource StyleBorderStackPanel}" Width="230" Margin="5">
+						<StackPanel Orientation="Vertical" Name="spEuropa">
+						</StackPanel>
+					</Border>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Width="230" Margin="5">
+						<StackPanel Orientation="Vertical" Name="spAfrica">
+						</StackPanel>
+					</Border>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Width="230" Margin="5">
+						<StackPanel Orientation="Vertical"  Name="spSouthAmerica">
+						</StackPanel>
+					</Border>
+					<StackPanel Orientation="Vertical">
+						<Border Style="{StaticResource StyleBorderStackPanel}" Width="230" Margin="5">
+							<StackPanel Orientation="Vertical" Name="spNorthAmerica">
+							</StackPanel>
+						</Border>
+						<Border Style="{StaticResource StyleBorderStackPanel}" Width="220" Margin="5">
+							<StackPanel Orientation="Vertical" Name="spAsia">
+							</StackPanel>
+						</Border>
+						<Border Style="{StaticResource StyleBorderStackPanel}" Width="220" Margin="5">
+							<StackPanel Orientation="Vertical" Name="spOceania">
+							</StackPanel>
+						</Border>
+					</StackPanel>
 				</StackPanel>
 			</ScrollViewer>
 
-					<Label Name="lbnbClubs" Content="Nombre de clubs : " Style="{StaticResource StyleLabel2}"/>
-					<Label Name="lbnbJoueurs" Content="Nombre de joueurs approximatifs : " Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbnbClubs" Content="" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbnbJoueurs" Content="" Style="{StaticResource StyleLabel2}"/>
 					<Button Name="btnLancer" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}" Content="Lancer" Click="BtnLancer_Click"/>
 
 		</StackPanel>

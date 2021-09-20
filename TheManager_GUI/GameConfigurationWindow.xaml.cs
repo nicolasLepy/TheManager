@@ -15,84 +15,112 @@ namespace TheManager_GUI
     {
 
         private readonly List<CheckBox> _checkbox;
+        private int _order;
+
+
+        private CheckBox GetCheckBox(Tournament t)
+        {
+            CheckBox res = null;
+            foreach(CheckBox cb in _checkbox)
+            {
+                if (cb.Content.ToString() == t.name)
+                {
+                    res = cb;
+                }
+            }
+            return res;
+        }
+
+        private void CreateCheckBox(Tournament t, StackPanel box, bool disable)
+        {
+            StackPanel spTournament = new StackPanel();
+            spTournament.Orientation = Orientation.Horizontal;
+
+            TextBlock l = new TextBlock();
+            l.Text = "   ";
+            l.Margin = new Thickness(0, 0, 5, 0);
+            l.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(t.color.ToHexa()));
+            spTournament.Children.Add(l);
+
+            CheckBox cb = new CheckBox();
+            cb.IsChecked = true;
+            cb.IsEnabled = !disable;
+            cb.Content = t.name;
+            cb.Style = FindResource("StyleCheckBox") as Style;
+            cb.Foreground = Brushes.LightGreen;
+            cb.Click += CheckboxComp_Click;
+
+            _checkbox.Add(cb);
+
+            spTournament.Children.Add(cb);
+            box.Children.Add(spTournament);
+
+        }
+
+        private void FillContinent(Continent c)
+        {
+            StackPanel spContinent = _order < 3 ? (spWorld.Children[_order] as Border).Child as StackPanel : ((spWorld.Children[3] as StackPanel).Children[_order-3] as Border).Child as StackPanel ;
+            spContinent.Children.Add(ViewUtils.CreateLabel(c.Name(), "StyleLabel2Center", 16, -1));
+
+            StackPanel box = new StackPanel();
+            box.Orientation = Orientation.Vertical;
+
+            if (c.Tournaments().Count > 0)
+            {
+                Label lb = new Label();
+                lb.Content = c.Name();
+                lb.Style = FindResource("StyleLabel2") as Style;
+                lb.FontWeight = FontWeights.Bold;
+                box.Children.Add(lb);
+                foreach (Tournament cp in c.Tournaments())
+                {
+                    CreateCheckBox(cp, box, true);
+                }
+            }
+            foreach (Country p in c.countries)
+            {
+                if (p.Tournaments().Count > 0)
+                {
+                    Label lb = new Label();
+                    lb.Content = p.Name();
+                    lb.Style = FindResource("StyleLabel2") as Style;
+                    Image i = new Image();
+                    i.Source = new BitmapImage(new Uri(Utils.Flag(p), UriKind.RelativeOrAbsolute));
+                    i.Width = 30;
+                    i.Height = 15;
+                    StackPanel sp = new StackPanel();
+                    sp.Orientation = Orientation.Horizontal;
+                    sp.Children.Add(i);
+                    sp.Children.Add(lb);
+                    box.Children.Add(sp);
+                    foreach (Tournament cp in p.Tournaments())
+                    {
+                        if (cp.isChampionship)
+                        {
+                            CreateCheckBox(cp, box, false);
+
+                        }
+
+                    }
+                }
+            }
+            spContinent.Children.Add(box);
+
+            _order++;
+        }
 
         public Windows_ConfigurationPartie()
         {
             InitializeComponent();
+            _order = 0;
             _checkbox = new List<CheckBox>();
 
             Kernel g = Session.Instance.Game.kernel;
             
             foreach(Continent c in g.continents)
             {
-                StackPanel box = new StackPanel();
-                box.Orientation = Orientation.Vertical;
-                
-                if (c.Tournaments().Count>0)
-                {
-                    Label lb = new Label();
-                    lb.Content = c.Name();
-                    lb.Style = FindResource("StyleLabel2") as Style;
-                    lb.FontWeight = FontWeights.Bold;
-                    box.Children.Add(lb);
-                    foreach(Tournament cp in c.Tournaments())
-                    {
-                        CheckBox cb = new CheckBox();
-                        cb.IsChecked = true;
-                        cb.Content = cp.name;
-                        cb.Style = FindResource("StyleCheckBox") as Style;
-                        cb.Click += new RoutedEventHandler(CheckboxComp_Click);
-                        cb.Foreground = Brushes.LightGreen;
-                        box.Children.Add(cb);
-                        _checkbox.Add(cb);
-                    }
-                }
-                foreach(Country p in c.countries)
-                {
-                    if(p.Tournaments().Count > 0)
-                    {
-                        Label lb = new Label();
-                        lb.Content = p.Name();
-                        lb.Style = FindResource("StyleLabel2") as Style;
-                        Image i = new Image();
-                        i.Source = new BitmapImage(new Uri( Utils.Flag(p), UriKind.RelativeOrAbsolute));
-                        i.Width = 30;
-                        i.Height = 15;
-                        StackPanel sp = new StackPanel();
-                        sp.Orientation = Orientation.Horizontal;
-                        sp.Children.Add(i);
-                        sp.Children.Add(lb);
-                        box.Children.Add(sp);
-                        foreach (Tournament cp in p.Tournaments())
-                        {
-                            if(cp.isChampionship)
-                            {
-                                StackPanel spTournament = new StackPanel();
-                                spTournament.Orientation = Orientation.Horizontal;
+                FillContinent(c);
 
-                                TextBlock l = new TextBlock();
-                                l.Text = "   ";
-                                l.Margin = new Thickness(0, 0, 5, 0);
-                                l.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(cp.color.ToHexa()));
-                                spTournament.Children.Add(l);
-
-                                CheckBox cb = new CheckBox();
-                                cb.IsChecked = true;
-                                cb.Content = cp.name;
-                                cb.Style = FindResource("StyleCheckBox") as Style;
-                                cb.Foreground = Brushes.LightGreen;
-                                
-                                _checkbox.Add(cb);
-
-                                spTournament.Children.Add(cb);
-                                box.Children.Add(spTournament);
-
-                            }
-
-                        }
-                    }
-                }
-                spContinents.Children.Add(box);
             }
 
         }
@@ -101,7 +129,22 @@ namespace TheManager_GUI
         {
             int nbClubs = 0;
             int nbJoueurs = 0;
-            foreach(CheckBox cb in _checkbox)
+
+            CheckBox checkBox = sender as CheckBox;
+            Tournament selected = Session.Instance.Game.kernel.String2Tournament(checkBox.Content.ToString());
+            foreach (Tournament t in Session.Instance.Game.kernel.LocalisationTournament(selected).Tournaments())
+            {
+                if (t.level > selected.level && t.isChampionship)
+                {
+                    GetCheckBox(t).IsChecked = false;
+                }
+                else if(t.level < selected.level && t.isChampionship)
+                {
+                    GetCheckBox(t).IsChecked = true;
+                }
+            }
+
+            foreach (CheckBox cb in _checkbox)
             {
                 if(cb.IsChecked == true)
                 {
@@ -111,10 +154,11 @@ namespace TheManager_GUI
                         nbClubs++;
                         nbJoueurs += 21;
                     }
+                    
                 }
             }
-            lbnbClubs.Content = "Nombre de clubs : " + nbClubs;
-            lbnbJoueurs.Content = "Nombre de joueurs : " + nbJoueurs;
+            lbnbClubs.Content = "Nombre de clubs actifs : " + nbClubs;
+            lbnbJoueurs.Content = "Nombre de joueurs approximatif : " + nbJoueurs;
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)
