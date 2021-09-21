@@ -19,6 +19,8 @@ namespace TheManager
         [DataMember]
         private List<Tournament> _tournaments;
         [DataMember]
+        private string _dbName;
+        [DataMember]
         private string _name;
 
         public List<City> cities { get { return _cities; } }
@@ -47,8 +49,11 @@ namespace TheManager
             }
         }
 
-        public Country(string name, Language language)
+        public string DbName { get => _dbName; }
+
+        public Country(string dbName, string name, Language language)
         {
+            _dbName = dbName;
             _name = name;
             _language = language;
             _cities = new List<City>();
@@ -61,15 +66,15 @@ namespace TheManager
             return _tournaments;
         }
 
-        public string Name()
-        {
-            return _name;
-        }
 
         public override string ToString()
         {
             return _name;
         }
 
+        public string Name()
+        {
+            return _name;
+        }
     }
 }

@@ -212,6 +212,23 @@ namespace TheManager
             return res;
         }
 
+        public Country DbCountryName2Country(string country)
+        {
+            Country res = null;
+
+            foreach (Continent c in _continents)
+            {
+                foreach (Country p in c.countries)
+                {
+                    if (p.DbName == country)
+                    {
+                        res = p;
+                    }
+                }
+            }
+            return res;
+        }
+
         public Stadium String2Stadium(string stadium)
         {
             Stadium res = null;

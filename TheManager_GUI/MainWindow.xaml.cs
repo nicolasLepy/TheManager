@@ -70,12 +70,14 @@ namespace TheManager_GUI
 
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
+            
 
             Game partie = new Game();
             Session.Instance.Game = partie;
             Kernel g = partie.kernel;
             _loader = new DatabaseLoader(g);
             DatabaseLoader cbdd = _loader;
+            //cbdd.ReformateCities();
 
             cbdd.LoadLanguages();
             pbLoading.Value = 2;

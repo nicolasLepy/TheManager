@@ -155,9 +155,14 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Monthly wage
+        /// </summary>
+        /// <returns></returns>
         public int EstimateWage()
         {
-            int wage = (int)(0.292188*Math.Pow(1.1859960,level));
+            //int wage = (int)(0.292188*Math.Pow(1.1859960,level));
+            int wage = (int)(1.254 * Math.Pow(1.158, level));
             switch (_position)
             {
                 case Position.Goalkeeper:
@@ -178,7 +183,24 @@ namespace TheManager
 
         public int EstimateTransferValue()
         {
-            return EstimateWage() * 100;
+            int value = (int)(1000000*(0.0001298 * Math.Pow(1.166, potential)));
+            switch (_position)
+            {
+                case Position.Goalkeeper:
+                    value = (int)(value * 0.7f);
+                    break;
+                case Position.Defender:
+                    value = (int)(value * 0.8f);
+                    break;
+                case Position.Midfielder:
+                    value = (int)(value * 0.9f);
+                    break;
+                default:
+                    value *= 1;
+                    break;
+            }
+            return value;
+
         }
 
         /// <summary>

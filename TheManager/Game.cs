@@ -20,6 +20,7 @@ namespace TheManager
         private readonly List<float> _averageClubLevelInGame;
         private readonly List<int> _playersInGame;
         private readonly List<float> _averageGoals;
+        private readonly List<float> _rateIndebtesClubs;
 
         public List<int> TotalBudgetInGame => _totalBudgetInGame;
 
@@ -31,13 +32,16 @@ namespace TheManager
 
         public List<float> AverageGoals => _averageGoals;
 
-        public void AddInfo(int totalBudgetInGame, float averagePlayerLevelInGame, int playersInGame, float averageClubLevelInGame, float averageGoals)
+        public List<float> RateIndebtesClubs => _rateIndebtesClubs;
+
+        public void AddInfo(int totalBudgetInGame, float averagePlayerLevelInGame, int playersInGame, float averageClubLevelInGame, float averageGoals, float rateIndebtesClubs)
         {
             _totalBudgetInGame.Add(totalBudgetInGame);
             _averagePlayerLevelInGame.Add(averagePlayerLevelInGame);
             _playersInGame.Add(playersInGame);
             _averageClubLevelInGame.Add(averageClubLevelInGame);
             _averageGoals.Add(averageGoals);
+            _rateIndebtesClubs.Add(rateIndebtesClubs);
         }
 
         public GameWorld()
@@ -47,6 +51,7 @@ namespace TheManager
             _playersInGame = new List<int>();
             _averageClubLevelInGame = new List<float>();
             _averageGoals = new List<float>();
+            _rateIndebtesClubs = new List<float>();
         }
     }
 
@@ -199,6 +204,7 @@ namespace TheManager
             int playersInGame = 0;
             float averageClubLevelInGame = 0;
             float averageGoals = 0;
+            int indebtedClubs = 0;
             
             int clubsCount = 0;
             int playersCount = 0;
@@ -217,6 +223,10 @@ namespace TheManager
                     }
                     
                     averageClubLevelInGame += (c as CityClub).Level();
+                    if((c as CityClub).budget < 0)
+                    {
+                        indebtedClubs++;
+                    }
                 }
             }
 
@@ -228,8 +238,40 @@ namespace TheManager
 
             averageClubLevelInGame = averageClubLevelInGame / (clubsCount+0.0f);
             averagePlayerLevelInGame = averagePlayerLevelInGame / (playersCount+0.0f);
+            
 
-            _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageGoals);
+            _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageGoals, (indebtedClubs+0.0f)/(clubsCount+0.0f));
+            Console.WriteLine("=========================== DATA ANNEE " + _date.ToShortDateString() + " =========================");
+            Console.WriteLine("AverageClubLevelInGame");
+            foreach (float f in _gameUniverse.AverageClubLevelInGame)
+            {
+                Console.WriteLine(f);
+            }
+            Console.WriteLine("AverageGoals");
+            foreach (float f in _gameUniverse.AverageGoals)
+            {
+                Console.WriteLine(f);
+            }
+            Console.WriteLine("AveragePlayerLevelInGame");
+            foreach (float f in _gameUniverse.AveragePlayerLevelInGame)
+            {
+                Console.WriteLine(f);
+            }
+            Console.WriteLine("PlayersInGame");
+            foreach (int f in _gameUniverse.PlayersInGame)
+            {
+                Console.WriteLine(f);
+            }
+            Console.WriteLine("TotalBudgetInGame");
+            foreach (int f in _gameUniverse.TotalBudgetInGame)
+            {
+                Console.WriteLine(f);
+            }
+            Console.WriteLine("TotalIndebtedClubs");
+            foreach (float f in _gameUniverse.RateIndebtesClubs)
+            {
+                Console.WriteLine(f);
+            }
         }
 
         public void UpdateClubs()

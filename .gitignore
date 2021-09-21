@@ -261,3 +261,6 @@ paket-files/
 __pycache__/
 *.pyc
 *.save
+*.py
+FifaDatabaseAnalysis/players_20.csv
+*.xlsx

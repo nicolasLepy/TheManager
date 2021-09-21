@@ -43,16 +43,16 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Simulation stability
 
-The simulation is currently not very stable: money circulating in the game varies too much, and the more the years pass, the more the average level of the players decreases.
+The simulation is currently not very stable: clubs economically collapse after a few years before stabilizing, but with a much lower average level.
 
 <p float="left">
-  <img src="Pics/graph_budget.png" width="35%" />
-  <img src="Pics/graph_level.png" width="35%" />
+  <img src="Pics/graph_budget.png" width="40%" />
+  <img src="Pics/graph_level.png" width="40%" />
 </p>
 
 <p float="left">
-  <img src="Pics/graph_players.png" width="35%" />
-  <img src="Pics/graph_goals.png" width="35%" />
+  <img src="Pics/graph_players.png" width="40%" />
+  <img src="Pics/graph_debts.png" width="40%" />
 </p>
 
 ## Features implemented
@@ -106,7 +106,7 @@ The simulation is currently not very stable: money circulating in the game varie
 | Task                                                                  | Status           |
 | --------------------------------------------------------------------- | ---------------- |
 | **Stability**                                                         |                  |
-| Improve world stability                                               | 🔴 Not started |
+| Improve world stability                                               | 🟡 In progress |
 | **Managing**                                                          |                 |
 | Staff management                                                      | 🔴 Not started |
 | Youth team management                                                 | 🔴 Not started |
@@ -137,7 +137,6 @@ The simulation is currently not very stable: money circulating in the game varie
 |  Generate Wiki with simulation data                                   | 🔴 Not started |
 |  3D Engine for games                                                  | 🔴 Not started |
 
-
 ## Authors
 Nicolas Lépy
 
@@ -151,6 +150,10 @@ Windows Media Player library
 [Live Charts for WPF](https://www.google.com)
 MathNet.Numerics
 [pngtree.com](https://pngtree.com)
+
+Data about cities were obtained from [SimpleMaps](https://simplemaps.com/data/world-cities)
+
+Data about players were obtained from [Kaggle](https://www.kaggle.com/stefanoleone992/fifa-20-complete-player-dataset?select=players_20.csv)
 
 ## License
 

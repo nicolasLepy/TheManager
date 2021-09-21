@@ -267,12 +267,12 @@ namespace TheManager
             int potential = level;
             if (diff > 0)
             {
-                potential += 3 * diff;
+                level -= 3 * diff;
             }
 
-            if (potential > 99)
+            if (level < 1)
             {
-                potential = 99;
+                level = 1;
             }
 
             /* Méthode Potentiel -> Niveau
@@ -308,7 +308,7 @@ namespace TheManager
             return res;
         }
 
-        public void GeneratePlayer(int minAge, int maxAge)
+        public void GeneratePlayer(int minAge, int maxAge, int offset = 0)
         {
             Position p = Position.Goalkeeper;
             int random = Session.Instance.Random(1, 13);
@@ -324,7 +324,7 @@ namespace TheManager
             {
                 p = Position.Striker;
             }
-            GeneratePlayer(p,minAge,maxAge);
+            GeneratePlayer(p,minAge,maxAge, offset);
         }
 
         public void ModifyBudget(int amount, BudgetModificationReason reason)
@@ -432,6 +432,11 @@ namespace TheManager
         {
 
             int nb = Session.Instance.Random(1, 3);
+            int nbRes = 0;
+            for(int i = 0; i<reserves.Count;i++)
+            {
+                nbRes += Session.Instance.Random(1, 3);
+            }
 
             int nbPlayersClub = contracts.Count;
             if(nbPlayersClub < 13)
@@ -441,6 +446,10 @@ namespace TheManager
             for(int i = 0; i<nb; i++)
             {
                 GeneratePlayer(17,19);
+            }
+            for (int i = 0; i < nbRes; i++)
+            {
+                GeneratePlayer(17, 19, -15);
             }
         }
 

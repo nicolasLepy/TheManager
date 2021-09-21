@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
+using System.Xml;
 
 namespace TheManager
 {
@@ -336,43 +337,112 @@ namespace TheManager
 
         public void LoadCities()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/villes.xml");
-            foreach (XElement e in doc.Descendants("Villes"))
+            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/cities/"))
             {
-                foreach (XElement e2 in e.Descendants("Ville"))
+                //XDocument doc = XDocument.Load(Utils.dataFolderName + "/cities/cities.xml");
+                XDocument doc = XDocument.Load(xmlFile);
+                foreach (XElement e in doc.Descendants("Villes"))
                 {
-                    string name = e2.Element("Nom").Value;
-                    int population = int.Parse(e2.Element("Population").Value);
-                    float lat = float.Parse(e2.Element("Latitute").Value, CultureInfo.InvariantCulture);
-                    float lon = float.Parse(e2.Element("Longitude").Value, CultureInfo.InvariantCulture);
-                    if(e2.Element("Pays") != null)
+                    foreach (XElement e2 in e.Descendants("Ville"))
                     {
-                        _kernel.String2Country(e2.Element("Pays").Value).cities.Add(new City(name, population, lat, lon));
+                        string name = e2.Attribute("Name").Value;
+                        int population = 0;
+                        try
+                        {
+                            population = int.Parse(e2.Attribute("Population").Value);
+                        }
+                        catch(Exception exception)
+                        {
+                            population = 0;
+                        }
+                        float lat = float.Parse(e2.Attribute("Latitude").Value, CultureInfo.InvariantCulture);
+                        float lon = float.Parse(e2.Attribute("Longitude").Value, CultureInfo.InvariantCulture);
+                        string country = e2.Attribute("Country").Value;
+                        _kernel.DbCountryName2Country(country).cities.Add(new City(name, population, lat, lon));
                     }
-                    else
-                    {
-                        _kernel.String2Country("France").cities.Add(new City(name, population, lat, lon));
-                    }
-
                 }
+
             }
+
+        }
+
+        public void ReformateCities()
+        {
+            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/old_rawdb/rawcities/"))
+            {
+                //XDocument doc = XDocument.Load(Utils.dataFolderName + "/cities/cities.xml");
+                XDocument doc = XDocument.Load(xmlFile);
+                List<XElement> toDelete = new List<XElement>();
+                foreach (XElement e in doc.Descendants("Villes"))
+                {
+                    foreach (XElement e2 in e.Descendants("Ville"))
+                    {
+                        e2.Attribute("A").Remove();
+                        e2.Attribute("F").Remove();
+                        e2.Attribute("G").Remove();
+                        if (e2.Attribute("H") != null)
+                        {
+                            e2.Attribute("H").Remove();
+                        }
+                        if (e2.Attribute("K") != null)
+                        {
+                            e2.Attribute("K").Remove();
+                        }
+                        if (e2.Attribute("I") != null)
+                        {
+                            e2.Attribute("I").Remove();
+                        }
+                        if (e2.Attribute("L") != null)
+                        {
+                            e2.Attribute("L").Remove();
+                        }
+                        if (e2.Attribute("M") != null)
+                        {
+                            e2.Attribute("M").Remove();
+                        }
+                        if(e2.Attribute("Population") == null)
+                        {
+                            toDelete.Add(e2);
+                        }
+                    }
+                }
+
+                foreach(XElement toDel in toDelete)
+                {
+                    toDel.Remove();
+                }
+
+                foreach (XElement e in doc.Descendants("Villes"))
+                {
+                    var elements = e.Elements("Ville").OrderBy(el => el.Attribute("Country").Value).ToArray();
+                    Console.WriteLine(elements);
+                    e.Elements().Remove();
+                    e.Add(elements);
+                    
+                }
+
+                doc.Save("data/old_rawdb/rawcities/all.xml");
+
+            }
+
         }
 
         public void LoadGeography()
         {
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/continents.xml");
-            foreach (XElement e in doc.Descendants("Monde"))
+            foreach (XElement e in doc.Descendants("World"))
             {
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
-                    string continentName = e2.Attribute("nom").Value;
+                    string continentName = e2.Attribute("name").Value;
                     Continent c = new Continent(continentName);
-                    foreach(XElement e3 in e2.Descendants("Pays"))
+                    foreach(XElement e3 in e2.Descendants("Country"))
                     {
-                        string countryName = e3.Attribute("nom").Value;
+                        string countryName = e3.Attribute("name").Value;
+                        string countrydBName = e3.Attribute("db_name").Value;
                         string language = e3.Attribute("langue").Value;
                         Language l = _kernel.String2Language(language);
-                        Country p = new Country(countryName,l);
+                        Country p = new Country(countrydBName,countryName,l);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -409,127 +479,134 @@ namespace TheManager
 
         public void LoadClubs()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs.xml");
-            
-            foreach(XElement e in doc.Descendants("Clubs"))
+
+            foreach(string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/clubs/"))
             {
-                foreach (XElement e2 in e.Descendants("Club"))
+                //XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs/clubs.xml");
+                Utils.Debug(xmlFile);
+                XDocument doc = XDocument.Load(xmlFile);
+
+                foreach (XElement e in doc.Descendants("Clubs"))
                 {
-                    int id = int.Parse(e2.Attribute("id").Value);
-                    string name = e2.Attribute("nom").Value;
-                    string shortName = e2.Attribute("nomCourt").Value;
-                    if (shortName == "")
+                    foreach (XElement e2 in e.Descendants("Club"))
                     {
-                        shortName = name;
-                    }
-                    int reputation = int.Parse(e2.Attribute("reputation").Value);
-                    int budget = int.Parse(e2.Attribute("budget").Value);
-                    int supporters = int.Parse(e2.Attribute("supporters").Value);
-
-                    string cityName = e2.Attribute("ville").Value;
-                    City city = _kernel.String2City(cityName);
-
-                    Stadium stadium = null;
-                    if (e2.Attribute("stade") != null)
-                    {
-                        string stadiumName = e2.Attribute("stade").Value;
-                        stadium = _kernel.String2Stadium(stadiumName);
-                        if(stadium == null)
+                        int id = int.Parse(e2.Attribute("id").Value);
+                        string name = e2.Attribute("nom").Value;
+                        string shortName = e2.Attribute("nomCourt").Value;
+                        if (shortName == "")
                         {
-                            int capacite = 1000;
-                            if (city != null)
+                            shortName = name;
+                        }
+                        int reputation = int.Parse(e2.Attribute("reputation").Value);
+                        int budget = int.Parse(e2.Attribute("budget").Value);
+                        int supporters = int.Parse(e2.Attribute("supporters").Value);
+
+                        string cityName = e2.Attribute("ville").Value;
+                        City city = _kernel.String2City(cityName);
+
+                        Stadium stadium = null;
+                        if (e2.Attribute("stade") != null)
+                        {
+                            string stadiumName = e2.Attribute("stade").Value;
+                            stadium = _kernel.String2Stadium(stadiumName);
+                            if (stadium == null)
                             {
-                                capacite = city.Population / 10;
-                            }
-                            stadium = new Stadium(stadiumName, capacite, city);
-                            if (city != null)
-                            {
-                                city.Country().stadiums.Add(stadium);
-                            }
-                            else
-                            {
-                                Utils.Debug("La ville " + stadiumName + " n'existe pas.");
+                                int capacite = 1000;
+                                if (city != null)
+                                {
+                                    capacite = city.Population / 10;
+                                }
+                                stadium = new Stadium(stadiumName, capacite, city);
+                                if (city != null)
+                                {
+                                    city.Country().stadiums.Add(stadium);
+                                }
+                                else
+                                {
+                                    Utils.Debug("La ville " + stadiumName + " n'existe pas.");
+                                }
                             }
                         }
-                    }
 
-                    if (stadium == null)
+                        if (stadium == null)
+                        {
+                            stadium = new Stadium("Stade de " + shortName, city.Population / 10, city);
+                        }
+
+
+                        int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
+                        string logo = e2.Attribute("logo").Value;
+                        if (logo == "" ||
+                            !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\" + Utils.clubLogoFolderName + "\\" + logo + ".png"))
+                        {
+                            logo = "generic";
+                        }
+
+                        string musiqueBut = "";
+                        if (e2.Attribute("musiqueBut") != null)
+                        {
+                            musiqueBut = e2.Attribute("musiqueBut").Value;
+                        }
+                        else
+                        {
+                            musiqueBut = "null";
+                        }
+
+                        //Simplification
+                        reputation = centreFormation;
+
+                        Country pays = city.Country();
+                        Manager entraineur = new Manager(pays.language.GetFirstName(), pays.language.GetLastName(), centreFormation, new DateTime(1970, 1, 1), pays);
+
+                        bool equipePremiere = true;
+                        Club c = new CityClub(name, entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere);
+                        _clubsId[id] = c;
+                        _kernel.Clubs.Add(c);
+                    }
+                    foreach (XElement e2 in e.Descendants("Selection"))
                     {
-                        stadium = new Stadium("Stade de " + shortName, city.Population / 10, city);
+                        int id = int.Parse(e2.Attribute("id").Value);
+                        string name = e2.Attribute("nom").Value;
+                        string shortName = name;
+                        int reputation = int.Parse(e2.Attribute("reputation").Value);
+                        int supporters = int.Parse(e2.Attribute("supporters").Value);
+                        Country country = _kernel.String2Country(e2.Attribute("pays").Value);
+
+                        Stadium stadium = null;
+                        if (e2.Attribute("stade") != null)
+                        {
+                            string nom_stade = e2.Attribute("stade").Value;
+                            stadium = _kernel.String2Stadium(nom_stade);
+                        }
+
+                        if (stadium == null)
+                        {
+                            stadium = new Stadium("Stade de " + shortName, 15000, null);
+                        }
+                        int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
+                        string logo = e2.Attribute("logo").Value;
+                        logo = country.Flag;
+                        float coefficient = float.Parse(e2.Attribute("coefficient").Value);
+
+                        string goalMusic = "";
+                        if (e2.Attribute("musiqueBut") != null)
+                        {
+                            goalMusic = e2.Attribute("musiqueBut").Value;
+                        }
+                        else
+                        {
+                            goalMusic = "null";
+                        }
+
+                        Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
+
+                        Club c = new NationalTeam(name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, coefficient, country, goalMusic);
+                        _clubsId[id] = c;
+                        _kernel.Clubs.Add(c);
                     }
-
-
-                    int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
-                    string logo = e2.Attribute("logo").Value;
-                    if (logo == "" ||
-                        !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\"+Utils.imagesFolderName+"\\"+Utils.clubLogoFolderName+"\\" + logo + ".png"))
-                    {
-                        logo = "generic";
-                    }
-
-                    string musiqueBut = "";
-                    if (e2.Attribute("musiqueBut") != null)
-                    {
-                        musiqueBut = e2.Attribute("musiqueBut").Value ;
-                    }
-                    else
-                    {
-                        musiqueBut = "null";
-                    }
-
-                    //Simplification
-                    reputation = centreFormation;
-
-                    Country pays = city.Country();
-                    Manager entraineur = new Manager(pays.language.GetFirstName(), pays.language.GetLastName(), centreFormation, new DateTime(1970, 1, 1), pays);
-
-                    bool equipePremiere = true;
-                    Club c = new CityClub(name,entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium,musiqueBut, equipePremiere);
-                    _clubsId[id] = c;
-                    _kernel.Clubs.Add(c);
-                }
-                foreach (XElement e2 in e.Descendants("Selection"))
-                {
-                    int id = int.Parse(e2.Attribute("id").Value);
-                    string name = e2.Attribute("nom").Value;
-                    string shortName = name;
-                    int reputation = int.Parse(e2.Attribute("reputation").Value);
-                    int supporters = int.Parse(e2.Attribute("supporters").Value);
-                    Country country = _kernel.String2Country(e2.Attribute("pays").Value);
-
-                    Stadium stadium = null;
-                    if (e2.Attribute("stade") != null)
-                    {
-                        string nom_stade = e2.Attribute("stade").Value;
-                        stadium = _kernel.String2Stadium(nom_stade);
-                    }
-
-                    if (stadium == null)
-                    {
-                        stadium = new Stadium("Stade de " + shortName, 15000, null);
-                    }
-                    int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
-                    string logo = e2.Attribute("logo").Value;
-                    logo = country.Flag;
-                    float coefficient = float.Parse(e2.Attribute("coefficient").Value);
-
-                    string goalMusic = "";
-                    if (e2.Attribute("musiqueBut") != null)
-                    {
-                        goalMusic = e2.Attribute("musiqueBut").Value;
-                    }
-                    else
-                    {
-                        goalMusic = "null";
-                    }
-
-                    Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
-
-                    Club c = new NationalTeam(name,entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, coefficient,country,goalMusic);
-                    _clubsId[id] = c;
-                    _kernel.Clubs.Add(c);
                 }
             }
+
         }
         
         public void LoadTournaments()
