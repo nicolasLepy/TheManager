@@ -5,53 +5,50 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Competition" Height="750" Width="1100" Style="{StaticResource StyleWindows}">
+        Title="Windows_Competition" Height="1200" Width="1650" Style="{StaticResource StyleWindowsWithMap}">
     <Grid>
 		<StackPanel Orientation="Vertical">
 			<Button Content="Fermer" Name="btnQuitter" Width="100" Click="BtnQuitter_Click" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}"/>
 			<Label Content="Competition" Name="lbCompetition" Style="{StaticResource StyleLabel1}"/>
-			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<Button Name="btnTourGauche" Content="(--" Width="20" Style="{StaticResource StyleButton1}" Margin="0 0 20 0" Click="BtnTourGauche_Click"/>
-				<Label Name="lbNomTour" Content="Tour préliminaire" Style="{StaticResource StyleLabel2}" Width="500" HorizontalContentAlignment="Center"/>
-				<Button Name="btnTourDroite" Content="--)" Width="20" Style="{StaticResource StyleButton1}" Margin="20 0 00 0" Click="BtnTourDroite_Click"/>
-			</StackPanel>
+			<Border Style="{StaticResource StyleBorderStackPanel}">
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+					<Button Name="btnTourGauche" Content="(--" Width="20" Style="{StaticResource StyleButton1}" Margin="0 0 20 0" Click="BtnTourGauche_Click"/>
+					<Label Name="lbNomTour" Content="Tour préliminaire" Style="{StaticResource StyleLabel2}" Width="500" HorizontalContentAlignment="Center"/>
+					<Button Name="btnTourDroite" Content="--)" Width="20" Style="{StaticResource StyleButton1}" Margin="20 0 00 0" Click="BtnTourDroite_Click"/>
+				</StackPanel>
+			</Border>
 
 			<StackPanel Orientation="Horizontal">
-				<StackPanel Orientation="Vertical">
-					<Label Content="Plus gros écart" Style="{StaticResource StyleLabel2}"/>
-					<Label Name="lbGrosEcart" Content="" Style="{StaticResource StyleLabel2}"/>
-					<Label Content="Plus gros score" Style="{StaticResource StyleLabel2}"/>
-					<Label Name="lbGrandScore" Content="" Style="{StaticResource StyleLabel2}"/>
-					<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" MaxWidth="300" IsReadOnly="True" Height="100" Width="175" Name="dgPalmares" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTextColumn Header="Annee" Binding="{Binding Annee}"/>
-							<DataGridTextColumn Header="Club" Binding="{Binding Club}"/>
-						</DataGrid.Columns>
-					</DataGrid>
-					
-					<Label Content="Buteurs" Style="{StaticResource StyleLabel2}"/>
-					<DataGrid Margin="10" IsReadOnly="True" MouseDoubleClick="DgButeurs_MouseDoubleClick" Width="175" Height="175" Name="dgButeurs" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-						<DataGrid.Columns>
-							<DataGridTemplateColumn Width="18">
-								<DataGridTemplateColumn.CellTemplate>
-									<DataTemplate>
-										<Image Source="{Binding Club}" />
-									</DataTemplate>
-								</DataGridTemplateColumn.CellTemplate>
-							</DataGridTemplateColumn>
-							<DataGridTextColumn Header="" Binding="{Binding Buteur}"/>
-							<DataGridTextColumn Header="" Binding="{Binding NbButs}"/>
-						</DataGrid.Columns>
-					</DataGrid>
+				<StackPanel Orientation="Vertical" Width="150">
+					<ComboBox Name="cbYear" Style="{StaticResource StyleComboBox}" FontSize="12">
+					</ComboBox>
+					<ListBox Name="lbStats" Style="{StaticResource StyleListBox}" FontSize="12">
+						<ListBoxItem Content="Classement général" Selected="SelectedRanking"/>
+						<ListBoxItem Content="Classement domicile" Selected="SelectedHomeRanking"/>
+						<ListBoxItem Content="Classement extérieur" Selected="SelectedAwayRanking"/>
+						<ListBoxItem Content="Classement des buteurs" Selected="SelectedGoalscorers"/>
+						<ListBoxItem Content="Possession" Selected="SelectedStatPossession"/>
+						<ListBoxItem Content="Tirs" Selected="SelectedStatShot"/>
+						<ListBoxItem Content="Records de matchs" Selected="SelectedRecords"/>
+						<ListBoxItem Content="Palmarès par équipe" Selected="SelectedPalmaresClubs"/>
+						<ListBoxItem Content="Palmarès par année" Selected="SelectedPalmaresYears"/>
+						<ListBoxItem Content="Budget" Selected="SelectedBudget"/>
+						<ListBoxItem Content="Niveau" Selected="SelectedLevel"/>
+						<ListBoxItem Content="Potentiel" Selected="SelectedPotential"/>
+						<ListBoxItem Content="Stades" Selected="SelectedStadium"/>
+
+					</ListBox>
+
 					<Button Content="Historique" Name="btnHistoric" Width="100" Click="BtnHistoric_Click" Style="{StaticResource StyleButton1}"/>
 				</StackPanel>
 				<StackPanel Orientation="Vertical">
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-						<Button Content="(--" Width="20" Style="{StaticResource StyleButton1}" Margin="0 0 20 0" Name="btnJourneeGauche" Click="BtnJourneeGauche_Click"/>
-						<Button Content="--)" Width="20" Style="{StaticResource StyleButton1}" Margin="20 0 00 0" Name="btnJourneeDroite" Click="BtnJourneeDroite_Click"/>
-					</StackPanel>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600">
+					<Border Style="{StaticResource StyleBorderStackPanel}">
+						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+							<Button Content="(--" Width="20" Style="{StaticResource StyleButton1}" Margin="0 0 20 0" Name="btnJourneeGauche" Click="BtnJourneeGauche_Click"/>
+							<Button Content="--)" Width="20" Style="{StaticResource StyleButton1}" Margin="20 0 00 0" Name="btnJourneeDroite" Click="BtnJourneeDroite_Click"/>
+						</StackPanel>
+					</Border>
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="650">
 						<StackPanel Orientation="Vertical" Name="spMatchs">
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 								<Label Content="Vendredi 18 août 2018" Style="{StaticResource StyleLabel1}"/>
@@ -60,7 +57,7 @@
 								<Label HorizontalContentAlignment="Center" Content="17h30" Style="{StaticResource StyleLabel2}" Width="50"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal">
-								<Label HorizontalContentAlignment="Left" Content="Equipe 1" Style="{StaticResource StyleLabel2}" FontSize="18" Width="200"/>
+								<Label HorizontalContentAlignment="Left" Content="Equipe 1" Style="{StaticResource StyleLabel2}" FontSize="18" Width="250"/>
 								<Button Content="3 - 1" Style="{StaticResource StyleButton1}" Width="50"/>
 								<Label HorizontalContentAlignment="Right" Content="Equipe 2" Style="{StaticResource StyleLabel1}" Width="200"/>
 							</StackPanel>
@@ -69,18 +66,29 @@
 							</StackPanel>
 						</StackPanel>
 					</ScrollViewer>
-					
+
 				</StackPanel>
 
 				<StackPanel Orientation="Vertical" Name="spBlocClassement">
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600" Width="440">
-						<StackPanel Orientation="Vertical" Name="spClassement" Width="440">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="650" Width="490">
+						<StackPanel Orientation="Vertical" Name="spRanking" Width="490">
 						</StackPanel>
 					</ScrollViewer>
 				</StackPanel>
-					
+
+				<StackPanel Orientation="Vertical" VerticalAlignment="Center">
+					<StackPanel Orientation="Vertical" Width="450" Height="425" ClipToBounds="True">
+						<WindowsFormsHost Width="450" Height="425" Name="host">
+
+						</WindowsFormsHost>
+
+					</StackPanel>
+
+				</StackPanel>
+
+
 			</StackPanel>
-			
+
 		</StackPanel>
     </Grid>
 </Window>

@@ -435,14 +435,20 @@ namespace TheManager
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
-                    Continent c = new Continent(continentName);
+                    float continentLatitude = float.Parse(e2.Attribute("latitude").Value, CultureInfo.InvariantCulture);
+                    float continentLongitude = float.Parse(e2.Attribute("longitude").Value, CultureInfo.InvariantCulture);
+                    float continentRange = float.Parse(e2.Attribute("range").Value, CultureInfo.InvariantCulture);
+                    Continent c = new Continent(continentName, continentLatitude, continentLongitude, continentRange);
                     foreach(XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
                         string countrydBName = e3.Attribute("db_name").Value;
                         string language = e3.Attribute("langue").Value;
+                        float countryLatitude = float.Parse(e3.Attribute("latitude").Value, CultureInfo.InvariantCulture);
+                        float countryLongitude = float.Parse(e3.Attribute("longitude").Value, CultureInfo.InvariantCulture);
+                        float countryRange = float.Parse(e3.Attribute("range").Value, CultureInfo.InvariantCulture);
                         Language l = _kernel.String2Language(language);
-                        Country p = new Country(countrydBName,countryName,l);
+                        Country p = new Country(countrydBName,countryName,l, countryLatitude, countryLongitude, countryRange);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -477,6 +483,12 @@ namespace TheManager
             }
         }
 
+        private string RemoveClubDenomination(string name, string denomination)
+        {
+            string res = name.Replace(denomination + " ", "");
+            res = name.Replace(" " + denomination, "");
+            return res;
+        }
         public void LoadClubs()
         {
 
@@ -496,7 +508,17 @@ namespace TheManager
                         if (shortName == "")
                         {
                             shortName = name;
+                            shortName = RemoveClubDenomination(shortName, "Olympique");
+                            shortName = RemoveClubDenomination(shortName, "FC");
+                            shortName = RemoveClubDenomination(shortName, "AS");
+                            shortName = RemoveClubDenomination(shortName, "US");
+                            shortName = RemoveClubDenomination(shortName, "RC");
+                            shortName = RemoveClubDenomination(shortName, "AC");
+                            shortName = RemoveClubDenomination(shortName, "ES");
+                            shortName = RemoveClubDenomination(shortName, "SO");
+                            shortName = RemoveClubDenomination(shortName, "USM");
                         }
+
                         int reputation = int.Parse(e2.Attribute("reputation").Value);
                         int budget = int.Parse(e2.Attribute("budget").Value);
                         int supporters = int.Parse(e2.Attribute("supporters").Value);
@@ -624,7 +646,7 @@ namespace TheManager
                     string seasonBeginning = e2.Attribute("debut_saison").Value;
                     bool isChampionship = e2.Attribute("championnat").Value == "oui" ? true : false;
                     int level = int.Parse(e2.Attribute("niveau").Value);
-                    ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
+                    Localisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
                     DateTime debut = String2Date(seasonBeginning);
                     int periodicity = 1;
                     if (e2.Attribute("periodicite") != null)

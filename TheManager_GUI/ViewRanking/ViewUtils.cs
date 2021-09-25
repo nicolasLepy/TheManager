@@ -104,8 +104,14 @@ namespace TheManager_GUI
         {
             Image sprite = new Image();
             sprite.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
-            sprite.Width = width;
-            sprite.Height = height;
+            if(width != -1)
+            {
+                sprite.Width = width;
+            }
+            if(height != -1)
+            {
+                sprite.Height = height;
+            }
             return sprite;
 
         }

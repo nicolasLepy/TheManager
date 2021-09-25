@@ -215,30 +215,6 @@ namespace TheManager
             return players;
         }
 
-        public override float Level()
-        {
-            float level = 0;
-
-            
-            List<Player> players = new List<Player>();
-            foreach (Contract c in _players)
-            {
-                players.Add(c.player);
-            }
-            players.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
-
-            int total = 0;
-            for(int i = 0;i<16;i++)
-            {
-                if (players.Count > i)
-                {
-                    level += players[i].level;
-                    total++;
-                }
-            }
-            return level / (total+0.0f);
-        }
-
         public void GeneratePlayer(Position p, int minAge, int maxAge)
         {
             GeneratePlayer(p, minAge, maxAge, 0);

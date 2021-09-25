@@ -26,9 +26,13 @@ namespace TheManager_GUI.ViewMisc
         private bool showDate;
         private float fontSize;
         private bool colorizeResult;
+        private bool showHourSeparated;
+        private bool showHalfTimeScore;
+        private bool beautifyScore;
+        private float widthMultiplier;
         private Club club;
 
-        public ViewMatches(List<Match> matches, bool showDate, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament, float fontSize = 12, bool colorizeResult = false, Club club = null)
+        public ViewMatches(List<Match> matches, bool showDate, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament, float fontSize = 12, bool colorizeResult = false, Club club = null, bool showHourSeparated = false, bool showHalfTimeScore = false, bool beautifyScore = false, float widthMultiplier = 1.0f)
         {
             this.matches = matches;
             this.showDate = showDate;
@@ -39,11 +43,16 @@ namespace TheManager_GUI.ViewMisc
             this.showTournament = showTournament;
             this.fontSize = fontSize;
             this.colorizeResult = colorizeResult;
+            this.showHourSeparated = showHourSeparated;
+            this.showHalfTimeScore = showHalfTimeScore;
+            this.beautifyScore = beautifyScore;
+            this.widthMultiplier = widthMultiplier;
             this.club = club;
         }
 
         public override void Full(StackPanel spRanking)
         {
+            float sizeMultiplier = fontSize / 12;
             panel = spRanking;
             panel.Children.Clear();
 
@@ -57,66 +66,106 @@ namespace TheManager_GUI.ViewMisc
                     {
                         StackPanel spDate = new StackPanel();
                         spDate.Orientation = Orientation.Horizontal;
-                        spDate.Children.Add(ViewUtils.CreateLabel(match.day.Date.ToLongDateString(), "StyleLabel2", fontSize, 100));
+                        spDate.Children.Add(ViewUtils.CreateLabel(match.day.Date.ToString("dddd dd MMMM yyyy"), "StyleLabel2", fontSize, -1));
                         panel.Children.Add(spDate);
                     }
                 }
                 lastTime = match.day.Date;
 
-
+                if(showHourSeparated)
+                {
+                    StackPanel spHourLine = new StackPanel();
+                    spHourLine.Orientation = Orientation.Horizontal;
+                    spHourLine.HorizontalAlignment = HorizontalAlignment.Center;
+                    spHourLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortTimeString(), "StyleLabel2Center", fontSize * 0.7, 50*sizeMultiplier));
+                    panel.Children.Add(spHourLine);
+                }
 
                 StackPanel spLine = new StackPanel();
                 spLine.Orientation = Orientation.Horizontal;
 
                 if(!showDateSeparated && showDate)
                 {
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToString("dd/MM"), "StyleLabel2", fontSize * 0.9, 40));
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToString("dd/MM"), "StyleLabel2", fontSize * 0.9, 40 * sizeMultiplier));
                 }
-                if (showHour)
+                if (showHour && !showHourSeparated)
                 {
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortTimeString(), "StyleLabel2", fontSize * 0.9, 35));
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortTimeString(), "StyleLabel2", fontSize * 0.9, 35 * sizeMultiplier));
                 }
                 if(showTournament)
                 {
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30 * sizeMultiplier, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
                 }
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize * 0.85, 70));
-                spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20, 20));
-                Label labelScore = ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(), "StyleLabel2Center", fontSize, 85);
-                string fontColor = "defaiteColor";
-                if (colorizeResult)
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize * 0.85, 70 * sizeMultiplier * widthMultiplier));
+                spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20 * sizeMultiplier, 20 * sizeMultiplier));
+                if(!beautifyScore)
                 {
+                    Label labelScore = ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(), "StyleLabel2Center", fontSize, 85 * sizeMultiplier);
+                    string fontColor = "defaiteColor";
+                    if (colorizeResult)
+                    {
+                        if ((club == match.home && match.score1 > match.score2) || (club == match.away && match.score1 < match.score2))
+                        {
+                            fontColor = "victoireColor";
+                        }
+                        else if (match.score1 == match.score2)
+                        {
+                            fontColor = "nulColor";
+                        }
+                        SolidColorBrush color = Application.Current.TryFindResource(fontColor) as SolidColorBrush;
+                        labelScore.Background = color;
+                    }
 
-                    if( (club == match.home && match.score1 > match.score2) || (club == match.away && match.score1 < match.score2))
-                    {
-                        fontColor = "victoireColor";
-                    }
-                    else if(match.score1 == match.score2)
-                    {
-                        fontColor = "nulColor";
-                    }
-                    SolidColorBrush color = Application.Current.TryFindResource(fontColor) as SolidColorBrush;
-                    labelScore.Background = color;
+
+                    spLine.Children.Add(labelScore);
+                }
+                else
+                {
+                    Border borderScore1 = new Border();
+                    borderScore1.Style = Application.Current.FindResource("StyleBorderCalendar") as Style;
+                    borderScore1.Height = fontSize * 2.25;
+                    borderScore1.Width = fontSize * 2.25;
+                    borderScore1.CornerRadius = new CornerRadius(3);
+                    borderScore1.Child = ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.score1.ToString(), "StyleLabel2Center", fontSize, -1);
+                    borderScore1.Margin = new Thickness(fontSize / 2, 0, 0, 0);
+                    Border borderScore2 = new Border();
+                    borderScore2.Style = Application.Current.FindResource("StyleBorderCalendar") as Style;
+                    borderScore2.Height = fontSize * 2.25;
+                    borderScore2.Width = fontSize * 2.25;
+                    borderScore2.CornerRadius = new CornerRadius(3);
+                    borderScore2.Child = ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.score2.ToString(), "StyleLabel2Center", fontSize, -1);
+                    borderScore2.Margin = new Thickness(0, 0, fontSize / 2, 0);
+                    spLine.Children.Add(borderScore1);
+                    spLine.Children.Add(borderScore2);
                 }
 
-
-                spLine.Children.Add(labelScore);
-                spLine.Children.Add(ViewUtils.CreateLogo(match.away, 20, 20));
-                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.away, OpenClub, match.away.shortName, "StyleLabel2", fontSize * 0.85, 70));
+                spLine.Children.Add(ViewUtils.CreateLogo(match.away, 20 * sizeMultiplier, 20 * sizeMultiplier));
+                spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.away, OpenClub, match.away.shortName, "StyleLabel2Right", fontSize * 0.85, 70 * sizeMultiplier * widthMultiplier));
 
                 if(showAttendance)
                 {
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.attendance.ToString(), "StyleLabel2", fontSize * 0.8, 40));
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.attendance.ToString(), "StyleLabel2", fontSize * 0.8, 40 * sizeMultiplier));
                 }
 
                 if (showOdds)
                 {
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.odd1.ToString("0.00"), "StyleLabel2", fontSize * 0.75, 30));
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.oddD.ToString("0.00"), "StyleLabel2", fontSize * 0.75, 30));
-                    spLine.Children.Add(ViewUtils.CreateLabel(match.odd2.ToString("0.00"), "StyleLabel2", fontSize * 0.75, 30));
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.odd1.ToString("0.00"), "StyleLabel2", fontSize * 0.75, 30 * sizeMultiplier));
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.oddD.ToString("0.00"), "StyleLabel2", fontSize * 0.75, 30 * sizeMultiplier));
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.odd2.ToString("0.00"), "StyleLabel2", fontSize * 0.75, 30 * sizeMultiplier));
                 }
 
                 panel.Children.Add(spLine);
+
+                if (showHalfTimeScore)
+                {
+                    StackPanel spHalfTimeLine = new StackPanel();
+                    spHalfTimeLine.Orientation = Orientation.Horizontal;
+                    spHalfTimeLine.HorizontalAlignment = HorizontalAlignment.Center;
+                    spHalfTimeLine.Children.Add(ViewUtils.CreateLabel("(" + match.ScoreHalfTime1 + "-" + match.ScoreHalfTime2 + ")", "StyleLabel2Center", fontSize * 0.7, 50));
+                    spHalfTimeLine.Margin = new Thickness(0, 0, 0, fontSize / 2);
+                    panel.Children.Add(spHalfTimeLine);
+                }
+
 
             }
         }

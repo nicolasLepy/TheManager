@@ -232,7 +232,42 @@ namespace TheManager
         }
 
         public abstract List<Player> Players();
-        public abstract float Level();
+        public float Level()
+        {
+            float level = 0;
+
+            List<Player> players = new List<Player>(Players());
+            players.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
+
+            int total = 0;
+            for (int i = 0; i < 16; i++)
+            {
+                if (players.Count > i)
+                {
+                    level += players[i].level;
+                    total++;
+                }
+            }
+            return level / (total + 0.0f);
+        }
+        public float Potential()
+        {
+            float potential = 0;
+
+            List<Player> players = new List<Player>(Players());
+            players.Sort(new PlayerComparator(true, PlayerAttribute.POTENTIAL));
+
+            int total = 0;
+            for (int i = 0; i < 16; i++)
+            {
+                if (players.Count > i)
+                {
+                    potential += players[i].potential;
+                    total++;
+                }
+            }
+            return potential / (total + 0.0f);
+        }
 
         public float Stars
         {

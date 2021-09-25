@@ -199,7 +199,15 @@
 			<Setter Property="BorderBrush" Value="{StaticResource borderColor}"/>
 			<Setter Property="BorderThickness" Value="3"/>
 		</Style>
-		
+
+		<Style x:Key="StyleWindowsWithMap" TargetType="{x:Type Window}">
+			<Setter Property="WindowStyle" Value="None"/>
+			<Setter Property="ResizeMode" Value="NoResize"/>
+			<Setter Property="Background" Value="{StaticResource backgroundColor}"/>
+			<Setter Property="BorderBrush" Value="{StaticResource borderColor}"/>
+			<Setter Property="BorderThickness" Value="3"/>
+		</Style>
+
 		<Style x:Key="StyleButton1" TargetType="{x:Type Button}">
 			<Setter Property="Background" Value="{StaticResource color1}" />
 			<Setter Property="Foreground" Value="#eeeeee" />
@@ -252,6 +260,10 @@
 
 		<Style x:Key="StyleLabel2Center" TargetType="{x:Type Label}" BasedOn="{StaticResource StyleLabel2}">
 			<Setter Property="HorizontalContentAlignment" Value="Center" />
+		</Style>
+
+		<Style x:Key="StyleLabel2Right" TargetType="{x:Type Label}" BasedOn="{StaticResource StyleLabel2}">
+			<Setter Property="HorizontalContentAlignment" Value="Right" />
 		</Style>
 
 		<Style x:Key="StyleTextBlock" TargetType="{x:Type TextBlock}">

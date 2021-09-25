@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
-    public class Country : ILocalisation
+    public class Country : Localisation
     {
         [DataMember]
         private List<City> _cities;
@@ -51,7 +51,7 @@ namespace TheManager
 
         public string DbName { get => _dbName; }
 
-        public Country(string dbName, string name, Language language)
+        public Country(string dbName, string name, Language language, float latitude, float longitude, float range) : base(latitude, longitude, range)
         {
             _dbName = dbName;
             _name = name;
@@ -61,7 +61,7 @@ namespace TheManager
             _tournaments = new List<Tournament>();
         }
 
-        public List<Tournament> Tournaments()
+        public override List<Tournament> Tournaments()
         {
             return _tournaments;
         }
@@ -72,7 +72,7 @@ namespace TheManager
             return _name;
         }
 
-        public string Name()
+        public override string Name()
         {
             return _name;
         }

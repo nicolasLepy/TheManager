@@ -34,16 +34,6 @@ namespace TheManager
            return new List<Player>(_selected);
         }
 
-        public override float Level()
-        {
-            float res = 0;
-            foreach(Player j in _selected)
-            {
-                res += j.level;
-            }
-            return res / (_selected.Count + 0.0f);
-        }
-
         private void SelectPlayersByPosition(Position position, List<Player> players, int playersNumberToTake)
         {
             List<Player> playersByPosition = Utils.PlayersByPosition(players, position);

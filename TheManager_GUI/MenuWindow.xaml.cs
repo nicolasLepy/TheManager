@@ -186,9 +186,8 @@ namespace TheManager_GUI
 
         private void ComboPays_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ILocalisation localisation = comboPays.SelectedItem as ILocalisation;
+            Localisation localisation = comboPays.SelectedItem as Localisation;
             ListerCompetitions(localisation);
-
         }
 
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
@@ -221,7 +220,7 @@ namespace TheManager_GUI
 
         }
 
-        private void ListerCompetitions(ILocalisation localisation)
+        private void ListerCompetitions(Localisation localisation)
         {
             if(localisation != null)
             {

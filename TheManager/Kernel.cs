@@ -397,9 +397,9 @@ namespace TheManager
         /// Get a localisation (continent or country) from a name
         /// </summary>
         /// <returns></returns>
-        public ILocalisation String2Localisation(string name)
+        public Localisation String2Localisation(string name)
         {
-            ILocalisation res = null;
+            Localisation res = null;
             foreach(Continent c in _continents)
             {
                 if (c.Name() == name)
@@ -417,9 +417,9 @@ namespace TheManager
             return res;
         }
 
-        public ILocalisation LocalisationTournament(Tournament tournament)
+        public Localisation LocalisationTournament(Tournament tournament)
         {
-            ILocalisation res = null;
+            Localisation res = null;
             foreach(Continent c in _continents)
             {
                 if (c.Tournaments().Contains(tournament))

@@ -55,6 +55,7 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Comparators\ClubComparator.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Comparators\JournalistOffsetComparator.cs" />
     <Compile Include="Comparators\QualificationComparator.cs" />
