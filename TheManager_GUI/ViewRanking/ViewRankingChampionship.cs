@@ -12,7 +12,6 @@ namespace TheManager_GUI.VueClassement
     public class ViewRankingChampionship : View
     {
 
-        private readonly DataGrid _grid;
         private readonly ChampionshipRound _round;
         private readonly double _sizeMultiplier;
         private readonly bool _focusOnTeam;
@@ -22,14 +21,12 @@ namespace TheManager_GUI.VueClassement
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="grid"></param>
         /// <param name="round"></param>
         /// <param name="sizeMultiplier">Width and font size multiplier</param>
         /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
         /// <param name="team">The team to focus ranking on</param>
-        public ViewRankingChampionship(DataGrid grid, ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false)
+        public ViewRankingChampionship(ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false)
         {
-            _grid = grid;
             _round = round;
             _sizeMultiplier = sizeMultiplier;
             _focusOnTeam = focusOnTeam;
@@ -170,57 +167,5 @@ namespace TheManager_GUI.VueClassement
  
         }
 
-        public override void Show()
-        {
-            _grid.Items.Clear();
-            int i = 0;
-            foreach (Club c in _round.Ranking())
-            {
-                i++;
-                _grid.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Club = c, Classement = i, Nom = c.shortName, Pts = _round.Points(c), J = _round.Played(c), G = _round.Wins(c), N = _round.Draws(c), P = _round.Loses(c), bp = _round.GoalsFor(c), bc = _round.GoalsAgainst(c), Diff = _round.Difference(c) });
-            }
-            Style s = new Style();
-
-            s.Setters.Add(new Setter { Property = Control.BackgroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-            s.Setters.Add(new Setter { Property = Control.ForegroundProperty, Value = App.Current.TryFindResource("color2") as SolidColorBrush });
-
-
-            //Pour chaque couleur
-            foreach (Qualification q in _round.qualifications)
-            {
-                if (q.tournament.isChampionship)
-                {
-                    int niveau = _round.Tournament.level;
-                    string couleur = "backgroundColor";
-                    if (q.tournament.level < niveau)
-                    {
-                        couleur = "promotionColor";
-                    }
-                    else if (q.tournament.level > niveau)
-                    {
-                        couleur = "relegationColor";
-                    }
-                    else if (q.tournament.level == niveau && q.roundId > _round.Tournament.rounds.IndexOf(_round))
-                    {
-                        couleur = "barrageColor";
-                    }
-
-                    DataTrigger tg = new DataTrigger
-                    {
-                        Binding = new System.Windows.Data.Binding("Classement"),
-                        Value = q.ranking
-                    };
-                    tg.Setters.Add(new Setter
-                    {
-                        Property = Control.BackgroundProperty,
-                        Value = App.Current.TryFindResource(couleur) as SolidColorBrush
-                    });
-                    s.Triggers.Add(tg);
-
-                    _grid.CellStyle = s;
-                }
-
-            }
-        }
     }
 }

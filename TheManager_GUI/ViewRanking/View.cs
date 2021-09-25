@@ -5,8 +5,6 @@ namespace TheManager_GUI.VueClassement
 {
     public abstract class View
     {
-
-        public abstract void Show();
         public abstract void Full(StackPanel spRanking);
 
         public void OpenPlayer(Player p)

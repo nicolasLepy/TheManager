@@ -13,16 +13,14 @@ namespace TheManager_GUI.VueClassement
     public class ViewRankingGroups : View
     {
 
-        private readonly DataGrid _grille;
-        private readonly GroupsRound _tour;
+        private readonly GroupsRound _round;
         private readonly bool _focusOnTeam;
         private readonly double _sizeMultiplier;
         private readonly Club _team;
 
-        public ViewRankingGroups(DataGrid grille, GroupsRound tour, double sizeMultiplier, bool focusOnTeam, Club team)
+        public ViewRankingGroups(GroupsRound round, double sizeMultiplier, bool focusOnTeam, Club team)
         {
-            _grille = grille;
-            _tour = tour;
+            _round = round;
             _focusOnTeam = focusOnTeam;
             _sizeMultiplier = sizeMultiplier;
             _team = team;
@@ -34,36 +32,34 @@ namespace TheManager_GUI.VueClassement
             sp.Orientation = Orientation.Horizontal;
 
             int fontBase = (int)(14 * _sizeMultiplier);
-            Label l1 = ViewUtils.CreateLabel(index.ToString(), "StyleLabel2", fontBase, 30);
-            sp.Children.Add(l1);
+            sp.Children.Add(ViewUtils.CreateLabel(index.ToString(), "StyleLabel2", fontBase, 30));
+            if (_round.Tournament.IsInternational() && (c as CityClub) != null)
+            {
+                sp.Children.Add(ViewUtils.CreateFlag((c as CityClub).city.Country() , 30 * _sizeMultiplier, 30 * _sizeMultiplier));
+            }
+            else if (_round.Tournament.IsInternational() && (c as ReserveClub) != null)
+            {
+                sp.Children.Add(ViewUtils.CreateFlag((c as ReserveClub).FannionClub.city.Country(), 30 * _sizeMultiplier, 30 * _sizeMultiplier));
+            }
+            else
+            {
+                sp.Children.Add(ViewUtils.CreateLogo(c, 30 * _sizeMultiplier, 30 * _sizeMultiplier));
+            }
 
-            Image image = new Image();
-            image.Source = new BitmapImage(new Uri(Utils.Logo(c)));
-            image.Width = 30 * _sizeMultiplier;
-            sp.Children.Add(image);
 
             Label l2 = ViewUtils.CreateLabel(c.shortName, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
             l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
             { clubNameButtonClick(c); };
-            Label l3 = ViewUtils.CreateLabel(_tour.Points(c).ToString(), "StyleLabel2", fontBase, 25);
-            Label l4 = ViewUtils.CreateLabel(_tour.Played(c).ToString(), "StyleLabel2", fontBase, 25);
-            Label l5 = ViewUtils.CreateLabel(_tour.Wins(c).ToString(), "StyleLabel2", fontBase, 25);
-            Label l6 = ViewUtils.CreateLabel(_tour.Draws(c).ToString(), "StyleLabel2", fontBase, 25);
-            Label l7 = ViewUtils.CreateLabel(_tour.Loses(c).ToString(), "StyleLabel2", fontBase, 25);
-            Label l8 = ViewUtils.CreateLabel(_tour.GoalsFor(c).ToString(), "StyleLabel2", fontBase, 25);
-            Label l9 = ViewUtils.CreateLabel(_tour.GoalsAgainst(c).ToString(), "StyleLabel2", fontBase, 25);
-            Label l10 = ViewUtils.CreateLabel(_tour.Difference(c).ToString(), "StyleLabel2", fontBase, 25);
-
 
             sp.Children.Add(l2);
-            sp.Children.Add(l3);
-            sp.Children.Add(l4);
-            sp.Children.Add(l5);
-            sp.Children.Add(l6);
-            sp.Children.Add(l7);
-            sp.Children.Add(l8);
-            sp.Children.Add(l9);
-            sp.Children.Add(l10);
+            sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c).ToString(), "StyleLabel2", fontBase, 25));
+            sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c).ToString(), "StyleLabel2", fontBase, 25));
+            sp.Children.Add(ViewUtils.CreateLabel(_round.Wins(c).ToString(), "StyleLabel2", fontBase, 25));
+            sp.Children.Add(ViewUtils.CreateLabel(_round.Draws(c).ToString(), "StyleLabel2", fontBase, 25));
+            sp.Children.Add(ViewUtils.CreateLabel(_round.Loses(c).ToString(), "StyleLabel2", fontBase, 25));
+            sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsFor(c).ToString(), "StyleLabel2", fontBase, 25));
+            sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsAgainst(c).ToString(), "StyleLabel2", fontBase, 25));
+            sp.Children.Add(ViewUtils.CreateLabel(_round.Difference(c).ToString(), "StyleLabel2", fontBase, 25));
 
             return sp;
 
@@ -77,11 +73,11 @@ namespace TheManager_GUI.VueClassement
             if (_focusOnTeam)
             {
                 List<Club> ranking = null;
-                for(int group = 0; group < _tour.groupsCount; group++)
+                for(int group = 0; group < _round.groupsCount; group++)
                 {
-                    if (_tour.groups[group].Contains(_team))
+                    if (_round.groups[group].Contains(_team))
                     {
-                        ranking = _tour.Ranking(group);
+                        ranking = _round.Ranking(group);
                     }
                 }
                 //Never know if not null
@@ -104,15 +100,15 @@ namespace TheManager_GUI.VueClassement
             }
             else
             {
-                for (int poule = 0; poule < _tour.groupsCount; poule++)
+                for (int poule = 0; poule < _round.groupsCount; poule++)
                 {
                     Label labelPoule = new Label();
-                    labelPoule.Content = _tour.GroupName(poule);
+                    labelPoule.Content = _round.GroupName(poule);
                     labelPoule.Style = Application.Current.FindResource("StyleLabel1") as Style;
                     labelPoule.FontSize *= _sizeMultiplier;
                     spRanking.Children.Add(labelPoule);
                     int i = 0;
-                    foreach (Club c in _tour.Ranking(poule))
+                    foreach (Club c in _round.Ranking(poule))
                     {
                         i++;
                         spRanking.Children.Add(CreateRanking(i, c));
@@ -123,28 +119,28 @@ namespace TheManager_GUI.VueClassement
 
 
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
-            if (_tour.groups[0].Count > 0 && !_focusOnTeam)
+            if (_round.groups[0].Count > 0 && !_focusOnTeam)
             {
 
                 //Split qualifications in several list because according to group qualifications can be differents (if reserves are not promoted for instance)
 
-                List<Qualification>[] qualifications = new List<Qualification>[_tour.groupsCount];
+                List<Qualification>[] qualifications = new List<Qualification>[_round.groupsCount];
 
-                List<Club>[] groups = new List<Club>[_tour.groupsCount];
-                for (int i = 0; i < _tour.groupsCount; i++)
+                List<Club>[] groups = new List<Club>[_round.groupsCount];
+                for (int i = 0; i < _round.groupsCount; i++)
                 {
-                    groups[i] = new List<Club>(_tour.Ranking(i));
+                    groups[i] = new List<Club>(_round.Ranking(i));
                 }
 
-                for (int i = 0; i< _tour.groupsCount; i++)
+                for (int i = 0; i< _round.groupsCount; i++)
                 {
-                    qualifications[i] = new List<Qualification>(_tour.qualifications);
+                    qualifications[i] = new List<Qualification>(_round.qualifications);
                     qualifications[i].Sort(new QualificationComparator());
 
                     //If reserves can't be promoted
-                    if (_tour.rules.Contains(Rule.ReservesAreNotPromoted))
+                    if (_round.rules.Contains(Rule.ReservesAreNotPromoted))
                     {
-                        qualifications[i] = Utils.AdjustQualificationsToNotPromoteReserves(qualifications[i], groups[i], _tour.Tournament);
+                        qualifications[i] = Utils.AdjustQualificationsToNotPromoteReserves(qualifications[i], groups[i], _round.Tournament);
                         /*
                         for (int j = 0; j < qualifications[i].Count; j++)
                         {
@@ -187,13 +183,13 @@ namespace TheManager_GUI.VueClassement
 
 
 
-                for (int j = 0; j<_tour.groupsCount; j++)
+                for (int j = 0; j< _round.groupsCount; j++)
                 {
                     foreach (Qualification q in qualifications[j])
                     {
                         if (q.tournament.isChampionship)
                         {
-                            int niveau = _tour.Tournament.level;
+                            int niveau = _round.Tournament.level;
                             string couleur = "backgroundColor";
                             if (q.tournament.level < niveau)
                             {
@@ -203,7 +199,7 @@ namespace TheManager_GUI.VueClassement
                             {
                                 couleur = "relegationColor";
                             }
-                            else if (q.tournament.level == niveau && q.roundId > _tour.Tournament.rounds.IndexOf(_tour))
+                            else if (q.tournament.level == niveau && q.roundId > _round.Tournament.rounds.IndexOf(_round))
                             {
                                 couleur = "barrageColor";
                             }
@@ -211,7 +207,7 @@ namespace TheManager_GUI.VueClassement
                             int index = q.ranking - 1;
 
                             SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                            int nbChildrenParPoule = (_tour.clubs.Count / _tour.groupsCount) + 1;
+                            int nbChildrenParPoule = (_round.clubs.Count / _round.groupsCount) + 1;
                             index++;
 
                             StackPanel sp = (spRanking.Children[j * nbChildrenParPoule + index] as StackPanel);
@@ -223,25 +219,6 @@ namespace TheManager_GUI.VueClassement
                 
             }
 
-        }
-
-        public override void Show()
-        {
-            _grille.Items.Clear();
-            for (int poules = 0; poules < _tour.groupsCount; poules++)
-            {
-                List<Club> poule = new List<Club>(_tour.groups[poules]);
-                poule.Sort(new ClubRankingComparator(_tour.matches));
-                int i = 0;
-                _grille.Items.Add(new ClassementElement { Classement = 0, Nom = "" });
-                _grille.Items.Add(new ClassementElement { Classement = i, Nom = "Poule " + (int)(poules + 1) });
-                _grille.Items.Add(new ClassementElement { Classement = 0, Nom = "" });
-                foreach (Club c in poule)
-                {
-                    i++;
-                    _grille.Items.Add(new ClassementElement { Logo = Utils.Logo(c), Classement = i, Nom = c.shortName, Pts = _tour.Points(c), J = _tour.Played(c), G = _tour.Wins(c), N = _tour.Draws(c), P = _tour.Loses(c), bp = _tour.GoalsFor(c), bc = _tour.GoalsAgainst(c), Diff = _tour.Difference(c) });
-                }
-            }
         }
 
         private void clubNameButtonClick(Club c)

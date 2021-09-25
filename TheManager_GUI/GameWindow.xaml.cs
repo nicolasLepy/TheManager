@@ -54,29 +54,6 @@ namespace TheManager_GUI
             }
             if(match.PenaltyShootout)
             {
-
-                /**
-                 * 
-                 * 			<StackPanel Orientation="Vertical" HorizontalAlignment="Center" Height="40">
-				<StackPanel Orientation="Horizontal">
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-				</StackPanel>
-				<StackPanel Orientation="Horizontal">
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Lime"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-					<Border Style="{StaticResource StyleBorderCalendar}" CornerRadius="3" Height="10" Width="10" Margin="5" Background="Red"></Border>
-				</StackPanel>
-			</StackPanel>
-
-
-                 */
-
                 StackPanel spTab = new StackPanel();
                 spTab.Orientation = Orientation.Vertical;
                 spTab.HorizontalAlignment = HorizontalAlignment.Center;

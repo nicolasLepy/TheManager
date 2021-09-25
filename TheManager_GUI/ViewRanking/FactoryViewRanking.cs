@@ -12,15 +12,15 @@ namespace TheManager_GUI.VueClassement
 
             if (round as ChampionshipRound != null)
             {
-                res = new ViewRankingChampionship(grid, round as ChampionshipRound, sizeMultiplier, focusOnTeam, team, reduced);
+                res = new ViewRankingChampionship(round as ChampionshipRound, sizeMultiplier, focusOnTeam, team, reduced);
             }
             if (round as KnockoutRound != null)
             {
-                res = new ViewRankingElimination(grid, round as KnockoutRound, sizeMultiplier);
+                res = new ViewRankingElimination(round as KnockoutRound, sizeMultiplier);
             }
             if (round as GroupsRound != null)
             {
-                res = new ViewRankingGroups(grid, round as GroupsRound, sizeMultiplier, focusOnTeam, team);
+                res = new ViewRankingGroups(round as GroupsRound, sizeMultiplier, focusOnTeam, team);
             }
 
             return res;

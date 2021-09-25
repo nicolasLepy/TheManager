@@ -9,7 +9,7 @@ using TheManager.Comparators;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
-    public class Continent : Localisation, IRecoverableTeams
+    public class Continent : IRecoverableTeams, ILocalisation
     {
         [DataMember]
         private List<Country> _countries;
@@ -19,18 +19,18 @@ namespace TheManager
         private string _name;
 
         public List<Country> countries => _countries;
-        public override List<Tournament> Tournaments()
+        public List<Tournament> Tournaments()
         {
             return _tournaments;
         }
 
-        public override string Name()
+        public string Name()
         {
             return _name;
         }
         
 
-        public Continent(string name, float latitude, float longitude, float range) : base(latitude, longitude, range)
+        public Continent(string name)
         {
             _name = name;
             _countries = new List<Country>();

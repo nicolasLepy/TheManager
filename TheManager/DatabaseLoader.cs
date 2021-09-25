@@ -435,20 +435,15 @@ namespace TheManager
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
-                    float continentLatitude = float.Parse(e2.Attribute("latitude").Value, CultureInfo.InvariantCulture);
-                    float continentLongitude = float.Parse(e2.Attribute("longitude").Value, CultureInfo.InvariantCulture);
-                    float continentRange = float.Parse(e2.Attribute("range").Value, CultureInfo.InvariantCulture);
-                    Continent c = new Continent(continentName, continentLatitude, continentLongitude, continentRange);
+                    Continent c = new Continent(continentName);
                     foreach(XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
                         string countrydBName = e3.Attribute("db_name").Value;
                         string language = e3.Attribute("langue").Value;
-                        float countryLatitude = float.Parse(e3.Attribute("latitude").Value, CultureInfo.InvariantCulture);
-                        float countryLongitude = float.Parse(e3.Attribute("longitude").Value, CultureInfo.InvariantCulture);
-                        float countryRange = float.Parse(e3.Attribute("range").Value, CultureInfo.InvariantCulture);
+                        int countryShape = int.Parse(e3.Attribute("shape").Value);
                         Language l = _kernel.String2Language(language);
-                        Country p = new Country(countrydBName,countryName,l, countryLatitude, countryLongitude, countryRange);
+                        Country p = new Country(countrydBName,countryName,l, countryShape);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -646,7 +641,7 @@ namespace TheManager
                     string seasonBeginning = e2.Attribute("debut_saison").Value;
                     bool isChampionship = e2.Attribute("championnat").Value == "oui" ? true : false;
                     int level = int.Parse(e2.Attribute("niveau").Value);
-                    Localisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
+                    ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
                     DateTime debut = String2Date(seasonBeginning);
                     int periodicity = 1;
                     if (e2.Attribute("periodicite") != null)

@@ -11,13 +11,11 @@ namespace TheManager_GUI.VueClassement
     public class ViewRankingElimination : View
     {
 
-        private readonly DataGrid _grille;
         private readonly KnockoutRound _tour;
         private readonly double _sizeMultiplier;
 
-        public ViewRankingElimination(DataGrid grille, KnockoutRound tour, double sizeMultiplier)
+        public ViewRankingElimination(KnockoutRound tour, double sizeMultiplier)
         {
-            _grille = grille;
             _tour = tour;
             _sizeMultiplier = sizeMultiplier;
         }
@@ -159,11 +157,6 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
-        }
-
-        public override void Show()
-        {
-            _grille.Items.Clear();
         }
 
         private void matchButtonClick(Match m)

@@ -115,38 +115,53 @@ namespace TheManager_GUI
             MapWinGIS.Shapefile shapeFileMap = new MapWinGIS.Shapefile();
             shapeFileMap.Open(@"D:\Projets\TheManager\TheManager_GUI\bin\Debug\gis\world\World_Countries.shp", null);
             map.AddLayer(shapeFileMap, true);
-            map.ZoomToShape(0, 77);
+            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(t.Tournament);
+            double logoSize = 30.0;
+            if(localisation as Country != null)
+            {
+                map.ZoomToShape(0, (localisation as Country).ShapeNumber);
+            }
+            else
+            {
+                if(localisation.Name() == "Europe")
+                {
+                    map.ZoomToShape(0, 68 /*12 101*/);
+                    map.CurrentZoom = 4;
+                    logoSize = 15.0;
+                }
+            }
             //map.CurrentScale = 5;
             MapWinGIS.Shape shpFrance = shapeFileMap.Shape[79];
             foreach(Club c in t.clubs)
             {
-                double projX = -1;
-                double projY = -1;
-                map.DegreesToProj((c as CityClub).city.Position.Longitude, (c as CityClub).city.Position.Latitude, ref projX, ref projY);
+                CityClub cc = c as CityClub;
+                if(cc != null)
+                {
+                    double projX = -1;
+                    double projY = -1;
+                    map.DegreesToProj(cc.city.Position.Longitude, cc.city.Position.Latitude, ref projX, ref projY);
 
-                MapWinGIS.Image img = new MapWinGIS.Image();
-                img.CreateNew(30, 30);
-                img.Open(Utils.Logo(c));
+                    MapWinGIS.Image img = new MapWinGIS.Image();
+                    img.Open(Utils.Logo(c));
 
-                MapWinGIS.Shapefile sf = new MapWinGIS.Shapefile();
-                sf.CreateNew("", MapWinGIS.ShpfileType.SHP_POINT);
-                sf.DefaultDrawingOptions.AlignPictureByBottom = false;
-                sf.DefaultDrawingOptions.PointType = MapWinGIS.tkPointSymbolType.ptSymbolPicture;
-                sf.DefaultDrawingOptions.Picture = img;
-                sf.DefaultDrawingOptions.PictureScaleX = Math.Round(30.0 / img.OriginalWidth,2);
-                sf.DefaultDrawingOptions.PictureScaleY = Math.Round(30.0 / img.OriginalHeight,2);
-                sf.CollisionMode = MapWinGIS.tkCollisionMode.AllowCollisions;
+                    MapWinGIS.Shapefile sf = new MapWinGIS.Shapefile();
+                    sf.CreateNew("", MapWinGIS.ShpfileType.SHP_POINT);
+                    sf.DefaultDrawingOptions.AlignPictureByBottom = false;
+                    sf.DefaultDrawingOptions.PointType = MapWinGIS.tkPointSymbolType.ptSymbolPicture;
+                    sf.DefaultDrawingOptions.Picture = img;
+                    sf.DefaultDrawingOptions.PictureScaleX = Math.Round(logoSize / img.OriginalWidth, 2);
+                    sf.DefaultDrawingOptions.PictureScaleY = Math.Round(logoSize / img.OriginalHeight, 2);
+                    sf.CollisionMode = MapWinGIS.tkCollisionMode.AllowCollisions;
 
-                MapWinGIS.Shape shp = new MapWinGIS.Shape();
-                shp.Create(MapWinGIS.ShpfileType.SHP_POINT);
-                shp.AddPoint(projX, projY);
-                sf.EditAddShape(shp);
+                    MapWinGIS.Shape shp = new MapWinGIS.Shape();
+                    shp.Create(MapWinGIS.ShpfileType.SHP_POINT);
+                    shp.AddPoint(projX, projY);
+                    sf.EditAddShape(shp);
 
-                map.AddLayer(sf, true);
-
+                    map.AddLayer(sf, true);
+                }
             }
             map.Redraw();
-
         }
 
         private void Calendrier(Round t)
@@ -214,12 +229,6 @@ namespace TheManager_GUI
             thw.Show();
         }
 
-        private void BtnMatchClick(Match m)
-        {
-            Windows_Match wm = new Windows_Match(m);
-            wm.Show();
-        }
-
         private void SelectedHomeRanking(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -259,12 +268,89 @@ namespace TheManager_GUI
 
         private void SelectedStatPossession(object sender, RoutedEventArgs e)
         {
+
             spRanking.Children.Clear();
+
+            Dictionary<Club, float> possessions = new Dictionary<Club, float>();
+            Dictionary<Club, int> playedGames = new Dictionary<Club, int>();
+            foreach (Round r in _competition.rounds)
+            {
+                foreach(Match m in r.matches)
+                {
+                    if(!possessions.ContainsKey(m.home))
+                    {
+                        possessions.Add(m.home, 0);
+                        playedGames.Add(m.home, 0);
+                    }
+                    if (!possessions.ContainsKey(m.away))
+                    {
+                        possessions.Add(m.away, 0);
+                        playedGames.Add(m.away, 0);
+                    }
+                    possessions[m.home] += m.statistics.HomePossession;
+                    possessions[m.away] += m.statistics.AwayPossession;
+                    playedGames[m.home]++;
+                    playedGames[m.away]++;
+                }
+            }
+            List<KeyValuePair<Club, float>> list = possessions.ToList();
+            list.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+
+            foreach(KeyValuePair<Club, float> kvp in list)
+            {
+                StackPanel sp = new StackPanel();
+                sp.Orientation = Orientation.Horizontal;
+                sp.Children.Add(ViewUtils.CreateLogo(kvp.Key, 25, 25));
+                sp.Children.Add(ViewUtils.CreateLabel(kvp.Key.name, "StyleLabel2", 12, 250));
+                sp.Children.Add(ViewUtils.CreateLabel(kvp.Value.ToString(), "StyleLabel2", 12, 100));
+                sp.Children.Add(ViewUtils.CreateLabel(playedGames[kvp.Key].ToString(), "StyleLabel2", 12, 100));
+                spRanking.Children.Add(sp);
+
+            }
+
         }
 
         private void SelectedStatShot(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
+
+            Dictionary<Club, float> tirs = new Dictionary<Club, float>();
+            Dictionary<Club, int> playedGames = new Dictionary<Club, int>();
+            foreach (Round r in _competition.rounds)
+            {
+                foreach (Match m in r.matches)
+                {
+                    if (!tirs.ContainsKey(m.home))
+                    {
+                        tirs.Add(m.home, 0);
+                        playedGames.Add(m.home, 0);
+                    }
+                    if (!tirs.ContainsKey(m.away))
+                    {
+                        tirs.Add(m.away, 0);
+                        playedGames.Add(m.away, 0);
+                    }
+                    tirs[m.home] += m.statistics.HomeShoots;
+                    tirs[m.away] += m.statistics.AwayShoots;
+                    playedGames[m.home]++;
+                    playedGames[m.away]++;
+                }
+            }
+            List<KeyValuePair<Club, float>> list = tirs.ToList();
+            list.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+
+            foreach (KeyValuePair<Club, float> kvp in list)
+            {
+                StackPanel sp = new StackPanel();
+                sp.Orientation = Orientation.Horizontal;
+                sp.Children.Add(ViewUtils.CreateLogo(kvp.Key, 25, 25));
+                sp.Children.Add(ViewUtils.CreateLabel(kvp.Key.name, "StyleLabel2", 12, 250));
+                sp.Children.Add(ViewUtils.CreateLabel(kvp.Value.ToString(), "StyleLabel2", 12, 100));
+                sp.Children.Add(ViewUtils.CreateLabel((kvp.Value/playedGames[kvp.Key]).ToString("0.00") + "/m", "StyleLabel2", 12, 100));
+                sp.Children.Add(ViewUtils.CreateLabel(playedGames[kvp.Key].ToString(), "StyleLabel2", 12, 100));
+                spRanking.Children.Add(sp);
+
+            }
         }
 
         private void SelectedRecords(object sender, RoutedEventArgs e)
@@ -307,7 +393,13 @@ namespace TheManager_GUI
                 sp.Children.Add(ViewUtils.CreateLogo(club.Key, 25, 25));
                 sp.Children.Add(ViewUtils.CreateLabel(club.Key.name, "StyleLabel2", 12, 200));
                 sp.Children.Add(ViewUtils.CreateLabel(club.Value.Count.ToString(), "StyleLabel2", 12, 50, null, null, true));
-                sp.Children.Add(ViewUtils.CreateLabel(club.Value.ToString(), "StyleLabel2", 12, 250));
+                string yearList = "";
+                foreach(float years in club.Value)
+                {
+                    yearList += years + ", ";
+                }
+                //yearList = yearList.Substring(yearList.Length - 2);
+                sp.Children.Add(ViewUtils.CreateLabel(yearList, "StyleLabel2", 12, 250));
                 spRanking.Children.Add(sp);
             }
 
