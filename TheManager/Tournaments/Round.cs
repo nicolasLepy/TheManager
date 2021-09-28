@@ -668,7 +668,7 @@ namespace TheManager
                 case RecuperationMethod.Best:
                     try
                     {
-                        clubs.Sort(new ClubLevelComparator());
+                        clubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
                     }
                     catch(Exception e)
                     {
@@ -676,7 +676,7 @@ namespace TheManager
                     }
                     break;
                 case RecuperationMethod.Worst :
-                    clubs.Sort(new ClubLevelComparator(true));
+                    clubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
                     break;
             }
             List<Club> res = new List<Club>();

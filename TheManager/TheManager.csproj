@@ -75,7 +75,6 @@
     <Compile Include="Comparators\ClubRankingComparator.cs" />
     <Compile Include="Comparators\ClubRandomRankingComparator.cs" />
     <Compile Include="Comparators\ClubLocalisationComparator.cs" />
-    <Compile Include="Comparators\ClubLevelComparator.cs" />
     <Compile Include="Comparators\GameEventTimeComparator.cs" />
     <Compile Include="Comparators\PlayerCompositionComparator.cs" />
     <Compile Include="Comparators\PlayerLevelComparator.cs" />

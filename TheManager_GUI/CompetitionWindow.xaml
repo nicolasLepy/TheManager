@@ -5,16 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Competition" Height="1000" Width="1700" Style="{StaticResource StyleWindowsWithMap}">
+        Title="Windows_Competition" Height="1075" Width="1450" Style="{StaticResource StyleWindowsWithMap}">
     <Grid>
 		<StackPanel Orientation="Vertical">
-			<Button Content="Fermer" Name="btnQuitter" Width="100" Click="BtnQuitter_Click" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}"/>
+			<Button Name="btnQuitter" Click="BtnQuitter_Click" Width="25" Height="25" HorizontalAlignment="Right">
+				<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
+			</Button>
 			<Label Content="Competition" Name="lbCompetition" Style="{StaticResource StyleLabel1}"/>
-			<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+			<Border Style="{StaticResource StyleBorderStackPanel}" Padding="5">
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-					<Button Name="btnTourGauche" Content="(--" Width="20" Style="{StaticResource StyleButton1}" Margin="0 0 20 0" Click="BtnTourGauche_Click"/>
+					<Button Name="btnTourGauche" Click="BtnTourGauche_Click">
+						<Image Name="imgBtnTourGauche" Source="Images/left.png" Width="20" Height="20"/>
+					</Button>
+
 					<Label Name="lbNomTour" Content="Tour préliminaire" Style="{StaticResource StyleLabel2}" Width="500" HorizontalContentAlignment="Center"/>
-					<Button Name="btnTourDroite" Content="--)" Width="20" Style="{StaticResource StyleButton1}" Margin="20 0 00 0" Click="BtnTourDroite_Click"/>
+					<Button Name="btnTourDroite" Click="BtnTourDroite_Click">
+						<Image Name="imgBtnTourDroite" Source="Images/left.png" Width="20" Height="20"/>
+					</Button>
+
 				</StackPanel>
 			</Border>
 
@@ -44,11 +52,17 @@
 				<StackPanel Orientation="Vertical">
 					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 						<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-							<Button Content="(--" Width="20" Style="{StaticResource StyleButton1}" Margin="0 0 20 0" Name="btnJourneeGauche" Click="BtnJourneeGauche_Click"/>
-							<Button Content="--)" Width="20" Style="{StaticResource StyleButton1}" Margin="20 0 00 0" Name="btnJourneeDroite" Click="BtnJourneeDroite_Click"/>
+							<Button Name="btnJourneeGauche" Click="BtnJourneeGauche_Click">
+								<Image Name="imgBtnJourneeGauche" Source="Images/left.png" Width="20" Height="20"/>
+							</Button>
+
+							<Button Name="btnJourneeDroite" Click="BtnJourneeDroite_Click">
+								<Image Name="imgBtnJourneeDroite" Source="Images/left.png" Width="20" Height="20"/>
+							</Button>
+
 						</StackPanel>
 					</Border>
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="650" Width="500">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="900" Width="600">
 						<StackPanel Orientation="Vertical" Name="spMatchs">
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 							</StackPanel>
@@ -58,21 +72,19 @@
 				</StackPanel>
 
 				<StackPanel Orientation="Vertical" Name="spBlocClassement">
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="650" Width="490">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="575" Width="490">
 						<StackPanel Orientation="Vertical" Name="spRanking" Width="490">
 						</StackPanel>
 					</ScrollViewer>
-				</StackPanel>
-
-				<StackPanel Orientation="Vertical" VerticalAlignment="Center">
-					<StackPanel Orientation="Vertical" Width="555" Height="425" ClipToBounds="True">
-						<WindowsFormsHost Width="555" Height="425" Name="host">
+					<StackPanel Orientation="Vertical" Width="600" Height="400" ClipToBounds="True">
+						<WindowsFormsHost Width="600" Height="400" Name="host">
 
 						</WindowsFormsHost>
 
 					</StackPanel>
 
 				</StackPanel>
+
 
 
 			</StackPanel>

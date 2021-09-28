@@ -96,6 +96,12 @@ namespace TheManager_GUI.ViewMisc
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30 * sizeMultiplier, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
                 }
+
+                if (!match.Round.Tournament.isChampionship)
+                {
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.home.Championship != null ? match.home.Championship.shortName : "", "StyleLabel2Center", fontSize * 0.85, 20 * sizeMultiplier * widthMultiplier));
+                }
+
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.home, OpenClub, match.home.shortName, "StyleLabel2", fontSize * 0.85, 70 * sizeMultiplier * widthMultiplier));
                 spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20 * sizeMultiplier, 20 * sizeMultiplier));
                 if(!beautifyScore)
@@ -142,7 +148,13 @@ namespace TheManager_GUI.ViewMisc
                 spLine.Children.Add(ViewUtils.CreateLogo(match.away, 20 * sizeMultiplier, 20 * sizeMultiplier));
                 spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(match.away, OpenClub, match.away.shortName, "StyleLabel2Right", fontSize * 0.85, 70 * sizeMultiplier * widthMultiplier));
 
-                if(showAttendance)
+                if (!match.Round.Tournament.isChampionship)
+                {
+                    spLine.Children.Add(ViewUtils.CreateLabel(match.away.Championship != null ? match.away.Championship.shortName : "", "StyleLabel2Center", fontSize * 0.85, 20 * sizeMultiplier * widthMultiplier));
+                }
+
+
+                if (showAttendance)
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(match.attendance.ToString(), "StyleLabel2", fontSize * 0.8, 40 * sizeMultiplier));
                 }
@@ -170,9 +182,5 @@ namespace TheManager_GUI.ViewMisc
             }
         }
 
-        public override void Show()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

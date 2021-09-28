@@ -97,7 +97,22 @@ namespace TheManager_GUI.VueClassement
 
 
                 sp.Children.Add(ViewUtils.CreateLabel(i.ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth/1.25));
-                sp.Children.Add(ViewUtils.CreateLogo(c, regularCellWidth / 1.5, regularCellWidth / 1.5));
+
+
+                if (_round.Tournament.IsInternational() && (c as CityClub) != null)
+                {
+                    sp.Children.Add(ViewUtils.CreateFlag((c as CityClub).city.Country(), regularCellWidth / 1.5, regularCellWidth / 1.5));
+
+                }
+                else if (_round.Tournament.IsInternational() && (c as ReserveClub) != null)
+                {
+                    sp.Children.Add(ViewUtils.CreateFlag((c as ReserveClub).FannionClub.city.Country(), regularCellWidth / 1.5, regularCellWidth / 1.5));
+                }
+                else
+                {
+                    sp.Children.Add(ViewUtils.CreateLogo(c, regularCellWidth / 1.5, regularCellWidth / 1.5));
+                }
+
                 sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, c.shortName,"StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));

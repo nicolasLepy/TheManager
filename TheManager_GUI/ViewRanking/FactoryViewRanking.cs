@@ -6,7 +6,7 @@ namespace TheManager_GUI.VueClassement
     public class FactoryViewRanking
     {
 
-        public static View CreerVue(DataGrid grid, Round round, double sizeMultiplier = 1, bool focusOnTeam = false, Club team = null, bool reduced = false)
+        public static View CreateView(Round round, double sizeMultiplier = 1, bool focusOnTeam = false, Club team = null, bool reduced = false)
         {
             View res = null;
 
@@ -16,7 +16,7 @@ namespace TheManager_GUI.VueClassement
             }
             if (round as KnockoutRound != null)
             {
-                res = new ViewRankingElimination(round as KnockoutRound, sizeMultiplier);
+                res = new ViewRankingElimination(round as KnockoutRound, sizeMultiplier+0.2);
             }
             if (round as GroupsRound != null)
             {

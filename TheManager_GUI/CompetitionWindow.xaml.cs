@@ -19,24 +19,40 @@ namespace TheManager_GUI
     public partial class Windows_Competition : Window
     {
 
-        private readonly Tournament _competition;
+        private Tournament _competition;
+        private Tournament _baseTournament;
         private int _indexTour;
         private int _indexJournee;
 
-        public Windows_Competition(Tournament competition)
+        public Windows_Competition(Tournament tournament)
         {
             InitializeComponent();
-            _competition = competition;
+            _competition = tournament;
+            _baseTournament = tournament;
             _indexTour = 0;
             _indexJournee = 1;
             InitWidgets();
+            FillComboBoxYear();
+
+            imgBtnJourneeGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\left.png"));
+            imgBtnJourneeDroite.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\right.png"));
+            imgBtnTourGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\left.png"));
+            imgBtnTourDroite.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\right.png"));
+
+            imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
+
         }
 
         private void FillComboBoxYear()
         {
-            foreach(KeyValuePair<int,Tournament> history in _competition.previousEditions)
+            ComboBoxItem cbi = new ComboBoxItem();
+            cbi.Content = "Saison actuelle";
+            cbi.Selected += new RoutedEventHandler((s, e) => NewYearSelected(new KeyValuePair<int, Tournament>(-1, _baseTournament)));
+            cbYear.Items.Add(cbi);
+
+            foreach (KeyValuePair<int,Tournament> history in _competition.previousEditions)
             {
-                ComboBoxItem cbi = new ComboBoxItem();
+                cbi = new ComboBoxItem();
                 cbi.Content = "Saison " + (history.Key - 1) + "-" + history.Key;
                 cbi.Selected += new RoutedEventHandler((s, e) => NewYearSelected(history));
                 cbYear.Items.Add(cbi);
@@ -46,6 +62,10 @@ namespace TheManager_GUI
         private void NewYearSelected(KeyValuePair<int, Tournament> history)
         {
             Console.WriteLine(history.Key);
+            _competition = history.Value;
+            _indexTour = 0;
+            _indexJournee = 1;
+            InitWidgets();
         }
 
 
@@ -63,7 +83,7 @@ namespace TheManager_GUI
 
         private void Ranking()
         {
-            View vue = FactoryViewRanking.CreerVue(null, _competition.rounds[_indexTour]);
+            View vue = FactoryViewRanking.CreateView(_competition.rounds[_indexTour]);
             vue.Full(spRanking);
         }
 
@@ -171,7 +191,9 @@ namespace TheManager_GUI
             List<Match> matchs = Journee();
             matchs.Sort(new MatchDateComparator());
 
-            ViewMatches view = new ViewMatches(matchs, true, true, true, false, false, false, 17, false, null, true, true, true, 1.75f);
+
+
+            ViewMatches view = new ViewMatches(matchs, true, true, true, false, false, false, 17, false, null, true, true, true, 1.5f);
             view.Full(spMatchs);
 
 
@@ -435,7 +457,7 @@ namespace TheManager_GUI
             
             spRanking.Children.Clear();
             List<Club> clubs = new List<Club>(_competition.rounds[_indexTour].clubs);
-            clubs.Sort(new ClubComparator(ClubAttribute.BUDGET));
+            clubs.Sort(new ClubComparator(ClubAttribute.BUDGET, false));
             int i = 0;
             foreach (Club c in clubs)
             {
@@ -457,7 +479,7 @@ namespace TheManager_GUI
         {
             spRanking.Children.Clear();
             List<Club> clubs = new List<Club>(_competition.rounds[_indexTour].clubs);
-            clubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
+            clubs.Sort(new ClubComparator(ClubAttribute.LEVEL, false));
             int i = 0;
             foreach (Club c in clubs)
             {
@@ -476,7 +498,7 @@ namespace TheManager_GUI
         {
             spRanking.Children.Clear();
             List<Club> clubs = new List<Club>(_competition.rounds[_indexTour].clubs);
-            clubs.Sort(new ClubComparator(ClubAttribute.POTENTIEL));
+            clubs.Sort(new ClubComparator(ClubAttribute.POTENTIEL, false));
             int i = 0;
             foreach (Club c in clubs)
             {
@@ -495,7 +517,7 @@ namespace TheManager_GUI
         {
             spRanking.Children.Clear();
             List<Club> clubs = new List<Club>(_competition.rounds[_indexTour].clubs);
-            clubs.Sort(new ClubComparator(ClubAttribute.STADIUM));
+            clubs.Sort(new ClubComparator(ClubAttribute.STADIUM, false));
             int i = 0;
             foreach(Club c in clubs)
             {

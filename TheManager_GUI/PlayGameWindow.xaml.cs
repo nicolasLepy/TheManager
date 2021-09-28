@@ -201,7 +201,7 @@ namespace TheManager_GUI
         {
             if(_tour != null)
             {
-                View view = FactoryViewRanking.CreerVue(null, _tour, 0.65, false, null, false) ;
+                View view = FactoryViewRanking.CreateView(_tour, 0.65, false, null, false) ;
                 view.Full(spRanking);
             }
         }

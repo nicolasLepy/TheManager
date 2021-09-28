@@ -257,6 +257,26 @@ namespace TheManager
                         }
                     }
                 }
+                //If round is still null, so the round is probably located in archived tournaments
+                if(res == null)
+                {
+                    foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
+                    {
+                        foreach(KeyValuePair<int, Tournament> oldC in c.previousEditions)
+                        {
+                            foreach (Round t in oldC.Value.rounds)
+                            {
+                                foreach (Match m in t.matches)
+                                {
+                                    if (m == this)
+                                    {
+                                        res = t;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 return res;
             }
         }

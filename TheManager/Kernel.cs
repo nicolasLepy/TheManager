@@ -435,6 +435,38 @@ namespace TheManager
                     }
                 }
             }
+            if(res == null)
+            {
+                foreach (Continent c in _continents)
+                {
+                    foreach(Tournament t in c.Tournaments())
+                    {
+                        foreach(KeyValuePair<int,Tournament> tt in t.previousEditions)
+                        {
+                            if(tt.Value == tournament)
+                            {
+                                res = c;
+                            }
+                        }
+                    }
+
+                    foreach (Country p in c.countries)
+                    {
+                        foreach (Tournament t in p.Tournaments())
+                        {
+                            foreach (KeyValuePair<int, Tournament> tt in t.previousEditions)
+                            {
+                                if (tt.Value == tournament)
+                                {
+                                    res = p;
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+
             return res;
         }
 

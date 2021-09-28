@@ -119,7 +119,7 @@ namespace TheManager_GUI
         {
             Round rnd = _currentArchive.rounds[_currentRound];
             lbRoundName.Content = rnd.name;
-            View vc = FactoryViewRanking.CreerVue(null, rnd, 0.75);
+            View vc = FactoryViewRanking.CreateView(rnd, 0.75);
             vc.Full(spRoundRanking);
 
             List<Match> matches = new List<Match>(rnd.matches);

@@ -19,42 +19,57 @@ namespace TheManager
     {
 
         private readonly ClubAttribute _attribute;
+        private readonly bool _inverted;
 
-        public ClubComparator(ClubAttribute attribute)
+
+        public ClubComparator(ClubAttribute attribute, bool inverted = false)
         {
             _attribute = attribute;
+            _inverted = inverted;
+        }
+
+        private int Inverted()
+        {
+            return _inverted ? -1 : 1;
         }
 
         public int Compare(Club x, Club y)
         {
+            int res;
             switch (_attribute)
             {
                 case ClubAttribute.STADIUM:
-                    return y.stadium.capacity - x.stadium.capacity;
+                    res = y.stadium.capacity - x.stadium.capacity;
+                    break;
                 case ClubAttribute.LEVEL:
-                    return x.Level() > y.Level() ? -1 : 1;
+                    res = x.Level() > y.Level() ? -1 : 1;
+                    break;
                 case ClubAttribute.POTENTIEL:
-                    return x.Potential() > y.Potential() ? -1 : 1;
+                    res = x.Potential() > y.Potential() ? -1 : 1;
+                    break;
                 case ClubAttribute.BUDGET:
                     if(x as CityClub == null && y as CityClub == null)
                     {
-                        return 0;
+                        res = 0;
                     }
                     else if (x as CityClub != null && y as CityClub == null)
                     {
-                        return -1;
+                        res = -1;
                     }
                     else if (x as CityClub == null && y as CityClub != null)
                     {
-                        return 1;
+                        res = 1;
                     }
                     else
                     {
-                        return (y as CityClub).budget - (x as CityClub).budget;
+                        res = (y as CityClub).budget - (x as CityClub).budget;
                     }
+                    break;
                 default:
-                    return x.Level() > y.Level() ? -1 : 1;
+                    res = x.Level() > y.Level() ? -1 : 1;
+                    break;
             }
+            return res * Inverted();
         }
     }
 }

@@ -61,11 +61,11 @@ namespace TheManager
             List<Club> res = new List<Club>();
             if (method == RecuperationMethod.Best)
             {
-                clubs.Sort(new ClubLevelComparator());            
+                clubs.Sort(new ClubComparator(ClubAttribute.LEVEL, false));            
             }
             else if (method == RecuperationMethod.Worst)
             {
-                clubs.Sort(new ClubLevelComparator(true));
+                clubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
             }
             else if (method == RecuperationMethod.Randomly)
             {                

@@ -160,7 +160,7 @@ namespace TheManager_GUI
 
             if (t != null)
             {
-                View vue = FactoryViewRanking.CreerVue(null, t, 0.7);
+                View vue = FactoryViewRanking.CreateView(t, 0.7);
                 if (vue != null)
                 {
                     vue.Full(spRoundRanking);
@@ -311,7 +311,7 @@ namespace TheManager_GUI
 
             if (_partie.club != null && _partie.club.Championship != null)
             {
-                _viewRanking = FactoryViewRanking.CreerVue(null, _partie.club.Championship.rounds[0], 0.75, true, _partie.club, true);
+                _viewRanking = FactoryViewRanking.CreateView(_partie.club.Championship.rounds[0], 0.75, true, _partie.club, true);
                 _viewRanking.Full(spRanking);
             }
         }

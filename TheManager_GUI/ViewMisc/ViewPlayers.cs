@@ -251,9 +251,5 @@ namespace TheManager_GUI.ViewMisc
             Full(spRanking);
         }
 
-        public override void Show()
-        {
-            
-        }
     }
 }
