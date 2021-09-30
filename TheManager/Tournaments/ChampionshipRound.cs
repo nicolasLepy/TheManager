@@ -79,9 +79,9 @@ namespace TheManager
             }
         }
 
-        public List<Club> Ranking()
+        public List<Club> Ranking(RankingType rankingType = RankingType.General)
         {
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, rankingType);
             List<Club> ranking = new List<Club>(_clubs);
             ranking.Sort(comparator);
             return ranking;

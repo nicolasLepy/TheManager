@@ -41,10 +41,10 @@ namespace TheManager_GUI
             lbTirs2.Content = match.statistics.AwayShoots;
             pbTirs.Maximum = match.statistics.HomeShoots + match.statistics.AwayShoots;
             pbTirs.Value = match.statistics.HomeShoots;
-            lbPossession1.Content = match.statistics.Possession1 + "%";
-            lbPossession2.Content = match.statistics.Possession2 + "%";
-            pbPossession.Maximum = match.statistics.Possession1 + match.statistics.Possession2;
-            pbPossession.Value = match.statistics.Possession1;
+            lbPossession1.Content = match.statistics.HomePossession + "%";
+            lbPossession2.Content = match.statistics.AwayPossession + "%";
+            pbPossession.Maximum = match.statistics.HomePossession + match.statistics.AwayPossession;
+            pbPossession.Value = match.statistics.HomePossession;
             lbOdd1.Content = match.odd1.ToString("0.00");
             lbOddD.Content = match.oddD.ToString("0.00");
             lbOdd2.Content = match.odd2.ToString("0.00");

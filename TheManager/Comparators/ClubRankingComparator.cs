@@ -9,10 +9,12 @@ namespace TheManager.Comparators
     public class ClubRankingComparator : IComparer<Club>
     {
         private readonly List<Match> _round;
+        private readonly RankingType _rankingType;
 
-        public ClubRankingComparator(List<Match> games)
+        public ClubRankingComparator(List<Match> games, RankingType rankingType = RankingType.General)
         {
             _round = games;
+            _rankingType = rankingType;
         }
 
         public int Compare(Club x, Club y)
@@ -44,17 +46,17 @@ namespace TheManager.Comparators
 
         private int Points(Club c)
         {
-            return Utils.Points(_round, c);
+            return Utils.Points(_round, c, _rankingType);
         }
 
         private int Difference(Club c)
         {
-            return Utils.Difference(_round, c);
+            return Utils.Difference(_round, c, _rankingType);
         }
 
         private int GoalFor(Club c)
         {
-            return Utils.Gf(_round, c);
+            return Utils.Gf(_round, c, _rankingType);
         }
     }
 }

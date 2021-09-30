@@ -69,15 +69,15 @@ namespace TheManager
     public class Statistics
     {
         [DataMember]
-        public int Possession1 { get; set; }
+        public int RawPossession1 { get; set; }
         [DataMember]
-        public int Possession2 { get; set; }
+        public int RawPossession2 { get; set; }
 
         public float HomePossession
         {
             get
             {
-                return Possession1 / (Possession1 + Possession2 + 0.0f);
+                return RawPossession1 + RawPossession2 > 0 ? RawPossession1 / (RawPossession1 + RawPossession2 + 0.0f) : 0;
             }
         }
 
@@ -93,15 +93,14 @@ namespace TheManager
         {
             HomeShoots = 0;
             AwayShoots = 0;
-            Possession1 = 0;
-            Possession2 = 0;
+            RawPossession1 = 0;
+            RawPossession2 = 0;
         }
     }
 
     [DataContract(IsReference =true)]
     public class Match
     {
-        //Attributs propres à la gestion du match
         [DataMember]
         private int _minute;
         [DataMember]
@@ -289,7 +288,8 @@ namespace TheManager
             get
             {
                 bool res = _minute > 0 || _period > 1;
-                //Si la date de la partie est supérieure ou égale au jour du match, alors le match a été joué
+
+                //Old method: If simulation day is greater than match day, then game is considered played
                 /*if(DateTime.Compare(Session.Instance.Partie.Date,Jour) >= 0)
                 {
                     res = true;

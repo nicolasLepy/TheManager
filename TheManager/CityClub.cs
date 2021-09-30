@@ -523,7 +523,7 @@ namespace TheManager
         }
 
         /// <summary>
-        /// Génère le calendrier des matchs amicaux du club avant le début de la compétition
+        /// Create friendly games before beginning of season
         /// </summary>
         public void GenerateFriendlyGamesCalendar()
         {
@@ -535,7 +535,7 @@ namespace TheManager
                 foreach (Club c in Session.Instance.Game.kernel.Clubs)
                 {
                     CityClub cv = c as CityClub;
-                    if (cv != null && Utils.Distance(cv.city, city) < 300)
+                    if (cv != null && cv.Championship != null && Utils.Distance(cv.city, city) < 300/cv.Championship.level)
                     {
                         possibleOpponents.Add(cv);
                     }

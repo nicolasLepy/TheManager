@@ -81,9 +81,9 @@ namespace TheManager_GUI
             return res;
         }
 
-        private void Ranking()
+        private void Ranking(RankingType rankingType)
         {
-            View vue = FactoryViewRanking.CreateView(_competition.rounds[_indexTour]);
+            View vue = FactoryViewRanking.CreateView(_competition.rounds[_indexTour], 1, false, null, false, rankingType);
             vue.Full(spRanking);
         }
 
@@ -92,7 +92,7 @@ namespace TheManager_GUI
             lbCompetition.Content = _competition.name;
             lbNomTour.Content = _competition.rounds[_indexTour].name;
 
-            Ranking();
+            Ranking(RankingType.General);
             Calendrier(_competition.rounds[_indexTour]);
             Map(_competition.rounds[_indexTour]);
 
@@ -254,16 +254,19 @@ namespace TheManager_GUI
         private void SelectedHomeRanking(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
+            Ranking(RankingType.Home);
         }
 
         private void SelectedRanking(object sender, RoutedEventArgs e)
         {
-            Ranking();
+            spRanking.Children.Clear();
+            Ranking(RankingType.General);
         }
 
         private void SelectedAwayRanking(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
+            Ranking(RankingType.Away);
         }
 
         private void SelectedGoalscorers(object sender, RoutedEventArgs e)

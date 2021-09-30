@@ -17,6 +17,7 @@ namespace TheManager_GUI.VueClassement
         private readonly bool _focusOnTeam;
         private readonly Club _team;
         private readonly bool _reduced;
+        private readonly RankingType _rankingType;
 
         /// <summary>
         /// 
@@ -25,13 +26,14 @@ namespace TheManager_GUI.VueClassement
         /// <param name="sizeMultiplier">Width and font size multiplier</param>
         /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
         /// <param name="team">The team to focus ranking on</param>
-        public ViewRankingChampionship(ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false)
+        public ViewRankingChampionship(ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false, RankingType rankingType = RankingType.General)
         {
             _round = round;
             _sizeMultiplier = sizeMultiplier;
             _focusOnTeam = focusOnTeam;
             _team = team;
             _reduced = reduced;
+            _rankingType = rankingType;
         }
 
         public override void Full(StackPanel spRanking)
@@ -40,7 +42,7 @@ namespace TheManager_GUI.VueClassement
 
             int i = 0;
 
-            List<Club> clubs = _round.Ranking();
+            List<Club> clubs = _round.Ranking(_rankingType);
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around
             int indexTeam = -1;
@@ -114,17 +116,17 @@ namespace TheManager_GUI.VueClassement
                 }
 
                 sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, c.shortName,"StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
-                sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
-                sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
+                sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
                 if(!_reduced)
                 {
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.Wins(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.Draws(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.Loses(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsFor(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsAgainst(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.Wins(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.Draws(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.Loses(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsFor(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsAgainst(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
                 }
-                sp.Children.Add(ViewUtils.CreateLabel(_round.Difference(c).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 1.25));
+                sp.Children.Add(ViewUtils.CreateLabel(_round.Difference(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 1.25));
 
                 spRanking.Children.Add(sp);
 

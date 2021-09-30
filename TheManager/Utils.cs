@@ -183,21 +183,33 @@ namespace TheManager
             return (float)d;
         }
 
-        public static int Points(List<Match> matchs, Club c)
+        public static List<Match> MatchesOfClub(List<Match> matches, Club c, RankingType rankingType)
         {
-            return (3 * Wins(matchs, c)) + Draws(matchs, c);
+            List<Match> res = new List<Match>();
+            foreach(Match m in matches)
+            {
+                if((m.home == c && rankingType != RankingType.Away) || (m.away == c && rankingType != RankingType.Home))
+                {
+                    res.Add(m);
+                }
+            }
+            return res;
         }
 
-        public static int Played(List<Match> matchs, Club c)
+        public static int Points(List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
         {
-            return Wins(matchs, c) + Draws(matchs, c) + Loses(matchs, c);
+            return (3 * Wins(matchs, c, rankingType)) + Draws(matchs, c, rankingType);
         }
 
+        public static int Played(List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
+        {
+            return Wins(matchs, c, rankingType) + Draws(matchs, c, rankingType) + Loses(matchs, c, rankingType);
+        }
 
-        public static int Wins(List<Match> matchs, Club c)
+        public static int Wins(List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in matchs)
+            foreach (Match m in MatchesOfClub(matchs, c, rankingType))
             {
                 if (m.Played)
                 {
@@ -208,7 +220,6 @@ namespace TheManager
                             res++;
                         }
                     }
-
                     if (m.away == c)
                     {
                         if (m.score1 < m.score2)
@@ -220,10 +231,10 @@ namespace TheManager
             }
             return res;
         }
-        public static int Loses(List<Match> matchs, Club c)
+        public static int Loses(List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in matchs)
+            foreach (Match m in MatchesOfClub(matchs, c, rankingType))
             {
                 if (m.Played)
                 {
@@ -246,10 +257,10 @@ namespace TheManager
             }
             return res;
         }
-        public static int Draws(List<Match> matchs, Club c)
+        public static int Draws(List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in matchs)
+            foreach (Match m in MatchesOfClub(matchs, c, rankingType))
             {
                 if (m.Played)
                 {
@@ -262,10 +273,10 @@ namespace TheManager
             return res;
         }
 
-        public static int Gf(List<Match> matchs, Club c)
+        public static int Gf(List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in matchs)
+            foreach (Match m in MatchesOfClub(matchs, c, rankingType))
             {
                 if (m.home == c)
                 {
@@ -280,10 +291,10 @@ namespace TheManager
             return res;
         }
 
-        public static int Ga(List<Match> matchs, Club c)
+        public static int Ga(List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in matchs)
+            foreach (Match m in MatchesOfClub(matchs, c, rankingType))
             {
                 if (m.home == c)
                 {
@@ -298,9 +309,9 @@ namespace TheManager
             return res;
         }
 
-        public static int Difference(List<Match> games, Club c)
+        public static int Difference(List<Match> games, Club c, RankingType rankingType = RankingType.General)
         {
-            return Gf(games, c) - Ga(games, c);
+            return Gf(games, c, rankingType) - Ga(games, c, rankingType);
         }
 
         public static string MediaLogo(Media m)

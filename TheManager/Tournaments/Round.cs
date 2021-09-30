@@ -18,6 +18,14 @@ namespace TheManager
         ReservesAreNotPromoted
     }
 
+    public enum RankingType
+    {
+        General,
+        Home,
+        Away
+    }
+
+
     public enum RecuperationMethod
     {
         Randomly,
@@ -422,10 +430,23 @@ namespace TheManager
             return res;
         }
 
-        public int Points(Club c)
+        private List<Match> Matches(Club c, RankingType matchType)
+        {
+            List<Match> res = new List<Match>();
+            foreach(Match m in _matches)
+            {
+                if( (m.home == c && matchType != RankingType.Away) || (m.away == c && matchType != RankingType.Home))
+                {
+                    res.Add(m);
+                }
+            }
+            return res;
+        }
+
+        public int Points(Club c, RankingType rankingType = RankingType.General)
         {
             int points = 0;
-            foreach (Match m in _matches)
+            foreach (Match m in Matches(c, rankingType))
             {
                 if (m.Played)
                 {
@@ -458,10 +479,10 @@ namespace TheManager
         }
 
 
-        public int Played(Club c)
+        public int Played(Club c, RankingType rankingType = RankingType.General)
         {
             int played = 0;
-            foreach (Match m in _matches)
+            foreach (Match m in Matches(c, rankingType))
             {
                 if (m.Played && (m.home == c || m.away == c))
                 {
@@ -471,10 +492,10 @@ namespace TheManager
             return played;
         }
 
-        public int Wins(Club c)
+        public int Wins(Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in _matches)
+            foreach (Match m in Matches(c, rankingType))
             {
                 if (m.home == c)
                 {
@@ -494,10 +515,10 @@ namespace TheManager
             return res;
         }
 
-        public int Draws(Club c)
+        public int Draws(Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in _matches)
+            foreach (Match m in Matches(c, rankingType))
             {
                 if (m.Played && (m.home == c || m.away == c))
                 {
@@ -510,10 +531,10 @@ namespace TheManager
             return res;
         }
 
-        public int Loses(Club c)
+        public int Loses(Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in _matches)
+            foreach (Match m in Matches(c, rankingType))
             {
                 if (m.home == c)
                 {
@@ -533,10 +554,10 @@ namespace TheManager
             return res;
         }
 
-        public int GoalsFor(Club c)
+        public int GoalsFor(Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in _matches)
+            foreach (Match m in Matches(c, rankingType))
             {
                 if (m.home == c)
                 {
@@ -550,10 +571,10 @@ namespace TheManager
             return res;
         }
 
-        public int GoalsAgainst(Club c)
+        public int GoalsAgainst(Club c, RankingType rankingType = RankingType.General)
         {
             int res = 0;
-            foreach (Match m in _matches)
+            foreach (Match m in Matches(c, rankingType))
             {
                 if (m.home == c)
                 {
@@ -567,9 +588,9 @@ namespace TheManager
             return res;
         }
 
-        public int Difference(Club c)
+        public int Difference(Club c, RankingType rankingType = RankingType.General)
         {
-            return GoalsFor(c) - GoalsAgainst(c);
+            return GoalsFor(c, rankingType) - GoalsAgainst(c, rankingType);
         }
 
         public void Reset()
