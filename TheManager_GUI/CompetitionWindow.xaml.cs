@@ -31,7 +31,7 @@ namespace TheManager_GUI
             _baseTournament = tournament;
             _indexTour = 0;
             _indexJournee = 1;
-            InitWidgets();
+            InitWidgets(true);
             FillComboBoxYear();
 
             imgBtnJourneeGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\left.png"));
@@ -65,7 +65,7 @@ namespace TheManager_GUI
             _competition = history.Value;
             _indexTour = 0;
             _indexJournee = 1;
-            InitWidgets();
+            InitWidgets(true);
         }
 
 
@@ -87,24 +87,26 @@ namespace TheManager_GUI
             vue.Full(spRanking);
         }
 
-        private void InitWidgets()
+        private void InitWidgets(bool initMap)
         {
             lbCompetition.Content = _competition.name;
             lbNomTour.Content = _competition.rounds[_indexTour].name;
-
             Ranking(RankingType.General);
             Calendrier(_competition.rounds[_indexTour]);
-            Map(_competition.rounds[_indexTour]);
+            if(initMap)
+            {
+                Map(_competition.rounds[_indexTour]);
+            }
 
-            int nbRegles = 0;
+            int rulesCount = 0;
             foreach (Rule r in _competition.rounds[_indexTour].rules)
             {
                 Label l = new Label();
                 l.Style = Application.Current.FindResource("StyleLabel2") as Style;
-                l.Width = 20;
                 l.Content = Utils.Rule2String(r);
-                spBlocClassement.Children.Add(l);
-                nbRegles++;
+                l.FontSize -= 2;
+                spRanking.Children.Add(l);
+                rulesCount++;
             }
 
 
@@ -191,8 +193,6 @@ namespace TheManager_GUI
             List<Match> matchs = Journee();
             matchs.Sort(new MatchDateComparator());
 
-
-
             ViewMatches view = new ViewMatches(matchs, true, true, true, false, false, false, 17, false, null, true, true, true, 1.5f);
             view.Full(spMatchs);
 
@@ -210,7 +210,7 @@ namespace TheManager_GUI
             {
                 _indexTour++;
             }
-            InitWidgets();
+            InitWidgets(true);
         }
 
         private void BtnTourGauche_Click(object sender, RoutedEventArgs e)
@@ -219,7 +219,7 @@ namespace TheManager_GUI
             {
                 _indexTour--;
             }
-            InitWidgets();
+            InitWidgets(true);
         }
 
         private void BtnJourneeGauche_Click(object sender, RoutedEventArgs e)
@@ -228,7 +228,7 @@ namespace TheManager_GUI
             {
                 _indexJournee--;
             }
-            InitWidgets();
+            InitWidgets(false);
         }
 
         private void BtnJourneeDroite_Click(object sender, RoutedEventArgs e)
@@ -240,7 +240,7 @@ namespace TheManager_GUI
                 {
                     _indexJournee++;
                 }
-                InitWidgets();
+                InitWidgets(false);
             }
         }
 

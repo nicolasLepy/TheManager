@@ -445,152 +445,42 @@ namespace TheManager
 
         public int Points(Club c, RankingType rankingType = RankingType.General)
         {
-            int points = 0;
-            foreach (Match m in Matches(c, rankingType))
-            {
-                if (m.Played)
-                {
-                    if (m.home == c)
-                    {
-                        if (m.score1 > m.score2)
-                        {
-                            points += 3;
-                        }
-                        else if (m.score2 == m.score1)
-                        {
-                            points++;
-                        }
-                    }
-                    else if (m.away == c)
-                    {
-                        if (m.score2 > m.score1)
-                        {
-                            points += 3;
-                        }
-                        else if (m.score2 == m.score1)
-                        {
-                            points++;
-                        }
-                    }
-                }
-            }
-
-            return points;
+            return Utils.Points(_matches, c, rankingType);
         }
-
 
         public int Played(Club c, RankingType rankingType = RankingType.General)
         {
-            int played = 0;
-            foreach (Match m in Matches(c, rankingType))
-            {
-                if (m.Played && (m.home == c || m.away == c))
-                {
-                    played++;
-                }
-            }
-            return played;
+            return Utils.Played(_matches, c, rankingType);
         }
 
         public int Wins(Club c, RankingType rankingType = RankingType.General)
         {
-            int res = 0;
-            foreach (Match m in Matches(c, rankingType))
-            {
-                if (m.home == c)
-                {
-                    if (m.score1 > m.score2)
-                    {
-                        res++;
-                    }
-                }
-                else if (m.away == c)
-                {
-                    if (m.score2 > m.score1)
-                    {
-                        res++;
-                    }
-                }
-            }
-            return res;
+            return Utils.Wins(_matches, c, rankingType);
         }
 
         public int Draws(Club c, RankingType rankingType = RankingType.General)
         {
-            int res = 0;
-            foreach (Match m in Matches(c, rankingType))
-            {
-                if (m.Played && (m.home == c || m.away == c))
-                {
-                    if (m.score1 == m.score2)
-                    {
-                        res++;
-                    }
-                }
-            }
-            return res;
+            return Utils.Draws(_matches, c, rankingType);
         }
 
         public int Loses(Club c, RankingType rankingType = RankingType.General)
         {
-            int res = 0;
-            foreach (Match m in Matches(c, rankingType))
-            {
-                if (m.home == c)
-                {
-                    if (m.score1 < m.score2)
-                    {
-                        res++;
-                    }
-                }
-                else if (m.away == c)
-                {
-                    if (m.score2 < m.score1)
-                    {
-                        res++;
-                    }
-                }
-            }
-            return res;
+            return Utils.Loses(_matches, c, rankingType);
         }
 
         public int GoalsFor(Club c, RankingType rankingType = RankingType.General)
         {
-            int res = 0;
-            foreach (Match m in Matches(c, rankingType))
-            {
-                if (m.home == c)
-                {
-                    res += m.score1;
-                }
-                else if (m.away == c)
-                {
-                    res += m.score2;
-                }
-            }
-            return res;
+            return Utils.Gf(_matches, c, rankingType);
         }
 
         public int GoalsAgainst(Club c, RankingType rankingType = RankingType.General)
         {
-            int res = 0;
-            foreach (Match m in Matches(c, rankingType))
-            {
-                if (m.home == c)
-                {
-                    res += m.score2;
-                }
-                else if (m.away == c)
-                {
-                    res += m.score1;
-                }
-            }
-            return res;
+            return Utils.Ga(_matches, c, rankingType);
         }
 
         public int Difference(Club c, RankingType rankingType = RankingType.General)
         {
-            return GoalsFor(c, rankingType) - GoalsAgainst(c, rankingType);
+            return Utils.Difference(_matches, c, rankingType);
         }
 
         public void Reset()
