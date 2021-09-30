@@ -163,10 +163,16 @@ namespace TheManager
             _isForbiddenToRecruit = false;
         }
 
+        public override Country Country()
+        {
+            return _city.Country();
+        }
+
         public void AddPlayer(Contract c)
         {
             _players.Add(c);
         }
+
 
 
         public void RemovePlayer(Player j)

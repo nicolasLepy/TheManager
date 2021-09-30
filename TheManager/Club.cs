@@ -109,6 +109,8 @@ namespace TheManager
         public string goalMusic { get => _goalMusic; }
         public ClubRecords records { get => _records; }
 
+        public abstract Country Country();
+
         /// <summary>
         /// List of games played by the club
         /// </summary>

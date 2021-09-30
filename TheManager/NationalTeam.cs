@@ -29,6 +29,11 @@ namespace TheManager
             _country = country;
         }
 
+        public override Country Country()
+        {
+            return country;
+        }
+
         public override List<Player> Players()
         {
            return new List<Player>(_selected);

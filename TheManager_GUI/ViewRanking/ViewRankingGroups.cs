@@ -113,6 +113,35 @@ namespace TheManager_GUI.VueClassement
                         i++;
                         spRanking.Children.Add(CreateRanking(i, c));
                     }
+
+
+                    int roundLevel = _round.Tournament.level;
+                    foreach (Qualification q in _round.qualifications)
+                    {
+                        string color = "backgroundColor";
+                        if (q.tournament.level == roundLevel && q.tournament != _round.Tournament)
+                        {
+                            color = "cl1Color";
+                        }
+                        else if (q.tournament.level == roundLevel && q.tournament == _round.Tournament)
+                        {
+                            color = "cl2Color";
+                        }
+                        else if (q.tournament.level > roundLevel)
+                        {
+                            color = "el1Color";
+                        }
+                        int index = q.ranking;
+                        if (color != "backgroundColor")
+                        {
+                            SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
+                            (spRanking.Children[  spRanking.Children.Count-_round.Ranking(poule).Count + index-1] as StackPanel).Background = lineColor;
+                        }
+
+                    }
+
+
+
                 }
 
             }

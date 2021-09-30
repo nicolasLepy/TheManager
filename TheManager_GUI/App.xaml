@@ -17,6 +17,12 @@
 		<Color x:Key="UpperPlayOff">#5E7004</Color>
 		<Color x:Key="BottomPlayOff">#CA040B</Color>
 		<Color x:Key="Relegation">#7C0004</Color>
+		<Color x:Key="CL1">#00478a</Color>
+		<Color x:Key="CL2">#006cd1</Color>
+		<Color x:Key="EL1">#785400</Color>
+		<Color x:Key="EL2">#ab7800</Color>
+		<Color x:Key="ECL1">#81008a</Color>
+
 		<FontFamily x:Key="Font">Bahnschrift Light</FontFamily>
 		<FontFamily x:Key="BoldFont">Bahnschrift SemiBold</FontFamily>
 		<FontFamily x:Key="FontClassement">Bitstream Vera Sans</FontFamily>
@@ -32,6 +38,11 @@
 		<SolidColorBrush x:Key="brushBackgroundCalendar" Color="LightGray" Opacity="0.6" />
 		<SolidColorBrush x:Key="brushBackgroundCalendarToday" Color="LightSalmon" Opacity="0.6" />
 
+		<SolidColorBrush x:Key="cl1Color" Color="{DynamicResource CL1}"/>
+		<SolidColorBrush x:Key="cl2Color" Color="{DynamicResource CL2}"/>
+		<SolidColorBrush x:Key="el1Color" Color="{DynamicResource EL1}"/>
+		<SolidColorBrush x:Key="el2Color" Color="{DynamicResource EL2}"/>
+		<SolidColorBrush x:Key="ecl1Color" Color="{DynamicResource ECL1}"/>
 		<SolidColorBrush x:Key="promotionColor" Color="{DynamicResource Promotion}"/>
 		<SolidColorBrush x:Key="barrageColor" Color="{DynamicResource UpperPlayOff}"/>
 		<SolidColorBrush x:Key="barrageRelegationColor" Color="{DynamicResource BottomPlayOff}"/>

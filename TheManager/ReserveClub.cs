@@ -24,6 +24,12 @@ namespace TheManager
             _players = new List<Contract>();
         }
 
+        public override Country Country()
+        {
+            return _fannionClub.Country();
+        }
+
+
         public override List<Player> Players()
         {
             List<Player> res = new List<Player>();

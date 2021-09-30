@@ -135,32 +135,53 @@ namespace TheManager_GUI.VueClassement
             //Only show colors when the ranking is not focused on a team
             if (!_focusOnTeam)
             {
+                int roundLevel = _round.Tournament.level;
                 foreach (Qualification q in _round.qualifications)
                 {
+                    string color = "backgroundColor";
                     if (q.tournament.isChampionship)
                     {
-                        int niveau = _round.Tournament.level;
-                        string couleur = "backgroundColor";
-                        if (q.tournament.level < niveau)
+                        if (q.tournament.level < roundLevel)
                         {
-                            couleur = "promotionColor";
+                            color = "promotionColor";
                         }
-                        else if (q.tournament.level > niveau)
+                        else if (q.tournament.level > roundLevel)
                         {
-                            couleur = "relegationColor";
+                            color = "relegationColor";
                         }
-                        else if (q.tournament.level == niveau && q.roundId > _round.Tournament.rounds.IndexOf(_round))
+                        else if (q.tournament.level == roundLevel && q.roundId > _round.Tournament.rounds.IndexOf(_round))
                         {
-                            couleur = "barrageColor";
+                            color = "barrageColor";
                         }
-
-                        int index = q.ranking;
-
-                        if(couleur != "backgroundColor")
+                    }
+                    else if(q.tournament.IsInternational())
+                    {
+                        if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
                         {
-                            SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                            (spRanking.Children[index] as StackPanel).Background = color;
+                            color = "cl1Color";
                         }
+                        else if (q.tournament.level == 1)
+                        {
+                            color = "cl2Color";
+                        }
+                        else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
+                        {
+                            color = "el1Color";
+                        }
+                        else if (q.tournament.level == 2)
+                        {
+                            color = "el2Color";
+                        }
+                        else if (q.tournament.level == 3)
+                        {
+                            color = "el3Color";
+                        }
+                    }
+                    int index = q.ranking;
+                    if (color != "backgroundColor")
+                    {
+                        SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
+                        (spRanking.Children[index] as StackPanel).Background = lineColor;
                     }
 
                 }
@@ -172,16 +193,6 @@ namespace TheManager_GUI.VueClassement
                 color.Opacity = 0.6;
                 (spRanking.Children[indexTeam+1] as StackPanel).Background = color;
             }
-        }
-
-        private void clubNameButtonClick(Club c)
-        {
-            if(c != null && c as CityClub != null)
-            {
-                Windows_Club wc = new Windows_Club(c as CityClub);
-                wc.Show();
-            }
- 
         }
 
     }

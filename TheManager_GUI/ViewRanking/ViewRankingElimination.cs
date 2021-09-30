@@ -68,8 +68,8 @@ namespace TheManager_GUI.VueClassement
 
                     if(internationalTournament)
                     {
-                        spFirstTeam.Children.Add(ViewUtils.CreateFlag((pair[0].home as CityClub).city.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
-                        spSecondTeam.Children.Add(ViewUtils.CreateFlag((pair[0].away as CityClub).city.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
+                        spFirstTeam.Children.Add(ViewUtils.CreateFlag(pair[0].home.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
+                        spSecondTeam.Children.Add(ViewUtils.CreateFlag(pair[0].away.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier));
                     }
                     else
                     {
