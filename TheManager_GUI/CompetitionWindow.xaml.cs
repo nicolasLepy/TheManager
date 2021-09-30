@@ -244,13 +244,6 @@ namespace TheManager_GUI
             }
         }
 
-        private void BtnHistoric_Click(object sender, RoutedEventArgs e)
-        {
-
-            TournamentHistoryWindow thw = new TournamentHistoryWindow(_competition);
-            thw.Show();
-        }
-
         private void SelectedHomeRanking(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -387,6 +380,56 @@ namespace TheManager_GUI
             spRanking.Children.Add(ViewUtils.CreateLabel("Plus large score", "StyleLabel2", 12, -1));
             spRanking.Children.Add(ViewUtils.CreateLabel(_competition.statistics.BiggerScore != null ? _competition.statistics.BiggerScore.home.name + " " + _competition.statistics.BiggerScore.score1 + "-" + _competition.statistics.BiggerScore.score2 + " " + _competition.statistics.BiggerScore.away.name : "Pas encore de match joué", "StyleLabel2", 12, -1));
 
+            KeyValuePair<int, KeyValuePair<Club, int>> bestAttack = new KeyValuePair<int, KeyValuePair<Club, int>>(-1, new KeyValuePair<Club, int>(null, -1));
+            KeyValuePair<int, KeyValuePair<Club, int>> bestDefense = new KeyValuePair<int, KeyValuePair<Club, int>>(-1, new KeyValuePair<Club, int>(null, -1));
+            KeyValuePair<int, KeyValuePair<Club, int>> worstAttack = new KeyValuePair<int, KeyValuePair<Club, int>>(-1, new KeyValuePair<Club, int>(null, -1));
+            KeyValuePair<int, KeyValuePair<Club, int>> worstDefense = new KeyValuePair<int, KeyValuePair<Club, int>>(-1, new KeyValuePair<Club, int>(null, -1));
+            foreach (KeyValuePair<int, Tournament> t in _baseTournament.previousEditions)
+            {
+                if(t.Value.isChampionship)
+                {
+                    Round r = t.Value.rounds[0];
+                    foreach(Club c in r.clubs)
+                    {
+                        int goalsFor = r.GoalsFor(c);
+                        int goalsAgainst = r.GoalsAgainst(c);
+                        if (goalsFor > bestAttack.Value.Value || bestAttack.Key == -1)
+                        {
+                            bestAttack = new KeyValuePair<int, KeyValuePair<Club, int>>(t.Key, new KeyValuePair<Club, int>(c, goalsFor));
+                        }
+                        if (goalsFor < worstAttack.Value.Value || worstAttack.Key == -1)
+                        {
+                            worstAttack = new KeyValuePair<int, KeyValuePair<Club, int>>(t.Key, new KeyValuePair<Club, int>(c, goalsFor));
+                        }
+                        if (goalsAgainst < bestDefense.Value.Value || bestDefense.Key == -1)
+                        {
+                            bestDefense = new KeyValuePair<int, KeyValuePair<Club, int>>(t.Key, new KeyValuePair<Club, int>(c, goalsAgainst));
+                        }
+                        if (goalsAgainst > worstDefense.Value.Value || worstDefense.Key == -1)
+                        {
+                            worstDefense = new KeyValuePair<int, KeyValuePair<Club, int>>(t.Key, new KeyValuePair<Club, int>(c, goalsAgainst));
+                        }
+                    }
+                }
+                else
+                {
+
+                }
+            }
+
+            spRanking.Children.Add(ViewUtils.CreateLabel("Meilleure attaque", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(bestAttack.Key == -1 ? "Pas encore de match joué" : bestAttack.Value.Key + " (" + bestAttack.Value.Value + " buts, " + bestAttack.Key + ")", "StyleLabel2", 12, -1));
+
+            spRanking.Children.Add(ViewUtils.CreateLabel("Meilleure défense", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(bestDefense.Key == -1 ? "Pas encore de match joué" : bestDefense.Value.Key + " (" + bestDefense.Value.Value + " buts, " + bestDefense.Key + ")", "StyleLabel2", 12, -1));
+
+            spRanking.Children.Add(ViewUtils.CreateLabel("Pire attaque", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(worstAttack.Key == -1 ? "Pas encore de match joué" : worstAttack.Value.Key + " (" + worstAttack.Value.Value + " buts, " + worstAttack.Key + ")", "StyleLabel2", 12, -1));
+
+            spRanking.Children.Add(ViewUtils.CreateLabel("Pire défense", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(worstDefense.Key == -1 ? "Pas encore de match joué" : worstDefense.Value.Key + " (" + worstDefense.Value.Value + " buts, " + worstDefense.Key + ")", "StyleLabel2", 12, -1));
+
+
         }
 
         private void SelectedPalmaresClubs(object sender, RoutedEventArgs e)
@@ -430,6 +473,108 @@ namespace TheManager_GUI
 
 
         }
+
+        private void SelectedStatsYears(object sender, RoutedEventArgs e)
+        {
+            spRanking.Children.Clear();
+
+            StackPanel spTitle = new StackPanel();
+            spTitle.Orientation = Orientation.Horizontal;
+            spTitle.Children.Add(ViewUtils.CreateLabel("Année", "StyleLabel2", 12, 150));
+            spTitle.Children.Add(ViewUtils.CreateLabel("Buts/Match", "StyleLabel2", 12, 80));
+            spTitle.Children.Add(ViewUtils.CreateLabel("Buts", "StyleLabel2", 12, 80));
+            spTitle.Children.Add(ViewUtils.CreateLabel("CJ/Match", "StyleLabel2", 12, 80));
+            spTitle.Children.Add(ViewUtils.CreateLabel("CR/Match", "StyleLabel2", 12, 80));
+            spRanking.Children.Add(spTitle);
+
+
+            foreach (KeyValuePair<int, Tournament> t in _baseTournament.previousEditions)
+            {
+                int gameCount = 0;
+                int goalCount = 0;
+                int yellowCards = 0;
+                int redCards = 0;
+
+                foreach(Round r in t.Value.rounds)
+                {
+                    foreach(Match m in r.matches)
+                    {
+                        gameCount++;
+                        goalCount += m.score1 + m.score2;
+                        yellowCards += m.YellowCards;
+                        redCards += m.RedCards;
+                    }
+                }
+
+                StackPanel spYear = new StackPanel();
+                spYear.Orientation = Orientation.Horizontal;
+                spYear.Children.Add(ViewUtils.CreateLabel(t.Key.ToString(), "StyleLabel2", 12, 150));
+                spYear.Children.Add(ViewUtils.CreateLabel((goalCount/(gameCount+0.0)).ToString("0.00"), "StyleLabel2", 12, 80));
+                spYear.Children.Add(ViewUtils.CreateLabel(goalCount.ToString(), "StyleLabel2", 12, 80));
+                spYear.Children.Add(ViewUtils.CreateLabel((yellowCards / (gameCount + 0.0)).ToString("0.00"), "StyleLabel2", 12, 80));
+                spYear.Children.Add(ViewUtils.CreateLabel((redCards / (gameCount + 0.0)).ToString("0.00"), "StyleLabel2", 12, 80));
+                spRanking.Children.Add(spYear);
+
+            }
+
+
+        }
+
+
+        private void SelectedSeasonsClubs(object sender, RoutedEventArgs e)
+        {
+            Dictionary<Club, int> clubs = new Dictionary<Club, int>();
+            spRanking.Children.Clear();
+            foreach (KeyValuePair<int, Tournament> t in _competition.previousEditions)
+            {
+                if(t.Value.isChampionship)
+                {
+                    foreach(Club c in t.Value.rounds[0].clubs)
+                    {
+                        if(!clubs.ContainsKey(c))
+                        {
+                            clubs.Add(c, 0);
+                        }
+                        clubs[c]++;
+                    }
+                }
+                else
+                {
+                    List<Club> clubsList = new List<Club>();
+                    foreach(Round r in t.Value.rounds)
+                    {
+                        foreach (Club c in r.clubs)
+                        {
+                            if(!clubsList.Contains(c))
+                            {
+                                clubsList.Add(c);
+                            }
+                        }
+                    }
+                    foreach(Club c in clubsList)
+                    {
+                        if(!clubs.ContainsKey(c))
+                        {
+                            clubs.Add(c, 0);
+                        }
+                        clubs[c]++;
+                    }
+                }
+            }
+            List<KeyValuePair<Club, int>> list = clubs.ToList();
+            list.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+            foreach(KeyValuePair<Club, int> club in list)
+            {
+                StackPanel spClub = new StackPanel();
+                spClub.Orientation = Orientation.Horizontal;
+                spClub.Children.Add(ViewUtils.CreateLogo(club.Key, 25, 25));
+                spClub.Children.Add(ViewUtils.CreateLabel(club.Key.name, "StyleLabel2", 12, 200));
+                spClub.Children.Add(ViewUtils.CreateLabel(club.Value.ToString(), "StyleLabel2", 12, 50, null, null, true));
+                spRanking.Children.Add(spClub);
+            }
+
+        }
+
 
         private void SelectedPalmaresYears(object sender, RoutedEventArgs e)
         {

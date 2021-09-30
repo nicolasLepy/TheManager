@@ -77,9 +77,6 @@
       <DependentUpon>SearchPlayersWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Styles\Theme.cs" />
-    <Compile Include="TournamentHistoryWindow.xaml.cs">
-      <DependentUpon>TournamentHistoryWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewMisc\ViewMatches.cs" />
     <Compile Include="ViewMisc\ViewPlayers.cs" />
     <Compile Include="ViewRanking\DataGridTournamentColumnConverter.cs" />
@@ -142,10 +139,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="SearchPlayersWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="TournamentHistoryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

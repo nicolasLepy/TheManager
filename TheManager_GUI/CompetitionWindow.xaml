@@ -40,6 +40,8 @@
 						<ListBoxItem Content="Records" Selected="SelectedRecords"/>
 						<ListBoxItem Content="Palmarès par équipe" Selected="SelectedPalmaresClubs"/>
 						<ListBoxItem Content="Palmarès par année" Selected="SelectedPalmaresYears"/>
+						<ListBoxItem Content="Statistiques par année" Selected="SelectedStatsYears"/>
+						<ListBoxItem Content="Saisons par clubs" Selected="SelectedSeasonsClubs"/>
 						<ListBoxItem Content="Budget" Selected="SelectedBudget"/>
 						<ListBoxItem Content="Niveau" Selected="SelectedLevel"/>
 						<ListBoxItem Content="Potentiel" Selected="SelectedPotential"/>
@@ -47,7 +49,6 @@
 
 					</ListBox>
 
-					<Button Content="Historique" Name="btnHistoric" Width="100" Click="BtnHistoric_Click" Style="{StaticResource StyleButton1}"/>
 				</StackPanel>
 				<StackPanel Orientation="Vertical">
 					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
