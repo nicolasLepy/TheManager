@@ -45,7 +45,9 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Simulation stability
 
-The simulation is currently not very stable: clubs economically collapse after a few years before stabilizing, but with a much lower average level.
+The simulation has gained in stability : money in game stabilizes after few years and remains stable after. Players and clubs average level tends to incrase over time.
+
+Some realism issues : Small clubs at beginning can't stabilize in professionnals divisions
 
 <p float="left">
   <img src="Pics/graph_budget.png" width="40%" />

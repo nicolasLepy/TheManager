@@ -962,6 +962,7 @@ namespace TheManager
                         cityClub.GeneratePlayer(24,33);
                     }
                     cityClub.DispatchPlayersInReserveTeams();
+                    cityClub.GetSponsor();
                 }
             }
         }

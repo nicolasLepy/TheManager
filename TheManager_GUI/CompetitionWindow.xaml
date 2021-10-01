@@ -64,9 +64,8 @@
 						</StackPanel>
 					</Border>
 					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="900" Width="600">
-						<StackPanel Orientation="Vertical" Name="spMatchs">
-							<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-							</StackPanel>
+						<StackPanel Orientation="Vertical" Name="spMatchs" HorizontalAlignment="Center">
+							
 						</StackPanel>
 					</ScrollViewer>
 
