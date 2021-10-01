@@ -143,10 +143,11 @@ The simulation is currently not very stable: clubs economically collapse after a
 Nicolas Lépy
 
 ## Tools used
-Visual Studio
-C#
-WPF
-Windows Media Player library
+
+* Visual Studio
+* WPF
+* Windows Media Player library
+* MapWindow GIS
 
 ## Credits
 [Live Charts for WPF](https://www.google.com)
