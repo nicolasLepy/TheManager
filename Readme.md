@@ -150,7 +150,11 @@ Windows Media Player library
 
 ## Credits
 [Live Charts for WPF](https://www.google.com)
+
+[MapWindow GIS](https://www.mapwindow.org/)
+
 MathNet.Numerics
+
 [pngtree.com](https://pngtree.com)
 
 Data about cities were obtained from [SimpleMaps](https://simplemaps.com/data/world-cities)
