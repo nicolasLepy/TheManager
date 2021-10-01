@@ -143,20 +143,19 @@ The simulation is currently not very stable: clubs economically collapse after a
 Nicolas Lépy
 
 ## Tools used
-
-* Visual Studio
-* WPF
-* Windows Media Player library
-* MapWindow GIS
+*  Visual Studio
+*  WPF
+*  Windows Media Player library
+*  MapWindow GIS
 
 ## Credits
 
-* [Live Charts for WPF](https://www.google.com)
-* [MapWindow GIS](https://www.mapwindow.org/)
-* MathNet.Numerics
-* [pngtree.com](https://pngtree.com)
-* Data about cities were obtained from [SimpleMaps](https://simplemaps.com/data/world-cities)
-* Data about players were obtained from [Kaggle](https://www.kaggle.com/stefanoleone992/fifa-20-complete-player-dataset?select=players_20.csv)
+*  [Live Charts for WPF](https://www.google.com)
+*  [MapWindow GIS](https://www.mapwindow.org/)
+*  MathNet.Numerics
+*  [pngtree.com](https://pngtree.com)
+*  Data about cities were obtained from [SimpleMaps](https://simplemaps.com/data/world-cities)
+*  Data about players were obtained from [Kaggle](https://www.kaggle.com/stefanoleone992/fifa-20-complete-player-dataset?select=players_20.csv)
 
 ## License
 
