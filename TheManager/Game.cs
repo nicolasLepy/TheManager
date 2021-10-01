@@ -241,36 +241,36 @@ namespace TheManager
             
 
             _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageGoals, (indebtedClubs+0.0f)/(clubsCount+0.0f));
-            Console.WriteLine("=========================== DATA ANNEE " + _date.ToShortDateString() + " =========================");
-            Console.WriteLine("AverageClubLevelInGame");
+            Utils.Debug("=========================== DATA ANNEE " + _date.ToShortDateString() + " =========================");
+            Utils.Debug("AverageClubLevelInGame");
             foreach (float f in _gameUniverse.AverageClubLevelInGame)
             {
-                Console.WriteLine(f);
+                Utils.Debug(f.ToString());
             }
-            Console.WriteLine("AverageGoals");
+            Utils.Debug("AverageGoals");
             foreach (float f in _gameUniverse.AverageGoals)
             {
-                Console.WriteLine(f);
+                Utils.Debug(f.ToString());
             }
-            Console.WriteLine("AveragePlayerLevelInGame");
+            Utils.Debug("AveragePlayerLevelInGame");
             foreach (float f in _gameUniverse.AveragePlayerLevelInGame)
             {
-                Console.WriteLine(f);
+                Utils.Debug(f.ToString());
             }
-            Console.WriteLine("PlayersInGame");
+            Utils.Debug("PlayersInGame");
             foreach (int f in _gameUniverse.PlayersInGame)
             {
-                Console.WriteLine(f);
+                Utils.Debug(f.ToString());
             }
-            Console.WriteLine("TotalBudgetInGame");
+            Utils.Debug("TotalBudgetInGame");
             foreach (int f in _gameUniverse.TotalBudgetInGame)
             {
-                Console.WriteLine(f);
+                Utils.Debug(f.ToString());
             }
-            Console.WriteLine("TotalIndebtedClubs");
+            Utils.Debug("TotalIndebtedClubs");
             foreach (float f in _gameUniverse.RateIndebtesClubs)
             {
-                Console.WriteLine(f);
+                Utils.Debug(f.ToString());
             }
         }
 

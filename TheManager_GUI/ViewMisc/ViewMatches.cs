@@ -16,21 +16,21 @@ namespace TheManager_GUI.ViewMisc
 
         private StackPanel panel;
 
-        private List<Match> matches;
+        private readonly List<Match> matches;
 
-        private bool showHour;
-        private bool showDateSeparated;
-        private bool showAttendance;
-        private bool showOdds;
-        private bool showTournament;
-        private bool showDate;
-        private float fontSize;
-        private bool colorizeResult;
-        private bool showHourSeparated;
-        private bool showHalfTimeScore;
-        private bool beautifyScore;
-        private float widthMultiplier;
-        private Club club;
+        private readonly bool showHour;
+        private readonly bool showDateSeparated;
+        private readonly bool showAttendance;
+        private readonly bool showOdds;
+        private readonly bool showTournament;
+        private readonly bool showDate;
+        private readonly float fontSize;
+        private readonly bool colorizeResult;
+        private readonly bool showHourSeparated;
+        private readonly bool showHalfTimeScore;
+        private readonly bool beautifyScore;
+        private readonly float widthMultiplier;
+        private readonly Club club;
 
         public ViewMatches(List<Match> matches, bool showDate, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament, float fontSize = 12, bool colorizeResult = false, Club club = null, bool showHourSeparated = false, bool showHalfTimeScore = false, bool beautifyScore = false, float widthMultiplier = 1.0f)
         {
