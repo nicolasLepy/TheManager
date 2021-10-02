@@ -102,7 +102,7 @@ namespace TheManager
             return res;
         }
 
-        public int MatchesDayNumber()
+        public override int MatchesDayNumber()
         {
             int nbTeams = clubs.Count;
             int nbMatches = matches.Count;
@@ -164,12 +164,7 @@ namespace TheManager
             return total;
         }
 
-        /// <summary>
-        /// List the matches of the games day
-        /// </summary>
-        /// <param name="journey">The games day</param>
-        /// <returns>Matches of game day j</returns>
-        public List<Match> GamesDay(int journey)
+        public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
             int total = MatchesByGamesDay();

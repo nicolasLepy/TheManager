@@ -17,8 +17,7 @@
 					<Button Name="btnTourGauche" Click="BtnTourGauche_Click">
 						<Image Name="imgBtnTourGauche" Source="Images/left.png" Width="20" Height="20"/>
 					</Button>
-
-					<Label Name="lbNomTour" Content="Tour préliminaire" Style="{StaticResource StyleLabel2}" Width="500" HorizontalContentAlignment="Center"/>
+					<Label Name="lbNomTour" Content="Tour préliminaire" Style="{StaticResource StyleLabel2Center}" Width="500"/>
 					<Button Name="btnTourDroite" Click="BtnTourDroite_Click">
 						<Image Name="imgBtnTourDroite" Source="Images/left.png" Width="20" Height="20"/>
 					</Button>
@@ -56,7 +55,7 @@
 							<Button Name="btnJourneeGauche" Click="BtnJourneeGauche_Click">
 								<Image Name="imgBtnJourneeGauche" Source="Images/left.png" Width="20" Height="20"/>
 							</Button>
-
+							<Label Name="lbDayName" Content="Journée 1" Style="{StaticResource StyleLabel2Center}" Width="150"/>
 							<Button Name="btnJourneeDroite" Click="BtnJourneeDroite_Click">
 								<Image Name="imgBtnJourneeDroite" Source="Images/left.png" Width="20" Height="20"/>
 							</Button>

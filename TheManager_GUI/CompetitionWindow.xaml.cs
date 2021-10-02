@@ -68,17 +68,9 @@ namespace TheManager_GUI
             InitWidgets(true);
         }
 
-
-
         private List<Match> Journee()
         {
-            List<Match> res = _competition.rounds[_indexTour].matches;
-            ChampionshipRound tc = _competition.rounds[_indexTour] as ChampionshipRound;
-            if(tc != null)
-            {
-                res = tc.GamesDay(_indexJournee);
-            }
-            return res;
+            return _competition.rounds[_indexTour].GamesDay(_indexJournee);            
         }
 
         private void Ranking(RankingType rankingType)
@@ -91,6 +83,7 @@ namespace TheManager_GUI
         {
             lbCompetition.Content = _competition.name;
             lbNomTour.Content = _competition.rounds[_indexTour].name;
+            lbDayName.Content = "Journée " + _indexJournee.ToString();
             Ranking(RankingType.General);
             Calendrier(_competition.rounds[_indexTour]);
             if(initMap)
@@ -208,18 +201,20 @@ namespace TheManager_GUI
         {
             if (_indexTour < _competition.rounds.Count - 1)
             {
+                _indexJournee = 1;
                 _indexTour++;
+                InitWidgets(true);
             }
-            InitWidgets(true);
         }
 
         private void BtnTourGauche_Click(object sender, RoutedEventArgs e)
         {
             if (_indexTour > 0)
             {
+                _indexJournee = 1;
                 _indexTour--;
+                InitWidgets(true);
             }
-            InitWidgets(true);
         }
 
         private void BtnJourneeGauche_Click(object sender, RoutedEventArgs e)
@@ -227,19 +222,15 @@ namespace TheManager_GUI
             if (_indexJournee > 1)
             {
                 _indexJournee--;
+                InitWidgets(false);
             }
-            InitWidgets(false);
         }
 
         private void BtnJourneeDroite_Click(object sender, RoutedEventArgs e)
         {
-            ChampionshipRound tc = _competition.rounds[_indexTour] as ChampionshipRound;
-            if (tc != null)
+            if (_indexJournee < _competition.rounds[_indexTour].MatchesDayNumber())
             {
-                if (_indexJournee < tc.MatchesDayNumber())
-                {
-                    _indexJournee++;
-                }
+                _indexJournee++;
                 InitWidgets(false);
             }
         }

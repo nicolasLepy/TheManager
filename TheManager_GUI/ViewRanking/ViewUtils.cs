@@ -133,7 +133,7 @@ namespace TheManager_GUI
             return sprite;
         }
 
-        public static Border CreateCalendarItem(DateTime time, bool today, Match match = null)
+        public static Border CreateCalendarItem(DateTime time, bool today, Match match = null, List<Tournament> tournaments = null)
         {
 
             Border res = new Border();
@@ -160,6 +160,14 @@ namespace TheManager_GUI
                     spMatch.Children.Add(CreateLabel(match.ScoreToString(), "StyleLabel2", 9, -1));
                 }
                 spMatch.Children.Add(CreateLogo(match.away, 26, 26));
+            }
+
+            if(tournaments != null && tournaments.Count > 0)
+            {
+                foreach(Tournament tournament in tournaments)
+                {
+                    main.Children.Add(CreateLabel(tournament.shortName, "StyleLabel2", 9, -1, tournament.IsInternational() ? System.Windows.Media.Brushes.DarkOrange : !tournament.isChampionship ? System.Windows.Media.Brushes.Blue : null, null, true));
+                }
             }
 
             res.Child = main;

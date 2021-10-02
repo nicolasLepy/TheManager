@@ -536,9 +536,15 @@ namespace TheManager_GUI
             {
                 Windows_Competition wc = new Windows_Competition(c);
                 wc.Left = 50;
-                wc.Top = 50;
+                wc.Top = 25;
                 wc.Show();
             }
+        }
+
+        private void btnCalendar_Click(object sender, RoutedEventArgs e)
+        {
+            CalendarWindow cw = new CalendarWindow();
+            cw.Show();
         }
     }
 

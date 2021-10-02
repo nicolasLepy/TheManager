@@ -143,6 +143,7 @@
 								</ScrollViewer>
 							</StackPanel>
 						</StackPanel>
+						<Button Name="btnCalendar" Margin="5" Content="Calendrier" Style="{StaticResource StyleButton1}" Width="80" Click="btnCalendar_Click"/>
 					</StackPanel>
 					
 				</StackPanel>

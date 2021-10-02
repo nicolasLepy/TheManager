@@ -209,18 +209,18 @@ namespace TheManager
 
         }
 
-        public List<Match> GamesDay(int journey)
+        public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
-            int matchesPerGroups = MatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
+            int matchesPerGroups = GroupMatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
             if (twoLegs)
             {
                 matchesPerGroups *= 2;
             }
             for (int i = 0; i < _groupsNumber; i++)
             {
-                int baseIndex = (matchesPerGroups * i) + (MatchesPerGamesDay() * (journey - 1));
-                for (int j = 0; j < MatchesPerGamesDay(); j++)
+                int baseIndex = (matchesPerGroups * i) + (GroupMatchesPerGamesDay() * (journey - 1));
+                for (int j = 0; j < GroupMatchesPerGamesDay(); j++)
                 {
                     res.Add(_matches[j + baseIndex]);
                 }
@@ -230,7 +230,12 @@ namespace TheManager
             return res;
         }
 
-        public int MatchesPerGamesDay()
+        public override int MatchesDayNumber()
+        {
+            return _matches.Count / _groupsNumber / GroupMatchesPerGamesDay();
+        }
+
+        public int GroupMatchesPerGamesDay()
         {
             return (_clubs.Count / _groupsNumber) / 2;
         }

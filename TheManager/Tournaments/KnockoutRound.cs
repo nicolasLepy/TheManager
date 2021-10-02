@@ -192,5 +192,23 @@ namespace TheManager
             }
             return res;
         }
+
+        public override int MatchesDayNumber()
+        {
+            return _twoLegs ? 2 : 1;
+        }
+
+        public override List<Match> GamesDay(int journey)
+        {
+            List<Match> res = new List<Match>();
+            int gamesByDay = _twoLegs ? _matches.Count / 2 : _matches.Count;
+            for(int i = (journey-1)* gamesByDay; i < journey*gamesByDay; i++)
+            {
+                res.Add(_matches[i]);
+            }
+            return res;
+
+        }
+
     }
 }

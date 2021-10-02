@@ -545,7 +545,17 @@ namespace TheManager
         /// </summary>
         /// <returns></returns>
         public abstract List<Match> NextMatchesDay();
-        
+
+        public abstract int MatchesDayNumber();
+
+        /// <summary>
+        /// List the matches of the games day
+        /// </summary>
+        /// <param name="journey">The games day</param>
+        /// <returns>Matches of game day j</returns>
+        public abstract List<Match> GamesDay(int journey);
+
+
 
 
         public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)

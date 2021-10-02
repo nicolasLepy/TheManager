@@ -122,5 +122,15 @@ namespace TheManager
                 }
             }
         }
+
+        public override int MatchesDayNumber()
+        {
+            return 0;
+        }
+
+        public override List<Match> GamesDay(int journey)
+        {
+            return new List<Match>();
+        }
     }
 }

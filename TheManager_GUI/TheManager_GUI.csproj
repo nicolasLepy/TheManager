@@ -69,6 +69,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CalendarWindow.xaml.cs">
+      <DependentUpon>CalendarWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HomepageWindow.xaml.cs">
       <DependentUpon>HomepageWindow.xaml</DependentUpon>
     </Compile>
@@ -122,6 +125,10 @@
     <Compile Include="TournamentClubWindow.xaml.cs">
       <DependentUpon>TournamentClubWindow.xaml</DependentUpon>
     </Compile>
+    <Page Include="CalendarWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="HomepageWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

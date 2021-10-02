@@ -1,0 +1,38 @@
+﻿<Window x:Class="TheManager_GUI.CalendarWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+        Title="CalendarWindow" Height="700" Width="800" Style="{StaticResource StyleWindows}">
+    <Grid>
+		<StackPanel Orientation="Vertical">
+			<StackPanel Orientation="Vertical" HorizontalAlignment="Right" Margin="20">
+				<Button Name="btnQuitter" Click="btnQuitter_Click">
+					<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
+				</Button>
+			</StackPanel>
+			<Border Style="{StaticResource StyleBorderStackPanel}">
+
+
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+					<Button Name="btnJourneeGauche" Click="btnJourneeGauche_Click">
+						<Image Name="imgBtnJourneeGauche" Source="Images/left.png" Width="20" Height="20"/>
+					</Button>
+					<Label Name="lbDate" Style="{StaticResource StyleLabel2Center}" Content="Juillet 2017" Width="200"/>
+					<Button Name="btnJourneeDroite" Click="btnJourneeDroite_Click">
+						<Image Name="imgBtnJourneeDroite" Source="Images/right.png" Width="20" Height="20"/>
+					</Button>
+				</StackPanel>
+
+			</Border>
+
+			<StackPanel Orientation="Vertical" Name="spCalendar" HorizontalAlignment="Center">
+				
+			</StackPanel>
+			
+		</StackPanel>
+
+	</Grid>
+</Window>
