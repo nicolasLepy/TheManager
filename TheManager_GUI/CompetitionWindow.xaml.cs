@@ -116,7 +116,6 @@ namespace TheManager_GUI
         }
         private void Map(Round t)
         {
-
             AxMapWinGIS.AxMap map = new AxMapWinGIS.AxMap();
             map.Width = 380;
             map.Height = 380;

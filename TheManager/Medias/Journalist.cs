@@ -50,6 +50,25 @@ namespace TheManager
             }
         }
 
+        public List<Match> CommentedGames
+        {
+            get
+            {
+                List<Match> res = new List<Match>();
+                foreach (Match m in Session.Instance.Game.kernel.Matchs)
+                {
+                    foreach (KeyValuePair<Media, Journalist> j in m.journalists)
+                    {
+                        if (j.Value == this)
+                        {
+                            res.Add(m);
+                        }
+                    }
+                }
+                return res;
+            }
+        }
+
         /// <summary>
         /// Give the number of commented games by the journalist on the non-archived tournaments
         /// </summary>
@@ -57,20 +76,7 @@ namespace TheManager
         {
             get
             {
-                int res = 0;
-
-                foreach(Match m in Session.Instance.Game.kernel.Matchs)
-                {
-                    foreach(KeyValuePair<Media, Journalist> j in m.journalists)
-                    {
-                        if (j.Value == this)
-                        {
-                            res++;
-                        }
-                    }
-                }
-
-                return res;
+                return CommentedGames.Count;
             }
         }
 

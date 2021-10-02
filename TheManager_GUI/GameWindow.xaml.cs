@@ -206,7 +206,7 @@ namespace TheManager_GUI
                 spJournalists.Orientation = Orientation.Vertical;
                 spJournalists.Children.Add(ViewUtils.CreateMediaLogo(j.Key, 80, 40));
                 spJournalists.Margin = new Thickness(15);
-                Label labelJournalist = ViewUtils.CreateLabel(j.Value.ToString(), "StyleLabel2", 11, -1);
+                Label labelJournalist = ViewUtils.CreateLabelOpenWindow<Media>(j.Key, OpenMedia, j.Value.ToString(), "StyleLabel2", 11, -1);
                 labelJournalist.VerticalContentAlignment = VerticalAlignment.Center;
 
                 if(presentsMedias.Contains(j.Key))
@@ -221,6 +221,12 @@ namespace TheManager_GUI
                 }
             }
 
+        }
+
+        private void OpenMedia(Media media)
+        {
+            MediaWindow mediaWindow = new MediaWindow(media);
+            mediaWindow.Show();
         }
 
         private void DrawTimeline(Match match)
