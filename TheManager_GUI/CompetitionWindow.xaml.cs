@@ -672,5 +672,65 @@ namespace TheManager_GUI
             }
         }
 
+        private void SelectedAttendance(object sender, RoutedEventArgs e)
+        {
+
+            spRanking.Children.Clear();
+
+            Dictionary<Club, int> attendances = new Dictionary<Club, int>();
+
+            Round r = _competition.rounds[_indexTour];
+            foreach (Club c in r.clubs)
+            {
+                attendances.Add(c, 0);
+                int count = 0;
+                foreach(Match m in r.matches)
+                {
+                    if(m.home == c)
+                    {
+                        count++;
+                        attendances[c] += m.attendance;
+                    }
+                }
+                attendances[c] /= count;
+            }
+
+            List<KeyValuePair<Club, int>> list = attendances.ToList();
+            list.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+
+            foreach (KeyValuePair<Club, int> club in list)
+            {
+                StackPanel sp = new StackPanel();
+                sp.Orientation = Orientation.Horizontal;
+                sp.Children.Add(ViewUtils.CreateLogo(club.Key, 25, 25));
+                sp.Children.Add(ViewUtils.CreateLabel(club.Key.name, "StyleLabel2", 12, 200));
+                sp.Children.Add(ViewUtils.CreateLabel(club.Value.ToString(), "StyleLabel2", 12, 75, null, null, true));
+                spRanking.Children.Add(sp);
+            }
+
+        }
+
+        private void SelectedSponsors(object sender, RoutedEventArgs e)
+        {
+            spRanking.Children.Clear();
+            List<Club> clubs = new List<Club>(_competition.rounds[_indexTour].clubs);
+            clubs.Sort(new ClubComparator(ClubAttribute.SPONSOR, false));
+            int i = 0;
+            foreach (Club c in clubs)
+            {
+                CityClub cc = c as CityClub;
+                if(cc != null)
+                {
+                    i++;
+                    StackPanel sp = new StackPanel();
+                    sp.Orientation = Orientation.Horizontal;
+                    sp.Children.Add(ViewUtils.CreateLabel(i.ToString(), "StyleLabel2", 12, 30));
+                    sp.Children.Add(ViewUtils.CreateLogo(c, 25, 25));
+                    sp.Children.Add(ViewUtils.CreateLabel(c.name, "StyleLabel2", 12, 200));
+                    sp.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(cc.sponsor), "StyleLabel2", 12, 100));
+                    spRanking.Children.Add(sp);
+                }
+            }
+        }
     }
 }

@@ -12,7 +12,8 @@ namespace TheManager
         STADIUM,
         LEVEL,
         POTENTIEL,
-        BUDGET
+        BUDGET,
+        SPONSOR
     }
 
     public class ClubComparator : IComparer<Club>
@@ -63,6 +64,16 @@ namespace TheManager
                     else
                     {
                         res = (y as CityClub).budget - (x as CityClub).budget;
+                    }
+                    break;
+                case ClubAttribute.SPONSOR:
+                    if(x as CityClub != null)
+                    {
+                        res = (x as CityClub).sponsor > (y as CityClub).sponsor ? -1 : 1;
+                    }
+                    else
+                    {
+                        res = 0;
                     }
                     break;
                 default:

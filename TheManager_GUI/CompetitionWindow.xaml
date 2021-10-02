@@ -45,6 +45,8 @@
 						<ListBoxItem Content="Niveau" Selected="SelectedLevel"/>
 						<ListBoxItem Content="Potentiel" Selected="SelectedPotential"/>
 						<ListBoxItem Content="Stades" Selected="SelectedStadium"/>
+						<ListBoxItem Content="Affluence moyenne" Selected="SelectedAttendance"/>
+						<ListBoxItem Content="Sponsors" Selected="SelectedSponsors"/>
 
 					</ListBox>
 
