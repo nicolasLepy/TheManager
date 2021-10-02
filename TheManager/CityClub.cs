@@ -558,10 +558,13 @@ namespace TheManager
                     possibleOpponents.Remove(adv);
                     DateTime begin = new DateTime(championship.rounds[0].matches[0].day.Year, championship.rounds[0].matches[0].day.Month, championship.rounds[0].matches[0].day.Day);
                     begin = begin.AddDays(Session.Instance.Random(-30, -10));
-                    begin = begin.AddHours(Session.Instance.Random(14, 22));
+                    begin = begin.AddHours(Session.Instance.Random(12, 22));
                     Match game = new Match(this, adv, begin, false);
                     game.Reprogram(0);
-                    Session.Instance.Game.kernel.AddFriendlyGame(game );
+                    if (Utils.CompareDates(game.day, begin) && game.day.CompareTo(Session.Instance.Game.date.AddDays(1)) > 0)
+                    {
+                        Session.Instance.Game.kernel.AddFriendlyGame(game);
+                    }
                 }
             }
         }

@@ -150,6 +150,26 @@ namespace TheManager
             }
         }
 
+        public List<Match> MatchsOfDate(DateTime date)
+        {
+            List<Match> res = new List<Match>();
+            foreach (Tournament c in Competitions)
+            {
+                foreach (Round t in c.rounds)
+                {
+                    foreach (Match m in t.matches)
+                    {
+                        if(Utils.CompareDates(m.day, date))
+                        {
+                            res.Add(m);
+                        }
+                    }
+                }
+            }
+
+            return res;
+        }
+
         public List<Player> TransferList(int clubChampionshipLevel, Country country)
         {
             List<Player> players = new List<Player>();

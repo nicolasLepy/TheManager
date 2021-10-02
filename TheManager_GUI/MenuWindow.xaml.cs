@@ -62,8 +62,6 @@ namespace TheManager_GUI
                 }
             }
             Refresh();
-
-            
         }
 
         private void RefreshTransferListPanel()
@@ -233,6 +231,14 @@ namespace TheManager_GUI
             }
         }
 
+        public void FillGamesOfDayPanel()
+        {
+            List<Match> matchs = Session.Instance.Game.kernel.MatchsOfDate(Session.Instance.Game.date);
+            matchs.Sort(new MatchDateComparator());
+            ViewMatches view = new ViewMatches(matchs, false, true, false, false, false, true, 11, false, null, false, false, false, true);
+            view.Full(spFullGames);
+        }
+
         private void Refresh()
         {
             if(cbOpti.IsChecked == false)
@@ -244,6 +250,7 @@ namespace TheManager_GUI
                 FillNextMatchPanel();
                 FillCalendar();
                 RefreshTransferListPanel();
+                FillGamesOfDayPanel();
             }
         }
 

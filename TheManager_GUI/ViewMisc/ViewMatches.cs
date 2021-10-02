@@ -30,9 +30,10 @@ namespace TheManager_GUI.ViewMisc
         private readonly bool showHalfTimeScore;
         private readonly bool beautifyScore;
         private readonly float widthMultiplier;
+        private readonly bool showTournamentSeparated;
         private readonly Club club;
 
-        public ViewMatches(List<Match> matches, bool showDate, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament, float fontSize = 12, bool colorizeResult = false, Club club = null, bool showHourSeparated = false, bool showHalfTimeScore = false, bool beautifyScore = false, float widthMultiplier = 1.0f)
+        public ViewMatches(List<Match> matches, bool showDate, bool showHour, bool showDateSeparated, bool showAttendance, bool showOdds, bool showTournament, float fontSize = 12, bool colorizeResult = false, Club club = null, bool showHourSeparated = false, bool showHalfTimeScore = false, bool beautifyScore = false, bool showTournamentSeparated = false, float widthMultiplier = 1.0f)
         {
             this.matches = matches;
             this.showDate = showDate;
@@ -47,6 +48,7 @@ namespace TheManager_GUI.ViewMisc
             this.showHalfTimeScore = showHalfTimeScore;
             this.beautifyScore = beautifyScore;
             this.widthMultiplier = widthMultiplier;
+            this.showTournamentSeparated = showTournamentSeparated;
             this.club = club;
         }
 
@@ -57,6 +59,8 @@ namespace TheManager_GUI.ViewMisc
             panel.Children.Clear();
 
             DateTime lastTime = new DateTime(2000, 1, 1);
+            Tournament currentTournament = null;
+
             foreach (Match match in matches)
             {
 
@@ -81,6 +85,19 @@ namespace TheManager_GUI.ViewMisc
                     panel.Children.Add(spHourLine);
                 }
 
+                if(showTournamentSeparated && currentTournament != match.Tournament)
+                {
+                    StackPanel spTournamentLine = new StackPanel();
+                    spTournamentLine.Orientation = Orientation.Horizontal;
+                    Country tournamentCountry = Session.Instance.Game.kernel.LocalisationTournament(match.Tournament) as Country;
+                    if(tournamentCountry != null)
+                    {
+                        spTournamentLine.Children.Add(ViewUtils.CreateFlag(tournamentCountry, 30 * sizeMultiplier, 20 * sizeMultiplier));
+                    }
+                    spTournamentLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.name, "StyleLabel2", fontSize, 175 * sizeMultiplier));
+                    panel.Children.Add(spTournamentLine);
+                }
+
                 StackPanel spLine = new StackPanel();
                 spLine.Orientation = Orientation.Horizontal;
 
@@ -92,7 +109,7 @@ namespace TheManager_GUI.ViewMisc
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(match.day.ToShortTimeString(), "StyleLabel2", fontSize * 0.9, 35 * sizeMultiplier));
                 }
-                if(showTournament)
+                if(showTournament && !showTournamentSeparated)
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(match.Tournament.shortName, "StyleLabel2", fontSize, 30 * sizeMultiplier, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue))));  
                 }
@@ -178,6 +195,7 @@ namespace TheManager_GUI.ViewMisc
                     panel.Children.Add(spHalfTimeLine);
                 }
 
+                currentTournament = match.Tournament;
 
             }
         }

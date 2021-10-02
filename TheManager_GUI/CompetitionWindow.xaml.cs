@@ -185,7 +185,7 @@ namespace TheManager_GUI
             List<Match> matchs = Journee();
             matchs.Sort(new MatchDateComparator());
 
-            ViewMatches view = new ViewMatches(matchs, true, true, true, false, false, false, 17, false, null, true, true, true, 1.5f);
+            ViewMatches view = new ViewMatches(matchs, true, true, true, false, false, false, 17, false, null, true, true, true, false, 1.5f);
             view.Full(spMatchs);
 
 

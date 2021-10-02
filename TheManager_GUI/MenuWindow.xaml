@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Menu" Height="900" Width="1400" Style="{StaticResource StyleWindows}" WindowStartupLocation="Manual" Left="50" Top="50">
+        Title="Windows_Menu" Height="900" Width="1450" Style="{StaticResource StyleWindows}" WindowStartupLocation="Manual" Left="50" Top="50">
     <Grid>
 		<DockPanel Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
 
 			<StackPanel Margin="3" Orientation="Vertical" DockPanel.Dock="Top" Height="820">
 
 				<StackPanel Orientation="Horizontal">
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="1245">
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="1295">
 						<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content="Avancer" Click="BtnAvancer_Click"/>
 						<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 15 juin" Click="BtnSimuler_Click"/>
 						<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 10 ans" Click="BtnSimuler2_Click"/>
@@ -38,8 +38,8 @@
 				</StackPanel>
 				<StackPanel Orientation="Horizontal">
 					<!-- côté gauche, infos générales -->
-					<StackPanel Orientation="Vertical" Width="400">
-						<StackPanel Orientation="Vertical" Width="350" Margin="20">
+					<StackPanel Orientation="Vertical" Width="420">
+						<StackPanel Orientation="Vertical" Width="370" Margin="20">
 							<ComboBox Name="comboPays" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboPays_SelectionChanged" Margin="5" Width="200" HorizontalAlignment="Left"/>
 							<StackPanel Orientation="Horizontal">
 								<ListBox Name="lbChampionnats" Width="165" HorizontalAlignment="Left" Height="60" Margin="5" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
@@ -132,8 +132,8 @@
 					</StackPanel>
 
 					<!-- côté droit, info sur le club contrôlé -->
-					<StackPanel Orientation="Vertical" Width="285">
-						<StackPanel Orientation="Horizontal" Width="285" Height="475">
+					<StackPanel Orientation="Vertical" Width="310">
+						<StackPanel Orientation="Horizontal" Width="285">
 							<StackPanel Orientation="Vertical" Width="285">
 								<Image Name="imgClub" Width="150" Height="150" Source="generic.png"></Image>
 								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200">
@@ -143,7 +143,17 @@
 								</ScrollViewer>
 							</StackPanel>
 						</StackPanel>
-						<Button Name="btnCalendar" Margin="5" Content="Calendrier" Style="{StaticResource StyleButton1}" Width="80" Click="btnCalendar_Click"/>
+						<Button Name="btnCalendar" Margin="20,5,20,5" Content="Calendrier des compétitions" Style="{StaticResource StyleButton1}" Click="btnCalendar_Click"/>
+						<Border Style="{StaticResource StyleBorderStackPanel}">
+							<StackPanel Orientation="Vertical">
+								<Label Style="{StaticResource StyleLabel2Center}" Content="Matchs du jour"/>
+								<ScrollViewer HorizontalScrollBarVisibility="Auto" Height="360">
+									<StackPanel Orientation="Vertical" Name="spFullGames">
+
+									</StackPanel>
+								</ScrollViewer>
+							</StackPanel>
+						</Border>
 					</StackPanel>
 					
 				</StackPanel>
