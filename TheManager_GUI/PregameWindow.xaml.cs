@@ -117,7 +117,7 @@ namespace TheManager_GUI
         {
             _joueurs.Clear();
 
-            List<Player> compo = _club.Composition();
+            List<Player> compo = _club.Composition(_matchs[0]);
             foreach(Player j in compo)
             {
                 _joueurs.Add(j);

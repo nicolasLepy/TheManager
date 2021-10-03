@@ -789,8 +789,8 @@ namespace TheManager
                 initialCompo = _compo2;
             }
 
-            terrain.Sort(new PlayerCompositionComparator());
-            subs.Sort(new PlayerCompositionComparator());
+            terrain.Sort(new PlayerCompositionComparator(Tournament.name == Utils.friendlyTournamentName || (!Tournament.IsInternational() && Tournament.isChampionship) ));
+            subs.Sort(new PlayerCompositionComparator(Tournament.name == Utils.friendlyTournamentName || (!Tournament.IsInternational() && Tournament.isChampionship)));
             int nbSubs = 0;
             foreach (Substitution s in _substitutions)
             {
@@ -827,12 +827,12 @@ namespace TheManager
 
         public void SetCompo()
         {
-            _compo1 = new List<Player>(home.Composition());
-            _compo2 = new List<Player>(away.Composition());
+            _compo1 = new List<Player>(home.Composition(this));
+            _compo2 = new List<Player>(away.Composition(this));
             _compo1Terrain = new List<Player>(_compo1);
             _compo2Terrain = new List<Player>(_compo2);
-            _subs1 = new List<Player>(home.Subs(_compo1, 7));
-            _subs2 = new List<Player>(away.Subs(_compo2, 7));
+            _subs1 = new List<Player>(home.Subs(this, _compo1, 7));
+            _subs2 = new List<Player>(away.Subs(this, _compo2, 7));
             _subs1OnBench = new List<Player>(_subs1);
             _subs2OnBench = new List<Player>(_subs2);
 

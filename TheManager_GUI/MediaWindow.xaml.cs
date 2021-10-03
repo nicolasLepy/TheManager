@@ -63,20 +63,29 @@ namespace TheManager_GUI
             sf.DefaultDrawingOptions.PointType = MapWinGIS.tkPointSymbolType.ptSymbolStandard;
             sf.CollisionMode = MapWinGIS.tkCollisionMode.AllowCollisions;
 
+            List<City> takenCities = new List<City>();
+
             foreach (Journalist journalist in _media.journalists)
             {
                 double projX = -1;
                 double projY = -1;
                 map.DegreesToProj(journalist.baseCity.Position.Longitude, journalist.baseCity.Position.Latitude, ref projX, ref projY);
+
+                if(takenCities.Contains(journalist.baseCity))
+                {
+                    projY += Session.Instance.Random(3, 12) / 10.0;
+                }
+
                 MapWinGIS.Shape shp = new MapWinGIS.Shape();
                 shp.Create(MapWinGIS.ShpfileType.SHP_POINT);
                 shp.AddPoint(projX, projY);
                 _indexOrders.Add(sf.EditAddShape(shp));
+                takenCities.Add(journalist.baseCity);
 
             }
             int layer = map.AddLayer(sf, true);
 
-            foreach(Journalist journalist in _media.journalists)
+            foreach (Journalist journalist in _media.journalists)
             {
                 int handle = map.NewDrawing(MapWinGIS.tkDrawReferenceList.dlScreenReferencedList);
                 double pixX = -1;

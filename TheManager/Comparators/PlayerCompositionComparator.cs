@@ -8,9 +8,21 @@ namespace TheManager.Comparators
 {
     public class PlayerCompositionComparator : IComparer<Player>
     {
+        private bool _lessImportantGame = true;
+
+        public PlayerCompositionComparator(bool lessImportantGame)
+        {
+            _lessImportantGame = lessImportantGame;
+        }
         public int Compare(Player x, Player y)
         {
-            return (int)(y.level * ((y.energy/200.0f)+0.5f) - x.level * ((x.energy/200.0f)+0.5f));
+            float energyImportance = 200f;
+            if(_lessImportantGame)
+            {
+                energyImportance = 100f;
+            }
+
+            return (int)(y.level * ((y.energy/ energyImportance) +0.5f) - x.level * ((x.energy/ energyImportance) +0.5f));
         }
     }
 }

@@ -83,6 +83,8 @@ namespace TheManager
         [DataMember]
         private int _supporters;
         [DataMember]
+        private int _baseSupporters;
+        [DataMember]
         protected int _formationFacilities;
         [DataMember]
         private Stadium _stadium;
@@ -286,6 +288,7 @@ namespace TheManager
             _shortName = shortName;
             _reputation = reputation;
             _supporters = supporters;
+            _baseSupporters = supporters;
             _formationFacilities = formationFacilities;
             _logo = logo;
             _stadium = stadium;
@@ -316,10 +319,10 @@ namespace TheManager
         /// <param name="position">The position needed</param>
         /// <param name="composition">The current composition to add player</param>
         /// <param name="playersNumberToTake">Number of players of this position to put in the composition</param>
-        private void BuildComposition(Position position, List<Player> composition, int playersNumberToTake)
+        private void BuildComposition(Match match, Position position, List<Player> composition, int playersNumberToTake)
         {
             List<Player> playersOfPosition = ListEligiblePlayersByPosition(position);
-            playersOfPosition.Sort(new PlayerCompositionComparator());
+            playersOfPosition.Sort(new PlayerCompositionComparator(match.Tournament.name == Utils.friendlyTournamentName || (!match.Tournament.IsInternational() && match.Tournament.isChampionship)));
 
             for (int i = 0; i < playersNumberToTake; i++)
             {
@@ -335,7 +338,7 @@ namespace TheManager
         /// Get subs for a game
         /// </summary>
         /// <param name="composition">List of players starting the game on the ground</param>
-        public List<Player> Subs(List<Player> composition, int nbSubs)
+        public List<Player> Subs(Match match, List<Player> composition, int nbSubs)
         {
             List<Player> subs = new List<Player>();
             List<Player> allPlayersAvailable = new List<Player>();
@@ -359,7 +362,7 @@ namespace TheManager
             }
             int remainingPlayers = nbSubs - subs.Count;
 
-            allPlayersAvailable.Sort(new PlayerCompositionComparator());
+            allPlayersAvailable.Sort(new PlayerCompositionComparator(match.Tournament.name == Utils.friendlyTournamentName || (!match.Tournament.IsInternational() && match.Tournament.isChampionship)));
             for(int i = 0; i < remainingPlayers; i++)
             {
                 if(allPlayersAvailable.Count > i)
@@ -371,14 +374,14 @@ namespace TheManager
             return subs;
         }
 
-        public List<Player> Composition()
+        public List<Player> Composition(Match match)
         {
             List<Player> res = new List<Player>();
 
-            BuildComposition(Position.Goalkeeper, res, 1);
-            BuildComposition(Position.Defender, res, 4);
-            BuildComposition(Position.Midfielder, res, 4);
-            BuildComposition(Position.Striker, res,2);
+            BuildComposition(match, Position.Goalkeeper, res, 1);
+            BuildComposition(match, Position.Defender, res, 4);
+            BuildComposition(match, Position.Midfielder, res, 4);
+            BuildComposition(match, Position.Striker, res,2);
             
             return res;
         }

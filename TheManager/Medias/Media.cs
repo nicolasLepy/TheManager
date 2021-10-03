@@ -148,6 +148,7 @@ namespace TheManager
             }
             if (journalist == null)
             {
+                //TODO: Search in unemployed journalists
                 Journalist newJournalist = new Journalist(country.language.GetFirstName(), country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100, false);
                 journalists.Add(newJournalist);
                 journalist = newJournalist;
