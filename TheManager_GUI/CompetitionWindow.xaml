@@ -73,8 +73,8 @@
 				</StackPanel>
 
 				<StackPanel Orientation="Vertical" Name="spBlocClassement">
-					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="575" Width="490">
-						<StackPanel Orientation="Vertical" Name="spRanking" Width="490">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="575" Width="575">
+						<StackPanel Orientation="Vertical" Name="spRanking" Width="575">
 						</StackPanel>
 					</ScrollViewer>
 					<StackPanel Orientation="Vertical" Width="600" Height="400" ClipToBounds="True">

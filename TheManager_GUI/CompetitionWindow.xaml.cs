@@ -141,8 +141,13 @@ namespace TheManager_GUI
                 {
                     map.ZoomToShape(0, 68 /*12 101*/);
                     map.CurrentZoom = 4;
-                    logoSize = 15.0;
                 }
+                else if (localisation.Name() == "Afrique")
+                {
+                    map.ZoomToShape(0, 40);
+                    map.CurrentZoom = 3;
+                }
+                logoSize = 15.0;
             }
             //map.CurrentScale = 5;
             MapWinGIS.Shape shpFrance = shapeFileMap.Shape[79];
@@ -174,6 +179,40 @@ namespace TheManager_GUI
 
                     map.AddLayer(sf, true);
                 }
+            }
+            if(_competition.rounds[_indexTour].clubs[0] as NationalTeam != null)
+            {
+                shapeFileMap.StartEditingTable();
+                int fieldIndex = shapeFileMap.EditAddField("Qualification", MapWinGIS.FieldType.INTEGER_FIELD, 1, 1);
+                Console.WriteLine(fieldIndex);
+                shapeFileMap.DefaultDrawingOptions.FillType = MapWinGIS.tkFillType.ftStandard;
+                for (int i = 0; i < shapeFileMap.NumShapes; i++)
+                {
+                    shapeFileMap.EditCellValue(fieldIndex, i, 0);
+                }
+                Dictionary<NationalTeam, int> clubCourses = new Dictionary<NationalTeam, int>();
+                for(int i = 0; i<_competition.rounds.Count; i++)
+                {
+                    Round round = _competition.rounds[i];
+                    foreach(Club c in round.clubs)
+                    {
+                        NationalTeam nt = c as NationalTeam;
+                        if (!clubCourses.ContainsKey(nt))
+                        {
+                            clubCourses.Add(nt, 1);
+                        }
+                        clubCourses[nt] = i+1;
+                    }
+                }
+                foreach(KeyValuePair<NationalTeam, int> kvp in clubCourses)
+                {
+                    shapeFileMap.EditCellValue(fieldIndex, kvp.Key.country.ShapeNumber, kvp.Value);
+                }
+                shapeFileMap.Categories.Generate(fieldIndex, MapWinGIS.tkClassificationType.ctUniqueValues, _competition.rounds.Count+1);
+                shapeFileMap.Categories.ApplyExpressions();
+                MapWinGIS.ColorScheme colorScheme = new MapWinGIS.ColorScheme();
+                colorScheme.SetColors2(MapWinGIS.tkMapColor.AliceBlue, MapWinGIS.tkMapColor.DarkBlue);
+                shapeFileMap.Categories.ApplyColorScheme(MapWinGIS.tkColorSchemeType.ctSchemeGraduated, colorScheme);
             }
             map.Redraw();
         }
