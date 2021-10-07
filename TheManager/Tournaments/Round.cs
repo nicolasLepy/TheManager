@@ -134,10 +134,10 @@ namespace TheManager
         [DataMember]
         public bool isNextYear { get; set; }
 
-        public Qualification(int Ranking, int IDTour, Tournament Tournament, bool nextYear)
+        public Qualification(int Ranking, int RoundId, Tournament Tournament, bool nextYear)
         {
             ranking = Ranking;
-            roundId = IDTour;
+            roundId = RoundId;
             tournament = Tournament;
             isNextYear = nextYear;
         }

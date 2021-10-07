@@ -347,42 +347,79 @@ namespace TheManager
         /// <summary>
         /// Make the tournament inactive (when used decide to disable tournament)
         /// </summary>
-        public void RendreInactive()
+        public void DisableTournament()
         {
 
             List<Round> newRounds = new List<Round>();
+            int i = 0;
             foreach(Round t in _rounds)
             {
-                InactiveRound tour = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end);
-                newRounds.Add(tour);
+                InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end);
+                newRounds.Add(newRound);
                 foreach (Qualification q in t.qualifications)
                 {
+                    //TODO: Non optimal architecture
+                    if(t as GroupsRound != null)
+                    {
+                        GroupsRound tGroup = t as GroupsRound;
+                        for(int j = tGroup.groupsCount*(q.ranking-1); j< tGroup.groupsCount * q.ranking; j++)
+                        {
+                            newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear));
+                        }
+                    }
+                    else if(t as ChampionshipRound != null)
+                    {
+                        newRound.qualifications.Add(q);
+                    }
+                    else if(t as KnockoutRound != null)
+                    {
+                        int clubCount = t.clubs.Count ;
+                        foreach(Tournament otherTournaments in Session.Instance.Game.kernel.Competitions)
+                        {
+                            foreach(Round otherRound in otherTournaments.rounds)
+                            {
+                                foreach(Qualification otherQualifications in otherRound.qualifications)
+                                {
+                                    if(otherQualifications.tournament == this && !otherQualifications.isNextYear && otherQualifications.roundId == i)
+                                    {
+                                        clubCount++;
+                                    }
+                                }
+                            }
+                        }
+                        int numberOfGames = clubCount / 2;
+                        for(int j = numberOfGames*(q.ranking-1); j< numberOfGames * q.ranking; j++)
+                        {
+                            newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear));
+                        }
 
-                    //if(t as TourPoules != null)
+                    }
+                    else if(t as InactiveRound != null)
+                    {
+                        newRound.qualifications.Add(q);
+                    }
 
-                    //if(t as TourElimination != null)
-                    //else
-                    //tour.Qualifications.Add(q);
                 }
                 foreach (RecoverTeams re in t.recuperedTeams)
                 {
-                    tour.recuperedTeams.Add(re);
+                    newRound.recuperedTeams.Add(re);
                 }
 
                 foreach (Club c in t.clubs)
                 {
-                    tour.clubs.Add(c);
+                    newRound.clubs.Add(c);
                 }
 
                 foreach (Prize d in t.prizes)
                 {
-                    tour.prizes.Add(d);
+                    newRound.prizes.Add(d);
                 }
 
                 foreach (Rule r in t.rules)
                 {
-                    tour.rules.Add(r);
+                    newRound.rules.Add(r);
                 }
+                i++;
             }
 
             foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
@@ -391,9 +428,9 @@ namespace TheManager
                 {
                     foreach (Round t in c.rounds)
                     {
-                        for(int i = 0; i<t.recuperedTeams.Count; i++)
+                        for(int j = 0; j<t.recuperedTeams.Count; j++)
                         {
-                            RecoverTeams re = t.recuperedTeams[i];
+                            RecoverTeams re = t.recuperedTeams[j];
                             if (_rounds.Contains(re.Source))
                             {
                                 int index = _rounds.IndexOf(re.Source as Round);

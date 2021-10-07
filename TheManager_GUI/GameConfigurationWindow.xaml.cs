@@ -42,17 +42,21 @@ namespace TheManager_GUI
             l.Background = (SolidColorBrush)(new BrushConverter().ConvertFrom(t.color.ToHexa()));
             spTournament.Children.Add(l);
 
-            CheckBox cb = new CheckBox();
-            cb.IsChecked = true;
-            cb.IsEnabled = !disable;
-            cb.Content = t.name;
-            cb.Style = FindResource("StyleCheckBox") as Style;
-            cb.Foreground = Brushes.LightGreen;
-            cb.Click += CheckboxComp_Click;
-
-            _checkbox.Add(cb);
-
-            spTournament.Children.Add(cb);
+            if(!disable)
+            {
+                CheckBox cb = new CheckBox();
+                cb.IsChecked = true;
+                cb.Content = t.name;
+                cb.Style = FindResource("StyleCheckBox") as Style;
+                cb.Foreground = Brushes.LightGreen;
+                cb.Click += CheckboxComp_Click;
+                _checkbox.Add(cb);
+                spTournament.Children.Add(cb);
+            }
+            else
+            {
+                spTournament.Children.Add(ViewUtils.CreateLabel(t.name, "StyleLabel2", -1, -1));
+            }
             box.Children.Add(spTournament);
 
         }
@@ -120,9 +124,7 @@ namespace TheManager_GUI
             foreach(Continent c in g.continents)
             {
                 FillContinent(c);
-
             }
-
         }
 
         private void CheckboxComp_Click(object sender, RoutedEventArgs e)
@@ -186,7 +188,7 @@ namespace TheManager_GUI
             }
             foreach(Tournament c in toDesactivate)
             {
-                c.RendreInactive();
+                c.DisableTournament();
             }
             Windows_ChoixClub wch = new Windows_ChoixClub();
             wch.Show();
