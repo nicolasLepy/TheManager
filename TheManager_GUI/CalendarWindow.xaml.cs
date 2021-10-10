@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TheManager;
+using TheManager.Tournaments;
 
 namespace TheManager_GUI
 {
@@ -57,9 +58,15 @@ namespace TheManager_GUI
                     {
                         foreach (Round r in t.rounds)
                         {
-                            foreach (DateTime rp in r.programmation.gamesDays)
+                            foreach (GameDay gd in r.programmation.gamesDays)
                             {
-                                if (Utils.CompareDatesWithoutYear(rp, dateMonth))
+                                DateTime dt = gd.ConvertToDateTime(Session.Instance.Game.date.Year);
+                                if (Utils.IsBeforeWithoutYear(dt, r.DateInitialisationRound()))
+                                {
+                                    dt = gd.ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+                                }
+
+                                if (Utils.CompareDatesWithoutYear(dt, dateMonth))
                                 {
                                     dayTournaments.Add(t);
                                 }

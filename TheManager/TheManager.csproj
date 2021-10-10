@@ -102,6 +102,7 @@
     <Compile Include="Stadium.cs" />
     <Compile Include="Tournaments\Calendar.cs" />
     <Compile Include="Tournaments\ChampionshipRound.cs" />
+    <Compile Include="Tournaments\GameDay.cs" />
     <Compile Include="Tournaments\GroupsRound.cs" />
     <Compile Include="Tournaments\InactiveRound.cs" />
     <Compile Include="Tournaments\IRandomDrawing.cs" />

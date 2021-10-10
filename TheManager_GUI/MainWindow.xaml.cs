@@ -70,7 +70,9 @@ namespace TheManager_GUI
 
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
-            
+
+            //await CallLoadingGame();
+
 
             Game partie = new Game();
             Session.Instance.Game = partie;
@@ -79,55 +81,75 @@ namespace TheManager_GUI
             DatabaseLoader cbdd = _loader;
             //cbdd.ReformateCities();
 
+           
+            
             cbdd.LoadLanguages();
             pbLoading.Value = 2;
             lbCreationPartie.Content = "Chargement de l'environnement";
             cbdd.LoadGeography();
 
+            pbLoading.Value = 3;
+            Console.WriteLine("3");
+            lbCreationPartie.Content = "Chargement des calendriers";
+            cbdd.LoadCalendars();
+
             pbLoading.Value = 4;
+            Console.WriteLine("4");
             lbCreationPartie.Content = "Chargement des villes";
             cbdd.LoadCities();
 
             pbLoading.Value = 6;
+            Console.WriteLine("6");
             lbCreationPartie.Content = "Chargement des stades";
             cbdd.LoadStadiums();
 
             pbLoading.Value = 10;
+            Console.WriteLine("10");
             lbCreationPartie.Content = "Chargement des clubs";
             cbdd.LoadClubs();
 
             pbLoading.Value = 30;
+            Console.WriteLine("30");
             lbCreationPartie.Content = "Chargement des compétitions";
             cbdd.LoadTournaments();
 
             pbLoading.Value = 40;
+            Console.WriteLine("40");
             lbCreationPartie.Content = "Chargement des joueurs";
             cbdd.LoadPlayers();
 
             pbLoading.Value = 60;
+            Console.WriteLine("60");
             lbCreationPartie.Content = "Chargement des entraîneurs";
             cbdd.LoadManagers();
 
             pbLoading.Value = 65;
+            Console.WriteLine("65");
             lbCreationPartie.Content = "Initialisation des équipes";
             cbdd.InitTeams();
 
             pbLoading.Value = 90;
+            Console.WriteLine("90");
             lbCreationPartie.Content = "Initialisation des joueurs";
             cbdd.InitPlayers();
 
             pbLoading.Value = 95;
+            Console.WriteLine("95");
             lbCreationPartie.Content = "Chargement des médias";
             cbdd.LoadMedias();
 
             pbLoading.Value = 98;
+            Console.WriteLine("98");
             lbCreationPartie.Content = "Chargement des commentaires de match";
             cbdd.LoadGamesComments();
 
             pbLoading.Value = 100;
+            Console.WriteLine("100");
 
             Windows_ConfigurationPartie wcp = new Windows_ConfigurationPartie();
             wcp.Show();
+            
+
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)

@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -16,13 +17,13 @@ namespace TheManager
     {
 
 
-        public KnockoutRound(string name, Hour hour, List<DateTime> dates, List<TvOffset> offsets, bool twoLegs,DateTime initialisation, DateTime end) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
+        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, GameDay initialisation, GameDay end) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
         {
         }
 
         public override Round Copy()
         {
-            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
+            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
             
             foreach (Club c in this.clubs)
             {

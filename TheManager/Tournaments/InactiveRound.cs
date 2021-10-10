@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -12,12 +13,12 @@ namespace TheManager
     public class InactiveRound : Round
     {
 
-        public InactiveRound(string name, Hour hour, DateTime initialisation, DateTime end) :base(name,hour,new List<DateTime>(),new List<TvOffset>(),initialisation,end,false,0)
+        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end) :base(name,hour,new List<GameDay>(),new List<TvOffset>(),initialisation,end,false,0)
         { }
 
         public override Round Copy()
         {
-            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
+            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -69,16 +70,17 @@ namespace TheManager
             //Simuler des gains d'argent de matchs pour les clubs (affluence)
 
 
-            DateTime fin = new DateTime(programmation.end.Year, programmation.end.Month, programmation.end.Day);
-            if (fin.Month < programmation.initialisation.Month)
+            DateTime fin = DateEndRound();
+            DateTime dateInitialisationRound = DateInitialisationRound();
+            if (fin.Month < dateInitialisationRound.Month)
             {
                 fin = fin.AddYears(1);
             }
-            else if (fin.Month == programmation.initialisation.Month && fin.Day < programmation.initialisation.Day)
+            else if (fin.Month == dateInitialisationRound.Month && fin.Day < dateInitialisationRound.Day)
             {
                 fin = fin.AddYears(1);
             }
-            int matchesCount = (int)((fin - programmation.initialisation).TotalDays) / 14;
+            int matchesCount = (int)((fin - dateInitialisationRound).TotalDays) / 14;
             foreach (Club c in ranking)
             {
                 CityClub cv = c as CityClub;

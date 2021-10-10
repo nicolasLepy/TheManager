@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -49,6 +50,8 @@ namespace TheManager
         private List<Continent> _continents;
         [DataMember]
         private List<Language> _languages;
+        [DataMember]
+        private List<GenericCalendar> _genericCalendars;
         [DataMember]
         private List<Media> _medias;
         [DataMember]
@@ -106,6 +109,22 @@ namespace TheManager
             _matchCommentaries.Add(new MatchEventCommentary(GameEvent.RedCard));
             _matchCommentaries.Add(new MatchEventCommentary(GameEvent.Shot));
             _freeJournalists = new List<Journalist>();
+            _genericCalendars = new List<GenericCalendar>();
+        }
+
+        public GenericCalendar GetGenericCalendar(string name)
+        {
+            GenericCalendar res = null;
+
+            foreach(GenericCalendar gc in _genericCalendars)
+            {
+                if (gc.Name == name)
+                {
+                    res = gc;
+                }
+            }
+
+            return res;
         }
 
         public City String2City(string name)
@@ -505,6 +524,11 @@ namespace TheManager
                     cem.commentaries.Add(commentary);
                 }
             }
+        }
+
+        public void AddGenericCalendar(GenericCalendar calendar)
+        {
+            _genericCalendars.Add(calendar);
         }
 
         public string Commentary(MatchEvent matchEvent)

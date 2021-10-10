@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using TheManager.Comparators;
 using TheManager.Exportation;
 using MathNet.Numerics.Distributions;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -114,7 +115,8 @@ namespace TheManager
         public Game()
         {
             _articles = new List<Article>();
-            _date = new DateTime(2018, 07, 01);
+            GameDay beginSeasons = new GameDay(25, true, 0, 0);
+            _date = beginSeasons.ConvertToDateTime(2021);
             _kernel = new Kernel();
             _options = new Options();
             _club = null;
@@ -123,7 +125,7 @@ namespace TheManager
 
         public void Exports(Tournament t)
         {
-            if (Utils.CompareDatesWithoutYear(t.seasonBeginning.AddDays(-7), _date) && options.tournamentsToExport.Contains(t))
+            if (Utils.CompareDatesWithoutYear(t.seasonBeginning.ConvertToDateTime().AddDays(-7), _date) && options.tournamentsToExport.Contains(t))
             {
                 Exporteur.Exporter(t);
             }
@@ -503,6 +505,19 @@ namespace TheManager
         {
             _date = _date.AddDays(1);
 
+            foreach(Tournament t in _kernel.Competitions)
+            {
+                Console.WriteLine("=======================");
+                Console.WriteLine(t.name);
+                Console.WriteLine("Initialisation : " + t.seasonBeginning.ConvertToDateTime().ToString());
+                foreach (Round r in t.rounds)
+                {
+                    Console.WriteLine(r.name);
+                    Console.WriteLine("Begin = " + r.DateInitialisationRound().ToString());
+                    Console.WriteLine("End = " + r.DateEndRound().ToString());
+                }
+            }
+
             List<Match> toPlay = new List<Match>();
             List<Match> clubMatchs = new List<Match>();
 
@@ -547,17 +562,18 @@ namespace TheManager
                 }
                 foreach(Round t in c.rounds)
                 {
-                    if(Utils.CompareDatesWithoutYear(t.programmation.end, _date))
+                    
+                    if(Utils.CompareDates(t.DateEndRound(), _date))
                     {
                         t.QualifyClubs();
                     }
-                    if (Utils.CompareDatesWithoutYear(t.programmation.initialisation, _date))
+                    if (Utils.CompareDates(t.DateInitialisationRound(), _date))
                     {
                         c.NextRound();
                     }
                 }
 
-                if(Utils.CompareDatesWithoutYear(c.seasonBeginning,_date))
+                if (Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(),_date))
                 {
                     c.Reset();
                 }
@@ -587,7 +603,7 @@ namespace TheManager
             }
 
             //Yearly update of clubs (sponsors, formation facilities, contracts)
-            if (date.Day == 1 && date.Month == 7)
+            if (date.Day == 16 && date.Month == 6)
             {
                 UpdateGameUniverseData();
                 UpdateClubs();
@@ -600,7 +616,7 @@ namespace TheManager
             }
 
             //Free players can be retired
-            if (date.Day == 2 && date.Month == 7)
+            if (date.Day == 17 && date.Month == 6)
             {
                 _kernel.RetirementOfFreePlayers();
             }

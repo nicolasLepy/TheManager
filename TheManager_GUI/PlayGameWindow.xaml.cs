@@ -54,7 +54,6 @@ namespace TheManager_GUI
                         _media.AjouterSon("jingle", false);
                     }
 
-
                     //Refresh en cas de but
                     Matchs();
                     Classement();

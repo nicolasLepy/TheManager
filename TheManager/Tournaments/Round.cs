@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -61,27 +62,27 @@ namespace TheManager
         [DataMember]
         private Hour _defaultHour;
         [DataMember]
-        private List<DateTime> _gamesDays;
+        private List<GameDay> _gamesDays;
         [DataMember]
         private List<TvOffset> _tvScheduling;
         [DataMember]
-        private DateTime _initialisation;
+        private GameDay _initialisation;
         [DataMember]
-        private DateTime _end;
+        private GameDay _end;
         [DataMember]
         private int _lastMatchDaysSameDayNumber;
 
         public Hour defaultHour { get => _defaultHour; }
-        public List<DateTime> gamesDays { get => _gamesDays; }
+        public List<GameDay> gamesDays { get => _gamesDays; }
         public List<TvOffset> tvScheduling { get => _tvScheduling; }
-        public DateTime initialisation { get => _initialisation; }
-        public DateTime end { get => _end; }
+        public GameDay initialisation { get => _initialisation; }
+        public GameDay end { get => _end; }
         public int lastMatchDaysSameDayNumber { get => _lastMatchDaysSameDayNumber; }
 
-        public RoundProgrammation(Hour hour, List<DateTime> days, List<TvOffset> tvSchedule, DateTime initialisation, DateTime end, int lastDaySameDay)
+        public RoundProgrammation(Hour hour, List<GameDay> days, List<TvOffset> tvSchedule, GameDay initialisation, GameDay end, int lastDaySameDay)
         {
             _defaultHour = hour;
-            _gamesDays = new List<DateTime>(days);
+            _gamesDays = new List<GameDay>(days);
             _tvScheduling = tvSchedule;
             _initialisation = initialisation;
             _end = end;
@@ -275,7 +276,7 @@ namespace TheManager
             }
         }
 
-        public Round(string name, Hour hour, List<DateTime> dates, List<TvOffset> tvOffsets, DateTime initialisation, DateTime end, bool twoLegs, int lastDaysSameDay)
+        public Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int lastDaysSameDay)
         {
             _name = name;
             _clubs = new List<Club>();
@@ -286,6 +287,35 @@ namespace TheManager
             _recuperedTeams = new List<RecoverTeams>();
             _rules = new List<Rule>();
             _prizes = new List<Prize>();
+        }
+
+
+        public DateTime DateInitialisationRound()
+        {
+            int year = Session.Instance.Game.date.Year;
+            if (_programmation.initialisation.WeekNumber < Tournament.seasonBeginning.WeekNumber)
+            {
+                year = year + 1;
+            }
+            if(Utils.IsBeforeWithoutYear(Session.Instance.Game.date, Tournament.seasonBeginning.ConvertToDateTime()))
+            {
+                year = year - 1;
+            }
+            return _programmation.initialisation.ConvertToDateTime(year).AddDays(-1);
+        }
+
+        public DateTime DateEndRound()
+        {
+            int year = Session.Instance.Game.date.Year;
+            if (_programmation.end.WeekNumber < Tournament.seasonBeginning.WeekNumber)
+            {
+                year = year + 1;
+            }
+            if (Utils.IsBeforeWithoutYear(Session.Instance.Game.date, Tournament.seasonBeginning.ConvertToDateTime()))
+            {
+                year = year - 1;
+            }
+            return _programmation.end.ConvertToDateTime(year).AddDays(1);
         }
 
         /// <summary>

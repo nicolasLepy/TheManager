@@ -8,6 +8,7 @@ using System.Windows;
 using System.Text;
 using TheManager.Exportation;
 using System.Windows.Media;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -66,7 +67,7 @@ namespace TheManager
         [DataMember]
         private string _logo;
         [DataMember]
-        private DateTime _seasonBeginning;
+        private GameDay _seasonBeginning;
         [DataMember]
         private string _shortName;
         [DataMember]
@@ -94,7 +95,7 @@ namespace TheManager
         [DataMember]
         public int currentRound { get; set; }
 
-        public DateTime seasonBeginning => _seasonBeginning;
+        public GameDay seasonBeginning => _seasonBeginning;
         public string shortName => _shortName;
         public Dictionary<int, Tournament> previousEditions => _previousEditions;
         public TournamentStatistics statistics { get => _statistics; set => _statistics = value; }
@@ -110,7 +111,7 @@ namespace TheManager
         /// </summary>
         public int level => _level;
 
-        public Tournament(string name, string logo, DateTime seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color)
+        public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color)
         {
             _rounds = new List<Round>();
             _name = name;

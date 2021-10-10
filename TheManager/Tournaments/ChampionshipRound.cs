@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -12,13 +13,13 @@ namespace TheManager
     public class ChampionshipRound : Round
     {
 
-        public ChampionshipRound(string name, Hour hour, List<DateTime> days, bool twoLegs, List<TvOffset> offsets, DateTime initialisation, DateTime end, int lastDaySameDay) : base(name, hour, days, offsets, initialisation,end, twoLegs, lastDaySameDay)
+        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, List<TvOffset> offsets, GameDay initialisation, GameDay end, int lastDaySameDay) : base(name, hour, days, offsets, initialisation,end, twoLegs, lastDaySameDay)
         {
         }
 
         public override Round Copy()
         {
-            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), twoLegs, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, programmation.lastMatchDaysSameDayNumber);
+            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, programmation.lastMatchDaysSameDayNumber);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -39,7 +40,7 @@ namespace TheManager
         public override void Initialise()
         {
             AddTeamsToRecover();
-            _matches = Calendar.GenerateCalendar(this.clubs, this.programmation, twoLegs);
+            _matches = Calendar.GenerateCalendar(this.clubs, this, twoLegs);
 
         }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -50,7 +51,7 @@ namespace TheManager
             _groupsNames.Add(name);
         }
 
-        public GroupsRound(string name, Hour hour, List<DateTime> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, DateTime initialisation, DateTime end, RandomDrawingMethod randomDrawingMethod) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
+        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod randomDrawingMethod) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -65,7 +66,7 @@ namespace TheManager
 
         public override Round Copy()
         {
-            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<DateTime>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod);
+            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -94,7 +95,7 @@ namespace TheManager
             SetGroups();
             for (int i = 0; i < _groupsNumber; i++)
             {
-                _matches.AddRange(Calendar.GenerateCalendar(_groups[i], _programmation, twoLegs));
+                _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this, twoLegs));
             }
 
         }
