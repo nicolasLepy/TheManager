@@ -505,18 +505,22 @@ namespace TheManager
         {
             _date = _date.AddDays(1);
 
+            /*
             foreach(Tournament t in _kernel.Competitions)
             {
-                Console.WriteLine("=======================");
-                Console.WriteLine(t.name);
-                Console.WriteLine("Initialisation : " + t.seasonBeginning.ConvertToDateTime().ToString());
-                foreach (Round r in t.rounds)
+                if(t.IsInternational())
                 {
-                    Console.WriteLine(r.name);
-                    Console.WriteLine("Begin = " + r.DateInitialisationRound().ToString());
-                    Console.WriteLine("End = " + r.DateEndRound().ToString());
+                    Console.WriteLine("=======================");
+                    Console.WriteLine(t.name);
+                    Console.WriteLine("Initialisation : " + t.seasonBeginning.ConvertToDateTime().ToString());
+                    foreach (Round r in t.rounds)
+                    {
+                        Console.WriteLine(r.name);
+                        Console.WriteLine("Begin = " + r.DateInitialisationRound().ToString());
+                        Console.WriteLine("End = " + r.DateEndRound().ToString());
+                    }
                 }
-            }
+            }*/
 
             List<Match> toPlay = new List<Match>();
             List<Match> clubMatchs = new List<Match>();
@@ -563,17 +567,25 @@ namespace TheManager
                 foreach(Round t in c.rounds)
                 {
                     
-                    if(Utils.CompareDates(t.DateEndRound(), _date))
+                    if(c.remainingYears == c.periodicity)
                     {
-                        t.QualifyClubs();
+                        if (Utils.CompareDates(t.DateEndRound(), _date))
+                        {
+                            t.QualifyClubs();
+                        }
+                        if (Utils.CompareDates(t.DateInitialisationRound(), _date))
+                        {
+                            c.NextRound();
+                        }
                     }
-                    if (Utils.CompareDates(t.DateInitialisationRound(), _date))
+                    /*
+                    else
                     {
-                        c.NextRound();
-                    }
+                        Console.WriteLine(c.name + " is not activated this year");
+                    }*/
                 }
 
-                if (Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(),_date))
+                if (Utils.CompareDates(c.seasonBeginning.ConvertToDateTime(),_date))
                 {
                     c.Reset();
                 }

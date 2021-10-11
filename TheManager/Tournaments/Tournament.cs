@@ -100,6 +100,9 @@ namespace TheManager
         public Dictionary<int, Tournament> previousEditions => _previousEditions;
         public TournamentStatistics statistics { get => _statistics; set => _statistics = value; }
 
+        public int remainingYears => _remainingYears;
+        public int periodicity => _periodicity;
+
         /// <summary>
         /// Is a championship (L1, L2)
         /// Fixed : if it's a championship, the main round is the round at index 0

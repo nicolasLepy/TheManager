@@ -682,15 +682,6 @@ namespace TheManager
         
         public void LoadTournaments()
         {
-
-            /*
-             * 
-             *             foreach(string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/clubs/"))
-            {
-                //XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs/clubs.xml");
-                
-             */
-
             foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/comp/"))
             {
                 XDocument doc = XDocument.Load(xmlFile);
