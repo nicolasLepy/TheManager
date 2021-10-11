@@ -103,7 +103,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | GUI                                                                       | 
 | ------------------------------------------------------------------------- |
 | Sample GUI                                                                | 
-| Team composition                                                          |
 | Custom themes                                                             |
 
 
@@ -119,7 +118,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Search / observe players                                              | 🟡 In progress |
 | Negociate contracts / transferts with other clubs                     | 🔴 Not started |
 | **Environment**                                                       |                 |
-| Dynamic dates, from one season to an other                            | 🔴 Not started |
 | A system for transferring players between clubs                       | 🟡 In progress |
 | National Directorate of Management Control (DNCG)                     | 🟡 In progress |
 | **Tournaments**                                                       |                 |

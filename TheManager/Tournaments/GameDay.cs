@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -49,39 +50,29 @@ namespace TheManager.Tournaments
 
         public DateTime ConvertToDateTime(int year)
         {
-            DateTime firstSaturday = new DateTime(year + _yearOffset, 1, 1, 0, 0, 0);
-            switch (firstSaturday.DayOfWeek)
-            {
-                case DayOfWeek.Thursday:
-                    firstSaturday = firstSaturday.AddDays(2);
-                    break;
-                case DayOfWeek.Friday:
-                    firstSaturday = firstSaturday.AddDays(3);
-                    break;
-                case DayOfWeek.Saturday:
-                    firstSaturday = firstSaturday.AddDays(4);
-                    break;
-                case DayOfWeek.Sunday:
-                    firstSaturday = firstSaturday.AddDays(5);
-                    break;
-                case DayOfWeek.Monday:
-                    firstSaturday = firstSaturday.AddDays(6);
-                    break;
-                case DayOfWeek.Tuesday:
-                    firstSaturday = firstSaturday.AddDays(7);
-                    break;
-                case DayOfWeek.Wednesday:
-                    firstSaturday = firstSaturday.AddDays(8);
-                    break;
-            }
-            firstSaturday = firstSaturday.AddDays(((_weekNumber - 1) * 7) - 1);
-            if(_midWeekGame)
-            {
-                firstSaturday = firstSaturday.AddDays(4);
-            }
-            firstSaturday = firstSaturday.AddDays(DayOffset);
-            return firstSaturday;
-        }
 
+            DateTime jan1 = new DateTime(year + _yearOffset, 1, 1);
+            int daysOffset = DayOfWeek.Tuesday - jan1.DayOfWeek;
+
+            DateTime firstMonday = jan1.AddDays(daysOffset);
+
+            var cal = CultureInfo.CurrentCulture.Calendar;
+            int firstWeek = cal.GetWeekOfYear(jan1, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+
+            int weekNum = _weekNumber;
+            if (firstWeek <= 1)
+            {
+                weekNum -= 1;
+            }
+
+            DateTime res = firstMonday.AddDays(weekNum * 7 + 5 - 1);
+            if (_midWeekGame)
+            {
+                res = res.AddDays(4);
+            }
+            res = res.AddDays(_dayOffset);
+            return res;
+            
+        }
     }
 }
