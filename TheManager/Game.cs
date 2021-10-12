@@ -530,7 +530,6 @@ namespace TheManager
                 m.FreeJournalists();
             }
 
-            
             foreach (Tournament c in _kernel.Competitions)
             {
                 List<Match> todayGames = new List<Match>();

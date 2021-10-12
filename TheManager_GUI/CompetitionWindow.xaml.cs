@@ -730,7 +730,10 @@ namespace TheManager_GUI
                         attendances[c] += m.attendance;
                     }
                 }
-                attendances[c] /= count;
+                if(count > 0)
+                {
+                    attendances[c] /= count;
+                }
             }
 
             List<KeyValuePair<Club, int>> list = attendances.ToList();

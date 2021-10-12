@@ -1044,7 +1044,7 @@ namespace TheManager
                         {
                             string firstName = nationalTeam.country.language.GetFirstName();
                             string lastName = nationalTeam.country.language.GetLastName();
-                            DateTime birthday = new DateTime(Session.Instance.Random(Utils.beginningYear-30, Utils.beginningYear - 18) , Session.Instance.Random(1,13), Session.Instance.Random(1,29));
+                            DateTime birthday = new DateTime(Session.Instance.Random(Utils.beginningYear-30, Utils.beginningYear - 18) , Session.Instance.Random(1,13), Session.Instance.Random(1,28));
                             Position p;
                             switch(Session.Instance.Random(1,10))
                             {
@@ -1071,13 +1071,6 @@ namespace TheManager
                 }
             }
             _kernel.NationalTeamsCall();
-        }
-
-        private DateTime String2Date(string date)
-        {
-            string[] split = date.Split('/');
-            DateTime d = new DateTime(2000, int.Parse(split[1]), int.Parse(split[0]));
-            return d;
         }
 
         private Hour String2Hour(string hour)

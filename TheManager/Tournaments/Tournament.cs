@@ -152,12 +152,18 @@ namespace TheManager
             
                 UpdateRecords();
                 Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color);
+
+                int gamesCount = 0;
                 foreach (Round r in rounds)
                 {
                     copyForArchives.rounds.Add(r.Copy());
+                    gamesCount += r.matches.Count;
                 }
                 copyForArchives.statistics = statistics;
-                _previousEditions.Add(Session.Instance.Game.date.Year, copyForArchives);
+                if(_periodicity == 1 || (_periodicity > 1 && gamesCount > 0))
+                {
+                    _previousEditions.Add(_periodicity == 1 ? Session.Instance.Game.date.Year : Session.Instance.Game.date.Year - periodicity, copyForArchives);
+                }
                 for (int i = 0; i<rounds.Count; i++)
                 {
 

@@ -233,7 +233,7 @@ namespace TheManager
             int birthYear = Session.Instance.Random(Session.Instance.Game.date.Year - maxAge, Session.Instance.Game.date.Year - minAge+1);
 
             //Method Level -> Potential
-            int level = Session.Instance.Random(formationFacilities - 18, formationFacilities + 18) + potentialOffset;
+            int level = Session.Instance.Random(formationFacilities - 12, formationFacilities + 12) + potentialOffset;
             if (level < 1)
             {
                 level = 1;
