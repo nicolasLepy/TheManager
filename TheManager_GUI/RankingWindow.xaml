@@ -15,11 +15,14 @@
 				</Button>
 			</StackPanel>
 			<Label Style="{StaticResource StyleLabel1}" Content="Classement FIFA"/>
-			<ScrollViewer VerticalScrollBarVisibility="Auto" Height="700">
-				<StackPanel Orientation="Vertical" Name="spRanking">
+			<Border Style="{StaticResource StyleBorderStackPanel}" Margin="20,0,20,0">
 
-				</StackPanel>
-			</ScrollViewer>
+				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="700">
+					<StackPanel Orientation="Vertical" Name="spRanking">
+
+					</StackPanel>
+				</ScrollViewer>
+			</Border>
 		</StackPanel>
     </Grid>
 </Window>

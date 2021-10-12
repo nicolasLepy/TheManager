@@ -46,7 +46,7 @@ namespace TheManager
         /// <returns></returns>
         public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
-            List<Club> clubs = new List<Club>();
+            List<NationalTeam> nationalsTeams = new List<NationalTeam>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
             {
                 NationalTeam sn = c as NationalTeam;
@@ -54,27 +54,30 @@ namespace TheManager
                 {
                     if (_countries.Contains(sn.country))
                     {
-                        clubs.Add(sn);
+                        nationalsTeams.Add(sn);
                     }
                 }
             }
             List<Club> res = new List<Club>();
             if (method == RecuperationMethod.Best)
             {
-                clubs.Sort(new ClubComparator(ClubAttribute.LEVEL, false));            
+                //nationalsTeams.Sort(new ClubComparator(ClubAttribute.LEVEL, false));            
+                nationalsTeams.Sort(new NationsFifaRankingComparator());
             }
             else if (method == RecuperationMethod.Worst)
             {
-                clubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
+                nationalsTeams.Sort(new NationsFifaRankingComparator(true));
             }
             else if (method == RecuperationMethod.Randomly)
-            {                
-                clubs = Utils.ShuffleList<Club>(clubs);
+            {
+                nationalsTeams = Utils.ShuffleList<NationalTeam>(nationalsTeams);
             }
 
+            Console.WriteLine("Select " + number + " teams with " + method + " method");
             for (int i = 0; i < number; i++)
             {
-                res.Add(clubs[i]);
+                res.Add(nationalsTeams[i]);
+                Console.WriteLine(nationalsTeams[i].name + " selected");
             }
             return res;
         }

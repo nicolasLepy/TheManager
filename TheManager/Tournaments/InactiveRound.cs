@@ -37,12 +37,24 @@ namespace TheManager
         /// </summary>
         public override void DistributeGrants()
         {
-            // Not implemented yet
+            // TODO: Not implemented yet
         }
 
         public override void Initialise()
         {
-            // Nothing to do because the inactive round show no information on its progress
+            if(!Tournament.IsInternational())
+            {
+                AddTeamsToRecover();
+            }
+            //If it's an international tournament (national teams or continental cup eg), we add all teams to recover for all rounds now because ranking can fluctuate after and the same team could be selected for 2 differents rounds
+            else if (Tournament.rounds[0] == this)
+            {
+                foreach (Round r in Tournament.rounds)
+                {
+                    r.AddTeamsToRecover();
+                }
+            }
+
         }
 
         public override List<Match> NextMatchesDay()

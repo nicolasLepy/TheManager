@@ -22,6 +22,20 @@ namespace TheManager
             try
             {
                 pot.Sort(new ClubComparator(ClubAttribute.LEVEL, false));
+                if(pot[0] as NationalTeam != null)
+                {
+                    List<NationalTeam> nationalsTeams = new List<NationalTeam>();
+                    foreach(Club c in pot)
+                    {
+                        nationalsTeams.Add(c as NationalTeam);
+                    }
+                    nationalsTeams.Sort(new NationsFifaRankingComparator(false));
+                    pot.Clear();
+                    foreach(NationalTeam nt in nationalsTeams)
+                    {
+                        pot.Add(nt);
+                    }
+                }
             }
             catch
             {

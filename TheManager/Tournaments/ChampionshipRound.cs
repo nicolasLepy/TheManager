@@ -39,7 +39,18 @@ namespace TheManager
 
         public override void Initialise()
         {
-            AddTeamsToRecover();
+            if(!Tournament.IsInternational())
+            {
+                AddTeamsToRecover();
+            }
+            //If it's an international tournament (national teams or continental cup eg), we add all teams to recover for all rounds now because ranking can fluctuate after and the same team could be selected for 2 differents rounds
+            else if(Tournament.rounds[0] == this)
+            {
+                foreach(Round r in Tournament.rounds)
+                {
+                    r.AddTeamsToRecover();
+                }
+            }
             _matches = Calendar.GenerateCalendar(this.clubs, this, twoLegs);
 
         }
