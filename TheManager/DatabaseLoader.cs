@@ -657,7 +657,6 @@ namespace TheManager
                         int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
                         string logo = e2.Attribute("logo").Value;
                         logo = country.Flag;
-                        float coefficient = float.Parse(e2.Attribute("coefficient").Value);
 
                         string goalMusic = "";
                         if (e2.Attribute("musiqueBut") != null)
@@ -668,10 +667,15 @@ namespace TheManager
                         {
                             goalMusic = "null";
                         }
+                        float points = 0;
+                        if (e2.Attribute("points") != null)
+                        {
+                            points = float.Parse(e2.Attribute("points").Value);
+                        }
 
                         Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
-                        Club c = new NationalTeam(name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, coefficient, country, goalMusic);
+                        Club c = new NationalTeam(name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalMusic, points);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }

@@ -12,7 +12,7 @@
 			<StackPanel Margin="3" Orientation="Vertical" DockPanel.Dock="Top" Height="820">
 
 				<StackPanel Orientation="Horizontal">
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="1295">
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="1260">
 						<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content="Avancer" Click="BtnAvancer_Click"/>
 						<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 15 juin" Click="BtnSimuler_Click"/>
 						<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 10 ans" Click="BtnSimuler2_Click"/>
@@ -21,6 +21,9 @@
 
 					</StackPanel>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+						<Button Name="btnRanking" Click="BtnRanking_Click">
+							<Image Name="imgBtnRanking" Source="Images/ranking.png" Width="25" Height="25" Margin="3"/>
+						</Button>
 						<Button Name="btnSearch" Click="BtnSearch_Click">
 							<Image Name="imgBtnSearch" Source="Images/search.png" Width="25" Height="25" Margin="3"/>
 						</Button>
@@ -98,10 +101,10 @@
 									</StackPanel>
 								</StackPanel>
 							</Border>
-							<Border Style="{StaticResource StyleBorderStackPanel}" Height="180" Margin="10">
+							<Border Style="{StaticResource StyleBorderStackPanel}" Height="170" Margin="10">
 								<StackPanel Orientation="Vertical">
 									<Label HorizontalAlignment="Center" Content="NEWS" FontSize="16" Style="{StaticResource StyleLabel2}"/>
-									<ScrollViewer VerticalScrollBarVisibility="Auto" Height="135">
+									<ScrollViewer VerticalScrollBarVisibility="Auto" Height="125">
 										<StackPanel Orientation="Vertical" Name="spNews">
 										</StackPanel>
 									</ScrollViewer>

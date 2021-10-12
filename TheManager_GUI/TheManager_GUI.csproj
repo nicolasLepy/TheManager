@@ -79,6 +79,9 @@
     <Compile Include="MediaWindow.xaml.cs">
       <DependentUpon>MediaWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RankingWindow.xaml.cs">
+      <DependentUpon>RankingWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SearchPlayersWindow.xaml.cs">
       <DependentUpon>SearchPlayersWindow.xaml</DependentUpon>
     </Compile>
@@ -149,6 +152,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="MediaWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="RankingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

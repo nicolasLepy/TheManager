@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using TheManager.Comparators;
 using TheManager.Tournaments;
 
 namespace TheManager
@@ -543,6 +544,23 @@ namespace TheManager
             }
 
             return res;
+        }
+
+        public List<NationalTeam> FifaRanking()
+        {
+            List<NationalTeam> nationalsTeams = new List<NationalTeam>();
+            foreach(Club c in _clubs)
+            {
+                NationalTeam nt = c as NationalTeam;
+                if (nt != null)
+                {
+                    nationalsTeams.Add(nt);
+                }
+            }
+
+            nationalsTeams.Sort(new NationsFifaRankingComparator());
+
+            return nationalsTeams;
         }
 
     }

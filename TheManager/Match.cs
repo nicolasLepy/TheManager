@@ -871,7 +871,20 @@ namespace TheManager
             UpdatePlayersMatchPlayedStat(compo);
         }
 
-        public void UpdateRecords()
+        private void EndOfGame()
+        {
+            UpdateRecords();
+            if(home as NationalTeam != null)
+            {
+                (home as NationalTeam).UpdateFifaPointsAfterGame(this);
+            }
+            if (away as NationalTeam != null)
+            {
+                (away as NationalTeam).UpdateFifaPointsAfterGame(this);
+            }
+        }
+
+        private void UpdateRecords()
         {
             home.UpdateRecords(this);
             away.UpdateRecords(this);
@@ -923,7 +936,7 @@ namespace TheManager
                     else
                     {
                         lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
-                        UpdateRecords();
+                        EndOfGame();
 
                     }
                 }
@@ -934,7 +947,7 @@ namespace TheManager
                         PlayPenaltyShootout();
                     }
                     lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
-                    UpdateRecords();
+                    EndOfGame();
                 }
             }
 
@@ -980,7 +993,7 @@ namespace TheManager
                 Article article = new Article(res, "", new DateTime(day.Year, day.Month, day.Day), 2);
                 Session.Instance.Game.articles.Add(article);
             }
-            UpdateRecords();
+            EndOfGame();
         }
 
         private bool SecondLegIsDraw()

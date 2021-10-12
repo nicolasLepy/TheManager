@@ -605,6 +605,7 @@ namespace TheManager
                 else{
                     m.Play();
                 }
+
             }
 
 
@@ -664,6 +665,11 @@ namespace TheManager
                     {
                         cv.PayWages();
                         cv.SponsorGrant();
+                    }
+                    NationalTeam nt = c as NationalTeam;
+                    if(nt != null)
+                    {
+                        nt.UpdateFifaPoints();
                     }
                 }
             }

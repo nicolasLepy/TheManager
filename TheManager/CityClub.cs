@@ -561,7 +561,7 @@ namespace TheManager
                     begin = begin.AddHours(Session.Instance.Random(12, 22));
                     Match game = new Match(this, adv, begin, false);
                     game.Reprogram(0);
-                    if (Utils.CompareDates(game.day, begin) && game.day.CompareTo(Session.Instance.Game.date.AddDays(1)) > 0)
+                    if (Utils.CompareDates(game.day, begin) && game.day.CompareTo(Session.Instance.Game.date.AddDays(1)) > 0 && adv != this)
                     {
                         Session.Instance.Game.kernel.AddFriendlyGame(game);
                     }

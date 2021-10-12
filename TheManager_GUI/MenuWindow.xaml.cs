@@ -41,6 +41,7 @@ namespace TheManager_GUI
             imgBtnSave.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\save.png"));
             imgBtnSearch.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\search.png"));
             imgBtnOptions.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\options.png"));
+            imgBtnRanking.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\ranking.png"));
 
             _partie = Session.Instance.Game;
 
@@ -534,6 +535,12 @@ namespace TheManager_GUI
                 }
                 Calendrier(r);
             }
+        }
+
+        private void BtnRanking_Click(object sender, RoutedEventArgs e)
+        {
+            RankingWindow rw = new RankingWindow();
+            rw.Show();
         }
 
         private void BtnCompetition_Click(object sender, RoutedEventArgs e)

@@ -58,6 +58,7 @@
     <Compile Include="Comparators\ClubComparator.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Comparators\JournalistOffsetComparator.cs" />
+    <Compile Include="Comparators\NationsFifaRankingComparator.cs" />
     <Compile Include="Comparators\QualificationComparator.cs" />
     <Compile Include="DatabaseLoader.cs" />
     <Compile Include="Club.cs" />
