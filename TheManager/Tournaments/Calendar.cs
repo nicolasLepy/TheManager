@@ -77,20 +77,12 @@ namespace TheManager
         }
 
         private static List<int> _level2;
-        private static List<int> _level3;
-        private static List<int> _level4;
-        private static List<int> _level5;
         private static List<int> _level6;
-        private static List<int> _level7;
 
         private static void ConstructTables()
         {
             _level2 = new List<int>();
-            _level3 = new List<int>();
-            _level4 = new List<int>();
-            _level5 = new List<int>();
             _level6 = new List<int>();
-            _level7 = new List<int>();
             for (int i = 0; i < 2; i++)
             {
                 _level2.Add(18000);
@@ -361,6 +353,10 @@ namespace TheManager
             }
             if(twoLegged)
             {
+                if(ghost)
+                {
+                    gamesPerRound--;
+                }
                 //Part 1 : manager Journey [2-end]
                 int nbGamesFirstRound = res.Count / gamesPerRound;
                 List<Match> games = new List<Match>();
@@ -370,7 +366,6 @@ namespace TheManager
                     for(int j = 0; j< gamesPerRound; j++)
                     {
                         Match mbase = res[gamesPerRound * i + j];
-
 
                         DateTime jour = programmation.gamesDays[nbGamesFirstRound + i - 1].ConvertToDateTime(Session.Instance.Game.date.Year);
                         if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
@@ -396,7 +391,6 @@ namespace TheManager
                 {
                     Match mbase = res[i];
 
-
                     DateTime jour = programmation.gamesDays[programmation.gamesDays.Count - 1].ConvertToDateTime(Session.Instance.Game.date.Year);
                     if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
                     {
@@ -413,7 +407,9 @@ namespace TheManager
                 {
                     TVSchedule(games, programmation.tvScheduling, nbGamesFirstRound*2);
                 }
+
             }
+
             return res;
         }
 

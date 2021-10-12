@@ -134,13 +134,16 @@ namespace TheManager
         public Tournament tournament { get; set; }
         [DataMember]
         public bool isNextYear { get; set; }
+        [DataMember]
+        public int qualifies { get; set; }
 
-        public Qualification(int Ranking, int RoundId, Tournament Tournament, bool nextYear)
+        public Qualification(int Ranking, int RoundId, Tournament Tournament, bool nextYear, int Qualifies)
         {
             ranking = Ranking;
             roundId = RoundId;
             tournament = Tournament;
             isNextYear = nextYear;
+            qualifies = Qualifies;
         }
 
         public bool Equals(Qualification other)

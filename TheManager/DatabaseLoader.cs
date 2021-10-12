@@ -942,9 +942,14 @@ namespace TheManager
                             {
                                 int tourId = int.Parse(e4.Attribute("id_tour").Value);
                                 bool nextYear = false;
+                                int qualifies = 0;
                                 if (e4.Attribute("anneeSuivante") != null)
                                 {
                                     nextYear = e4.Attribute("anneeSuivante").Value == "oui";
+                                }
+                                if (e4.Attribute("qualifies") != null)
+                                {
+                                    qualifies = int.Parse(e4.Attribute("qualifies").Value);
                                 }
                                 Tournament targetedTournament = null;
                                 if (e4.Attribute("competition") != null)
@@ -963,7 +968,7 @@ namespace TheManager
                                 {
                                     int ranking = int.Parse(e4.Attribute("classement").Value);
 
-                                    Qualification qu = new Qualification(ranking, tourId, targetedTournament, nextYear);
+                                    Qualification qu = new Qualification(ranking, tourId, targetedTournament, nextYear, qualifies);
                                     round.qualifications.Add(qu);
                                 }
                                 else
@@ -972,7 +977,7 @@ namespace TheManager
                                     int to = int.Parse(e4.Attribute("a").Value);
                                     for (int j = from; j <= to; j++)
                                     {
-                                        Qualification qu = new Qualification(j, tourId, targetedTournament, nextYear);
+                                        Qualification qu = new Qualification(j, tourId, targetedTournament, nextYear, qualifies);
                                         round.qualifications.Add(qu);
                                     }
                                 }

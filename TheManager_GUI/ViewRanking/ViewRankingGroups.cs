@@ -123,6 +123,10 @@ namespace TheManager_GUI.VueClassement
                         {
                             color = "cl1Color";
                         }
+                        if (q.tournament.level == roundLevel && q.tournament != _round.Tournament && q.qualifies > 0)
+                        {
+                            color = "cl2Color";
+                        }
                         else if (q.tournament.level == roundLevel && q.tournament == _round.Tournament)
                         {
                             color = "cl2Color";
@@ -135,7 +139,10 @@ namespace TheManager_GUI.VueClassement
                         if (color != "backgroundColor")
                         {
                             SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-                            (spRanking.Children[  spRanking.Children.Count-_round.Ranking(poule).Count + index-1] as StackPanel).Background = lineColor;
+                            if(_round.clubs.Count > 0)
+                            {
+                                (spRanking.Children[spRanking.Children.Count - _round.Ranking(poule).Count + index - 1] as StackPanel).Background = lineColor;
+                            }
                         }
 
                     }

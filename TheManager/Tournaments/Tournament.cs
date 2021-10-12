@@ -374,7 +374,7 @@ namespace TheManager
                         GroupsRound tGroup = t as GroupsRound;
                         for(int j = tGroup.groupsCount*(q.ranking-1); j< tGroup.groupsCount * q.ranking; j++)
                         {
-                            newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear));
+                            newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear, q.qualifies));
                         }
                     }
                     else if(t as ChampionshipRound != null)
@@ -400,7 +400,7 @@ namespace TheManager
                         int numberOfGames = clubCount / 2;
                         for(int j = numberOfGames*(q.ranking-1); j< numberOfGames * q.ranking; j++)
                         {
-                            newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear));
+                            newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear, q.qualifies));
                         }
 
                     }

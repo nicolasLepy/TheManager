@@ -112,17 +112,35 @@ namespace TheManager
             }
             return res;
         }
+
         public override void QualifyClubs()
         {
-           
+
+            int maxClubsInGroup = _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
+            List<Club>[] clubsByRanking = new List<Club>[maxClubsInGroup];
+            for(int i = 0; i<maxClubsInGroup; i++)
+            {
+                clubsByRanking[i] = new List<Club>();
+            }
+
             List<Club>[] groups = new List<Club>[_groupsNumber];
             for (int i = 0; i < _groupsNumber; i++)
             {
                 groups[i] = new List<Club>(Ranking(i));
+
+                for (int j = 0; j < groups[i].Count; j++)
+                {
+                    clubsByRanking[j].Add(groups[i][j]);
+                }
             }
+
+            for (int i = 0; i < maxClubsInGroup; i++)
+            {
+                clubsByRanking[i].Sort(new ClubRankingComparator(_matches));
+            }
+
             for (int i = 0; i < _groupsNumber; i++)
             {
-
                 List<Qualification> qualifications = new List<Qualification>(_qualifications);
                 qualifications.Sort(new QualificationComparator());
 
@@ -131,74 +149,33 @@ namespace TheManager
                     qualifications = Utils.AdjustQualificationsToNotPromoteReserves(qualifications, groups[i], Tournament);
                 }
 
-                /*
-                //If reserves can't be promoted
-                if (_rules.Contains(Rule.ReservesAreNotPromoted))
-                {
-                    for (int j = 0; j<qualifications.Count; j++)
-                    {
-                        Qualification q = qualifications[j];
-                        //If the two tournaments involved are championship and the level of the destination is higher in league structure than the current league
-                        if(Tournament.isChampionship && q.tournament.isChampionship && q.tournament.level < Tournament.level)
-                        {
-                            Utils.Debug("check for the " + q.ranking + " place");
-                            int offset = 0;
-                            bool pursue = true;
-                            while (pursue && j+offset < qualifications.Count)
-                            {
-                                //This is a reserve club so it must not be promoted
-                                if (groups[i][q.ranking - 1 + offset] as ReserveClub != null)
-                                {
-                                    offset++;
-                                }
-                                else
-                                {
-                                    pursue = false;
-                                    //If there is an offset, make a swap
-                                    if(offset > 0)
-                                    {
-                                        Utils.Debug("swap " + j + " and " + (j + offset));
-                                        Qualification first = qualifications[j];
-                                        Qualification second = qualifications[j + offset];
-                                        int tempRanking = second.ranking;
-                                        second.ranking = first.ranking;
-                                        first.ranking = tempRanking;
-                                        qualifications[j] = second;
-                                        qualifications[j + offset] = first;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }*/
-
-                foreach (Qualification q in qualifications)
-                {
-                    Utils.Debug(q.ranking + " - " + q.tournament.name);
-                }
-
                 foreach (Qualification q in qualifications)
                 {
                     Club c = groups[i][q.ranking - 1];
-                    if (!q.isNextYear)
+
+                    if(q.qualifies == 0 || (q.qualifies > 0 && clubsByRanking[q.ranking-1].IndexOf(c) < q.qualifies) )
                     {
-                        q.tournament.rounds[q.roundId].clubs.Add(c);
-                    }
-                    else
-                    {
-                        q.tournament.AddClubForNextYear(c, q.roundId);
-                    }
-                    if (q.tournament.isChampionship && c.Championship != null)
-                    {
-                        if (q.tournament.level > c.Championship.level)
+                        if (!q.isNextYear)
                         {
-                            c.supporters = (int)(c.supporters / 1.8f);
+                            q.tournament.rounds[q.roundId].clubs.Add(c);
                         }
-                        else if (q.tournament.level < c.Championship.level)
+                        else
                         {
-                            c.supporters = (int)(c.supporters * 1.8f);
+                            q.tournament.AddClubForNextYear(c, q.roundId);
+                        }
+                        if (q.tournament.isChampionship && c.Championship != null)
+                        {
+                            if (q.tournament.level > c.Championship.level)
+                            {
+                                c.supporters = (int)(c.supporters / 1.8f);
+                            }
+                            else if (q.tournament.level < c.Championship.level)
+                            {
+                                c.supporters = (int)(c.supporters * 1.8f);
+                            }
                         }
                     }
+
                 }
             }
         }
