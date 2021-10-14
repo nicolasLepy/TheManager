@@ -22,6 +22,7 @@ namespace TheManager_GUI.VueClassement
             {
                 res = new ViewRankingGroups(round as GroupsRound, sizeMultiplier, focusOnTeam, team);
             }
+            //TODO: For inactive rounds
 
             return res;
         }

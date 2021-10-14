@@ -106,6 +106,8 @@ namespace TheManager
         [DataMember]
         private bool _isForbiddenToRecruit;
 
+        
+
         public int budget { get => _budget; }
         public City city { get => _city; }
         public float sponsor { get => _sponsor; }
