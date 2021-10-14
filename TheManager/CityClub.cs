@@ -545,8 +545,8 @@ namespace TheManager
                     {
                         possibleOpponents.Add(cv);
                     }
-
                 }
+
                 int nbGames = Session.Instance.Random(2, 5);
                 if (nbGames > possibleOpponents.Count)
                 {
