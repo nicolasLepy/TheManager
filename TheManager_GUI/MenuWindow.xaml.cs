@@ -201,7 +201,7 @@ namespace TheManager_GUI
             }
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
-            Console.WriteLine("Total execution " + elapsedMs + "ms");
+            Utils.Debug("Total execution " + elapsedMs + "ms");
 
         }
 

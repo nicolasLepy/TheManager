@@ -593,13 +593,13 @@ namespace TheManager
 
         public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
-            List<Club> clubs = new List<Club>(_clubs);
+            List<Club> roundClubs = new List<Club>(_clubs);
             
             //If we have decided to have only first teams, we delete all reserves teams of the list
             if(onlyFirstTeams)
             {
                 List<Club> toDelete = new List<Club>();
-                foreach (Club c in clubs)
+                foreach (Club c in roundClubs)
                 {
                     if (c as ReserveClub != null)
                     {
@@ -609,7 +609,7 @@ namespace TheManager
 
                 foreach (Club c in toDelete)
                 {
-                    clubs.Remove(c);
+                    roundClubs.Remove(c);
                 }
             }
 
@@ -617,12 +617,12 @@ namespace TheManager
             switch (method)
             {
                 case RecuperationMethod.Randomly:
-                    clubs = Utils.ShuffleList<Club>(clubs);
+                    roundClubs = Utils.ShuffleList<Club>(roundClubs);
                     break;
                 case RecuperationMethod.Best:
                     try
                     {
-                        clubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
+                        roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
                     }
                     catch(Exception e)
                     {
@@ -630,13 +630,17 @@ namespace TheManager
                     }
                     break;
                 case RecuperationMethod.Worst :
-                    clubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
+                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
                     break;
+                default:
+                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
+                    break;
+
             }
             List<Club> res = new List<Club>();
             for (int i = 0; i < number; i++)
             {
-                res.Add(clubs[i]);
+                res.Add(roundClubs[i]);
             }
             return res;
         }

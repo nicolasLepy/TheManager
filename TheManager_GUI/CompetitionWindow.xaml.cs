@@ -61,7 +61,6 @@ namespace TheManager_GUI
 
         private void NewYearSelected(KeyValuePair<int, Tournament> history)
         {
-            Console.WriteLine(history.Key);
             _competition = history.Value;
             _indexTour = 0;
             _indexJournee = 1;
@@ -85,7 +84,7 @@ namespace TheManager_GUI
             lbNomTour.Content = _competition.rounds[_indexTour].name;
             lbDayName.Content = "Journée " + _indexJournee.ToString();
             Ranking(RankingType.General);
-            Calendrier(_competition.rounds[_indexTour]);
+            Calendrier();
             if(initMap)
             {
                 Map(_competition.rounds[_indexTour]);
@@ -149,8 +148,7 @@ namespace TheManager_GUI
                 }
                 logoSize = 15.0;
             }
-            //map.CurrentScale = 5;
-            MapWinGIS.Shape shpFrance = shapeFileMap.Shape[79];
+
             foreach(Club c in t.clubs)
             {
                 CityClub cc = c as CityClub;
@@ -184,7 +182,6 @@ namespace TheManager_GUI
             {
                 shapeFileMap.StartEditingTable();
                 int fieldIndex = shapeFileMap.EditAddField("Qualification", MapWinGIS.FieldType.INTEGER_FIELD, 1, 1);
-                Console.WriteLine(fieldIndex);
                 shapeFileMap.DefaultDrawingOptions.FillType = MapWinGIS.tkFillType.ftStandard;
                 for (int i = 0; i < shapeFileMap.NumShapes; i++)
                 {
@@ -217,7 +214,7 @@ namespace TheManager_GUI
             map.Redraw();
         }
 
-        private void Calendrier(Round t)
+        private void Calendrier()
         {
             spMatchs.Children.Clear();
 
@@ -442,7 +439,7 @@ namespace TheManager_GUI
                 }
                 else
                 {
-
+                    spRanking.Children.Add(ViewUtils.CreateLabel("Information non disponible pour une coupe", "StyleLabel2", 12, -1));
                 }
             }
 
@@ -495,7 +492,6 @@ namespace TheManager_GUI
                 {
                     yearList += years + ", ";
                 }
-                //yearList = yearList.Substring(yearList.Length - 2);
                 sp.Children.Add(ViewUtils.CreateLabel(yearList, "StyleLabel2", 12, 250));
                 spRanking.Children.Add(sp);
             }

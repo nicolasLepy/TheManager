@@ -464,11 +464,17 @@ namespace TheManager
             money = money / i * i;
 
             if (money >= 1000000000)
+            {
                 return (money / 1000000000D).ToString("0.##") + "B €";
+            }
             if (money >= 1000000)
+            {
                 return (money / 1000000D).ToString("0.##") + "M €";
+            }
             if (money >= 1000)
+            {
                 return (money / 1000D).ToString("0.##") + "K €";
+            }
 
             return negative ? "-" : "" + money.ToString("#,0") + " €";
         }
