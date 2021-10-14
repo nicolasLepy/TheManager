@@ -115,7 +115,7 @@ namespace TheManager_GUI.VueClassement
                     sp.Children.Add(ViewUtils.CreateLogo(c, regularCellWidth / 1.5, regularCellWidth / 1.5));
                 }
 
-                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, c.shortName,"StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
+                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, _round.Tournament.isChampionship ? c.extendedName : c.shortName,"StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
                 if(!_reduced)

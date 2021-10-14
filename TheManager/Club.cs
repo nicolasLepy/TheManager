@@ -111,6 +111,31 @@ namespace TheManager
         public string goalMusic { get => _goalMusic; }
         public ClubRecords records { get => _records; }
 
+        public string extendedName
+        {
+            get
+            {
+                string res = shortName;
+                CityClub cc = this as CityClub;
+                if(cc != null)
+                {
+                    foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
+                    {
+                        if(Session.Instance.Game.kernel.LocalisationTournament(c) == cc.city.Country() && c.isChampionship && c.previousEditions.Count > 0)
+                        {
+                            int closestYear = c.previousEditions.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
+
+                            if (c.previousEditions[closestYear].rounds[0].clubs.Contains(this))
+                            {
+                                res = c.level > Championship.level ? res + " (P)" : c.level < Championship.level ? res + " (R)" : res;
+                            }
+                        }
+                    }
+                }
+                return res;
+            }
+        }
+
         public abstract Country Country();
 
         /// <summary>

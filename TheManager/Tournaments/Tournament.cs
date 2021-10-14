@@ -131,10 +131,14 @@ namespace TheManager
             _color = color;
         }
 
-        public void InitializeQualificationsNextYearsLists()
+        public void InitializeQualificationsNextYearsLists(int count = -1)
         {
-            _nextYearQualified = new List<Club>[rounds.Count];
-            for(int i =0;i < rounds.Count; i++)
+            if(count == -1)
+            {
+                count = rounds.Count;
+            }
+            _nextYearQualified = new List<Club>[count];
+            for(int i =0;i < count; i++)
             {
                 _nextYearQualified[i] = new List<Club>();
             }

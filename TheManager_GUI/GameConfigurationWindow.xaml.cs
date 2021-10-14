@@ -168,6 +168,22 @@ namespace TheManager_GUI
             Close();
         }
 
+        private void BtnDisable_Click(object sender, RoutedEventArgs e)
+        {
+            foreach(CheckBox cb in _checkbox)
+            {
+                cb.IsChecked = false;
+            }
+        }
+
+        private void BtnEnable_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (CheckBox cb in _checkbox)
+            {
+                cb.IsChecked = true;
+            }
+        }
+
         private void BtnLancer_Click(object sender, RoutedEventArgs e)
         {
             List<Tournament> toDesactivate = new List<Tournament>();

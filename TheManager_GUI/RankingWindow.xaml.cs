@@ -35,7 +35,7 @@ namespace TheManager_GUI
             spHead.Orientation = Orientation.Horizontal;
             spHead.Children.Add(ViewUtils.CreateLabel("", "StyleLabel2Center", -1, 50, null, null, true));
             spHead.Children.Add(ViewUtils.CreateLabel("Nation", "StyleLabel2", -1, 315, null, null, true));
-            spHead.Children.Add(ViewUtils.CreateLabel("Pts", "StyleLabel2Center", -1, 75, null, null, true));
+            spHead.Children.Add(ViewUtils.CreateLabel("Points", "StyleLabel2Center", -1, 75, null, null, true));
             spRanking.Children.Add(spHead);
 
             foreach (NationalTeam nt in Session.Instance.Game.kernel.FifaRanking())

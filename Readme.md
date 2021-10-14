@@ -91,6 +91,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Hierarchical Competitions (promotion, relegation ...)                     |
 | Domestic Cup                                                              |
 | International tournaments                                                 |
+| International ranking                                                     |
 | Specials rules (lower team at home for domestic cups...)                  |
 | Reserves teams can't go too high in league structure                      |
 
@@ -124,7 +125,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Set up international tournaments on multiples years                   | 🔴 Not started |
 | **GUI**                                                               |                 |
 | View system                                                           | 🟡 In progress |
-| Panel to give infos (transfers, main results) during simulation       | 🟡 In progress |
 | Make player search table faster                                       | 🟡 In progress |
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |

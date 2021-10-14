@@ -716,6 +716,7 @@ namespace TheManager
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color);
+                        tournament.InitializeQualificationsNextYearsLists(e2.Descendants("Tour").Count());
                         localisation.Tournaments().Add(tournament);
                         //_gestionnaire.Competitions.Add(c);
                     }
@@ -734,6 +735,7 @@ namespace TheManager
                     {
                         string name = e2.Attribute("nom").Value;
                         Tournament c = _kernel.String2Tournament(name);
+                        int roundIndex = 0;
                         foreach (XElement e3 in e2.Descendants("Tour"))
                         {
                             Round round = null;
@@ -853,8 +855,16 @@ namespace TheManager
                                     }
                                 }
 
+                                if(c.periodicity == c.remainingYears)
+                                {
+                                    round.clubs.Add(club);
+                                }
+                                //Upcoming competition, so teams are added in the next year case
+                                else
+                                {
+                                    c.AddClubForNextYear(club, roundIndex);
+                                }
 
-                                round.clubs.Add(club);
                             }
                             foreach (XElement e4 in e3.Descendants("Participants"))
                             {
@@ -986,16 +996,18 @@ namespace TheManager
                                     }
                                 }
                             }
+                            roundIndex++;
                         }
                     }
                 }
 
             }
 
+            /*
             foreach (Tournament c in _kernel.Competitions)
             {
                 c.InitializeQualificationsNextYearsLists();
-            }
+            }*/
         }
 
         public void LoadLanguages()

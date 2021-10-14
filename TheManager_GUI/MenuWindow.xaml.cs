@@ -125,6 +125,7 @@ namespace TheManager_GUI
                 Windows_AvantMatch wam = new Windows_AvantMatch(matchs, _partie.club);
                 wam.ShowDialog();
             }
+            _partie.UpdateTournaments();
             Refresh();
         }
 
@@ -208,10 +209,10 @@ namespace TheManager_GUI
         {
             for(int i = 0; i<10;i++)
             {
-                _partie.NextDay();
+                Avancer();
                 while (!(_partie.date.Month == 6 && _partie.date.Day == 13))
                 {
-                    _partie.NextDay();
+                    Avancer();
                 }
                 Refresh();
             }

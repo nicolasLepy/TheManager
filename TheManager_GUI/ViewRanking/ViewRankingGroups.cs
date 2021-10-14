@@ -139,27 +139,46 @@ namespace TheManager_GUI.VueClassement
                         if (color != "backgroundColor")
                         {
                             SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-                            if(_round.clubs.Count > 0)
+                            if(_round.matches.Count > 0)
                             {
                                 (spRanking.Children[spRanking.Children.Count - _round.Ranking(poule).Count + index - 1] as StackPanel).Background = lineColor;
                             }
                         }
 
                     }
-
-
-
                 }
 
+                foreach(Qualification q in _round.qualifications)
+                {
+                    if(q.qualifies > 0 && _round.matches.Count > 0)
+                    {
+                        spRanking.Children.Add(ViewUtils.CreateLabel("Classement des " + q.ranking + "èmes", "StyleLabel2Center", (int)(14 * _sizeMultiplier), -1));
+                        List<Club> concernedClubs = new List<Club>();
+                        for(int i = 0; i<_round.groupsCount; i++)
+                        {
+                            concernedClubs.Add(_round.Ranking(i)[q.ranking-1]);
+                        }
+                        concernedClubs.Sort(new ClubRankingComparator(_round.matches));
+                        int j = 0;
+                        foreach(Club c in concernedClubs)
+                        {
+                            j++;
+                            StackPanel spLine = CreateRanking(j, c);
+                            if(j <= q.qualifies)
+                            {
+                                spLine.Background = Application.Current.TryFindResource("cl2Color") as SolidColorBrush;
+                            }
+                            spRanking.Children.Add(spLine);
+                        }
+                    }
+                }
             }
-
 
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
             if (_round.groups[0].Count > 0 && !_focusOnTeam)
             {
 
                 //Split qualifications in several list because according to group qualifications can be differents (if reserves are not promoted for instance)
-
                 List<Qualification>[] qualifications = new List<Qualification>[_round.groupsCount];
 
                 List<Club>[] groups = new List<Club>[_round.groupsCount];
@@ -177,43 +196,6 @@ namespace TheManager_GUI.VueClassement
                     if (_round.rules.Contains(Rule.ReservesAreNotPromoted))
                     {
                         qualifications[i] = Utils.AdjustQualificationsToNotPromoteReserves(qualifications[i], groups[i], _round.Tournament);
-                        /*
-                        for (int j = 0; j < qualifications[i].Count; j++)
-                        {
-                            Qualification q = qualifications[i][j];
-                            //If the two tournaments involved are championship and the level of the destination is higher in league structure than the current league
-                            if (_tour.Tournament.isChampionship && q.tournament.isChampionship && q.tournament.level < _tour.Tournament.level)
-                            {
-                                Utils.Debug("check " + q.ranking);
-                                int offset = 0;
-                                bool pursue = true;
-                                while (pursue && j + offset < qualifications[i].Count)
-                                {
-                                    Utils.Debug("check " + groups[i][q.ranking - 1 + offset].name);
-                                    //This is a reserve club so it must not be promoted
-                                    if (groups[i][q.ranking - 1 + offset] as ReserveClub != null)
-                                    {
-                                        offset++;
-                                    }
-                                    else
-                                    {
-                                        pursue = false;
-                                        //If there is an offset, make a swap
-                                        if (offset > 0)
-                                        {
-                                            Utils.Debug("swap " + j + " and " + (j + offset));
-                                            Qualification first = qualifications[i][j];
-                                            Qualification second = qualifications[i][j + offset];
-                                            int tempRanking = second.ranking;
-                                            second.ranking = first.ranking;
-                                            first.ranking = tempRanking;
-                                            qualifications[i][j] = second;
-                                            qualifications[i][j + offset] = first;
-                                        }
-                                    }
-                                }
-                            }
-                        }*/
                     }
                 }
 

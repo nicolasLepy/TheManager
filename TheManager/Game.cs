@@ -501,13 +501,52 @@ namespace TheManager
             }
         }
 
+        public void UpdateTournaments()
+        {
+            foreach (Tournament c in _kernel.Competitions)
+            {
+                int i = 0;
+                foreach (Round t in c.rounds)
+                {
+                    if (c.remainingYears == c.periodicity)
+                    {
+                        if (Utils.CompareDates(t.DateEndRound(), _date))
+                        {
+                            t.QualifyClubs();
+                        }
+                        if (Utils.CompareDates(t.DateInitialisationRound(), _date) && c.currentRound + 1 == i)
+                        {
+                            c.NextRound();
+                        }
+                    }
+                    i++;
+                    /*
+                    else
+                    {
+                        Console.WriteLine(c.name + " is not activated this year");
+                    }*/
+                }
+
+                if (Utils.CompareDates(c.seasonBeginning.ConvertToDateTime(), _date))
+                {
+                    c.Reset();
+                }
+
+                if (options.ExportEnabled)
+                {
+                    Exports(c);
+                }
+            }
+        }
+
         public List<Match> NextDay()
         {
             _date = _date.AddDays(1);
 
-            /*
-            foreach(Tournament t in _kernel.Competitions)
+
+            /*foreach(Tournament t in _kernel.Competitions)
             {
+                
                 if(t.IsInternational())
                 {
                     Console.WriteLine("=======================");
@@ -563,51 +602,21 @@ namespace TheManager
                     }
                     SetUpMediasForTournaments(todayGames, c);
                 }
-                foreach(Round t in c.rounds)
-                {
-                    
-                    if(c.remainingYears == c.periodicity)
-                    {
-                        if (Utils.CompareDates(t.DateEndRound(), _date))
-                        {
-                            t.QualifyClubs();
-                        }
-                        if (Utils.CompareDates(t.DateInitialisationRound(), _date))
-                        {
-                            c.NextRound();
-                        }
-                    }
-                    /*
-                    else
-                    {
-                        Console.WriteLine(c.name + " is not activated this year");
-                    }*/
-                }
-
-                if (Utils.CompareDates(c.seasonBeginning.ConvertToDateTime(),_date))
-                {
-                    c.Reset();
-                }
-
-                if (options.ExportEnabled)
-                {
-                    Exports(c);
-                }
             }
 
             bool clubPlayedHaveAMatch = (clubMatchs.Count > 0) ? true : false;
-            foreach(Match m in toPlay)
+            foreach (Match m in toPlay)
             {
                 if (clubPlayedHaveAMatch && m.Tournament == clubMatchs[0].Tournament && m.day.ToShortTimeString() == clubMatchs[0].day.ToShortTimeString())
                 {
                     clubMatchs.Add(m);
                 }
-                else{
+                else
+                {
                     m.Play();
                 }
 
             }
-
 
             if (date.Month == 6 && date.Day == 15)
             {
