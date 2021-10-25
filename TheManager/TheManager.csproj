@@ -70,6 +70,7 @@
     <Compile Include="Medias\ArticleGenerator.cs" />
     <Compile Include="Medias\Journalist.cs" />
     <Compile Include="Medias\Media.cs" />
+    <Compile Include="Parsers\FifaDataParser.cs" />
     <Compile Include="ReserveClub.cs" />
     <Compile Include="CityClub.cs" />
     <Compile Include="Comparators\ArticleComparator.cs" />

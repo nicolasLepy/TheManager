@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using TheManager;
+using TheManager.Parsers;
 
 namespace TheManager_GUI
 {
@@ -70,6 +71,13 @@ namespace TheManager_GUI
 
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
+
+            
+            /*
+            FifaDataParser fifaDataParser = new FifaDataParser();
+            fifaDataParser.Parse();*/
+
+            
 
             //await CallLoadingGame();
 

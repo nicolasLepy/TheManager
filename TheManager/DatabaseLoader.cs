@@ -334,7 +334,7 @@ namespace TheManager
 
         public void LoadPlayers()
         {
-            StreamReader reader = new StreamReader(Utils.dataFolderName + "/joueurs.xml", Encoding.UTF8);
+            StreamReader reader = new StreamReader(Utils.dataFolderName + "/players.xml", Encoding.UTF8);
             XDocument doc = XDocument.Load(reader);
             foreach (XElement e in doc.Descendants("Joueurs"))
             {
@@ -345,9 +345,11 @@ namespace TheManager
                     int level = int.Parse(e2.Attribute("niveau").Value);
                     int potential = int.Parse(e2.Attribute("potentiel").Value);
                     int clubId = int.Parse(e2.Attribute("club").Value);
-                    CityClub club = _clubsId[clubId] as CityClub;
+                    CityClub club = clubId > 0 ? _clubsId[clubId] as CityClub : null ;
                     Position position;
                     string positionName = e2.Attribute("poste").Value;
+                    string playerBirthName = e2.Attribute("naissance").Value;
+                    DateTime playerBirth = new DateTime(int.Parse(playerBirthName.Split('-')[2]), int.Parse(playerBirthName.Split('-')[1]), int.Parse(playerBirthName.Split('-')[0]));
                     switch(positionName)
                     {
                         case "DEFENSEUR": 
@@ -363,8 +365,16 @@ namespace TheManager
                             position = Position.Goalkeeper;
                             break;
                     }
-                    Player j = new Player(firstName, lastName, new DateTime(1995, 1, 1), level, potential, _kernel.String2Country("France"), position);
-                    club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear,Utils.beginningYear+5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                    Country playerCountry = _kernel.String2Country(e2.Attribute("pays").Value);
+                    Player j = new Player(firstName, lastName, playerBirth, level, potential, playerCountry == null ? _kernel.String2Country("France") : playerCountry, position);
+                    if(club != null)
+                    {
+                        club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear, Utils.beginningYear + 5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                    }
+                    else
+                    {
+                        Session.Instance.Game.kernel.freePlayers.Add(j);
+                    }
                 }
             }
         }
@@ -573,7 +583,13 @@ namespace TheManager
                         int supporters = int.Parse(e2.Attribute("supporters").Value);
 
                         string cityName = e2.Attribute("ville").Value;
+                        if (cityName == "")
+                        {
+                            cityName = "Paris";
+                        }
+
                         City city = _kernel.String2City(cityName);
+
 
                         Stadium stadium = null;
                         if (e2.Attribute("stade") != null)
@@ -951,6 +967,17 @@ namespace TheManager
                                 int ranking = int.Parse(e4.Attribute("classement").Value);
                                 int prize = int.Parse(e4.Attribute("somme").Value);
                                 round.prizes.Add(new Prize(ranking, prize));
+
+                                if(e4.Attribute("rate") != null)
+                                {
+                                    float rate = float.Parse(e4.Attribute("rate").Value, CultureInfo.InvariantCulture);
+                                    int to = int.Parse(e4.Attribute("to").Value);
+                                    for (int i = ranking + 1; i <= to; i++)
+                                    {
+                                        prize = (int)(prize * rate);
+                                        round.prizes.Add(new Prize(i, prize));
+                                    }
+                                }
                             }
                             foreach (XElement e4 in e3.Descendants("Qualification"))
                             {
@@ -1058,7 +1085,8 @@ namespace TheManager
                 NationalTeam nationalTeam = c as NationalTeam;
                 if(nationalTeam != null)
                 {
-                    int gap = 25 - _kernel.NumberPlayersOfCountry(nationalTeam.country); 
+                    int gap = 25 - _kernel.NumberPlayersOfCountry(nationalTeam.country);
+                    Console.WriteLine(nationalTeam.name + " - " + _kernel.NumberPlayersOfCountry(nationalTeam.country));
                     if(gap > 0)
                     {
                         for(int i =0; i<gap; i++)

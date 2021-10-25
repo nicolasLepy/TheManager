@@ -235,7 +235,7 @@ namespace TheManager
             return players;
         }
 
-        public Country String2Country(string country)
+        public Country String2Country(string country, bool idName = false)
         {
             Country res = null;
 
@@ -243,7 +243,11 @@ namespace TheManager
             {
                 foreach(Country p in c.countries)
                 {
-                    if (p.Name() == country)
+                    if (!idName && p.Name() == country)
+                    {
+                        res = p;
+                    }
+                    if (idName && p.DbName == country)
                     {
                         res = p;
                     }
