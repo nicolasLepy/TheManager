@@ -1037,6 +1037,25 @@ namespace TheManager
             }*/
         }
 
+        public void LoadRules()
+        {
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/rules.xml");
+            foreach (XElement e in doc.Descendants("Rules"))
+            {
+                foreach (XElement e2 in e.Descendants("Continent"))
+                {
+                    foreach(XElement e3 in e.Descendants("Qualifications"))
+                    {
+                        int rank = int.Parse(e3.Attribute("rank").Value);
+                        string tournamentName = e3.Attribute("tournament").Value;
+                        int idTour = int.Parse(e3.Attribute("id_tour").Value);
+                        int count = int.Parse(e3.Attribute("count").Value);
+
+                    }
+                }
+            }
+        }
+
         public void LoadLanguages()
         {
             LoadLanguage("Francais", "fr");

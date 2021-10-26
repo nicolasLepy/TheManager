@@ -178,7 +178,7 @@ namespace TheManager_GUI
                     map.AddLayer(sf, true);
                 }
             }
-            if(_competition.rounds[_indexTour].clubs[0] as NationalTeam != null)
+            if(_competition.rounds[_indexTour].clubs.Count > 0 && _competition.rounds[_indexTour].clubs[0] as NationalTeam != null)
             {
                 shapeFileMap.StartEditingTable();
                 int fieldIndex = shapeFileMap.EditAddField("Qualification", MapWinGIS.FieldType.INTEGER_FIELD, 1, 1);

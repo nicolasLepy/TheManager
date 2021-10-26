@@ -87,6 +87,19 @@ namespace TheManager
             return _countries.Count;
         }
 
+        public Tournament GetContinentalClubTournament(int level)
+        {
+            Tournament res = null;
+            foreach (Tournament t in Tournaments())
+            {
+                if(t.periodicity == 1 && t.level == level)
+                {
+                    res = t;
+                }
+            }
+            return res;
+        }
+
         public override string ToString()
         {
             return _name;

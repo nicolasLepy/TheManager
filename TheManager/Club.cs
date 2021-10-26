@@ -111,6 +111,126 @@ namespace TheManager
         public string goalMusic { get => _goalMusic; }
         public ClubRecords records { get => _records; }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="nSeason">Last n season. -1 is last season</param>
+        /// <param name="associationCoefficient"></param>
+        /// <returns></returns>
+        public float ClubYearCoefficient(int nSeason, bool associationCoefficient = false)
+        {
+            float res = 0;
+
+            Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
+            for (int i = 1; i < 3; i++)
+            {
+                Tournament continentalTournament = europe.GetContinentalClubTournament(i);
+                int j = continentalTournament.previousEditions.Count - (-nSeason);
+
+                if (j >= 0)
+                {
+                    int indexGroupRound = -1;
+                    Tournament yearContinentalTournament = continentalTournament.previousEditions.ToList()[j].Value;
+                    foreach (Round r in yearContinentalTournament.rounds)
+                    {
+                        GroupsRound rg = r as GroupsRound;
+                        if (rg != null)
+                        {
+                            indexGroupRound = yearContinentalTournament.rounds.IndexOf(r);
+                            res += r.Wins(this) * 2;
+                            res += r.Draws(this);
+                            if (r.clubs.Contains(this) && continentalTournament.level == 1)
+                            {
+                                res += 4;
+                            }
+                            if (!associationCoefficient)
+                            {
+                                if (r.clubs.Contains(this) && continentalTournament.level == 2)
+                                {
+                                    res += 3;
+                                }
+                                if (r.clubs.Contains(this) && continentalTournament.level == 3)
+                                {
+                                    res += 2.5f;
+                                }
+                            }
+                            else
+                            {
+                                if (r.clubs.Contains(this) && continentalTournament.level == 2)
+                                {
+                                    res += 4;
+                                }
+                            }
+                            for (int g = 0; g < rg.groupsCount; g++)
+                            {
+                                if (rg.Ranking(g)[0] == this && continentalTournament.level < 3)
+                                {
+                                    res += 4;
+                                }
+                                else if (rg.Ranking(g)[0] == this && continentalTournament.level == 3)
+                                {
+                                    res += 2;
+                                }
+                                if (rg.Ranking(g)[1] == this && continentalTournament.level == 1)
+                                {
+                                    res += 4;
+                                }
+                                if (rg.Ranking(g)[1] == this && continentalTournament.level == 2)
+                                {
+                                    res += 2;
+                                }
+                                if (rg.Ranking(g)[1] == this && continentalTournament.level == 3)
+                                {
+                                    res += 1;
+                                }
+                            }
+                        }
+                        if (associationCoefficient && rg == null)
+                        {
+                            res += Utils.Wins(r.matches, this);
+                            res += Utils.Draws(r.matches, this) * 0.5f;
+                        }
+                    }
+                    for (int roundIndex = yearContinentalTournament.rounds.Count - 3; roundIndex < yearContinentalTournament.rounds.Count; roundIndex++)
+                    {
+                        if (yearContinentalTournament.rounds[roundIndex].clubs.Contains(this))
+                        {
+                            res += 1;
+                        }
+                    }
+                    if (!associationCoefficient && continentalTournament.level == 3)
+                    {
+                        float[] allowedPoints = new float[4] { 1, 1.5f, 2, 2.5f };
+                        for (int r = 0; r < indexGroupRound; r++)
+                        {
+                            if (yearContinentalTournament.rounds[r].clubs.Contains(this) && !yearContinentalTournament.rounds[r + 1].clubs.Contains(this))
+                            {
+                                res += allowedPoints[r];
+                            }
+                        }
+                    }
+                }
+                
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Get continent club coefficient computed in the 5 past years
+        /// </summary>
+        public float ClubCoefficient(bool associationCoefficient = false)
+        {
+            float res = 0;
+
+            for(int i = -5; i<0; i++)
+            {
+                res += ClubYearCoefficient(i, associationCoefficient);
+            }
+            return res;
+            
+        }
+
         public string extendedName
         {
             get

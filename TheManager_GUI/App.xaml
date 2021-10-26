@@ -255,6 +255,73 @@
 			<Setter Property="Background" Value="{StaticResource color2}" />
 		</Style>
 
+		<Style TargetType="{x:Type TabControl}">
+			<Setter Property="Margin" Value="2" />
+			<Setter Property="Padding" Value="2"    />
+			<Setter Property="Background" Value="{StaticResource brushBackgroundStackPanel}" />
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type TabControl}">
+						<Grid ClipToBounds="True" SnapsToDevicePixels="True" KeyboardNavigation.TabNavigation="Local">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Name="ColumnDefinition0" />
+								<ColumnDefinition Width="0" Name="ColumnDefinition1" />
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto" Name="RowDefinition0" />
+								<RowDefinition Height="*" Name="RowDefinition1" />
+							</Grid.RowDefinitions>
+							<Border x:Name="HeaderBorder"
+                            BorderBrush="Black"
+                            BorderThickness="1"
+                            CornerRadius="5"
+                            Background="#FAFAFA"
+                            Margin="0,0,0,5">
+								<TabPanel IsItemsHost="True"
+                                  Name="HeaderPanel"
+                                  Panel.ZIndex="1"
+                                  KeyboardNavigation.TabIndex="1"
+                                  Grid.Column="0"
+                                  Grid.Row="0" />
+							</Border>
+							<Grid Name="ContentPanel"
+                          KeyboardNavigation.TabIndex="2"
+                          KeyboardNavigation.TabNavigation="Local"
+                          KeyboardNavigation.DirectionalNavigation="Contained"
+                          Grid.Column="0"
+                          Grid.Row="1">
+								<Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+									<ContentPresenter Content="{TemplateBinding SelectedContent}"
+                                              ContentTemplate="{TemplateBinding SelectedContentTemplate}"
+                                              ContentStringFormat="{TemplateBinding SelectedContentStringFormat}"
+                                              ContentSource="SelectedContent"
+                                              Name="PART_SelectedContentHost"
+                                              Margin="2"
+                                              SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+								</Border>
+							</Grid>
+						</Grid>
+						<ControlTemplate.Triggers>
+							<Trigger Property="UIElement.IsEnabled" Value="False">
+								<Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+
+
+		<Style x:Key="StyleTabHeader" TargetType="{x:Type TabItem}">
+			<Setter Property="FontSize" Value="14"/>
+			<Setter Property="FontFamily" Value="{DynamicResource Font}"/>
+			<Setter Property="Foreground" Value="{StaticResource color1}" />
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+		</Style>
+
 
 		<Style x:Key="StyleLabel1" TargetType="{x:Type Label}">
 			<Setter Property="FontSize" Value="18"/>

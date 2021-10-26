@@ -203,19 +203,22 @@ namespace TheManager
         public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
-            int matchesPerGroups = GroupMatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
-            if (twoLegs)
+            if(_matches.Count > 0)
             {
-                matchesPerGroups *= 2;
-            }
-            for (int i = 0; i < _groupsNumber; i++)
-            {
-                int baseIndex = (matchesPerGroups * i) + (GroupMatchesPerGamesDay() * (journey - 1));
-                for (int j = 0; j < GroupMatchesPerGamesDay(); j++)
+                int matchesPerGroups = GroupMatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
+                if (twoLegs)
                 {
-                    res.Add(_matches[j + baseIndex]);
+                    matchesPerGroups *= 2;
                 }
+                for (int i = 0; i < _groupsNumber; i++)
+                {
+                    int baseIndex = (matchesPerGroups * i) + (GroupMatchesPerGamesDay() * (journey - 1));
+                    for (int j = 0; j < GroupMatchesPerGamesDay(); j++)
+                    {
+                        res.Add(_matches[j + baseIndex]);
+                    }
 
+                }
             }
 
             return res;

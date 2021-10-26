@@ -510,5 +510,17 @@ namespace TheManager
             return Session.Instance.Game.kernel.LocalisationTournament(this) as Continent != null;
         }
 
+        public bool IsInvolved(Club c)
+        {
+            bool res = false;
+            foreach(Round r in rounds)
+            {
+                if(r.clubs.Contains(c))
+                {
+                    res = true;
+                }
+            }
+            return res;
+        }
     }
 }

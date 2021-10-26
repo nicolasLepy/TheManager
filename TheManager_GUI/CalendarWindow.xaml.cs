@@ -65,7 +65,6 @@ namespace TheManager_GUI
                                 {
                                     dt = gd.ConvertToDateTime(Session.Instance.Game.date.Year + 1);
                                 }
-
                                 if (Utils.CompareDatesWithoutYear(dt, dateMonth))
                                 {
                                     dayTournaments.Add(t);

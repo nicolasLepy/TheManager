@@ -14,15 +14,26 @@
 					<Image Name="imgBtnQuitter" Source="Images/close.png" Width="25" Height="25" Margin="3"/>
 				</Button>
 			</StackPanel>
-			<Label Style="{StaticResource StyleLabel1}" Content="Classement FIFA"/>
-			<Border Style="{StaticResource StyleBorderStackPanel}" Margin="20,0,20,0">
-
-				<ScrollViewer VerticalScrollBarVisibility="Auto" Height="700">
-					<StackPanel Orientation="Vertical" Name="spRanking">
-
-					</StackPanel>
-				</ScrollViewer>
-			</Border>
+			<TabControl>
+				<TabItem Header="Classement FIFA" Style="{StaticResource StyleTabHeader}">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="700">
+						<StackPanel Orientation="Vertical" Name="spFIFARanking">
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+				<TabItem Header="Classement UEFA des associations" Style="{StaticResource StyleTabHeader}">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="700">
+						<StackPanel Orientation="Vertical" Name="spUEFARanking">
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+				<TabItem Header="Classement UEFA des clubs" Style="{StaticResource StyleTabHeader}">
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="700">
+						<StackPanel Orientation="Vertical" Name="spUEFAClubsRanking">
+						</StackPanel>
+					</ScrollViewer>
+				</TabItem>
+			</TabControl>
 		</StackPanel>
     </Grid>
 </Window>

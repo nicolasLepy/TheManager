@@ -13,7 +13,8 @@ namespace TheManager
         LEVEL,
         POTENTIEL,
         BUDGET,
-        SPONSOR
+        SPONSOR,
+        CONTINENTAL_COEFFICIENT
     }
 
     public class ClubComparator : IComparer<Club>
@@ -47,6 +48,9 @@ namespace TheManager
                     break;
                 case ClubAttribute.POTENTIEL:
                     res = x.Potential() > y.Potential() ? -1 : 1;
+                    break;
+                case ClubAttribute.CONTINENTAL_COEFFICIENT:
+                    res = x.ClubCoefficient() > y.ClubCoefficient() ? -1 : 1;
                     break;
                 case ClubAttribute.BUDGET:
                     if(x as CityClub == null && y as CityClub == null)

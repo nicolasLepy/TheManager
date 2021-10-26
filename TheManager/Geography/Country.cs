@@ -54,6 +54,57 @@ namespace TheManager
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
+        public float YearAssociationCoefficient(int nSeason)
+        {
+            List<Club> clubs = new List<Club>();
+            float total = 0;
+            Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
+            for (int i = 1; i < 3; i++)
+            {
+                Tournament continentalTournament = europe.GetContinentalClubTournament(i);
+                int j = continentalTournament.previousEditions.Count - (-nSeason);
+
+                if (j >= 0)
+                {
+                    
+                    Tournament yearContinentalTournament = continentalTournament.previousEditions.ToList()[j].Value;
+                    foreach(Tournament championship in _tournaments)
+                    {
+                        if(championship.isChampionship)
+                        {
+                            foreach(Club c in championship.rounds[0].clubs)
+                            {
+                                if (yearContinentalTournament.IsInvolved(c))
+                                {
+                                    clubs.Add(c);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            foreach(Club c in clubs)
+            {
+                float clubCoefficient = c.ClubYearCoefficient(nSeason, true);
+                total += clubCoefficient;
+            }
+
+            return clubs.Count > 0 ? total / clubs.Count : 0;
+        }
+
+        public float AssociationCoefficient
+        {
+            get
+            {
+                float res = 0;
+                for(int i = -5; i < 0; i++)
+                {
+                    res += YearAssociationCoefficient(i);
+                }
+                return res;
+            }
+        }
+
         public Country(string dbName, string name, Language language, int shapeNumber)
         {
             _dbName = dbName;
