@@ -17,8 +17,31 @@ namespace TheManager
         private List<Tournament> _tournaments;
         [DataMember]
         private string _name;
+        /**
+         * Represent qualification in continental clubs competitions in function of the country place in the coefficient ranking
+         */
+        [DataMember]
+        private List<Qualification> _continentalQualifications;
+        [DataMember]
+        private List<Country> _associationRanking;
+
+        /// <summary>
+        /// As association ranking can be long to be computed (and change only at the end of the season), ranking is stored here to be reused without computing all ranking
+        /// </summary>
+        public List<Country> associationRanking
+        {
+            get
+            {
+                if(_associationRanking == null)
+                {
+                    UpdateStoredAssociationRanking();
+                }
+                return _associationRanking;
+            }
+        }
 
         public List<Country> countries => _countries;
+        public List<Qualification> continentalQualifications => _continentalQualifications;
         public List<Tournament> Tournaments()
         {
             return _tournaments;
@@ -35,6 +58,8 @@ namespace TheManager
             _name = name;
             _countries = new List<Country>();
             _tournaments = new List<Tournament>();
+            _continentalQualifications = new List<Qualification>();
+            _associationRanking = new List<Country>();
         }
 
         /// <summary>
@@ -61,7 +86,6 @@ namespace TheManager
             List<Club> res = new List<Club>();
             if (method == RecuperationMethod.Best)
             {
-                //nationalsTeams.Sort(new ClubComparator(ClubAttribute.LEVEL, false));            
                 nationalsTeams.Sort(new NationsFifaRankingComparator());
             }
             else if (method == RecuperationMethod.Worst)
@@ -73,11 +97,9 @@ namespace TheManager
                 nationalsTeams = Utils.ShuffleList<NationalTeam>(nationalsTeams);
             }
 
-            Console.WriteLine("Select " + number + " teams with " + method + " method");
             for (int i = 0; i < number; i++)
             {
                 res.Add(nationalsTeams[i]);
-                Console.WriteLine(nationalsTeams[i].name + " selected");
             }
             return res;
         }
@@ -98,6 +120,56 @@ namespace TheManager
                 }
             }
             return res;
+        }
+
+        public void UpdateStoredAssociationRanking()
+        {
+            _associationRanking = new List<Country>();
+            foreach (Country c in _countries)
+            {
+                if (c.Tournaments().Count > 0)
+                {
+                    _associationRanking.Add(c);
+                }
+            }
+
+            _associationRanking.Sort(new CountryComparator(CountryAttribute.CONTINENTAL_COEFFICIENT));
+
+        }
+
+
+        public void QualifiesClubForContinentalCompetitionNextYear()
+        {
+            List<Country> countries = new List<Country>();
+            foreach(Country c in _countries)
+            {
+                if(c.Tournaments().Count > 0)
+                {
+                    countries.Add(c);
+                }
+            }
+
+            countries.Sort(new CountryComparator(CountryAttribute.CONTINENTAL_COEFFICIENT));
+            
+            for(int i = 0; i<countries.Count; i++)
+            {
+                List<Club> clubs = (countries[i].FirstDivisionChampionship().rounds[0] as ChampionshipRound).Ranking();
+                int rank = i + 1;
+                int currentLevel = 0;
+                foreach(Qualification q in _continentalQualifications)
+                {
+                    if(q.ranking == rank)
+                    {
+                        for(int j = 0; j<q.qualifies; j++)
+                        {
+                            Club qualifiedClub = clubs[currentLevel];
+                            currentLevel++;
+                            q.tournament.AddClubForNextYear(qualifiedClub, q.roundId);
+                            Console.WriteLine("Qualified " + qualifiedClub.name + " in " + q.tournament.name);
+                        }
+                    }
+                }
+            }
         }
 
         public override string ToString()

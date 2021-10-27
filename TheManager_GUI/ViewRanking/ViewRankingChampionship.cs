@@ -136,6 +136,47 @@ namespace TheManager_GUI.VueClassement
             if (!_focusOnTeam)
             {
                 int roundLevel = _round.Tournament.level;
+                ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament);
+                Country country = localisation as Country;
+                if(country != null)
+                {
+                    Continent continent = country.Continent;
+                    int nationIndex = continent.associationRanking.IndexOf(country) + 1;
+                    int currentRanking = 0;
+                    foreach(Qualification q in continent.continentalQualifications)
+                    {
+                        if(q.ranking == nationIndex)
+                        {
+                            for (int j = 0; j < q.qualifies; j++)
+                            {
+                                string color = "backgroundColor";
+                                if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
+                                {
+                                    color = "cl1Color";
+                                }
+                                else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound == null)
+                                {
+                                    color = "cl2Color";
+                                }
+                                else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
+                                {
+                                    color = "el1Color";
+                                }
+                                else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound == null)
+                                {
+                                    color = "el2Color";
+                                }
+                                else if (q.tournament.level == 3)
+                                {
+                                    color = "ecl1Color";
+                                }
+                                SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
+                                (spRanking.Children[currentRanking + 1] as StackPanel).Background = lineColor;
+                                currentRanking++;
+                            }
+                        }
+                    }
+                }
                 foreach (Qualification q in _round.qualifications)
                 {
                     string color = "backgroundColor";

@@ -1044,13 +1044,16 @@ namespace TheManager
             {
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
+                    Continent continent = Session.Instance.Game.kernel.String2Continent(e2.Attribute("name").Value);
                     foreach(XElement e3 in e.Descendants("Qualifications"))
                     {
                         int rank = int.Parse(e3.Attribute("rank").Value);
                         string tournamentName = e3.Attribute("tournament").Value;
-                        int idTour = int.Parse(e3.Attribute("id_tour").Value);
+                        Tournament targetTournament = Session.Instance.Game.kernel.String2Tournament(tournamentName);
+                        int roundId = int.Parse(e3.Attribute("id_tour").Value);
                         int count = int.Parse(e3.Attribute("count").Value);
-
+                        Qualification q = new Qualification(rank, roundId, targetTournament, true, count);
+                        continent.continentalQualifications.Add(q);
                     }
                 }
             }

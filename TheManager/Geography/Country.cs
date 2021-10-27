@@ -121,6 +121,18 @@ namespace TheManager
             return _tournaments;
         }
 
+        public Tournament FirstDivisionChampionship()
+        {
+            Tournament res = null;
+            foreach(Tournament t in _tournaments)
+            {
+                if(t.isChampionship && t.level == 1)
+                {
+                    res = t;
+                }
+            }
+            return res;
+        }
 
         public override string ToString()
         {
@@ -130,6 +142,25 @@ namespace TheManager
         public string Name()
         {
             return _name;
+        }
+
+        public Continent Continent
+        {
+            get
+            {
+                Continent res = null;
+                foreach(Continent c in Session.Instance.Game.kernel.continents)
+                {
+                    foreach(Country cy in c.countries)
+                    {
+                        if(cy == this)
+                        {
+                            res = c;
+                        }
+                    }
+                }
+                return res;
+            }
         }
     }
 }

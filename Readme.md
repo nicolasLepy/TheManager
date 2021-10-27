@@ -33,7 +33,12 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 <img src="Pics/pic14.png" alt="Tournament screen"/>
 
-<img src="Pics/pic15.png" alt="International ranking" width="45%"/>
+<p float="left">
+	<img src="Pics/pic15.png" alt="International ranking" width="45%"/>
+	<img src="Pics/pic16.png" alt="UEFA associations ranking" width="45%"/>
+</p>
+
+<img src="Pics/pic17.png" alt="UEFA clubs ranking" width="45%"/>
 
 ### Search players screen
 
@@ -129,7 +134,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
 | Implement Machine Learning solution for transferts management         | 🔴 Not started |
-| Pre-game competitions selection                                       | 🟡 In progress |
 | Try to reduce savegame size (135mo / year)                            | 🟡 In progress |
 | Manage memory for long games                                          | 🔴 Not started |
 

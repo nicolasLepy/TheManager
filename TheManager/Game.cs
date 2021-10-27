@@ -6,6 +6,7 @@ using TheManager.Comparators;
 using TheManager.Exportation;
 using MathNet.Numerics.Distributions;
 using TheManager.Tournaments;
+using System.Globalization;
 
 namespace TheManager
 {
@@ -543,6 +544,7 @@ namespace TheManager
         {
             _date = _date.AddDays(1);
 
+            int weekNumber = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
 
             /*foreach(Tournament t in _kernel.Competitions)
             {
@@ -630,8 +632,27 @@ namespace TheManager
                 UpdateClubs();
             }
 
+            if(weekNumber == 23 && date.DayOfWeek == DayOfWeek.Wednesday)
+            {
+                Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
+                europe.QualifiesClubForContinentalCompetitionNextYear();
+                //TODO: Use this when competitions for other continents are ready
+                /*
+                foreach(Continent c in kernel.continents)
+                {
+                    c.QualifiesClubForContinentalCompetitionNextYear();
+                }*/
+
+            }
+
+            if(weekNumber == 26 && date.DayOfWeek == DayOfWeek.Wednesday)
+            {
+                Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
+                europe.UpdateStoredAssociationRanking();
+            }
+
             //Transfers market
-            if(options.transfersEnabled)
+            if (options.transfersEnabled)
             {
                 Transfers();
             }

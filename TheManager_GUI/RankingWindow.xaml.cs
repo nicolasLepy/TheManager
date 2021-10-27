@@ -43,9 +43,9 @@ namespace TheManager_GUI
             spHead.Children.Add(ViewUtils.CreateLabel("-2", "StyleLabel2Center", -1, 35, null, null, false));
             spHead.Children.Add(ViewUtils.CreateLabel("-1", "StyleLabel2Center", -1, 35, null, null, false));
             spHead.Children.Add(ViewUtils.CreateLabel("Total", "StyleLabel2Center", -1, 50, null, null, true));
-            spHead.Children.Add(ViewUtils.CreateLabel("CL", "StyleLabel2Center", -1, 20, null, null, false));
-            spHead.Children.Add(ViewUtils.CreateLabel("EL", "StyleLabel2Center", -1, 20, null, null, false));
-            spHead.Children.Add(ViewUtils.CreateLabel("ECL", "StyleLabel2Center", -1, 20, null, null, false));
+            spHead.Children.Add(ViewUtils.CreateLabel("CL", "StyleLabel2Center", 10, 20, null, null, false));
+            spHead.Children.Add(ViewUtils.CreateLabel("EL", "StyleLabel2Center", 10, 20, null, null, false));
+            spHead.Children.Add(ViewUtils.CreateLabel("ECL", "StyleLabel2Center", 10, 20, null, null, false));
             spUEFARanking.Children.Add(spHead);
 
             List<Country> countries = new List<Country>();
@@ -63,6 +63,18 @@ namespace TheManager_GUI
             foreach (Country c in countries)
             {
                 rank++;
+                Dictionary<int, int> qualifications = new Dictionary<int, int>();
+                foreach(Qualification q in europe.continentalQualifications)
+                {
+                    if(q.ranking == rank)
+                    {
+                        if(!qualifications.ContainsKey(q.tournament.level))
+                        {
+                            qualifications.Add(q.tournament.level, 0);
+                        }
+                        qualifications[q.tournament.level] += q.qualifies;
+                    }
+                }
                 StackPanel spLine = new StackPanel();
                 spLine.Orientation = Orientation.Horizontal;
                 spLine.Children.Add(ViewUtils.CreateLabel(rank.ToString(), "StyleLabel2", -1, 30, null, null, true));
@@ -74,9 +86,9 @@ namespace TheManager_GUI
                 spLine.Children.Add(ViewUtils.CreateLabel(c.YearAssociationCoefficient(-2).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
                 spLine.Children.Add(ViewUtils.CreateLabel(c.YearAssociationCoefficient(-1).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
                 spLine.Children.Add(ViewUtils.CreateLabel(c.AssociationCoefficient.ToString("0.00"), "StyleLabel2Center", -1, 50, null, null, true));
-                spLine.Children.Add(ViewUtils.CreateLabel("0", "StyleLabel2Center", 9, 20, null, null, true));
-                spLine.Children.Add(ViewUtils.CreateLabel("0", "StyleLabel2Center", 9, 20, null, null, true));
-                spLine.Children.Add(ViewUtils.CreateLabel("0", "StyleLabel2Center", 9, 20, null, null, true));
+                spLine.Children.Add(ViewUtils.CreateLabel(qualifications.ContainsKey(1) ? qualifications[1].ToString() : "0", "StyleLabel2Center", 9, 20, null, null, true));
+                spLine.Children.Add(ViewUtils.CreateLabel(qualifications.ContainsKey(2) ? qualifications[2].ToString() : "0", "StyleLabel2Center", 9, 20, null, null, true));
+                spLine.Children.Add(ViewUtils.CreateLabel(qualifications.ContainsKey(3) ? qualifications[3].ToString() : "0", "StyleLabel2Center", 9, 20, null, null, true));
                 spUEFARanking.Children.Add(spLine);
                 
             }
