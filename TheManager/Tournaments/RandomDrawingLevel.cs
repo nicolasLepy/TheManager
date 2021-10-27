@@ -10,10 +10,12 @@ namespace TheManager
     public class RandomDrawingLevel : IRandomDrawing
     {
         private readonly GroupsRound _round;
+        private readonly ClubAttribute _attribute;
 
-        public RandomDrawingLevel(GroupsRound tour)
+        public RandomDrawingLevel(GroupsRound tour, ClubAttribute attribute)
         {
             _round = tour;
+            _attribute = attribute;
         }
 
         public void RandomDrawing()
@@ -21,7 +23,7 @@ namespace TheManager
             List<Club> pot = new List<Club>(_round.clubs);
             try
             {
-                pot.Sort(new ClubComparator(ClubAttribute.LEVEL, false));
+                pot.Sort(new ClubComparator(_attribute, false));
                 if(pot[0] as NationalTeam != null)
                 {
                     List<NationalTeam> nationalsTeams = new List<NationalTeam>();

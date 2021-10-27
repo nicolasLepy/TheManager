@@ -585,7 +585,7 @@ namespace TheManager
                         string cityName = e2.Attribute("ville").Value;
                         if (cityName == "")
                         {
-                            cityName = "Paris";
+                            cityName = "NoCity";
                         }
 
                         City city = _kernel.String2City(cityName);
@@ -787,7 +787,12 @@ namespace TheManager
                             }
                             else if (type == "elimination")
                             {
-                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, initialisationDate, endDate);
+                                RandomDrawingMethod method = RandomDrawingMethod.Random;
+                                if (e3.Attribute("methode") != null)
+                                {
+                                    method = String2DrawingMethod(e3.Attribute("methode").Value);
+                                }
+                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, initialisationDate, endDate, method);
                             }
                             else if (type == "poules")
                             {
@@ -797,7 +802,7 @@ namespace TheManager
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
-                                    //Lecture position poules
+                                    //Read groups localisation
                                     for (int groupNum = 1; groupNum <= groupsNumber; groupNum++)
                                     {
                                         string[] poulePosition = e3.Attribute("poule" + groupNum).Value.Split(';');
@@ -1088,6 +1093,15 @@ namespace TheManager
                 CityClub cityClub = c as CityClub;
                 if(cityClub != null)
                 {
+                    if(cityClub.city.Name == "NoCity" && cityClub.Championship != null)
+                    {
+                        Country country = Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country;
+                        if(country.cities.Count == 0)
+                        {
+                            country.cities.Add(new City(country.Name(), 0, 0, 0));
+                        }
+                        cityClub.city = country.cities[0];
+                    }
                     int firstTeamPlayersNumber = cityClub.contracts.Count - (cityClub.reserves.Count * 15);
                     int missingContractNumber = 19 - firstTeamPlayersNumber;
                     for (int i = 0; i < missingContractNumber; i++)
@@ -1164,6 +1178,22 @@ namespace TheManager
             else if (method == "Geographique")
             {
                 res = RandomDrawingMethod.Geographic;
+            }
+            else if (method == "Coefficient")
+            {
+                res = RandomDrawingMethod.Coefficient ;
+            }
+            else if (method == "Fixed")
+            {
+                res = RandomDrawingMethod.Fixed;
+            }
+            else if (method == "Random")
+            {
+                res = RandomDrawingMethod.Random;
+            }
+            else if (method == "Ranking")
+            {
+                res = RandomDrawingMethod.Ranking;
             }
 
             return res;

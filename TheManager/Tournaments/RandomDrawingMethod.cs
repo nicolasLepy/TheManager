@@ -9,6 +9,10 @@ namespace TheManager
     public enum RandomDrawingMethod
     {
         Level,
-        Geographic
+        Geographic,
+        Ranking,
+        Coefficient,
+        Random,
+        Fixed
     }
 }

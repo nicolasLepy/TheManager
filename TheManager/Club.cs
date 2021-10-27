@@ -122,7 +122,7 @@ namespace TheManager
             float res = 0;
 
             Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
-            for (int i = 1; i < 3; i++)
+            for (int i = 1; i < 4; i++)
             {
                 Tournament continentalTournament = europe.GetContinentalClubTournament(i);
                 int j = continentalTournament.previousEditions.Count - (-nSeason);

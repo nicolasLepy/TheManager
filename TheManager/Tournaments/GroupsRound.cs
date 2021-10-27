@@ -30,6 +30,8 @@ namespace TheManager
 
         public int groupsCount { get { return _groupsNumber; } }
 
+        public int maxClubsInGroup => _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
+
         public List<GeographicPosition> groupsLocalisation { get => _groupsLocalisation; }
 
         public string GroupName(int groupId)
@@ -263,7 +265,10 @@ namespace TheManager
             switch (_randomDrawingMethod)
             {
                 case RandomDrawingMethod.Level:
-                    randomDrawing = new RandomDrawingLevel(this);
+                    randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);
+                    break;
+                case RandomDrawingMethod.Coefficient:
+                    randomDrawing = new RandomDrawingLevel(this, _clubs[0] as NationalTeam == null ? ClubAttribute.CONTINENTAL_COEFFICIENT : ClubAttribute.LEVEL);
                     break;
                 case RandomDrawingMethod.Geographic:
                     randomDrawing = new RandomDrawingGeographic(this);

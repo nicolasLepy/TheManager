@@ -44,6 +44,11 @@ namespace TheManager
             return _random.Next(min, max);
         }
 
+        public int Random(int max)
+        {
+            return _random.Next(max);
+        }
+
         /// <summary>
         /// Return a number between 0.0 and 1.0
         /// </summary>

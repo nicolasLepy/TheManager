@@ -59,14 +59,13 @@ namespace TheManager
             List<Club> clubs = new List<Club>();
             float total = 0;
             Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
-            for (int i = 1; i < 3; i++)
+            for (int i = 1; i < 4; i++)
             {
                 Tournament continentalTournament = europe.GetContinentalClubTournament(i);
                 int j = continentalTournament.previousEditions.Count - (-nSeason);
 
                 if (j >= 0)
                 {
-                    
                     Tournament yearContinentalTournament = continentalTournament.previousEditions.ToList()[j].Value;
                     foreach(Tournament championship in _tournaments)
                     {

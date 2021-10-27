@@ -16,14 +16,20 @@ namespace TheManager
     public class KnockoutRound : Round
     {
 
+        [DataMember]
+        private RandomDrawingMethod _randomDrawingMethod;
 
-        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, GameDay initialisation, GameDay end) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
+        public RandomDrawingMethod randomDrawingMethod => _randomDrawingMethod;
+
+
+        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod method) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
         {
+            _randomDrawingMethod = method;
         }
 
         public override Round Copy()
         {
-            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end);
+            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod);
             
             foreach (Club c in this.clubs)
             {

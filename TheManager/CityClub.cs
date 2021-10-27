@@ -107,7 +107,7 @@ namespace TheManager
         private bool _isForbiddenToRecruit;
 
         public int budget { get => _budget; }
-        public City city { get => _city; }
+        public City city { get => _city; set => _city = value; }
         public float sponsor { get => _sponsor; }
         public bool isForbiddenToRecruit { get => _isForbiddenToRecruit; set => _isForbiddenToRecruit = value; }
         public List<Contract> contracts { get => _players; }

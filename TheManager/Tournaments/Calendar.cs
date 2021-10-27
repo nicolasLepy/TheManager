@@ -472,7 +472,21 @@ namespace TheManager
                 indice++;
             }
         }
-        
+
+        public static void Shuffle<T>(this IList<T> list)
+        {
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = Session.Instance.Random(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+
+
         /// <summary>
         /// The drawing for direct-elimination round
         /// </summary>
@@ -481,12 +495,64 @@ namespace TheManager
         public static List<Match> Draw(KnockoutRound round)
         {
             List<Match> res = new List<Match>();
-            List<Club> hat = new List<Club>(round.clubs);
+
+
+            List<Club>[] hats = new List<Club>[] { new List<Club>(), new List<Club>() };
+
+            if (round.randomDrawingMethod == RandomDrawingMethod.Ranking)
+            {
+                GroupsRound previousRound = round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1] as GroupsRound;
+                List<Club>[] clubsByRankPosition = new List<Club>[previousRound.maxClubsInGroup];
+                List<Club> allClubs = new List<Club>();
+
+                for(int i = 0; i < clubsByRankPosition.Length; i++)
+                {
+                    clubsByRankPosition[i] = new List<Club>();
+                }
+
+                for(int i = 0; i < previousRound.groupsCount; i++)
+                {
+                    List<Club> ranking = previousRound.Ranking(i);
+                    for(int j = 0; j<ranking.Count; j++)
+                    {
+                        clubsByRankPosition[j].Add(ranking[j]);
+                    }
+                }
+
+                for (int i = 0; i < clubsByRankPosition.Length; i++)
+                {
+                    clubsByRankPosition[i].Sort(new ClubRankingComparator(previousRound.matches));
+                    allClubs.AddRange(clubsByRankPosition[i]);
+                }
+
+                allClubs = new List<Club>(allClubs.GetRange(0, round.clubs.Count));
+                hats[0].AddRange(allClubs.GetRange(0, round.clubs.Count / 2));
+                hats[1].AddRange(allClubs.GetRange(round.clubs.Count / 2, round.clubs.Count / 2));
+            }
+            else if(round.randomDrawingMethod == RandomDrawingMethod.Coefficient)
+            {
+                List<Club> allClubs = new List<Club>(round.clubs);
+                allClubs.Sort(new ClubComparator(ClubAttribute.CONTINENTAL_COEFFICIENT));
+                hats[0].AddRange(allClubs.GetRange(0, round.clubs.Count / 2));
+                hats[1].AddRange(allClubs.GetRange(round.clubs.Count / 2, round.clubs.Count / 2));
+            }
+            //Random
+            else
+            {
+                List<Club> allClubs = new List<Club>(round.clubs);
+                allClubs.Shuffle();
+                for(int i = 0; i<allClubs.Count;i++)
+                {
+                    hats[i < allClubs.Count/2 ? 0 : 1].Add(allClubs[i]);
+                }
+            }
+
             RoundProgrammation programmation = round.programmation;
             for (int i = 0; i < round.clubs.Count / 2; i++)
             {
-                Club home = DrawClub(hat);
-                Club away = DrawClub(hat);
+                int hat = Session.Instance.Random(0, 2);
+                Club home = DrawClub(hats[hat]);
+                Club away = DrawClub(hats[hat == 1 ? 0 : 1]);
 
 
                 DateTime day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year);
