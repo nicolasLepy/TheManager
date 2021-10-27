@@ -153,7 +153,16 @@ namespace TheManager
             
             for(int i = 0; i<countries.Count; i++)
             {
-                List<Club> clubs = (countries[i].FirstDivisionChampionship().rounds[0] as ChampionshipRound).Ranking();
+                List<Club> clubs = new List<Club>();
+                Round championshipRound = countries[i].FirstDivisionChampionship().rounds[0];
+                if(championshipRound as ChampionshipRound != null)
+                {
+                    clubs = (championshipRound as ChampionshipRound).Ranking();
+                }
+                if (championshipRound as InactiveRound != null)
+                {
+                    clubs = (championshipRound as InactiveRound).Ranking();
+                }
                 int rank = i + 1;
                 int currentLevel = 0;
                 foreach(Qualification q in _continentalQualifications)
@@ -165,7 +174,6 @@ namespace TheManager
                             Club qualifiedClub = clubs[currentLevel];
                             currentLevel++;
                             q.tournament.AddClubForNextYear(qualifiedClub, q.roundId);
-                            Console.WriteLine("Qualified " + qualifiedClub.name + " in " + q.tournament.name);
                         }
                     }
                 }

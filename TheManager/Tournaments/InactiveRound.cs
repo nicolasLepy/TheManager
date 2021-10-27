@@ -13,8 +13,13 @@ namespace TheManager
     public class InactiveRound : Round
     {
 
+
+        private List<Club> _ranking;
+
         public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end) :base(name,hour,new List<GameDay>(),new List<TvOffset>(),initialisation,end,false,0)
-        { }
+        {
+            _ranking = null;
+        }
 
         public override Round Copy()
         {
@@ -54,6 +59,7 @@ namespace TheManager
                     r.AddTeamsToRecover();
                 }
             }
+            _ranking = null;
 
         }
 
@@ -67,20 +73,28 @@ namespace TheManager
             return _clubs[0];
         }
 
+        public List<Club> Ranking()
+        {
+            if(_ranking == null)
+            {
+                _ranking = new List<Club>(_clubs);
+                try
+                {
+                    _ranking.Sort(new ClubRandomRankingComparator());
+                }
+                catch
+                {
+                    Utils.Debug("Le classement aléatoire n'a pu être généré");
+                }
+            }
+            return _ranking;
+        }
+
         public override void QualifyClubs()
         {
-            List<Club> ranking = new List<Club>(_clubs);
-            try
-            {
-                ranking.Sort(new ClubRandomRankingComparator());
-            }
-            catch
-            {
-                Utils.Debug("Le classement aléatoire n'a pu être généré");
-            }
 
+            List<Club> ranking = Ranking();
             //Simuler des gains d'argent de matchs pour les clubs (affluence)
-
 
             DateTime fin = DateEndRound();
             DateTime dateInitialisationRound = DateInitialisationRound();
@@ -101,7 +115,6 @@ namespace TheManager
                     cv.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice, BudgetModificationReason.TournamentGrant);
                 }
             }
-
 
             List<Qualification> adjustedQualifications = new List<Qualification>(_qualifications);
             adjustedQualifications.Sort(new QualificationComparator());
