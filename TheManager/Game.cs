@@ -7,6 +7,7 @@ using TheManager.Exportation;
 using MathNet.Numerics.Distributions;
 using TheManager.Tournaments;
 using System.Globalization;
+using System.IO.Compression;
 
 namespace TheManager
 {
@@ -134,16 +135,45 @@ namespace TheManager
 
         public void Save(string path)
         {
+            path = path.Replace(".csave", ".save");
             using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
                 DataContractSerializer ser = new DataContractSerializer(typeof(Game));
                 ser.WriteObject(writer, this);
             }
-            
+
+            if(File.Exists(path.Split('.')[0] + ".csave"))
+            {
+                File.Delete(path.Split('.')[0] + ".csave");
+            }
+
+            using (ZipArchive zip = ZipFile.Open(path.Split('.')[0] + ".csave", ZipArchiveMode.Create))
+            {
+                zip.CreateEntryFromFile(path, "save.save");
+                File.Delete(path);
+                zip.Dispose();
+            }
+
         }
 
         public void Load(string path)
         {
+
+            Game loadObj;
+            using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
+            {
+                ZipArchiveEntry cFile = zip.GetEntry("save.save");
+                DataContractSerializer ser = new DataContractSerializer(typeof(Game));
+                loadObj = (Game)ser.ReadObject(cFile.Open());
+                _options = loadObj.options;
+                this._kernel = loadObj.kernel;
+                this._date = loadObj.date;
+                this._club = loadObj.club;
+                zip.Dispose();
+
+            }
+
+            /*
             Game loadObj;
             using (FileStream reader = new FileStream(path,FileMode.Open, FileAccess.Read))
             {
@@ -153,7 +183,7 @@ namespace TheManager
                 this._kernel = loadObj.kernel;
                 this._date = loadObj.date;
                 this._club = loadObj.club;
-            }
+            }*/
         }
 
         /// <summary>

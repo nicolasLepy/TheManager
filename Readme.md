@@ -134,7 +134,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
 | Implement Machine Learning solution for transferts management         | 🔴 Not started |
-| Try to reduce savegame size (135mo / year)                            | 🟡 In progress |
 | Manage memory for long games                                          | 🔴 Not started |
 
 ## Next Features

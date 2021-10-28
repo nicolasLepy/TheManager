@@ -157,7 +157,7 @@ namespace TheManager_GUI
         private void BtnChargerPartie_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "The Manager Save|*.save";
+            openFileDialog.Filter = "The Manager Save|*.csave";
             if (openFileDialog.ShowDialog() == true)
             {
                 Game p = new Game();
