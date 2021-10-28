@@ -265,3 +265,4 @@ __pycache__/
 FifaDatabaseAnalysis/players_20.csv
 *.xlsx
 *.rar
+*.csave

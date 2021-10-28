@@ -42,15 +42,16 @@
 				<StackPanel Orientation="Horizontal">
 					<!-- côté gauche, infos générales -->
 					<StackPanel Orientation="Vertical" Width="420">
-						<StackPanel Orientation="Vertical" Width="370" Margin="20">
-							<ComboBox Name="comboPays" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboPays_SelectionChanged" Margin="5" Width="200" HorizontalAlignment="Left"/>
+						<StackPanel Orientation="Vertical" Width="390" Margin="0,20,0,0">
+							<ComboBox Name="comboContinent" Style="{StaticResource StyleComboBox}" SelectionChanged="comboContinent_SelectionChanged" Margin="5" Width="200" HorizontalAlignment="Left"/>
 							<StackPanel Orientation="Horizontal">
+								<ListBox Name="lbCountries" Width="165" HorizontalAlignment="Left" Margin="5" Height="60" Style="{StaticResource StyleListBox}" SelectionChanged="lbCountries_SelectionChanged"></ListBox>
 								<ListBox Name="lbChampionnats" Width="165" HorizontalAlignment="Left" Height="60" Margin="5" Style="{StaticResource StyleListBox}" SelectionChanged="LbChampionnats_SelectionChanged">
 								</ListBox>
-								<ListBox Name="lbTours" Width="165" HorizontalAlignment="Left" Margin="5" Height="60" Style="{StaticResource StyleListBox}" SelectionChanged="LbTours_SelectionChanged"></ListBox>
 
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+								<ComboBox Name="comboRounds" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboRounds_SelectionChanged" Margin="5" Width="140" HorizontalAlignment="Left"/>
 								<Button Name="btnCompetition" Margin="5" Content="Voir plus" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
 								<Button Name="btnParticipants" Margin="5" Width="135" Style="{StaticResource StyleButton1}" Content="Equipes engagées" Click="BtnParticipants_Click"/>
 
@@ -65,9 +66,7 @@
 							</Border>
 
 							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="0,10,0,0">
-								<StackPanel Orientation="Vertical">
-									
-								
+								<StackPanel Orientation="Vertical" Height="153">
 									<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 										<Button Name="btnGauche" Click="BtnGauche_Click">
 											<Image Name="imgBtnGauche" Source="Images/left.png" Width="20" Height="20"/>
@@ -147,7 +146,7 @@
 							</StackPanel>
 						</StackPanel>
 						<Button Name="btnCalendar" Margin="20,5,20,5" Content="Calendrier des compétitions" Style="{StaticResource StyleButton1}" Click="btnCalendar_Click"/>
-						<Border Style="{StaticResource StyleBorderStackPanel}">
+						<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 							<StackPanel Orientation="Vertical">
 								<Label Style="{StaticResource StyleLabel2Center}" Content="Matchs du jour"/>
 								<ScrollViewer HorizontalScrollBarVisibility="Auto" Height="360">

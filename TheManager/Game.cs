@@ -170,20 +170,7 @@ namespace TheManager
                 this._date = loadObj.date;
                 this._club = loadObj.club;
                 zip.Dispose();
-
             }
-
-            /*
-            Game loadObj;
-            using (FileStream reader = new FileStream(path,FileMode.Open, FileAccess.Read))
-            {
-                DataContractSerializer ser = new DataContractSerializer(typeof(Game));
-                loadObj = (Game)ser.ReadObject(reader);
-                _options= loadObj.options;
-                this._kernel = loadObj.kernel;
-                this._date = loadObj.date;
-                this._club = loadObj.club;
-            }*/
         }
 
         /// <summary>

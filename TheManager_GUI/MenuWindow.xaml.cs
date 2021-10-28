@@ -46,21 +46,10 @@ namespace TheManager_GUI
             _partie = Session.Instance.Game;
 
             imgClub.Source = new BitmapImage(new Uri(Utils.Logo(_partie.club)));
-            comboPays.Items.Clear();
+            comboContinent.Items.Clear();
             foreach (Continent c in _partie.kernel.continents)
             {
-                if (c.Tournaments().Count > 0)
-                {
-                    this.comboPays.Items.Add(c);
-                }
-
-                foreach (Country p in c.countries)
-                {
-                    if (p.Tournaments().Count > 0)
-                    {
-                        this.comboPays.Items.Add(p);
-                    }
-                }
+                comboContinent.Items.Add(c);
             }
             Refresh();
         }
@@ -144,19 +133,22 @@ namespace TheManager_GUI
             Tournament c = lbChampionnats.SelectedItem as Tournament;
             if(c != null)
             {
-                lbTours.Items.Clear();
-                /*dgClassement.Items.Clear();*/
+                comboRounds.Items.Clear();
                 foreach (Round t in c.rounds)
                 {
-                    lbTours.Items.Add(t);
+                    comboRounds.Items.Add(t);
+                }
+                if(comboRounds.Items.Count > 0)
+                {
+                    comboRounds.SelectedItem = comboRounds.Items[0];
                 }
 
             }
         }
 
-        private void LbTours_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void ComboRounds_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Round t = lbTours.SelectedItem as Round;
+            Round t = comboRounds.SelectedItem as Round;
 
             if (t != null)
             {
@@ -182,12 +174,6 @@ namespace TheManager_GUI
         {
             Windows_Options wo = new Windows_Options();
             wo.Show();
-        }
-
-        private void ComboPays_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ILocalisation localisation = comboPays.SelectedItem as ILocalisation;
-            ListerCompetitions(localisation);
         }
 
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
@@ -225,7 +211,7 @@ namespace TheManager_GUI
             if(localisation != null)
             {
                 lbChampionnats.Items.Clear();
-                lbTours.Items.Clear();
+                comboRounds.Items.Clear();
                 foreach (Tournament c in localisation.Tournaments())
                 {
                     this.lbChampionnats.Items.Add(c);
@@ -500,7 +486,7 @@ namespace TheManager_GUI
 
         private void BtnDroite_Click(object sender, RoutedEventArgs e)
         {
-            Round r = lbTours.SelectedItem as Round;
+            Round r = comboRounds.SelectedItem as Round;
             if(r != null)
             {
                 if(!Utils.CompareDates(_resultsCurrentDate, _lastDateOfRound)){
@@ -520,7 +506,7 @@ namespace TheManager_GUI
 
         private void BtnGauche_Click(object sender, RoutedEventArgs e)
         {
-            Round r = lbTours.SelectedItem as Round;
+            Round r = comboRounds.SelectedItem as Round;
             if (r != null)
             {
                 if (!Utils.CompareDates(_resultsCurrentDate, _firstDateOfRound)){
@@ -560,6 +546,31 @@ namespace TheManager_GUI
         {
             CalendarWindow cw = new CalendarWindow();
             cw.Show();
+        }
+
+        private void lbCountries_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ILocalisation localisation = lbCountries.SelectedItem as ILocalisation;
+            ListerCompetitions(localisation);
+        }
+
+        private void comboContinent_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Continent c = comboContinent.SelectedItem as Continent;
+
+            lbCountries.Items.Clear();
+            if(c.Tournaments().Count > 0)
+            {
+                lbCountries.Items.Add(c);
+            }
+            foreach (Country cy in c.countries)
+            {
+                if(cy.Tournaments().Count > 0)
+                {
+                    lbCountries.Items.Add(cy);
+                }
+            }
+            
         }
     }
 
