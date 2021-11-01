@@ -140,6 +140,7 @@ namespace TheManager_GUI
             lbCreationPartie.Content = "Chargement des commentaires de match";
             cbdd.LoadGamesComments();
             cbdd.LoadRules();
+            cbdd.GenerateNationalCup();
 
             pbLoading.Value = 100;
 

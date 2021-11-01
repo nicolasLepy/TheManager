@@ -124,7 +124,6 @@ namespace TheManager
                 adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(_qualifications, ranking, Tournament);
             }
 
-
             foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking - 1];
