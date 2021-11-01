@@ -33,6 +33,7 @@ namespace TheManager_GUI
             _indexJournee = 1;
             InitWidgets(true);
             FillComboBoxYear();
+            FillComboBoxContinents();
 
             imgBtnJourneeGauche.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\left.png"));
             imgBtnJourneeDroite.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\right.png"));
@@ -41,10 +42,15 @@ namespace TheManager_GUI
 
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
 
+            cbContinent.SelectedItem = Session.Instance.Game.kernel.ContinentTournament(tournament);
+            cbCountry.SelectedItem = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            cbCompetition.SelectedItem = tournament;
+
         }
 
         private void FillComboBoxYear()
         {
+            cbYear.Items.Clear();
             ComboBoxItem cbi = new ComboBoxItem();
             cbi.Content = "Saison actuelle";
             cbi.Selected += new RoutedEventHandler((s, e) => NewYearSelected(new KeyValuePair<int, Tournament>(-1, _baseTournament)));
@@ -58,13 +64,61 @@ namespace TheManager_GUI
                 cbYear.Items.Add(cbi);
             }
         }
-
         private void NewYearSelected(KeyValuePair<int, Tournament> history)
         {
             _competition = history.Value;
             _indexTour = 0;
             _indexJournee = 1;
             InitWidgets(true);
+        }
+
+        private void FillComboBoxContinents()
+        {
+            foreach (Continent c in Session.Instance.Game.kernel.continents)
+            {
+                ComboBoxItem cbi = new ComboBoxItem();
+                cbi.Content = c;
+                cbi.Selected += new RoutedEventHandler((s, e) => ContinentSelected(c));
+                cbContinent.Items.Add(cbi);
+            }
+
+        }
+
+        private void ContinentSelected(Continent c)
+        {
+            cbCountry.Items.Clear();
+            foreach (Country cy in c.countries)
+            {
+                ComboBoxItem cbi = new ComboBoxItem();
+                cbi.Content = cy.Name();
+                cbi.Selected += new RoutedEventHandler((s, e) => CountrySelected(cy));
+                cbCountry.Items.Add(cbi);
+            }
+
+        }
+
+        private void CountrySelected(Country c)
+        {
+            cbCompetition.Items.Clear();
+            foreach (Tournament t in c.Tournaments())
+            {
+                ComboBoxItem cbi = new ComboBoxItem();
+                cbi.Content = t.name;
+                cbi.Selected += new RoutedEventHandler((s, e) => CompetitionSelected(t));
+                cbCompetition.Items.Add(cbi);
+            }
+        
+        }
+
+        private void CompetitionSelected(Tournament t)
+        {
+            _competition = t;
+            _baseTournament = t;
+            _indexTour = 0;
+            _indexJournee = 1;
+            InitWidgets(true);
+            FillComboBoxYear();
+
         }
 
         private List<Match> Journee()
@@ -769,5 +823,6 @@ namespace TheManager_GUI
                 }
             }
         }
+
     }
 }

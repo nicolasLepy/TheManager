@@ -1241,7 +1241,6 @@ namespace TheManager
                             roundCount++;
                         }
                         int preliRoundTeams = (totalTeams - j) * 2;
-                        int firstFinalRoundTeams = totalTeams - preliRoundTeams;
                         if(j != totalTeams)
                         {
                             roundCount++;
@@ -1292,6 +1291,7 @@ namespace TheManager
                             {
                                 name = "Finale";
                             }
+
                             Hour hour = new Hour() { Hours = 20, Minutes = 0 };
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
                             GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, false, 0, 0);
@@ -1322,6 +1322,7 @@ namespace TheManager
                             maxPrize /= 2;
                         }
 
+                        nationalCup.InitializeQualificationsNextYearsLists();
                         c.Tournaments().Add(nationalCup);
                     }
                 }

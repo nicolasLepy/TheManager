@@ -461,6 +461,34 @@ namespace TheManager
             return res;
         }
 
+        public Continent ContinentTournament(Tournament tournament)
+        {
+            Continent res = null;
+
+            foreach(Continent c in _continents)
+            {
+                foreach(Tournament t in c.Tournaments())
+                {
+                    if(t == tournament)
+                    {
+                        res = c;
+                    }
+                }
+                foreach(Country cy in c.countries)
+                {
+                    foreach(Tournament t in cy.Tournaments())
+                    {
+                        if(t == tournament)
+                        {
+                            res = c;
+                        }
+                    }
+                }
+            }
+
+            return res;
+        }
+
         public ILocalisation LocalisationTournament(Tournament tournament)
         {
             ILocalisation res = null;

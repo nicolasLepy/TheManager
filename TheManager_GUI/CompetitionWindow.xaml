@@ -27,8 +27,16 @@
 
 			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Vertical" Width="150">
+					<ComboBox Name="cbContinent" Style="{StaticResource StyleComboBox}" FontSize="12" SelectionChanged="cbContinent_SelectionChanged">
+					</ComboBox>
+					<ComboBox Name="cbCountry" Style="{StaticResource StyleComboBox}" FontSize="12" SelectionChanged="cbCountry_SelectionChanged">
+					</ComboBox>
+					<ComboBox Name="cbCompetition" Style="{StaticResource StyleComboBox}" FontSize="12" SelectionChanged="cbCompetition_SelectionChanged">
+					</ComboBox>
+					<Separator/>
 					<ComboBox Name="cbYear" Style="{StaticResource StyleComboBox}" FontSize="12">
 					</ComboBox>
+					<Separator/>
 					<ListBox Name="lbStats" Style="{StaticResource StyleListBox}" FontSize="12">
 						<ListBoxItem Content="Classement général" Selected="SelectedRanking"/>
 						<ListBoxItem Content="Classement domicile" Selected="SelectedHomeRanking"/>
