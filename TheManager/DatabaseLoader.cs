@@ -668,7 +668,7 @@ namespace TheManager
 
                         if (stadium == null)
                         {
-                            stadium = new Stadium("Stade de " + shortName, 15000, null);
+                            stadium = new Stadium("Stade de " + shortName, 75000, null);
                         }
                         int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
                         string logo = e2.Attribute("logo").Value;

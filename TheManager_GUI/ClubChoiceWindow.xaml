@@ -18,15 +18,15 @@
 					</ScrollViewer>
 					<StackPanel Orientation="Horizontal">
 						<Label Content="Prénom" Width="100" Style="{StaticResource StyleLabel2}"/>
-						<TextBox Name="tbPrenom" Width="125" Style="{StaticResource StyleTextBox}"/>
+						<TextBox Name="tbPrenom" Width="125" Style="{StaticResource StyleTextBox}" Text="Prenom" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
 						<Label Content="Nom" Width="100" Style="{StaticResource StyleLabel2}"/>
-						<TextBox Name="tbNom" Width="125" Style="{StaticResource StyleTextBox}"/>
+						<TextBox Name="tbNom" Width="125" Style="{StaticResource StyleTextBox}" Text="Nom"/>
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
 						<Label Content="Naissance" Width="100" Style="{StaticResource StyleLabel2}"/>
-						<DatePicker Name="dpNaissance" Width="125" Style="{StaticResource StyleDatePicker}"/>
+						<DatePicker Name="dpNaissance" Width="125" Style="{StaticResource StyleDatePicker}" SelectedDate="01/01/1950"/>
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
 						<Label Content="Nationalité" Width="100" Style="{StaticResource StyleLabel2}"/>

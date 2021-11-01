@@ -28,6 +28,7 @@ namespace TheManager_GUI
                     cbNationalite.Items.Add(p);
                 }
             }
+            cbNationalite.SelectedIndex = 0;
 
             RemplirTreeView();
 

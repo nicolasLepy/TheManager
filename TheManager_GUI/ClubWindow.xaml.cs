@@ -97,7 +97,11 @@ namespace TheManager_GUI
                 }
                 if(nombre > 0)
                 {
-                    dgPalmares.Items.Add(new PalmaresClubElement { Annees = annees, Competition = c, Nombre = nombre});
+                    StackPanel spPalmaresEntry = new StackPanel() { Orientation = Orientation.Horizontal };
+                    spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(c.name, "StyleLabel2", 10, 125));
+                    spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(nombre.ToString(), "StyleLabel2", 10, 50));
+                    spPalmares.Children.Add(spPalmaresEntry);
+                
                 }
             }
         }
@@ -184,7 +188,12 @@ namespace TheManager_GUI
             lhce.Sort(new HistoriqueClubComparator());
             foreach(HistoriqueClubElement hce in lhce)
             {
-                dgHistorique.Items.Add(hce);
+                StackPanel spHistoryEntry = new StackPanel();
+                spHistoryEntry.Orientation = Orientation.Horizontal;
+                spHistoryEntry.Children.Add(ViewUtils.CreateLabelOpenWindow<Tournament>(hce.Competition, OpenTournament, hce.Annee.ToString(), "StyleLabel2", 11, 75));
+                spHistoryEntry.Children.Add(ViewUtils.CreateLabelOpenWindow<Tournament>(hce.Competition, OpenTournament, hce.Competition.name, "StyleLabel2", 11, 125));
+                spHistoryEntry.Children.Add(ViewUtils.CreateLabel(hce.Classement.ToString(), "StyleLabel2", 11, 50));
+                spHistory.Children.Add(spHistoryEntry);
             }
 
             
@@ -255,19 +264,6 @@ namespace TheManager_GUI
             Close();
         }
 
-        private void DgHistorique_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            if (dgHistorique.SelectedItem != null)
-            {
-                HistoriqueClubElement hce = (HistoriqueClubElement)dgHistorique.SelectedItem;
-                if(hce.Competition != null)
-                {
-                    Windows_Competition wc = new Windows_Competition(hce.Competition);
-                    wc.Show();
-                }
-            }
-        }
-
         private void BtnMatch_Click(object sender, RoutedEventArgs e)
         {
             Button btn = sender as Button;
@@ -277,6 +273,13 @@ namespace TheManager_GUI
             wm.Show();
 
         }
+
+        private void OpenTournament(Tournament t)
+        {
+            Windows_Competition wc = new Windows_Competition(t);
+            wc.Show();
+        }
+
     }
 
     public struct HistoriqueClubElement : IEquatable<HistoriqueClubElement>

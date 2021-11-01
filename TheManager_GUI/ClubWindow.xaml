@@ -104,23 +104,17 @@
 					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 						<StackPanel Orientation="Vertical">
 							<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-							<DataGrid IsReadOnly="True" Name="dgPalmares" Height="100" MaxHeight="350" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-								<DataGrid.Columns>
-									<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-									<DataGridTextColumn Header="" Binding="{Binding Nombre}"/>
-									<DataGridTextColumn Header="" Binding="{Binding Annees}"/>
-								</DataGrid.Columns>
-							</DataGrid>
+							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="100">
+								<StackPanel x:Name="spPalmares" Orientation="Vertical">
+									
+								</StackPanel>
+							</ScrollViewer>
 
 							<Label Content="Histoire" Style="{StaticResource StyleLabel2}"/>
-							<DataGrid IsReadOnly="True" Name="dgHistorique" Height="150" MaxHeight="350" Width="150" MouseDoubleClick="DgHistorique_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
-								<DataGrid.Columns>
-									<DataGridTextColumn Header="" Binding="{Binding Annee}"/>
-									<DataGridTextColumn Header="" Binding="{Binding Competition}"/>
-									<DataGridTextColumn Header="" Binding="{Binding Classement}"/>
-									<DataGridTextColumn Header="" Binding="{Binding AverageAttendance}"/>
-								</DataGrid.Columns>
-							</DataGrid>
+							<ScrollViewer Height="150" VerticalScrollBarVisibility="Auto">
+								<StackPanel Orientation="Vertical" Name="spHistory">
+								</StackPanel>
+							</ScrollViewer>
 						</StackPanel>
 					</Border>
 

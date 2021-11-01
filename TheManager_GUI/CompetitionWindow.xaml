@@ -27,11 +27,11 @@
 
 			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Vertical" Width="150">
-					<ComboBox Name="cbContinent" Style="{StaticResource StyleComboBox}" FontSize="12" SelectionChanged="cbContinent_SelectionChanged">
+					<ComboBox Name="cbContinent" Style="{StaticResource StyleComboBox}" FontSize="12">
 					</ComboBox>
-					<ComboBox Name="cbCountry" Style="{StaticResource StyleComboBox}" FontSize="12" SelectionChanged="cbCountry_SelectionChanged">
+					<ComboBox Name="cbCountry" Style="{StaticResource StyleComboBox}" FontSize="12">
 					</ComboBox>
-					<ComboBox Name="cbCompetition" Style="{StaticResource StyleComboBox}" FontSize="12" SelectionChanged="cbCompetition_SelectionChanged">
+					<ComboBox Name="cbCompetition" Style="{StaticResource StyleComboBox}" FontSize="12">
 					</ComboBox>
 					<Separator/>
 					<ComboBox Name="cbYear" Style="{StaticResource StyleComboBox}" FontSize="12">
