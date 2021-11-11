@@ -411,6 +411,10 @@ namespace TheManager
                     }
 
                 }
+                if(!Played)
+                {
+                    c = null;
+                }
 
                 return c;
             }

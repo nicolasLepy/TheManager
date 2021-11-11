@@ -58,24 +58,26 @@ namespace TheManager
         {
             List<Club> clubs = new List<Club>();
             float total = 0;
-            Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
             for (int i = 1; i < 4; i++)
             {
-                Tournament continentalTournament = europe.GetContinentalClubTournament(i);
-                int j = continentalTournament.previousEditions.Count - (-nSeason);
-
-                if (j >= 0)
+                Tournament continentalTournament = Continent.GetContinentalClubTournament(i);
+                if(continentalTournament != null)
                 {
-                    Tournament yearContinentalTournament = continentalTournament.previousEditions.ToList()[j].Value;
-                    foreach(Tournament championship in _tournaments)
+                    int j = continentalTournament.previousEditions.Count - (-nSeason);
+
+                    if (j >= 0)
                     {
-                        if(championship.isChampionship)
+                        Tournament yearContinentalTournament = continentalTournament.previousEditions.ToList()[j].Value;
+                        foreach (Tournament championship in _tournaments)
                         {
-                            foreach(Club c in championship.rounds[0].clubs)
+                            if (championship.isChampionship)
                             {
-                                if (yearContinentalTournament.IsInvolved(c))
+                                foreach (Club c in championship.rounds[0].clubs)
                                 {
-                                    clubs.Add(c);
+                                    if (yearContinentalTournament.IsInvolved(c))
+                                    {
+                                        clubs.Add(c);
+                                    }
                                 }
                             }
                         }
@@ -120,6 +122,24 @@ namespace TheManager
             return _tournaments;
         }
 
+        /**
+         * cupRank : for exemple : Coupe de France is level 1 and Coupe de la Ligue is level 2
+         */
+        public Tournament Cup(int cupRank)
+        {
+            Tournament res = null;
+
+            foreach(Tournament t in Tournaments())
+            {
+                if(!t.isChampionship && t.level == cupRank)
+                {
+                    res = t;
+                }
+            }
+
+            return res;
+        }
+        
         public Tournament FirstDivisionChampionship()
         {
             Tournament res = null;

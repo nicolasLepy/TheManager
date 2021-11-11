@@ -651,21 +651,19 @@ namespace TheManager
 
             if(weekNumber == 23 && date.DayOfWeek == DayOfWeek.Wednesday)
             {
-                Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
-                europe.QualifiesClubForContinentalCompetitionNextYear();
-                //TODO: Use this when competitions for other continents are ready
-                /*
                 foreach(Continent c in kernel.continents)
                 {
                     c.QualifiesClubForContinentalCompetitionNextYear();
-                }*/
+                }
 
             }
 
             if(weekNumber == 26 && date.DayOfWeek == DayOfWeek.Wednesday)
             {
-                Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
-                europe.UpdateStoredAssociationRanking();
+                foreach(Continent c in kernel.continents)
+                {
+                    c.UpdateStoredAssociationRanking();
+                }
             }
 
             //Transfers market

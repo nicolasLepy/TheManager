@@ -1050,14 +1050,20 @@ namespace TheManager
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     Continent continent = Session.Instance.Game.kernel.String2Continent(e2.Attribute("name").Value);
-                    foreach(XElement e3 in e.Descendants("Qualifications"))
+                    foreach(XElement e3 in e2.Descendants("Qualifications"))
                     {
                         int rank = int.Parse(e3.Attribute("rank").Value);
                         string tournamentName = e3.Attribute("tournament").Value;
                         Tournament targetTournament = Session.Instance.Game.kernel.String2Tournament(tournamentName);
                         int roundId = int.Parse(e3.Attribute("id_tour").Value);
                         int count = int.Parse(e3.Attribute("count").Value);
-                        Qualification q = new Qualification(rank, roundId, targetTournament, true, count);
+                        bool isCupWinner = false;
+                        if(e3.Attribute("cup") != null)
+                        {
+                            isCupWinner = e3.Attribute("cup").Value.ToLower() == "yes";
+                        }
+                        //Here qualification structure is used to store continental qualifications but meaning of field can differ than "classic" qualification (rank is nation coefficient rank instead of league rank and isNextYear is used for isCupWinner)
+                        Qualification q = new Qualification(rank, roundId, targetTournament, isCupWinner, count);
                         continent.continentalQualifications.Add(q);
                     }
                 }
@@ -1186,6 +1192,8 @@ namespace TheManager
 
                     }
                 }
+                continentAvailableWeeks.Remove(51);
+                continentAvailableWeeks.Remove(52);
                 foreach (Country c in ct.countries)
                 {
                     List<int> availableWeeks = new List<int>(continentAvailableWeeks);

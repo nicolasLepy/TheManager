@@ -36,6 +36,32 @@ namespace TheManager_GUI.VueClassement
             _rankingType = rankingType;
         }
 
+        private string QualificationColor(Qualification q)
+        {
+            string color = "backgroundColor";
+            if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
+            {
+                color = "cl1Color";
+            }
+            else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound == null)
+            {
+                color = "cl2Color";
+            }
+            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
+            {
+                color = "el1Color";
+            }
+            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound == null)
+            {
+                color = "el2Color";
+            }
+            else if (q.tournament.level == 3)
+            {
+                color = "ecl1Color";
+            }
+            return color;
+        }
+
         public override void Full(StackPanel spRanking)
         {
             spRanking.Children.Clear();
@@ -135,45 +161,36 @@ namespace TheManager_GUI.VueClassement
             //Only show colors when the ranking is not focused on a team
             if (!_focusOnTeam)
             {
+                Club cupWinner = (Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Country)?.Cup(1)?.Winner();
                 int roundLevel = _round.Tournament.level;
                 ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament);
                 Country country = localisation as Country;
+                List<Club> registeredClubs = new List<Club>();
                 if(country != null)
                 {
                     Continent continent = country.Continent;
                     int nationIndex = continent.associationRanking.IndexOf(country) + 1;
                     int currentRanking = 0;
+                    
                     foreach(Qualification q in continent.continentalQualifications)
                     {
-                        if(q.ranking == nationIndex)
+                        //q.isNextYear refeer to cup winner qualification for continental competition
+                        if (q.ranking == nationIndex && (!q.isNextYear || registeredClubs.Contains(cupWinner)) )
                         {
+                            registeredClubs.Add(clubs[currentRanking]);
                             for (int j = 0; j < q.qualifies; j++)
                             {
-                                string color = "backgroundColor";
-                                if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
-                                {
-                                    color = "cl1Color";
-                                }
-                                else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound == null)
-                                {
-                                    color = "cl2Color";
-                                }
-                                else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
-                                {
-                                    color = "el1Color";
-                                }
-                                else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound == null)
-                                {
-                                    color = "el2Color";
-                                }
-                                else if (q.tournament.level == 3)
-                                {
-                                    color = "ecl1Color";
-                                }
+                                string color = QualificationColor(q);
                                 SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
                                 (spRanking.Children[currentRanking + 1] as StackPanel).Background = lineColor;
                                 currentRanking++;
                             }
+                        }
+                        else if(q.ranking == nationIndex && q.isNextYear && clubs.Contains(cupWinner))
+                        {
+                            string color = QualificationColor(q);
+                            SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
+                            (spRanking.Children[clubs.IndexOf(cupWinner) + 1] as StackPanel).Background = lineColor;
                         }
                     }
                 }

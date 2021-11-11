@@ -105,11 +105,14 @@ namespace TheManager
         private bool _isFannion;
         [DataMember]
         private bool _isForbiddenToRecruit;
+        [DataMember]
+        private float _baseCityAttendanceMultiplier;
 
         public int budget { get => _budget; }
         public City city { get => _city; set => _city = value; }
         public float sponsor { get => _sponsor; }
         public bool isForbiddenToRecruit { get => _isForbiddenToRecruit; set => _isForbiddenToRecruit = value; }
+        public float baseCityAttendanceMultiplier { get => _baseCityAttendanceMultiplier; set => _baseCityAttendanceMultiplier = value; }
         public List<Contract> contracts { get => _players; }
 
         /// <summary>
@@ -161,6 +164,7 @@ namespace TheManager
             _reserves = new List<ReserveClub>();
             _budgetHistory = new List<BudgetEntry>();
             _isForbiddenToRecruit = false;
+            _baseCityAttendanceMultiplier = 0;
         }
 
         public override Country Country()

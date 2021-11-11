@@ -209,6 +209,11 @@ namespace TheManager
             if(_clubs.Count > 0)
             {
                 res = _clubs[0];
+                //It's a final
+                if(_clubs.Count == 2)
+                {
+                    res = _matches[_matches.Count - 1].Winner;
+                }
             }
             return res;
         }

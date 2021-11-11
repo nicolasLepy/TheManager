@@ -51,7 +51,16 @@ namespace TheManager
                         if (cc != null)
                         {
                             int potentialSupporters = GetPotentialSupporters(cc, Tournament.level);
-                            c.supporters += (int)((potentialSupporters - c.supporters) * (Session.Instance.Random(5, 12) / 100.0f));
+                            if(cc.baseCityAttendanceMultiplier == 0)
+                            {
+                                float cityAttendanceMultiplier = 1;
+                                if(cc.supporters > 0)
+                                {
+                                    cityAttendanceMultiplier = cc.supporters / (potentialSupporters+0.0f);
+                                }
+                                cc.baseCityAttendanceMultiplier = cityAttendanceMultiplier;
+                            }
+                            c.supporters += (int)(((potentialSupporters - c.supporters) * (Session.Instance.Random(5, 12) / 100.0f))*cc.baseCityAttendanceMultiplier);
                         }
                     }
                 }
@@ -75,7 +84,6 @@ namespace TheManager
         /// <returns></returns>
         public int GetPotentialSupporters(CityClub club, int tournamentLevel)
         {
-            //TODO: Take in account situations like for RC Lens (high average attendance for a small city)
             int cityPopulation = club.city.Population;
             float clubLevel = club.Level();
 

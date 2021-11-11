@@ -114,6 +114,7 @@ namespace TheManager_GUI
             lbClub.Content = club.name;
             lbStadium.Content = club.stadium.name + " (" + club.stadium.capacity + " places)";
             lbBudget.Content = "Budget : " + Utils.FormatMoney((club as CityClub).budget);
+            lbCountry.Content = club.Country().Name();
             FillSquad(club);
             spEtoiles.Children.Clear();
             try

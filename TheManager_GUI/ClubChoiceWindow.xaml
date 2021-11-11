@@ -47,6 +47,7 @@
 							<StackPanel Orientation="Vertical" VerticalAlignment="Center">
 								<Label Name="lbBudget" Style="{StaticResource StyleLabel2}" Content=""/>
 								<Label Name="lbStadium" Style="{StaticResource StyleLabel2}" Content=""/>
+								<Label Name="lbCountry" Style="{StaticResource StyleLabel2}" Content=""/>
 							</StackPanel>
 						</Border>
 

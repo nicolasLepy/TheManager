@@ -109,6 +109,22 @@ namespace TheManager
             return _countries.Count;
         }
 
+        public int ContinentalTournamentsCount
+        {
+            get
+            {
+                int res = 0;
+                foreach(Tournament t in Tournaments())
+                {
+                    if(t.periodicity == 1)
+                    {
+                        res++;
+                    }
+                }
+                return res;
+            }
+        }
+
         public Tournament GetContinentalClubTournament(int level)
         {
             Tournament res = null;
@@ -153,8 +169,11 @@ namespace TheManager
             
             for(int i = 0; i<countries.Count; i++)
             {
+                List<Club> registeredClubs = new List<Club>();
                 List<Club> clubs = new List<Club>();
                 Round championshipRound = countries[i].FirstDivisionChampionship().rounds[0];
+                Club cupWinner = countries[i].Cup(1)?.Winner();
+
                 if(championshipRound as ChampionshipRound != null)
                 {
                     clubs = (championshipRound as ChampionshipRound).Ranking();
@@ -169,11 +188,20 @@ namespace TheManager
                 {
                     if(q.ranking == rank)
                     {
-                        for(int j = 0; j<q.qualifies; j++)
+                        //isNextYear is used as "cup winner" here instead of league qualification
+                        if(q.isNextYear && !registeredClubs.Contains(cupWinner))
                         {
-                            Club qualifiedClub = clubs[currentLevel];
-                            currentLevel++;
-                            q.tournament.AddClubForNextYear(qualifiedClub, q.roundId);
+                            q.tournament.AddClubForNextYear(cupWinner, q.roundId);
+                        }
+                        else
+                        {
+                            for (int j = 0; j < q.qualifies; j++)
+                            {
+                                Club qualifiedClub = clubs[currentLevel];
+                                currentLevel++;
+                                q.tournament.AddClubForNextYear(qualifiedClub, q.roundId);
+                                registeredClubs.Add(qualifiedClub);
+                            }
                         }
                     }
                 }
