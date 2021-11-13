@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
+using System.Linq;
 
 namespace TheManager_GUI.VueClassement
 {
@@ -166,20 +167,21 @@ namespace TheManager_GUI.VueClassement
                 ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament);
                 Country country = localisation as Country;
                 List<Club> registeredClubs = new List<Club>();
-                if(country != null)
+                if(country != null && roundLevel == 1)
                 {
                     Continent continent = country.Continent;
                     int nationIndex = continent.associationRanking.IndexOf(country) + 1;
                     int currentRanking = 0;
-                    
+                    int totalQualificationsFromLeague = (from qualification in continent.continentalQualifications where (qualification.ranking == nationIndex && !qualification.isNextYear) select qualification.qualifies).Sum();
+
                     foreach(Qualification q in continent.continentalQualifications)
                     {
                         //q.isNextYear refeer to cup winner qualification for continental competition
-                        if (q.ranking == nationIndex && (!q.isNextYear || registeredClubs.Contains(cupWinner)) )
+                        if (q.ranking == nationIndex && (!q.isNextYear || registeredClubs.Contains(cupWinner) ))
                         {
-                            registeredClubs.Add(clubs[currentRanking]);
                             for (int j = 0; j < q.qualifies; j++)
                             {
+                                registeredClubs.Add(clubs[currentRanking]);
                                 string color = QualificationColor(q);
                                 SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
                                 (spRanking.Children[currentRanking + 1] as StackPanel).Background = lineColor;

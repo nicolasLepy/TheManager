@@ -658,7 +658,7 @@ namespace TheManager
 
             }
 
-            if(weekNumber == 26 && date.DayOfWeek == DayOfWeek.Wednesday)
+            if(weekNumber == 27 && date.DayOfWeek == DayOfWeek.Wednesday)
             {
                 foreach(Continent c in kernel.continents)
                 {

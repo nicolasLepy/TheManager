@@ -48,18 +48,9 @@ namespace TheManager_GUI
             spHead.Children.Add(ViewUtils.CreateLabel("ECL", "StyleLabel2Center", 10, 20, null, null, false));
             spUEFARanking.Children.Add(spHead);
 
-            List<Country> countries = new List<Country>();
             Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
-            foreach (Country c in europe.countries)
-            {
-                if (c.Tournaments().Count > 0)
-                {
-                    countries.Add(c);
-                }
-            }
-
-            countries.Sort(new CountryComparator(CountryAttribute.CONTINENTAL_COEFFICIENT));
             int rank = 0;
+            List<Country> countries = europe.associationRanking;
             foreach (Country c in countries)
             {
                 rank++;

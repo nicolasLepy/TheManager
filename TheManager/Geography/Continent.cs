@@ -156,19 +156,11 @@ namespace TheManager
 
         public void QualifiesClubForContinentalCompetitionNextYear()
         {
-            List<Country> countries = new List<Country>();
-            foreach(Country c in _countries)
-            {
-                if(c.Tournaments().Count > 0)
-                {
-                    countries.Add(c);
-                }
-            }
-
-            countries.Sort(new CountryComparator(CountryAttribute.CONTINENTAL_COEFFICIENT));
+            List<Country> countries = new List<Country>(associationRanking);
             
             for(int i = 0; i<countries.Count; i++)
             {
+                Console.WriteLine("=======" + countries[i].Name() + "=======");
                 List<Club> registeredClubs = new List<Club>();
                 List<Club> clubs = new List<Club>();
                 Round championshipRound = countries[i].FirstDivisionChampionship().rounds[0];
@@ -189,11 +181,7 @@ namespace TheManager
                     if(q.ranking == rank)
                     {
                         //isNextYear is used as "cup winner" here instead of league qualification
-                        if(q.isNextYear && !registeredClubs.Contains(cupWinner))
-                        {
-                            q.tournament.AddClubForNextYear(cupWinner, q.roundId);
-                        }
-                        else
+                        if (!q.isNextYear || registeredClubs.Contains(cupWinner))
                         {
                             for (int j = 0; j < q.qualifies; j++)
                             {
@@ -202,6 +190,11 @@ namespace TheManager
                                 q.tournament.AddClubForNextYear(qualifiedClub, q.roundId);
                                 registeredClubs.Add(qualifiedClub);
                             }
+
+                        }
+                        else
+                        {
+                            q.tournament.AddClubForNextYear(cupWinner, q.roundId);
                         }
                     }
                 }
