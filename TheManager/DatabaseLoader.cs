@@ -1194,6 +1194,7 @@ namespace TheManager
                 }
                 continentAvailableWeeks.Remove(51);
                 continentAvailableWeeks.Remove(52);
+                continentAvailableWeeks.Remove(0);
                 foreach (Country c in ct.countries)
                 {
                     List<int> availableWeeks = new List<int>(continentAvailableWeeks);
@@ -1231,8 +1232,10 @@ namespace TheManager
                             }
                         }
                     }
-                    if(noCup && c.Tournaments().Count > 0 && totalTeams > 1)
+
+                    if (noCup && c.Tournaments().Count > 0 && totalTeams > 1)
                     {
+
                         string acr = "de ";
                         if(c.Name()[0] == 'E' || c.Name()[0] == 'A' || c.Name()[0] == 'I' || c.Name()[0] == 'O' || c.Name()[0] == 'U')
                         {
@@ -1260,7 +1263,7 @@ namespace TheManager
                         {
                             Hour hour = new Hour() { Hours = 20, Minutes = 0 };
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
-                            GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, false, 0, 0);
+                            GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
                             Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random);
                             round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
@@ -1302,7 +1305,7 @@ namespace TheManager
 
                             Hour hour = new Hour() { Hours = 20, Minutes = 0 };
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
-                            GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, false, 0, 0);
+                            GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
                             Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random);
                             if(j > 2)

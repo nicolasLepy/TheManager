@@ -96,7 +96,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Tournaments                                                               | 
 | ------------------------------------------------------------------------- |
 | Hierarchical Competitions (promotion, relegation ...)                     |
-| Automatically created domestic cup (qualifications and programming)       |
+| Automatically created domestic cup (qualifications and scheduling)        |
 | International tournaments                                                 |
 | International ranking                                                     |
 | Specials rules (lower team at home for domestic cups...)                  |

@@ -70,7 +70,7 @@ namespace TheManager
             int dayOffset = hourInt % 10 - 1;
             int hour = hourInt / 1000;
             int minute = (hourInt / 10) % 100;
-            match.day = match.day.AddDays(dayOffset);
+            //match.day = match.day.AddDays(dayOffset);
             match.day = match.day.AddHours(hour - match.day.Hour);
             match.day = match.day.AddMinutes(minute - match.day.Minute);
 
@@ -574,7 +574,6 @@ namespace TheManager
                         away = temp;
                     }
                 }
-
                 res.Add(new Match(home, away, day, !round.twoLegs));
             }
 

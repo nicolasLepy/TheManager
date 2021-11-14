@@ -184,7 +184,7 @@ namespace TheManager
         public List<bool> penaltyShoots2 { get => _penaltyShoots2; }
         public List<KeyValuePair<Media, Journalist>> journalists { get => _journalists; }
         /// <summary>
-        /// Description des actions du match [minute , action]
+        /// Game actions description [minutes , actions]
         /// </summary>
         public List<KeyValuePair<string,string>> actions { get => _actions; }
         public Statistics statistics { get => _statistics; }
@@ -289,11 +289,6 @@ namespace TheManager
             {
                 bool res = _minute > 0 || _period > 1;
 
-                //Old method: If simulation day is greater than match day, then game is considered played
-                /*if(DateTime.Compare(Session.Instance.Partie.Date,Jour) >= 0)
-                {
-                    res = true;
-                }*/
                 return res;
             }
         }
@@ -652,42 +647,7 @@ namespace TheManager
             odd1 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioD - 3f))));
             odd2 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioE - 3f))));
             
-
-            /*Cote1 = (float)(-1.64266 * Math.Pow(rapportD, 6) + 24.1675 * Math.Pow(rapportD, 5) - 88.8353 * Math.Pow(rapportD, 4) + 117.695 * Math.Pow(rapportD, 3) - 29.6458 * Math.Pow(rapportD, 2) - 49.5219 * rapportD + 30.2832);
-            Cote2 = (float)(-1.64266 * Math.Pow(rapportE, 6) + 24.1675 * Math.Pow(rapportE, 5) - 88.8353 * Math.Pow(rapportE, 4) + 117.695 * Math.Pow(rapportE, 3) - 29.6458 * Math.Pow(rapportE, 2) - 49.5219 * rapportE + 30.2832);
-            */
-            /*
-            if(rapportD < 1)
-            {
-                Cote1 = 1 / rapportD;
-                Cote2 = 1 / (1-rapportD);
-            }
-            else
-            {
-                Cote2 = 1 / rapportE;
-                Cote1 = 1 / (1 - rapportE);
-            }*/
-
             oddD = (odd1 + odd2) / 2;
-
-            /*
-            if (domN > extN)
-            {
-                domN *= 2f;
-            }
-            else
-            {
-                extN *= 2f;
-            }
-            float ratioD = domN / extN;
-            float ratioE = extN / domN;
-            float ratio = ratioD / (ratioD + ratioE);
-            //float ratio = Domicile.Niveau() / Exterieur.Niveau();
-            Cote1 = 1 / ratio;// 1 / ((ratio * 50) / 100);
-            //ratio = Exterieur.Niveau() / Domicile.Niveau();
-            ratio = ratioE / (ratioD + ratioE);
-            Cote2 = 1 / ratio;// ((ratio * 50) / 100);
-            CoteN = (Cote1 + Cote2) / 2;*/
         }
 
         public Match(Club homeTeam, Club awayTeam, DateTime matchDay, bool prolongationsIfDraw, Match firstLeg = null)

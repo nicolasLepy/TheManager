@@ -123,7 +123,7 @@ namespace TheManager
 
             Continent continent = Country().Continent;
             int tournamentsCount = continent.ContinentalTournamentsCount;
-            for (int i = 1; i < tournamentsCount; i++)
+            for (int i = 1; i <= tournamentsCount; i++)
             {
                 Tournament continentalTournament = continent.GetContinentalClubTournament(i);
                 int j = continentalTournament.previousEditions.Count - (-nSeason);
@@ -211,9 +211,7 @@ namespace TheManager
                         }
                     }
                 }
-                
             }
-
             return res;
         }
 

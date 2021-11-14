@@ -116,7 +116,8 @@ namespace TheManager
                 int res = 0;
                 foreach(Tournament t in Tournaments())
                 {
-                    if(t.periodicity == 1)
+                    //TODO: Move friendly tournaments in a "World" category
+                    if(t.periodicity == 1 && t.name != Utils.friendlyTournamentName)
                     {
                         res++;
                     }
@@ -130,7 +131,7 @@ namespace TheManager
             Tournament res = null;
             foreach (Tournament t in Tournaments())
             {
-                if(t.periodicity == 1 && t.level == level)
+                if(t.periodicity == 1 && t.level == level && t.name != Utils.friendlyTournamentName)
                 {
                     res = t;
                 }
@@ -160,7 +161,6 @@ namespace TheManager
             
             for(int i = 0; i<countries.Count; i++)
             {
-                Console.WriteLine("=======" + countries[i].Name() + "=======");
                 List<Club> registeredClubs = new List<Club>();
                 List<Club> clubs = new List<Club>();
                 Round championshipRound = countries[i].FirstDivisionChampionship().rounds[0];
