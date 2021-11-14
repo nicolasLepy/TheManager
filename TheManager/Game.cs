@@ -18,11 +18,17 @@ namespace TheManager
     [DataContract]
     public class GameWorld
     {
+        [DataMember]
         private readonly List<int> _totalBudgetInGame;
+        [DataMember]
         private readonly List<float> _averagePlayerLevelInGame;
+        [DataMember]
         private readonly List<float> _averageClubLevelInGame;
+        [DataMember]
         private readonly List<int> _playersInGame;
+        [DataMember]
         private readonly List<float> _averageGoals;
+        [DataMember]
         private readonly List<float> _rateIndebtesClubs;
 
         public List<int> TotalBudgetInGame => _totalBudgetInGame;
@@ -114,6 +120,8 @@ namespace TheManager
 
         public List<Article> articles { get => _articles; }
 
+        public GameWorld gameUniverse => _gameUniverse;
+
         public Game()
         {
             _articles = new List<Article>();
@@ -165,10 +173,12 @@ namespace TheManager
                 ZipArchiveEntry cFile = zip.GetEntry("save.save");
                 DataContractSerializer ser = new DataContractSerializer(typeof(Game));
                 loadObj = (Game)ser.ReadObject(cFile.Open());
-                _options = loadObj.options;
+                this._options = loadObj.options;
                 this._kernel = loadObj.kernel;
                 this._date = loadObj.date;
                 this._club = loadObj.club;
+                this._gameUniverse = loadObj.gameUniverse;
+                this._articles = loadObj.articles;
                 zip.Dispose();
             }
         }
@@ -261,37 +271,6 @@ namespace TheManager
             
 
             _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageGoals, (indebtedClubs+0.0f)/(clubsCount+0.0f));
-            Utils.Debug("=========================== DATA ANNEE " + _date.ToShortDateString() + " =========================");
-            Utils.Debug("AverageClubLevelInGame");
-            foreach (float f in _gameUniverse.AverageClubLevelInGame)
-            {
-                Utils.Debug(f.ToString());
-            }
-            Utils.Debug("AverageGoals");
-            foreach (float f in _gameUniverse.AverageGoals)
-            {
-                Utils.Debug(f.ToString());
-            }
-            Utils.Debug("AveragePlayerLevelInGame");
-            foreach (float f in _gameUniverse.AveragePlayerLevelInGame)
-            {
-                Utils.Debug(f.ToString());
-            }
-            Utils.Debug("PlayersInGame");
-            foreach (int f in _gameUniverse.PlayersInGame)
-            {
-                Utils.Debug(f.ToString());
-            }
-            Utils.Debug("TotalBudgetInGame");
-            foreach (int f in _gameUniverse.TotalBudgetInGame)
-            {
-                Utils.Debug(f.ToString());
-            }
-            Utils.Debug("TotalIndebtedClubs");
-            foreach (float f in _gameUniverse.RateIndebtesClubs)
-            {
-                Utils.Debug(f.ToString());
-            }
         }
 
         public void UpdateClubs()

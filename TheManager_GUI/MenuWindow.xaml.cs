@@ -42,6 +42,7 @@ namespace TheManager_GUI
             imgBtnSearch.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\search.png"));
             imgBtnOptions.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\options.png"));
             imgBtnRanking.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\ranking.png"));
+            imgBtnGlobal.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\ranking.png"));
 
             _partie = Session.Instance.Game;
 
@@ -571,6 +572,12 @@ namespace TheManager_GUI
                 }
             }
             
+        }
+
+        private void btnGlobal_Click(object sender, RoutedEventArgs e)
+        {
+            GlobalWindow gw = new GlobalWindow();
+            gw.Show();
         }
     }
 

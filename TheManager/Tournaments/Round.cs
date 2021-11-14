@@ -630,7 +630,14 @@ namespace TheManager
                     }
                     break;
                 case RecuperationMethod.Worst :
-                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
+                    try
+                    {
+                        roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
+                    }
+                    catch(Exception e)
+                    {
+                        Utils.Debug("Erreur sort Club_Niveau_Comparator pour " + name);
+                    }
                     break;
                 default:
                     roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));

@@ -32,7 +32,7 @@ namespace TheManager_GUI
                 if(c.GetContinentalClubTournament(1) != null)
                 {
                     AddContinentalCountryRanking(c);
-                    AddContinentalClubRanking(c);
+                    //AddContinentalClubRanking(c);
                 }
             }
         }
