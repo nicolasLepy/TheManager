@@ -95,7 +95,7 @@ namespace TheManager_GUI.VueClassement
                     if(pair[1].prolongations)
                     {
                         spFirstTeam.Children.Add(ViewUtils.CreateLabel(pair[1].Winner == pair[0].home ? "p." : "", "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
-                        spSecondTeam.Children.Add(ViewUtils.CreateLabel(!(pair[1].Winner == pair[0].home) ? "p." : "", "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
+                        spSecondTeam.Children.Add(ViewUtils.CreateLabel(pair[1].Winner != pair[0].home ? "p." : "", "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
                     }
 
                     if (pair[1].PenaltyShootout)

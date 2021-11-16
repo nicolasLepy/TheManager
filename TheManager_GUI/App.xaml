@@ -258,7 +258,7 @@
 		<Style TargetType="{x:Type TabControl}">
 			<Setter Property="Margin" Value="2" />
 			<Setter Property="Padding" Value="2"    />
-			<Setter Property="Background" Value="{StaticResource brushBackgroundStackPanel}" />
+			<Setter Property="Background" Value="Transparent"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type TabControl}">
@@ -473,6 +473,7 @@
 			<Setter Property="HorizontalAlignment" Value="Center"/>
 			<Setter Property="Foreground" Value="LightGray"/>
 		</Style>
-		
+
+
 	</Application.Resources>
 </Application>

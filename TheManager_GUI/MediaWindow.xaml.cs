@@ -23,7 +23,7 @@ namespace TheManager_GUI
     public partial class MediaWindow : Window
     {
 
-        private Media _media;
+        private readonly Media _media;
         private List<int> _indexOrders;
 
         public MediaWindow(Media media)

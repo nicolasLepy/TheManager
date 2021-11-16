@@ -13,9 +13,6 @@ namespace TheManager.Parsers
     /// </summary>
     public class FifaDataParser
     {
-        public FifaDataParser()
-        {
-        }
 
         private string RemoveQuotedText(string input)
         {
@@ -199,7 +196,7 @@ namespace TheManager.Parsers
                 string playerBirthday = "1-1-" + (2022-int.Parse(lineSplit[3]));
                 string playerCountry = lineSplit[7];
 
-                string playerPosition = "MILIEU";
+                string playerPosition;
                 switch (lineSplit[14])
                 {
                     case "GK":

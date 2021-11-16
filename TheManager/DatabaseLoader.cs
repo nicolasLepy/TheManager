@@ -545,7 +545,7 @@ namespace TheManager
         private string RemoveClubDenomination(string name, string denomination)
         {
             string res = name.Replace(denomination + " ", "");
-            res = name.Replace(" " + denomination, "");
+            res = res.Replace(" " + denomination, "");
             return res;
         }
         public void LoadClubs()
@@ -671,8 +671,7 @@ namespace TheManager
                             stadium = new Stadium("Stade de " + shortName, 75000, null);
                         }
                         int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
-                        string logo = e2.Attribute("logo").Value;
-                        logo = country.Flag;
+                        string logo = country.Flag;
 
                         string goalMusic = "";
                         if (e2.Attribute("musiqueBut") != null)
@@ -949,7 +948,7 @@ namespace TheManager
                             }
                             foreach (XElement e4 in e3.Descendants("Regle"))
                             {
-                                Rule rule = Rule.AtHomeIfTwoLevelDifference;
+                                Rule rule;
                                 switch (e4.Attribute("nom").Value)
                                 {
                                     case "RECOIT_SI_DEUX_DIVISION_ECART":

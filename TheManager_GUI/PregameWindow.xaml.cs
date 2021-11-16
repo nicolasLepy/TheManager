@@ -33,7 +33,7 @@ namespace TheManager_GUI
                     case Position.Goalkeeper: conteneur = spGardiens;break;
                     case Position.Defender: conteneur = spDefenseurs; break;
                     case Position.Midfielder: conteneur = spMilieux; break;
-                    case Position.Striker: conteneur = spAttaquants; break;
+                    case Position.Striker: default: conteneur = spAttaquants; break;
                 }
 
                 StackPanel conteneurJoueur = new StackPanel();

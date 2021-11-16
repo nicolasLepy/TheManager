@@ -35,38 +35,49 @@ namespace TheManager_GUI
 
         private readonly Club _club;
 
+        private void AddValueToDictionnary(Dictionary<BudgetModificationReason, double> dictionnary, BudgetModificationReason key, double value)
+        {
+            if(!dictionnary.ContainsKey(key))
+            {
+                dictionnary.Add(key, 0);
+            }
+            dictionnary[key] += value;
+        }
 
         public void FillBudget()
         {
+            DateTime beginSeason = (Session.Instance.Game.date.Month <= 6 ||(Session.Instance.Game.date.Month == 6 && Session.Instance.Game.date.Day < 15)) ? new DateTime(Session.Instance.Game.date.Year-1, 6, 15) : new DateTime(Session.Instance.Game.date.Year, 6, 15); 
             CityClub cc = _club as CityClub;
             if(cc != null)
             {
-                foreach(BudgetEntry be in cc.budgetHistory)
+                Dictionary<BudgetModificationReason, double> depenses = new Dictionary<BudgetModificationReason, double>();
+                Dictionary<BudgetModificationReason, double> incomes = new Dictionary<BudgetModificationReason, double>();
+
+                foreach (BudgetEntry be in cc.budgetHistory)
                 {
                     StackPanel spEntry = new StackPanel();
                     spEntry.Orientation = Orientation.Horizontal;
-
-                    spEntry.Children.Add(ViewUtils.CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 11, 70));
-                    if(be.Amount < 0)
-                    {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(be.Amount), "StyleLabel2", 11, 75, Brushes.Red));
-                    }
-                    else
-                    {
-                        spEntry.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(be.Amount), "StyleLabel2", 11, 75));
-                    }
-
-                    spEntry.Children.Add(ViewUtils.CreateLabel(Utils.GetDescription(be.Reason), "StyleLabel2", 10, 100));
-
+                    spEntry.Children.Add(ViewUtils.CreateLabel(be.Date.ToShortDateString(), "StyleLabel2", 12, 90));
+                    spEntry.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(be.Amount), "StyleLabel2", 12, 100, be.Amount < 0 ? Brushes.Red : null));
+                    spEntry.Children.Add(ViewUtils.CreateLabel(Utils.GetDescription(be.Reason), "StyleLabel2", 12, 125));
                     spBudget.Children.Add(spEntry);
+
+                    if(Utils.IsBefore(beginSeason, be.Date))
+                    {
+                        AddValueToDictionnary(be.Amount < 0 ? depenses : incomes, be.Reason, be.Amount);
+                    }
                 }
+
+                CreatePieChart(depenses);
+                CreatePieChart(incomes);
+
             }
         }
 
-        public void RemplirMatchs()
+        public void FillGames()
         {
             List<Match> matchs = _club.Games;
-            ViewMatches view = new ViewMatches(matchs, true, true, false, true, false, true, 12, true, _club);
+            ViewMatches view = new ViewMatches(matchs, true, true, false, true, false, true, 14, true, _club);
             view.Full(spMatchs);
         }
 
@@ -98,12 +109,34 @@ namespace TheManager_GUI
                 if(nombre > 0)
                 {
                     StackPanel spPalmaresEntry = new StackPanel() { Orientation = Orientation.Horizontal };
-                    spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(c.name, "StyleLabel2", 10, 125));
-                    spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(nombre.ToString(), "StyleLabel2", 10, 50));
+                    spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(c.name, "StyleLabel2", 12, 175));
+                    spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(nombre.ToString(), "StyleLabel2", 12, 75));
                     spPalmares.Children.Add(spPalmaresEntry);
                 
                 }
             }
+        }
+
+        private void CreatePieChart(Dictionary<BudgetModificationReason, double> values)
+        {
+            SeriesCollection series = new SeriesCollection();
+
+            foreach(KeyValuePair<BudgetModificationReason, double> kvp in values)
+            {
+                series.Add(new PieSeries
+                {
+                    Title = kvp.Key.ToString(),
+                    Values = new ChartValues<double> { kvp.Value }
+                });
+            }
+
+            PieChart pc = new PieChart();
+            pc.Width = 250;
+            pc.Height = 250;
+
+            pc.Series = series;
+
+            spRepartitions.Children.Add(pc);
         }
 
         public Windows_Club(CityClub c)
@@ -111,6 +144,7 @@ namespace TheManager_GUI
             InitializeComponent();
 
             imgBudget.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\budget.png"));
+            imgCurrentBudget.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\budget.png"));
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             imgManager.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\manager.png"));
 
@@ -127,6 +161,7 @@ namespace TheManager_GUI
             }
 
             lbBudget.Content = Utils.FormatMoney(c.budget);
+            lbCurrentBudget.Content = Utils.FormatMoney(c.budget);
 
             try
             {
@@ -137,7 +172,7 @@ namespace TheManager_GUI
                 Utils.Debug(e.ToString());
             }
             Palmares(c);
-            RemplirMatchs();
+            FillGames();
             FillBudget();
 
             
@@ -152,8 +187,11 @@ namespace TheManager_GUI
                     newContracts.Add(ct.player);
                 }
             }
+            
+            /*TODO
             ViewPlayers viewNewPlayers = new ViewPlayers(newContracts, 11, false, false, false, true, false, false, false, false, false, true, false, false, false, false, false, false, false);
             viewNewPlayers.Full(spArrivees);
+            */
             ViewPlayers viewPlayers = new ViewPlayers(c.Players(), 12, true, true, true, true, true, false, false, true, false, true, false, false, false, false, false, true, true, true);
             viewPlayers.Full(spPlayers);
 
@@ -257,6 +295,7 @@ namespace TheManager_GUI
             {
                 lbBiggestLose.Content = c.records.BiggestLose.home.name + " " + c.records.BiggestLose.score1 + " - " + c.records.BiggestLose.score2 + " " + c.records.BiggestLose.away.name;
             }
+
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)

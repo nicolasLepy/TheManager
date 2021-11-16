@@ -157,14 +157,14 @@ namespace TheManager
 
         public void QualifiesClubForContinentalCompetitionNextYear()
         {
-            List<Country> countries = new List<Country>(associationRanking);
+            List<Country> countriesRanking = new List<Country>(associationRanking);
             
-            for(int i = 0; i<countries.Count; i++)
+            for(int i = 0; i< countriesRanking.Count; i++)
             {
                 List<Club> registeredClubs = new List<Club>();
                 List<Club> clubs = new List<Club>();
-                Round championshipRound = countries[i].FirstDivisionChampionship().rounds[0];
-                Club cupWinner = countries[i].Cup(1)?.Winner();
+                Round championshipRound = countriesRanking[i].FirstDivisionChampionship().rounds[0];
+                Club cupWinner = countriesRanking[i].Cup(1)?.Winner();
 
                 if(championshipRound as ChampionshipRound != null)
                 {

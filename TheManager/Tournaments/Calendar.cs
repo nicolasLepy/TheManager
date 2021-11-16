@@ -359,7 +359,7 @@ namespace TheManager
                 }
                 //Part 1 : manager Journey [2-end]
                 int nbGamesFirstRound = res.Count / gamesPerRound;
-                List<Match> games = new List<Match>();
+                List<Match> games;
                 for (int i = 1; i< nbGamesFirstRound; i++)
                 {
                     games = new List<Match>();

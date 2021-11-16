@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -541,16 +542,15 @@ namespace TheManager_GUI
                 sp.Children.Add(ViewUtils.CreateLogo(club.Key, 25, 25));
                 sp.Children.Add(ViewUtils.CreateLabel(club.Key.name, "StyleLabel2", 12, 200));
                 sp.Children.Add(ViewUtils.CreateLabel(club.Value.Count.ToString(), "StyleLabel2", 12, 50, null, null, true));
-                string yearList = "";
+                StringBuilder bld = new StringBuilder();
                 foreach(float years in club.Value)
                 {
-                    yearList += years + ", ";
+                    bld.Append(years + ", ");
                 }
+                string yearList = bld.ToString();
                 sp.Children.Add(ViewUtils.CreateLabel(yearList, "StyleLabel2", 12, 250));
                 spRanking.Children.Add(sp);
             }
-
-
         }
 
         private void SelectedStatsYears(object sender, RoutedEventArgs e)

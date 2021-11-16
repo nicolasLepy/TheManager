@@ -565,6 +565,12 @@ namespace TheManager
                             players.Add(j);
                         }
                         break;
+                    default:
+                        for (int i = 0; i < j.level; i++)
+                        {
+                            players.Add(j);
+                        }
+                        break;
                 }
             }
             Player res = null;

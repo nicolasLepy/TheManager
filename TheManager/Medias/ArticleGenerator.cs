@@ -63,6 +63,7 @@ namespace TheManager
                     }
                     break;
                 case ContractOfferResult.NoAgreementWithPlayer:
+                default:
                     res = to.shortName + " n'arrive pas à s'entendre avec " + co.Player.lastName + ".";
                     break;
 
@@ -181,7 +182,7 @@ namespace TheManager
                             break;
                         case "NL_E": _nl_e.Add(article); 
                             break;
-                        case "NL_O" : _nl_o.Add(article);
+                        case "NL_O": default : _nl_o.Add(article);
                             break;
                     }
                 }

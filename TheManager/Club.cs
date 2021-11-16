@@ -201,7 +201,7 @@ namespace TheManager
                     }
                     if (!associationCoefficient && continentalTournament.level == 3)
                     {
-                        float[] allowedPoints = new float[4] { 1, 1.5f, 2, 2.5f };
+                        float[] allowedPoints = new float[] { 1, 1.5f, 2, 2.5f };
                         for (int r = 0; r < indexGroupRound; r++)
                         {
                             if (yearContinentalTournament.rounds[r].clubs.Contains(this) && !yearContinentalTournament.rounds[r + 1].clubs.Contains(this))

@@ -210,7 +210,7 @@ namespace TheManager
             {
                 res = _clubs[0];
                 //It's a final
-                if(_clubs.Count == 2)
+                if(_clubs.Count == 2 && _matches.Count > 0)
                 {
                     res = _matches[_matches.Count - 1].Winner;
                 }

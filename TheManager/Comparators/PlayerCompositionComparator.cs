@@ -8,7 +8,7 @@ namespace TheManager.Comparators
 {
     public class PlayerCompositionComparator : IComparer<Player>
     {
-        private bool _lessImportantGame = true;
+        private readonly bool _lessImportantGame = true;
 
         public PlayerCompositionComparator(bool lessImportantGame)
         {

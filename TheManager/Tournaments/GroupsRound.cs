@@ -261,17 +261,17 @@ namespace TheManager
 
         private void SetGroups()
         {
-            IRandomDrawing randomDrawing = null;
+            IRandomDrawing randomDrawing;
             switch (_randomDrawingMethod)
             {
-                case RandomDrawingMethod.Level:
-                    randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);
-                    break;
                 case RandomDrawingMethod.Coefficient:
                     randomDrawing = new RandomDrawingLevel(this, _clubs[0] as NationalTeam == null ? ClubAttribute.CONTINENTAL_COEFFICIENT : ClubAttribute.LEVEL);
                     break;
                 case RandomDrawingMethod.Geographic:
                     randomDrawing = new RandomDrawingGeographic(this);
+                    break;
+                case RandomDrawingMethod.Level : default:
+                    randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);
                     break;
             }
             randomDrawing.RandomDrawing();

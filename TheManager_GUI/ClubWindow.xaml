@@ -22,64 +22,43 @@
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 			</StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<!-- partie gauche -->
-				<StackPanel Orientation="Vertical">
-					<StackPanel Orientation="Horizontal">
-						<Image Name="imgManager" Width="50" Height="50"/>
-						<Label Name="lbEntraineur" Content="Antoine Kombouaré" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-					</StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<Image Name="imgBudget" Width="50" Height="50"/>
-						<Label Name="lbBudget" Content="45M€" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-					</StackPanel>
-					<Label Content="Opérations" Style="{StaticResource StyleLabel2}"/>
-					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
-						<ScrollViewer VerticalScrollBarVisibility="Auto" Height="250" Width="260">
-							<StackPanel Name="spBudget" Orientation="Vertical">
 
+			<TabControl Height="700">
+				<TabItem Header="Effectif" Style="{StaticResource StyleTabHeader}">
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Vertical">
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<StackPanel Orientation="Vertical" Width="600">
+									<Label Content="Effectif" Style="{StaticResource StyleLabel2}"/>
+									<ScrollViewer VerticalScrollBarVisibility="Auto" Height="500">
+										<StackPanel Orientation="Vertical" Name="spPlayers">
+										</StackPanel>
+									</ScrollViewer>
+								</StackPanel>
+							</Border>
+							<StackPanel Orientation="Horizontal">
+								<Image Name="imgManager" Width="50" Height="50"/>
+								<Label Name="lbEntraineur" Content="Antoine Kombouaré" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<Image Name="imgBudget" Width="50" Height="50"/>
+								<Label Name="lbBudget" Content="45M€" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 							</StackPanel>
 
-						</ScrollViewer>
-					</Border>
-					<Label Content="Evolution du solde" Style="{StaticResource StyleLabel2}"/>
-					<lvc:CartesianChart Width="300" Height="150" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
-						<lvc:CartesianChart.AxisY>
-							<lvc:Axis Title="Budget" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
-						</lvc:CartesianChart.AxisY>
-						<lvc:CartesianChart.AxisX>
-							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
-						</lvc:CartesianChart.AxisX>
-					</lvc:CartesianChart>
 
-				</StackPanel>
-				<!--Partie centrale-->
-				<StackPanel Orientation="Vertical" Width="600">
-
-					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
-						<StackPanel Orientation="Vertical">
-							<Label Content="Effectif" Style="{StaticResource StyleLabel2}"/>
-							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="190">
-								<StackPanel Orientation="Vertical" Name="spPlayers">
-								</StackPanel>
-							</ScrollViewer>
 						</StackPanel>
-					</Border>
-
-					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 						<StackPanel Orientation="Vertical">
-							<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
-							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200" Width="500">
-								<StackPanel Name="spMatchs" Orientation="Vertical">
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<StackPanel Orientation="Vertical">
+									<Label Content="Matchs" Style="{StaticResource StyleLabel2}"/>
+									<ScrollViewer VerticalScrollBarVisibility="Auto" Height="200" Width="600">
+										<StackPanel Name="spMatchs" Orientation="Vertical">
+										</StackPanel>
+									</ScrollViewer>
 								</StackPanel>
-							</ScrollViewer>
-						</StackPanel>
-					</Border>
-
-					<StackPanel Orientation="Horizontal">
-						<StackPanel Orientation="Vertical">
+							</Border>
 							<Label Content="Centre de formation" Style="{StaticResource StyleLabel2}"/>
-							<lvc:CartesianChart Width="300" Height="150" Series="{Binding CFCollection}" LegendLocation="Right" >
+							<lvc:CartesianChart Width="450" Height="300" Series="{Binding CFCollection}" LegendLocation="Right" >
 								<lvc:CartesianChart.AxisY>
 									<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
 								</lvc:CartesianChart.AxisY>
@@ -87,62 +66,96 @@
 									<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 								</lvc:CartesianChart.AxisX>
 							</lvc:CartesianChart>
+
+						</StackPanel>
+					</StackPanel>
+				</TabItem>
+				<TabItem Header="Finances" Style="{StaticResource StyleTabHeader}">
+
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Vertical">
+							<Label Content="Opérations" Style="{StaticResource StyleLabel2}"/>
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="300" Width="400">
+									<StackPanel Name="spBudget" Orientation="Vertical">
+
+									</StackPanel>
+
+								</ScrollViewer>
+							</Border>
+							<Label Content="Répartition des opérations" Style="{StaticResource StyleLabel2}"/>
+							<StackPanel Orientation="Horizontal" Name="spRepartitions">
+								
+							</StackPanel>
 						</StackPanel>
 						<StackPanel Orientation="Vertical">
-							<Label Content="Arrivées cette année" Style="{StaticResource StyleLabel2}"/>
-							<ScrollViewer Height="150"  VerticalScrollBarVisibility="Auto">
-								<StackPanel Orientation="Vertical" Name="spArrivees">
-								</StackPanel>
-							</ScrollViewer>
+							<StackPanel Orientation="Horizontal">
+								<Image Name="imgCurrentBudget" Width="50" Height="50"/>
+								<Label Name="lbCurrentBudget" Content="45M€" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</StackPanel>
+
+							<Label Content="Evolution du solde" Style="{StaticResource StyleLabel2}"/>
+							<lvc:CartesianChart Width="500" Height="300" Series="{Binding BudgetsCollection}" LegendLocation="Right" >
+								<lvc:CartesianChart.AxisY>
+									<lvc:Axis Title="Budget" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
+								</lvc:CartesianChart.AxisY>
+								<lvc:CartesianChart.AxisX>
+									<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+								</lvc:CartesianChart.AxisX>
+							</lvc:CartesianChart>
 						</StackPanel>
 					</StackPanel>
 
-				</StackPanel>
-				<!-- partie droite -->
-				<StackPanel Orientation="Vertical">
+				</TabItem>
+				<TabItem Header="Histoire" Style="{StaticResource StyleTabHeader}">
+					<StackPanel Orientation="Horizontal">
+						<StackPanel Orientation="Vertical" Width="500">
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<ScrollViewer VerticalScrollBarVisibility="Auto" Height="100">
+									<StackPanel x:Name="spPalmares" Orientation="Vertical">
+									</StackPanel>
+								</ScrollViewer>
+							</Border>
 
-					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
-						<StackPanel Orientation="Vertical">
-							<Label Content="Palmarès" Style="{StaticResource StyleLabel2}"/>
-							<ScrollViewer VerticalScrollBarVisibility="Auto" Height="100">
-								<StackPanel x:Name="spPalmares" Orientation="Vertical">
-									
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<StackPanel Orientation="Vertical">
+									<Label Content="Plus grande victoire" Style="{StaticResource StyleLabel2}"/>
+									<Label Name="lbBiggestWin" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
+									<Label Content="Plus grande défaite" Style="{StaticResource StyleLabel2}"/>
+									<Label Name="lbBiggestLose" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
 								</StackPanel>
-							</ScrollViewer>
+							</Border>
 
-							<Label Content="Histoire" Style="{StaticResource StyleLabel2}"/>
-							<ScrollViewer Height="150" VerticalScrollBarVisibility="Auto">
-								<StackPanel Orientation="Vertical" Name="spHistory">
+						</StackPanel>
+
+
+						<StackPanel Orientation="Vertical" Width="500">
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<StackPanel Orientation="Vertical">
+									<Label Content="Histoire" Style="{StaticResource StyleLabel2}"/>
+									<ScrollViewer Height="150" VerticalScrollBarVisibility="Auto">
+										<StackPanel Orientation="Vertical" Name="spHistory">
+										</StackPanel>
+									</ScrollViewer>
 								</StackPanel>
-							</ScrollViewer>
+							</Border>
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<StackPanel Orientation="Vertical">
+									<Label Content="Evolution de l'affluence moyenne" Style="{StaticResource StyleLabel2}"/>
+									<lvc:CartesianChart Width="400" Height="350" Series="{Binding AttendanceCollection}" LegendLocation="Right" >
+										<lvc:CartesianChart.AxisY>
+											<lvc:Axis Title="Affluence"></lvc:Axis>
+										</lvc:CartesianChart.AxisY>
+										<lvc:CartesianChart.AxisX>
+											<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+										</lvc:CartesianChart.AxisX>
+									</lvc:CartesianChart>
+								</StackPanel>
+							</Border>
 						</StackPanel>
-					</Border>
-
-
-					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
-						<StackPanel Orientation="Vertical">
-							<Label Content="Plus grande victoire" Style="{StaticResource StyleLabel2}"/>
-							<Label Name="lbBiggestWin" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
-							<Label Content="Plus grande défaite" Style="{StaticResource StyleLabel2}"/>
-							<Label Name="lbBiggestLose" Content="" FontSize="12" Style="{StaticResource StyleLabel2}"/>
-						</StackPanel>
-					</Border>
-
-					<Label Content="Evolution de l'affluence moyenne" Style="{StaticResource StyleLabel2}"/>
-					<lvc:CartesianChart Width="350" Height="100" Series="{Binding AttendanceCollection}" LegendLocation="Right" >
-						<lvc:CartesianChart.AxisY>
-							<lvc:Axis Title="Affluence"></lvc:Axis>
-						</lvc:CartesianChart.AxisY>
-						<lvc:CartesianChart.AxisX>
-							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
-						</lvc:CartesianChart.AxisX>
-					</lvc:CartesianChart>
-
-
-				</StackPanel>
-			</StackPanel>
-			
-			
+					</StackPanel>
+				</TabItem>
+			</TabControl>
 		</StackPanel>
     </Grid>
 </Window>

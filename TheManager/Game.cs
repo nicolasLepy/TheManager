@@ -245,9 +245,9 @@ namespace TheManager
                 {
                     clubsCount++;
                     totalBudgetInGame += (c as CityClub).budget;
-                    playersCount += (c as CityClub).Players().Count;
-                    playersInGame += (c as CityClub).Players().Count;
-                    foreach (Player p in (c as CityClub).Players())
+                    playersCount += c.Players().Count;
+                    playersInGame += c.Players().Count;
+                    foreach (Player p in c.Players())
                     {
                         averagePlayerLevelInGame += p.level;
                     }
@@ -517,11 +517,6 @@ namespace TheManager
                         }
                     }
                     i++;
-                    /*
-                    else
-                    {
-                        Console.WriteLine(c.name + " is not activated this year");
-                    }*/
                 }
 
                 if (Utils.CompareDates(c.seasonBeginning.ConvertToDateTime(), _date))

@@ -274,7 +274,7 @@ namespace TheManager_GUI
                     case Position.Goalkeeper: conteneur = spGardiens; break;
                     case Position.Defender: conteneur = spDefender; break;
                     case Position.Midfielder: conteneur = spMidfielder; break;
-                    case Position.Striker: conteneur = spStrickers; break;
+                    case Position.Striker: default:  conteneur = spStrickers; break;
                 }
 
                 conteneur.Children.Add(GeneratePlayerIcon(j, match, showEnergy, 1));
@@ -300,6 +300,7 @@ namespace TheManager_GUI
                 case Position.Midfielder:
                     return "M";
                 case Position.Striker:
+                default:
                     return "S";
             }
             return "-";

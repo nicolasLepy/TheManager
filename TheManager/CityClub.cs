@@ -347,45 +347,45 @@ namespace TheManager
 
         public void GetSponsor()
         {
-            int sponsor = 0;
+            int sponsorValue = 0;
             float level = Level();
             if (level < 10)
             {
-                sponsor = Session.Instance.Random(5000, 14000);
+                sponsorValue = Session.Instance.Random(5000, 14000);
             }
             else if (level < 30)
             {
-                sponsor = Session.Instance.Random(85000, 323000);
+                sponsorValue = Session.Instance.Random(85000, 323000);
             }
             else if (level < 40)
             {
-                sponsor = Session.Instance.Random(200000, 500000);
+                sponsorValue = Session.Instance.Random(200000, 500000);
             }
             else if (level < 50)
             {
-                sponsor = Session.Instance.Random(500000, 800000);
+                sponsorValue = Session.Instance.Random(500000, 800000);
             }
             else if (level < 60)
             {
-                sponsor = Session.Instance.Random(800000, 2500000);
+                sponsorValue = Session.Instance.Random(800000, 2500000);
             }
             else if (level < 70)
             {
-                sponsor = Session.Instance.Random(2500000, 6500000);
+                sponsorValue = Session.Instance.Random(2500000, 6500000);
             }
             else if (level < 80)
             {
-                sponsor = Session.Instance.Random(6000000, 14000000);
+                sponsorValue = Session.Instance.Random(6000000, 14000000);
             }
             else if (level < 90)
             {
-                sponsor = Session.Instance.Random(14000000, 23000000);
+                sponsorValue = Session.Instance.Random(14000000, 23000000);
             }
             else
             {
-                sponsor = Session.Instance.Random(23000000, 40000000);
+                sponsorValue = Session.Instance.Random(23000000, 40000000);
             }
-            _sponsor = sponsor;
+            _sponsor = sponsorValue;
         }
 
         /// <summary>
