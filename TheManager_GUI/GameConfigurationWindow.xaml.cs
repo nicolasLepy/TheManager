@@ -116,6 +116,7 @@ namespace TheManager_GUI
         public Windows_ConfigurationPartie()
         {
             InitializeComponent();
+            imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             _order = 0;
             _checkbox = new List<CheckBox>();
 
@@ -159,8 +160,8 @@ namespace TheManager_GUI
                     
                 }
             }
-            lbnbClubs.Content = "Nombre de clubs actifs : " + nbClubs;
-            lbnbJoueurs.Content = "Nombre de joueurs approximatif : " + nbJoueurs;
+            lbnbClubs.Content = FindResource("str_activeClubs").ToString() + " : " + nbClubs;
+            lbnbJoueurs.Content = FindResource("str_playersEstimation").ToString() + " : " + nbJoueurs;
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)

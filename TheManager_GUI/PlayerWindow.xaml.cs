@@ -26,6 +26,7 @@ namespace TheManager_GUI
         {
             _player = joueur;
             InitializeComponent();
+            imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             lbJoueur.Content = joueur.ToString();
             Club c = joueur.Club;
             if(c != null)
@@ -37,7 +38,7 @@ namespace TheManager_GUI
             {
                 lbClub.Content = "Libre";
             }
-            lbAge.Content = "Né le " + joueur.birthday.ToShortDateString() + " (" + joueur.Age + " ans)";
+            lbAge.Content = FindResource("str_born").ToString() + " " + joueur.birthday.ToShortDateString() + " (" + joueur.Age + " "+FindResource("yo").ToString()+")";
             imgFlag.Source = new BitmapImage(new Uri(Utils.Flag(joueur.nationality)));
 
             ChartValues<int> niveaux = new ChartValues<int>();
@@ -54,7 +55,7 @@ namespace TheManager_GUI
             {
                 new LineSeries
                 {
-                    Title = "Niveau",
+                    Title = FindResource("str_level").ToString(),
                     Values = niveaux,
                 }
             };
@@ -63,7 +64,7 @@ namespace TheManager_GUI
             {
                 new LineSeries
                 {
-                    Title = "Buts",
+                    Title = FindResource("str_goalsScored").ToString(),
                     Values = buts,
                 }
             };
@@ -72,7 +73,7 @@ namespace TheManager_GUI
             {
                 new LineSeries
                 {
-                    Title = "Matchs",
+                    Title = FindResource("str_matchPlayed").ToString(),
                     Values = joues,
                 }
             };
@@ -89,15 +90,15 @@ namespace TheManager_GUI
 
             FillPlayerHistory();
             FillPlayerGames();
-            lbValue.Content = "Valeur : " + Utils.FormatMoney(_player.EstimateTransferValue());
+            lbValue.Content = FindResource("str_value").ToString() + " : " + Utils.FormatMoney(_player.EstimateTransferValue());
             Contract ct = _player.Club == null ? null : _player.Club.FindContract(_player);
             if(ct != null)
             {
-                lbContract.Content = "Sous contrat jusqu'au " + ct.end.ToShortDateString() + " (salaire de " + Utils.FormatMoney(ct.wage) + "/m)";
+                lbContract.Content = FindResource("str_underContractUntil").ToString() + " " + ct.end.ToShortDateString() + " ("+FindResource("str_wageOf").ToString() +" " + Utils.FormatMoney(ct.wage) + " /m)";
             }
             else
             {
-                lbContract.Content = "Sans contrat";
+                lbContract.Content = FindResource("str_noClub").ToString();
             }
             spLevel.Children.Add(ViewUtils.CreateStarNotation(_player.Stars, 15));
             spPotentiel.Children.Add(ViewUtils.CreateStarNotation(_player.StarsPotential, 15));
@@ -119,10 +120,10 @@ namespace TheManager_GUI
         {
             StackPanel firstLine = new StackPanel();
             firstLine.Orientation = Orientation.Horizontal;
-            firstLine.Children.Add(ViewUtils.CreateLabel("Durée", "StyleLabel2", 11, 80));
-            firstLine.Children.Add(ViewUtils.CreateLabel("Club", "StyleLabel2", 11, 100));
-            firstLine.Children.Add(ViewUtils.CreateLabel("Matchs", "StyleLabel2", 11, 40));
-            firstLine.Children.Add(ViewUtils.CreateLabel("Buts", "StyleLabel2", 11, 40));
+            firstLine.Children.Add(ViewUtils.CreateLabel(FindResource("str_duration").ToString(), "StyleLabel2", 11, 80));
+            firstLine.Children.Add(ViewUtils.CreateLabel(FindResource("str_club").ToString(), "StyleLabel2", 11, 100));
+            firstLine.Children.Add(ViewUtils.CreateLabel(FindResource("str_games").ToString(), "StyleLabel2", 11, 40));
+            firstLine.Children.Add(ViewUtils.CreateLabel(FindResource("str_goals").ToString(), "StyleLabel2", 11, 40));
             spPlayerHistory.Children.Add(firstLine);
 
             int cumulativeGoals = 0;
@@ -139,7 +140,7 @@ namespace TheManager_GUI
                         string nameClub = "";
                         if(last == null)
                         {
-                            nameClub = "Libre";
+                            nameClub = FindResource("str_free").ToString();
                         }
                         else
                         {
@@ -167,7 +168,7 @@ namespace TheManager_GUI
                 string clubName = "";
                 if (last == null)
                 {
-                    clubName = "Libre";
+                    clubName = FindResource("str_free").ToString();
                 }
                 else
                 {

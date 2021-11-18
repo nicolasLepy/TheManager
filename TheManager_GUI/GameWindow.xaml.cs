@@ -18,6 +18,7 @@ namespace TheManager_GUI
         public Windows_Match(Match match)
         {
             InitializeComponent();
+            imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             try
             {
                 imgCompetition.Source = new BitmapImage(new Uri(Utils.LogoTournament(match.Tournament)));
@@ -30,7 +31,7 @@ namespace TheManager_GUI
             imgLogoHome.Source = new BitmapImage(new Uri(Utils.Logo(match.home)));
             imgLogoAway.Source = new BitmapImage(new Uri(Utils.Logo(match.away)));
             lbStade.Content = match.home.stadium.name;
-            lbAffluence.Content = match.attendance + " spectateurs";
+            lbAffluence.Content = match.attendance + " " + FindResource("str_spectators").ToString();
             lbEquipe1.Content = match.home.name;
             lbEquipe2.Content = match.away.name;
             lbScore1.Content = match.score1;
@@ -98,6 +99,9 @@ namespace TheManager_GUI
             spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo1, false, match, match.Subs1));
             spCompositions.Children.Add(ViewUtils.CreateCompositionPanel(match.compo2, false, match, match.Subs2));
 
+            string strOg = FindResource("str_og").ToString();
+            string strPen = FindResource("str_pen").ToString();
+
             foreach (MatchEvent em in match.events)
             {
                 string icone = "";
@@ -130,12 +134,12 @@ namespace TheManager_GUI
                     c2 = em.player.firstName + " " + em.player.lastName;
                     if (em.type == GameEvent.PenaltyGoal)
                     {
-                        c2 += " (sp)";
+                        c2 += " ("+strPen+")";
                     }
 
                     if (em.type == GameEvent.AgGoal)
                     {
-                        c2 += " (csc)";
+                        c2 += " ("+strOg+")";
                     }
                 }
                 else
@@ -145,12 +149,12 @@ namespace TheManager_GUI
                     c3 = em.player.firstName + " " + em.player.lastName;
                     if (em.type == GameEvent.PenaltyGoal)
                     {
-                        c3 += " (sp)";
+                        c3 += " ("+strPen+")";
                     }
 
                     if (em.type == GameEvent.AgGoal)
                     {
-                        c3 += " (csc)";
+                        c3 += " ("+strOg+")";
                     }
                 }
                 if(em.type != GameEvent.Shot)
@@ -231,6 +235,9 @@ namespace TheManager_GUI
 
         private void DrawTimeline(Match match)
         {
+            string strOg = FindResource("str_og").ToString();
+            string strPen = FindResource("str_pen").ToString();
+
             double canvasWidth = 700;
             System.Windows.Shapes.Rectangle rect = new System.Windows.Shapes.Rectangle();
             rect.Width = canvasWidth;
@@ -267,12 +274,12 @@ namespace TheManager_GUI
                 eventText = em.player.firstName + " " + em.player.lastName;
                 if (em.type == GameEvent.PenaltyGoal)
                 {
-                    eventText += " (sp)";
+                    eventText += " ("+strPen+")";
                 }
 
                 if (em.type == GameEvent.AgGoal)
                 {
-                    eventText += " (csc)";
+                    eventText += " ("+strOg+")";
                 }
 
                 eventText += " (" + em.EventMinute + "')";

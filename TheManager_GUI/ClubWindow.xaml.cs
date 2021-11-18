@@ -157,7 +157,7 @@ namespace TheManager_GUI
             }
             else
             {
-                lbEntraineur.Content = "Aucun entraîneur";
+                lbEntraineur.Content = FindResource("str_noManager").ToString();
             }
 
             lbBudget.Content = Utils.FormatMoney(c.budget);
@@ -249,7 +249,7 @@ namespace TheManager_GUI
             {
                 new LineSeries
                 {
-                    Title = "Budget",
+                    Title = FindResource("str_budget").ToString(),
                     Values = budgets,
                 }
             };
@@ -260,7 +260,7 @@ namespace TheManager_GUI
             {
                 new LineSeries
                 {
-                    Title = "Niveau",
+                    Title = FindResource("str_level").ToString(),
                     Values = centreFormation,
                 }
             };
@@ -271,7 +271,7 @@ namespace TheManager_GUI
             {
                 new LineSeries
                 {
-                    Title = "Affluence moyenne",
+                    Title = FindResource("str_averageAttendance").ToString(),
                     Values = attendance,
                 }
             };

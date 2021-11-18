@@ -38,23 +38,23 @@
 					</ComboBox>
 					<Separator/>
 					<ListBox Name="lbStats" Style="{StaticResource StyleListBox}" FontSize="12">
-						<ListBoxItem Content="Classement général" Selected="SelectedRanking"/>
-						<ListBoxItem Content="Classement domicile" Selected="SelectedHomeRanking"/>
-						<ListBoxItem Content="Classement extérieur" Selected="SelectedAwayRanking"/>
-						<ListBoxItem Content="Classement des buteurs" Selected="SelectedGoalscorers"/>
-						<ListBoxItem Content="Possession" Selected="SelectedStatPossession"/>
-						<ListBoxItem Content="Tirs" Selected="SelectedStatShot"/>
-						<ListBoxItem Content="Records" Selected="SelectedRecords"/>
-						<ListBoxItem Content="Palmarès par équipe" Selected="SelectedPalmaresClubs"/>
-						<ListBoxItem Content="Palmarès par année" Selected="SelectedPalmaresYears"/>
-						<ListBoxItem Content="Statistiques par année" Selected="SelectedStatsYears"/>
-						<ListBoxItem Content="Saisons par clubs" Selected="SelectedSeasonsClubs"/>
-						<ListBoxItem Content="Budget" Selected="SelectedBudget"/>
-						<ListBoxItem Content="Niveau" Selected="SelectedLevel"/>
-						<ListBoxItem Content="Potentiel" Selected="SelectedPotential"/>
-						<ListBoxItem Content="Stades" Selected="SelectedStadium"/>
-						<ListBoxItem Content="Affluence moyenne" Selected="SelectedAttendance"/>
-						<ListBoxItem Content="Sponsors" Selected="SelectedSponsors"/>
+						<ListBoxItem Content="{StaticResource str_generalRanking}" Selected="SelectedRanking"/>
+						<ListBoxItem Content="{StaticResource str_homeRanking}" Selected="SelectedHomeRanking"/>
+						<ListBoxItem Content="{StaticResource str_awayRanking}" Selected="SelectedAwayRanking"/>
+						<ListBoxItem Content="{StaticResource str_goalscorers}" Selected="SelectedGoalscorers"/>
+						<ListBoxItem Content="{StaticResource str_possession}" Selected="SelectedStatPossession"/>
+						<ListBoxItem Content="{StaticResource str_shots}" Selected="SelectedStatShot"/>
+						<ListBoxItem Content="{StaticResource str_records}" Selected="SelectedRecords"/>
+						<ListBoxItem Content="{StaticResource str_achievementsClub}" Selected="SelectedPalmaresClubs"/>
+						<ListBoxItem Content="{StaticResource str_generalRanking}" Selected="SelectedPalmaresYears"/>
+						<ListBoxItem Content="{StaticResource str_statisticsYear}" Selected="SelectedStatsYears"/>
+						<ListBoxItem Content="{StaticResource str_seasonsByClub}" Selected="SelectedSeasonsClubs"/>
+						<ListBoxItem Content="{StaticResource str_budget}" Selected="SelectedBudget"/>
+						<ListBoxItem Content="{StaticResource str_level}" Selected="SelectedLevel"/>
+						<ListBoxItem Content="{StaticResource str_potential}" Selected="SelectedPotential"/>
+						<ListBoxItem Content="{StaticResource str_stadiums}" Selected="SelectedStadium"/>
+						<ListBoxItem Content="{StaticResource str_averageAttendance}" Selected="SelectedAttendance"/>
+						<ListBoxItem Content="{StaticResource str_sponsors}" Selected="SelectedSponsors"/>
 
 					</ListBox>
 

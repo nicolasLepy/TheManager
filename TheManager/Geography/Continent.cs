@@ -8,7 +8,7 @@ using TheManager.Comparators;
 
 namespace TheManager
 {
-    [DataContract(IsReference =true)]
+    [DataContract(IsReference = true)]
     public class Continent : IRecoverableTeams, ILocalisation
     {
         [DataMember]

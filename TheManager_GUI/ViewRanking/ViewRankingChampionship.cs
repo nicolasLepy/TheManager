@@ -238,7 +238,7 @@ namespace TheManager_GUI.VueClassement
                         }
                     }
                     int index = q.ranking;
-                    if (color != "backgroundColor")
+                    if (color != "backgroundColor" && clubs.Count > 0)
                     {
                         SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
                         (spRanking.Children[index] as StackPanel).Background = lineColor;

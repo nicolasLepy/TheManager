@@ -9,10 +9,10 @@
 	<Grid>
 		<StackPanel Orientation="Vertical">
 			<StackPanel Orientation="Horizontal">
-				<Label Content="Vitesse simulation" Style="{StaticResource StyleLabel2}"/>
-				<Label Content="Rapide" FontSize="10" Style="{StaticResource StyleLabel2}"/>
+				<Label Content="{StaticResource str_simulationSpeed}" Style="{StaticResource StyleLabel2}"/>
+				<Label Content="{StaticResource str_fast}" FontSize="10" Style="{StaticResource StyleLabel2}"/>
 				<Slider Name="sliderVitesseSimulation" Minimum="50" Maximum="1500" Value="400" TickPlacement="BottomRight" TickFrequency="10" Width="140" />
-				<Label Content="Lent" FontSize="10" Style="{StaticResource StyleLabel2}"/>
+				<Label Content="{StaticResource str_slow}" FontSize="10" Style="{StaticResource StyleLabel2}"/>
 				<CheckBox Name="cbJingleBut" Content="Jingle but" Style="{StaticResource StyleCheckBox}" />
 			</StackPanel>
 			<!-- panneau principal -->
@@ -35,7 +35,7 @@
 						</Border>
 					</StackPanel>
 
-					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
+					<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="{StaticResource str_shots}"/>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 						<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 						<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
@@ -48,8 +48,8 @@
 							</StackPanel>
 						</ScrollViewer>
 					</Border>
-					<Button Name="btnSimuler" Content="Abandonner et simuler match" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
-					<Button Name="btnTerminer" Content="Quitter" Visibility="Hidden" Width="200" Click="BtnTerminer_Click" Style="{StaticResource StyleButton1}"/>
+					<Button Name="btnSimuler" Content="{StaticResource str_abandonAndInstantResult}" Width="200" Click="BtnSimuler_Click" Style="{StaticResource StyleButton1}"/>
+					<Button Name="btnTerminer" Content="{StaticResource str_quit}" Visibility="Hidden" Width="200" Click="BtnTerminer_Click" Style="{StaticResource StyleButton1}"/>
 				</StackPanel>
 				<!-- infos compet -->
 				<StackPanel Orientation="Vertical">

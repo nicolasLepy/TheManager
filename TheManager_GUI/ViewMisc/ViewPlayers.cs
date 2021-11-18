@@ -72,7 +72,7 @@ namespace TheManager_GUI.ViewMisc
 
             StackPanel spLine = new StackPanel();
             spLine.Orientation = Orientation.Horizontal;
-            spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.NAME, sortPlayers, "Nom", "StyleLabel2", FontSize, 100));
+            spLine.Children.Add(ViewUtils.CreateLabelOpenWindow<PlayerAttribute>(PlayerAttribute.NAME, sortPlayers, spLine.FindResource("str_name").ToString(), "StyleLabel2", FontSize, 100));
 
             if (Position)
             {
@@ -158,7 +158,7 @@ namespace TheManager_GUI.ViewMisc
                 }
                 if (Age)
                 {
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.Age + " ans", "StyleLabel2", FontSize, 60));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.Age + " " + spLine.FindResource("str_yo").ToString(), "StyleLabel2", FontSize, 60));
                 }
                 if (Level)
                 {

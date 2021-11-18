@@ -24,14 +24,14 @@
 			</Grid>
 			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Vertical" Width="275">
-					<Label Content="Joueurs disponibles" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="{StaticResource str_availablePlayers}" Style="{StaticResource StyleLabel2}"/>
 					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="275" Name="dgJoueursDispo" MouseDoubleClick="DgJoueursDispo_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
 						<DataGrid.Columns>
-							<DataGridTextColumn Header="Poste" Binding="{Binding Poste}"/>
-							<DataGridTextColumn Header="Nom" Binding="{Binding Nom}"/>
-							<DataGridTextColumn Header="Age" Binding="{Binding Age}"/>
-							<DataGridTextColumn Header="Niveau" Binding="{Binding Niveau}"/>
-							<DataGridTemplateColumn Header="Energie" Width="75">
+							<DataGridTextColumn Header="{StaticResource str_position}" Binding="{Binding Poste}"/>
+							<DataGridTextColumn Header="{StaticResource str_name}" Binding="{Binding Nom}"/>
+							<DataGridTextColumn Header="{StaticResource str_age}" Binding="{Binding Age}"/>
+							<DataGridTextColumn Header="{StaticResource str_level}" Binding="{Binding Niveau}"/>
+							<DataGridTemplateColumn Header="{StaticResource str_energy}" Width="75">
 								<DataGridTemplateColumn.CellTemplate>
 									<DataTemplate>
 										<ProgressBar Value="{Binding Energie}" Minimum="0" Maximum="100"/>
@@ -40,10 +40,10 @@
 							</DataGridTemplateColumn>
 						</DataGrid.Columns>
 					</DataGrid>
-					<Button Name="btnCompoAuto" Content="Composition automatique" Style="{StaticResource StyleButton1}" Width="175" Click="BtnCompoAuto_Click"/>
+					<Button Name="btnCompoAuto" Content="{StaticResource str_autoCompo}" Style="{StaticResource StyleButton1}" Width="175" Click="BtnCompoAuto_Click"/>
 				</StackPanel>
 				<StackPanel Orientation="Vertical" Width="350">
-					<Label Content="Composition" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="{StaticResource str_composition}" Style="{StaticResource StyleLabel2}"/>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spAttaquants" >
 						<StackPanel Orientation="Vertical">
 							<Label Content="Sliti" HorizontalAlignment="Center"  Style="{StaticResource StyleLabel2}"/>
@@ -57,10 +57,10 @@
 					</StackPanel>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spGardiens" >
 					</StackPanel>
-					<Button Name="btnRAZ" Content="Réinitialiser" Style="{StaticResource StyleButton1}" Width="150" Click="BtnRAZ_Click"/>
+					<Button Name="btnRAZ" Content="{StaticResource str_reset}" Style="{StaticResource StyleButton1}" Width="150" Click="BtnRAZ_Click"/>
 				</StackPanel>
 				<StackPanel Orientation="Vertical" Width="320">
-					<Label Style="{StaticResource StyleLabel2}" Content="Programme du jour"/>
+					<Label Style="{StaticResource StyleLabel2}" Content="{StaticResource str_todayProgram}"/>
 					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5" Height="300">
 						<StackPanel Orientation="Vertical" Name="spGames">
 							
@@ -69,8 +69,8 @@
 				</StackPanel>
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-				<Button Name="btnJouer" Content="Jouer" Style="{StaticResource StyleButton1}" Width="100" Click="Button_Click"/>
-				<Button Name="btnSimuler" Content="Résultat immédiat" Style="{StaticResource StyleButton1}" Width="150" Click="BtnSimuler_Click"/>
+				<Button Name="btnJouer" Content="{StaticResource str_play}" Style="{StaticResource StyleButton1}" Width="100" Click="Button_Click"/>
+				<Button Name="btnSimuler" Content="{StaticResource str_instantResult}" Style="{StaticResource StyleButton1}" Width="150" Click="BtnSimuler_Click"/>
 			</StackPanel>
 		</StackPanel>
     </Grid>

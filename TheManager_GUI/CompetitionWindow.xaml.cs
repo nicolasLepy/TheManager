@@ -53,14 +53,14 @@ namespace TheManager_GUI
         {
             cbYear.Items.Clear();
             ComboBoxItem cbi = new ComboBoxItem();
-            cbi.Content = "Saison actuelle";
+            cbi.Content = FindResource("str_currentSeason").ToString();
             cbi.Selected += new RoutedEventHandler((s, e) => NewYearSelected(new KeyValuePair<int, Tournament>(-1, _baseTournament)));
             cbYear.Items.Add(cbi);
 
             foreach (KeyValuePair<int,Tournament> history in _competition.previousEditions)
             {
                 cbi = new ComboBoxItem();
-                cbi.Content = "Saison " + (history.Key - 1) + "-" + history.Key;
+                cbi.Content = FindResource("str_season").ToString() + " " + (history.Key - 1) + "-" + history.Key;
                 cbi.Selected += new RoutedEventHandler((s, e) => NewYearSelected(history));
                 cbYear.Items.Add(cbi);
             }
@@ -137,7 +137,7 @@ namespace TheManager_GUI
         {
             lbCompetition.Content = _competition.name;
             lbNomTour.Content = _competition.rounds[_indexTour].name;
-            lbDayName.Content = "Journée " + _indexJournee.ToString();
+            lbDayName.Content = FindResource("str_matchweek").ToString() + " " + _indexJournee.ToString();
             Ranking(RankingType.General);
             Calendrier();
             if(initMap)
@@ -196,7 +196,7 @@ namespace TheManager_GUI
                     map.ZoomToShape(0, 68 /*12 101*/);
                     map.CurrentZoom = 4;
                 }
-                else if (localisation.Name() == "Afrique")
+                else if (localisation.Name() == "Africa")
                 {
                     map.ZoomToShape(0, 40);
                     map.CurrentZoom = 3;
@@ -456,9 +456,9 @@ namespace TheManager_GUI
         {
             spRanking.Children.Clear();
 
-            spRanking.Children.Add(ViewUtils.CreateLabel("Plus gros score", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(FindResource("str_biggestScore").ToString(), "StyleLabel2", 12, -1));
             spRanking.Children.Add(ViewUtils.CreateLabel(_competition.statistics.LargerScore != null ? _competition.statistics.LargerScore.home.name + " " + _competition.statistics.LargerScore.score1 + "-" + _competition.statistics.LargerScore.score2 + " " + _competition.statistics.LargerScore.away.name : "Pas encore de match joué", "StyleLabel2", 12, -1));
-            spRanking.Children.Add(ViewUtils.CreateLabel("Plus large score", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(FindResource("str_biggestWin").ToString(), "StyleLabel2", 12, -1));
             spRanking.Children.Add(ViewUtils.CreateLabel(_competition.statistics.BiggerScore != null ? _competition.statistics.BiggerScore.home.name + " " + _competition.statistics.BiggerScore.score1 + "-" + _competition.statistics.BiggerScore.score2 + " " + _competition.statistics.BiggerScore.away.name : "Pas encore de match joué", "StyleLabel2", 12, -1));
 
             KeyValuePair<int, KeyValuePair<Club, int>> bestAttack = new KeyValuePair<int, KeyValuePair<Club, int>>(-1, new KeyValuePair<Club, int>(null, -1));
@@ -498,17 +498,17 @@ namespace TheManager_GUI
                 }
             }
 
-            spRanking.Children.Add(ViewUtils.CreateLabel("Meilleure attaque", "StyleLabel2", 12, -1));
-            spRanking.Children.Add(ViewUtils.CreateLabel(bestAttack.Key == -1 ? "Pas encore de match joué" : bestAttack.Value.Key + " (" + bestAttack.Value.Value + " buts, " + bestAttack.Key + ")", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(FindResource("str_bestAttack").ToString(), "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(bestAttack.Key == -1 ? "Pas encore de match joué" : bestAttack.Value.Key + " (" + bestAttack.Value.Value + " "+FindResource("str_mgoals").ToString()+", " + bestAttack.Key + ")", "StyleLabel2", 12, -1));
 
-            spRanking.Children.Add(ViewUtils.CreateLabel("Meilleure défense", "StyleLabel2", 12, -1));
-            spRanking.Children.Add(ViewUtils.CreateLabel(bestDefense.Key == -1 ? "Pas encore de match joué" : bestDefense.Value.Key + " (" + bestDefense.Value.Value + " buts, " + bestDefense.Key + ")", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(FindResource("str_bestDefense").ToString(), "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(bestDefense.Key == -1 ? "Pas encore de match joué" : bestDefense.Value.Key + " (" + bestDefense.Value.Value + " "+ FindResource("str_mgoals").ToString() + ", " + bestDefense.Key + ")", "StyleLabel2", 12, -1));
 
-            spRanking.Children.Add(ViewUtils.CreateLabel("Pire attaque", "StyleLabel2", 12, -1));
-            spRanking.Children.Add(ViewUtils.CreateLabel(worstAttack.Key == -1 ? "Pas encore de match joué" : worstAttack.Value.Key + " (" + worstAttack.Value.Value + " buts, " + worstAttack.Key + ")", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(FindResource("str_worstAttack").ToString(), "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(worstAttack.Key == -1 ? "Pas encore de match joué" : worstAttack.Value.Key + " (" + worstAttack.Value.Value + " "+ FindResource("str_mgoals").ToString() + ", " + worstAttack.Key + ")", "StyleLabel2", 12, -1));
 
-            spRanking.Children.Add(ViewUtils.CreateLabel("Pire défense", "StyleLabel2", 12, -1));
-            spRanking.Children.Add(ViewUtils.CreateLabel(worstDefense.Key == -1 ? "Pas encore de match joué" : worstDefense.Value.Key + " (" + worstDefense.Value.Value + " buts, " + worstDefense.Key + ")", "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(FindResource("str_worstDefense").ToString(), "StyleLabel2", 12, -1));
+            spRanking.Children.Add(ViewUtils.CreateLabel(worstDefense.Key == -1 ? "Pas encore de match joué" : worstDefense.Value.Key + " (" + worstDefense.Value.Value + " "+ FindResource("str_mgoals").ToString() + ", " + worstDefense.Key + ")", "StyleLabel2", 12, -1));
 
 
         }
@@ -559,11 +559,11 @@ namespace TheManager_GUI
 
             StackPanel spTitle = new StackPanel();
             spTitle.Orientation = Orientation.Horizontal;
-            spTitle.Children.Add(ViewUtils.CreateLabel("Année", "StyleLabel2", 12, 150));
-            spTitle.Children.Add(ViewUtils.CreateLabel("Buts/Match", "StyleLabel2", 12, 80));
-            spTitle.Children.Add(ViewUtils.CreateLabel("Buts", "StyleLabel2", 12, 80));
-            spTitle.Children.Add(ViewUtils.CreateLabel("CJ/Match", "StyleLabel2", 12, 80));
-            spTitle.Children.Add(ViewUtils.CreateLabel("CR/Match", "StyleLabel2", 12, 80));
+            spTitle.Children.Add(ViewUtils.CreateLabel(FindResource("str_year").ToString(), "StyleLabel2", 12, 150));
+            spTitle.Children.Add(ViewUtils.CreateLabel(FindResource("str_goalsByGame").ToString(), "StyleLabel2", 12, 80));
+            spTitle.Children.Add(ViewUtils.CreateLabel(FindResource("str_goals").ToString(), "StyleLabel2", 12, 80));
+            spTitle.Children.Add(ViewUtils.CreateLabel(FindResource("str_YCByGame").ToString(), "StyleLabel2", 12, 80));
+            spTitle.Children.Add(ViewUtils.CreateLabel(FindResource("str_RCByGame").ToString(), "StyleLabel2", 12, 80));
             spRanking.Children.Add(spTitle);
 
 

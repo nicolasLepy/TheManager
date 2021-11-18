@@ -5,14 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_ConfigurationPartie" Height="565" Width="1050" Style="{StaticResource StyleWindows}">
+        Title="Windows_ConfigurationPartie" Height="580" Width="1050" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
-			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
-				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			<StackPanel Margin="20" Orientation="Vertical" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Click="BtnQuitter_Click">
+					<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
+				</Button>
 			</StackPanel>
-			<Label  Content="Configuration de la partie" Style="{StaticResource StyleLabel1}"/>
-			<Label  Content="Sélection des championnats" Style="{StaticResource StyleLabel2Center}"/>
+			<Label  Content="{StaticResource str_gameConfiguration}" Style="{StaticResource StyleLabel1}"/>
+			<Label  Content="{StaticResource str_tournamentsSelection}" Style="{StaticResource StyleLabel2Center}"/>
 			<ScrollViewer Margin="30 10 30 0" Grid.Row="1" Name="ScrollViewer1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Height="350" CanContentScroll="True">
 				<StackPanel Orientation="Horizontal" Name="spWorld">
 					<Border Style="{StaticResource StyleBorderStackPanel}" Width="230" Margin="5">
@@ -40,6 +42,10 @@
 							<StackPanel Orientation="Vertical" Name="spOceania">
 							</StackPanel>
 						</Border>
+						<Border Style="{StaticResource StyleBorderStackPanel}" Width="220" Margin="5">
+							<StackPanel Orientation="Vertical" Name="spWorldContient">
+							</StackPanel>
+						</Border>
 					</StackPanel>
 				</StackPanel>
 			</ScrollViewer>
@@ -48,11 +54,11 @@
 			<Label Name="lbnbJoueurs" Content="" Style="{StaticResource StyleLabel2}"/>
 			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="985">
-					<Button Name="btnDisableAll" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}" Content="Tout désactiver" Click="BtnDisable_Click"/>
-					<Button Name="btnEnableAll" HorizontalAlignment="Right" Margin="10,0,0,0" Style="{StaticResource StyleButton1}" Content="Tout activer" Click="BtnEnable_Click"/>
+					<Button Name="btnDisableAll" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}" Content="{StaticResource str_disableAll}" Click="BtnDisable_Click"/>
+					<Button Name="btnEnableAll" HorizontalAlignment="Right" Margin="10,0,0,0" Style="{StaticResource StyleButton1}" Content="{StaticResource str_enableAll}" Click="BtnEnable_Click"/>
 				</StackPanel>
 				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-					<Button Name="btnLancer" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}" Content="Lancer" Click="BtnLancer_Click"/>
+					<Button Name="btnLancer" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}" Content="{StaticResource str_launch}" Click="BtnLancer_Click"/>
 				</StackPanel>
 			</StackPanel>
 

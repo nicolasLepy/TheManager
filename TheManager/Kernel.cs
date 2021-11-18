@@ -38,6 +38,7 @@ namespace TheManager
     
 
     [DataContract(IsReference =true)]
+    [KnownType(typeof(Continent))]
     public class Kernel
     {
 

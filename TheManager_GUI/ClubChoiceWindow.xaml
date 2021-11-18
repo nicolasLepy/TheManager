@@ -8,7 +8,7 @@
         Title="Windows_ChoixClub" Height="570" Width="900" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
-			<Label Content="Choix du club" Style="{StaticResource StyleLabel1}"/>
+			<Label Content="{StaticResource str_clubChoice}" Style="{StaticResource StyleLabel1}"/>
 			
 			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Vertical">
@@ -17,19 +17,19 @@
 						</ListBox>
 					</ScrollViewer>
 					<StackPanel Orientation="Horizontal">
-						<Label Content="Prénom" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<Label Content="{StaticResource str_firstName}" Width="100" Style="{StaticResource StyleLabel2}"/>
 						<TextBox Name="tbPrenom" Width="125" Style="{StaticResource StyleTextBox}" Text="Prenom" />
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<Label Content="Nom" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<Label Content="{StaticResource str_lastName}" Width="100" Style="{StaticResource StyleLabel2}"/>
 						<TextBox Name="tbNom" Width="125" Style="{StaticResource StyleTextBox}" Text="Nom"/>
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<Label Content="Naissance" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<Label Content="{StaticResource str_birthDay}" Width="100" Style="{StaticResource StyleLabel2}"/>
 						<DatePicker Name="dpNaissance" Width="125" Style="{StaticResource StyleDatePicker}" SelectedDate="01/01/1950"/>
 					</StackPanel>
 					<StackPanel Orientation="Horizontal">
-						<Label Content="Nationalité" Width="100" Style="{StaticResource StyleLabel2}"/>
+						<Label Content="{StaticResource str_nationality}" Width="100" Style="{StaticResource StyleLabel2}"/>
 						<ComboBox Name="cbNationalite" Style="{StaticResource StyleComboBox}" Width="125"/>
 					</StackPanel>
 
@@ -63,7 +63,7 @@
 				</StackPanel>
 			</StackPanel>
 
-			<Button Content="Valider" Style="{StaticResource StyleButton1}" Width="150" Margin="15" Click="Button_Click"/>
+			<Button Content="{StaticResource str_confirm}" Style="{StaticResource StyleButton1}" Width="150" Margin="15" Click="Button_Click"/>
 		</StackPanel>
     </Grid>
 </Window>

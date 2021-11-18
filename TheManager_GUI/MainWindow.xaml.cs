@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -61,8 +62,34 @@ namespace TheManager_GUI
         }
 
         private DatabaseLoader _loader;
+
+
+        public static void SelectCulture()
+        {
+
+            //Copy all MergedDictionarys into a auxiliar list.
+            var dictionaryList = Application.Current.Resources.MergedDictionaries.ToList();
+
+            //Search for the specified culture.
+            string requestedCulture = "StringResources.xaml";
+            var resourceDictionary = dictionaryList.FirstOrDefault(d => d.Source.OriginalString == requestedCulture);
+
+
+            //If we have the requested resource, remove it from the list and place at the end.     
+            //Then this language will be our string table to use.      
+            if (resourceDictionary != null)
+            {
+                Application.Current.Resources.MergedDictionaries.Remove(resourceDictionary);
+                Application.Current.Resources.MergedDictionaries.Add(resourceDictionary);
+            }
+
+        }
+
         public MainWindow()
         {
+
+            SelectCulture();
+
             Style = (Style) Resources["StyleWindows"];
             InitializeComponent();
             LoadBackgroundImage();

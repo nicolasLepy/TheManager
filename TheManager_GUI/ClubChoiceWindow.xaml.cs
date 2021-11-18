@@ -112,8 +112,8 @@ namespace TheManager_GUI
         private void ClubIsSelected()
         {
             lbClub.Content = club.name;
-            lbStadium.Content = club.stadium.name + " (" + club.stadium.capacity + " places)";
-            lbBudget.Content = "Budget : " + Utils.FormatMoney((club as CityClub).budget);
+            lbStadium.Content = club.stadium.name + " (" + club.stadium.capacity + " "+ FindResource("str_seats").ToString() + ")";
+            lbBudget.Content = FindResource("str_budget").ToString() + " : " + Utils.FormatMoney((club as CityClub).budget);
             lbCountry.Content = club.Country().Name();
             FillSquad(club);
             spEtoiles.Children.Clear();

@@ -5,11 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="Windows_Match" Height="700" Width="850" Style="{StaticResource StyleWindows}" Left="50" Top="50">
+        Title="Windows_Match" Height="715" Width="850" Style="{StaticResource StyleWindows}" Left="50" Top="50">
     <Grid>
 		<StackPanel Orientation="Vertical" Name="spMain">
-			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
-				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			<StackPanel Margin="20" Orientation="Vertical" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Click="BtnQuitter_Click">
+					<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
+				</Button>
+
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spScoreLine">
 				<StackPanel Orientation="Vertical">
@@ -69,13 +72,13 @@
 
 					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 						<StackPanel Orientation="Vertical">
-							<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Possession"/>
+							<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="{StaticResource str_possession}"/>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 								<Label Name="lbPossession1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 								<ProgressBar Name="pbPossession" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />
 								<Label Name="lbPossession2" Content="10" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 							</StackPanel>
-							<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="Tirs"/>
+							<Label Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" Content="{StaticResource str_shots}"/>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 								<Label Name="lbTirs1" Content="50" Width="50" HorizontalContentAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 								<ProgressBar Name="pbTirs" Minimum="0" Maximum="100" Value="50" Width="100" Height="10" Foreground="DarkGreen" Background="DarkRed" />

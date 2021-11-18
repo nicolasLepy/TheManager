@@ -40,7 +40,7 @@ namespace TheManager_GUI
         private void AddContinentalCountryRanking(Continent c)
         {
             TabItem tab = new TabItem();
-            tab.Header = "Classement " + c.Name() + " (associations)";
+            tab.Header = FindResource("str_ranking").ToString() + " " + c.Name() + " (associations)";
             tab.Style = Application.Current.FindResource("StyleTabHeader") as Style;
             ScrollViewer scrollViewer = new ScrollViewer();
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
@@ -107,7 +107,7 @@ namespace TheManager_GUI
         private void AddContinentalClubRanking(Continent c)
         {
             TabItem tab = new TabItem();
-            tab.Header = "Classement " + c.Name() + " (clubs)";
+            tab.Header = FindResource("str_ranking").ToString() + " " + c.Name() + " (clubs)";
             tab.Style = Application.Current.FindResource("StyleTabHeader") as Style;
             ScrollViewer scrollViewer = new ScrollViewer();
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;

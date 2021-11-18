@@ -6,11 +6,13 @@
         xmlns:local="clr-namespace:TheManager_GUI"
 		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 		mc:Ignorable="d"
-        Title="Windows_Joueur" Height="600" Width="800" Style="{StaticResource StyleWindows}">
+        Title="Windows_Joueur" Height="615" Width="800" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
-			<StackPanel Margin="20" Orientation="Vertical" Width="200" HorizontalAlignment="Right">
-				<Button Name="btnQuitter" Style="{StaticResource StyleButton1}" Content="Retour" Click="BtnQuitter_Click"/>
+			<StackPanel Margin="20" Orientation="Vertical" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Click="BtnQuitter_Click">
+					<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
+				</Button>
 			</StackPanel>
 
 			<StackPanel Orientation="Horizontal">
@@ -29,10 +31,10 @@
 
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" Name="spLevel">
-								<Label Content="Niveau" Style="{StaticResource StyleLabel2}" Width="75"/>
+								<Label Content="{StaticResource str_level}" Style="{StaticResource StyleLabel2}" Width="75"/>
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" Name="spPotentiel">
-								<Label Content="Potentiel" Style="{StaticResource StyleLabel2}" Width="75"/>
+								<Label Content="{StaticResource str_potential}" Style="{StaticResource StyleLabel2}" Width="75"/>
 							</StackPanel>
 						</StackPanel>
 
@@ -67,13 +69,13 @@
 
 			<StackPanel Orientation="Horizontal">
 				<StackPanel Orientation="Vertical">
-					<Label Content="Progression" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="{StaticResource str_progression}" Style="{StaticResource StyleLabel2}"/>
 					<lvc:CartesianChart Width="350" Height="200" Series="{Binding NiveauCollection}" LegendLocation="Right" >
 						<lvc:CartesianChart.AxisY>
-							<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
+							<lvc:Axis Title="{StaticResource str_level}" MinValue="0" MaxValue="100"></lvc:Axis>
 						</lvc:CartesianChart.AxisY>
 						<lvc:CartesianChart.AxisX>
-							<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+							<lvc:Axis Title="{StaticResource str_years}" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 						</lvc:CartesianChart.AxisX>
 					</lvc:CartesianChart>
 				</StackPanel>
@@ -81,24 +83,24 @@
 					<!-- ICI AGE, NIVEAU, POTENTIEL, HISTORIQUE -->
 					<StackPanel Orientation="Horizontal">
 						<StackPanel Orientation="Vertical">
-							<Label Content="Buts marqués" Style="{StaticResource StyleLabel2}"/>
+							<Label Content="{StaticResource str_goalsScored}" Style="{StaticResource StyleLabel2}"/>
 							<lvc:CartesianChart Width="225" Height="125" Series="{Binding ButsCollection}" LegendLocation="Right" >
 								<lvc:CartesianChart.AxisY>
-									<lvc:Axis Title="Niveau" MinValue="0"></lvc:Axis>
+									<lvc:Axis Title="{StaticResource str_goalsScored}" MinValue="0"></lvc:Axis>
 								</lvc:CartesianChart.AxisY>
 								<lvc:CartesianChart.AxisX>
-									<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+									<lvc:Axis Title="{StaticResource str_years}" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 								</lvc:CartesianChart.AxisX>
 							</lvc:CartesianChart>
 						</StackPanel>
 						<StackPanel Orientation="Vertical">
-							<Label Content="Matchs joués" Style="{StaticResource StyleLabel2}"/>
+							<Label Content="{StaticResource str_matchPlayed}" Style="{StaticResource StyleLabel2}"/>
 							<lvc:CartesianChart Width="225" Height="125" Series="{Binding MatchsCollection}" LegendLocation="Right" >
 								<lvc:CartesianChart.AxisY>
-									<lvc:Axis Title="Niveau" MinValue="0"></lvc:Axis>
+									<lvc:Axis Title="{StaticResource str_matchPlayed}" MinValue="0"></lvc:Axis>
 								</lvc:CartesianChart.AxisY>
 								<lvc:CartesianChart.AxisX>
-									<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+									<lvc:Axis Title="{StaticResource str_years}" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 								</lvc:CartesianChart.AxisX>
 							</lvc:CartesianChart>
 						</StackPanel>

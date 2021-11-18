@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,7 +71,8 @@ namespace TheManager_GUI.ViewMisc
                     {
                         StackPanel spDate = new StackPanel();
                         spDate.Orientation = Orientation.Horizontal;
-                        spDate.Children.Add(ViewUtils.CreateLabel(match.day.Date.ToString("dddd dd MMMM yyyy"), "StyleLabel2", fontSize, -1));
+                        CultureInfo ci = new CultureInfo("en-EN");
+                        spDate.Children.Add(ViewUtils.CreateLabel(match.day.Date.ToString("dddd dd MMMM yyyy", ci), "StyleLabel2", fontSize, -1));
                         panel.Children.Add(spDate);
                     }
                 }

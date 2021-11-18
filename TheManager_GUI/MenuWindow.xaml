@@ -13,9 +13,9 @@
 
 				<StackPanel Orientation="Horizontal">
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="1230">
-						<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content="Avancer" Click="BtnAvancer_Click"/>
-						<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 15 juin" Click="BtnSimuler_Click"/>
-						<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content=">> 10 ans" Click="BtnSimuler2_Click"/>
+						<Button Name="btnAvancer" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content="{StaticResource str_advance}" Click="BtnAvancer_Click"/>
+						<Button Name="btnSimuler" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content="{StaticResource str_1y}" Click="BtnSimuler_Click"/>
+						<Button Name="btnSimuler2" Style="{StaticResource StyleButton1}" Margin="5 0 5 0" Width="75" Content="{StaticResource str_10y}" Click="BtnSimuler2_Click"/>
 						<CheckBox Name="cbOpti" Style="{StaticResource StyleCheckBox}" VerticalAlignment="Center"/>
 						<Label Content="Optimiser durée simulation" Style="{StaticResource StyleLabel2}"/>
 
@@ -55,8 +55,8 @@
 							</StackPanel>
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
 								<ComboBox Name="comboRounds" Style="{StaticResource StyleComboBox}" SelectionChanged="ComboRounds_SelectionChanged" Margin="5" Width="140" HorizontalAlignment="Left"/>
-								<Button Name="btnCompetition" Margin="5" Content="Voir plus" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
-								<Button Name="btnParticipants" Margin="5" Width="135" Style="{StaticResource StyleButton1}" Content="Equipes engagées" Click="BtnParticipants_Click"/>
+								<Button Name="btnCompetition" Margin="5" Content="{StaticResource str_seeMore}" Style="{StaticResource StyleButton1}" Width="80" Click="BtnCompetition_Click"/>
+								<Button Name="btnParticipants" Margin="5" Width="135" Style="{StaticResource StyleButton1}" Content="{StaticResource str_teams}" Click="BtnParticipants_Click"/>
 
 							</StackPanel>
 							<Border Style="{StaticResource StyleBorderStackPanel}">
@@ -119,7 +119,7 @@
 						<StackPanel Orientation="Horizontal" Height="180">
 							<Border Style="{StaticResource StyleBorderStackPanel}">
 								<StackPanel Orientation="Vertical" Width="400">
-									<Label Content="Prochains matchs" Style="{StaticResource StyleLabel2}"/>
+									<Label Content="{StaticResource str_nextGames}" Style="{StaticResource StyleLabel2}"/>
 									<StackPanel Name="spNextMatches">
 
 									</StackPanel>
@@ -127,7 +127,7 @@
 							</Border>
 							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="15,0,0,0">
 								<StackPanel Orientation="Vertical" Width="240">
-									<Label Content="Classement" Style="{StaticResource StyleLabel2}"/>
+									<Label Content="{StaticResource str_table}" Style="{StaticResource StyleLabel2}"/>
 									<StackPanel Orientation="Vertical" Name="spRanking" Width="270">
 									</StackPanel>
 								</StackPanel>
@@ -148,10 +148,10 @@
 								</ScrollViewer>
 							</StackPanel>
 						</StackPanel>
-						<Button Name="btnCalendar" Margin="20,5,20,5" Content="Calendrier des compétitions" Style="{StaticResource StyleButton1}" Click="btnCalendar_Click"/>
+						<Button Name="btnCalendar" Margin="20,5,20,5" Content="{StaticResource str_tournamentsSchedule}" Style="{StaticResource StyleButton1}" Click="btnCalendar_Click"/>
 						<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 							<StackPanel Orientation="Vertical">
-								<Label Style="{StaticResource StyleLabel2Center}" Content="Matchs du jour"/>
+								<Label Style="{StaticResource StyleLabel2Center}" Content="{StaticResource str_gamesOfTheDay}"/>
 								<ScrollViewer HorizontalScrollBarVisibility="Auto" Height="360">
 									<StackPanel Orientation="Vertical" Name="spFullGames">
 

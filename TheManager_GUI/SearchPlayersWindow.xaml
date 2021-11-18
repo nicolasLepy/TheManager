@@ -5,16 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
         mc:Ignorable="d"
-        Title="SearchPlayersWindow" Height="800" Width="1000" Style="{StaticResource StyleWindows}">
+        Title="SearchPlayersWindow" Height="820" Width="1000" Style="{StaticResource StyleWindows}">
     <Grid>
 		<StackPanel Orientation="Vertical">
-			<Button Content="Fermer" Name="btnQuit" Width="100" Click="BtnQuit_Click" HorizontalAlignment="Right" Style="{StaticResource StyleButton1}"/>
-			<Label Content="Recherche de joueurs" Name="lbCompetition" Style="{StaticResource StyleLabel1}"/>
-			<Label Content="Filtres" Style="{StaticResource StyleLabel2}" Margin="5 20 0 0"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+				<Button Name="btnQuitter" Click="BtnQuitter_Click">
+					<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
+				</Button>
+			</StackPanel>
+			<Label Content="{StaticResource str_searchPlayers}" Name="lbCompetition" Style="{StaticResource StyleLabel1}"/>
+			<Label Content="{StaticResource str_filters}" Style="{StaticResource StyleLabel2}" Margin="5 20 0 0"/>
 			<StackPanel Orientation="Horizontal">
-				<RadioButton Checked="RbNoConstraintChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbNoConstraint">Aucune contrainte</RadioButton>
-				<RadioButton Checked="RbTransfertListChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbTransferList">Liste des transferts</RadioButton>
-				<RadioButton Checked="RbFreePlayersChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbFreePlayers">Joueurs libres</RadioButton>
+				<RadioButton Checked="RbNoConstraintChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbNoConstraint" Content="{StaticResource str_noConstraint}"/>
+				<RadioButton Checked="RbTransfertListChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbTransferList" Content="{StaticResource str_transferList}"/>
+				<RadioButton Checked="RbFreePlayersChecked" GroupName="ready" Style="{StaticResource StyleRadioButton}" Name="rbFreePlayers" Content="{StaticResource str_freePlayers}"/>
 				<Label Style="{StaticResource StyleLabel2}" Content="Age" FontSize="12"/>
 				<TextBox Name="tbMinAge" TextChanged="tbChanged" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="15" PreviewTextInput="AgeValidationTextBox" Width="20" Style="{StaticResource StyleTextBox}"/>
 				<TextBox Name="tbMaxAge" TextChanged="tbChanged" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Text="60" PreviewTextInput="AgeValidationTextBox" Width="20" Style="{StaticResource StyleTextBox}"/>

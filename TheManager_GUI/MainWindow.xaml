@@ -9,9 +9,9 @@
 	<Grid>
 		<StackPanel Margin="100">
 			<Label Content="" Style="{StaticResource StyleLabel1}"/>
-			<Button Name="btnNouvellePartie" Click="BtnNouvellePartie_Click" Content="Nouvelle partie" Style="{StaticResource StyleButton1}"/>
-			<Button Name="btnChargerPartie" Click="BtnChargerPartie_Click" Content="Charger partie" Style="{StaticResource StyleButton1}"/>
-			<Button Name="btnQuitter" Click="BtnQuitter_Click" Content="Quitter" Style="{StaticResource StyleButton1}"/>
+			<Button Name="btnNouvellePartie" Click="BtnNouvellePartie_Click" Content="{StaticResource str_newGame}" Style="{StaticResource StyleButton1}"/>
+			<Button Name="btnChargerPartie" Click="BtnChargerPartie_Click" Content="{StaticResource str_load}" Style="{StaticResource StyleButton1}"/>
+			<Button Name="btnQuitter" Click="BtnQuitter_Click" Content="{StaticResource str_quit}" Style="{StaticResource StyleButton1}"/>
 			<ProgressBar Visibility="Hidden" Name="pbLoading" Height="10" Margin="10" Foreground="Green" Maximum="100" Minimum="0" Value="20" Background="Black"/>
 			<Label Visibility="Hidden" Name="lbCreationPartie" Content="Creation de la partie" HorizontalAlignment="Center" Style="{StaticResource StyleLabel2}"/>
 

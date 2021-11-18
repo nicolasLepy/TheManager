@@ -181,7 +181,7 @@ namespace TheManager_GUI
             spNews.Orientation = Orientation.Horizontal;
             int days = Utils.DaysNumberBetweenTwoDates(Session.Instance.Game.date, a.publication);
 
-            string dateString = days == 0 ? "Aujourd'hui" : "Il y a " + days + " jour" + (days == 1 ? "" : "s");
+            string dateString = days == 0 ? spNews.FindResource("str_today").ToString() : String.Format(spNews.FindResource("str_daysAgo").ToString(), days, (days == 1 ? "" : "s"));
 
             System.Windows.Media.Color color = (System.Windows.Media.Color)Application.Current.FindResource("ColorDate");
             SolidColorBrush brush = new SolidColorBrush(color);

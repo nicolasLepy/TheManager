@@ -22,6 +22,7 @@ namespace TheManager_GUI
         public SearchPlayersWindow()
         {
             InitializeComponent();
+            imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             _currentPlayersBase = new List<Player>();
         }
 
@@ -76,15 +77,15 @@ namespace TheManager_GUI
             view.Full(spPlayers);
             
 
-            lbPlayersCount.Content = players.Count + " joueurs";
+            lbPlayersCount.Content = players.Count + " " + FindResource("str_players");
             if(players.Count > 1000)
             {
-                lbPlayersCount.Content = "Trop de joueurs trouvés. Seuls les 1000 premiers affichés";
+                lbPlayersCount.Content = FindResource("str_tooManyPlayers").ToString();
             }
 
         }
 
-        private void BtnQuit_Click(object sender, RoutedEventArgs e)
+        private void BtnQuitter_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }

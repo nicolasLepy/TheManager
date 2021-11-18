@@ -179,7 +179,7 @@ namespace TheManager_GUI
             bool pursue = false;
             if (_joueurs.Count < 11)
             {
-                MessageBoxResult result = MessageBox.Show("Moins de 11 joueurs sélectionnés. Continuer ?", "Composition", MessageBoxButton.YesNo);
+                MessageBoxResult result = MessageBox.Show(FindResource("str_lessThan11Players").ToString(), "Composition", MessageBoxButton.YesNo);
                 if (result == MessageBoxResult.Yes)
                 {
                     pursue = true;
