@@ -369,6 +369,7 @@ namespace TheManager
             foreach(Round t in _rounds)
             {
                 InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end);
+                newRound.rules.AddRange(t.rules);
                 newRounds.Add(newRound);
                 foreach (Qualification q in t.qualifications)
                 {

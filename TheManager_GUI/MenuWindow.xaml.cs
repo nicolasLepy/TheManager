@@ -353,7 +353,7 @@ namespace TheManager_GUI
                 }
                 for(int i = indice; i<indice+5; i++)
                 {
-                    //Cas où si jamais il y a moins de 5 matchs pour le club
+                    //Case if there is less than 5 games for the club
                     if(i < clubMatches.Count && i>=0)
                     {
                         matches.Add(clubMatches[i]);

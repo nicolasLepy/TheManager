@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -410,10 +411,43 @@ namespace TheManager
             Console.WriteLine(str);
         }
 
+        private static bool RuleIsRespected(Club club, Qualification qualification, int baseLevel)
+        {
+            bool isReserve = club as ReserveClub != null;
+            bool res = !isReserve || (isReserve && qualification.tournament.isChampionship && qualification.tournament.level >= baseLevel);
+            return res;
+        }
+
         public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, Tournament from)
         {
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
 
+            for(int i = 0; i<qualifications.Count; i++)
+            {
+                qualifications.Sort(new QualificationComparator());
+                Qualification q = qualifications[i];
+                Club concernedClub = ranking[q.ranking - 1];
+                bool ok = RuleIsRespected(concernedClub, q, from.level);
+                int j = i;
+                if(from.isChampionship)
+                {
+                    while (!ok)
+                    {
+                        int tempValue = qualifications[j].ranking;
+                        Qualification first = qualifications[j];
+                        Qualification second = qualifications[j + 1];
+                        first.ranking = qualifications[j + 1].ranking;
+                        second.ranking = tempValue;
+                        qualifications[j] = first;
+                        qualifications[j + 1] = second;
+                        ok = RuleIsRespected(concernedClub, qualifications[j], from.level);
+                        Console.WriteLine(ok + " : " + concernedClub.name + " - " + qualifications[j].ranking + " - " + qualifications[j].tournament.level);
+                        j++;
+                    }
+                }
+            }
+
+            /*
             for (int j = 0; j < qualifications.Count; j++)
             {
                 Qualification q = qualifications[j];
@@ -446,9 +480,14 @@ namespace TheManager
                         }
                     }
                 }
+            }*/
+
+
+            Console.WriteLine("Qualifications");
+            foreach (Qualification qq in qualifications)
+            {
+                Console.WriteLine(qq.ranking + " - " + qq.tournament.name + " - " + ranking[qq.ranking - 1].name);
             }
-
-
 
             return qualifications;
         }

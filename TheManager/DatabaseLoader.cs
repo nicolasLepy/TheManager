@@ -405,9 +405,9 @@ namespace TheManager
             {
                 //XDocument doc = XDocument.Load(Utils.dataFolderName + "/cities/cities.xml");
                 XDocument doc = XDocument.Load(xmlFile);
-                foreach (XElement e in doc.Descendants("Villes"))
+                foreach (XElement e in doc.Descendants("Cities"))
                 {
-                    foreach (XElement e2 in e.Descendants("Ville"))
+                    foreach (XElement e2 in e.Descendants("City"))
                     {
                         string name = e2.Attribute("Name").Value;
                         int population = 0;
@@ -437,9 +437,9 @@ namespace TheManager
                 //XDocument doc = XDocument.Load(Utils.dataFolderName + "/cities/cities.xml");
                 XDocument doc = XDocument.Load(xmlFile);
                 List<XElement> toDelete = new List<XElement>();
-                foreach (XElement e in doc.Descendants("Villes"))
+                foreach (XElement e in doc.Descendants("Cities"))
                 {
-                    foreach (XElement e2 in e.Descendants("Ville"))
+                    foreach (XElement e2 in e.Descendants("City"))
                     {
                         e2.Attribute("A").Remove();
                         e2.Attribute("F").Remove();
@@ -1265,6 +1265,8 @@ namespace TheManager
                             GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
                             Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random);
+                            round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
+                            round.rules.Add(Rule.OnlyFirstTeams);
                             round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
                             int currentAddedTeams = 0;
                             while(currentAddedTeams < preliRoundTeams)
@@ -1307,7 +1309,9 @@ namespace TheManager
                             GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
                             Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random);
-                            if(j > 2)
+                            round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
+                            round.rules.Add(Rule.OnlyFirstTeams);
+                            if (j > 2)
                             {
                                 round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
                             }
