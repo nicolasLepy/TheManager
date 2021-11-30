@@ -791,7 +791,12 @@ namespace TheManager
                                 {
                                     method = String2DrawingMethod(e3.Attribute("methode").Value);
                                 }
-                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, initialisationDate, endDate, method);
+                                bool noRandomDrawing = false;
+                                if(e3.Attribute("noRandomDrawing") != null)
+                                {
+                                    noRandomDrawing = e3.Attribute("noRandomDrawing").Value == "true";
+                                }
+                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, initialisationDate, endDate, method, noRandomDrawing);
                             }
                             else if (type == "poules")
                             {
@@ -1264,7 +1269,7 @@ namespace TheManager
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
                             GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
-                            Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random);
+                            Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random, false);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                             round.rules.Add(Rule.OnlyFirstTeams);
                             round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
@@ -1308,7 +1313,7 @@ namespace TheManager
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
                             GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
-                            Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random);
+                            Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random, false);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                             round.rules.Add(Rule.OnlyFirstTeams);
                             if (j > 2)

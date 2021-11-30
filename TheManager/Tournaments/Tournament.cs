@@ -358,12 +358,31 @@ namespace TheManager
         }
 
 
+        private void UpdateRecoverTeamsRound(Round oldRound, Round newRound)
+        {
+            foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
+            {
+                foreach(Round r in t.rounds)
+                {
+                    for(int i = 0; i < r.recuperedTeams.Count; i++)
+                    {
+                        RecoverTeams rt = r.recuperedTeams[i];
+                        Console.WriteLine(rt.Source.ToString());
+                        if (rt.Source == oldRound)
+                        {
+                            Console.WriteLine("Match entre " + rt.Source.ToString() + " et " + oldRound.ToString());
+                            rt.Source = newRound;
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Make the tournament inactive (when used decide to disable tournament)
         /// </summary>
         public void DisableTournament()
         {
-
             List<Round> newRounds = new List<Round>();
             int i = 0;
             foreach(Round t in _rounds)
@@ -434,6 +453,9 @@ namespace TheManager
                 {
                     newRound.rules.Add(r);
                 }
+
+                //UpdateRecoverTeamsRound(t, newRound);
+                
                 i++;
             }
 
@@ -451,6 +473,8 @@ namespace TheManager
                                 int index = _rounds.IndexOf(re.Source as Round);
                                 re.Source = newRounds[index];
                             }
+                            //Affectation to the list because re is a struct (get a copy, not a ref)
+                            t.recuperedTeams[j] = re;
                         }
                         
                     }

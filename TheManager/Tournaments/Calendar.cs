@@ -427,6 +427,7 @@ namespace TheManager
         /// <param name="day">Championship day</param>
         private static void TVSchedule(List<Match> games, List<TvOffset> offsets, int day)
         {
+            games = new List<Match>(games);
             int indice = 0;
             if (offsets.Count>0)
             {
@@ -486,6 +487,134 @@ namespace TheManager
             }
         }
 
+        private static Club[] SwitchTeams(Club home, Club away)
+        {
+            Tournament champH = home.Championship;
+            Tournament champA = away.Championship;
+            if ((champH != null && champA != null) && champA.level - champH.level >= 2)
+            {
+                Club temp = home;
+                home = away;
+                away = temp;
+            }
+            return new Club[] { home, away };
+        }
+
+        private static DateTime GetRoundProgrammationDate(Round round, RoundProgrammation programmation)
+        {
+            DateTime day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year);
+            if (Utils.IsBeforeWithoutYear(day, round.DateInitialisationRound()))
+            {
+                day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+            }
+            day.AddHours(programmation.defaultHour.Hours);
+            day.AddMinutes(programmation.defaultHour.Minutes);
+            return day;
+        }
+
+        private static void CreateSecondLegKnockOutRound(List<Match> gamesList, Round round, RoundProgrammation programmation)
+        {
+            List<Match> games = new List<Match>();
+            List<Match> firstRound = new List<Match>(gamesList);
+            foreach (Match m in firstRound)
+            {
+
+                DateTime day = programmation.gamesDays[1].ConvertToDateTime(Session.Instance.Game.date.Year);
+                if (Utils.IsBeforeWithoutYear(day, round.DateInitialisationRound()))
+                {
+                    day = programmation.gamesDays[1].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+                }
+                day.AddHours(programmation.defaultHour.Hours);
+                day.AddMinutes(programmation.defaultHour.Minutes);
+
+                Match secondRound = new Match(m.away, m.home, day, !round.twoLegs, m);
+                games.Add(secondRound);
+                gamesList.Add(secondRound);
+            }
+            TVSchedule(games, round.programmation.tvScheduling, 0);
+        }
+
+        /// <summary>
+        /// Get list of fixtures when the precedent round is a group round and no random drawing is performed
+        /// TODO: Currently only work when there is two qualified teams by group
+        /// </summary>
+        /// <param name="round">The round to draw</param>
+        /// <param name="previousRound">The previous round</param>
+        /// <returns></returns>
+        public static List<Match> DrawNoRandomDrawing(KnockoutRound round, GroupsRound previousRound)
+        {
+            //We assume teams are added in round in the order of ranking and group
+            List<Match> res = new List<Match>();
+
+            RoundProgrammation programmation = round.programmation;
+            for (int i = 0; i < round.clubs.Count / 2; i++)
+            {
+                Club home = i < round.clubs.Count / 4 ? round.clubs[i * 4] : round.clubs[((i- (round.clubs.Count / 4)) * 4) + 2];
+                Club away = i < round.clubs.Count / 4 ? round.clubs[(i * 4) + 3] : round.clubs[((i - (round.clubs.Count / 4)) * 4) + 1];
+
+                DateTime day = GetRoundProgrammationDate(round, programmation);
+
+                if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
+                {
+                    Club[] switchedTeams = SwitchTeams(home, away);
+                    home = switchedTeams[0];
+                    away = switchedTeams[1];
+                }
+                res.Add(new Match(home, away, day, !round.twoLegs));
+            }
+
+            TVSchedule(res, round.programmation.tvScheduling, 0);
+            if (round.twoLegs)
+            {
+                CreateSecondLegKnockOutRound(res, round, programmation);
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Get list of fixtures when the precedent round is a knockout round and no random drawing is performed
+        /// </summary>
+        /// <param name="round">The round to draw</param>
+        /// <param name="previousRound">The previous round</param>
+        /// <returns></returns>
+        public static List<Match> DrawNoRandomDrawing(KnockoutRound round, KnockoutRound previousRound)
+        {
+            //We assume teams are added in round in the order of the games
+            List<Match> res = new List<Match>();
+
+            List<Club> clubsList = new List<Club>();
+
+            for(int i = previousRound.matches.Count-round.clubs.Count; i < previousRound.matches.Count; i++)
+            {
+                clubsList.Add(previousRound.matches[i].Winner);
+            }
+
+            RoundProgrammation programmation = round.programmation;
+            for (int i = 0; i< clubsList.Count/2; i++)
+            {
+                Club home = clubsList[i*2];
+                Club away = clubsList[(i*2) + 1];
+
+                DateTime day = GetRoundProgrammationDate(round, programmation);
+
+                if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
+                {
+                    Club[] switchedTeams = SwitchTeams(home, away);
+                    home = switchedTeams[0];
+                    away = switchedTeams[1];
+                }
+                res.Add(new Match(home, away, day, !round.twoLegs));
+            }
+
+            TVSchedule(res, round.programmation.tvScheduling, 0);
+            if (round.twoLegs)
+            {
+                CreateSecondLegKnockOutRound(res, round, programmation);
+            }
+
+            return res;
+        }
 
         /// <summary>
         /// The drawing for direct-elimination round
@@ -554,25 +683,13 @@ namespace TheManager
                 Club home = DrawClub(hats[hat]);
                 Club away = DrawClub(hats[hat == 1 ? 0 : 1]);
 
+                DateTime day = GetRoundProgrammationDate(round, programmation);
 
-                DateTime day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year);
-                if (Utils.IsBeforeWithoutYear(day, round.DateInitialisationRound()))
+                if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
-                    day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
-                }
-                day.AddHours(programmation.defaultHour.Hours);
-                day.AddMinutes(programmation.defaultHour.Minutes);
-
-                if(round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
-                {
-                    Tournament champH = home.Championship;
-                    Tournament champA = away.Championship;
-                    if((champH != null && champA != null) && champA.level - champH.level >= 2)
-                    {
-                        Club temp = home;
-                        home = away;
-                        away = temp;
-                    }
+                    Club[] switchedTeams = SwitchTeams(home, away);
+                    home = switchedTeams[0];
+                    away = switchedTeams[1];
                 }
                 res.Add(new Match(home, away, day, !round.twoLegs));
             }
@@ -580,24 +697,7 @@ namespace TheManager
             TVSchedule(res, round.programmation.tvScheduling,0);
             if(round.twoLegs)
             {
-                List<Match> games = new List<Match>();
-                List<Match> firstRound = new List<Match>(res);
-                foreach (Match m in firstRound)
-                {
-
-                    DateTime day = programmation.gamesDays[1].ConvertToDateTime(Session.Instance.Game.date.Year);
-                    if (Utils.IsBeforeWithoutYear(day, round.DateInitialisationRound()))
-                    {
-                        day = programmation.gamesDays[1].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
-                    }
-                    day.AddHours(programmation.defaultHour.Hours);
-                    day.AddMinutes(programmation.defaultHour.Minutes);
-
-                    Match secondRound = new Match(m.away, m.home, day, !round.twoLegs, m);
-                    games.Add(secondRound);
-                    res.Add(secondRound);
-                }
-                TVSchedule(games, round.programmation.tvScheduling, 0);
+                CreateSecondLegKnockOutRound(res, round, programmation);
             }
             return res;
         }

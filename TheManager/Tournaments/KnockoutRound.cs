@@ -19,17 +19,24 @@ namespace TheManager
         [DataMember]
         private RandomDrawingMethod _randomDrawingMethod;
 
+        /// <summary>
+        /// Teams are dispatched in regards with the precedant round (e.g. the final phase of WC)
+        /// </summary>
+        [DataMember]
+        private bool _noRandomDrawing;
+
         public RandomDrawingMethod randomDrawingMethod => _randomDrawingMethod;
 
 
-        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod method) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
+        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
         {
             _randomDrawingMethod = method;
+            _noRandomDrawing = noRandomDrawing;
         }
 
         public override Round Copy()
         {
-            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod);
+            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod, _noRandomDrawing);
             
             foreach (Club c in this.clubs)
             {
@@ -135,8 +142,25 @@ namespace TheManager
                 }
             }
 
+            if(_noRandomDrawing)
+            {
+                Round previousRound = Tournament.rounds[Tournament.rounds.IndexOf(this) - 1];
+                if(previousRound as KnockoutRound != null)
+                {
+                    KnockoutRound previousRoundKO = previousRound as KnockoutRound;
+                    _matches = Calendar.DrawNoRandomDrawing(this, previousRoundKO);
+                }
+                else if (previousRound as GroupsRound != null)
+                {
+                    GroupsRound previousRoundG = previousRound as GroupsRound;
+                    _matches = Calendar.DrawNoRandomDrawing(this, previousRoundG);
+                }
+            }
+            else
+            {
+                _matches = Calendar.Draw(this);
+            }
 
-            _matches = Calendar.Draw(this);
         }
 
         public override void QualifyClubs()

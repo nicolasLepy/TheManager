@@ -441,7 +441,6 @@ namespace TheManager
                         qualifications[j] = first;
                         qualifications[j + 1] = second;
                         ok = RuleIsRespected(concernedClub, qualifications[j], from.level);
-                        Console.WriteLine(ok + " : " + concernedClub.name + " - " + qualifications[j].ranking + " - " + qualifications[j].tournament.level);
                         j++;
                     }
                 }
@@ -481,13 +480,6 @@ namespace TheManager
                     }
                 }
             }*/
-
-
-            Console.WriteLine("Qualifications");
-            foreach (Qualification qq in qualifications)
-            {
-                Console.WriteLine(qq.ranking + " - " + qq.tournament.name + " - " + ranking[qq.ranking - 1].name);
-            }
 
             return qualifications;
         }
