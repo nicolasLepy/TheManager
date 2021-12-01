@@ -37,5 +37,10 @@ namespace TheManager
             _longitude = longitude;
             _latitude = latitude;
         }
+
+        public override string ToString()
+        {
+            return _longitude + ";" + _latitude;
+        }
     }
 }

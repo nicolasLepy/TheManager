@@ -257,6 +257,9 @@ namespace TheManager
 
         public abstract Country Country();
 
+        public abstract GeographicPosition Localisation();
+
+
         /// <summary>
         /// List of games played by the club
         /// </summary>

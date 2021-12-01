@@ -484,6 +484,160 @@ namespace TheManager
             return qualifications;
         }
 
+        private static float[,] ComputeDistance(List<Club> clubs, List<GeographicPosition> positions)
+        {
+            float[,] distance = new float[clubs.Count, positions.Count];
+            for(int i = 0; i<clubs.Count; i++)
+            {
+                for(int j = 0; j< positions.Count; j++)
+                {
+                    distance[i, j] = Utils.Distance(clubs[i].Localisation(), positions[j]);
+                }
+            }
+            return distance;
+        }
+
+        private static List<int> FindClosestCluster(float[,] distance)
+        {
+            List<int> closestClusters = new List<int>();
+
+            //Foreach clubs
+            for(int i = 0; i<distance.GetLength(0); i++)
+            {
+                int closestCluster = -1;
+                float currentMin = float.NaN;
+
+                //Foreach clusters
+                for (int j = 0; j<distance.GetLength(1); j++)
+                { 
+                    if(distance[i,j] < currentMin || float.IsNaN(currentMin))
+                    {
+                        currentMin = distance[i, j];
+                        closestCluster = j;
+                    }
+                }
+                closestClusters.Add(closestCluster);
+            }
+
+            return closestClusters;
+        }
+
+        private static List<GeographicPosition> ComputeCentroids(List<Club> clubs, List<int> closestClusters, int clusterCount)
+        {
+            List<GeographicPosition> centroids = new List<GeographicPosition>();
+
+            for(int i = 0; i<clusterCount; i++)
+            {
+                float totalLat = 0;
+                float totalLon = 0;
+                int total = 0;
+                for (int k = 0; k < closestClusters.Count; k++)
+                {
+                    if (closestClusters[k] == i)
+                    {
+                        totalLat += clubs[k].Localisation().Latitude;
+                        totalLon += clubs[k].Localisation().Longitude;
+                        total++;
+                    }
+                }
+                totalLat /= total;
+                totalLon /= total;
+                centroids.Add(new GeographicPosition(totalLat, totalLon));
+            }
+
+            return centroids;
+        }
+
+        /// <summary>
+        /// Split clubs in equal-size geographic clusters
+        /// </summary>
+        /// <param name="clubs">List of clubs</param>
+        /// <param name="clustersCount">Clusters count</param>
+        /// <returns></returns>
+        public static List<Club>[] GeoClustering(List<Club> clubs, int clustersCount)
+        {
+            List<Club>[] res = new List<Club>[clustersCount];
+            for(int i = 0;i<clustersCount; i++)
+            {
+                res[i] = new List<Club>();
+            }
+
+            foreach(Club c in clubs)
+            {
+                Console.WriteLine(c.name + " - " + c.Localisation().Latitude + " - " + c.Localisation().Longitude);
+            }
+
+            int maxIterations = 100;
+            List<GeographicPosition> centroids = new List<GeographicPosition>();
+            for (int i = 0; i<clustersCount; i++)
+            {
+                centroids.Add(clubs[i].Localisation());
+                centroids[i] = new GeographicPosition(centroids[i].Latitude + (Session.Instance.Random(-25, 25) / 1000.0f), centroids[i].Longitude + (Session.Instance.Random(-25, 25) / 1000.0f));
+            }
+            for(int i = 0; i<maxIterations; i++)
+            {
+                List<GeographicPosition> oldCentroids = new List<GeographicPosition>(centroids);
+                float[,] distance = ComputeDistance(clubs, oldCentroids);
+                List<int> closestClusters = FindClosestCluster(distance);
+                centroids = ComputeCentroids(clubs, closestClusters, clustersCount);
+            }
+            for (int i = 0; i<centroids.Count; i++)
+            {
+                Console.WriteLine(centroids[i].Latitude + " - " + centroids[i].Longitude);
+            }
+
+            List<int>[] clubsDistance = new List<int>[clubs.Count];
+            float[,] finalDistance = ComputeDistance(clubs, centroids);
+            for(int i = 0;i<clubs.Count; i++)
+            {
+                clubsDistance[i] = new List<int>();
+
+                for(int j = 0; j<clustersCount; j++)
+                {
+                    float minDistance = float.NaN;
+                    int cluster = -1;
+                    for(int k = 0; k<clustersCount; k++)
+                    {
+                        if(finalDistance[i, k] < minDistance || float.IsNaN(minDistance))
+                        {
+                            minDistance = finalDistance[i, k];
+                            cluster = k;
+                        }
+                    }
+                    finalDistance[i, cluster] = float.PositiveInfinity;
+                    clubsDistance[i].Add(cluster);
+                }
+            }
+
+            int teamsByCluster = clubs.Count / clustersCount;
+            for(int i = 0; i<clubs.Count; i++)
+            {
+                int j = 0;
+                bool ok = false;
+                while(!ok)
+                {
+                    if (res[clubsDistance[i][j]].Count < teamsByCluster)
+                    {
+                        res[clubsDistance[i][j]].Add(clubs[i]);
+                        ok = true;
+                    }
+                    j++;
+                }
+            }
+
+            return res;
+        }
+
+        /*
+        private static void ToStringList<T>(List<T> list)
+        {
+            foreach (T e in list)
+            {
+                Console.Write(e.ToString() + "-");
+            }
+            Console.WriteLine("");
+        }*/
+
         public static string FormatMoney(float money)
         {
             bool negative = money < 0;

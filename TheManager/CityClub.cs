@@ -172,6 +172,11 @@ namespace TheManager
             return _city.Country();
         }
 
+        public override GeographicPosition Localisation()
+        {
+            return _city.Position;
+        }
+
         public void AddPlayer(Contract c)
         {
             _players.Add(c);

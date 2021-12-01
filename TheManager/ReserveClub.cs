@@ -29,6 +29,11 @@ namespace TheManager
             return _fannionClub.Country();
         }
 
+        public override GeographicPosition Localisation()
+        {
+            return _fannionClub.city.Position;
+        }
+
 
         public override List<Player> Players()
         {

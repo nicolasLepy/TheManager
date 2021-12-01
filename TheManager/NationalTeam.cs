@@ -38,6 +38,12 @@ namespace TheManager
             return country;
         }
 
+        public override GeographicPosition Localisation()
+        {
+            //TOOD
+            return null;
+        }
+
         public int Ranking()
         {
             return Session.Instance.Game.kernel.FifaRanking().IndexOf(this) + 1;

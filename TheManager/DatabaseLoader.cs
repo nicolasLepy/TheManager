@@ -810,11 +810,14 @@ namespace TheManager
                                     //Read groups localisation
                                     for (int groupNum = 1; groupNum <= groupsNumber; groupNum++)
                                     {
-                                        string[] poulePosition = e3.Attribute("poule" + groupNum).Value.Split(';');
-                                        float latitude = float.Parse(poulePosition[0], CultureInfo.InvariantCulture);
-                                        float longitude = float.Parse(poulePosition[1], CultureInfo.InvariantCulture);
-                                        GroupsRound tp = round as GroupsRound;
-                                        tp.groupsLocalisation.Add(new GeographicPosition(latitude, longitude));
+                                        if(e3.Attribute("poule" + groupNum) != null)
+                                        {
+                                            string[] poulePosition = e3.Attribute("poule" + groupNum).Value.Split(';');
+                                            float latitude = float.Parse(poulePosition[0], CultureInfo.InvariantCulture);
+                                            float longitude = float.Parse(poulePosition[1], CultureInfo.InvariantCulture);
+                                            GroupsRound tp = round as GroupsRound;
+                                            tp.groupsLocalisation.Add(new GeographicPosition(latitude, longitude));
+                                        }
                                     }
                                 }
 
