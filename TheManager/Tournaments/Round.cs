@@ -16,7 +16,8 @@ namespace TheManager
     {
         AtHomeIfTwoLevelDifference,
         OnlyFirstTeams,
-        ReservesAreNotPromoted
+        ReservesAreNotPromoted,
+        OneClubByCountryInGroup
     }
 
     public enum RankingType

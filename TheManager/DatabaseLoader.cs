@@ -688,6 +688,7 @@ namespace TheManager
                             points = float.Parse(e2.Attribute("points").Value);
                         }
 
+                        points = formationFacilities;
                         Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
                         Club c = new NationalTeam(name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalMusic, points);
@@ -964,6 +965,9 @@ namespace TheManager
                                         break;
                                     case "RESERVES_NE_MONTENT_PAS":
                                         rule = Rule.ReservesAreNotPromoted;
+                                        break;
+                                    case "UN_CLUB_PAR_PAYS_GROUPE":
+                                        rule = Rule.OneClubByCountryInGroup;
                                         break;
                                     default:
                                         rule = Rule.OnlyFirstTeams;
@@ -1371,7 +1375,7 @@ namespace TheManager
             }
             else if (method == "Coefficient")
             {
-                res = RandomDrawingMethod.Coefficient ;
+                res = RandomDrawingMethod.Coefficient;
             }
             else if (method == "Fixed")
             {

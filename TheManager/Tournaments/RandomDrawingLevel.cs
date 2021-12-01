@@ -82,12 +82,72 @@ namespace TheManager
                 {
                     if (hats[j].Count > 0)
                     {
-                        Club c = hats[j][Session.Instance.Random(0, hats[j].Count)];
-                        hats[j].Remove(c);
+                        Club c;
+                        Club drawnClub;
+                        do
+                        {
+                            c = hats[j][Session.Instance.Random(0, hats[j].Count)];
+                            drawnClub = c;
+                            //The rule cannot be respected, switch current club with another club in the same hat but already placed
+                            if (_round.rules.Contains(Rule.OneClubByCountryInGroup) && ContainsCountry(_round.groups[i], c.Country()) && ContainsOnlyCountry(hats[j], c.Country()))
+                            {
+                                //For k from 0 to i, see if the k-j switch unlock the situation
+                                int k = 0;
+                                bool blocked = true;
+                                while(blocked)
+                                {
+                                    Club switchClub = _round.groups[k][j];
+                                    if((k+1) == i || (!ContainsCountry(_round.groups[i], switchClub.Country()) && !ContainsCountry(_round.groups[k], c.Country())))
+                                    {
+                                        blocked = false;
+                                        if((k+1) != i)
+                                        {
+                                            _round.groups[k][j] = c;
+                                            c = switchClub;
+                                        }
+                                    }
+                                    k++;
+                                }
+                            }
+                            //Console.WriteLine(_round.Tournament + " - " + _round.rules.Contains(Rule.OneClubByCountryInGroup) + " - " + ContainsCountry(_round.groups[i], c.Country()) + " - " + !ContainsOnlyCountry(hats[j], c.Country()));
+                        }
+                        while (_round.rules.Contains(Rule.OneClubByCountryInGroup) && (ContainsCountry(_round.groups[i], c.Country()) && !ContainsOnlyCountry(hats[j], c.Country())));
+
+                        hats[j].Remove(drawnClub);
                         _round.groups[i].Add(c);
                     }
                 }
             }
         }
+
+        private bool ContainsOnlyCountry(List<Club> clubs, Country country)
+        {
+            bool res = true;
+
+            foreach(Club c in clubs)
+            {
+                if(c.Country() != country)
+                {
+                    res = false;
+                }
+            }
+
+            return res;
+        }
+
+        private bool ContainsCountry(List<Club> clubs, Country country)
+        {
+            bool res = false;
+
+            foreach(Club c in clubs)
+            {
+                if(c.Country() == country)
+                {
+                    res = true;
+                }
+            }
+            return res;
+        }
+
     }
 }
