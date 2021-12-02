@@ -579,7 +579,10 @@ namespace TheManager
         /// <param name="newManager">The new manager of the club</param>
         public void ChangeManager(Manager newManager)
         {
-            Session.Instance.Game.kernel.freeManagers.Add(_manager);
+            if(_manager != null)
+            {
+                Session.Instance.Game.kernel.freeManagers.Add(_manager);
+            }
             _manager = newManager;
         }
 

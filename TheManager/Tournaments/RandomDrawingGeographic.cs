@@ -36,7 +36,7 @@ namespace TheManager
             }
             else
             {
-                List<Club>[] splitClubs = Utils.GeoClustering(clubs, _round.groupsCount);
+                List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubs, _round.groupsCount);
                 for(int i = 0; i<_round.groupsCount; i++)
                 {
                     _round.groups[i].AddRange(splitClubs[i]);

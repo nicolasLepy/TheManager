@@ -84,8 +84,13 @@ namespace TheManager
                     {
                         Club c;
                         Club drawnClub;
+
+                        //TODO: Change the algorithm to avoid use of securityLoop variable
+                        int securityLoop = 0;
+
                         do
                         {
+                            securityLoop++;
                             c = hats[j][Session.Instance.Random(0, hats[j].Count)];
                             drawnClub = c;
                             //The rule cannot be respected, switch current club with another club in the same hat but already placed
@@ -94,13 +99,13 @@ namespace TheManager
                                 //For k from 0 to i, see if the k-j switch unlock the situation
                                 int k = 0;
                                 bool blocked = true;
-                                while(blocked)
+                                while (blocked)
                                 {
                                     Club switchClub = _round.groups[k][j];
-                                    if((k+1) == i || (!ContainsCountry(_round.groups[i], switchClub.Country()) && !ContainsCountry(_round.groups[k], c.Country())))
+                                    if ((k + 1) == i || (!ContainsCountry(_round.groups[i], switchClub.Country()) && !ContainsCountry(_round.groups[k], c.Country())))
                                     {
                                         blocked = false;
-                                        if((k+1) != i)
+                                        if ((k + 1) != i)
                                         {
                                             _round.groups[k][j] = c;
                                             c = switchClub;
@@ -111,7 +116,12 @@ namespace TheManager
                             }
                             //Console.WriteLine(_round.Tournament + " - " + _round.rules.Contains(Rule.OneClubByCountryInGroup) + " - " + ContainsCountry(_round.groups[i], c.Country()) + " - " + !ContainsOnlyCountry(hats[j], c.Country()));
                         }
-                        while (_round.rules.Contains(Rule.OneClubByCountryInGroup) && (ContainsCountry(_round.groups[i], c.Country()) && !ContainsOnlyCountry(hats[j], c.Country())));
+                        while(securityLoop < 500 && _round.rules.Contains(Rule.OneClubByCountryInGroup) && (ContainsCountry(_round.groups[i], c.Country()) && !ContainsOnlyCountry(hats[j], c.Country())));
+
+                        if(securityLoop == 500)
+                        {
+                            Console.WriteLine("Security break used for " + _round.name + " (" + _round.Tournament.name + ")");
+                        }
 
                         hats[j].Remove(drawnClub);
                         _round.groups[i].Add(c);

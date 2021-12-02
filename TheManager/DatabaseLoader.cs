@@ -548,6 +548,19 @@ namespace TheManager
             res = res.Replace(" " + denomination, "");
             return res;
         }
+
+        private void AddStadium(Stadium stadium)
+        {
+            if(stadium.city != null && stadium.city.Name != "NoCity")
+            {
+                stadium.city.Country().stadiums.Add(stadium);
+            }
+            else
+            {
+                Console.WriteLine("La ville du stade " + stadium.name + "n'existe pas ou n'est pas vraie");
+            }
+        }
+
         public void LoadClubs()
         {
 
@@ -583,43 +596,32 @@ namespace TheManager
                         int supporters = int.Parse(e2.Attribute("supporters").Value);
 
                         string cityName = e2.Attribute("ville").Value;
-                        if (cityName == "")
-                        {
-                            cityName = "NoCity";
-                        }
-
                         City city = _kernel.String2City(cityName);
-
-
                         Stadium stadium = null;
+                        string stadiumName = "Stade de " + shortName;
+
                         if (e2.Attribute("stade") != null)
                         {
-                            string stadiumName = e2.Attribute("stade").Value;
-                            stadium = _kernel.String2Stadium(stadiumName);
-                            if (stadium == null)
+                            if(e2.Attribute("stade").Value != "")
                             {
-                                int capacite = 1000;
-                                if (city != null)
-                                {
-                                    capacite = city.Population / 10;
-                                }
-                                stadium = new Stadium(stadiumName, capacite, city);
-                                if (city != null)
-                                {
-                                    city.Country().stadiums.Add(stadium);
-                                }
-                                else
-                                {
-                                    Utils.Debug("La ville " + stadiumName + " n'existe pas.");
-                                }
+                                stadiumName = e2.Attribute("stade").Value;
                             }
+                            stadium = _kernel.String2Stadium(stadiumName);
                         }
 
                         if (stadium == null)
                         {
-                            stadium = new Stadium("Stade de " + shortName, city.Population / 10, city);
+                            int capacite = 1000;
+                            if (city != null)
+                            {
+                                capacite = supporters > 0 ? (int)(supporters * 1.5) : city.Population / 10;
+                            }
+                            stadium = new Stadium(stadiumName, capacite, city);
+                            if(city != null)
+                            {
+                                AddStadium(stadium);
+                            }
                         }
-
 
                         int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                         string logo = e2.Attribute("logo").Value;
@@ -642,11 +644,9 @@ namespace TheManager
                         //Simplification
                         reputation = centreFormation;
 
-                        Country pays = city.Country();
-                        Manager entraineur = new Manager(pays.language.GetFirstName(), pays.language.GetLastName(), centreFormation, new DateTime(1970, 1, 1), pays);
 
                         bool equipePremiere = true;
-                        Club c = new CityClub(name, entraineur, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere);
+                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -728,6 +728,7 @@ namespace TheManager
                         {
                             remainingYears = int.Parse(e2.Attribute("anneesRestantes").Value);
                         }
+
                         string[] colorStr = e2.Attribute("color").Value.Split(',');
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
@@ -972,6 +973,9 @@ namespace TheManager
                                     case "UN_CLUB_PAR_PAYS_GROUPE":
                                         rule = Rule.OneClubByCountryInGroup;
                                         break;
+                                    case "HOSTED_BY_ONE_COUNTRY":
+                                        rule = Rule.HostedByOneCountry;
+                                        break;
                                     default:
                                         rule = Rule.OnlyFirstTeams;
                                         break;
@@ -1103,6 +1107,18 @@ namespace TheManager
             _kernel.languages.Add(language);
         }
 
+        public void InitTournaments()
+        {
+            foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
+            {
+                //TODO: remove this in the reset fonction (reset function to adapt to the first initialization)
+                if (t.isHostedByOneCountry)
+                {
+                    t.InitializeHost();
+                }
+            }
+        }
+
         public void InitTeams()
         {
             foreach(Club c in _kernel.Clubs)
@@ -1110,25 +1126,33 @@ namespace TheManager
                 CityClub cityClub = c as CityClub;
                 if(cityClub != null)
                 {
-                    if(cityClub.city.Name == "NoCity" && cityClub.Championship != null)
+                    if (cityClub.city == null)
                     {
-                        Country country = Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country;
-                        if(country.cities.Count == 0)
+                        Country country = cityClub.Championship != null ? Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country : _kernel.continents[1].countries[0];
+                        if (country.cities.Count == 0)
                         {
                             country.cities.Add(new City(country.Name(), 0, 0, 0));
                         }
                         cityClub.city = country.cities[0];
+                        cityClub.stadium.city = country.cities[0];
+                        AddStadium(cityClub.stadium);
                     }
+
                     int firstTeamPlayersNumber = cityClub.contracts.Count - (cityClub.reserves.Count * 15);
                     int missingContractNumber = 19 - firstTeamPlayersNumber;
                     for (int i = 0; i < missingContractNumber; i++)
                     {
-                        cityClub.GeneratePlayer(24,33);
+                        cityClub.GeneratePlayer(24, 33);
                     }
                     cityClub.DispatchPlayersInReserveTeams();
                     cityClub.GetSponsor();
+
+                    Manager manager = new Manager(cityClub.city.Country().language.GetFirstName(), cityClub.city.Country().language.GetLastName(), cityClub.formationFacilities, new DateTime(1970, 1, 1), cityClub.city.Country());
+                    cityClub.ChangeManager(manager);
+
                 }
             }
+
         }
 
         public void InitPlayers()

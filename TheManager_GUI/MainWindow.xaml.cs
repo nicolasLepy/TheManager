@@ -159,6 +159,10 @@ namespace TheManager_GUI
             lbCreationPartie.Content = "Initialisation des joueurs";
             cbdd.InitPlayers();
 
+            pbLoading.Value = 92;
+            lbCreationPartie.Content = "Initialisation des compétitions";
+            cbdd.InitTournaments();
+
             pbLoading.Value = 95;
             lbCreationPartie.Content = "Chargement des médias";
             cbdd.LoadMedias();

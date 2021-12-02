@@ -57,12 +57,14 @@
     <Reference Include="System.Xml.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Algorithms\KMeansClustering.cs" />
     <Compile Include="Comparators\ClubComparator.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Comparators\CountryComparator.cs" />
     <Compile Include="Comparators\JournalistOffsetComparator.cs" />
     <Compile Include="Comparators\NationsFifaRankingComparator.cs" />
     <Compile Include="Comparators\QualificationComparator.cs" />
+    <Compile Include="Comparators\StadiumComparator.cs" />
     <Compile Include="DatabaseLoader.cs" />
     <Compile Include="Club.cs" />
     <Compile Include="Geography\Continent.cs" />

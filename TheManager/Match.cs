@@ -156,6 +156,8 @@ namespace TheManager
         [DataMember]
         private int _attendance;
         [DataMember]
+        private Stadium _stadium;
+        [DataMember]
         private List<KeyValuePair<Media,Journalist>> _journalists;
         [DataMember]
         private List<Substitution> _substitutions;
@@ -605,6 +607,16 @@ namespace TheManager
             get { return _statistics.AwayPossession; }
         }
 
+        public Stadium Stadium
+        {
+            get { return _stadium != null ? _stadium : home.stadium; }
+        }
+
+        public void SetStadium(Stadium stadium)
+        {
+            _stadium = stadium;
+        }
+
         public int ScoreHalfTime1
         {
             get
@@ -658,6 +670,7 @@ namespace TheManager
 
         public Match(Club homeTeam, Club awayTeam, DateTime matchDay, bool prolongationsIfDraw, Match firstLeg = null)
         {
+            _stadium = null;
             home = homeTeam;
             away = awayTeam;
             day = matchDay;

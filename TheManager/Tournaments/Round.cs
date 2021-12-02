@@ -17,7 +17,8 @@ namespace TheManager
         AtHomeIfTwoLevelDifference,
         OnlyFirstTeams,
         ReservesAreNotPromoted,
-        OneClubByCountryInGroup
+        OneClubByCountryInGroup,
+        HostedByOneCountry
     }
 
     public enum RankingType

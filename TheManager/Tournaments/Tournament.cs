@@ -9,6 +9,7 @@ using System.Text;
 using TheManager.Exportation;
 using System.Windows.Media;
 using TheManager.Tournaments;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -86,6 +87,8 @@ namespace TheManager
         private int _remainingYears;
         [DataMember]
         private Color _color;
+        [DataMember]
+        private List<Stadium> _stadiums;
 
 
         public string name { get => _name; }
@@ -94,6 +97,23 @@ namespace TheManager
         public string logo { get => _logo; }
         [DataMember]
         public int currentRound { get; set; }
+
+        public List<Stadium> stadiums => _stadiums;
+        public bool isHostedByOneCountry
+        {
+            get
+            {
+                bool isHostedByOneCountry = false;
+                foreach(Round r in _rounds)
+                {
+                    if(r.rules.Contains(Rule.HostedByOneCountry))
+                    {
+                        isHostedByOneCountry = true;
+                    }
+                }
+                return isHostedByOneCountry;
+            }
+        }
 
         public GameDay seasonBeginning => _seasonBeginning;
         public string shortName => _shortName;
@@ -129,6 +149,7 @@ namespace TheManager
             _periodicity = periodicity;
             _remainingYears = remainingYears;
             _color = color;
+            _stadiums = new List<Stadium>();
         }
 
         public void InitializeQualificationsNextYearsLists(int count = -1)
@@ -142,6 +163,43 @@ namespace TheManager
             {
                 _nextYearQualified[i] = new List<Club>();
             }
+        }
+
+        /// <summary>
+        /// Initialize retained country and stadiums for the tournament
+        /// </summary>
+        public void InitializeHost()
+        {
+            List<Country> candidates = new List<Country>();
+            //Find country
+            foreach(Round r in _rounds)
+            {
+                foreach(Club c in r.clubs)
+                {
+                    Country candidate = c.Country();
+                    Console.WriteLine("Candidat : " + candidate.Name() + " - " + candidate.stadiums.Count);
+                    if (candidate.stadiums.Count > 7)
+                    {
+                        candidates.Add(c.Country());
+                    }
+                }
+            }
+
+            Country host = candidates.Count > 0 ? candidates[Session.Instance.Random(0, candidates.Count)] : null;
+            //Find stadiums
+            if (host != null)
+            {
+                Console.WriteLine(host.Name() + " chosen to host " + _name);
+                List<Stadium> stadiums = new List<Stadium>(host.stadiums);
+                stadiums.Sort(new StadiumComparator());
+                Console.WriteLine("Retained stadiums : ");
+                for(int i = 0; i<8; i++)
+                {
+                    Console.WriteLine(stadiums[i].name + " - " + stadiums[i].capacity);
+                }
+                Console.WriteLine("");
+            }
+
         }
 
         /// <summary>
@@ -190,7 +248,10 @@ namespace TheManager
                 }
                 InitializeQualificationsNextYearsLists();
                 currentRound = -1;
-                
+                if(isHostedByOneCountry)
+                {
+                    InitializeHost();
+                }
             }
         }
 
@@ -268,7 +329,7 @@ namespace TheManager
             }
 
             //Tour 0, championnat -> génère match amicaux
-            if(currentRound == 0)
+            if (currentRound == 0)
             {
                 if (isChampionship)
                 {
@@ -282,7 +343,8 @@ namespace TheManager
                     }
                 }
             }
-            
+
+
 
         }
 
