@@ -71,14 +71,28 @@ namespace TheManager.Algorithms
                         total++;
                     }
                 }
-                totalLat /= total;
-                totalLon /= total;
+                if(total > 0)
+                {
+                    totalLat /= total;
+                    totalLon /= total;
+                }
                 centroids.Add(new GeographicPosition(totalLat, totalLon));
             }
 
             return centroids;
         }
 
+        public int[] GetClustersCapacity(int clubsCount, int clusterCount)
+        {
+            int[] res = new int[clusterCount];
+            int minElementByCluster = clubsCount / clusterCount;
+            int clusterWithAdditionnalElement = clubsCount % clusterCount;
+            for(int i = 0; i<clusterCount; i++)
+            {
+                res[i] = minElementByCluster + (i < clusterWithAdditionnalElement ? 1 : 0);
+            }
+            return res;
+        }
 
         /// <summary>
         /// Split clubs in equal-size geographic clusters
@@ -96,6 +110,7 @@ namespace TheManager.Algorithms
                 Console.WriteLine(c.name + " - " + c.Localisation().Latitude + " - " + c.Localisation().Longitude);
             }
 
+            int[] clustersCapacity = GetClustersCapacity(_clubs.Count, _clustersCount);
             int maxIterations = 100;
             List<GeographicPosition> centroids = new List<GeographicPosition>();
             for (int i = 0; i < _clustersCount; i++)
@@ -138,14 +153,13 @@ namespace TheManager.Algorithms
                 }
             }
 
-            int teamsByCluster = _clubs.Count / _clustersCount;
             for (int i = 0; i < _clubs.Count; i++)
             {
                 int j = 0;
                 bool ok = false;
                 while (!ok)
                 {
-                    if (res[clubsDistance[i][j]].Count < teamsByCluster)
+                    if (res[clubsDistance[i][j]].Count < clustersCapacity[clubsDistance[i][j]])
                     {
                         res[clubsDistance[i][j]].Add(_clubs[i]);
                         ok = true;

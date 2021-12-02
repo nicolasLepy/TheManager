@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using TheManager.Algorithms;
 using TheManager.Comparators;
 using TheManager.Tournaments;
 
@@ -665,6 +666,19 @@ namespace TheManager
                 hats[0].AddRange(allClubs.GetRange(0, round.clubs.Count / 2));
                 hats[1].AddRange(allClubs.GetRange(round.clubs.Count / 2, round.clubs.Count / 2));
             }
+            else if (round.randomDrawingMethod == RandomDrawingMethod.Geographic)
+            {
+                List<Club> allClubs = new List<Club>(round.clubs);
+                int currentClubsByGroups = allClubs.Count;
+                int groupsNumber = 1;
+                while ((currentClubsByGroups / 2) % 2 == 0 && (allClubs.Count / groupsNumber) > 20)
+                {
+                    currentClubsByGroups /= 2;
+                    groupsNumber *= 2;
+                }
+                KMeansClustering kmeans = new KMeansClustering(allClubs, groupsNumber);
+                hats = kmeans.CreateClusters();
+            }
             //Random
             else
             {
@@ -676,12 +690,28 @@ namespace TheManager
                 }
             }
 
+
             RoundProgrammation programmation = round.programmation;
+            int currentGeographicHat = 0;
             for (int i = 0; i < round.clubs.Count / 2; i++)
             {
-                int hat = Session.Instance.Random(0, 2);
-                Club home = DrawClub(hats[hat]);
-                Club away = DrawClub(hats[hat == 1 ? 0 : 1]);
+                Club home;
+                Club away;
+                if(round.randomDrawingMethod != RandomDrawingMethod.Geographic)
+                {
+                    int hat = Session.Instance.Random(0, 2);
+                    home = DrawClub(hats[hat]);
+                    away = DrawClub(hats[hat == 1 ? 0 : 1]);
+                }
+                else
+                {
+                    if(hats[currentGeographicHat].Count < 2)
+                    {
+                        currentGeographicHat++;
+                    }
+                    home = DrawClub(hats[currentGeographicHat]);
+                    away = DrawClub(hats[currentGeographicHat]);
+                }
 
                 DateTime day = GetRoundProgrammationDate(round, programmation);
 

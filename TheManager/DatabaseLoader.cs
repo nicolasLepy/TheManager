@@ -1343,9 +1343,9 @@ namespace TheManager
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
                             GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
-                            Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random, false);
+                            Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                            round.rules.Add(Rule.OnlyFirstTeams);
+                            //round.rules.Add(Rule.OnlyFirstTeams);
                             if (j > 2)
                             {
                                 round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
