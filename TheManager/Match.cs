@@ -607,7 +607,7 @@ namespace TheManager
             get { return _statistics.AwayPossession; }
         }
 
-        public Stadium Stadium
+        public Stadium stadium
         {
             get { return _stadium != null ? _stadium : home.stadium; }
         }
@@ -730,18 +730,26 @@ namespace TheManager
 
         private void SetAttendance()
         {
-            _attendance = (int)(home.supporters * (Session.Instance.Random(6, 14) / 10.0f));
-            float prestigeModifier = (away.Level() / home.Level()) + ((1-(away.Level() / home.Level()))/2f);
-            _attendance = (int)(_attendance * prestigeModifier);
-            if (_attendance > home.stadium.capacity)
+            //Neutral venue
+            if(_stadium != null)
             {
-                _attendance = home.stadium.capacity;
+                _attendance = (int)((home.supporters / 2 * (Session.Instance.Random(6, 14) / 10.0f)) + (away.supporters / 2 * (Session.Instance.Random(6, 14) / 10.0f)));
+            }
+            else
+            {
+                _attendance = (int)(home.supporters * (Session.Instance.Random(6, 14) / 10.0f));
+                float prestigeModifier = (away.Level() / home.Level()) + ((1 - (away.Level() / home.Level())) / 2f);
+                _attendance = (int)(_attendance * prestigeModifier);
+            }
+            if (_attendance > stadium.capacity)
+            {
+                _attendance = stadium.capacity;
             }
             else if(_attendance < 0)
             {
                 _attendance = 0;
             }
-            if(home as CityClub != null)
+            if(home as CityClub != null && _stadium == null)
             {
                 (home as CityClub).ModifyBudget(_attendance * home.ticketPrice, BudgetModificationReason.StadiumAttendance);
             }

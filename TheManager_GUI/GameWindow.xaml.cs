@@ -30,7 +30,7 @@ namespace TheManager_GUI
             lbCompetition.Content = match.Tournament.name;
             imgLogoHome.Source = new BitmapImage(new Uri(Utils.Logo(match.home)));
             imgLogoAway.Source = new BitmapImage(new Uri(Utils.Logo(match.away)));
-            lbStade.Content = match.home.stadium.name;
+            lbStade.Content = match.stadium.name;
             lbAffluence.Content = match.attendance + " " + FindResource("str_spectators").ToString();
             lbEquipe1.Content = match.home.name;
             lbEquipe2.Content = match.away.name;

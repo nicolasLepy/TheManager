@@ -560,6 +560,19 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Affect stadiums to games in case of round is hosted by one country
+        /// </summary>
+        public void AffectHostStadiumsToGames()
+        {
+            int i = 0;
+            foreach(Match match in _matches)
+            {
+                match.SetStadium(Tournament.hostStadiums[i % Tournament.hostStadiums.Count]);
+                i++;
+            }
+        }
+
+        /// <summary>
         /// Init the round (random draw, schedule)
         /// </summary>
         public abstract void Initialise();

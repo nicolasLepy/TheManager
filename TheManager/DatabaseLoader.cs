@@ -1152,7 +1152,6 @@ namespace TheManager
 
                 }
             }
-
         }
 
         public void InitPlayers()

@@ -88,7 +88,7 @@ namespace TheManager
         [DataMember]
         private Color _color;
         [DataMember]
-        private List<Stadium> _stadiums;
+        private List<Stadium> _hostStadiums;
 
 
         public string name { get => _name; }
@@ -98,7 +98,7 @@ namespace TheManager
         [DataMember]
         public int currentRound { get; set; }
 
-        public List<Stadium> stadiums => _stadiums;
+        public List<Stadium> hostStadiums => _hostStadiums;
         public bool isHostedByOneCountry
         {
             get
@@ -149,7 +149,7 @@ namespace TheManager
             _periodicity = periodicity;
             _remainingYears = remainingYears;
             _color = color;
-            _stadiums = new List<Stadium>();
+            _hostStadiums = new List<Stadium>();
         }
 
         public void InitializeQualificationsNextYearsLists(int count = -1)
@@ -177,7 +177,6 @@ namespace TheManager
                 foreach(Club c in r.clubs)
                 {
                     Country candidate = c.Country();
-                    Console.WriteLine("Candidat : " + candidate.Name() + " - " + candidate.stadiums.Count);
                     if (candidate.stadiums.Count > 7)
                     {
                         candidates.Add(c.Country());
@@ -192,12 +191,12 @@ namespace TheManager
                 Console.WriteLine(host.Name() + " chosen to host " + _name);
                 List<Stadium> stadiums = new List<Stadium>(host.stadiums);
                 stadiums.Sort(new StadiumComparator());
-                Console.WriteLine("Retained stadiums : ");
                 for(int i = 0; i<8; i++)
                 {
+                    _hostStadiums.Add(stadiums[i]);
                     Console.WriteLine(stadiums[i].name + " - " + stadiums[i].capacity);
                 }
-                Console.WriteLine("");
+                Console.WriteLine("=================================");
             }
 
         }
@@ -326,6 +325,10 @@ namespace TheManager
             {
                 currentRound++;
                 _rounds[currentRound].Initialise();
+                if(_rounds[currentRound].rules.Contains(Rule.HostedByOneCountry))
+                {
+                    _rounds[currentRound].AffectHostStadiumsToGames();
+                }
             }
 
             //Tour 0, championnat -> génère match amicaux
