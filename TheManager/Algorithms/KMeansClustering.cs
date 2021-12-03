@@ -82,18 +82,6 @@ namespace TheManager.Algorithms
             return centroids;
         }
 
-        public int[] GetClustersCapacity(int clubsCount, int clusterCount)
-        {
-            int[] res = new int[clusterCount];
-            int minElementByCluster = clubsCount / clusterCount;
-            int clusterWithAdditionnalElement = clubsCount % clusterCount;
-            for(int i = 0; i<clusterCount; i++)
-            {
-                res[i] = minElementByCluster + (i < clusterWithAdditionnalElement ? 1 : 0);
-            }
-            return res;
-        }
-
         /// <summary>
         /// Split clubs in equal-size geographic clusters
         /// </summary>
@@ -110,7 +98,7 @@ namespace TheManager.Algorithms
                 Console.WriteLine(c.name + " - " + c.Localisation().Latitude + " - " + c.Localisation().Longitude);
             }
 
-            int[] clustersCapacity = GetClustersCapacity(_clubs.Count, _clustersCount);
+            int[] clustersCapacity = Utils.GetClustersCapacity(_clubs.Count, _clustersCount);
             int maxIterations = 100;
             List<GeographicPosition> centroids = new List<GeographicPosition>();
             for (int i = 0; i < _clustersCount; i++)

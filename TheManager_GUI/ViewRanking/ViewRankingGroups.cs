@@ -47,7 +47,7 @@ namespace TheManager_GUI.VueClassement
             }
 
 
-            Label l2 = ViewUtils.CreateLabel(c.shortName, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
+            Label l2 = ViewUtils.CreateLabel(_round.Tournament.isChampionship ? c.extendedName : c.shortName, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
             l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
             { clubNameButtonClick(c); };
 
@@ -189,7 +189,7 @@ namespace TheManager_GUI.VueClassement
 
                 for (int i = 0; i< _round.groupsCount; i++)
                 {
-                    qualifications[i] = new List<Qualification>(_round.qualifications);
+                    qualifications[i] = _round.GetGroupQualifications(i);// new List<Qualification>(_round.qualifications);
                     qualifications[i].Sort(new QualificationComparator());
 
                     //If reserves can't be promoted
@@ -199,8 +199,7 @@ namespace TheManager_GUI.VueClassement
                     }
                 }
 
-
-
+                int cumulatedChildrenCount = 0;
                 for (int j = 0; j< _round.groupsCount; j++)
                 {
                     foreach (Qualification q in qualifications[j])
@@ -228,11 +227,11 @@ namespace TheManager_GUI.VueClassement
                             int nbChildrenParPoule = (_round.clubs.Count / _round.groupsCount) + 1;
                             index++;
 
-                            StackPanel sp = (spRanking.Children[j * nbChildrenParPoule + index] as StackPanel);
+                            StackPanel sp = (spRanking.Children[cumulatedChildrenCount /*j * nbChildrenParPoule*/ + index] as StackPanel);
                             sp.Background = color;
                         }
-
                     }
+                    cumulatedChildrenCount += _round.groups[j].Count +1 ;
                 }
                 
             }

@@ -128,6 +128,48 @@ namespace TheManager
             return res;
         }
 
+        public List<Qualification> GetGroupQualifications(int group)
+        {
+            List<Qualification> allQualifications = new List<Qualification>(qualifications);
+            int countChampionshipQualifications = 0;
+            foreach(Qualification qualification in qualifications)
+            {
+                if(qualification.tournament.isChampionship)
+                {
+                    countChampionshipQualifications++;
+                }
+            }
+            int minTeamsByGroup = clubs.Count / groupsCount;
+            if (groups[group].Count == minTeamsByGroup + 1 && countChampionshipQualifications == minTeamsByGroup)
+            {
+                
+                allQualifications.Sort(new QualificationComparator());
+                int firstRankingToBottom = -1;
+                foreach(Qualification q in allQualifications)
+                {
+                    if(q.tournament.level > Tournament.level && firstRankingToBottom == -1)
+                    {
+                        firstRankingToBottom = q.ranking;
+                    }
+                }
+                if(firstRankingToBottom > -1)
+                {
+                    for (int i = firstRankingToBottom - 1; i < allQualifications.Count; i++)
+                    {
+                        allQualifications[i] = new Qualification(allQualifications[i].ranking + 1, allQualifications[i].roundId, allQualifications[i].tournament, allQualifications[i].isNextYear, allQualifications[i].qualifies);
+                    }
+                    allQualifications.Add(new Qualification(firstRankingToBottom, allQualifications[firstRankingToBottom - 2].roundId, allQualifications[firstRankingToBottom - 2].tournament, allQualifications[firstRankingToBottom - 2].isNextYear, allQualifications[firstRankingToBottom - 2].qualifies));
+                }
+                else
+                {
+                    Qualification lastQualification = allQualifications[allQualifications.Count - 1];
+                    allQualifications.Add(new Qualification(lastQualification.ranking+1, lastQualification.roundId, lastQualification.tournament, lastQualification.isNextYear, lastQualification.qualifies));
+                }
+            }
+            return allQualifications;
+
+        }
+
         public override void QualifyClubs()
         {
 
@@ -156,7 +198,7 @@ namespace TheManager
 
             for (int i = 0; i < _groupsNumber; i++)
             {
-                List<Qualification> qualifications = new List<Qualification>(_qualifications);
+                List<Qualification> qualifications = GetGroupQualifications(i);// new List<Qualification>(_qualifications);
                 qualifications.Sort(new QualificationComparator());
 
                 if (_rules.Contains(Rule.ReservesAreNotPromoted))

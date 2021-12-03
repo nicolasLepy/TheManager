@@ -19,7 +19,7 @@ namespace TheManager
 
         public void RandomDrawing()
         {
-            int clubsNumberByGroup = _round.clubs.Count / _round.groupsCount;
+            int[] groupsCapacity = Utils.GetClustersCapacity(_round.clubs.Count, _round.groupsCount);
             List<Club> clubs = new List<Club>(_round.clubs);
             if(_round.groupsLocalisation.Count > 0)
             {
@@ -27,7 +27,7 @@ namespace TheManager
                 {
                     GeographicPosition position = _round.groupsLocalisation[i];
                     clubs.Sort(new ClubLocalisationComparator(position));
-                    for (int j = 0; j < clubsNumberByGroup; j++)
+                    for (int j = 0; j < groupsCapacity[i]; j++)
                     {
                         _round.groups[i].Add(clubs[0]);
                         clubs.RemoveAt(0);

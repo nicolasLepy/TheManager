@@ -553,5 +553,17 @@ namespace TheManager
             return null;
         }
 
+        public static int[] GetClustersCapacity(int clubsCount, int clusterCount)
+        {
+            int[] res = new int[clusterCount];
+            int minElementByCluster = clubsCount / clusterCount;
+            int clusterWithAdditionnalElement = clubsCount % clusterCount;
+            for (int i = 0; i < clusterCount; i++)
+            {
+                res[i] = minElementByCluster + (i < clusterWithAdditionnalElement ? 1 : 0);
+            }
+            return res;
+        }
+
     }
 }

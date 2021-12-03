@@ -235,19 +235,15 @@ namespace TheManager
             get
             {
                 string res = shortName;
-                CityClub cc = this as CityClub;
-                if(cc != null)
+                foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
-                    foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
+                    if(Session.Instance.Game.kernel.LocalisationTournament(c) == Country() && c.isChampionship && c.previousEditions.Count > 0)
                     {
-                        if(Session.Instance.Game.kernel.LocalisationTournament(c) == cc.city.Country() && c.isChampionship && c.previousEditions.Count > 0)
-                        {
-                            int closestYear = c.previousEditions.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
+                        int closestYear = c.previousEditions.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
 
-                            if (c.previousEditions[closestYear].rounds[0].clubs.Contains(this))
-                            {
-                                res = c.level > Championship.level ? res + " (P)" : c.level < Championship.level ? res + " (R)" : res;
-                            }
+                        if (c.previousEditions[closestYear].rounds[0].clubs.Contains(this))
+                        {
+                            res = c.level > Championship.level ? res + " (P)" : c.level < Championship.level ? res + " (R)" : res;
                         }
                     }
                 }
