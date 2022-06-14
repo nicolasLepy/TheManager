@@ -67,6 +67,7 @@
     <Compile Include="Comparators\StadiumComparator.cs" />
     <Compile Include="DatabaseLoader.cs" />
     <Compile Include="Club.cs" />
+    <Compile Include="Geography\AdministrativeDivision.cs" />
     <Compile Include="Geography\Continent.cs" />
     <Compile Include="Geography\Country.cs" />
     <Compile Include="Geography\ILocalisation.cs" />

@@ -518,6 +518,22 @@ namespace TheManager
                             City v = new City(cityName, population, lat, lon);
                             p.cities.Add(v);
                         }
+
+                        foreach (XElement e4 in e3.Descendants("AdministrativeDivision"))
+                        {
+                            string administrationName = e4.Attribute("name").Value;
+                            int administrationId = int.Parse(e4.Attribute("id").Value);
+                            int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
+                            AdministrativeDivision ad = new AdministrativeDivision(administrationId, administrationName);
+                            if (administrationParent > 0)
+                            {
+                                p.GetAdministrativeDivision(administrationParent).divisions.Add(ad);
+                            }
+                            else
+                            {
+                                p.administrativeDivisions.Add(ad);
+                            }
+                        }
                         c.countries.Add(p);
                     }
                     _kernel.continents.Add(c);
@@ -1226,9 +1242,10 @@ namespace TheManager
 
                     }
                 }
+                
                 continentAvailableWeeks.Remove(51);
-                continentAvailableWeeks.Remove(52);
-                continentAvailableWeeks.Remove(0);
+                continentAvailableWeeks.Remove(52); //A mid-week game on the last year week lead to the next year
+                continentAvailableWeeks.Remove(0); //Bug 2027
                 foreach (Country c in ct.countries)
                 {
                     List<int> availableWeeks = new List<int>(continentAvailableWeeks);
@@ -1293,7 +1310,7 @@ namespace TheManager
 
                         int indexRound = 0;
                         //Prelimiary round
-                        if(j != totalTeams)
+                        if (j != totalTeams)
                         {
                             Hour hour = new Hour() { Hours = 20, Minutes = 0 };
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
@@ -1301,7 +1318,7 @@ namespace TheManager
                             GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
                             Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random, false);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                            round.rules.Add(Rule.OnlyFirstTeams);
+                            //round.rules.Add(Rule.OnlyFirstTeams);
                             round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
                             int currentAddedTeams = 0;
                             while(currentAddedTeams < preliRoundTeams)
@@ -1323,7 +1340,7 @@ namespace TheManager
                             nationalCup.rounds.Add(round);
                             indexRound++;
                         }
-                        while(j != 1) 
+                        while (j != 1) 
                         {
                             string name = (j/2) + "èmes de finale";
                             if(j == 8)

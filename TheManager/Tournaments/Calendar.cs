@@ -503,13 +503,19 @@ namespace TheManager
 
         private static DateTime GetRoundProgrammationDate(Round round, RoundProgrammation programmation)
         {
+            Console.WriteLine("PROGRAMMATION " + round.name + " (" + round.Tournament.name + ")");
             DateTime day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year);
+            Console.WriteLine("Date initialisation : " + round.DateInitialisationRound().ToString() + " (" + programmation.initialisation.WeekNumber + ")");
+            Console.WriteLine("Date des matchs : " + day.ToString() + " (" + programmation.gamesDays[0].WeekNumber + ")");
+            Console.WriteLine("Date fin : " + round.DateEndRound().ToString() + " (" + programmation.end.WeekNumber + ")");
             if (Utils.IsBeforeWithoutYear(day, round.DateInitialisationRound()))
             {
+                Console.WriteLine("Ajoute une année");
                 day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
             }
             day.AddHours(programmation.defaultHour.Hours);
             day.AddMinutes(programmation.defaultHour.Minutes);
+            Console.WriteLine("FIN PROGRAMMATION\n");
             return day;
         }
 
@@ -624,6 +630,12 @@ namespace TheManager
         /// <returns>The list of games of this round</returns>
         public static List<Match> Draw(KnockoutRound round)
         {
+            Console.WriteLine("Tirage au sort " + round.name + " (" + round.Tournament.name + "), initialisé le " + round.DateInitialisationRound().ToString() + ", du " + Session.Instance.Game.date.ToString());
+            if(round.Tournament.rounds.IndexOf(round) > 0 && round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].matches.Count > 0)
+            {
+                Console.WriteLine("Précédent tour : " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].name + " initialisé le " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].DateInitialisationRound().ToString());
+                Console.WriteLine("Date: " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].matches[0].day.ToString());
+            }
             List<Match> res = new List<Match>();
 
 

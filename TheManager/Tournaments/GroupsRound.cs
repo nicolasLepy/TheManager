@@ -140,9 +140,11 @@ namespace TheManager
                 }
             }
             int minTeamsByGroup = clubs.Count / groupsCount;
-            if (groups[group].Count == minTeamsByGroup + 1 && countChampionshipQualifications == minTeamsByGroup)
+            int groupsWithExtraTeam = clubs.Count % groupsCount;
+
+            //It's a group with extra team, qualifications needs to be adapted
+            if (group < groupsWithExtraTeam /*groups[group].Count == minTeamsByGroup + 1*/ && countChampionshipQualifications == minTeamsByGroup)
             {
-                
                 allQualifications.Sort(new QualificationComparator());
                 int firstRankingToBottom = -1;
                 foreach(Qualification q in allQualifications)

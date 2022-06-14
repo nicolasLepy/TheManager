@@ -547,7 +547,7 @@ namespace TheManager
                 {
                     teamsToGrab += diff;
                 }
-                if (teamsToGrab > re.Source.CountWithoutReserves())
+                if (teamsToGrab > re.Source.CountWithoutReserves() && rules.Contains(Rule.OnlyFirstTeams))
                 {
                     teamsToGrab = re.Source.CountWithoutReserves();
                 }
@@ -660,6 +660,7 @@ namespace TheManager
 
             }
             List<Club> res = new List<Club>();
+
             for (int i = 0; i < number; i++)
             {
                 res.Add(roundClubs[i]);

@@ -455,18 +455,39 @@ namespace TheManager
                 InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end);
                 newRound.rules.AddRange(t.rules);
                 newRounds.Add(newRound);
+
+                GroupsRound tGroup = t as GroupsRound;
+                if(tGroup != null)
+                {
+                    for (int j = 0; j < tGroup.groupsCount; j++)
+                    {
+                        List<Qualification> groupQualifications = tGroup.GetGroupQualifications(j);
+                        groupQualifications.Sort(new QualificationComparator());
+                        foreach (Qualification q in groupQualifications)
+                        {
+                            newRound.qualifications.Add(new Qualification((j+1)+((q.ranking-1)*tGroup.groupsCount), q.roundId, q.tournament, q.isNextYear, q.qualifies));
+                        }
+                    }
+                }
+
                 foreach (Qualification q in t.qualifications)
                 {
                     //TODO: Non optimal architecture
-                    if(t as GroupsRound != null)
+                    /*if(t as GroupsRound != null)
                     {
-                        GroupsRound tGroup = t as GroupsRound;
+                        List<Qualification>[] qualifications = new List<Qualification>[tGroup.groupsCount];
+                        for(int j = 0; j<tGroup.groupsCount; j++)
+                        {
+                            qualifications[i] = tGroup.GetGroupQualifications(j);
+                        }
+                        int clubsCount = tGroup.clubs.Count;
+                        Console.WriteLine("Deactivate " + t.name + " from " + this.name);
                         for(int j = tGroup.groupsCount*(q.ranking-1); j< tGroup.groupsCount * q.ranking; j++)
                         {
                             newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear, q.qualifies));
                         }
-                    }
-                    else if(t as ChampionshipRound != null)
+                    }*/
+                    if(t as ChampionshipRound != null)
                     {
                         newRound.qualifications.Add(q);
                     }

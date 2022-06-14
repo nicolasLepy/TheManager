@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace TheManager
 {
@@ -24,11 +25,15 @@ namespace TheManager
         private string _name;
         [DataMember]
         private int _shapeNumber;
+        [DataMember]
+        private List<AdministrativeDivision> _administrativeDivisions;
 
         public List<City> cities { get { return _cities; } }
         public List<Stadium> stadiums { get { return _stadiums; } }
         public Language language { get => _language; }
 
+        public List<AdministrativeDivision> administrativeDivisions => _administrativeDivisions;
+        
         public string Flag
         {
             get
@@ -115,8 +120,28 @@ namespace TheManager
             _stadiums = new List<Stadium>();
             _tournaments = new List<Tournament>();
             _shapeNumber = shapeNumber;
+            _administrativeDivisions = new List<AdministrativeDivision>();
         }
 
+        public AdministrativeDivision GetAdministrativeDivision(int id)
+        {
+            AdministrativeDivision res = null;
+            foreach (AdministrativeDivision ad in _administrativeDivisions)
+            {
+                if (ad.id == id)
+                {
+                    res = ad;
+                }
+
+                AdministrativeDivision resChild = ad.GetAdministrativeDivision(id);
+                if (resChild != null)
+                {
+                    res = resChild;
+                }
+            }
+            return res;
+        }
+        
         public List<Tournament> Tournaments()
         {
             return _tournaments;
