@@ -613,6 +613,7 @@ namespace TheManager
 
                         string cityName = e2.Attribute("ville").Value;
                         City city = _kernel.String2City(cityName);
+                        
                         Stadium stadium = null;
                         string stadiumName = "Stade de " + shortName;
 
@@ -628,6 +629,7 @@ namespace TheManager
                         if (stadium == null)
                         {
                             int capacite = 1000;
+
                             if (city != null)
                             {
                                 capacite = supporters > 0 ? (int)(supporters * 1.5) : city.Population / 10;
@@ -748,6 +750,7 @@ namespace TheManager
                         string[] colorStr = e2.Attribute("color").Value.Split(',');
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
+                        Console.WriteLine(name);
                         Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color);
                         tournament.InitializeQualificationsNextYearsLists(e2.Descendants("Tour").Count());
                         localisation.Tournaments().Add(tournament);
@@ -880,25 +883,6 @@ namespace TheManager
                                     _clubsId[newId] = club;
                                     _kernel.Clubs.Add(club);
                                     firstTeam.reserves.Add(club as ReserveClub);
-                                    //A reserve team was generated, let's create some players in base club to populate this reserve team
-                                    int averagePotential = (int)(firstTeam.formationFacilities - (firstTeam.formationFacilities / divider));
-                                    //Warning for {2,5,5,3} -> 15 is used in team initialisation to determine player number of first team
-                                    for (int g = 0; g < 2; g++)
-                                    {
-                                        firstTeam.GeneratePlayer(Position.Goalkeeper, 16, 23, -averagePotential);
-                                    }
-                                    for (int g = 0; g < 5; g++)
-                                    {
-                                        firstTeam.GeneratePlayer(Position.Defender, 16, 23, -averagePotential);
-                                    }
-                                    for (int g = 0; g < 5; g++)
-                                    {
-                                        firstTeam.GeneratePlayer(Position.Midfielder, 16, 23, -averagePotential);
-                                    }
-                                    for (int g = 0; g < 3; g++)
-                                    {
-                                        firstTeam.GeneratePlayer(Position.Striker, 16, 23, -averagePotential);
-                                    }
                                 }
 
                                 if(c.periodicity == c.remainingYears)
@@ -1139,6 +1123,45 @@ namespace TheManager
         {
             foreach(Club c in _kernel.Clubs)
             {
+                ReserveClub reserveClub = c as ReserveClub;
+                if (reserveClub != null)
+                {
+                    //A reserve team was generated, let's create some players in base club to populate this reserve team
+                    CityClub firstTeam = reserveClub.FannionClub;
+
+                    string lastChar = reserveClub.name.Split(' ').Last();
+                    float divider = 1.75f;
+                    if (lastChar.Equals("C"))
+                    {
+                        divider = 2.5f;
+                    }
+                    if (lastChar.Equals("D"))
+                    {
+                        divider = 3.5f;
+                    }
+                    if (lastChar.Equals("E"))
+                    {
+                        divider = 4.5f;
+                    }
+                    int averagePotential = (int)(firstTeam.formationFacilities - (firstTeam.formationFacilities / divider));
+                    //Warning for {2,5,5,3} -> 15 is used in team initialisation to determine player number of first team
+                    for (int g = 0; g < 2; g++)
+                    {
+                        firstTeam.GeneratePlayer(Position.Goalkeeper, 16, 23, -averagePotential);
+                    }
+                    for (int g = 0; g < 5; g++)
+                    {
+                        firstTeam.GeneratePlayer(Position.Defender, 16, 23, -averagePotential);
+                    }
+                    for (int g = 0; g < 5; g++)
+                    {
+                        firstTeam.GeneratePlayer(Position.Midfielder, 16, 23, -averagePotential);
+                    }
+                    for (int g = 0; g < 3; g++)
+                    {
+                        firstTeam.GeneratePlayer(Position.Striker, 16, 23, -averagePotential);
+                    }
+                }
                 CityClub cityClub = c as CityClub;
                 if(cityClub != null)
                 {
