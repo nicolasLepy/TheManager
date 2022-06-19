@@ -10,11 +10,13 @@ namespace TheManager.Comparators
     {
         private readonly List<Match> _round;
         private readonly RankingType _rankingType;
+        private readonly bool _inverted;
 
-        public ClubRankingComparator(List<Match> games, RankingType rankingType = RankingType.General)
+        public ClubRankingComparator(List<Match> games, RankingType rankingType = RankingType.General, bool inverted = false)
         {
             _round = games;
             _rankingType = rankingType;
+            _inverted = inverted;
         }
 
         public int Compare(Club x, Club y)
@@ -41,7 +43,7 @@ namespace TheManager.Comparators
             }
             
             
-            return res;
+            return _inverted ? -res : res;
         }
 
         private int Points(Club c)

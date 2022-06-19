@@ -17,7 +17,7 @@
 		<Color x:Key="BackgroundColor">#1c262b</Color>
 		<Color x:Key="Promotion">#075002</Color>
 		<Color x:Key="UpperPlayOff">#5E7004</Color>
-		<Color x:Key="BottomPlayOff">#CA040B</Color>
+		<Color x:Key="BottomPlayOff">#8c3236</Color>
 		<Color x:Key="Relegation">#7C0004</Color>
 		<Color x:Key="CL1">#00478a</Color>
 		<Color x:Key="CL2">#006cd1</Color>

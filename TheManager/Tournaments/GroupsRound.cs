@@ -212,7 +212,11 @@ namespace TheManager
                 {
                     Club c = groups[i][q.ranking - 1];
 
-                    if(q.qualifies == 0 || (q.qualifies > 0 && clubsByRanking[q.ranking-1].IndexOf(c) < q.qualifies) )
+                    //Move club according to 3 cases
+                    //q.qualifies == 0 : all clubs
+                    //q.qualifies > 0 : from best nth clubs
+                    //q.qualifies < 0 : from worst nth clubs
+                    if(q.qualifies == 0 || (q.qualifies > 0 && clubsByRanking[q.ranking-1].IndexOf(c) < q.qualifies) || (q.qualifies < 0 && clubsByRanking[q.ranking-1].IndexOf(c) >= (clubsByRanking.Length+q.qualifies)))
                     {
                         if (!q.isNextYear)
                         {

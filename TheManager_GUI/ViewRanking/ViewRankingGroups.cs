@@ -116,6 +116,7 @@ namespace TheManager_GUI.VueClassement
 
 
                     int roundLevel = _round.Tournament.level;
+                    
                     foreach (Qualification q in _round.qualifications)
                     {
                         string color = "backgroundColor";
@@ -123,9 +124,9 @@ namespace TheManager_GUI.VueClassement
                         {
                             color = "cl1Color";
                         }
-                        if (q.tournament.level == roundLevel && q.tournament != _round.Tournament && q.qualifies > 0)
+                        if (q.tournament.level == roundLevel && q.tournament != _round.Tournament && q.qualifies != 0)
                         {
-                            color = "cl2Color";
+                            color = q.qualifies > 0 ? "cl2Color" : "barrageRelegationColor";
                         }
                         else if (q.tournament.level == roundLevel && q.tournament == _round.Tournament)
                         {
@@ -133,15 +134,16 @@ namespace TheManager_GUI.VueClassement
                         }
                         else if (q.tournament.level > roundLevel)
                         {
-                            color = "el1Color";
+                            color = q.qualifies >= 0 ? "el1Color" : "barrageRelegationColor";
                         }
                         int index = q.ranking;
                         if (color != "backgroundColor")
                         {
                             SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-                            if(_round.matches.Count > 0)
+                            List<Club> rankingPoule = _round.Ranking(poule);
+                            if(_round.matches.Count > 0 && index <= rankingPoule.Count)
                             {
-                                (spRanking.Children[spRanking.Children.Count - _round.Ranking(poule).Count + index - 1] as StackPanel).Background = lineColor;
+                                (spRanking.Children[spRanking.Children.Count - rankingPoule.Count + index - 1] as StackPanel).Background = lineColor;
                             }
                         }
 
@@ -150,7 +152,7 @@ namespace TheManager_GUI.VueClassement
 
                 foreach(Qualification q in _round.qualifications)
                 {
-                    if(q.qualifies > 0 && _round.matches.Count > 0)
+                    if(q.qualifies != 0 && _round.matches.Count > 0)
                     {
                         spRanking.Children.Add(ViewUtils.CreateLabel("Classement des " + q.ranking + "èmes", "StyleLabel2Center", (int)(14 * _sizeMultiplier), -1));
                         List<Club> concernedClubs = new List<Club>();
@@ -164,9 +166,9 @@ namespace TheManager_GUI.VueClassement
                         {
                             j++;
                             StackPanel spLine = CreateRanking(j, c);
-                            if(j <= q.qualifies)
+                            if((j <= Math.Abs(q.qualifies) && q.qualifies > 0) || (j > concernedClubs.Count-Math.Abs(q.qualifies) && q.qualifies < 0) )
                             {
-                                spLine.Background = Application.Current.TryFindResource("cl2Color") as SolidColorBrush;
+                                spLine.Background = Application.Current.TryFindResource(q.qualifies > 0 ? "cl2Color" : "relegationColor") as SolidColorBrush;
                             }
                             spRanking.Children.Add(spLine);
                         }
@@ -202,31 +204,31 @@ namespace TheManager_GUI.VueClassement
                 int cumulatedChildrenCount = 0;
                 for (int j = 0; j< _round.groupsCount; j++)
                 {
+                    List<Club> ranking = _round.groups[j];
                     foreach (Qualification q in qualifications[j])
                     {
-                        if (q.tournament.isChampionship)
+                        if (q.tournament.isChampionship && q.ranking <= ranking.Count)
                         {
                             int niveau = _round.Tournament.level;
                             string couleur = "backgroundColor";
                             if (q.tournament.level < niveau)
                             {
-                                couleur = "promotionColor";
+                                couleur = q.qualifies != 0 ? "el1Color" : "promotionColor";
                             }
                             else if (q.tournament.level > niveau)
                             {
-                                couleur = "relegationColor";
+                                couleur = q.qualifies != 0 ? "barrageRelegationColor" : "relegationColor";
                             }
                             else if (q.tournament.level == niveau && q.roundId > _round.Tournament.rounds.IndexOf(_round))
                             {
                                 couleur = "barrageColor";
                             }
 
-                            int index = q.ranking - 1;
+                            int index = q.ranking; //Ranking index + 1 for the group headline
 
                             SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
                             int nbChildrenParPoule = (_round.clubs.Count / _round.groupsCount) + 1;
-                            index++;
-
+                            
                             StackPanel sp = (spRanking.Children[cumulatedChildrenCount /*j * nbChildrenParPoule*/ + index] as StackPanel);
                             sp.Background = color;
                         }
