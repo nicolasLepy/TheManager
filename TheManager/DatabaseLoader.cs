@@ -1439,6 +1439,10 @@ namespace TheManager
             {
                 res = RandomDrawingMethod.Geographic;
             }
+            else if (method == "Administrative")
+            {
+                res = RandomDrawingMethod.Administrative;
+            }
             else if (method == "Coefficient")
             {
                 res = RandomDrawingMethod.Coefficient;

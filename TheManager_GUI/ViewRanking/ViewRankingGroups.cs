@@ -150,10 +150,12 @@ namespace TheManager_GUI.VueClassement
                     }
                 }
 
+                List<int> rankingDone = new List<int>();
                 foreach(Qualification q in _round.qualifications)
                 {
-                    if(q.qualifies != 0 && _round.matches.Count > 0)
+                    if(q.qualifies != 0 && _round.matches.Count > 0 && !rankingDone.Contains(q.ranking))
                     {
+                        rankingDone.Add(q.ranking);
                         spRanking.Children.Add(ViewUtils.CreateLabel("Classement des " + q.ranking + "èmes", "StyleLabel2Center", (int)(14 * _sizeMultiplier), -1));
                         List<Club> concernedClubs = new List<Club>();
                         for(int i = 0; i<_round.groupsCount; i++)
@@ -227,9 +229,8 @@ namespace TheManager_GUI.VueClassement
                             int index = q.ranking; //Ranking index + 1 for the group headline
 
                             SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
-                            int nbChildrenParPoule = (_round.clubs.Count / _round.groupsCount) + 1;
                             
-                            StackPanel sp = (spRanking.Children[cumulatedChildrenCount /*j * nbChildrenParPoule*/ + index] as StackPanel);
+                            StackPanel sp = (spRanking.Children[cumulatedChildrenCount + index] as StackPanel);
                             sp.Background = color;
                         }
                     }

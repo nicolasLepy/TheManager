@@ -115,6 +115,7 @@
     <Compile Include="Tournaments\InactiveRound.cs" />
     <Compile Include="Tournaments\IRandomDrawing.cs" />
     <Compile Include="Tournaments\KnockoutRound.cs" />
+    <Compile Include="Tournaments\RandomDrawingAdministrative.cs" />
     <Compile Include="Tournaments\RandomDrawingGeographic.cs" />
     <Compile Include="Tournaments\RandomDrawingLevel.cs" />
     <Compile Include="Tournaments\RandomDrawingMethod.cs" />

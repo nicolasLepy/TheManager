@@ -13,6 +13,7 @@ namespace TheManager
         Ranking,
         Coefficient,
         Random,
-        Fixed
+        Fixed,
+        Administrative
     }
 }
