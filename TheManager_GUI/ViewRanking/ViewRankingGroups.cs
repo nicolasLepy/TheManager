@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -117,7 +118,7 @@ namespace TheManager_GUI.VueClassement
 
                     int roundLevel = _round.Tournament.level;
                     
-                    foreach (Qualification q in _round.qualifications)
+                    foreach (Qualification q in _round.GetGroupQualifications(poule))
                     {
                         string color = "backgroundColor";
                         if (q.tournament.level == roundLevel && q.tournament != _round.Tournament)
@@ -156,11 +157,13 @@ namespace TheManager_GUI.VueClassement
                     if(q.qualifies != 0 && _round.matches.Count > 0 && !rankingDone.Contains(q.ranking))
                     {
                         rankingDone.Add(q.ranking);
-                        spRanking.Children.Add(ViewUtils.CreateLabel("Classement des " + q.ranking + "èmes", "StyleLabel2Center", (int)(14 * _sizeMultiplier), -1));
+                        int rankingName = q.ranking > 0 ? q.ranking : _round.groups.Last().Count + q.ranking + 1;
+                        spRanking.Children.Add(ViewUtils.CreateLabel("Classement des " + rankingName + "èmes", "StyleLabel2Center", (int)(14 * _sizeMultiplier), -1));
                         List<Club> concernedClubs = new List<Club>();
                         for(int i = 0; i<_round.groupsCount; i++)
                         {
-                            concernedClubs.Add(_round.Ranking(i)[q.ranking-1]);
+                            int correspondingGroupRanking = q.ranking > 0 ? q.ranking : _round.groups[i].Count + q.ranking + 1;
+                            concernedClubs.Add(_round.Ranking(i)[correspondingGroupRanking-1]);
                         }
                         concernedClubs.Sort(new ClubRankingComparator(_round.matches));
                         int j = 0;

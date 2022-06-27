@@ -168,6 +168,30 @@ namespace TheManager
                     allQualifications.Add(new Qualification(lastQualification.ranking+1, lastQualification.roundId, lastQualification.tournament, lastQualification.isNextYear, lastQualification.qualifies));
                 }
             }
+            //Adapt qualifications to adapt negative ranking to real ranking in the group
+            int totalClubs = _groups[group].Count;
+            List<int> allGroupRankings = Enumerable.Range(1, totalClubs).ToList();
+
+            for (int i = 0; i < allQualifications.Count; i++)
+            {
+                Qualification q = allQualifications[i];
+                if (q.ranking < 0)
+                {
+                    allQualifications[i] = new Qualification(totalClubs + q.ranking + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies);
+                }
+
+                // This ranking have a qualification to another round, remove it from the list
+                allGroupRankings.Remove(allQualifications[i].ranking);
+            }
+
+            // Add qualification to every ranking with no qualifications
+            if (Tournament.isChampionship)
+            {
+                foreach (int remainingRanking in allGroupRankings)
+                {
+                    allQualifications.Add(new Qualification(remainingRanking, 0, Tournament, true, 0));
+                }
+            }
             return allQualifications;
 
         }
@@ -177,9 +201,11 @@ namespace TheManager
 
             int maxClubsInGroup = _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
             List<Club>[] clubsByRanking = new List<Club>[maxClubsInGroup];
+            List<Club>[] clubsByRankingDescending = new List<Club>[maxClubsInGroup];
             for(int i = 0; i<maxClubsInGroup; i++)
             {
                 clubsByRanking[i] = new List<Club>();
+                clubsByRankingDescending[i] = new List<Club>();
             }
 
             List<Club>[] groups = new List<Club>[_groupsNumber];
@@ -190,12 +216,14 @@ namespace TheManager
                 for (int j = 0; j < groups[i].Count; j++)
                 {
                     clubsByRanking[j].Add(groups[i][j]);
+                    clubsByRankingDescending[j].Add(groups[i][groups[i].Count-1-j]);
                 }
             }
 
             for (int i = 0; i < maxClubsInGroup; i++)
             {
                 clubsByRanking[i].Sort(new ClubRankingComparator(_matches));
+                clubsByRankingDescending[i].Sort(new ClubRankingComparator(_matches));
             }
 
             for (int i = 0; i < _groupsNumber; i++)
@@ -208,15 +236,46 @@ namespace TheManager
                     qualifications = Utils.AdjustQualificationsToNotPromoteReserves(qualifications, groups[i], Tournament);
                 }
 
+                if (Tournament.level == 5)
+                {
+                    Console.WriteLine("Qualifications");
+                    int counter = 0;
+                    foreach (Qualification qu in qualifications)
+                    {
+                        Console.WriteLine(qu.ranking + " - R" + qu.roundId + "(" + qu.tournament.level + "), " + qu.qualifies);
+                    }
+                }
+
+                
                 foreach (Qualification q in qualifications)
                 {
                     Club c = groups[i][q.ranking - 1];
+
+                    // If this qualification has a "negative ranking" (get team from bottom of ranking), get the base qualification to know if there is condition on team (n best team, n worst team eg)
+                    Qualification baseNegativeQualification = new Qualification();
+                    bool baseNegativeQualificationExist = false;
+                    foreach (Qualification qu in _qualifications)
+                    {
+                        if (qu.ranking < 0 && q.ranking == groups[i].Count + qu.ranking + 1)
+                        {
+                            baseNegativeQualification = qu;
+                            baseNegativeQualificationExist = true;
+                        }
+                    }
 
                     //Move club according to 3 cases
                     //q.qualifies == 0 : all clubs
                     //q.qualifies > 0 : from best nth clubs
                     //q.qualifies < 0 : from worst nth clubs
-                    if(q.qualifies == 0 || (q.qualifies > 0 && clubsByRanking[q.ranking-1].IndexOf(c) < q.qualifies) || (q.qualifies < 0 && clubsByRanking[q.ranking-1].IndexOf(c) >= (clubsByRanking.Length+q.qualifies)))
+                    bool caseQualifieMoreThan0 = (q.qualifies > 0 && clubsByRanking[q.ranking - 1].IndexOf(c) < q.qualifies);
+                    bool caseQualifieLessThan0 = (q.qualifies < 0 && clubsByRanking[q.ranking - 1].IndexOf(c) >= (clubsByRanking.Length + q.qualifies));
+                    if (baseNegativeQualificationExist)
+                    {
+                        caseQualifieMoreThan0 = (q.qualifies > 0 && clubsByRankingDescending[Math.Abs(baseNegativeQualification.ranking)-1].IndexOf(c) < q.qualifies);
+                        caseQualifieLessThan0 = (q.qualifies < 0 && clubsByRankingDescending[Math.Abs(baseNegativeQualification.ranking)-1].IndexOf(c) >= (groups.Length + q.qualifies));
+                    }
+
+                    if(q.qualifies == 0 || caseQualifieMoreThan0 || caseQualifieLessThan0)
                     {
                         if (!q.isNextYear)
                         {
