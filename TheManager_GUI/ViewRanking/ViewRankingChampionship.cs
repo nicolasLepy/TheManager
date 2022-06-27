@@ -237,7 +237,8 @@ namespace TheManager_GUI.VueClassement
                             color = "el3Color";
                         }
                     }
-                    int index = q.ranking;
+
+                    int index = q.ranking > 0 ? q.ranking : clubs.Count + q.ranking + 1;
                     if (color != "backgroundColor" && clubs.Count > 0)
                     {
                         SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
@@ -248,7 +249,6 @@ namespace TheManager_GUI.VueClassement
             }
             else
             {
-
                 SolidColorBrush color = new SolidColorBrush((System.Windows.Media.Color)Application.Current.TryFindResource("ColorDate"));
                 color.Opacity = 0.6;
                 (spRanking.Children[indexTeam+1] as StackPanel).Background = color;

@@ -236,17 +236,6 @@ namespace TheManager
                     qualifications = Utils.AdjustQualificationsToNotPromoteReserves(qualifications, groups[i], Tournament);
                 }
 
-                if (Tournament.level == 5)
-                {
-                    Console.WriteLine("Qualifications");
-                    int counter = 0;
-                    foreach (Qualification qu in qualifications)
-                    {
-                        Console.WriteLine(qu.ranking + " - R" + qu.roundId + "(" + qu.tournament.level + "), " + qu.qualifies);
-                    }
-                }
-
-                
                 foreach (Qualification q in qualifications)
                 {
                     Club c = groups[i][q.ranking - 1];

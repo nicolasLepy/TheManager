@@ -93,12 +93,46 @@ namespace TheManager
             return (int)((cityPopulation / populationDivider) / tournamentLevel * (clubLevel / 70));
         }
 
+        /*
+         * Identical logic with GetGroupQualification of GroupRound : merge function on Round class
+         */
+        public List<Qualification> GetQualifications()
+        {
+            List<Qualification> adjustedQualifications = new List<Qualification>(qualifications);
+            //Adapt qualifications to adapt negative ranking to real ranking in the group
+
+            List<int> allRankings = Enumerable.Range(1, clubs.Count).ToList();
+
+            for (int i = 0; i < adjustedQualifications.Count; i++)
+            {
+                Qualification q = adjustedQualifications[i];
+                if (q.ranking < 0)
+                {
+                    adjustedQualifications[i] = new Qualification(clubs.Count + q.ranking + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies);
+                }
+
+                // This ranking have a qualification to another round, remove it from the list
+                allRankings.Remove(adjustedQualifications[i].ranking);
+            }
+
+            // Add qualification to every ranking with no qualifications
+            if (Tournament.isChampionship)
+            {
+                foreach (int remainingRanking in allRankings)
+                {
+                    adjustedQualifications.Add(new Qualification(remainingRanking, 0, Tournament, true, 0));
+                }
+            }
+            return adjustedQualifications;
+        }
+        
         public override void QualifyClubs()
         {
             List<Club> ranking = Ranking();
 
             List<Club> qualifies = new List<Club>();
-            List<Qualification> adjustedQualifications = new List<Qualification>(qualifications);
+            List<Qualification> adjustedQualifications = GetQualifications();
+            
             adjustedQualifications.Sort(new QualificationComparator());
             if (rules.Contains(Rule.ReservesAreNotPromoted))
             {
