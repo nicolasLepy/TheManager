@@ -669,6 +669,41 @@ namespace TheManager
             return res;
         }
 
+
+        /// <summary>
+        /// Adjust qualification of championship (or group for RoundGroup) by replacing negative ranking by "true" position on ranking, and filling hole by qualifications for next year on the same championship (if the tournament is a championship)
+        /// </summary>
+        /// <param name="qualificationsList">List of qualifications (can be specific to round or a group)</param>
+        /// <param name="totalClubsInRanking">Clubs count on the table (round club count for ChampionshipRound, group club count for specific group)</param>
+        /// <returns></returns>
+        protected List<Qualification> AdaptQualificationsToRanking(List<Qualification> qualificationsList, int totalClubsInRanking)
+        {
+            //Adapt qualifications to adapt negative ranking to real ranking in the group
+            List<int> allRankings = Enumerable.Range(1, totalClubsInRanking).ToList();
+
+            for (int i = 0; i < qualificationsList.Count; i++)
+            {
+                Qualification q = qualificationsList[i];
+                if (q.ranking < 0)
+                {
+                    qualificationsList[i] = new Qualification(totalClubsInRanking + q.ranking + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies);
+                }
+
+                // This ranking have a qualification to another round, remove it from the list
+                allRankings.Remove(qualificationsList[i].ranking);
+            }
+
+            // Add qualification to every ranking with no qualifications
+            if (Tournament.isChampionship)
+            {
+                foreach (int remainingRanking in allRankings)
+                {
+                    qualificationsList.Add(new Qualification(remainingRanking, 0, Tournament, true, 0));
+                }
+            }
+            return qualificationsList;
+        }
+        
         public override string ToString()
         {
             return _name;

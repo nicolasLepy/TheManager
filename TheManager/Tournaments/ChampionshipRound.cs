@@ -131,7 +131,7 @@ namespace TheManager
             List<Club> ranking = Ranking();
 
             List<Club> qualifies = new List<Club>();
-            List<Qualification> adjustedQualifications = GetQualifications();
+            List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
             
             adjustedQualifications.Sort(new QualificationComparator());
             if (rules.Contains(Rule.ReservesAreNotPromoted))

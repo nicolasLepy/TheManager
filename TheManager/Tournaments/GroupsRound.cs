@@ -168,30 +168,12 @@ namespace TheManager
                     allQualifications.Add(new Qualification(lastQualification.ranking+1, lastQualification.roundId, lastQualification.tournament, lastQualification.isNextYear, lastQualification.qualifies));
                 }
             }
+            
+            
             //Adapt qualifications to adapt negative ranking to real ranking in the group
             int totalClubs = _groups[group].Count;
-            List<int> allGroupRankings = Enumerable.Range(1, totalClubs).ToList();
-
-            for (int i = 0; i < allQualifications.Count; i++)
-            {
-                Qualification q = allQualifications[i];
-                if (q.ranking < 0)
-                {
-                    allQualifications[i] = new Qualification(totalClubs + q.ranking + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies);
-                }
-
-                // This ranking have a qualification to another round, remove it from the list
-                allGroupRankings.Remove(allQualifications[i].ranking);
-            }
-
-            // Add qualification to every ranking with no qualifications
-            if (Tournament.isChampionship)
-            {
-                foreach (int remainingRanking in allGroupRankings)
-                {
-                    allQualifications.Add(new Qualification(remainingRanking, 0, Tournament, true, 0));
-                }
-            }
+            allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
+            
             return allQualifications;
 
         }
