@@ -255,6 +255,8 @@ namespace TheManager
 
         public abstract GeographicPosition Localisation();
 
+        public abstract AdministrativeDivision AdministrativeDivision();
+
 
         /// <summary>
         /// List of games played by the club

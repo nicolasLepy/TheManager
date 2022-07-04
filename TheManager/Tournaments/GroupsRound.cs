@@ -28,7 +28,10 @@ namespace TheManager
 
         public List<Club>[] groups { get => _groups; }
 
-        public int groupsCount { get { return _groupsNumber; } }
+        public int groupsCount
+        {
+            get => _groupsNumber; set => _groupsNumber = value;
+        }
 
         public int maxClubsInGroup => _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
 
@@ -48,6 +51,11 @@ namespace TheManager
             return res;
         }
 
+        public void ClearGroupNames()
+        {
+            _groupsNames.Clear();
+        }
+        
         public void AddGroupName(string name)
         {
             _groupsNames.Add(name);
@@ -86,13 +94,18 @@ namespace TheManager
             return t;
         }
 
-        public override void Initialise()
+        public void InitializeGroups()
         {
             _groups = new List<Club>[_groupsNumber];
             for (int i = 0; i < _groupsNumber; i++)
             {
                 _groups[i] = new List<Club>();
             }
+        }
+        
+        public override void Initialise()
+        {
+            InitializeGroups();
             if (!Tournament.IsInternational())
             {
                 AddTeamsToRecover();
@@ -171,7 +184,7 @@ namespace TheManager
             
             
             //Adapt qualifications to adapt negative ranking to real ranking in the group
-            int totalClubs = _groups[group].Count;
+            int totalClubs = _groups[group].Count > 0 ? _groups[group].Count : _clubs.Count/_groupsNumber; //Get theoretical clubs by group if groups were not drawn
             allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
             
             return allQualifications;
@@ -180,8 +193,11 @@ namespace TheManager
 
         public override void QualifyClubs()
         {
-
-            int maxClubsInGroup = _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
+            int maxClubsInGroup = _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber; //Theorical formula
+            for (int i = 0; i < this.groups.Length; i++)
+            {
+                maxClubsInGroup = this.groups[i].Count > maxClubsInGroup ? this.groups[i].Count : maxClubsInGroup;
+            }
             List<Club>[] clubsByRanking = new List<Club>[maxClubsInGroup];
             List<Club>[] clubsByRankingDescending = new List<Club>[maxClubsInGroup];
             for(int i = 0; i<maxClubsInGroup; i++)
@@ -347,6 +363,9 @@ namespace TheManager
                     break;
                 case RandomDrawingMethod.Geographic:
                     randomDrawing = new RandomDrawingGeographic(this);
+                    break;
+                case RandomDrawingMethod.Administrative:
+                    randomDrawing = new RandomDrawingAdministrative(this);
                     break;
                 case RandomDrawingMethod.Level : default:
                     randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);

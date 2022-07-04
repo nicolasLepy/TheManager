@@ -123,6 +123,20 @@ namespace TheManager
             _administrativeDivisions = new List<AdministrativeDivision>();
         }
 
+        public AdministrativeDivision GetCountryAdministrativeDivision()
+        {
+            AdministrativeDivision res = null;
+            foreach (AdministrativeDivision ad in _administrativeDivisions)
+            {
+                if (ad.name == this._name)
+                {
+                    res = ad;
+                }
+            }
+
+            return res;
+        }
+        
         public AdministrativeDivision GetAdministrativeDivision(int id)
         {
             AdministrativeDivision res = null;

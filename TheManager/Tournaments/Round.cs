@@ -340,6 +340,20 @@ namespace TheManager
             }
             return total;
         }
+
+        public List<Club> GetClubsAdministrativeDivision(AdministrativeDivision adm)
+        {
+            List<Club> res = new List<Club>();
+            foreach(Club c in clubs)
+            {
+                if (c.AdministrativeDivision() == adm)
+                {
+                    res.Add(c);
+                }
+            }
+            return res;
+        }
+        
         public float GoalsAverage()
         {
             float res = 0;

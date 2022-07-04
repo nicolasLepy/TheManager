@@ -465,12 +465,31 @@ namespace TheManager
                         groupQualifications.Sort(new QualificationComparator());
                         foreach (Qualification q in groupQualifications)
                         {
-                            newRound.qualifications.Add(new Qualification((j+1)+((q.ranking-1)*tGroup.groupsCount), q.roundId, q.tournament, q.isNextYear, q.qualifies));
+                            if (q.qualifies == 0 || (q.qualifies < 0 && (-q.qualifies > j-1)) || (q.qualifies > 0 && (j < q.qualifies)))
+                            {
+                                newRound.qualifications.Add(new Qualification((j+1)+((q.ranking-1)*tGroup.groupsCount), q.roundId, q.tournament, q.isNextYear, q.qualifies));
+                            }
                         }
                     }
-                }
 
-                foreach (Qualification q in t.qualifications)
+                    //Groups with extra teams request additional qualification to the next year same tournament
+                    int extraTeams = tGroup.clubs.Count % tGroup.groupsCount;
+                    for (int j = tGroup.clubs.Count - extraTeams; j < tGroup.clubs.Count; j++)
+                    {
+                        newRound.qualifications.Add(new Qualification(j+1, 0, tGroup.Tournament, true, 0));
+                    }
+
+                }
+                
+                List<Qualification> qualificationsToAdd = new List<Qualification>(t.qualifications);
+                
+                ChampionshipRound cRound = t as ChampionshipRound;
+                if (cRound != null)
+                {
+                    qualificationsToAdd = cRound.GetQualifications();
+                }
+                
+                foreach (Qualification q in qualificationsToAdd)
                 {
                     //TODO: Non optimal architecture
                     /*if(t as GroupsRound != null)
@@ -518,6 +537,7 @@ namespace TheManager
                     {
                         newRound.qualifications.Add(q);
                     }
+                    
 
                 }
                 foreach (RecoverTeams re in t.recuperedTeams)

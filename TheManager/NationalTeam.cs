@@ -44,6 +44,11 @@ namespace TheManager
             return null;
         }
 
+        public override AdministrativeDivision AdministrativeDivision()
+        {
+            return null;
+        }
+
         public int Ranking()
         {
             return Session.Instance.Game.kernel.FifaRanking().IndexOf(this) + 1;

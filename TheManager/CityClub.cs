@@ -107,6 +107,8 @@ namespace TheManager
         private bool _isForbiddenToRecruit;
         [DataMember]
         private float _baseCityAttendanceMultiplier;
+        [DataMember]
+        private AdministrativeDivision _administrativeDivision;
 
         public int budget { get => _budget; }
         public City city { get => _city; set => _city = value; }
@@ -114,6 +116,7 @@ namespace TheManager
         public bool isForbiddenToRecruit { get => _isForbiddenToRecruit; set => _isForbiddenToRecruit = value; }
         public float baseCityAttendanceMultiplier { get => _baseCityAttendanceMultiplier; set => _baseCityAttendanceMultiplier = value; }
         public List<Contract> contracts { get => _players; }
+        public AdministrativeDivision administrativeDivision => _administrativeDivision;
 
         /// <summary>
         /// Get the list of contracts of the club, including contracts in reserves teams
@@ -152,7 +155,7 @@ namespace TheManager
             }
         }
 
-        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalMusic, bool isFannion) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic)
+        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalMusic, bool isFannion, AdministrativeDivision administrativeDivision) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic)
         {
             _budget = budget;
             _city = city;
@@ -165,6 +168,7 @@ namespace TheManager
             _budgetHistory = new List<BudgetEntry>();
             _isForbiddenToRecruit = false;
             _baseCityAttendanceMultiplier = 0;
+            _administrativeDivision = administrativeDivision;
         }
 
         public override Country Country()
@@ -175,6 +179,11 @@ namespace TheManager
         public override GeographicPosition Localisation()
         {
             return _city.Position;
+        }
+
+        public override AdministrativeDivision AdministrativeDivision()
+        {
+            return administrativeDivision;
         }
 
         public void AddPlayer(Contract c)

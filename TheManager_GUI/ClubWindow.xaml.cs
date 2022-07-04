@@ -163,6 +163,9 @@ namespace TheManager_GUI
             lbBudget.Content = Utils.FormatMoney(c.budget);
             lbCurrentBudget.Content = Utils.FormatMoney(c.budget);
 
+            lbAdministrativeDivision.Content =
+                c.AdministrativeDivision() != null ? c.AdministrativeDivision().name : "-";
+
             try
             {
                 imgLogo.Source = new BitmapImage(new Uri(Utils.Logo(c)));

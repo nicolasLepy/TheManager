@@ -462,6 +462,23 @@ namespace TheManager
             return res;
         }
 
+        public AdministrativeDivision GetAdministrativeDivision(int idAdministrativeDivision)
+        {
+            AdministrativeDivision res = null;
+            foreach (Continent c in _continents)
+            {
+                foreach (Country p in c.countries)
+                {
+                    if (res == null)
+                    {
+                        res = p.GetAdministrativeDivision(idAdministrativeDivision);
+                    }
+                }
+            }
+
+            return res;
+        }
+
         public Continent ContinentTournament(Tournament tournament)
         {
             Continent res = null;

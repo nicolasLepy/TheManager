@@ -44,6 +44,9 @@
 								<Image Name="imgBudget" Width="50" Height="50"/>
 								<Label Name="lbBudget" Content="45M€" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 							</StackPanel>
+							<StackPanel Orientation="Horizontal">
+								<Label Name="lbAdministrativeDivision" Content="-" Margin="25 0 0 0" Style="{StaticResource StyleLabel2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+							</StackPanel>
 
 
 						</StackPanel>

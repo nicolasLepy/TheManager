@@ -494,6 +494,7 @@ namespace TheManager
         public void LoadGeography()
         {
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/continents.xml");
+            int maxAdmId = 0;
             foreach (XElement e in doc.Descendants("World"))
             {
                 foreach (XElement e2 in e.Descendants("Continent"))
@@ -524,6 +525,7 @@ namespace TheManager
                             string administrationName = e4.Attribute("name").Value;
                             int administrationId = int.Parse(e4.Attribute("id").Value);
                             int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
+                            maxAdmId = administrationId > maxAdmId ? administrationId : maxAdmId;
                             AdministrativeDivision ad = new AdministrativeDivision(administrationId, administrationName);
                             if (administrationParent > 0)
                             {
@@ -537,6 +539,16 @@ namespace TheManager
                         c.countries.Add(p);
                     }
                     _kernel.continents.Add(c);
+                }
+            }
+
+            maxAdmId++;
+            foreach (Continent c in _kernel.continents)
+            {
+                foreach (Country cc in c.countries)
+                {
+                    AdministrativeDivision adCountry = new AdministrativeDivision(maxAdmId++, cc.Name());
+                    cc.administrativeDivisions.Add(adCountry);
                 }
             }
         }
@@ -592,7 +604,7 @@ namespace TheManager
                     {
                         int id = int.Parse(e2.Attribute("id").Value);
                         string name = e2.Attribute("nom").Value;
-                        string shortName = e2.Attribute("nomCourt").Value;
+                        string shortName = e2.Attribute("nomCourt") != null ? e2.Attribute("nomCourt").Value : "";
                         if (shortName == "")
                         {
                             shortName = name;
@@ -640,6 +652,19 @@ namespace TheManager
                                 AddStadium(stadium);
                             }
                         }
+                        
+                        int idAdministrativeDivision = 0;
+                        AdministrativeDivision administrativeDivision = null;
+                        if (e2.Attribute("administrativeDivision") != null)
+                        {
+                            idAdministrativeDivision = int.Parse(e2.Attribute("administrativeDivision").Value);
+                            administrativeDivision = _kernel.GetAdministrativeDivision(idAdministrativeDivision); //city?.Country().GetAdministrativeDivision(idAdministrativeDivision);
+                        }
+
+                        if (administrativeDivision == null)
+                        {
+                            administrativeDivision = city?.Country().GetCountryAdministrativeDivision();
+                        }
 
                         int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                         string logo = e2.Attribute("logo").Value;
@@ -661,10 +686,9 @@ namespace TheManager
 
                         //Simplification
                         reputation = centreFormation;
-
-
+                        
                         bool equipePremiere = true;
-                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere);
+                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere, administrativeDivision);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
