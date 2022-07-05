@@ -161,22 +161,51 @@ namespace TheManager
             return _tournaments;
         }
 
-        /**
-         * cupRank : for exemple : Coupe de France is level 1 and Coupe de la Ligue is level 2
-         */
-        public Tournament Cup(int cupRank)
+        private Tournament GetTournamentByLevel(int rank, bool isChampionship)
         {
             Tournament res = null;
 
             foreach(Tournament t in Tournaments())
             {
-                if(!t.isChampionship && t.level == cupRank)
+                if(t.isChampionship == isChampionship && t.level == rank)
                 {
                     res = t;
                 }
             }
 
-            return res;
+            return res;   
+            
+        }
+        
+        public Tournament League(int leagueRank)
+        {
+            return GetTournamentByLevel(leagueRank, true);
+        }
+
+        /**
+         * cupRank : for exemple : Coupe de France is level 1 and Coupe de la Ligue is level 2
+         */
+        public Tournament Cup(int cupRank)
+        {
+            return GetTournamentByLevel(cupRank, false);
+        }
+
+        /**
+         * Get last league with a national level, then league is subdivised by groups
+         */
+        public Tournament GetLastNationalLeague()
+        {
+            int res = -1;
+            foreach (Tournament t in Tournaments())
+            {
+                GroupsRound gr = t.rounds[0] as GroupsRound;
+                if (gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative && t.level > res)
+                {
+                    res = t.level;
+                }
+            }
+
+            return League(res);
         }
         
         public Tournament FirstDivisionChampionship()
