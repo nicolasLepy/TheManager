@@ -32,7 +32,7 @@ namespace TheManager.Tournaments
             List<string> groupNames = new List<string>();
             if (hostCountry != null)
             {
-                int defaultMaxTeamsByGroup = _round.clubs.Count / _round.groupsCount;
+                int defaultMaxTeamsByGroup = _round.referenceClubsByGroup == 0 ? _round.clubs.Count / _round.groupsCount : _round.referenceClubsByGroup;
                 defaultMaxTeamsByGroup = _round.clubs.Count % _round.groupsCount != 0
                     ? defaultMaxTeamsByGroup + 1
                     : defaultMaxTeamsByGroup;

@@ -182,7 +182,7 @@ namespace TheManager_GUI
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             Avancer();
-            while (!(_partie.date.Month == 6 && _partie.date.Day == 13))
+            while (!(_partie.date.Month == 6 && _partie.date.Day == 1))
             {
                 Avancer();
             }

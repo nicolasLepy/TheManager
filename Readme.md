@@ -126,8 +126,8 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Search / observe players                                              | 🟡 In progress |
 | Negociate contracts / transferts with other clubs                     | 🔴 Not started |
 | **Environment**                                                       |                 |
-| A system for transferring players between clubs                       | 🟡 In progress |
-| National Directorate of Management Control (DNCG)                     | 🟡 In progress |
+| Transferring players between clubs                                    | 🟡 In progress |
+| Controlling club finances                                             | 🟡 In progress |
 | **GUI**                                                               |                 |
 | View system                                                           | 🟡 In progress |
 | Make player search table faster                                       | 🟡 In progress |
