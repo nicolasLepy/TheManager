@@ -801,7 +801,7 @@ namespace TheManager
                             Round round = null;
                             string type = e3.Attribute("type").Value;
                             string nomTour = e3.Attribute("nom").Value;
-                            bool twoLegged = e3.Attribute("allerRetour").Value == "oui";
+                            bool twoLegged = e3.Attribute("allerRetour") != null ? e3.Attribute("allerRetour").Value == "oui" : false;
                             string hourByDefault = e3.Attribute("heureParDefaut").Value;
                             GameDay initialisationDate = String2GameDay(e3.Attribute("initialisation").Value);
                             GameDay endDate = String2GameDay(e3.Attribute("fin").Value);
@@ -847,7 +847,12 @@ namespace TheManager
                             {
                                 int groupsNumber = int.Parse(e3.Attribute("nombrePoules").Value);
                                 RandomDrawingMethod method = String2DrawingMethod(e3.Attribute("methode").Value);
-                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, initialisationDate, endDate, method);
+                                int administrativeLevel = 0;
+                                if (method == RandomDrawingMethod.Administrative)
+                                {
+                                    administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
+                                }
+                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, initialisationDate, endDate, method, administrativeLevel);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {

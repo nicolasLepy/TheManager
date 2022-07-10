@@ -22,6 +22,8 @@ namespace TheManager
         [DataMember]
         private RandomDrawingMethod _randomDrawingMethod;
         [DataMember]
+        private int _administrativeLevel;
+        [DataMember]
         private List<GeographicPosition> _groupsLocalisation;
         [DataMember]
         private List<string> _groupsNames;
@@ -39,6 +41,8 @@ namespace TheManager
         }
 
         public int maxClubsInGroup => _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
+
+        public int administrativeLevel => _administrativeLevel;
 
         public List<GeographicPosition> groupsLocalisation { get => _groupsLocalisation; }
 
@@ -68,7 +72,7 @@ namespace TheManager
             _groupsNames.Add(name);
         }
 
-        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod randomDrawingMethod) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
+        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod randomDrawingMethod, int administrativeLevel) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -80,11 +84,12 @@ namespace TheManager
             _randomDrawingMethod = randomDrawingMethod;
             _groupsLocalisation = new List<GeographicPosition>();
             _referenceClubsByGroup = 0;
+            _administrativeLevel = administrativeLevel;
         }
 
         public override Round Copy()
         {
-            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod);
+            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod, _administrativeLevel);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);

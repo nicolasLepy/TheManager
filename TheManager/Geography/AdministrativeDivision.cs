@@ -24,6 +24,41 @@ namespace TheManager
             _divisions = new List<AdministrativeDivision>();
         }
 
+        public List<AdministrativeDivision> GetAdministrativeDivisionsLevel(int level)
+        {
+            List<AdministrativeDivision> res = new List<AdministrativeDivision>();
+            if (level == 1)
+            {
+                res = _divisions;
+            }
+            else
+            {
+                foreach (AdministrativeDivision ad in _divisions)
+                {
+                    res.AddRange(ad.GetAdministrativeDivisionsLevel(level - 1));
+                }
+            }
+            return res;
+        }
+
+        public bool ContainsAdministrativeDivision(AdministrativeDivision administrativeDivision)
+        {
+            bool res = this == administrativeDivision;
+
+            if(!res)
+            {
+                foreach (AdministrativeDivision adm in _divisions)
+                {
+                    if (adm.ContainsAdministrativeDivision(administrativeDivision))
+                    {
+                        res = true;
+                    }
+                }
+            }
+            
+            return res;
+        }
+        
         public AdministrativeDivision GetAdministrativeDivision(int id)
         {
             AdministrativeDivision res = null;

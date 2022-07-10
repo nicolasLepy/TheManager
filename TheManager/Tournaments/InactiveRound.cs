@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using MathNet.Numerics.LinearAlgebra.Storage;
 using TheManager.Comparators;
 using TheManager.Tournaments;
 
@@ -90,6 +91,71 @@ namespace TheManager
             return _ranking;
         }
 
+        public List<Qualification> AdjustQualificationAccordingToAdministrativeDivisions(List<Qualification> baseQualifications, GroupsRound upperGroupRound, List<Club> ranking)
+        {
+            Country c = _clubs[0].Country();
+            List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
+            adjustedQualifications.Sort(new QualificationComparator());
+            foreach (AdministrativeDivision ad in c.GetAdministrativeDivisionsLevel(upperGroupRound.administrativeLevel))
+            {
+                //Plutôt que calculer manuellement le nombre d'équipe releguées, regarder le nombre d'équipe régulièrement releguées (et faire +1)
+                List<int> admGroups = upperGroupRound.GetGroupsFromAdministrativeDivision(ad);
+                int relegations = 0;
+
+                foreach (Qualification q in upperGroupRound.qualifications)
+                {
+                    if (q.isNextYear && q.roundId == 0 && q.tournament.isChampionship && q.tournament == Tournament)
+                    {
+                        relegations++;
+                    }
+                }
+
+                relegations = (admGroups.Count * relegations) + 1;
+
+                /*
+                foreach(int i in admGroups)
+                {
+                    List<Qualification> down = upperGroupRound.GetGroupQualifications(i);
+                    int relegationPlaces = -1;
+                    foreach (Qualification q in down)
+                    {
+                        if (q.tournament.level > upperGroupRound.Tournament.level && q.isNextYear && q.roundId == 0 &&
+                            relegationPlaces == -1)
+                        {
+                            relegationPlaces = down.Count - q.ranking + 1;
+                        }
+                    }
+
+                    relegations = relegationPlaces > -1 ? relegations + relegationPlaces : relegations;
+
+                }
+
+                relegations = relegations > 0 ? relegations + 1 : relegations;*/
+                Console.WriteLine("[Ad " + ad.name + "] -> Rélégués : " + relegations);
+
+                for (int i = 0; i < ranking.Count && relegations > 0; i++)
+                {
+                    Club club = ranking[i];
+                    if (ad.ContainsAdministrativeDivision(club.AdministrativeDivision()))
+                    {
+                        for (int j = 0; j < adjustedQualifications.Count; j++)
+                        {
+                            Qualification q = adjustedQualifications[j];
+                            if (q.isNextYear && q.tournament.isChampionship && q.roundId == 0 && q.ranking == i+1)
+                            {
+                                adjustedQualifications[j] = new Qualification(q.ranking, q.roundId, upperGroupRound.Tournament,
+                                    q.isNextYear, 0);
+                                Console.WriteLine("Update qualification " + q.ranking + "With tournament " + Tournament.name);
+                            }
+                        }
+                        relegations--;
+                    }
+                }
+            }
+
+            return adjustedQualifications;
+        }
+
         public override void QualifyClubs()
         {
 
@@ -110,10 +176,7 @@ namespace TheManager
             foreach (Club c in ranking)
             {
                 CityClub cv = c as CityClub;
-                if(cv != null)
-                {
-                    cv.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice, BudgetModificationReason.TournamentGrant);
-                }
+                cv?.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice, BudgetModificationReason.TournamentGrant);
             }
 
             List<Qualification> adjustedQualifications = new List<Qualification>(_qualifications);
@@ -123,10 +186,26 @@ namespace TheManager
             {
                 adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(_qualifications, ranking, Tournament);
             }
+
+            if (_clubs.Count > 0)
+            {
+                GroupsRound upperGroupRound = (_clubs[0].Country().League(Tournament.level - 1)?.rounds[0] as GroupsRound);
+                if (upperGroupRound != null &&
+                    upperGroupRound.RandomDrawingMethod == RandomDrawingMethod.Administrative)
+                {
+                    adjustedQualifications = AdjustQualificationAccordingToAdministrativeDivisions(adjustedQualifications, upperGroupRound, ranking);
+                }
+            }
+             
             
             foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking - 1];
+                if (Tournament.level == 5)
+                {
+                    Console.WriteLine("[" + q.ranking + "] " + c.name + " (" + c.AdministrativeDivision().name + ") -> " +
+                                      q.tournament.level);
+                }
                 if (!q.isNextYear)
                 {
                     q.tournament.rounds[q.roundId].clubs.Add(c);

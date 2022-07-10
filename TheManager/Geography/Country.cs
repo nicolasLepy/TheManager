@@ -155,6 +155,28 @@ namespace TheManager
             }
             return res;
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="level">Administrative division level</param>
+        /// <returns></returns>
+        public List<AdministrativeDivision> GetAdministrativeDivisionsLevel(int level)
+        {
+            List<AdministrativeDivision> res = new List<AdministrativeDivision>();
+            if (level == 1)
+            {
+                res = _administrativeDivisions;
+            }
+            else
+            {
+                foreach (AdministrativeDivision ad in _administrativeDivisions)
+                {
+                    res.AddRange(ad.GetAdministrativeDivisionsLevel(level - 1));
+                }
+            }
+            return res;
+        }
         
         public List<Tournament> Tournaments()
         {
@@ -230,6 +252,8 @@ namespace TheManager
         {
             return _name;
         }
+        
+        
 
         public Continent Continent
         {
