@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using TheManager.Comparators;
 
 namespace TheManager.Tournaments
@@ -36,10 +37,12 @@ namespace TheManager.Tournaments
                 defaultMaxTeamsByGroup = _round.clubs.Count % _round.groupsCount != 0
                     ? defaultMaxTeamsByGroup + 1
                     : defaultMaxTeamsByGroup;
-                foreach (AdministrativeDivision ad in hostCountry.administrativeDivisions)
+                Console.WriteLine("[MaxTeamsByGroup] " + defaultMaxTeamsByGroup);
+                foreach (AdministrativeDivision ad in hostCountry.GetAdministrativeDivisionsLevel(_round.administrativeLevel))
                 {
                     int admCounter = 0;
                     List<Club> clubsAdm = _round.GetClubsAdministrativeDivision(ad);
+                    Console.WriteLine("[" + ad.name + "], équipes = " + clubsAdm.Count);
                     if (clubsAdm.Count > 0)
                     {
                         List<int> groupsCount = GetGroupSize(clubsAdm.Count, defaultMaxTeamsByGroup);

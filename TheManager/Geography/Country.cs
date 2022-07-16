@@ -177,6 +177,21 @@ namespace TheManager
             }
             return res;
         }
+
+        public AdministrativeDivision GetAdministrativeDivisionLevel(AdministrativeDivision administrativeDivision, int level)
+        {
+            AdministrativeDivision res = null;
+            List<AdministrativeDivision> levelAdm = GetAdministrativeDivisionsLevel(level);
+
+            foreach (AdministrativeDivision adm in levelAdm)
+            {
+                if (adm == administrativeDivision || adm.ContainsAdministrativeDivision(administrativeDivision))
+                {
+                    res = adm;
+                }
+            }
+            return res;
+        }
         
         public List<Tournament> Tournaments()
         {
@@ -222,6 +237,21 @@ namespace TheManager
             {
                 GroupsRound gr = t.rounds[0] as GroupsRound;
                 if (gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative && t.level > res)
+                {
+                    res = t.level;
+                }
+            }
+
+            return League(res);
+        }
+
+        public Tournament GetLastRegionalLeague(int level)
+        {
+            int res = -1;
+            foreach (Tournament t in Tournaments())
+            {
+                GroupsRound gr = t.rounds[0] as GroupsRound;
+                if (gr != null && gr.RandomDrawingMethod == RandomDrawingMethod.Administrative && gr.administrativeLevel == level && t.level > res)
                 {
                     res = t.level;
                 }

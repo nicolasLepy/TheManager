@@ -346,7 +346,7 @@ namespace TheManager
             List<Club> res = new List<Club>();
             foreach(Club c in clubs)
             {
-                if (c.AdministrativeDivision() == adm)
+                if (c.AdministrativeDivision() == adm || adm.ContainsAdministrativeDivision(c.AdministrativeDivision()))
                 {
                     res.Add(c);
                 }

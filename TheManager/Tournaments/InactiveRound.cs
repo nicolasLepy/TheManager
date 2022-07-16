@@ -98,7 +98,6 @@ namespace TheManager
             adjustedQualifications.Sort(new QualificationComparator());
             foreach (AdministrativeDivision ad in c.GetAdministrativeDivisionsLevel(upperGroupRound.administrativeLevel))
             {
-                //Plutôt que calculer manuellement le nombre d'équipe releguées, regarder le nombre d'équipe régulièrement releguées (et faire +1)
                 List<int> admGroups = upperGroupRound.GetGroupsFromAdministrativeDivision(ad);
                 int relegations = 0;
 
@@ -145,7 +144,6 @@ namespace TheManager
                             {
                                 adjustedQualifications[j] = new Qualification(q.ranking, q.roundId, upperGroupRound.Tournament,
                                     q.isNextYear, 0);
-                                Console.WriteLine("Update qualification " + q.ranking + "With tournament " + Tournament.name);
                             }
                         }
                         relegations--;
