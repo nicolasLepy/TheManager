@@ -96,43 +96,64 @@ namespace TheManager
             Country c = _clubs[0].Country();
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
             adjustedQualifications.Sort(new QualificationComparator());
+
+            int promotionsSlotByAd = 0;
+            int relegationsSlotByAd = 0;
+            Tournament lowerTournament = null;
+            Tournament upperTournament = null;
+            for (int i = 0; i < adjustedQualifications.Count; i++)
+            {
+                Qualification q = adjustedQualifications[i];
+                if (q.isNextYear && q.roundId == 0 && q.tournament.level < Tournament.level)
+                {
+                    promotionsSlotByAd++;
+                    upperTournament = q.tournament;
+                    //Remove promotion because it will be automatically managed
+                    adjustedQualifications[i] = new Qualification(q.ranking, q.roundId, Tournament, q.isNextYear, q.qualifies);
+                }
+                if (q.isNextYear && q.roundId == 0 && q.tournament.level > Tournament.level)
+                {
+                    relegationsSlotByAd++;
+                    lowerTournament = q.tournament;
+                    //Remove relegation because it will be automatically managed
+                    adjustedQualifications[i] = new Qualification(q.ranking, q.roundId, Tournament, q.isNextYear, q.qualifies);
+                }
+            }
+
+            //TODO: Differents relegations count by ADM not taken account
+            int upperRegularRelegations = 0;
+            foreach (Qualification q in upperGroupRound.qualifications)
+            {
+                if (q.isNextYear && q.roundId == 0 && q.tournament.level > upperGroupRound.Tournament.level)
+                {
+                    upperRegularRelegations++;
+                }
+            }
             foreach (AdministrativeDivision ad in c.GetAdministrativeDivisionsLevel(upperGroupRound.administrativeLevel))
             {
+                
                 List<int> admGroups = upperGroupRound.GetGroupsFromAdministrativeDivision(ad);
-                int relegations = 0;
+                int upperRelegations = 0;
 
-                foreach (Qualification q in upperGroupRound.qualifications)
+                foreach (int admGroup in admGroups)
                 {
-                    if (q.isNextYear && q.roundId == 0 && q.tournament.isChampionship && q.tournament == Tournament)
+                    foreach (Qualification q in upperGroupRound.GetGroupQualifications(admGroup))
                     {
-                        relegations++;
-                    }
-                }
-
-                relegations = (admGroups.Count * relegations) + 1;
-
-                /*
-                foreach(int i in admGroups)
-                {
-                    List<Qualification> down = upperGroupRound.GetGroupQualifications(i);
-                    int relegationPlaces = -1;
-                    foreach (Qualification q in down)
-                    {
-                        if (q.tournament.level > upperGroupRound.Tournament.level && q.isNextYear && q.roundId == 0 &&
-                            relegationPlaces == -1)
+                        if (q.isNextYear && q.roundId == 0 && q.tournament.isChampionship && q.tournament.level > upperGroupRound.Tournament.level)
                         {
-                            relegationPlaces = down.Count - q.ranking + 1;
+                            upperRelegations++;
                         }
                     }
-
-                    relegations = relegationPlaces > -1 ? relegations + relegationPlaces : relegations;
-
                 }
 
-                relegations = relegations > 0 ? relegations + 1 : relegations;*/
-                Console.WriteLine("[Ad " + ad.name + "] -> Rélégués : " + relegations);
+                int additionnalUpperRelegations = upperRelegations - upperRegularRelegations;
+                int relegations = relegationsSlotByAd > 0 ? relegationsSlotByAd + additionnalUpperRelegations : relegationsSlotByAd;
+                
+                Console.WriteLine("[" + Tournament.name + "][Ad " + ad.name + "] -> Rélégués du haut : " + upperRelegations + "(" + upperRegularRelegations + " normalement). " + relegations + " relegations");
 
-                for (int i = 0; i < ranking.Count && relegations > 0; i++)
+                int promotions = promotionsSlotByAd;
+                //Manage promotion
+                for (int i = 0; i < ranking.Count && promotions > 0; i++)
                 {
                     Club club = ranking[i];
                     if (ad.ContainsAdministrativeDivision(club.AdministrativeDivision()))
@@ -142,11 +163,38 @@ namespace TheManager
                             Qualification q = adjustedQualifications[j];
                             if (q.isNextYear && q.tournament.isChampionship && q.roundId == 0 && q.ranking == i+1)
                             {
-                                adjustedQualifications[j] = new Qualification(q.ranking, q.roundId, upperGroupRound.Tournament,
-                                    q.isNextYear, 0);
+                                adjustedQualifications[j] = new Qualification(q.ranking, q.roundId, upperTournament, q.isNextYear, 0);
                             }
                         }
-                        relegations--;
+                        promotions--;
+                    }
+                }
+
+                //Manage relegation
+                //Manage when there is not relegation because there is no ADM team in the lower league
+                int lowerRoundTeamsCount = 0;
+                if (lowerTournament != null)
+                {
+                    lowerRoundTeamsCount = lowerTournament.rounds[0].GetClubsAdministrativeDivision(ad).Count;
+                    Console.WriteLine("[" + lowerTournament.name + "][Ad " + ad.name + "] " + lowerRoundTeamsCount + " équipes de l'ADM, " + relegations +  " relegations.");
+                }
+                if (lowerRoundTeamsCount > 0)
+                {
+                    for (int i = ranking.Count - 1; i >= 0 && relegations > 0; i--)
+                    {
+                        Club club = ranking[i];
+                        if (ad.ContainsAdministrativeDivision(club.AdministrativeDivision()))
+                        {
+                            for (int j = 0; j < adjustedQualifications.Count; j++)
+                            {
+                                Qualification q = adjustedQualifications[j];
+                                if (q.isNextYear && q.tournament.isChampionship && q.roundId == 0 && q.ranking == i+1)
+                                {
+                                    adjustedQualifications[j] = new Qualification(q.ranking, q.roundId, lowerTournament, q.isNextYear, 0);
+                                }
+                            }
+                            relegations--;
+                        }
                     }
                 }
             }
@@ -185,11 +233,23 @@ namespace TheManager
                 adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(_qualifications, ranking, Tournament);
             }
 
+            adjustedQualifications = AdaptQualificationsToRanking(adjustedQualifications, clubs.Count);
+
             if (_clubs.Count > 0)
             {
-                GroupsRound upperGroupRound = (_clubs[0].Country().League(Tournament.level - 1)?.rounds[0] as GroupsRound);
-                if (upperGroupRound != null &&
-                    upperGroupRound.RandomDrawingMethod == RandomDrawingMethod.Administrative)
+                //Get last non inactive division with administrative random drawing method
+                GroupsRound upperGroupRound = null;
+                int level = Tournament.level - 1;
+                while (upperGroupRound == null && level > 0)
+                {
+                    upperGroupRound = (_clubs[0].Country().League(level)?.rounds[0] as GroupsRound);
+                    if (upperGroupRound != null && upperGroupRound.RandomDrawingMethod != RandomDrawingMethod.Administrative)
+                    {
+                        upperGroupRound = null;
+                    }
+                    level--;
+                }
+                if (upperGroupRound != null)
                 {
                     adjustedQualifications = AdjustQualificationAccordingToAdministrativeDivisions(adjustedQualifications, upperGroupRound, ranking);
                 }
@@ -199,7 +259,7 @@ namespace TheManager
             foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking - 1];
-                if (Tournament.level == 5)
+                if (Tournament.level >= 8)
                 {
                     Console.WriteLine("[" + q.ranking + "] " + c.name + " (" + c.AdministrativeDivision().name + ") -> " +
                                       q.tournament.level);

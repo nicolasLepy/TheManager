@@ -206,6 +206,20 @@ namespace TheManager_GUI
             foreach(Tournament c in toDesactivate)
             {
                 c.DisableTournament();
+                int pr = 0;
+                int re = 0;
+                foreach(Qualification q in c.rounds[0].qualifications)
+                {
+                    if(q.isNextYear && q.roundId == 0 && q.tournament.level > c.level)
+                    {
+                        re++;
+                    }
+                    if (q.isNextYear && q.roundId == 0 && q.tournament.level < c.level)
+                    {
+                        pr++;
+                    }
+                }
+                Console.WriteLine("[" + c.name + "] " + pr + " promotions et " + re + " relegations");
             }
             Windows_ChoixClub wch = new Windows_ChoixClub();
             wch.Show();
