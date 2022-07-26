@@ -134,10 +134,8 @@ namespace TheManager
             List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
             
             adjustedQualifications.Sort(new QualificationComparator());
-            if (rules.Contains(Rule.ReservesAreNotPromoted))
-            {
-                adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(qualifications, ranking, Tournament);
-            }
+            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, rules.Contains(Rule.ReservesAreNotPromoted));
+            
             foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking-1];

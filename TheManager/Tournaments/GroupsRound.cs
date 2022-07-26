@@ -694,7 +694,12 @@ namespace TheManager
             {
                 allQualifications = AdjustQualificationAdministrativeDivision(allQualifications, group);
             }
-            
+
+            if(groups[group].Count > 0)
+            {
+                allQualifications = Utils.AdjustQualificationsToNotPromoteReserves(allQualifications, Ranking(group), Tournament, _rules.Contains(Rule.ReservesAreNotPromoted));
+            }
+
             return allQualifications;
 
         }
@@ -740,11 +745,6 @@ namespace TheManager
             {
                 List<Qualification> qualifications = GetGroupQualifications(i);// new List<Qualification>(_qualifications);
                 qualifications.Sort(new QualificationComparator());
-
-                if (_rules.Contains(Rule.ReservesAreNotPromoted))
-                {
-                    qualifications = Utils.AdjustQualificationsToNotPromoteReserves(qualifications, groups[i], Tournament);
-                }
 
                 foreach (Qualification q in qualifications)
                 {

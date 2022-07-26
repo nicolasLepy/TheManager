@@ -198,12 +198,6 @@ namespace TheManager_GUI.VueClassement
                 {
                     qualifications[i] = _round.GetGroupQualifications(i);// new List<Qualification>(_round.qualifications);
                     qualifications[i].Sort(new QualificationComparator());
-
-                    //If reserves can't be promoted
-                    if (_round.rules.Contains(Rule.ReservesAreNotPromoted))
-                    {
-                        qualifications[i] = Utils.AdjustQualificationsToNotPromoteReserves(qualifications[i], groups[i], _round.Tournament);
-                    }
                 }
 
                 int cumulatedChildrenCount = 0;

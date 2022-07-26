@@ -202,38 +202,15 @@ namespace TheManager
             return adjustedQualifications;
         }
 
-        public override void QualifyClubs()
+        public List<Qualification> GetQualifications()
         {
-
             List<Club> ranking = Ranking();
-            //Simuler des gains d'argent de matchs pour les clubs (affluence)
-
-            DateTime fin = DateEndRound();
-            DateTime dateInitialisationRound = DateInitialisationRound();
-            if (fin.Month < dateInitialisationRound.Month)
-            {
-                fin = fin.AddYears(1);
-            }
-            else if (fin.Month == dateInitialisationRound.Month && fin.Day < dateInitialisationRound.Day)
-            {
-                fin = fin.AddYears(1);
-            }
-            int matchesCount = (int)((fin - dateInitialisationRound).TotalDays) / 14;
-            foreach (Club c in ranking)
-            {
-                CityClub cv = c as CityClub;
-                cv?.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice, BudgetModificationReason.TournamentGrant);
-            }
-
             List<Qualification> adjustedQualifications = new List<Qualification>(_qualifications);
             adjustedQualifications.Sort(new QualificationComparator());
 
-            if (_rules.Contains(Rule.ReservesAreNotPromoted))
-            {
-                adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(_qualifications, ranking, Tournament);
-            }
-
             adjustedQualifications = AdaptQualificationsToRanking(adjustedQualifications, clubs.Count);
+
+            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, _rules.Contains(Rule.ReservesAreNotPromoted));
 
             if (_clubs.Count > 0)
             {
@@ -254,7 +231,33 @@ namespace TheManager
                     adjustedQualifications = AdjustQualificationAccordingToAdministrativeDivisions(adjustedQualifications, upperGroupRound, ranking);
                 }
             }
-             
+            return adjustedQualifications;
+        }
+
+        public override void QualifyClubs()
+        {
+
+            List<Club> ranking = Ranking();
+            //Estimate incomes dues to matchs (attendance)
+
+            DateTime fin = DateEndRound();
+            DateTime dateInitialisationRound = DateInitialisationRound();
+            if (fin.Month < dateInitialisationRound.Month)
+            {
+                fin = fin.AddYears(1);
+            }
+            else if (fin.Month == dateInitialisationRound.Month && fin.Day < dateInitialisationRound.Day)
+            {
+                fin = fin.AddYears(1);
+            }
+            int matchesCount = (int)((fin - dateInitialisationRound).TotalDays) / 14;
+            foreach (Club c in ranking)
+            {
+                CityClub cv = c as CityClub;
+                cv?.ModifyBudget(matchesCount * cv.supporters * cv.ticketPrice, BudgetModificationReason.TournamentGrant);
+            }
+
+            List<Qualification> adjustedQualifications = GetQualifications();
             
             foreach (Qualification q in adjustedQualifications)
             {
