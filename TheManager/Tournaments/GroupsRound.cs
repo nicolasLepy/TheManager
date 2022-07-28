@@ -473,7 +473,6 @@ namespace TheManager
                 }
             }
 
-            Console.WriteLine("[" + Tournament.name + "][" + _groupsNames[group] + "][" + administrativeDivision.name + "] " + relegationPlaces + " places de relegation,  " + admRelegables + " réléguations à ajouter, donc " + (relegationPlaces + admRelegables - (extraPromotionOnGroup ? 1 : 0)) + " au total");
             relegationPlaces += admRelegables;
             if (extraPromotionOnGroup)
             {
@@ -499,7 +498,6 @@ namespace TheManager
                     relegationOnGroup++;
                 }
             }
-            Console.WriteLine("[" + Tournament.name + "][" + _groupsNames[group] + "][" + administrativeDivision.name + "] " + relegationOnGroup + " équipes relegués dans ce groupe");
 
             /*
             //TODO : Possible d'avoir a gérer ce cas un jour, où il y a moins de relegué que prévu (promu extra ...)

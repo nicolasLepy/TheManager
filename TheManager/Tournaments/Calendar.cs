@@ -503,19 +503,19 @@ namespace TheManager
 
         private static DateTime GetRoundProgrammationDate(Round round, RoundProgrammation programmation)
         {
-            Console.WriteLine("PROGRAMMATION " + round.name + " (" + round.Tournament.name + ")");
+            //Console.WriteLine("PROGRAMMATION " + round.name + " (" + round.Tournament.name + ")");
             DateTime day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year);
-            Console.WriteLine("Date initialisation : " + round.DateInitialisationRound().ToString() + " (" + programmation.initialisation.WeekNumber + ")");
-            Console.WriteLine("Date des matchs : " + day.ToString() + " (" + programmation.gamesDays[0].WeekNumber + ")");
-            Console.WriteLine("Date fin : " + round.DateEndRound().ToString() + " (" + programmation.end.WeekNumber + ")");
+            //Console.WriteLine("Date initialisation : " + round.DateInitialisationRound().ToString() + " (" + programmation.initialisation.WeekNumber + ")");
+            //Console.WriteLine("Date des matchs : " + day.ToString() + " (" + programmation.gamesDays[0].WeekNumber + ")");
+            //Console.WriteLine("Date fin : " + round.DateEndRound().ToString() + " (" + programmation.end.WeekNumber + ")");
             if (Utils.IsBeforeWithoutYear(day, round.DateInitialisationRound()))
             {
-                Console.WriteLine("Ajoute une année");
+                //Console.WriteLine("Ajoute une année");
                 day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
             }
             day.AddHours(programmation.defaultHour.Hours);
             day.AddMinutes(programmation.defaultHour.Minutes);
-            Console.WriteLine("FIN PROGRAMMATION\n");
+            //Console.WriteLine("FIN PROGRAMMATION\n");
             return day;
         }
 

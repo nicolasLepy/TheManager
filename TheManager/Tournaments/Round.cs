@@ -223,6 +223,12 @@ namespace TheManager
         protected List<RecoverTeams> _recuperedTeams;
 
         /// <summary>
+        /// Initial list of teams get from other tournament still in progress. Stored for references for national cups
+        /// </summary>
+        [DataMember]
+        protected List<RecoverTeams> _baseRecuperedTeams;
+
+        /// <summary>
         /// Rules concerning the round
         /// Example : the team receiving if she evolves two divisions lower
         /// </summary>
@@ -243,6 +249,7 @@ namespace TheManager
         public RoundProgrammation programmation { get => _programmation; }
         public List<Qualification> qualifications { get => _qualifications; }
         public List<RecoverTeams> recuperedTeams { get => _recuperedTeams; }
+        public List<RecoverTeams> baseRecuperedTeams { get => _baseRecuperedTeams; }
         public List<Rule> rules { get => _rules; }
         public List<Prize> prizes { get => _prizes; }
 
@@ -291,6 +298,7 @@ namespace TheManager
             _twoLegs = twoLegs;
             _qualifications = new List<Qualification>();
             _recuperedTeams = new List<RecoverTeams>();
+            _baseRecuperedTeams = new List<RecoverTeams>();
             _rules = new List<Rule>();
             _prizes = new List<Prize>();
         }

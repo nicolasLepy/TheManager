@@ -273,6 +273,27 @@ namespace TheManager
             return res;
         }
 
+        public bool LeagueSystemWithReserves()
+        {
+            bool res = false;
+            for(int i = 0; i<_tournaments.Count && !res; i++)
+            {
+                Tournament t = _tournaments[i];
+                for(int j = 0; j < t.rounds.Count && !res; j++)
+                {
+                    Round r = t.rounds[j];
+                    foreach(Club c in r.clubs)
+                    {
+                        if((c as ReserveClub) != null)
+                        {
+                            res = true;
+                        }
+                    }
+                }
+            }
+            return res;
+        }
+
         public override string ToString()
         {
             return _name;

@@ -1079,6 +1079,8 @@ namespace TheManager
 
             }
 
+
+
             /*
             foreach (Tournament c in _kernel.Competitions)
             {
@@ -1318,10 +1320,10 @@ namespace TheManager
                             {
                                 teamsByLevel.Add(t.level, 0);
                             }
-                            teamsByLevel[t.level] += t.rounds[0].clubs.Count;
-                            teamsByTournaments.Add(new KeyValuePair<Tournament, int>(t, t.rounds[0].clubs.Count));
+                            teamsByLevel[t.level] += t.rounds[0].CountWithoutReserves();
+                            teamsByTournaments.Add(new KeyValuePair<Tournament, int>(t, t.rounds[0].CountWithoutReserves()));
 
-                            totalTeams += t.rounds[0].clubs.Count;
+                            totalTeams += t.rounds[0].CountWithoutReserves();
 
                             foreach(Round r in t.rounds)
                             {
@@ -1370,7 +1372,7 @@ namespace TheManager
                             GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
                             Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, RandomDrawingMethod.Random, false);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                            //round.rules.Add(Rule.OnlyFirstTeams);
+                            round.rules.Add(Rule.OnlyFirstTeams);
                             round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
                             int currentAddedTeams = 0;
                             while(currentAddedTeams < preliRoundTeams)
@@ -1414,7 +1416,7 @@ namespace TheManager
                             GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
                             Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                            //round.rules.Add(Rule.OnlyFirstTeams);
+                            round.rules.Add(Rule.OnlyFirstTeams);
                             if (j > 2)
                             {
                                 round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
@@ -1442,6 +1444,39 @@ namespace TheManager
 
                         nationalCup.InitializeQualificationsNextYearsLists();
                         c.Tournaments().Add(nationalCup);
+
+
+
+
+
+
+
+
+
+                        if (!nationalCup.isChampionship && (Session.Instance.Game.kernel.LocalisationTournament(nationalCup) as Country) == Session.Instance.Game.kernel.String2Country("Azerbaïdjan"))
+                        {
+                            Country azer = Session.Instance.Game.kernel.String2Country("Azerbaïdjan");
+                            Console.WriteLine("Initialise la coupe de l'azerbaidjan");
+                            foreach (Round r in nationalCup.rounds)
+                            {
+                                Console.WriteLine("[CDLA] " + r.name);
+                                foreach (RecoverTeams rt in r.recuperedTeams)
+                                {
+                                    Console.WriteLine("[CDLA][" + r.name + "]. Ajoute " + rt.Number + " depuis " + (rt.Source as Round).Tournament.name);
+                                }
+                            }
+                            foreach (Tournament t in azer.Tournaments())
+                            {
+                                if (t.isChampionship)
+                                {
+                                    Console.WriteLine("[CDLA][" + t.name + "]. Clubs : " + t.rounds[0].clubs.Count + " (" + t.rounds[0].CountWithoutReserves() + " équipes premières");
+                                }
+                            }
+                        }
+
+
+
+
                     }
                 }
             }

@@ -490,8 +490,9 @@ namespace TheManager
         {
 
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
+            List<int> fixedRelegations = new List<int>(); //Contains ranking of teams that can't be saved
 
-            for(int i = 0; i<qualifications.Count; i++)
+            for (int i = 0; i<qualifications.Count; i++)
             {
                 qualifications.Sort(new QualificationComparator());
                 Qualification q = qualifications[i];
@@ -499,7 +500,7 @@ namespace TheManager
                 RuleStatus ruleStatus = RuleIsRespected(concernedClub, q, from.level, reservesCantBePromoted);
                 bool ok = ruleStatus.HasFlag(RuleStatus.RuleRespected);
                 bool toRelegate = ruleStatus.HasFlag(RuleStatus.RuleRelegation);
-                if(toRelegate)
+                if (toRelegate)
                 {
                     ok = q.tournament.level >= from.level;
                 }
@@ -527,7 +528,7 @@ namespace TheManager
                     int indexQualificationFirstRelegated = -1;
                     for(int k = 0; k < qualifications.Count && rankingFirstRelegated == -1; k++)
                     {
-                        if(qualifications[k].tournament.level > from.level)
+                        if(qualifications[k].tournament.level > from.level && !fixedRelegations.Contains(qualifications[k].ranking))
                         {
                             rankingFirstRelegated = qualifications[k].ranking;
                             indexQualificationFirstRelegated = k;
@@ -535,6 +536,7 @@ namespace TheManager
                     }
                     if (rankingFirstRelegated > -1)
                     {
+                        fixedRelegations.Add(qualifications[j].ranking);
                         Qualification first = qualifications[j];
                         Qualification second = qualifications[indexQualificationFirstRelegated];
                         first.ranking = qualifications[indexQualificationFirstRelegated].ranking;
