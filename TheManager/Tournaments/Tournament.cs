@@ -318,6 +318,7 @@ namespace TheManager
                 }
             }
 
+            // Les qualifications de chaque ligue à chaque tour sont remises par défaut
             foreach(Round r in _rounds)
             {
                 r.recuperedTeams.Clear();
@@ -326,6 +327,7 @@ namespace TheManager
 
             List<LeagueCupApparition> leagueCupApparitions = new List<LeagueCupApparition>();
 
+            // Obtient le nombre d'équipes une fois toutes les ligues entrées dans la compétition
             int teamsKnockout = 0;
             int j = 0;
             for(int i = _rounds.Count-1; i >= 0 && teamsKnockout == 0; i--)
@@ -338,6 +340,8 @@ namespace TheManager
                 }
             }
 
+            
+            //Crée la liste qui résume à quel moment chaque ligue entre dans la compétition et combien d'équipes entrent par ligue
             foreach(Round r in _rounds)
             {
                 List<RecoverTeams> recovers = new List<RecoverTeams>(r.recuperedTeams);
@@ -357,13 +361,8 @@ namespace TheManager
                 }
             }
 
+            //Trie la liste en fonction du niveau de la compétition (et si jamais une ligue entre dans la compétition en deux fois avec meilleurs/plus mauvaises équipes)
             leagueCupApparitions.Sort((a, b) => (a.tournament.level != b.tournament.level ? a.tournament.level - b.tournament.level : (a.teams > 0 ? -1 : 0)));
-
-            Console.WriteLine("MISE A JOUR DE LA " + this.name + " teams knockout = " + teamsKnockout);
-            for (int i = 0; i < leagueCupApparitions.Count; i++)
-            {
-                Console.WriteLine("[" + leagueCupApparitions[i].tournament.name + "] (Entre au tour index " + leagueCupApparitions[i].apparitionRound + " ) -> " + leagueCupApparitions[i].teams + " équipes");
-            }
 
             int roundStart = 0;
             foreach(LeagueCupApparition lca in leagueCupApparitions)
@@ -372,6 +371,7 @@ namespace TheManager
             }
             int currentTeamsCount = teamsKnockout;
             int additionalTeams = 0;
+            //Remonte la compétition pour récupérer le nombre d'équipes à ajouter au premier tour
             for(int i = roundStart-1; i > -1; i--)
             {
                 //We remove all teams that will be added to the next round
@@ -382,14 +382,16 @@ namespace TheManager
 
             additionalTeams = CountAdditionnalTeamsRound(0, leagueCupApparitions);
             Console.WriteLine(additionalTeams + " >= " + currentTeamsCount + " ?");
+            //Petit fix pour corriger les approximation du ratio
             if(additionalTeams - currentTeamsCount == 1)
             {
                 leagueCupApparitions[leagueCupApparitions.Count - 1].teams--;
             }
-            //On a suffisament d'équipes dans les
+            //On a suffisament d'équipes dans les divisions qui entrent au premier tour, on sélectionne alors n équipes parmis ces ligues
             if(additionalTeams >= currentTeamsCount)
             {
                 Console.WriteLine("Suffisament d'équipes disponibles pour les exigences du tour");
+                //Ratio d'équipes à prendre dans chaque ligue pour obtenir le nombre d'équipes ciblé
                 double ratio = additionalTeams / (currentTeamsCount + 0.0);
                 int currentTeamsAdded = 0;
                 Console.WriteLine("On prend");
@@ -398,22 +400,9 @@ namespace TheManager
                     int teamsToSelectFromLeague = leagueCupApparitions[i].apparitionRound == 0 ? (int)Math.Round(leagueCupApparitions[i].teams / ratio) : leagueCupApparitions[i].teams;
                     currentTeamsAdded += leagueCupApparitions[i].apparitionRound == 0 ?  teamsToSelectFromLeague : 0;
                     UpdateRecuperedTeams(teamsToSelectFromLeague, leagueCupApparitions[i].tournament, leagueCupApparitions[i].isBestTeams, false);
-                    /*
-                    foreach(Round r in _rounds)
-                    {
-                        for(int k = 0; k<r.recuperedTeams.Count; k++)
-                        {
-                            RecoverTeams rt = r.recuperedTeams[k];
-                            bool isBestTeams = rt.Method == RecuperationMethod.Best;
-                            if((rt.Source as Round).Tournament == leagueCupApparitions[i].tournament && (leagueCupApparitions[i].isBestTeams == isBestTeams || GetOtherRecoverTeamsOfRound(rt).Source == null))
-                            {
-                                rt.Number = teamsToSelectFromLeague;
-                                r.recuperedTeams[k] = rt;
-                                Console.WriteLine("[" + r.name + "] Récupère " + r.recuperedTeams[k].Number + " équipes du tour " + (r.recuperedTeams[k].Source as Round).Tournament.name +  " (" + r.recuperedTeams[k].Method + ")");
-                            }
-                        }
-                    }*/
+
                 }
+                //Dans le cas où le calcul à partir du ratio n'a pas fonctionné (ça ne tombe pas rond), alors on fixe en ajoutant ou retirant manuellement un ou plusieurs équipes pour obtenir le bon compte
                 if(currentTeamsAdded != currentTeamsCount)
                 {
                     int margin = currentTeamsCount - currentTeamsAdded;
@@ -426,41 +415,15 @@ namespace TheManager
                         {
                             currentlyAddedTeamFromLeague = rt.Number;
                         }
-                        /*
-                        foreach(Round r in _rounds)
-                        {
-                            for(int k = 0; k<r.recuperedTeams.Count; k++)
-                            {
-                                bool isBestTeams = r.recuperedTeams[k].Method == RecuperationMethod.Best;
-                                if ((r.recuperedTeams[k].Source as Round).Tournament == leagueCupApparitions[i].tournament && (leagueCupApparitions[i].isBestTeams == isBestTeams || GetOtherRecoverTeamsOfRound(r.recuperedTeams[k]).Source == null))
-                                {
-                                    addedTeams = r.recuperedTeams[k].Number;
-                                }
-                            }
-                        }*/
                         if(leagueCupApparitions[i].apparitionRound == 0 && currentlyAddedTeamFromLeague + margin <= leagueCupApparitions[i].teams)
                         {
                             UpdateRecuperedTeams(margin, leagueCupApparitions[i].tournament, leagueCupApparitions[i].isBestTeams, true);
-                            /*
-                            foreach (Round r in _rounds)
-                            {
-                                for (int k = 0; k < r.recuperedTeams.Count; k++)
-                                {
-                                    bool isBestTeams = r.recuperedTeams[k].Method == RecuperationMethod.Best;
-                                    if ((r.recuperedTeams[k].Source as Round).Tournament == leagueCupApparitions[i].tournament && (leagueCupApparitions[i].isBestTeams == isBestTeams || GetOtherRecoverTeamsOfRound(r.recuperedTeams[k]).Source == null))
-                                    {
-                                        RecoverTeams rt = r.recuperedTeams[k];
-                                        rt.Number += margin;
-                                        r.recuperedTeams[k] = rt;
-                                        Console.WriteLine("[" + r.name + "] Récupère " + r.recuperedTeams[k].Number + " équipes du tour " + (r.recuperedTeams[k].Source as Round).Tournament.name + " (" + r.recuperedTeams[k].Method + ")");
-                                    }
-                                }
-                            }*/
                             margin = 0;
                         }
                     }
                 }
             }
+            //On a pas suffisament d'équipes dans les ligues inférieures qui entrent au premier tour, on supprime ce tour pour passer directement au suivant (voir plus loin si on a toujours pas suffisament d'équipes) en simulant n qualifiés parmis les équipes des ligues inférieures
             else
             {
                 Console.WriteLine("Trop peu d'équipes disponibles pour les exigences du tour, obliger de supprimer des tours");
@@ -469,7 +432,7 @@ namespace TheManager
                 while(!ok)
                 {
                     Console.WriteLine("Suppression du tour ID " + delRoundId);
-
+                    //On supprime un tour en plus, on calcule le nombre d'équipe censée s'être qualifié à ce tour (à partir du tour précédéant) et le nombre total d'équipe à ce tour (en ajoutant celles qui arrivent à ce tour)
                     delRoundId++;
                     int expectedQualified = currentTeamsCount / 2;
                     int expectedRoundTeams = expectedQualified + CountAdditionnalTeamsRound(delRoundId, leagueCupApparitions);
@@ -480,6 +443,7 @@ namespace TheManager
                         totalDispoTeams += CountAdditionnalTeamsRound(i, leagueCupApparitions);
                     }
                     Console.WriteLine(totalDispoTeams + " équipes disponibles pour le tour " + delRoundId);
+                    //Si le nombre d'équipes disponibles (c'est à dire l'intégralité des équipes des tours en lice à ce moment de la compétition) est supérieur au nombre nécessaire, alors c'est bon on débute la compétition à ce tour
                     if(totalDispoTeams > expectedRoundTeams)
                     {
                         ok = true;
@@ -488,29 +452,41 @@ namespace TheManager
                         {
                             totalApp += CountAdditionnalTeamsRound(i, leagueCupApparitions);
                         }
-                        double ratio = expectedQualified / (totalApp + 0.0);
+                        double ratio = expectedQualified / (totalApp + 0.0); //Ratio d'équipes à prendre dans chaque ligue
                         int currentTeamsAdded = 0;
+                        //Créé les qualifications des ligues dans la coupe
                         List<RecoverTeams> newRecoverTeams = new List<RecoverTeams>();
                         for (int i = 0; i<delRoundId;i++)
                         {
                             for(int k = 0; k<leagueCupApparitions.Count; k++)
                             {
-                                int teamsToAddFromLeague = (int)Math.Round(leagueCupApparitions[k].teams * ratio);
+                                int teamsToAddFromLeague = (int)Math.Round(leagueCupApparitions[k].teams * ratio); //Le nombre d'équipes à prendre dans la ligue est calculé en fonction du nombre d'équipes nécessaire au tour
                                 if (leagueCupApparitions[k].apparitionRound == i)
                                 {
                                     RecoverTeams newRt = new RecoverTeams(leagueCupApparitions[k].tournament.rounds[0], teamsToAddFromLeague, leagueCupApparitions[k].isBestTeams ? RecuperationMethod.Best : RecuperationMethod.Worst);
                                     _rounds[delRoundId].recuperedTeams.Add(newRt);
                                     currentTeamsAdded += teamsToAddFromLeague;
                                     newRecoverTeams.Add(newRt);
-                                    Console.WriteLine("Tour " + i + ", " + teamsToAddFromLeague + " équipes de D" + (j + 1) + " directement qualifiés au tour " + delRoundId);
+                                    Console.WriteLine("Tour " + i + ", " + teamsToAddFromLeague + " équipes de D" + (k + 1) + " directement qualifiés au tour " + delRoundId);
                                 }
                             }
                             _rounds[i].recuperedTeams.Clear();
                         }
-                        if(currentTeamsAdded != totalApp)
+                        //On oublie pas de mettre à jour les qualifications des autres ligues aux tours plus loin car d'une année à l'autre le nombre d'équipes première dans une ligue a changé
+                        for(int i = 0; i<leagueCupApparitions.Count; i++)
                         {
-                            int margin = totalApp - currentTeamsAdded;
-                            Console.WriteLine("Marge : " + margin + " avec "+totalApp+" equipes a atteindres et " + currentTeamsAdded + " equipes ajoutés");
+                            RecoverTeams rt = GetRecoverTeams(leagueCupApparitions[i].tournament, leagueCupApparitions[i].isBestTeams);
+                            if(leagueCupApparitions[i].apparitionRound >= delRoundId && !newRecoverTeams.Contains(rt))
+                            {
+                                UpdateRecuperedTeams(leagueCupApparitions[i].teams, leagueCupApparitions[i].tournament, leagueCupApparitions[i].isBestTeams, false);
+                            }
+                        }
+                        Console.WriteLine(currentTeamsAdded + " équipes ajoutées sur un total de " + expectedQualified);
+                        //Même fixe que l'autre cas si le calcul du ratio n'est pas tombé juste
+                        if(currentTeamsAdded != expectedQualified)
+                        {
+                            int margin = expectedQualified - currentTeamsAdded;
+                            Console.WriteLine("Marge : " + margin + " avec "+ expectedQualified + " equipes a atteindres et " + currentTeamsAdded + " equipes ajoutés");
                             for (int i = 0; i < newRecoverTeams.Count && margin != 0; i++)
                             {
                                 int currentlyAddedTeamFromLeague = 0;
@@ -535,6 +511,7 @@ namespace TheManager
                             }
                         }
                     }
+                    //Pas assez d'équipe, on passe au tour suivant en mettant à jour le nombre actuel d'équipes dans la compétition
                     currentTeamsCount = expectedRoundTeams;
                 }
             }

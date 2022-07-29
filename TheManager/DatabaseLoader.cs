@@ -1028,6 +1028,19 @@ namespace TheManager
                                     }
                                 }
                             }
+                            foreach (XElement e4 in e3.Descendants("RelegationRegion"))
+                            {
+                                int administrativeId = int.Parse(e4.Attribute("administrative_id").Value);
+                                int relegations = int.Parse(e4.Attribute("relegations").Value);
+                                AdministrativeDivision ad = _kernel.GetAdministrativeDivision(administrativeId);
+                                GroupsRound gr = round as GroupsRound;
+                                if(gr != null && ad != null)
+                                {
+                                    Console.WriteLine("Add relegation par region " + ad.name + " " + relegations);
+                                    gr.relegationsByAdministrativeDivisions.Add(ad, relegations);
+                                }
+                            }
+
                             foreach (XElement e4 in e3.Descendants("Qualification"))
                             {
                                 int tourId = int.Parse(e4.Attribute("id_tour").Value);

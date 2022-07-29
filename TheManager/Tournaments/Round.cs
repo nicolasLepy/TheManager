@@ -55,7 +55,7 @@ namespace TheManager
 
         public bool Equals(RecoverTeams other)
         {
-            throw new NotImplementedException();
+            return this.Source == other.Source && this.Number == other.Number && this.Method == other.Method;
         }
     }
 

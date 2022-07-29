@@ -31,6 +31,8 @@ namespace TheManager
         private List<string> _groupsNames;
         [DataMember]
         private int _referenceClubsByGroup;
+        [DataMember]
+        private Dictionary<AdministrativeDivision, int> _relegationsByAdministrativeDivisions;
 
         public int referenceClubsByGroup => _referenceClubsByGroup;
 
@@ -50,6 +52,8 @@ namespace TheManager
 
         public RandomDrawingMethod RandomDrawingMethod => _randomDrawingMethod;
         
+        public Dictionary<AdministrativeDivision, int> relegationsByAdministrativeDivisions => _relegationsByAdministrativeDivisions;
+
         public string GroupName(int groupId)
         {
             string res = "";
@@ -87,6 +91,7 @@ namespace TheManager
             _groupsLocalisation = new List<GeographicPosition>();
             _referenceClubsByGroup = 0;
             _administrativeLevel = administrativeLevel;
+            _relegationsByAdministrativeDivisions = new Dictionary<AdministrativeDivision, int>();
         }
 
         public override Round Copy()
@@ -105,6 +110,10 @@ namespace TheManager
             {
                 t._groups[i] = new List<Club>(c);
                 i++;
+            }
+            foreach(KeyValuePair<AdministrativeDivision, int> kvp in relegationsByAdministrativeDivisions)
+            {
+                t.relegationsByAdministrativeDivisions.Add(kvp.Key, kvp.Value);
             }
             return t;
         }
@@ -245,6 +254,12 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Adjust qualifications according to region and district constraints
+        /// </summary>
+        /// <param name="baseQualifications">List of initial qualifications</param>
+        /// <param name="group">Concerned group</param>
+        /// <returns>New list of qualifications</returns>
         public List<Qualification> AdjustQualificationAdministrativeDivision(List<Qualification> baseQualifications, int group)
         {
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
@@ -257,6 +272,7 @@ namespace TheManager
 
             List<Club> admRelegationsCandidates = GetAdministrativeDivisionRelegablesCandidates(administrativeDivision);
             List<Club> groupRanking = Ranking(group);
+            //Get tournament target of relegation places
             Tournament bottomTournament = null;
             foreach (Qualification q in adjustedQualifications)
             {
@@ -271,7 +287,6 @@ namespace TheManager
                 bottomTournament = Tournament;
             }
 
-            
             //If this league is this first district league, automatically compute promotion slots
             GroupsRound upperGroupRound = country.League(Tournament.level - 1).rounds[0] as GroupsRound;
             bool extraPromotionOnGroup = false;
@@ -294,9 +309,15 @@ namespace TheManager
                         promotionSlots++;
                     }
                 }
+                //Si le nombre de relegations de la division du haut est défini par région, alors on sélectionne automatiquement ce nombre de relegués
+                if(upperGroupRound.relegationsByAdministrativeDivisions.ContainsKey(upperAdministrativeDivision))
+                {
+                    promotionSlots = upperGroupRound.relegationsByAdministrativeDivisions[upperAdministrativeDivision];
+                }
 
                 promotionSlots = promotionSlots + 1; //TODO : +1 or +offset national/regional
                 
+                //Dispatche les places de promotion attribué au groupe si la région administrative possède plusieurs groupes dans la division
                 int promotionByGroup = promotionSlots / admGroupUpper;
                 extraPromotions = promotionSlots % admGroupUpper;
                 for (int i = 1; i <= promotionByGroup; i++)
@@ -318,6 +339,7 @@ namespace TheManager
 
             int relegationPlaces = 0;
             //TODO : Round with barrages are not managed, creating barrage not managed
+            //Dispatche les places de promotion attribué au groupe si la région administrative possède plusieurs groupes dans la division
             if (admGroupCount > 1)
             {
                 //Multiple groups by adm, split promotion/relegation on groups
@@ -336,8 +358,7 @@ namespace TheManager
                         relegationPlaces = adjustedQualifications.Count - q.ranking + 1;
                     }
                 }
-
-                if (promotionPlaces > -1)
+                if (promotionPlaces > 0)
                 {
                     int promotionByGroup = promotionPlaces / admGroupCount;
                     extraPromotions = promotionPlaces % admGroupCount;
@@ -366,6 +387,12 @@ namespace TheManager
                     }
                 }
 
+                //Ignore qualifications relegations but take predefined relegations number of administrative divsiion
+                if (relegationsByAdministrativeDivisions.ContainsKey(administrativeDivision))
+                {
+                    relegationPlaces = relegationsByAdministrativeDivisions[administrativeDivision];
+                }
+                Console.WriteLine("[" + Tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Promotions : " + promotionPlaces + ", relegations : " + relegationPlaces);
                 if (relegationPlaces > -1)
                 {
                     int relegationsByGroup = relegationPlaces / admGroupCount;
@@ -395,12 +422,27 @@ namespace TheManager
             }
             else
             {
+                //Sinon le nombre de relegétions dans le groupe est le nombre de relégations défini dans la liste des qualifications
                 foreach (Qualification q in adjustedQualifications)
                 {
                     if (q.isNextYear && q.roundId == 0 && q.tournament.level > Tournament.level)
                     {
                         relegationPlaces++;
                     }
+                }
+                //Ignore qualifications relegations but take predefined relegations number of administrative division if defined
+                if (relegationsByAdministrativeDivisions.ContainsKey(administrativeDivision))
+                {
+                    for (int i = adjustedQualifications.Count; i > adjustedQualifications.Count-relegationPlaces; i--)
+                    {
+                        UpdateQualificationTournament(adjustedQualifications, i, Tournament);
+                    }
+                    int fixedRelegations = relegationsByAdministrativeDivisions[administrativeDivision];
+                    for (int i = adjustedQualifications.Count; i > adjustedQualifications.Count-fixedRelegations; i--)
+                    {
+                        UpdateQualificationTournament(adjustedQualifications, i, bottomTournament);
+                    }
+                    relegationPlaces = fixedRelegations;
                 }
             }
 
@@ -438,17 +480,27 @@ namespace TheManager
                             }
                         }
                     }
+                    if(Tournament.level == 5) Console.WriteLine("[Case 1][" + Tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Relegations aditionnelles : " + admRelegables);
                 }
                 //Case 2
                 else
                 {
                     List<Qualification> regularQualifications = upperGroupRound.qualifications;
                     int regularQualificationsCount = 0;
-                    foreach (Qualification q in regularQualifications)
+                    AdministrativeDivision upperAdministrativeDivision = country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound.administrativeLevel);
+                    //Ignore qualifications relegations but take predefined relegations number of administrative divsiion
+                    if (upperGroupRound.relegationsByAdministrativeDivisions.ContainsKey(upperAdministrativeDivision))
                     {
-                        if (q.tournament == Tournament && q.isNextYear && q.roundId == 0)
+                        regularQualificationsCount = upperGroupRound.relegationsByAdministrativeDivisions[upperAdministrativeDivision];
+                    }
+                    else
+                    {
+                        foreach (Qualification q in regularQualifications)
                         {
-                            regularQualificationsCount++;
+                            if (q.tournament == Tournament && q.isNextYear && q.roundId == 0)
+                            {
+                                regularQualificationsCount++;
+                            }
                         }
                     }
 
@@ -470,10 +522,13 @@ namespace TheManager
                     }
 
                     admRelegables = totalRelegations - regularQualificationsCount;
+                    if (Tournament.level == 5) Console.WriteLine("[Case 2][" + Tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Relegations aditionnelles : " + admRelegables);
                 }
             }
 
             relegationPlaces += admRelegables;
+            if (Tournament.level == 5) Console.WriteLine("[" + Tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Total relegations : " + relegationPlaces);
+            //Dans le cas par exemple avec deux groupes et trois montées, un groupe aura une montée additionelle. On enlève alors une relégation à ce groupe pour maintenir le même nombre d'équipes dans le groupe
             if (extraPromotionOnGroup)
             {
                 relegationPlaces--;
@@ -603,6 +658,7 @@ namespace TheManager
             */
 
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
+            //Check if bottom round is a group round or an inactive round (could be factorized)
             bool ok = false;
             GroupsRound bottomGroupRound = country.League(Tournament.level + 1)?.rounds[0] as GroupsRound;
             if (bottomGroupRound != null)
