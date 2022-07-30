@@ -273,6 +273,19 @@ namespace TheManager
             return res;
         }
 
+        public Tournament GetHigherRegionalTournament(int administrativeLevel)
+        {
+            Tournament higherRegionalTournament = null;
+            foreach (Tournament t in Tournaments())
+            {
+                if (t.isChampionship && (t.rounds[0] as GroupsRound) != null && (t.rounds[0] as GroupsRound).administrativeLevel == administrativeLevel && (higherRegionalTournament == null || t.level < higherRegionalTournament.level))
+                {
+                    higherRegionalTournament = t;
+                }
+            }
+            return higherRegionalTournament;
+        }
+
         public bool LeagueSystemWithReserves()
         {
             bool res = false;
