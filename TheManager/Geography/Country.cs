@@ -27,12 +27,14 @@ namespace TheManager
         private int _shapeNumber;
         [DataMember]
         private List<AdministrativeDivision> _administrativeDivisions;
-
+        [DataMember]
+        private Dictionary<Club, Tournament> _administrativeRetrogradations;
         public List<City> cities { get { return _cities; } }
         public List<Stadium> stadiums { get { return _stadiums; } }
         public Language language { get => _language; }
 
         public List<AdministrativeDivision> administrativeDivisions => _administrativeDivisions;
+        public Dictionary<Club, Tournament> administrativeRetrogradations => _administrativeRetrogradations;
         
         public string Flag
         {
@@ -121,6 +123,7 @@ namespace TheManager
             _tournaments = new List<Tournament>();
             _shapeNumber = shapeNumber;
             _administrativeDivisions = new List<AdministrativeDivision>();
+            _administrativeRetrogradations = new Dictionary<Club, Tournament>();
         }
 
         public AdministrativeDivision GetCountryAdministrativeDivision()

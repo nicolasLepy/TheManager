@@ -556,9 +556,9 @@ namespace TheManager
                     }
                 }
             }
-
             return res;
         }
+
 
         public void AddFriendlyGame(Match m)
         {

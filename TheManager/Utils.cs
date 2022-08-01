@@ -413,14 +413,14 @@ namespace TheManager
         }
 
         [Flags]
-        private enum RuleStatus
+        public enum RuleStatus
         {
             RuleRespected = 1,
             RuleNotRespected = 2,
             RuleRelegation = 4
         }
 
-        private static RuleStatus RuleIsRespected(Club club, Qualification qualification, int baseLevel, bool reservesCantBePromoted)
+        public static RuleStatus RuleIsRespected(Club club, Qualification qualification, int baseLevel, bool reservesCantBePromoted)
         {
             //Rule 1 : Reserve can't be promoted
             //Rule 2 : Reserve can't be promoted if another reserve of the club is in the higher division
@@ -490,7 +490,7 @@ namespace TheManager
         {
 
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
-            List<int> fixedRelegations = new List<int>(); //Contains ranking of teams that can't be saved
+            List<int> fixedRelegations = new List<int>(); // Contains ranking of teams that can't be saved
 
             for (int i = 0; i<qualifications.Count; i++)
             {

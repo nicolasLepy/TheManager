@@ -1036,7 +1036,6 @@ namespace TheManager
                                 GroupsRound gr = round as GroupsRound;
                                 if(gr != null && ad != null)
                                 {
-                                    Console.WriteLine("Add relegation par region " + ad.name + " " + relegations);
                                     gr.relegationsByAdministrativeDivisions.Add(ad, relegations);
                                 }
                             }

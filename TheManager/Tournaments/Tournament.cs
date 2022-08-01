@@ -90,6 +90,7 @@ namespace TheManager
         [DataMember]
         private List<Stadium> _hostStadiums;
 
+        public List<Club>[] nextYearQualified;
 
         public string name { get => _name; }
         public Color color => _color;
@@ -522,26 +523,6 @@ namespace TheManager
         /// </summary>
         public void Reset()
         {
-            if(!isChampionship && (Session.Instance.Game.kernel.LocalisationTournament(this) as Country) == Session.Instance.Game.kernel.String2Country("Azerbaïdjan"))
-            {
-                Country c = Session.Instance.Game.kernel.String2Country("Azerbaïdjan");
-                Console.WriteLine("Initialise la coupe de l'azerbaidjan");
-                foreach(Round r in this.rounds)
-                {
-                    Console.WriteLine("[CDLA] " + r.name);
-                    foreach(RecoverTeams rt in r.recuperedTeams)
-                    {
-                        Console.WriteLine("[CDLA][" + r.name + "]. Ajoute " + rt.Number + " depuis " + (rt.Source as Round).Tournament.name);
-                    }
-                }
-                foreach(Tournament t in c.Tournaments())
-                {
-                    if(t.isChampionship)
-                    {
-                        Console.WriteLine("[CDLA][" + t.name + "]. Clubs : " + t.rounds[0].clubs.Count + " (" + t.rounds[0].CountWithoutReserves() + " équipes premières");
-                    }
-                }
-            }
             _remainingYears--;
             if (_remainingYears == 0)
             {

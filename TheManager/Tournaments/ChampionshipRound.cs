@@ -125,7 +125,115 @@ namespace TheManager
             }
             return adjustedQualifications;
         }
-        
+
+        //TODO : Gestion des relégations administratives
+        /*
+        private void RequalifyClubsAdministrativeRetrogradation()
+        {
+            Tournament tournament = Tournament;
+            List<KeyValuePair<Club, Tournament>> qualifications = new List<KeyValuePair<Club, Tournament>>();
+            List<Club> ranking = Ranking();
+            foreach(Club c in ranking)
+            {
+                qualifications.Add(new KeyValuePair<Club, Tournament>(c, tournament));
+            }
+
+            Country country = Session.Instance.Game.kernel.LocalisationTournament(tournament) as Country;
+            for(int i = tournament.level-1; i < tournament.level+2; i++)
+            {
+                Tournament tournamentI = country.League(i);
+                if(tournamentI != null)
+                {
+                    List<Club> nextYearQualified = tournamentI.nextYearQualified[0];
+                    for(int j = 0; j < qualifications.Count; j++)
+                    {
+                        KeyValuePair<Club, Tournament> kvp = qualifications[j];
+                        if (nextYearQualified.Contains(kvp.Key))
+                        {
+                            qualifications[j] = new KeyValuePair<Club, Tournament>(kvp.Key, tournamentI);
+                        }
+                    }
+                }
+            }
+
+            for(int i = 0; i<ranking.Count; i++)
+            {
+                Club c = ranking[i];
+                KeyValuePair<Club, Tournament> qualification = qualifications[i];
+                foreach (KeyValuePair<Club, Tournament> retrogradation in country.administrativeRetrogradations)
+                {
+                    if (retrogradation.Key == c)
+                    {
+                        List<Qualification> roundQualifications = GetQualifications();
+                        //Le club est promu
+                        if (qualification.Value.level < tournament.level)
+                        {
+                            qualification.Value.nextYearQualified[0].Remove(c);
+
+                            //Ajouter le premier club non promu à être promu s'il respecte les règles
+                            bool ok = false;
+                            for(int j = 0; j < ranking.Count && !ok; j++)
+                            {
+                                Club candidate = ranking[j];
+                                KeyValuePair<Club, Tournament> nextYearCandidate = qualifications[j];
+                                if (nextYearCandidate.Value == tournament && Utils.RuleIsRespected(candidate, roundQualifications[j], tournament.level, tournament.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted)) == Utils.RuleStatus.RuleRespected)
+                                {
+                                    ok = true;
+                                    qualification.Value.nextYearQualified[0].Add(candidate);
+                                    tournament.nextYearQualified[0].Remove(candidate);
+
+                                }
+                            }
+                        }
+                        if(qualification.Value.level == tournament.level)
+                        {
+                            //Sauver le premier candidat relegue s'il respecte les règles
+                            bool ok = false;
+                            for (int j = 0; j < ranking.Count && !ok; j++)
+                            {
+                                Club candidate = ranking[j];
+                                KeyValuePair<Club, Tournament> nextYearCandidate = qualifications[j];
+                                if (nextYearCandidate.Value.level > tournament.level && Utils.RuleIsRespected(candidate, roundQualifications[j], tournament.level, tournament.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted)) == Utils.RuleStatus.RuleRespected)
+                                {
+                                    ok = true;
+                                    nextYearCandidate.Value.nextYearQualified[0].Remove(candidate);
+                                    tournament.nextYearQualified[0].Add(candidate);
+
+                                }
+                            }
+                        }
+                        retrogradation.Value.AddClubForNextYear(c, 0);
+                    }
+                }
+            }
+        }*/
+
+        private List<Qualification> AdjustQualificationsAdministrativeRetrogradation(List<Qualification> qualifications, Country country)
+        {
+            Tournament tournament = Tournament;
+            List<Club> ranking = Ranking();
+            List<Qualification> newQualifications = new List<Qualification>(qualifications);
+            newQualifications.Sort(new QualificationComparator());
+            foreach (Club c in _clubs)
+            {
+                //Aussi if reserve && reserve >= cible descente
+                if(country.administrativeRetrogradations.ContainsKey(c))
+                {
+                    Qualification q = newQualifications[ranking.IndexOf(c)];
+                    if ((q.isNextYear && q.tournament.level < tournament.level) )
+                    {
+
+                    }
+                    //Si promovable ou barrage, on change
+                    //Si relegable, on change rien pour ce groupe
+                }
+            }
+
+            //Check autres descend voir si ici on est concerné
+
+            return newQualifications;
+        }
+
         public override void QualifyClubs()
         {
             List<Club> ranking = Ranking();

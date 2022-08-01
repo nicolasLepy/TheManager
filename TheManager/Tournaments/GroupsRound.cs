@@ -33,6 +33,11 @@ namespace TheManager
         private int _referenceClubsByGroup;
         [DataMember]
         private Dictionary<AdministrativeDivision, int> _relegationsByAdministrativeDivisions;
+        /// <summary>
+        /// For computation time optimization, save computed group qualifications
+        /// </summary>
+        [DataMember]
+        private List<Qualification>[] _storedGroupQualifications = null;
 
         public int referenceClubsByGroup => _referenceClubsByGroup;
 
@@ -78,6 +83,10 @@ namespace TheManager
             _groupsNames.Add(name);
         }
 
+        public void InitStoredGroupQualifications()
+        {
+            _storedGroupQualifications = new List<Qualification>[_groups.Length];
+        }
         public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod randomDrawingMethod, int administrativeLevel) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
         {
             _groupsNumber = groupsCount;
@@ -288,6 +297,7 @@ namespace TheManager
         /// <returns>New list of qualifications</returns>
         public List<Qualification> AdjustQualificationAdministrativeDivision(List<Qualification> baseQualifications, int group)
         {
+
             Tournament tournament = Tournament;
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
             adjustedQualifications.Sort(new QualificationComparator());
@@ -357,7 +367,7 @@ namespace TheManager
                 if (extraPromotions > 0)
                 {
                     List<Club> rankingRank = RankingByRank(promotionByGroup + 1, upperAdministrativeDivision);
-                    Club concerned = Ranking(group)[promotionByGroup];
+                    Club concerned = groupRanking[promotionByGroup];
                     if (rankingRank.IndexOf(concerned) < extraPromotions)
                     {
                         UpdateQualificationTournament(adjustedQualifications, promotionByGroup+1, upperGroupRound.Tournament);
@@ -401,7 +411,7 @@ namespace TheManager
                     {
                         int ranking = promotionPlaces - promotionOffset;
                         List<int> groupsAdm = GetGroupsFromAdministrativeDivision(administrativeDivision);
-                        Club groupConcerned = Ranking(group)[ranking];
+                        Club groupConcerned = groupRanking[ranking];
                         List<Club> rankingI = new List<Club>();
                         foreach(int i in groupsAdm)
                         {
@@ -438,7 +448,7 @@ namespace TheManager
                         int relativeRanking = ranking - _groups[group].Count;
                         //int ranking = _groups[group].Count - relegationPlaces + relegationOffset + 1;// - (relegationOffset == 0 ? 1 : 0);
                         //int relativeRanking = _groups[group].Count - ranking - 1;
-                        Club groupConcerned = Ranking(group)[ranking];
+                        Club groupConcerned = groupRanking[ranking];
                         List<Club> rankingI = RankingByRank(relativeRanking, administrativeDivision);
                         int cOff = rankingI.IndexOf(groupConcerned);
                         Console.WriteLine(rankingI.IndexOf(groupConcerned) + " < " + (rankingI.Count-extraRelegations));
@@ -451,7 +461,7 @@ namespace TheManager
             }
             else
             {
-                //Sinon le nombre de relegétions dans le groupe est le nombre de relégations défini dans la liste des qualifications
+                //Sinon le nombre de relégations dans le groupe est le nombre de relégations défini dans la liste des qualifications
                 foreach (Qualification q in adjustedQualifications)
                 {
                     if (q.isNextYear && q.roundId == 0 && q.tournament.level > tournament.level)
@@ -512,7 +522,7 @@ namespace TheManager
                 //Case 1
                 if (upperGroupRound.administrativeLevel < administrativeLevel)
                 {
-                    AdministrativeDivision admAtLevel = upperGroupRound._administrativeLevel > 0 ? country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound._administrativeLevel) : null;
+                    AdministrativeDivision admAtLevel = upperGroupRound.administrativeLevel > 0 ? country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound._administrativeLevel) : null;
                     for (int i = 0; i < upperGroupRound._groupsNumber; i++)
                     {
                         List<Qualification> groupQualifications = upperGroupRound.GetGroupQualifications(i);
@@ -599,109 +609,6 @@ namespace TheManager
                 }
             }
 
-            /*
-            //TODO : Possible d'avoir a gérer ce cas un jour, où il y a moins de relegué que prévu (promu extra ...)
-            if (admRelegables < 0)
-            {
-                int savedByGroup = admRelegables / admGroupCount;
-                int savedRelegablesExtra = admRelegables % admGroupCount;
-                int firstPosition = -1;
-                foreach (Qualification q in adjustedQualifications)
-                {
-                    if (q.isNextYear && q.tournament.isChampionship && q.tournament.level > Tournament.level && firstPosition == -1)
-                    {
-                        firstPosition = q.ranking;
-                    }
-                }
-
-                if (firstPosition != -1)
-                {
-                    for (int i = 0; i < savedByGroup; i++)
-                    {
-                        Console.WriteLine("[" + Tournament.name + "][" + _groupsNames[group] + "][" + administrativeDivision.name + "] Une équipe sauvée rang " + firstPosition);
-                        UpdateQualificationTournament(adjustedQualifications, firstPosition, Tournament);
-                        firstPosition++;
-                    }
-
-                    if (savedRelegablesExtra > 0)
-                    {
-                        int negativePosition = firstPosition-_groups[group].Count-1;
-                        List<Club> clubsRanking = new List<Club>();
-                        for (int i = 0; i < groupsCount; i++)
-                        {
-                            clubsRanking.Add(Ranking(i)[_groups[i].Count+negativePosition]);
-                        }
-                        clubsRanking.Sort(new ClubRankingComparator(_matches));
-                        if (clubsRanking.IndexOf(groupRanking[firstPosition]) < firstPosition)
-                        {
-                            UpdateQualificationTournament(adjustedQualifications, firstPosition, Tournament);
-                        }
-                    }
-
-                    
-                }
-            }
-            if (admRelegables > 0)
-            {
-                int extraRelegablesByGroup = admRelegables / admGroupCount;
-                int extraRelegablesExtra = admRelegables % admGroupCount;
-                int firstPosition = -1;
-                foreach (Qualification q in adjustedQualifications)
-                {
-                    if (q.isNextYear && q.tournament.isChampionship && q.tournament.level > Tournament.level && firstPosition == -1)
-                    {
-                        firstPosition = q.ranking;
-                    }
-                }
-                
-                if (firstPosition != -1)
-                {
-                    //Incrementally increase relegation places on the ranking
-                    for (int i = 0; i < extraRelegablesByGroup; i++)
-                    {
-                        firstPosition--;
-                        //TODO : Maybe add a check if the ranking is neutral
-                        UpdateQualificationTournament(adjustedQualifications, firstPosition, bottomTournament);
-                        Console.WriteLine("[" + Tournament.name + "][" + _groupsNames[group] + "][" + administrativeDivision.name + "] Une équipe releguée rang " + firstPosition);
-
-                    }
-
-                    if (extraRelegablesExtra > 0)
-                    {
-                        firstPosition--;
-                        int negativePosition = firstPosition-_groups[group].Count-1;
-                        List<Club> clubsRanking = new List<Club>();
-                        for (int i = 0; i < groupsCount; i++)
-                        {
-                            clubsRanking.Add(Ranking(i)[_groups[i].Count+negativePosition]);
-                        }
-                        clubsRanking.Sort(new ClubRankingComparator(_matches, RankingType.General, true));
-                        if (clubsRanking.IndexOf(groupRanking[firstPosition]) < extraRelegablesExtra)
-                        {
-                            //Search the good qualification and set the bottom tournament
-                            UpdateQualificationTournament(adjustedQualifications, firstPosition, bottomTournament);
-                            Console.WriteLine("[" + Tournament.name + "][" + _groupsNames[group] + "][" + administrativeDivision.name + "] Une équipe supplémentaire dans ce groupe releguée rang " + firstPosition);
-                        }
-                    }
-                    
-                }
-            }
-
-            if (extraPromotionOnGroup)
-            {
-                bool ok = false;
-                for (int j = 0; j < adjustedQualifications.Count && !ok; j++)
-                {
-                    if (adjustedQualifications[j].tournament.level > Tournament.level)
-                    {
-                        UpdateQualificationTournament(adjustedQualifications, adjustedQualifications[j].ranking, Tournament);
-                        Console.WriteLine("[" + Tournament.name + "][" + _groupsNames[group] + "][" + administrativeDivision.name + "] Extra promotion, donc l'équipe " + adjustedQualifications[j].ranking + " ne sera pas releguée");
-                        ok = true;
-                    }
-                }
-            }
-            */
-
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
             //Check if bottom round is a group round or an inactive round (could be factorized)
             bool ok = false;
@@ -740,67 +647,78 @@ namespace TheManager
                 }
             }
 
-
             return adjustedQualifications;
         }
 
+
         public List<Qualification> GetGroupQualifications(int group)
         {
-            Tournament tournament = Tournament;
-            List<Qualification> allQualifications = new List<Qualification>(qualifications);
-            int countChampionshipQualifications = 0;
-            foreach(Qualification qualification in qualifications)
+            if(_storedGroupQualifications == null)
             {
-                if(qualification.tournament.isChampionship)
-                {
-                    countChampionshipQualifications++;
-                }
+                _storedGroupQualifications = new List<Qualification>[_groups.Length];
             }
-            int minTeamsByGroup = clubs.Count / groupsCount;
-            int groupsWithExtraTeam = clubs.Count % groupsCount;
-
-            //It's a group with extra team, qualifications needs to be adapted
-            if (group < groupsWithExtraTeam /*groups[group].Count == minTeamsByGroup + 1*/ && countChampionshipQualifications == minTeamsByGroup)
+            if(_storedGroupQualifications[group] != null)
             {
-                allQualifications.Sort(new QualificationComparator());
-                int firstRankingToBottom = -1;
-                foreach(Qualification q in allQualifications)
+                return _storedGroupQualifications[group];
+            }
+            else
+            {
+                Tournament tournament = Tournament;
+                List<Qualification> allQualifications = new List<Qualification>(qualifications);
+                int countChampionshipQualifications = 0;
+                foreach (Qualification qualification in qualifications)
                 {
-                    if(q.tournament.level > tournament.level && firstRankingToBottom == -1)
+                    if (qualification.tournament.isChampionship)
                     {
-                        firstRankingToBottom = q.ranking;
+                        countChampionshipQualifications++;
                     }
                 }
-                if(firstRankingToBottom > -1)
+                int minTeamsByGroup = clubs.Count / groupsCount;
+                int groupsWithExtraTeam = clubs.Count % groupsCount;
+
+                //It's a group with extra team, qualifications needs to be adapted
+                if (group < groupsWithExtraTeam /*groups[group].Count == minTeamsByGroup + 1*/ && countChampionshipQualifications == minTeamsByGroup)
                 {
-                    for (int i = firstRankingToBottom - 1; i < allQualifications.Count; i++)
+                    allQualifications.Sort(new QualificationComparator());
+                    int firstRankingToBottom = -1;
+                    foreach (Qualification q in allQualifications)
                     {
-                        allQualifications[i] = new Qualification(allQualifications[i].ranking + 1, allQualifications[i].roundId, allQualifications[i].tournament, allQualifications[i].isNextYear, allQualifications[i].qualifies);
+                        if (q.tournament.level > tournament.level && firstRankingToBottom == -1)
+                        {
+                            firstRankingToBottom = q.ranking;
+                        }
                     }
-                    allQualifications.Add(new Qualification(firstRankingToBottom, allQualifications[firstRankingToBottom - 2].roundId, allQualifications[firstRankingToBottom - 2].tournament, allQualifications[firstRankingToBottom - 2].isNextYear, allQualifications[firstRankingToBottom - 2].qualifies));
+                    if (firstRankingToBottom > -1)
+                    {
+                        for (int i = firstRankingToBottom - 1; i < allQualifications.Count; i++)
+                        {
+                            allQualifications[i] = new Qualification(allQualifications[i].ranking + 1, allQualifications[i].roundId, allQualifications[i].tournament, allQualifications[i].isNextYear, allQualifications[i].qualifies);
+                        }
+                        allQualifications.Add(new Qualification(firstRankingToBottom, allQualifications[firstRankingToBottom - 2].roundId, allQualifications[firstRankingToBottom - 2].tournament, allQualifications[firstRankingToBottom - 2].isNextYear, allQualifications[firstRankingToBottom - 2].qualifies));
+                    }
+                    else
+                    {
+                        Qualification lastQualification = allQualifications[allQualifications.Count - 1];
+                        allQualifications.Add(new Qualification(lastQualification.ranking + 1, lastQualification.roundId, lastQualification.tournament, lastQualification.isNextYear, lastQualification.qualifies));
+                    }
                 }
-                else
+
+
+                //Adapt qualifications to adapt negative ranking to real ranking in the group
+                int totalClubs = _groups[group].Count > 0 ? _groups[group].Count : _clubs.Count / _groupsNumber; //Get theoretical clubs by group if groups were not drawn
+                allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
+                if (_randomDrawingMethod == RandomDrawingMethod.Administrative && _groups[group].Count > 0)
                 {
-                    Qualification lastQualification = allQualifications[allQualifications.Count - 1];
-                    allQualifications.Add(new Qualification(lastQualification.ranking+1, lastQualification.roundId, lastQualification.tournament, lastQualification.isNextYear, lastQualification.qualifies));
+                    allQualifications = AdjustQualificationAdministrativeDivision(allQualifications, group);
                 }
-            }
-            
-            
-            //Adapt qualifications to adapt negative ranking to real ranking in the group
-            int totalClubs = _groups[group].Count > 0 ? _groups[group].Count : _clubs.Count/_groupsNumber; //Get theoretical clubs by group if groups were not drawn
-            allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
-            if (_randomDrawingMethod == RandomDrawingMethod.Administrative && _groups[group].Count > 0)
-            {
-                allQualifications = AdjustQualificationAdministrativeDivision(allQualifications, group);
-            }
 
-            if(groups[group].Count > 0)
-            {
-                allQualifications = Utils.AdjustQualificationsToNotPromoteReserves(allQualifications, Ranking(group), tournament, _rules.Contains(Rule.ReservesAreNotPromoted));
+                if (groups[group].Count > 0)
+                {
+                    allQualifications = Utils.AdjustQualificationsToNotPromoteReserves(allQualifications, Ranking(group), tournament, _rules.Contains(Rule.ReservesAreNotPromoted));
+                }
+                _storedGroupQualifications[group] = allQualifications;
+                return allQualifications;
             }
-
-            return allQualifications;
 
         }
 

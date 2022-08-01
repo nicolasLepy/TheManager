@@ -17,8 +17,11 @@ namespace TheManager
         [DataMember]
         public GeographicPosition Position { get; set; }
 
+        private Country _country;
+
         public City(string name, int population, float latitude, float longitude)
         {
+            _country = null;
             Name = name;
             Population = population;
             Position = new GeographicPosition(latitude, longitude);
@@ -26,21 +29,25 @@ namespace TheManager
 
         public Country Country()
         {
-            Country res = null;
-            foreach(Continent c in Session.Instance.Game.kernel.continents)
+            if(_country == null)
             {
-                foreach(Country p in c.countries)
+                Country res = null;
+                foreach (Continent c in Session.Instance.Game.kernel.continents)
                 {
-                    foreach(City v in p.cities)
+                    foreach (Country p in c.countries)
                     {
-                        if (v == this)
+                        foreach (City v in p.cities)
                         {
-                            res = p;
+                            if (v == this)
+                            {
+                                res = p;
+                            }
                         }
                     }
                 }
+                _country = res;
             }
-            return res;
+            return _country;
         }
     }
 }

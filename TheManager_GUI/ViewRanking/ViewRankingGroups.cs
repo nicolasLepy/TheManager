@@ -68,7 +68,21 @@ namespace TheManager_GUI.VueClassement
 
         public override void Full(StackPanel spRanking)
         {
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+
             spRanking.Children.Clear();
+
+            //Split qualifications in several list because according to group qualifications can be differents (if reserves are not promoted for instance)
+            List<Qualification>[] qualifications = new List<Qualification>[_round.groupsCount];
+            if(_round.groups.Length > 0 && _round.groups[0].Count > 0)
+            {
+                for (int i = 0; i < _round.groupsCount; i++)
+                {
+                    qualifications[i] = _round.GetGroupQualifications(i);// new List<Qualification>(_round.qualifications);
+                    qualifications[i].Sort(new QualificationComparator());
+                }
+            }
+
 
             //If focusing on a team, only show five teams around the current team
             if (_focusOnTeam)
@@ -118,7 +132,7 @@ namespace TheManager_GUI.VueClassement
 
                     int roundLevel = _round.Tournament.level;
                     
-                    foreach (Qualification q in _round.GetGroupQualifications(poule))
+                    foreach (Qualification q in qualifications[poule])
                     {
                         string color = "backgroundColor";
                         if (q.tournament.level == roundLevel && q.tournament != _round.Tournament)
@@ -181,23 +195,17 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
+
+
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
             if (_round.groups[0].Count > 0 && !_focusOnTeam)
             {
 
-                //Split qualifications in several list because according to group qualifications can be differents (if reserves are not promoted for instance)
-                List<Qualification>[] qualifications = new List<Qualification>[_round.groupsCount];
 
                 List<Club>[] groups = new List<Club>[_round.groupsCount];
                 for (int i = 0; i < _round.groupsCount; i++)
                 {
                     groups[i] = new List<Club>(_round.Ranking(i));
-                }
-
-                for (int i = 0; i< _round.groupsCount; i++)
-                {
-                    qualifications[i] = _round.GetGroupQualifications(i);// new List<Qualification>(_round.qualifications);
-                    qualifications[i].Sort(new QualificationComparator());
                 }
 
                 int cumulatedChildrenCount = 0;
@@ -236,7 +244,10 @@ namespace TheManager_GUI.VueClassement
                 
             }
 
+            watch.Stop();
+            Console.WriteLine("Affichage classement :" + watch.ElapsedMilliseconds);
         }
+
 
         private void clubNameButtonClick(Club c)
         {

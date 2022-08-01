@@ -595,6 +595,15 @@ namespace TheManager
                     }
                     SetUpMediasForTournaments(todayGames, c);
                 }
+
+                foreach(Round round in c.rounds)
+                {
+                    GroupsRound gRound = round as GroupsRound;
+                    if (gRound != null)
+                    {
+                        gRound.InitStoredGroupQualifications();
+                    }
+                }
             }
 
             bool clubPlayedHaveAMatch = (clubMatchs.Count > 0) ? true : false;
@@ -655,6 +664,13 @@ namespace TheManager
             //July 20th => teams set up tickets price
             if(date.Day == 20 && date.Month == 7)
             {
+                foreach(Continent ct in _kernel.continents)
+                {
+                    foreach(Country c in ct.countries)
+                    {
+                        c.administrativeRetrogradations.Clear();
+                    }
+                }
                 foreach (Club c in kernel.Clubs)
                 {
                     c.SetTicketPrice();
@@ -720,6 +736,7 @@ namespace TheManager
             {
                 j.Recover();
             }
+
 
             return clubMatchs;
         }
