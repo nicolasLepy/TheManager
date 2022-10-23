@@ -194,7 +194,7 @@ namespace TheManager
                     }
                     for (int roundIndex = yearContinentalTournament.rounds.Count - 3; roundIndex < yearContinentalTournament.rounds.Count; roundIndex++)
                     {
-                        if (yearContinentalTournament.rounds[roundIndex].clubs.Contains(this))
+                        if (roundIndex >= 0 && yearContinentalTournament.rounds[roundIndex].clubs.Contains(this))
                         {
                             res += 1;
                         }

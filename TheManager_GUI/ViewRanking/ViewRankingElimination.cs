@@ -111,6 +111,11 @@ namespace TheManager_GUI.VueClassement
             }
             else
             {
+                Dictionary<int, int> clubsByLevel = new Dictionary<int, int>();
+                for(int i = 1; i<10; i++)
+                {
+                    clubsByLevel[i] = 0;
+                }
                 foreach(Match m in matchs)
                 {
                     StackPanel spFirstTeam = new StackPanel();
@@ -131,6 +136,8 @@ namespace TheManager_GUI.VueClassement
 
                     if (!internationalTournament && !_round.Tournament.isChampionship)
                     {
+                        clubsByLevel[m.home.Championship.level]++;
+                        clubsByLevel[m.away.Championship.level]++;
                         spFirstTeam.Children.Add(ViewUtils.CreateLabel(m.home.Championship.shortName, "StyleLabel2", 10 * _sizeMultiplier, 30 * _sizeMultiplier));
                         spSecondTeam.Children.Add(ViewUtils.CreateLabel(m.away.Championship.shortName, "StyleLabel2", 10 * _sizeMultiplier, 30 * _sizeMultiplier));
                     }
@@ -158,6 +165,11 @@ namespace TheManager_GUI.VueClassement
                     spRanking.Children.Add(new Separator());
 
                 }
+                for (int i = 1; i < 10; i++)
+                {
+                    Console.WriteLine("Club de niveau " + i + " : " + clubsByLevel[i]);
+                }
+
             }
         }
     }

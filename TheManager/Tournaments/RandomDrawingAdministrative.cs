@@ -31,12 +31,16 @@ namespace TheManager.Tournaments
             Country hostCountry = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Country;
             List<List<Club>> groups = new List<List<Club>>();
             List<string> groupNames = new List<string>();
+            Console.WriteLine("Host country = " + hostCountry);
+            Console.WriteLine("Host country = " + _round.referenceClubsByGroup);
+            Console.WriteLine("Host country = " + _round.clubs.Count / _round.groupsCount);
             if (hostCountry != null)
             {
                 int defaultMaxTeamsByGroup = _round.referenceClubsByGroup == 0 ? _round.clubs.Count / _round.groupsCount : _round.referenceClubsByGroup;
                 defaultMaxTeamsByGroup = _round.clubs.Count % _round.groupsCount != 0
                     ? defaultMaxTeamsByGroup + 1
                     : defaultMaxTeamsByGroup;
+                Console.WriteLine(defaultMaxTeamsByGroup);
                 Console.WriteLine("[MaxTeamsByGroup] " + defaultMaxTeamsByGroup);
                 foreach (AdministrativeDivision ad in hostCountry.GetAdministrativeDivisionsLevel(_round.administrativeLevel))
                 {

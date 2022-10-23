@@ -74,6 +74,9 @@
     <Compile Include="CalendarWindow.xaml.cs">
       <DependentUpon>CalendarWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DialogDatabase.xaml.cs">
+      <DependentUpon>DialogDatabase.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GlobalWindow.xaml.cs">
       <DependentUpon>GlobalWindow.xaml</DependentUpon>
     </Compile>
@@ -137,6 +140,10 @@
       <DependentUpon>TournamentClubWindow.xaml</DependentUpon>
     </Compile>
     <Page Include="CalendarWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DialogDatabase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

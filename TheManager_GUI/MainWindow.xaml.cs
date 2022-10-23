@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -99,85 +100,90 @@ namespace TheManager_GUI
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
 
-            
+
             /*
             FifaDataParser fifaDataParser = new FifaDataParser();
             fifaDataParser.Parse();*/
 
-            
+
 
             //await CallLoadingGame();
 
+            DialogDatabase dd = new DialogDatabase();
+            bool? resultDialog = dd.ShowDialog();
+            if(resultDialog == true)
+            {
+                Game partie = new Game();
+                Session.Instance.Game = partie;
+                Kernel g = partie.kernel;
+                Utils.dataFolderName = "data\\database_" + dd.Database;
+                _loader = new DatabaseLoader(g);
+                DatabaseLoader cbdd = _loader;
+                //cbdd.ReformateCities();
 
-            Game partie = new Game();
-            Session.Instance.Game = partie;
-            Kernel g = partie.kernel;
-            _loader = new DatabaseLoader(g);
-            DatabaseLoader cbdd = _loader;
-            //cbdd.ReformateCities();
 
-           
-            
-            cbdd.LoadLanguages();
-            pbLoading.Value = 2;
-            lbCreationPartie.Content = "Chargement de l'environnement";
-            cbdd.LoadGeography();
 
-            pbLoading.Value = 3;
-            lbCreationPartie.Content = "Chargement des calendriers";
-            cbdd.LoadCalendars();
+                cbdd.LoadLanguages();
+                pbLoading.Value = 2;
+                lbCreationPartie.Content = "Chargement de l'environnement";
+                cbdd.LoadGeography();
 
-            pbLoading.Value = 4;
-            lbCreationPartie.Content = "Chargement des villes";
-            cbdd.LoadCities();
+                pbLoading.Value = 3;
+                lbCreationPartie.Content = "Chargement des calendriers";
+                cbdd.LoadCalendars();
 
-            pbLoading.Value = 6;
-            lbCreationPartie.Content = "Chargement des stades";
-            cbdd.LoadStadiums();
+                pbLoading.Value = 4;
+                lbCreationPartie.Content = "Chargement des villes";
+                cbdd.LoadCities();
 
-            pbLoading.Value = 10;
-            lbCreationPartie.Content = "Chargement des clubs";
-            cbdd.LoadClubs();
+                pbLoading.Value = 6;
+                lbCreationPartie.Content = "Chargement des stades";
+                cbdd.LoadStadiums();
 
-            pbLoading.Value = 30;
-            lbCreationPartie.Content = "Chargement des compétitions";
-            cbdd.LoadTournaments();
+                pbLoading.Value = 10;
+                lbCreationPartie.Content = "Chargement des clubs";
+                cbdd.LoadClubs();
 
-            pbLoading.Value = 40;
-            lbCreationPartie.Content = "Chargement des joueurs";
-            cbdd.LoadPlayers();
+                pbLoading.Value = 30;
+                lbCreationPartie.Content = "Chargement des compétitions";
+                cbdd.LoadTournaments();
 
-            pbLoading.Value = 60;
-            lbCreationPartie.Content = "Chargement des entraîneurs";
-            cbdd.LoadManagers();
+                pbLoading.Value = 40;
+                lbCreationPartie.Content = "Chargement des joueurs";
+                cbdd.LoadPlayers();
 
-            pbLoading.Value = 65;
-            lbCreationPartie.Content = "Initialisation des équipes";
-            cbdd.InitTeams();
+                pbLoading.Value = 60;
+                lbCreationPartie.Content = "Chargement des entraîneurs";
+                cbdd.LoadManagers();
 
-            pbLoading.Value = 90;
-            lbCreationPartie.Content = "Initialisation des joueurs";
-            cbdd.InitPlayers();
+                pbLoading.Value = 65;
+                lbCreationPartie.Content = "Initialisation des équipes";
+                cbdd.InitTeams();
 
-            pbLoading.Value = 92;
-            lbCreationPartie.Content = "Initialisation des compétitions";
-            cbdd.InitTournaments();
+                pbLoading.Value = 90;
+                lbCreationPartie.Content = "Initialisation des joueurs";
+                cbdd.InitPlayers();
 
-            pbLoading.Value = 95;
-            lbCreationPartie.Content = "Chargement des médias";
-            cbdd.LoadMedias();
+                pbLoading.Value = 92;
+                lbCreationPartie.Content = "Initialisation des compétitions";
+                cbdd.InitTournaments();
 
-            pbLoading.Value = 98;
-            lbCreationPartie.Content = "Chargement des commentaires de match";
-            cbdd.LoadGamesComments();
-            cbdd.LoadRules();
-            cbdd.GenerateNationalCup();
+                pbLoading.Value = 95;
+                lbCreationPartie.Content = "Chargement des médias";
+                cbdd.LoadMedias();
 
-            pbLoading.Value = 100;
+                pbLoading.Value = 98;
+                lbCreationPartie.Content = "Chargement des commentaires de match";
+                cbdd.LoadGamesComments();
+                cbdd.LoadRules();
+                cbdd.GenerateNationalCup();
 
-            Windows_ConfigurationPartie wcp = new Windows_ConfigurationPartie();
-            wcp.Show();
-            
+                pbLoading.Value = 100;
+
+                Windows_ConfigurationPartie wcp = new Windows_ConfigurationPartie();
+                wcp.Show();
+            }
+
 
         }
 

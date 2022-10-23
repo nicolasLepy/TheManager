@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using TheManager.Algorithms;
 using TheManager.Comparators;
@@ -20,7 +21,8 @@ namespace TheManager
         public readonly static string nationalFlagsFolderName = "flags";
         public readonly static string mediaLogoFolderName = "medias";
         public readonly static string namesSubfolderName = "names";
-        public readonly static string dataFolderName = "data";
+        private static string _dataFolderName = "data";
+        public static string dataFolderName { get => _dataFolderName; set => _dataFolderName = value; }
         public readonly static string musicFolderName = "music";
 
         public readonly static string friendlyTournamentName = "Matchs amicaux";

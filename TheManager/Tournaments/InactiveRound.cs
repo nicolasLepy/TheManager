@@ -81,7 +81,7 @@ namespace TheManager
                 _ranking = new List<Club>(_clubs);
                 try
                 {
-                    _ranking.Sort(new ClubRandomRankingComparator());
+                    _ranking.Sort(new ClubRandomRankingComparator(5, -1));
                 }
                 catch
                 {

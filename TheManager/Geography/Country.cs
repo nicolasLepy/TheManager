@@ -320,6 +320,18 @@ namespace TheManager
             return _name;
         }
         
+        public int GetLastLeagueLevelWithoutReserves()
+        {
+            int level = -1;
+            foreach(Tournament t in Tournaments())
+            {
+                if(t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted) && t.level > level)
+                {
+                    level = t.level;
+                }
+            }
+            return level;
+        }
         
 
         public Continent Continent
