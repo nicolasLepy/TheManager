@@ -1005,6 +1005,12 @@ namespace TheManager
                                     case "HOSTED_BY_ONE_COUNTRY":
                                         rule = Rule.HostedByOneCountry;
                                         break;
+                                    case "ULTRAMARINE_TEAMS_CAN_PLAY_HOME_OR_AWAY":
+                                        rule = Rule.UltramarineTeamsPlayHomeOrAway;
+                                        break;
+                                    case "ULTRAMARINE_TEAMS_PLAY_AWAY":
+                                        rule = Rule.UltramarineTeamsPlayAway;
+                                        break;
                                     default:
                                         rule = Rule.OnlyFirstTeams;
                                         break;

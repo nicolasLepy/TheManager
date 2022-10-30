@@ -234,7 +234,7 @@ namespace TheManager
         {
             get
             {
-                string res = shortName;
+                string res = shortName.Length > 10 ? shortName.Substring(0, 10) : shortName;
                 foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
                     if(Session.Instance.Game.kernel.LocalisationTournament(c) == Country() && c.isChampionship && c.previousEditions.Count > 0)
@@ -247,7 +247,8 @@ namespace TheManager
                         }
                     }
                 }
-                return res;
+                string adm = this.AdministrativeDivision() != null ? " (" + this.AdministrativeDivision().name + ")" : "";
+                return res + adm;
             }
         }
 

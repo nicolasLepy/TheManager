@@ -18,7 +18,9 @@ namespace TheManager
         OnlyFirstTeams,
         ReservesAreNotPromoted,
         OneClubByCountryInGroup,
-        HostedByOneCountry
+        HostedByOneCountry,
+        UltramarineTeamsPlayHomeOrAway,
+        UltramarineTeamsPlayAway
     }
 
     public enum RankingType

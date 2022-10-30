@@ -93,11 +93,6 @@ namespace TheManager.Algorithms
                 res[i] = new List<Club>();
             }
 
-            foreach (Club c in _clubs)
-            {
-                Console.WriteLine(c.name + " - " + c.Localisation().Latitude + " - " + c.Localisation().Longitude);
-            }
-
             int[] clustersCapacity = Utils.GetClustersCapacity(_clubs.Count, _clustersCount);
             int maxIterations = 100;
             List<GeographicPosition> centroids = new List<GeographicPosition>();

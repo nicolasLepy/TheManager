@@ -172,14 +172,22 @@ namespace TheManager
             }
             return candidates;
         }
-        
+
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rank">Rank can be negative</param>
+        /// <param name="administrativeDivision">If administrativeDivision is None, get Ranking for teams from all groups, else get only teams for the specified administrative division</param>
+        /// <returns></returns>
         public List<Club> RankingByRank(int rank, AdministrativeDivision administrativeDivision)
         {
             List<Club> ranking = new List<Club>();
             for (int i = 0; i < _groupsNumber; i++)
             {
                 AdministrativeDivision adm = GetGroupAdministrativeDivision(i);
-                if (administrativeDivision != null && administrativeDivision.ContainsAdministrativeDivision(adm))
+                if ((administrativeDivision != null && administrativeDivision.ContainsAdministrativeDivision(adm)) || administrativeDivision == null)
                 {
                     List<Club> rankingGroup = Ranking(i);
                     int realRanking = rank > 0 ? rank - 1 : rankingGroup.Count + rank;
@@ -297,7 +305,6 @@ namespace TheManager
         /// <returns>New list of qualifications</returns>
         public List<Qualification> AdjustQualificationAdministrativeDivision(List<Qualification> baseQualifications, int group)
         {
-
             Tournament tournament = Tournament;
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
             adjustedQualifications.Sort(new QualificationComparator());
@@ -397,6 +404,7 @@ namespace TheManager
                         relegationPlaces = adjustedQualifications.Count - q.ranking + 1;
                     }
                 }
+                Console.WriteLine("Etape 0 : " + relegationPlaces);
                 if (promotionPlaces > 0)
                 {
                     int promotionByGroup = promotionPlaces / admGroupCount;
@@ -504,11 +512,12 @@ namespace TheManager
             }
             //Système un peu brut. On admet qu'une région envoie une équipe au niveau régional au dessus. On gère donc seulement si on est dans le cas où on envoie plus d'une équipe au niveau régional au dessus.
             //On applique cette modification uniquement si on est à l'échelon régional le plus élevé car les échelons du dessous s'appuierons sur le nombre de relegués à ce niveau pour gérer leur propre nombre de relégué (donc pour éviter d'appliquer cette réduction du nombre de relegués plusieurs fois)
-            if (teamsSentToHigherRegionalLevel != 1 && isHigherRegionalLevel)
+            /**if (teamsSentToHigherRegionalLevel != 1 && isHigherRegionalLevel)
             {
                 relegationPlaces -= (teamsSentToHigherRegionalLevel - 1);
-            }
-            
+            }*/
+            Console.WriteLine("Etape 1 : " + relegationPlaces + " (teams sent to higher regional level)" + teamsSentToHigherRegionalLevel);
+
             int admRelegables = 0;
 
             //Two cases to count extra relegations
@@ -522,18 +531,31 @@ namespace TheManager
                 //Case 1
                 if (upperGroupRound.administrativeLevel < administrativeLevel)
                 {
+                    //It's probably to create a function in GroupsRound that return relegables teams
+                    //Et dangereux de faire comme ça car compatibilité entre relegations au milieu de classement (réserve qui tombe, rétrogradation adm) sont pas forcément compatible avec le classement des meilleurs nième
                     AdministrativeDivision admAtLevel = upperGroupRound.administrativeLevel > 0 ? country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound._administrativeLevel) : null;
                     for (int i = 0; i < upperGroupRound._groupsNumber; i++)
                     {
                         List<Qualification> groupQualifications = upperGroupRound.GetGroupQualifications(i);
+                        int upperGroupRoundClubsCount = upperGroupRound.groups[i].Count();
                         List<Club> upperGroupRanking = upperGroupRound.Ranking(i);
                         foreach (Qualification q in groupQualifications)
                         {
-                            if (q.roundId == 0 && q.isNextYear && q.tournament == tournament)
+                            Club concernedClub = upperGroupRanking[q.ranking - 1];
+                            if(country.GetAdministrativeDivisionLevel(concernedClub.AdministrativeDivision(), _administrativeLevel) == administrativeDivision)
                             {
-                                if (country.GetAdministrativeDivisionLevel(upperGroupRanking[q.ranking - 1].AdministrativeDivision(), _administrativeLevel) == administrativeDivision)
+                                if (q.roundId == 0 && q.isNextYear && q.tournament == tournament && q.qualifies == 0)
                                 {
                                     admRelegables++;
+                                }
+                                else if (q.qualifies != 0 && q.tournament == this.Tournament)
+                                {
+                                    List<Club> rankingOfRank = upperGroupRound.RankingByRank(q.ranking - upperGroupRoundClubsCount - 1, null);
+                                    int threshold = q.qualifies > 0 ? q.qualifies : q.qualifies + upperGroupRound._groupsNumber;
+                                    if (rankingOfRank.IndexOf(concernedClub) >= threshold)
+                                    {
+                                        admRelegables++;
+                                    }
                                 }
                             }
                         }
@@ -582,12 +604,13 @@ namespace TheManager
                 }
             }
 
+            Console.WriteLine("Relegations places " + relegationPlaces);
             relegationPlaces += admRelegables;
             //Dans le cas par exemple avec deux groupes et trois montées, un groupe aura une montée additionelle. On enlève alors une relégation à ce groupe pour maintenir le même nombre d'équipes dans le groupe
-            if (extraPromotionOnGroup)
+            /*if (extraPromotionOnGroup)
             {
                 relegationPlaces--;
-            }
+            }*/
 
             //Remove all relegation places
             for (int i = 0; i < adjustedQualifications.Count; i++)
@@ -608,6 +631,7 @@ namespace TheManager
                     relegationOnGroup++;
                 }
             }
+            Console.WriteLine("[" + this.GroupName(group) + "] " + promotionsCount + " Adm Relegables : " + admRelegables + " -> total : " + relegationPlaces + ", relegationOnGroup ? " + relegationOnGroup);
 
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
             //Check if bottom round is a group round or an inactive round (could be factorized)
@@ -653,7 +677,8 @@ namespace TheManager
 
         public List<Qualification> GetGroupQualifications(int group)
         {
-            if(_storedGroupQualifications == null)
+            if(Tournament.level == 6) _storedGroupQualifications = null;
+            if (_storedGroupQualifications == null)
             {
                 _storedGroupQualifications = new List<Qualification>[_groups.Length];
             }
@@ -792,10 +817,7 @@ namespace TheManager
                         caseQualifieLessThan0 = (q.qualifies < 0 && clubsByRankingDescending[Math.Abs(baseNegativeQualification.ranking)-1].IndexOf(c) >= (groups.Length + q.qualifies));
                     }
 
-                    if (Tournament.level == 4)
-                    {
-                        Console.WriteLine("[" + i + "], " + c.name + " - " + q.ranking + " -> " + q.tournament.name + " [" + q.qualifies + ", " + caseQualifieMoreThan0 + ", " + caseQualifieLessThan0 + "]");
-                    }
+                    
                     if(q.qualifies == 0 || caseQualifieMoreThan0 || caseQualifieLessThan0)
                     {
                         if (!q.isNextYear)
@@ -805,6 +827,10 @@ namespace TheManager
                         else
                         {
                             q.tournament.AddClubForNextYear(c, q.roundId);
+                            if (Tournament.level == 5)
+                            {
+                                Console.WriteLine("[" + i + "], " + c.name + " - " + q.ranking + " -> " + q.tournament.name + " [" + q.qualifies + ", " + caseQualifieMoreThan0 + ", " + caseQualifieLessThan0 + "]");
+                            }
                         }
                         if (q.tournament.isChampionship && c.Championship != null)
                         {
