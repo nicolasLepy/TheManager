@@ -1011,6 +1011,9 @@ namespace TheManager
                                     case "ULTRAMARINE_TEAMS_PLAY_AWAY":
                                         rule = Rule.UltramarineTeamsPlayAway;
                                         break;
+                                    case "ULTRAMARINE_TEAMS_CANT_COMPETE_AGAINST":
+                                        rule = Rule.UltramarineTeamsCantCompeteAgainst;
+                                        break;
                                     default:
                                         rule = Rule.OnlyFirstTeams;
                                         break;

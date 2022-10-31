@@ -20,7 +20,8 @@ namespace TheManager
         OneClubByCountryInGroup,
         HostedByOneCountry,
         UltramarineTeamsPlayHomeOrAway,
-        UltramarineTeamsPlayAway
+        UltramarineTeamsPlayAway,
+        UltramarineTeamsCantCompeteAgainst
     }
 
     public enum RankingType

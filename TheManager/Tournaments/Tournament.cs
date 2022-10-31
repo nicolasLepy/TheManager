@@ -327,6 +327,28 @@ namespace TheManager
             }
 
             List<LeagueCupApparition> leagueCupApparitions = new List<LeagueCupApparition>();
+            int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
+            for(int i = 0; i<_rounds.Count; i++)
+            {
+                teamsFromOutsideLeagueSystem[i] = 0;
+            }
+
+            foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
+            {
+                if(!t.IsInternational() && t != this)
+                {
+                    foreach (Round r in t.rounds)
+                    {
+                        foreach (Qualification q in r.qualifications)
+                        {
+                            if (q.tournament == this)
+                            {
+                                teamsFromOutsideLeagueSystem[q.roundId] += q.qualifies != 0 ? q.qualifies : 1;
+                            }
+                        }
+                    }
+                }
+            }
 
             // Obtient le nombre d'équipes une fois toutes les ligues entrées dans la compétition
             int teamsKnockout = 0;
@@ -373,11 +395,12 @@ namespace TheManager
             int currentTeamsCount = teamsKnockout;
             int additionalTeams = 0;
             //Remonte la compétition pour récupérer le nombre d'équipes à ajouter au premier tour
-            for(int i = roundStart-1; i > -1; i--)
+            for (int i = roundStart - 1; i > -1; i--)
             {
                 //We remove all teams that will be added to the next round
                 additionalTeams = CountAdditionnalTeamsRound(i + 1, leagueCupApparitions);
                 currentTeamsCount = (currentTeamsCount - additionalTeams) * 2;
+                currentTeamsCount -= teamsFromOutsideLeagueSystem[i];
                 Console.WriteLine("[Round " + i + "] Will add " + additionalTeams + " teams. " + currentTeamsCount + " teams (" + currentTeamsCount / 2 + " matchs)");
             }
 

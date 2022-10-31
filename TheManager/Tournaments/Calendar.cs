@@ -639,23 +639,35 @@ namespace TheManager
             List<Match> res = new List<Match>();
 
 
+            // Clubs ultramarins dispatchés dans les hats
+            // Si deux équipes ultramarines ne peuvent s'affronter et qu'elles s'affrontent dans un hat, alors on recommence le tirage
+            /*
+            Si SEULEMENT_AWAY:
+                Fixe extérieur
+            SINON HOME_OU_AWAY:
+                Lister toutes les nouvelles équipes dom-tom du tour
+                Fixer n/2 home et n/2+n%2 away
+                Pour toute équipe dom-tom
+                Si équipe dom_tom déjà au tour précédant :
+                    Fixe !Domicile-Extérieur tour précédant
+                */
             List<Club>[] hats = new List<Club>[] { new List<Club>(), new List<Club>() };
 
-            if (round.randomDrawingMethod == RandomDrawingMethod.Ranking)
+            if(round.randomDrawingMethod == RandomDrawingMethod.Ranking)
             {
                 GroupsRound previousRound = round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1] as GroupsRound;
                 List<Club>[] clubsByRankPosition = new List<Club>[previousRound.maxClubsInGroup];
                 List<Club> allClubs = new List<Club>();
 
-                for(int i = 0; i < clubsByRankPosition.Length; i++)
+                for (int i = 0; i < clubsByRankPosition.Length; i++)
                 {
                     clubsByRankPosition[i] = new List<Club>();
                 }
 
-                for(int i = 0; i < previousRound.groupsCount; i++)
+                for (int i = 0; i < previousRound.groupsCount; i++)
                 {
                     List<Club> ranking = previousRound.Ranking(i);
-                    for(int j = 0; j<ranking.Count; j++)
+                    for (int j = 0; j < ranking.Count; j++)
                     {
                         clubsByRankPosition[j].Add(ranking[j]);
                     }
@@ -678,12 +690,12 @@ namespace TheManager
                 hats[0].AddRange(allClubs.GetRange(0, round.clubs.Count / 2));
                 hats[1].AddRange(allClubs.GetRange(round.clubs.Count / 2, round.clubs.Count / 2));
             }
-            else if (round.randomDrawingMethod == RandomDrawingMethod.Geographic)
+            else if(round.randomDrawingMethod == RandomDrawingMethod.Geographic)
             {
                 List<Club> allClubs = new List<Club>(round.clubs);
                 int currentClubsByGroups = allClubs.Count;
                 int groupsNumber = 1;
-                while ((currentClubsByGroups / 2) % 2 == 0 && (allClubs.Count / groupsNumber) > 20)
+                while((currentClubsByGroups / 2) % 2 == 0 && (allClubs.Count / groupsNumber) > 20)
                 {
                     currentClubsByGroups /= 2;
                     groupsNumber *= 2;
@@ -696,16 +708,16 @@ namespace TheManager
             {
                 List<Club> allClubs = new List<Club>(round.clubs);
                 allClubs.Shuffle();
-                for(int i = 0; i<allClubs.Count;i++)
+                for(int i = 0; i < allClubs.Count; i++)
                 {
-                    hats[i < allClubs.Count/2 ? 0 : 1].Add(allClubs[i]);
+                    hats[i < allClubs.Count / 2 ? 0 : 1].Add(allClubs[i]);
                 }
             }
 
 
             RoundProgrammation programmation = round.programmation;
             int currentGeographicHat = 0;
-            for (int i = 0; i < round.clubs.Count / 2; i++)
+            for(int i = 0; i < round.clubs.Count / 2; i++)
             {
                 Club home;
                 Club away;
@@ -727,7 +739,7 @@ namespace TheManager
 
                 DateTime day = GetRoundProgrammationDate(round, programmation);
 
-                if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
+                if(round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
                     Club[] switchedTeams = SwitchTeams(home, away);
                     home = switchedTeams[0];
@@ -736,14 +748,14 @@ namespace TheManager
                 res.Add(new Match(home, away, day, !round.twoLegs));
             }
 
-            TVSchedule(res, round.programmation.tvScheduling,0);
+            TVSchedule(res, round.programmation.tvScheduling, 0);
             if(round.twoLegs)
             {
                 CreateSecondLegKnockOutRound(res, round, programmation);
             }
             return res;
         }
-        
+
         /// <summary>
         /// Get a club from a hat and remove it
         /// </summary>
