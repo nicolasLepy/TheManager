@@ -596,7 +596,7 @@ namespace TheManager
         /// <returns></returns>
         public static List<Club>[] CreateGeographicClusters(List<Club> clubs, int clustersCount)
         {
-            KMeansClustering kmeans = new KMeansClustering(clubs, clustersCount);
+            KMeansClustering kmeans = new KMeansClustering(clubs, clustersCount, new List<Club>());
             return kmeans.CreateClusters();
         }
 

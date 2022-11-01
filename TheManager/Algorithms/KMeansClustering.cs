@@ -11,7 +11,13 @@ namespace TheManager.Algorithms
     /// </summary>
     public class KMeansClustering
     {
-
+        /// <summary>
+        /// Clubs out of the geographic computation of centroids and dispatched into hats (ex. ultramarines clubs)
+        /// </summary>
+        private List<Club> _clubsToDispatch;
+        /// <summary>
+        /// All clubs
+        /// </summary>
         private List<Club> _clubs;
         private int _clustersCount;
 
@@ -151,12 +157,21 @@ namespace TheManager.Algorithms
                 }
             }
 
+            //Foreach clubs to dispatch (like ultramarines clubs), we places them in hats starting from the lasts (hats with at least one club missing)
+            int clusterCounter = _clustersCount - 1;
+            foreach (Club c in _clubsToDispatch)
+            {
+                res[clusterCounter].Add(c);
+                clusterCounter = clusterCounter == 0 ? _clustersCount - 1 : clusterCounter - 1;
+            }
+
             return res;
         }
 
-        public KMeansClustering(List<Club> clubs, int clustersCount)
+        public KMeansClustering(List<Club> clubs, int clustersCount, List<Club> noGeographicsClubsToDispatch)
         {
             _clubs = clubs;
+            _clubsToDispatch = noGeographicsClubsToDispatch;
             _clustersCount = clustersCount;
         }
 

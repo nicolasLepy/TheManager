@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Algorithms;
@@ -637,23 +638,62 @@ namespace TheManager
                 Console.WriteLine("Date: " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].matches[0].day.ToString());
             }
             List<Match> res = new List<Match>();
+            ILocalisation localisationTournament = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament);
 
-
-            // Clubs ultramarins dispatchés dans les hats
-            // Si deux équipes ultramarines ne peuvent s'affronter et qu'elles s'affrontent dans un hat, alors on recommence le tirage
-            /*
-            Si SEULEMENT_AWAY:
-                Fixe extérieur
-            SINON HOME_OU_AWAY:
-                Lister toutes les nouvelles équipes dom-tom du tour
-                Fixer n/2 home et n/2+n%2 away
-                Pour toute équipe dom-tom
-                Si équipe dom_tom déjà au tour précédant :
-                    Fixe !Domicile-Extérieur tour précédant
-                */
             List<Club>[] hats = new List<Club>[] { new List<Club>(), new List<Club>() };
 
-            if(round.randomDrawingMethod == RandomDrawingMethod.Ranking)
+            //First step, fix if some teams will play home or away according to round rules
+            Dictionary<Club, bool> fixedHomeOrAwayTeams = new Dictionary<Club, bool>();
+            if(round.rules.Contains(Rule.UltramarineTeamsPlayAway))
+            {
+                foreach(Club c in round.clubs)
+                {
+                    if(c.Country() != localisationTournament)
+                    {
+                        fixedHomeOrAwayTeams.Add(c, false);
+                    }
+                }
+            }
+            if(round.rules.Contains(Rule.UltramarineTeamsPlayHomeOrAway))
+            {
+                List<Club> newUltramarineTeams = new List<Club>();
+                Round previousRound = round.Tournament.rounds.IndexOf(round) > 0 ? round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1] : null;
+                foreach (Club c in round.clubs)
+                {
+                    //New ultramarine team entering this round
+                    if (c.Country() != localisationTournament && (previousRound != null && !previousRound.clubs.Contains(c)))
+                    {
+                        newUltramarineTeams.Add(c);
+                    }
+                    //Ultramarine already in tournament
+                    else if(c.Country() != localisationTournament)
+                    {
+                        foreach(Match m in previousRound.matches)
+                        {
+                            if(m.home == c)
+                            {
+                                fixedHomeOrAwayTeams.Add(c, false);
+                            }
+                            else if(m.away == c)
+                            {
+                                fixedHomeOrAwayTeams.Add(c, true);
+                            }
+                        }
+                    }
+                }
+                int willPlayHome = newUltramarineTeams.Count / 2;
+                newUltramarineTeams = Utils.ShuffleList<Club>(newUltramarineTeams);
+                for(int i = 0; i<willPlayHome; i++)
+                {
+                    fixedHomeOrAwayTeams.Add(newUltramarineTeams[i], true);
+                }
+                for(int i = willPlayHome; i<newUltramarineTeams.Count; i++)
+                {
+                    fixedHomeOrAwayTeams.Add(newUltramarineTeams[i], false);
+                }
+            }
+
+            if (round.randomDrawingMethod == RandomDrawingMethod.Ranking)
             {
                 GroupsRound previousRound = round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1] as GroupsRound;
                 List<Club>[] clubsByRankPosition = new List<Club>[previousRound.maxClubsInGroup];
@@ -693,6 +733,8 @@ namespace TheManager
             else if(round.randomDrawingMethod == RandomDrawingMethod.Geographic)
             {
                 List<Club> allClubs = new List<Club>(round.clubs);
+                List<Club> clubsToDispatch = new List<Club>();
+                
                 int currentClubsByGroups = allClubs.Count;
                 int groupsNumber = 1;
                 while((currentClubsByGroups / 2) % 2 == 0 && (allClubs.Count / groupsNumber) > 20)
@@ -700,7 +742,23 @@ namespace TheManager
                     currentClubsByGroups /= 2;
                     groupsNumber *= 2;
                 }
-                KMeansClustering kmeans = new KMeansClustering(allClubs, groupsNumber);
+
+                if (round.rules.Contains(Rule.UltramarineTeamsPlayAway) || round.rules.Contains(Rule.UltramarineTeamsPlayHomeOrAway))
+                {
+                    foreach (Club c in allClubs)
+                    {
+                        if (c.Country() != localisationTournament)
+                        {
+                            clubsToDispatch.Add(c);
+                        }
+                    }
+                    foreach (Club c in clubsToDispatch)
+                    {
+                        allClubs.Remove(c);
+                    }
+                }
+
+                KMeansClustering kmeans = new KMeansClustering(allClubs, groupsNumber, clubsToDispatch);
                 hats = kmeans.CreateClusters();
             }
             //Random
@@ -717,11 +775,11 @@ namespace TheManager
 
             RoundProgrammation programmation = round.programmation;
             int currentGeographicHat = 0;
-            for(int i = 0; i < round.clubs.Count / 2; i++)
+            for (int i = 0; i < round.clubs.Count / 2; i++)
             {
-                Club home;
-                Club away;
-                if(round.randomDrawingMethod != RandomDrawingMethod.Geographic)
+                Club home = null;
+                Club away = null;
+                if (round.randomDrawingMethod != RandomDrawingMethod.Geographic)
                 {
                     int hat = Session.Instance.Random(0, 2);
                     home = DrawClub(hats[hat]);
@@ -729,11 +787,27 @@ namespace TheManager
                 }
                 else
                 {
-                    if(hats[currentGeographicHat].Count < 2)
+                    if (hats[currentGeographicHat].Count < 2)
                     {
                         currentGeographicHat++;
                     }
-                    home = DrawClub(hats[currentGeographicHat]);
+
+                    //If Ultramarines teams can't compete against each other, start to draw them
+                    if (round.rules.Contains(Rule.UltramarineTeamsCantCompeteAgainst))
+                    {
+                        for (int j = 0; j < hats[currentGeographicHat].Count && home == null; j++)
+                        {
+                            if (hats[currentGeographicHat][j].Country() != localisationTournament)
+                            {
+                                home = hats[currentGeographicHat][j];
+                                hats[currentGeographicHat].Remove(hats[currentGeographicHat][j]);
+                            }
+                        }
+                    }
+                    if (home == null)
+                    {
+                        home = DrawClub(hats[currentGeographicHat]);
+                    }
                     away = DrawClub(hats[currentGeographicHat]);
                 }
 
@@ -744,6 +818,12 @@ namespace TheManager
                     Club[] switchedTeams = SwitchTeams(home, away);
                     home = switchedTeams[0];
                     away = switchedTeams[1];
+                }
+                if((fixedHomeOrAwayTeams.ContainsKey(home) && !fixedHomeOrAwayTeams[home]) || (fixedHomeOrAwayTeams.ContainsKey(away) && fixedHomeOrAwayTeams[away]))
+                {
+                    Club temp = home;
+                    home = away;
+                    away = temp;
                 }
                 res.Add(new Match(home, away, day, !round.twoLegs));
             }
