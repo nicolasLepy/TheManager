@@ -299,7 +299,7 @@ namespace TheManager
             }
         }
 
-        public Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay)
+        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay)
         {
             _name = name;
             _clubs = new List<Club>();

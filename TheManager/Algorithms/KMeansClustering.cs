@@ -14,7 +14,7 @@ namespace TheManager.Algorithms
         /// <summary>
         /// Clubs out of the geographic computation of centroids and dispatched into hats (ex. ultramarines clubs)
         /// </summary>
-        private List<Club> _clubsToDispatch;
+        private readonly List<Club> _clubsToDispatch;
         /// <summary>
         /// All clubs
         /// </summary>

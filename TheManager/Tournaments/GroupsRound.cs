@@ -677,7 +677,6 @@ namespace TheManager
 
         public List<Qualification> GetGroupQualifications(int group)
         {
-            if(Tournament.level == 6) _storedGroupQualifications = null;
             if (_storedGroupQualifications == null)
             {
                 _storedGroupQualifications = new List<Qualification>[_groups.Length];

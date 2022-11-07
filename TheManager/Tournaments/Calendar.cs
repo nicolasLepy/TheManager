@@ -333,7 +333,7 @@ namespace TheManager
             {
                 if (round % 2 == 1)
                 {
-                    int[] flipped = new int[] { rounds[round, 0, 1], rounds[round, 0, 0] };
+                    int[] flipped = new [] { rounds[round, 0, 1], rounds[round, 0, 0] };
                     rounds[round, 0, 0] = flipped[0];
                     rounds[round, 0, 1] = flipped[1];
                 }
@@ -394,7 +394,7 @@ namespace TheManager
             if(twoLegged)
             {
                 int nbGamesByLeg = res.Count / gamesPerRound;
-                for (int leg = 2; leg <= tournamentRound.phases; leg++)
+                for (uint leg = 2; leg <= tournamentRound.phases; leg++)
                 {
                     bool firstLeg = leg % 2 == 1;
                     //New phase, redraw games
@@ -403,7 +403,7 @@ namespace TheManager
                         clubs.Shuffle();
                     }
                     //Part 1 : manager Journey [2-end]
-                    int calendarBaseIndex = (programmation.gamesDays.Count / tournamentRound.phases) * (leg-1);
+                    int calendarBaseIndex = (programmation.gamesDays.Count / tournamentRound.phases) * ((int)leg-1);
                     List<Match> games;
                     for (int i = firstLeg ? 0 : 1; i < nbGamesByLeg; i++)
                     {
@@ -433,7 +433,7 @@ namespace TheManager
                     {
                         //Last journey : first journey inverted
                         games = new List<Match>();
-                        int lastLegcalendarIndex = ((programmation.gamesDays.Count / tournamentRound.phases) * (leg)) - 1;
+                        int lastLegcalendarIndex = ((programmation.gamesDays.Count / tournamentRound.phases) * (int)leg) - 1;
                         for (int i = 0; i < gamesPerRound; i++)
                         {
                             DateTime jour = programmation.gamesDays[lastLegcalendarIndex].ConvertToDateTime(Session.Instance.Game.date.Year);

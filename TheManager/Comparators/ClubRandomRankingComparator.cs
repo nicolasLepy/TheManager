@@ -11,9 +11,14 @@ namespace TheManager.Comparators
 
         private Dictionary<Club, int> clubsArtificalLevel;
 
-        private int _strength = 0;
-        private int _makeClubsOfAtLeastChampionshipLevelOnTop = -1;
+        private readonly int _strength;
+        private readonly int _makeClubsOfAtLeastChampionshipLevelOnTop;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="strength"></param>
+        /// <param name="championship">Clubs that are at or above the level of this championship on league system are automatically at the top of the ranking (-1 to not consider this parameter)</param>
         public ClubRandomRankingComparator(int strength, int championship)
         {
             clubsArtificalLevel = new Dictionary<Club, int>();
