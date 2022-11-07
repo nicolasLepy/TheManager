@@ -247,6 +247,17 @@ namespace TheManager
             }
         }
 
+        private static int[] GetEvenlyDistributedNValuesFromM(int n, int m)
+        {
+            int[] res = new int[n];
+            double step = (m - 1.0) / (n - 1.0);
+            for(int i = 0; i<n; i++)
+            {
+                res[i] = (int)Math.Round(step * i);
+            }
+            return res;
+        }
+
         /// <summary>
         /// Round robin algorithm to generate games
         /// </summary>
@@ -254,11 +265,13 @@ namespace TheManager
         /// <param name="programmation">TV / Federation schedule for games</param>
         /// <param name="twoLegged">One or two games</param>
         /// <returns></returns>
-        public static List<Match> GenerateCalendar(List<Club> clubs, Round tournamentRound, bool twoLegged)
+        public static List<Match> GenerateCalendar(List<Club> clubsBase, Round tournamentRound, bool twoLegged)
         {
             RoundProgrammation programmation = tournamentRound.programmation;
             List<Match> res = new List<Match>();
             bool ghost = false;
+            List<Club> clubs = new List<Club>(clubsBase);
+            clubs.Shuffle();
             int teams = clubs.Count;
             if (teams % 2 == 1)
             {
@@ -268,7 +281,7 @@ namespace TheManager
 
             int totalRound = teams - 1;
             int gamesPerRound = teams / 2;
-            string[,] rounds = new string[totalRound, gamesPerRound];
+            int[,,] rounds = new int[totalRound, gamesPerRound, 2];
 
             for (int round = 0; round < totalRound; round++)
             {
@@ -282,12 +295,13 @@ namespace TheManager
                         away = teams - 1;
                     }
 
-                    rounds[round, match] = (home + 1) + " v " + (away + 1);
+                    rounds[round, match, 0] = (home + 1);
+                    rounds[round, match, 1] = (away + 1);
 
                 }
             }
 
-            string[,] interleaved = new string[totalRound, gamesPerRound];
+            int[,,] interleaved = new int[totalRound, gamesPerRound, 2];
             int evn = 0;
             int odd = (teams / 2);
 
@@ -297,7 +311,8 @@ namespace TheManager
                 {
                     for (int j = 0; j < gamesPerRound; j++)
                     {
-                        interleaved[i, j] = rounds[evn, j];
+                        interleaved[i, j, 0] = rounds[evn, j, 0];
+                        interleaved[i, j, 1] = rounds[evn, j, 1];
                     }
                     evn++;
                 }
@@ -305,7 +320,8 @@ namespace TheManager
                 {
                     for (int j = 0; j < gamesPerRound; j++)
                     {
-                        interleaved[i, j] = rounds[odd, j];
+                        interleaved[i, j, 0] = rounds[odd, j, 0];
+                        interleaved[i, j, 1] = rounds[odd, j, 1];
                     }
                     odd++;
                 }
@@ -317,19 +333,41 @@ namespace TheManager
             {
                 if (round % 2 == 1)
                 {
-                    rounds[round, 0] = flip(rounds[round, 0]);
+                    int[] flipped = new int[] { rounds[round, 0, 1], rounds[round, 0, 0] };
+                    rounds[round, 0, 0] = flipped[0];
+                    rounds[round, 0, 1] = flipped[1];
                 }
             }
 
+            //Remove games with ghost team
+            if(ghost)
+            {
+                int[,,] newRounds = new int[totalRound, gamesPerRound - 1, 2];
+                for(int round = 0; round < totalRound; round++)
+                {
+                    int baseRoundGame = 0;
+                    for(int game = 0; game < gamesPerRound-1; game++, baseRoundGame++)
+                    {
+                        if (rounds[round, baseRoundGame, 0] > clubs.Count || rounds[round, baseRoundGame, 1] > clubs.Count)
+                        {
+                            baseRoundGame++;
+                        }
+                        newRounds[round, game, 0] = rounds[round, baseRoundGame, 0];
+                        newRounds[round, game, 1] = rounds[round, baseRoundGame, 1];
+                    }
+                }
+                rounds = newRounds;
+                gamesPerRound--;
+            }
+
+            int[] calendarIndices = GetEvenlyDistributedNValuesFromM(totalRound, programmation.gamesDays.Count/tournamentRound.phases);
             for (int i = 0; i < totalRound; i++)
             {
                 List<Match> matchs = new List<Match>();
                 for (int j = 0; j < gamesPerRound; j++)
                 {
-
-                    string[] compenents = rounds[i, j].Split(new string[] { " v " }, StringSplitOptions.None);
-                    int a = int.Parse(compenents[0]);
-                    int b = int.Parse(compenents[1]);
+                    int a = rounds[i, j, 0];
+                    int b = rounds[i, j, 1];
 
                     if (!ghost || (a != teams && b != teams))
                     {
@@ -338,10 +376,10 @@ namespace TheManager
                         Club e2 = clubs[b - 1];
 
                         //Game day
-                        DateTime jour = programmation.gamesDays[i].ConvertToDateTime(Session.Instance.Game.date.Year);
+                        DateTime jour = programmation.gamesDays[calendarIndices[i]].ConvertToDateTime(Session.Instance.Game.date.Year);
                         if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
                         {
-                            jour = programmation.gamesDays[i].ConvertToDateTime(Session.Instance.Game.date.Year+1);
+                            jour = programmation.gamesDays[calendarIndices[i]].ConvertToDateTime(Session.Instance.Game.date.Year+1);
                         }
                         jour = jour.AddHours(programmation.defaultHour.Hours);
                         jour = jour.AddMinutes(programmation.defaultHour.Minutes);
@@ -355,59 +393,66 @@ namespace TheManager
             }
             if(twoLegged)
             {
-                if(ghost)
+                int nbGamesByLeg = res.Count / gamesPerRound;
+                for (int leg = 2; leg <= tournamentRound.phases; leg++)
                 {
-                    gamesPerRound--;
-                }
-                //Part 1 : manager Journey [2-end]
-                int nbGamesFirstRound = res.Count / gamesPerRound;
-                List<Match> games;
-                for (int i = 1; i< nbGamesFirstRound; i++)
-                {
-                    games = new List<Match>();
-                    for(int j = 0; j< gamesPerRound; j++)
+                    bool firstLeg = leg % 2 == 1;
+                    //New phase, redraw games
+                    if (firstLeg)
                     {
-                        Match mbase = res[gamesPerRound * i + j];
-
-                        DateTime jour = programmation.gamesDays[nbGamesFirstRound + i - 1].ConvertToDateTime(Session.Instance.Game.date.Year);
-                        if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
+                        clubs.Shuffle();
+                    }
+                    //Part 1 : manager Journey [2-end]
+                    int calendarBaseIndex = (programmation.gamesDays.Count / tournamentRound.phases) * (leg-1);
+                    List<Match> games;
+                    for (int i = firstLeg ? 0 : 1; i < nbGamesByLeg; i++)
+                    {
+                        games = new List<Match>();
+                        for (int j = 0; j < gamesPerRound; j++)
                         {
-                            jour = programmation.gamesDays[nbGamesFirstRound + i - 1].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+                            int calendarIndex = firstLeg ? calendarIndices[i] : calendarIndices[i - 1];
+                            DateTime jour = programmation.gamesDays[calendarBaseIndex + calendarIndex].ConvertToDateTime(Session.Instance.Game.date.Year);
+                            if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
+                            {
+                                jour = programmation.gamesDays[calendarBaseIndex + calendarIndex].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+                            }
+                            jour = jour.AddHours(programmation.defaultHour.Hours);
+                            jour = jour.AddMinutes(programmation.defaultHour.Minutes);
+
+                            Match retour = new Match(clubs[rounds[i, j, 1]-1], clubs[rounds[i, j, 0]-1], jour, false);
+                            games.Add(retour);
+                            res.Add(retour);
                         }
-                        jour = jour.AddHours(programmation.defaultHour.Hours);
-                        jour = jour.AddMinutes(programmation.defaultHour.Minutes);
 
-                        Match retour = new Match(mbase.away, mbase.home, jour, false);
-                        games.Add(retour);
-                        res.Add(retour);
+                        if (nbGamesByLeg - i >= programmation.lastMatchDaysSameDayNumber)
+                        {
+                            TVSchedule(games, programmation.tvScheduling, nbGamesByLeg + i);
+                        }
                     }
-
-                    if (nbGamesFirstRound - i >= programmation.lastMatchDaysSameDayNumber)
+                    if(!firstLeg)
                     {
-                        TVSchedule(games, programmation.tvScheduling, nbGamesFirstRound + i);
-                    }
-                }
-                //Last journey : first journey inverted
-                games = new List<Match>();
-                for (int i = 0; i<gamesPerRound; i++)
-                {
-                    Match mbase = res[i];
+                        //Last journey : first journey inverted
+                        games = new List<Match>();
+                        int lastLegcalendarIndex = ((programmation.gamesDays.Count / tournamentRound.phases) * (leg)) - 1;
+                        for (int i = 0; i < gamesPerRound; i++)
+                        {
+                            DateTime jour = programmation.gamesDays[lastLegcalendarIndex].ConvertToDateTime(Session.Instance.Game.date.Year);
+                            if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
+                            {
+                                jour = programmation.gamesDays[lastLegcalendarIndex].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+                            }
+                            jour = jour.AddHours(programmation.defaultHour.Hours);
+                            jour = jour.AddMinutes(programmation.defaultHour.Minutes);
+                            Match retour = new Match(clubs[rounds[0, i, 1] - 1], clubs[rounds[0, i, 0] - 1], jour, false);
+                            games.Add(retour);
+                            res.Add(retour);
+                        }
 
-                    DateTime jour = programmation.gamesDays[programmation.gamesDays.Count - 1].ConvertToDateTime(Session.Instance.Game.date.Year);
-                    if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
-                    {
-                        jour = programmation.gamesDays[programmation.gamesDays.Count - 1].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+                        if (programmation.lastMatchDaysSameDayNumber < 1)
+                        {
+                            TVSchedule(games, programmation.tvScheduling, nbGamesByLeg * 2);
+                        }
                     }
-                    jour = jour.AddHours(programmation.defaultHour.Hours);
-                    jour = jour.AddMinutes(programmation.defaultHour.Minutes);
-                    Match retour = new Match(mbase.away, mbase.home, jour, false);
-                    games.Add(retour);
-                    res.Add(retour);
-                }
-
-                if (programmation.lastMatchDaysSameDayNumber < 1)
-                {
-                    TVSchedule(games, programmation.tvScheduling, nbGamesFirstRound*2);
                 }
 
             }
@@ -415,10 +460,9 @@ namespace TheManager
             return res;
         }
 
-        private static string flip(string match)
+        private static int[] flip(int[] match)
         {
-            string[] components = match.Split(new string[] { " v " }, StringSplitOptions.None);
-            return components[1] + " v " + components[0];
+            return new int[] { match[0], match[1] };
         }
 
         /// <summary>

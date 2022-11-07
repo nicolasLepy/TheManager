@@ -83,18 +83,19 @@ namespace TheManager_GUI.VueClassement
                 {
                     index = 0;
                 }
-                if (index > ranking.Count - 5)
+                int rankingBuffer = ranking.Count >= 5 ? 5 : 3;
+                if (index > ranking.Count - rankingBuffer)
                 {
-                    index = ranking.Count - 5;
+                    index = ranking.Count - rankingBuffer;
                 }
                 i = index;
-                for (int j = index; j < index + 5; j++)
+                for (int j = index; j < index + rankingBuffer; j++)
                 {
                     Club c = ranking[j];
                     clubs.Add(c);
-                    if(c == Session.Instance.Game.club)
+                    if (c == Session.Instance.Game.club)
                     {
-                        indexTeam = j-index;
+                        indexTeam = j - index;
                     }
                 }
             }
@@ -251,9 +252,8 @@ namespace TheManager_GUI.VueClassement
             {
                 SolidColorBrush color = new SolidColorBrush((System.Windows.Media.Color)Application.Current.TryFindResource("ColorDate"));
                 color.Opacity = 0.6;
-                (spRanking.Children[indexTeam+1] as StackPanel).Background = color;
+                (spRanking.Children[indexTeam + 1] as StackPanel).Background = color;
             }
         }
-
     }
 }

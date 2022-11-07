@@ -50,13 +50,12 @@ namespace TheManager.Tournaments
                     Console.WriteLine("[" + ad.name + "], équipes = " + clubsAdm.Count);
                     if (clubsAdm.Count > 0)
                     {
+
                         List<int> groupsCount = GetGroupSize(clubsAdm.Count, defaultMaxTeamsByGroup);
-                        clubsAdm.Shuffle();
-                        foreach (int count in groupsCount)
+                        List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubsAdm, groupsCount.Count);
+                        for (int grp = 0; grp < groupsCount.Count; grp++)
                         {
-                            List<Club> group = clubsAdm.GetRange(0, count);
-                            groups.Add(group);
-                            clubsAdm.RemoveRange(0, count);
+                            groups.Add(splitClubs[grp]);
                             groupNames.Add(ad.name + " " + ++admCounter);
                         }
                     }

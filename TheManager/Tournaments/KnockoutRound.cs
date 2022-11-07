@@ -28,7 +28,7 @@ namespace TheManager
         public RandomDrawingMethod randomDrawingMethod => _randomDrawingMethod;
 
 
-        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing) : base(name, hour, dates, offsets, initialisation,end, twoLegs,0)
+        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, int phases, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0)
         {
             _randomDrawingMethod = method;
             _noRandomDrawing = noRandomDrawing;
@@ -36,7 +36,7 @@ namespace TheManager
 
         public override Round Copy()
         {
-            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, programmation.initialisation, programmation.end, _randomDrawingMethod, _noRandomDrawing);
+            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, phases, programmation.initialisation, programmation.end, _randomDrawingMethod, _noRandomDrawing);
             
             foreach (Club c in this.clubs)
             {

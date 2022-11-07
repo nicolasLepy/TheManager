@@ -13,13 +13,13 @@ namespace TheManager
     public class ChampionshipRound : Round
     {
 
-        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, List<TvOffset> offsets, GameDay initialisation, GameDay end, int lastDaySameDay) : base(name, hour, days, offsets, initialisation,end, twoLegs, lastDaySameDay)
+        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int lastDaySameDay) : base(name, hour, days, offsets, initialisation,end, twoLegs, phases, lastDaySameDay)
         {
         }
 
         public override Round Copy()
         {
-            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, programmation.lastMatchDaysSameDayNumber);
+            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, phases, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, programmation.lastMatchDaysSameDayNumber);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);

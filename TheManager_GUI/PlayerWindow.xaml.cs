@@ -38,7 +38,7 @@ namespace TheManager_GUI
             {
                 lbClub.Content = "Libre";
             }
-            lbAge.Content = FindResource("str_born").ToString() + " " + joueur.birthday.ToShortDateString() + " (" + joueur.Age + " "+FindResource("yo").ToString()+")";
+            lbAge.Content = FindResource("str_born").ToString() + " " + joueur.birthday.ToShortDateString() + " (" + joueur.Age + " "+FindResource("str_yo").ToString()+")";
             imgFlag.Source = new BitmapImage(new Uri(Utils.Flag(joueur.nationality)));
 
             ChartValues<int> niveaux = new ChartValues<int>();

@@ -211,6 +211,12 @@ namespace TheManager
         protected bool _twoLegs;
 
         /// <summary>
+        /// Legs count during round
+        /// </summary>
+        [DataMember]
+        protected int _phases;
+
+        /// <summary>
         /// Concern general scheduling of matches of the round (TV, hour, days)
         /// </summary>
         [DataMember]
@@ -249,6 +255,7 @@ namespace TheManager
         public List<Club> clubs { get => _clubs; }
         public List<Match> matches { get => _matches; }
         public bool twoLegs { get => _twoLegs; }
+        public int phases { get => _phases; }
         public RoundProgrammation programmation { get => _programmation; }
         public List<Qualification> qualifications { get => _qualifications; }
         public List<RecoverTeams> recuperedTeams { get => _recuperedTeams; }
@@ -292,7 +299,7 @@ namespace TheManager
             }
         }
 
-        public Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int lastDaysSameDay)
+        public Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay)
         {
             _name = name;
             _clubs = new List<Club>();
@@ -304,6 +311,7 @@ namespace TheManager
             _baseRecuperedTeams = new List<RecoverTeams>();
             _rules = new List<Rule>();
             _prizes = new List<Prize>();
+            _phases = phases;
         }
 
 
