@@ -124,6 +124,10 @@ namespace TheManager
             {
                 t.relegationsByAdministrativeDivisions.Add(kvp.Key, kvp.Value);
             }
+            foreach (Qualification q in this.qualifications)
+            {
+                t.qualifications.Add(q);
+            }
             return t;
         }
 
@@ -950,7 +954,6 @@ namespace TheManager
                         cv.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
                     }
                 }
-
             }
         }
 

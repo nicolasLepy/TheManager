@@ -10,6 +10,7 @@ using TheManager.Exportation;
 using System.Windows.Media;
 using TheManager.Tournaments;
 using TheManager.Comparators;
+using System.Runtime.InteropServices;
 
 namespace TheManager
 {
@@ -608,7 +609,17 @@ namespace TheManager
                 int gamesCount = 0;
                 foreach (Round r in rounds)
                 {
-                    copyForArchives.rounds.Add(r.Copy());
+                    Round roundCopy = r.Copy();
+                    for(int i = 0; i < roundCopy.qualifications.Count; i++)
+                    {
+                        Qualification q = roundCopy.qualifications[i];
+                        if (roundCopy.qualifications[i].tournament == this)
+                        {
+                            q.tournament = copyForArchives;
+                            roundCopy.qualifications[i] = q;
+                        }
+                    }
+                    copyForArchives.rounds.Add(roundCopy);
                     gamesCount += r.matches.Count;
                 }
                 copyForArchives.statistics = statistics;
@@ -710,6 +721,93 @@ namespace TheManager
             }
         }
 
+        public List<Round> GetFinalPhaseTree(Round round, List<Round> allRounds)
+        {
+            String allRoundsStr = "";
+            foreach(Round r in allRounds)
+            {
+                allRoundsStr += r.name + ",";
+            }
+            Console.WriteLine("Get Final Phase Tree from " + round.name + " with " + allRounds.Count + " (" + allRoundsStr + ") precomputed rounds");
+
+            allRounds.Add(round);
+            int roundIndex = this.rounds.IndexOf(round);
+            List<Round> res = new List<Round>() { round};
+            //Step 1 : Append rounds with losing teams
+            foreach(Qualification q in round.qualifications)
+            {
+                if(!q.isNextYear && q.tournament == this && q.ranking > 1)
+                {
+                    Round targetRound = this.rounds[q.roundId];
+                    if(!allRounds.Contains(targetRound))
+                    {
+                        res.AddRange(GetFinalPhaseTree(targetRound, allRounds));
+                    }
+                }
+            }
+            //Step 2 : Append rounds with winning teams
+            foreach (Qualification q in round.qualifications)
+            {
+                if (!q.isNextYear && q.tournament == this && q.ranking == 1)
+                {
+                    Round targetRound = this.rounds[q.roundId];
+                    if (!allRounds.Contains(targetRound))
+                    {
+                        res.AddRange(GetFinalPhaseTree(targetRound, allRounds));
+                    }
+                }
+            }
+            //Step 3 : Insert in first positions rounds where teams come from
+            for(int i = 1; i < this.rounds.Count; i++)
+            {
+                Round ri = this.rounds[i];
+                if((ri as KnockoutRound) != null && !allRounds.Contains(ri))
+                {
+                    foreach(Qualification q in ri.qualifications)
+                    {
+                        if(!q.isNextYear && q.tournament == this && q.roundId == roundIndex && q.ranking == 1)
+                        {
+                            res.InsertRange(0, GetFinalPhaseTree(ri, allRounds));
+                        }
+                    }
+                }
+
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Get Final Phase Clubs ranked from competition winner to first team eliminated
+        /// TODO: Final phases with nested group rounds are not managed. Final phases can only be knockout rounds
+        /// </summary>
+        public List<Club> GetFinalPhasesClubs()
+        {
+            List<Club> finalClubs = new List<Club>();
+            Round finalRound = null;
+            _rounds[0].qualifications.ForEach(q => finalRound = (!q.isNextYear && q.tournament == this && q.roundId > 0 && q.ranking == 1) ? _rounds[q.roundId] : finalRound);
+            //If the league winner is qualified on another round this year on this tournament then the tournament finish with a final phase
+            List<Round> finalRounds = new List<Round>();
+
+            if (finalRound != null)
+            {
+                finalRounds = GetFinalPhaseTree(finalRound, new List<Round>()) ;
+            }
+            for (int i = finalRounds.Count-1; i>=0; i--)
+            {
+                List<Club> roundClubs = new List<Club>(finalRounds[i].clubs);
+                roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
+
+                foreach (Club c in roundClubs)
+                {
+                    if(!finalClubs.Contains(c))
+                    {
+                        finalClubs.Add(c);
+                    }
+                }
+            }
+            return finalClubs;
+        }
+
         public void NextRound()
         {
             if (currentRound > -1 && currentRound < _rounds.Count)
@@ -783,7 +881,15 @@ namespace TheManager
         {
             if(isChampionship)
             {
-                return _rounds[0].Winner();
+                List<Club> clubsFinalPhase = GetFinalPhasesClubs();
+                if (clubsFinalPhase.Count > 0)
+                {
+                    return clubsFinalPhase[0];
+                }
+                else
+                {
+                    return _rounds[0].Winner();
+                }
             }
             else
             {

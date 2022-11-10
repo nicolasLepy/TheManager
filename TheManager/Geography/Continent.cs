@@ -163,7 +163,8 @@ namespace TheManager
             {
                 List<Club> registeredClubs = new List<Club>();
                 List<Club> clubs = new List<Club>();
-                Round championshipRound = countriesRanking[i].FirstDivisionChampionship().rounds[0];
+                Tournament firstDivisionChampionship = countriesRanking[i].FirstDivisionChampionship();
+                Round championshipRound = firstDivisionChampionship.rounds[0];
                 Club cupWinner = countriesRanking[i].Cup(1)?.Winner();
 
                 if(championshipRound as ChampionshipRound != null)
@@ -173,6 +174,21 @@ namespace TheManager
                 if (championshipRound as InactiveRound != null)
                 {
                     clubs = (championshipRound as InactiveRound).Ranking();
+                }
+                if (championshipRound as GroupsRound != null)
+                {
+                    clubs = new List<Club>(championshipRound.clubs);
+                    clubs.Sort(new ClubRankingComparator(championshipRound.matches));
+                }
+
+                List<Club> finalPhasesClubs = firstDivisionChampionship.GetFinalPhasesClubs();
+                if (finalPhasesClubs.Count > 0)
+                {
+                    for(int j = finalPhasesClubs.Count-1; j >= 0; j--)
+                    {
+                        clubs.Remove(finalPhasesClubs[j]);
+                        clubs.Insert(0, finalPhasesClubs[j]);
+                    }
                 }
                 int rank = i + 1;
                 int currentLevel = 0;
@@ -186,6 +202,13 @@ namespace TheManager
                             for (int j = 0; j < q.qualifies; j++)
                             {
                                 Club qualifiedClub = clubs[currentLevel];
+                                //If we get the cup winner and is already qualified, then we move to the next candidate team to avoid the cup winner entering two times in continental tournament
+                                //TODO: Can't manage multiple cup winners (replace by a list of cup winners ?)
+                                if(qualifiedClub == cupWinner && registeredClubs.Contains(cupWinner))
+                                {
+                                    currentLevel++;
+                                    qualifiedClub = clubs[currentLevel];
+                                }
                                 currentLevel++;
                                 q.tournament.AddClubForNextYear(qualifiedClub, q.roundId);
                                 registeredClubs.Add(qualifiedClub);
@@ -195,6 +218,7 @@ namespace TheManager
                         else
                         {
                             q.tournament.AddClubForNextYear(cupWinner, q.roundId);
+                            registeredClubs.Add(cupWinner);
                         }
                     }
                 }

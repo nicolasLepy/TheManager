@@ -46,6 +46,10 @@ namespace TheManager
             {
                 t.matches.Add(m);
             }
+            foreach(Qualification q in this.qualifications)
+            {
+                t.qualifications.Add(q);
+            }
 
             return t;
         }

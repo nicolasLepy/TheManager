@@ -665,7 +665,7 @@ namespace TheManager_GUI
 
                 Round t = arc.Value.rounds[arc.Value.rounds.Count - 1];
                 //If the final round was not inactive, we can make the palmares
-                if (t.matches.Count > 0)
+                if ((t as InactiveRound) == null)
                 {
                     int year = arc.Key;
                     StackPanel sp = new StackPanel();

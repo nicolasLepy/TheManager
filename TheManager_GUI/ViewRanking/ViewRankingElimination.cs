@@ -165,11 +165,6 @@ namespace TheManager_GUI.VueClassement
                     spRanking.Children.Add(new Separator());
 
                 }
-                for (int i = 1; i < 10; i++)
-                {
-                    Console.WriteLine("Club de niveau " + i + " : " + clubsByLevel[i]);
-                }
-
             }
         }
     }
