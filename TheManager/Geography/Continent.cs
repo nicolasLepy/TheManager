@@ -17,6 +17,9 @@ namespace TheManager
         private List<Tournament> _tournaments;
         [DataMember]
         private string _name;
+        [DataMember]
+        private string _logo;
+
         /**
          * Represent qualification in continental clubs competitions in function of the country place in the coefficient ranking
          */
@@ -24,6 +27,8 @@ namespace TheManager
         private List<Qualification> _continentalQualifications;
         [DataMember]
         private List<Country> _associationRanking;
+        [DataMember]
+        private List<List<Country>> _archivalAssociationRanking;
 
         /// <summary>
         /// As association ranking can be long to be computed (and change only at the end of the season), ranking is stored here to be reused without computing all ranking
@@ -40,6 +45,8 @@ namespace TheManager
             }
         }
 
+        public List<List<Country>> archivalAssociationRanking => _archivalAssociationRanking;
+
         public List<Country> countries => _countries;
         public List<Qualification> continentalQualifications => _continentalQualifications;
         public List<Tournament> Tournaments()
@@ -51,15 +58,22 @@ namespace TheManager
         {
             return _name;
         }
+
+        public string Logo()
+        {
+            return _logo;
+        }
         
 
-        public Continent(string name)
+        public Continent(string name, string logo)
         {
             _name = name;
+            _logo = logo;
             _countries = new List<Country>();
             _tournaments = new List<Tournament>();
             _continentalQualifications = new List<Qualification>();
             _associationRanking = new List<Country>();
+            _archivalAssociationRanking = new List<List<Country>>();
         }
 
         /// <summary>
@@ -141,6 +155,10 @@ namespace TheManager
 
         public void UpdateStoredAssociationRanking()
         {
+            if(_associationRanking != null && _associationRanking.Count > 0)
+            {
+                _archivalAssociationRanking.Add(new List<Country>(_associationRanking));
+            }
             _associationRanking = new List<Country>();
             foreach (Country c in _countries)
             {

@@ -102,11 +102,14 @@ namespace TheManager
         private List<Article> _articles;
         [DataMember]
         private GameWorld _gameUniverse;
+        [DataMember]
+        private int _startYear;
 
         /// <summary>
         /// Date of the day
         /// </summary>
         public DateTime date => _date;
+        public int startYear => _startYear;
         public Kernel kernel { get => _kernel; }
         public Options options { get => _options; }
         /// <summary>
@@ -125,8 +128,9 @@ namespace TheManager
         public Game()
         {
             _articles = new List<Article>();
+            _startYear = 2021;
             GameDay beginSeasons = new GameDay(25, true, 0, 0);
-            _date = beginSeasons.ConvertToDateTime(2021);
+            _date = beginSeasons.ConvertToDateTime(_startYear);
             _kernel = new Kernel();
             _options = new Options();
             _club = null;

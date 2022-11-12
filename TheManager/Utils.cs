@@ -19,6 +19,7 @@ namespace TheManager
         public readonly static string tournamentLogoFolderName = "tournaments";
         public readonly static string clubLogoFolderName = "clubs";
         public readonly static string nationalFlagsFolderName = "flags";
+        public readonly static string universeLogoFolderName = "universe";
         public readonly static string mediaLogoFolderName = "medias";
         public readonly static string namesSubfolderName = "names";
         private static string _dataFolderName = "data";
@@ -333,6 +334,16 @@ namespace TheManager
             return flag;
         }
 
+        public static string Logo(Continent c)
+        {
+            string flag = Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\" + universeLogoFolderName + "\\" + c.Logo() + ".png";
+            if (!File.Exists(flag))
+            {
+                flag = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+            }
+            return flag;
+        }
+
         public static string Logo(Club c)
         {
             string res = "";
@@ -368,7 +379,12 @@ namespace TheManager
 
         public static string LogoTournament(Tournament tournament)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\"+Utils.tournamentLogoFolderName+"\\" + tournament.logo + ".png";
+            string path = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + tournamentLogoFolderName + "\\" + tournament.logo + ".png";
+            if(!File.Exists(path))
+            {
+                path = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + tournamentLogoFolderName + "\\" + "generic.png";
+            }
+            return path;
         }
 
         public static string PathSong(string song)

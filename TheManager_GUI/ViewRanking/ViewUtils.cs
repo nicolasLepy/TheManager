@@ -116,21 +116,33 @@ namespace TheManager_GUI
 
         }
 
-        public static Image CreateFlag(Country country, double width, double height)
+        public static Image CreateImage(Uri uri, double width, double height)
         {
             Image sprite = new Image();
-            sprite.Source = new BitmapImage(new Uri(Utils.Flag(country), UriKind.RelativeOrAbsolute));
+            sprite.Source = new BitmapImage(uri);
             sprite.Width = width;
             sprite.Height = height;
             return sprite;
         }
+
+        public static Image CreateFlag(Country country, double width, double height)
+        {
+            return CreateImage(new Uri(Utils.Flag(country), UriKind.RelativeOrAbsolute), width, height);
+        }
+
+        public static Image CreateContinentLogo(Continent continent, double width, double height)
+        {
+            return CreateImage(new Uri(Utils.Logo(continent), UriKind.RelativeOrAbsolute), width, height);
+        }
+
         public static Image CreateLogo(Club club, double width, double height)
         {
-            Image sprite = new Image();
-            sprite.Source = new BitmapImage(new Uri(Utils.Logo(club), UriKind.RelativeOrAbsolute));
-            sprite.Width = width;
-            sprite.Height = height;
-            return sprite;
+            return CreateImage(new Uri(Utils.Logo(club), UriKind.RelativeOrAbsolute), width, height);
+        }
+
+        public static Image CreateLogo(Tournament tournament, double width, double height)
+        {
+            return CreateImage(new Uri(Utils.LogoTournament(tournament), UriKind.RelativeOrAbsolute), width, height);
         }
 
         public static Border CreateCalendarItem(DateTime time, bool today, Match match = null, List<Tournament> tournaments = null)

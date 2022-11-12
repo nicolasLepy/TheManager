@@ -839,9 +839,6 @@ namespace TheManager
                     }
                 }
             }
-
-
-
         }
 
         /// <summary>

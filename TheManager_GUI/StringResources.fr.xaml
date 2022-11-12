@@ -88,6 +88,7 @@
 	<system:String x:Key="str_YCByGame">CJ/Match</system:String>
 	<system:String x:Key="str_RCByGame">CR/Match</system:String>
 	<system:String x:Key="str_fifaRanking">Classement FIFA</system:String>
+	<system:String x:Key="str_assoRanking">Classement de l'association</system:String>
 	<system:String x:Key="str_ranking">Classement</system:String>
 	<system:String x:Key="str_searchPlayers">Recherche de joueurs</system:String>
 	<system:String x:Key="str_filters">Filtres</system:String>
@@ -119,6 +120,10 @@
 	<system:String x:Key="str_playersEstimation">Nombre de joueurs approximatif</system:String>
 	<system:String x:Key="str_today">Aujourd'hui</system:String>
 	<system:String x:Key="str_daysAgo">Il y a {0} jour{1}</system:String>
+	<system:String x:Key="str_clubsInternationalTournaments">Clubs en compétitions internationales</system:String>
+	<system:String x:Key="str_tournaments">Compétitions</system:String>
+	<system:String x:Key="str_titleholder">Tenant du titre</system:String>
+	<system:String x:Key="str_notranked">Pas classé</system:String>
 
 
 </ResourceDictionary>

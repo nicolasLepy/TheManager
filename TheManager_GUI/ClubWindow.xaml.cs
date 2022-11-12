@@ -178,8 +178,6 @@ namespace TheManager_GUI
             FillGames();
             FillBudget();
 
-            
-
             List<Player> newContracts = new List<Player>();
             
             foreach (Contract ct in c.allContracts)

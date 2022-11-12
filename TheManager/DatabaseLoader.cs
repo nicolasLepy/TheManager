@@ -500,7 +500,8 @@ namespace TheManager
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
-                    Continent c = new Continent(continentName);
+                    string continentLogo = e2.Attribute("logo").Value;
+                    Continent c = new Continent(continentName, continentLogo);
                     foreach(XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;

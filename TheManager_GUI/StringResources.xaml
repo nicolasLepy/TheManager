@@ -87,6 +87,7 @@
 	<system:String x:Key="str_YCByGame">YC/Game</system:String>
 	<system:String x:Key="str_RCByGame">RC/Game</system:String>
 	<system:String x:Key="str_fifaRanking">FIFA Ranking</system:String>
+	<system:String x:Key="str_assoRanking">Association ranking</system:String>
 	<system:String x:Key="str_ranking">Ranking</system:String>
 	<system:String x:Key="str_searchPlayers">Search players</system:String>
 	<system:String x:Key="str_filters">Filters</system:String>
@@ -119,5 +120,9 @@
 	<system:String x:Key="str_playersEstimation">Approximate number of players</system:String>
 	<system:String x:Key="str_today">Today</system:String>
 	<system:String x:Key="str_daysAgo">{0} day{1} ago</system:String>
+	<system:String x:Key="str_clubsInternationalTournaments">Clubs in international competitions</system:String>
+	<system:String x:Key="str_tournaments">Tournaments</system:String>
+	<system:String x:Key="str_titleholder">Titleholder</system:String>
+	<system:String x:Key="str_notranked">Not ranked</system:String>
 
 </ResourceDictionary>

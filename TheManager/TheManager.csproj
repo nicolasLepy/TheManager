@@ -65,6 +65,7 @@
     <Compile Include="Comparators\NationsFifaRankingComparator.cs" />
     <Compile Include="Comparators\QualificationComparator.cs" />
     <Compile Include="Comparators\StadiumComparator.cs" />
+    <Compile Include="Comparators\TournamentComparator.cs" />
     <Compile Include="DatabaseLoader.cs" />
     <Compile Include="Club.cs" />
     <Compile Include="Geography\AdministrativeDivision.cs" />

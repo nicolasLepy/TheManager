@@ -20,6 +20,16 @@ namespace TheManager_GUI.VueClassement
                 Windows_Club wc = new Windows_Club(c as CityClub);
                 wc.Show();
             }
+            else if(c as ReserveClub != null)
+            {
+                Windows_Club wc = new Windows_Club((c as ReserveClub).FannionClub);
+                wc.Show();
+            }
+            else if(c as NationalTeam != null)
+            {
+                CountryWindow cw = new CountryWindow(c as NationalTeam);
+                cw.Show();
+            }
         }
 
         public void OpenMatch(Match m)

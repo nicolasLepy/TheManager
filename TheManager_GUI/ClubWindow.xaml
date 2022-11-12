@@ -13,7 +13,6 @@
 				<Button Name="btnQuitter" Click="BtnQuitter_Click">
 					<Image Name="imgBtnQuitter" Source="Images/return.png" Width="25" Height="25" Margin="3"/>
 				</Button>
-
 			</StackPanel>
 			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 				<Image Name="imgLogo" Width="120" Height="120"/>
@@ -63,10 +62,10 @@
 							<Label Content="{StaticResource str_formationCentre}" Style="{StaticResource StyleLabel2}"/>
 							<lvc:CartesianChart Width="450" Height="300" Series="{Binding CFCollection}" LegendLocation="Right" >
 								<lvc:CartesianChart.AxisY>
-									<lvc:Axis Title="Niveau" MinValue="0" MaxValue="100"></lvc:Axis>
+									<lvc:Axis Title="{StaticResource str_level}" MinValue="0" MaxValue="100"></lvc:Axis>
 								</lvc:CartesianChart.AxisY>
 								<lvc:CartesianChart.AxisX>
-									<lvc:Axis Title="Années" Labels="{Binding LabelsAnnees}"></lvc:Axis>
+									<lvc:Axis Title="{StaticResource str_years}" Labels="{Binding LabelsAnnees}"></lvc:Axis>
 								</lvc:CartesianChart.AxisX>
 							</lvc:CartesianChart>
 

@@ -710,7 +710,7 @@ namespace TheManager
                         newUltramarineTeams.Add(c);
                     }
                     //Ultramarine already in tournament
-                    else if(c.Country() != localisationTournament)
+                    else if(c.Country() != localisationTournament && previousRound != null)
                     {
                         foreach(Match m in previousRound.matches)
                         {
