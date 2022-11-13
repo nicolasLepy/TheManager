@@ -827,16 +827,20 @@ namespace TheManager
             _subs1OnBench = new List<Player>(_subs1);
             _subs2OnBench = new List<Player>(_subs2);
 
-            UpdatePlayersMatchPlayedStat(_compo1);
-            UpdatePlayersMatchPlayedStat(_compo2);
+            UpdatePlayersMatchPlayedStat(home, _compo1);
+            UpdatePlayersMatchPlayedStat(away, _compo2);
 
         }
 
-        private void UpdatePlayersMatchPlayedStat(List<Player> compo)
+        private void UpdatePlayersMatchPlayedStat(Club club, List<Player> compo)
         {
             foreach(Player p in compo)
             {
-                p.playedGames++;
+                if(!p.playedGames.ContainsKey(club))
+                {
+                    p.playedGames.Add(club, 0);
+                }
+                p.playedGames[club]++;
             }
         }
 
@@ -859,7 +863,7 @@ namespace TheManager
                 _compo2Terrain = new List<Player>(compo);
                 _subs2 = new List<Player>(subs);
             }
-            UpdatePlayersMatchPlayedStat(compo);
+            UpdatePlayersMatchPlayedStat(club, compo);
         }
 
         private void EndOfGame()
@@ -1298,13 +1302,17 @@ namespace TheManager
 
         private void Goal(Club c)
         {
-            Player j = Goalscorer(c == home ? compo1 : compo2);
-            if(j != null)
+            Player p = Goalscorer(c == home ? compo1 : compo2);
+            if(p != null)
             {
-                MatchEvent em = new MatchEvent(GameEvent.Goal, c, j, _minute, _period);
-                if (j != null)
+                MatchEvent em = new MatchEvent(GameEvent.Goal, c, p, _minute, _period);
+                if (p != null)
                 {
-                    j.goalsScored++;
+                    if (!p.goalsScored.ContainsKey(c))
+                    {
+                        p.goalsScored.Add(c, 0);
+                    }
+                    p.goalsScored[c]++;
                 }
                 _events.Add(em);
                 AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));

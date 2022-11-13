@@ -31,7 +31,7 @@ namespace TheManager_GUI
         public string[] labelsYears { get; set; }
         public string[] labelsYearsAsso { get; set; }
 
-        private NationalTeam nationalTeam;
+        private readonly NationalTeam nationalTeam;
 
         public CountryWindow(NationalTeam nationalTeam)
         {
@@ -100,7 +100,7 @@ namespace TheManager_GUI
         private void FillMainPanel()
         {
             List<Player> nationalPlayers = nationalTeam.Players();
-            ViewPlayers vp = new ViewPlayers(nationalPlayers, 10, true, true, false, true, true, false, false, true, false, false, false, false, false, false, false, false, false);
+            ViewPlayers vp = new ViewPlayers(nationalPlayers, 10, true, true, false, true, true, false, false, true, false, false, false, false, false, true, true, false, false);
             vp.Full(spTabTeam);
 
             List<Match> nationalMatchs = nationalTeam.Games;
@@ -217,8 +217,6 @@ namespace TheManager_GUI
                 for (int i = tournament.rounds.Count-1; i > -1; i--)
                 {
                     Round r = tournament.rounds[i];
-                    List<Club> roundClubs = new List<Club>(r.clubs);
-
                     foreach(Club c in r.clubs)
                     {
                         if(c.Country() == nationalTeam.country && !clubs.Contains(c) && (c as CityClub) != null)
@@ -261,7 +259,6 @@ namespace TheManager_GUI
             Image flag = ViewUtils.CreateFlag(nationalTeam.country, 700, 300);
             ib.ImageSource = flag.Source;
             ib.Stretch = Stretch.UniformToFill;
-            //ib.Transform = new RotateTransform(20);
             ib.Opacity = 0.25;
             gridHeader.Background = ib;
 

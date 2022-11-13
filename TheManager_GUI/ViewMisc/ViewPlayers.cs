@@ -233,11 +233,11 @@ namespace TheManager_GUI.ViewMisc
                 }
                 if (InternationalSelections)
                 {
-                    throw new NotImplementedException();
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.InternationalCaps.ToString(), "StyleLabel2", FontSize, 50));
                 }
                 if (InternationalGoals)
                 {
-                    throw new NotImplementedException();
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.InternationalGoals.ToString(), "StyleLabel2", FontSize, 50));
                 }
 
                 spRanking.Children.Add(spPlayer);

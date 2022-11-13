@@ -1,6 +1,8 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -47,8 +49,8 @@ namespace TheManager_GUI
             foreach (PlayerHistory hj in joueur.history)
             {
                 niveaux.Add(hj.Level);
-                buts.Add(hj.Goals);
-                joues.Add(hj.GamesPlayed);
+                buts.Add(hj.Goals.Sum(k => k.Value));
+                joues.Add(hj.GamesPlayed.Sum(k => k.Value));
             }
 
             NiveauCollection = new SeriesCollection
@@ -128,29 +130,29 @@ namespace TheManager_GUI
 
             int cumulativeGoals = 0;
             int cumulativeMatchesPlayed = 0;
+            int totalGoals = 0;
+            int totalMatchsPlayed = 0;
+
+            Dictionary<NationalTeam, int[]> nationalTeamHistory = new Dictionary<NationalTeam, int[]>();
 
             if(_player.history.Count > 0)
             {
-                Club last = null;
+                Club last = _player.history[0].Club;
                 int arrival = _player.history[0].Year;
-                foreach (PlayerHistory hj in _player.history)
+                for (int i = 0; i < _player.history.Count+1; i++)
                 {
-                    if (last != hj.Club)
+                    PlayerHistory hj = i < _player.history.Count ? _player.history[i] : new PlayerHistory(0, -1, new Dictionary<Club, int>(), new Dictionary<Club, int>(), null);
+                    totalGoals += hj.Goals.Sum(k => k.Value);
+                    totalMatchsPlayed += hj.GamesPlayed.Sum(k => k.Value);
+
+                    if (i == _player.history.Count || last != hj.Club)
                     {
-                        string nameClub = "";
-                        if(last == null)
-                        {
-                            nameClub = FindResource("str_free").ToString();
-                        }
-                        else
-                        {
-                            nameClub = last.name;
-                        }
+                        string nameClub = last == null ? FindResource("str_free").ToString() : last.name;
                         int depart = hj.Year;
 
                         StackPanel line = new StackPanel();
                         line.Orientation = Orientation.Horizontal;
-                        line.Children.Add(ViewUtils.CreateLabel((arrival - 1).ToString() + " - " + _player.history[_player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
+                        line.Children.Add(ViewUtils.CreateLabel(String.Format("{0}-{1}", (arrival - 1), last != _player.Club ? hj.Year.ToString() : ""), "StyleLabel2", 11, 80));
                         line.Children.Add(ViewUtils.CreateLabel(nameClub, "StyleLabel2", 11, 100));
                         line.Children.Add(ViewUtils.CreateLabel(cumulativeMatchesPlayed.ToString(), "StyleLabel2", 11, 40));
                         line.Children.Add(ViewUtils.CreateLabel(cumulativeGoals.ToString(), "StyleLabel2", 11, 40));
@@ -160,29 +162,69 @@ namespace TheManager_GUI
                         cumulativeMatchesPlayed = 0;
                         arrival = hj.Year;
                     }
-                    cumulativeGoals += hj.Goals;
-                    cumulativeMatchesPlayed += hj.GamesPlayed;
-                    last = hj.Club;
+                    if(i < _player.history.Count)
+                    {
+                        foreach (KeyValuePair<Club, int> kvp in hj.Goals)
+                        {
+                            NationalTeam nt = kvp.Key as NationalTeam;
+                            if (nt != null)
+                            {
+                                if (!nationalTeamHistory.ContainsKey(nt))
+                                {
+                                    nationalTeamHistory.Add(nt, new int[4]);
+                                }
+                                nationalTeamHistory[nt][3] += kvp.Value;
+                            }
+                            else
+                            {
+                                cumulativeGoals += kvp.Value;
+                            }
+                        }
+                        foreach (KeyValuePair<Club, int> kvp in hj.GamesPlayed)
+                        {
+                            NationalTeam nt = kvp.Key as NationalTeam;
+                            if (nt != null)
+                            {
+                                if (!nationalTeamHistory.ContainsKey(nt))
+                                {
+                                    nationalTeamHistory.Add(nt, new int[] { -1, -1, 0, 0 });
+                                }
+                                nationalTeamHistory[nt][2] += kvp.Value;
+                                nationalTeamHistory[nt][1] = nationalTeamHistory[nt][1] == -1 || hj.Year > nationalTeamHistory[nt][1] ? hj.Year : nationalTeamHistory[nt][1];
+                                nationalTeamHistory[nt][0] = nationalTeamHistory[nt][0] == -1 || hj.Year < nationalTeamHistory[nt][0] ? hj.Year : nationalTeamHistory[nt][0];
+                            }
+                            else
+                            {
+                                cumulativeMatchesPlayed += kvp.Value;
+                            }
+                        }
+
+                        last = hj.Club;
+                    }
                 }
 
-                string clubName = "";
-                if (last == null)
+                foreach (KeyValuePair<NationalTeam, int[]> kvp in nationalTeamHistory)
                 {
-                    clubName = FindResource("str_free").ToString();
-                }
-                else
-                {
-                    clubName = last.name;
+                    StackPanel spNational = new StackPanel();
+                    spNational.Margin = new Thickness(0, 10, 0, 0);
+                    spNational.Orientation = Orientation.Horizontal;
+                    spNational.Children.Add(ViewUtils.CreateLabel(String.Format("{0}-{1}", (kvp.Value[0] - 1), _player.IsRetired ? kvp.Value[1].ToString() : ""), "StyleLabel2", 11, 80));
+                    spNational.Children.Add(ViewUtils.CreateLabel(kvp.Key.name, "StyleLabel2", 11, 100));
+                    spNational.Children.Add(ViewUtils.CreateLabel(kvp.Value[2].ToString(), "StyleLabel2", 11, 40));
+                    spNational.Children.Add(ViewUtils.CreateLabel(kvp.Value[3].ToString(), "StyleLabel2", 11, 40));
+                    spPlayerHistory.Children.Add(spNational);
+
                 }
 
+                StackPanel spTotal = new StackPanel();
+                spTotal.Margin = new Thickness(0, 10, 0, 0);
+                spTotal.Orientation = Orientation.Horizontal;
+                spTotal.Children.Add(ViewUtils.CreateLabel(String.Format("{0}-{1}",(_player.history[0].Year - 1), _player.IsRetired ? _player.history[_player.history.Count - 1].Year.ToString() : ""), "StyleLabel2", 11, 80));
+                spTotal.Children.Add(ViewUtils.CreateLabel("Total", "StyleLabel2", 11, 100));
+                spTotal.Children.Add(ViewUtils.CreateLabel(totalMatchsPlayed.ToString(), "StyleLabel2", 11, 40));
+                spTotal.Children.Add(ViewUtils.CreateLabel(totalGoals.ToString(), "StyleLabel2", 11, 40));
+                spPlayerHistory.Children.Add(spTotal);
 
-                StackPanel lastLine = new StackPanel();
-                lastLine.Orientation = Orientation.Horizontal;
-                lastLine.Children.Add(ViewUtils.CreateLabel((arrival-1).ToString() + " - " + _player.history[_player.history.Count - 1].Year.ToString(), "StyleLabel2", 11, 80));
-                lastLine.Children.Add(ViewUtils.CreateLabel(clubName, "StyleLabel2", 11, 100));
-                lastLine.Children.Add(ViewUtils.CreateLabel(cumulativeMatchesPlayed.ToString(), "StyleLabel2", 11, 40));
-                lastLine.Children.Add(ViewUtils.CreateLabel(cumulativeGoals.ToString(), "StyleLabel2", 11, 40));
-                spPlayerHistory.Children.Add(lastLine);
             }
         }
     }

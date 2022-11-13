@@ -61,6 +61,24 @@ namespace TheManager
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
+        public List<NationalTeam> nationalTeams
+        {
+            get
+            {
+                List<NationalTeam> res = new List<NationalTeam>();
+                foreach (Club c in Session.Instance.Game.kernel.Clubs)
+                {
+                    NationalTeam nt = c as NationalTeam;
+                    if (nt != null && c.Country() == this)
+                    {
+                        res.Add(nt);
+                    }
+                }
+                return res;
+            }
+        }
+
+
         public float YearAssociationCoefficient(int nSeason)
         {
             List<Club> clubs = new List<Club>();

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -11,21 +12,25 @@ namespace TheManager
     public struct PlayerHistory : IEquatable<PlayerHistory>
     {
         [DataMember]
+        private Dictionary<Club, int> _goals;
+        [DataMember]
+        private Dictionary<Club, int> _gamesPlayed;
+
+
+        [DataMember]
         public int Level { get; set; }
         [DataMember]
         public int Year { get; set; }
-        [DataMember]
-        public int Goals { get; set; }
-        [DataMember]
-        public int GamesPlayed { get; set; }
+        public Dictionary<Club, int> Goals => _goals;
+        public Dictionary<Club, int> GamesPlayed => _gamesPlayed;
         [DataMember]
         public CityClub Club { get; set; }
-        public PlayerHistory(int level, int year, int goals, int playedGames, CityClub club)
+        public PlayerHistory(int level, int year, Dictionary<Club, int> goals, Dictionary<Club, int> playedGames, CityClub club)
         {
             Level = level;
             Year = year;
-            Goals = goals;
-            GamesPlayed = playedGames;
+            _goals = goals;
+            _gamesPlayed = playedGames;
             Club = club;
         }
         
@@ -54,27 +59,47 @@ namespace TheManager
         private List<ContractOffer> _offers;
         [DataMember]
         private bool _foundANewClubThisSeason;
+        [DataMember]
+        private Dictionary<Club, int> _playedGames;
+        [DataMember]
+        private Dictionary<Club, int> _goalsScored;
 
         public int level { get => _level; set => _level = value; }
         public int potential { get => _potential; }
         public Position position { get => _position;}
         public bool suspended { get => _suspended; set => _suspended = value; }
-        public List<PlayerHistory> history { get => _history; }
+        public List<PlayerHistory> history
+        {
+            get
+            {
+                List<PlayerHistory> res = new List<PlayerHistory>(_history);
+                //Add a fake history entry resuming the current season
+                res.Add(new PlayerHistory(this.level, Session.Instance.Game.CurrentSeason, this.goalsScored, this.playedGames, this.Club));
+                return res;
+            }
+        }
         /// <summary>
-        /// Matchs joués sur la saison en cours
+        /// Played games during the current season
         /// </summary>
-        [DataMember]
-        public int playedGames { get; set; }
+        public Dictionary<Club, int> playedGames => _playedGames;
         /// <summary>
-        /// Buts marqués sur la saison en cours
+        /// Goals scored during the current season
         /// </summary>
-        [DataMember]
-        public int goalsScored { get; set; }
+        public Dictionary<Club, int> goalsScored => _goalsScored;
 
         /// <summary>
         /// Level of the player taking into consideration his energy
         /// </summary>
         public float effectiveLevel => level * ((energy / 200.0f) + 0.5f);
+
+        //TODO: Maybe better to have a isRetired attribute (performance)
+        public bool IsRetired
+        {
+            get
+            {
+                return !Session.Instance.Game.kernel.freePlayers.Contains(this) && Club == null;
+            }
+        }
 
         public int energy
         {
@@ -123,6 +148,40 @@ namespace TheManager
             }
         }
 
+        public int InternationalCaps
+        {
+            get
+            {
+                int res = 0;
+                foreach(PlayerHistory he in this.history)
+                {
+                    foreach(KeyValuePair<Club, int> kvp in he.GamesPlayed)
+                    {
+                        NationalTeam nt = kvp.Key as NationalTeam;
+                        res = nt != null ? res+kvp.Value : res;
+                    }
+                }
+                return res;
+            }
+        }
+
+        public int InternationalGoals
+        {
+            get
+            {
+                int res = 0;
+                foreach (PlayerHistory he in this.history)
+                {
+                    foreach (KeyValuePair<Club, int> kvp in he.Goals)
+                    {
+                        NationalTeam nt = kvp.Key as NationalTeam;
+                        res = nt != null ? res + kvp.Value : res;
+                    }
+                }
+                return res;
+            }
+        }
+
         public Player(string firstName, string lastName, DateTime birthday, int level, int potential, Country nationality, Position position) : base(firstName,lastName,birthday,nationality)
         {
             
@@ -132,8 +191,8 @@ namespace TheManager
             suspended = false;
             _energy = 100;
             _history = new List<PlayerHistory>();
-            goalsScored = 0;
-            playedGames = 0;
+            _goalsScored = new Dictionary<Club, int>();
+            _playedGames = new Dictionary<Club, int>();
             _offers = new List<ContractOffer>();
             _foundANewClubThisSeason = false;
 
@@ -220,8 +279,8 @@ namespace TheManager
                 _level -= Session.Instance.Random(1, 5);
             }
             _history.Add(new PlayerHistory(_level, Session.Instance.Game.date.Year + 1,goalsScored, playedGames, Club));
-            goalsScored = 0;
-            playedGames = 0;
+            _goalsScored = new Dictionary<Club, int>();
+            _playedGames = new Dictionary<Club, int>();
 
             _foundANewClubThisSeason = false;
         }

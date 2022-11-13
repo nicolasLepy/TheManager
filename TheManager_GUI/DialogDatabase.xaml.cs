@@ -35,14 +35,21 @@ namespace TheManager_GUI
                     comboDatabase.Items.Add(directory.Remove(0, 14));
                 }
             }
-
         }
 
         private void formValidation(object sender, EventArgs e)
         {
-            database = comboDatabase.SelectedItem.ToString();
-            this.DialogResult = true;
-            this.Close();
+            if(comboDatabase.SelectedItem != null)
+            {
+                database = comboDatabase.SelectedItem.ToString();
+                this.DialogResult = true;
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show(FindResource("str_nodatabaseselected").ToString(), FindResource("str_error").ToString(), MessageBoxButton.OK, MessageBoxImage.Exclamation);
+
+            }
         }
 
         private void formCancel(object sender, EventArgs e)

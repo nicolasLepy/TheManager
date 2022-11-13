@@ -124,6 +124,8 @@
 	<system:String x:Key="str_tournaments">Compétitions</system:String>
 	<system:String x:Key="str_titleholder">Tenant du titre</system:String>
 	<system:String x:Key="str_notranked">Pas classé</system:String>
+	<system:String x:Key="str_nodatabaseselected">Aucune base de données sélectionnée</system:String>
+	<system:String x:Key="str_error">Erreur</system:String>
 
 
 </ResourceDictionary>

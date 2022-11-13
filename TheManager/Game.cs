@@ -125,6 +125,7 @@ namespace TheManager
 
         public GameWorld gameUniverse => _gameUniverse;
 
+
         public Game()
         {
             _articles = new List<Article>();
@@ -135,6 +136,18 @@ namespace TheManager
             _options = new Options();
             _club = null;
             _gameUniverse = new GameWorld();
+        }
+
+        /// <summary>
+        /// Get current season year (for eg. 2021-2022 => 2022)
+        /// TODO: Better to have a season by association and not a global season calendar
+        /// </summary>
+        public int CurrentSeason
+        {
+            get
+            {
+                return Utils.IsBeforeWithoutYear(date, new DateTime(2000, 6, 16)) ? _date.Year : _date.Year+1;
+            }
         }
 
         public void Exports(Tournament t)

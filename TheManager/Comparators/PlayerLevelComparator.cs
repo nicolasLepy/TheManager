@@ -62,9 +62,9 @@ namespace TheManager.Comparators
                 case PlayerAttribute.WAGE:
                     return y.EstimateWage() - x.EstimateWage();
                 case PlayerAttribute.GOALS:
-                    return y.goalsScored - x.goalsScored;
+                    return y.goalsScored.Sum(k => k.Value) - x.goalsScored.Sum(k => k.Value);
                 case PlayerAttribute.GAMES:
-                    return y.playedGames - x.playedGames;
+                    return y.playedGames.Sum(k => k.Value) - x.playedGames.Sum(k => k.Value);
                 case PlayerAttribute.NATIONALITY:
                     return y.nationality.Name().CompareTo(x.nationality.Name());
                 case PlayerAttribute.IS_SUSPENDED:
@@ -74,9 +74,9 @@ namespace TheManager.Comparators
                 case PlayerAttribute.IS_INTERNATIONAL:
                     throw new NotImplementedException();
                 case PlayerAttribute.INTERNATIONAL_SELECTIONS:
-                    throw new NotImplementedException();
+                    return y.InternationalCaps - x.InternationalCaps;
                 case PlayerAttribute.INTERNATIONAL_GOALS:
-                    throw new NotImplementedException();
+                    return y.InternationalGoals - x.InternationalGoals;
                 case PlayerAttribute.CONTRACT_BEGIN:
                     if(y.Club == null && x.Club == null)
                     {
