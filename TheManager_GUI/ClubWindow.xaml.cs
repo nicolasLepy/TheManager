@@ -2,6 +2,7 @@
 using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -177,6 +178,7 @@ namespace TheManager_GUI
             Palmares(c);
             FillGames();
             FillBudget();
+            FillHistory();
 
             List<Player> newContracts = new List<Player>();
             
@@ -297,6 +299,51 @@ namespace TheManager_GUI
                 lbBiggestLose.Content = c.records.BiggestLose.home.name + " " + c.records.BiggestLose.score1 + " - " + c.records.BiggestLose.score2 + " " + c.records.BiggestLose.away.name;
             }
 
+        }
+
+        private void FillHistory()
+        {
+            List<Tournament> tournaments = new List<Tournament>(_club.Country().Cups());
+            foreach (Continent c in Session.Instance.Game.kernel.continents)
+            {
+                if (c.countries.Count == 0 || _club.Country().Continent == c)
+                {
+                    int j = 0;
+                    Tournament continentalT = c.GetContinentalClubTournament(++j);
+                    while(continentalT != null)
+                    {
+                        tournaments.Add(continentalT);
+                        continentalT = c.GetContinentalClubTournament(++j);
+                    }
+                }
+            }
+            foreach (Tournament t in tournaments)
+            {
+                StackPanel spTournament = new StackPanel();
+                spTournament.Orientation = Orientation.Vertical;
+                spTournament.Children.Add(ViewUtils.CreateLabel(t.name, "StyleLabel2", 12, -1));
+                foreach (KeyValuePair<int, Tournament> previousEdition in t.previousEditions)
+                {
+                    Tournament tournament = previousEdition.Value;
+                    string teamPerformance = null;
+                    for (int i = tournament.rounds.Count - 1; i >= 0 && teamPerformance == null; i--)
+                    {
+                        if (tournament.rounds[i].clubs.Contains(_club))
+                        {
+                            teamPerformance = (i == tournament.rounds.Count - 1 && tournament.Winner() == _club) ? FindResource("str_winner").ToString() : tournament.rounds[i].name;
+                        }
+                    }
+                    teamPerformance = teamPerformance == null ? FindResource("str_notQualified").ToString() : teamPerformance;
+
+                    StackPanel spEdition = new StackPanel();
+                    spEdition.Orientation = Orientation.Horizontal;
+                    spEdition.Children.Add(ViewUtils.CreateLabel(String.Format("{0}", previousEdition.Key), "StyleLabel2", 10, 75));
+                    spEdition.Children.Add(ViewUtils.CreateLabel(teamPerformance, "StyleLabel2", 10, 500));
+                    spTournament.Children.Add(spEdition);
+
+                }
+                spTournamentsHistory.Children.Add(spTournament);
+            }
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)

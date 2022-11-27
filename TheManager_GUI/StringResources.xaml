@@ -126,5 +126,7 @@
 	<system:String x:Key="str_notranked">Not ranked</system:String>
 	<system:String x:Key="str_nodatabaseselected">No database selected</system:String>
 	<system:String x:Key="str_error">Error</system:String>
+	<system:String x:Key="str_notQualified">Not qualified</system:String>
+	<system:String x:Key="str_winner">Winner</system:String>
 
 </ResourceDictionary>

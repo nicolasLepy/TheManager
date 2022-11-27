@@ -97,6 +97,48 @@ namespace TheManager_GUI
             }
         }
 
+        private void FillHistory()
+        {
+            foreach(Continent c in Session.Instance.Game.kernel.continents)
+            {
+                if(c.countries.Count == 0 || nationalTeam.country.Continent == c)
+                {
+                    foreach (Tournament t in c.Tournaments())
+                    {
+                        if (t.rounds.Last().qualifications.Count == 0 && t.previousEditions.Count > 0 && (t.previousEditions.Values.Last().rounds.Last().clubs.Count > 0) && (t.previousEditions.Values.Last().rounds.Last().clubs[0] as NationalTeam) != null)
+                        {
+                            StackPanel spTournament = new StackPanel();
+                            spTournament.Orientation = Orientation.Vertical;
+                            spTournament.Children.Add(ViewUtils.CreateLabel(t.name, "StyleLabel2", 12, -1));
+                            foreach (KeyValuePair<int, Tournament> previousEdition in t.previousEditions)
+                            {
+                                Tournament tournament = previousEdition.Value;
+                                string teamPerformance = null;
+                                for(int i = tournament.rounds.Count-1; i>=0 && teamPerformance == null; i--)
+                                {
+                                    if (tournament.rounds[i].clubs.Contains(nationalTeam))
+                                    {
+                                        teamPerformance = (i == tournament.rounds.Count-1 && tournament.Winner() == nationalTeam) ? FindResource("str_winner").ToString() : tournament.rounds[i].name;
+                                    }
+                                }
+                                teamPerformance = teamPerformance == null ? FindResource("str_notQualified").ToString() : teamPerformance;
+
+                                StackPanel spEdition = new StackPanel();
+                                spEdition.Orientation = Orientation.Horizontal;
+                                spEdition.Children.Add(ViewUtils.CreateLabel(String.Format("{0}", previousEdition.Key), "StyleLabel2", 10, 75));
+                                spEdition.Children.Add(ViewUtils.CreateLabel(teamPerformance, "StyleLabel2", 10, 500));
+                                spTournament.Children.Add(spEdition);
+
+                            }
+                            spHistoryTournaments.Children.Add(spTournament);
+
+                        }
+                    }
+
+                }
+            }
+        }
+
         private void FillMainPanel()
         {
             List<Player> nationalPlayers = nationalTeam.Players();
@@ -265,6 +307,7 @@ namespace TheManager_GUI
             FillTournaments();
             FillContinentalTeams();
             FillMainPanel();
+            FillHistory();
 
         }
 

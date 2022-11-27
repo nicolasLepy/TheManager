@@ -48,7 +48,7 @@
 							</Border>
 						</StackPanel>
 					</TabItem>
-					<TabItem Header="{StaticResource str_progression}" Style="{StaticResource StyleTabHeader}">
+					<TabItem Header="{StaticResource str_progression}" Style="{StaticResource StyleTabHeader}" Height="23" Margin="-2,-2,-2,0" VerticalAlignment="Top">
 						<StackPanel Orientation="Vertical" Width="600" Name="spTabEvolution">
 							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 								<StackPanel Orientation="Vertical">
@@ -70,6 +70,15 @@
 											<lvc:Axis Title="{StaticResource str_years}" Labels="{Binding labelsYearsAsso}"></lvc:Axis>
 										</lvc:CartesianChart.AxisX>
 									</lvc:CartesianChart>
+								</StackPanel>
+							</Border>
+						</StackPanel>
+					</TabItem>
+					<TabItem Header="{StaticResource str_history}" Style="{StaticResource StyleTabHeader}" Height="23" Margin="-2,-2,-2,0" VerticalAlignment="Top">
+						<StackPanel Orientation="Vertical" Width="600" Name="spHistoryCountry">
+							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
+								<StackPanel Orientation="Vertical" Name="spHistoryTournaments">
+									
 								</StackPanel>
 							</Border>
 						</StackPanel>
