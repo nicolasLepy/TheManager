@@ -187,7 +187,7 @@ namespace TheManager_GUI
                             {
                                 if (!nationalTeamHistory.ContainsKey(nt))
                                 {
-                                    nationalTeamHistory.Add(nt, new int[] { -1, -1, 0, 0 });
+                                    nationalTeamHistory.Add(nt, new [] { -1, -1, 0, 0 });
                                 }
                                 nationalTeamHistory[nt][2] += kvp.Value;
                                 nationalTeamHistory[nt][1] = nationalTeamHistory[nt][1] == -1 || hj.Year > nationalTeamHistory[nt][1] ? hj.Year : nationalTeamHistory[nt][1];

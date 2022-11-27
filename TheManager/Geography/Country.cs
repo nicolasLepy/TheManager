@@ -240,6 +240,20 @@ namespace TheManager
             return GetTournamentByLevel(leagueRank, true);
         }
 
+        public List<Tournament> Cups()
+        {
+            int i = 1;
+            List<Tournament> res = new List<Tournament>();
+            Tournament cup = GetTournamentByLevel(i, false);
+            while(cup != null)
+            {
+                res.Add(cup);
+                cup = GetTournamentByLevel(++i, false);
+            }
+            return res;
+
+        }
+
         /**
          * cupRank : for exemple : Coupe de France is level 1 and Coupe de la Ligue is level 2
          */
