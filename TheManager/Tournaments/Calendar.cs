@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Algorithms;
@@ -247,6 +248,45 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Only suitable for two-conferences league
+        /// </summary>
+        /// <param name="n">Matrix size (number of teams)</param>
+        /// <returns></returns>
+        private static int[,] GenerateNonConferencesGamesMatrix(int n, int phases)
+        {
+            int[,] matrix = new int[n, n*phases];
+            for(int phase = 0; phase < phases; phase++)
+            {
+                List<int> firstRow = GenerateRandomSample(n);
+                List<int> permutes = GenerateRandomSample(n);
+                int row = 0;
+                foreach (int i in permutes)
+                {
+                    List<int> step = firstRow.GetRange(i, firstRow.Count - i);
+                    step.AddRange(firstRow.GetRange(0, i));
+                    int[] line = step.ToArray();
+                    for (int j = 0; j < line.Length; j++)
+                    {
+                        matrix[row, (phase*n)+j] = line[j];
+                    }
+                    row++;
+                }
+            }
+            return matrix;
+        }
+
+        private static List<int> GenerateRandomSample(int n)
+        {
+            List<int> res = new List<int>();
+            for (int i = 0; i < n; i++)
+            {
+                res.Add(i);
+            }
+            res.Shuffle();
+            return res;
+        }
+
         private static int[] GetEvenlyDistributedNValuesFromM(int n, int m)
         {
             int[] res = new int[n];
@@ -254,6 +294,97 @@ namespace TheManager
             for(int i = 0; i<n; i++)
             {
                 res[i] = (int)Math.Round(step * i);
+            }
+            return res;
+        }
+
+        public static List<Match> GenerateNonConferenceGames(GroupsRound tournamentRound)
+        {
+            List<Match> res = new List<Match>();
+            int maxTeamsByGroup = 0;
+            foreach(List<Club> c in tournamentRound.groups)
+            {
+                maxTeamsByGroup = c.Count > maxTeamsByGroup ? c.Count : maxTeamsByGroup;
+            }
+            List<Club>[] groups = new List<Club>[tournamentRound.groupsCount];
+            for(int i = 0; i<tournamentRound.groups.Length; i++)
+            {
+                groups[i] = new List<Club>(tournamentRound.groups[i]);
+                groups[i].Shuffle();
+            }
+            int nonConferenceGamesPhases = 1 + (tournamentRound.nonGroupGamesByTeams/maxTeamsByGroup);
+            int totalRound = (maxTeamsByGroup - 1) * nonConferenceGamesPhases;
+            int programmationDaysCountByPhase = (tournamentRound.programmation.gamesDays.Count / tournamentRound.phases);
+            int[] baseCalendarIndices = GetEvenlyDistributedNValuesFromM(maxTeamsByGroup - 1, programmationDaysCountByPhase);
+
+            List<int> nonConferenceGamesCalendarIndices = new List<int>();
+            for(int i = 0; i< tournamentRound.programmation.gamesDays.Count; i++)
+            {
+                bool ok = true;
+                foreach(int index in baseCalendarIndices)
+                {
+                    if(i% programmationDaysCountByPhase == index)
+                    {
+                        ok = false;
+                    }
+                }
+                if(ok)
+                {
+                    nonConferenceGamesCalendarIndices.Add(i);
+                }
+            }
+            
+            int gamesByDays = tournamentRound.nonGroupGamesByGameday > 0 ? tournamentRound.nonGroupGamesByGameday : tournamentRound.clubs.Count / 2;
+            int totalNonConferencesGames = tournamentRound.clubs.Count * tournamentRound.nonGroupGamesByTeams / 2;
+            int daysCounts = totalNonConferencesGames / gamesByDays;
+            int[] calendarIndices = GetEvenlyDistributedNValuesFromM(daysCounts, nonConferenceGamesCalendarIndices.Count);
+            int[,] gamesMatrix = GenerateNonConferencesGamesMatrix(maxTeamsByGroup, nonConferenceGamesPhases);
+
+            List<Club[]> games = new List<Club[]>();
+
+            for (int col = 0; col<tournamentRound.nonGroupGamesByTeams; col++)
+            {
+                for(int row = 0; row<maxTeamsByGroup; row++)
+                {
+                    if (row < groups[0].Count && gamesMatrix[row, col] < tournamentRound.groups[1].Count)
+                    {
+                        Club first = col % 2 == 0 ? groups[0][row] : groups[1][gamesMatrix[row, col]];
+                        Club second = col % 2 == 0 ? groups[1][gamesMatrix[row, col]] : groups[0][row];
+                        games.Add(new Club[] { first, second });
+                    }
+                }
+            }
+            for(int i = 0; i<games.Count; i++)
+            {
+                if (games[i].Contains(null))
+                {
+                    games.RemoveAt(i);
+                    i--;
+                }
+            }
+
+            int calendarIndex = 0;
+            for (int i = 0; i < games.Count; i++) //games.Count and not totalNonConferencesGames because some due to algo some games are removed because of ghost team
+            {
+                Club club1 = games[i][0];
+                Club club2 = games[i][1];
+
+                if(i%gamesByDays == 0 && i > 0)
+                {
+                    calendarIndex++;
+                }
+                int programmationIndice = nonConferenceGamesCalendarIndices[calendarIndices[calendarIndex]];
+                DateTime jour = tournamentRound.programmation.gamesDays[programmationIndice].ConvertToDateTime(Session.Instance.Game.date.Year);
+                if (Utils.IsBeforeWithoutYear(jour, tournamentRound.DateInitialisationRound()))
+                {
+                    jour = tournamentRound.programmation.gamesDays[programmationIndice].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
+                }
+                jour = jour.AddHours(tournamentRound.programmation.defaultHour.Hours);
+                jour = jour.AddMinutes(tournamentRound.programmation.defaultHour.Minutes);
+
+                Match game = new Match(club1, club2, jour, false);
+                res.Add(game);
+
             }
             return res;
         }

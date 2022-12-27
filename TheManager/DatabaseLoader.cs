@@ -805,6 +805,7 @@ namespace TheManager
                             bool twoLegged = e3.Attribute("allerRetour") != null ? e3.Attribute("allerRetour").Value == "oui" : false;
                             int phases = e3.Attribute("phases") != null ? int.Parse(e3.Attribute("phases").Value) : (twoLegged ? 2 : 1);
                             string hourByDefault = e3.Attribute("heureParDefaut").Value;
+                            int keepRankingFromPreviousRound = e3.Attribute("keep_ranking_from_previous_round") != null ? int.Parse(e3.Attribute("keep_ranking_from_previous_round").Value) : -1;
                             GameDay initialisationDate = String2GameDay(e3.Attribute("initialisation").Value);
                             GameDay endDate = String2GameDay(e3.Attribute("fin").Value);
                             List<GameDay> dates = CreateGameDaysList(e3);
@@ -829,7 +830,7 @@ namespace TheManager
                             {
                                 int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
 
-                                round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, twoLegged, phases, new List<TvOffset>(), initialisationDate, endDate, dernieresJourneesMemeJour);
+                                round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, twoLegged, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour);
                             }
                             else if (type == "elimination")
                             {
@@ -854,7 +855,10 @@ namespace TheManager
                                 {
                                     administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
                                 }
-                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, phases, initialisationDate, endDate, method, administrativeLevel);
+                                int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
+                                bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
+                                int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
+                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1457,7 +1461,7 @@ namespace TheManager
                             j /= 2;
                         }
 
-                        int maxPrize = c.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40;
+                        int maxPrize = c.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? c.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
 
                         for(int i = roundCount-1; i >= 0; i--)
                         {

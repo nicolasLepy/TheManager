@@ -32,6 +32,13 @@ namespace TheManager
         [DataMember]
         private int _referenceClubsByGroup;
         [DataMember]
+        private int _nonGroupGamesByTeams;
+        [DataMember]
+        private int _nonGroupGamesByGameday;
+        [DataMember]
+        private bool _fusionGroupAndNoGroupGames;
+
+        [DataMember]
         private Dictionary<AdministrativeDivision, int> _relegationsByAdministrativeDivisions;
         /// <summary>
         /// For computation time optimization, save computed group qualifications
@@ -52,6 +59,10 @@ namespace TheManager
         public int maxClubsInGroup => _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
 
         public int administrativeLevel => _administrativeLevel;
+
+        public int nonGroupGamesByTeams => _nonGroupGamesByTeams;
+        public int nonGroupGamesByGameday => _nonGroupGamesByGameday;
+        public bool fusionGroupAndNoGroupGames => _fusionGroupAndNoGroupGames;
 
         public List<GeographicPosition> groupsLocalisation { get => _groupsLocalisation; }
 
@@ -87,7 +98,7 @@ namespace TheManager
         {
             _storedGroupQualifications = new List<Qualification>[_groups.Length];
         }
-        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, int phases, GameDay initialisation, GameDay end, RandomDrawingMethod randomDrawingMethod, int administrativeLevel) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0)
+        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0, keepRankingFromPreviousRound)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -101,11 +112,14 @@ namespace TheManager
             _referenceClubsByGroup = 0;
             _administrativeLevel = administrativeLevel;
             _relegationsByAdministrativeDivisions = new Dictionary<AdministrativeDivision, int>();
+            _nonGroupGamesByTeams = nonGroupGamesByTeams;
+            _nonGroupGamesByGameday = nonGroupGamesByGameday;
+            _fusionGroupAndNoGroupGames = fusionGroupAndNoGroupGames;
         }
 
         public override Round Copy()
         {
-            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, phases, programmation.initialisation, programmation.end, _randomDrawingMethod, _administrativeLevel);
+            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -223,9 +237,22 @@ namespace TheManager
 
 
             SetGroups();
-            for (int i = 0; i < _groupsNumber; i++)
+
+            if(_fusionGroupAndNoGroupGames)
             {
-                _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this, twoLegs));
+                _matches.AddRange(Calendar.GenerateCalendar(clubs, this, twoLegs));
+            }
+            else
+            {
+                for (int i = 0; i < _groupsNumber; i++)
+                {
+                    _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this, twoLegs));
+                }
+                if (this.nonGroupGamesByTeams > 0)
+                {
+                    _matches.AddRange(Calendar.GenerateNonConferenceGames(this));
+
+                }
             }
 
         }

@@ -28,7 +28,7 @@ namespace TheManager
         public RandomDrawingMethod randomDrawingMethod => _randomDrawingMethod;
 
 
-        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, int phases, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0)
+        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, int phases, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0, -1)
         {
             _randomDrawingMethod = method;
             _noRandomDrawing = noRandomDrawing;

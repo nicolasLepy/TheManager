@@ -14,10 +14,9 @@ namespace TheManager
     public class InactiveRound : Round
     {
 
-
         private List<Club> _ranking;
 
-        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end) :base(name,hour,new List<GameDay>(),new List<TvOffset>(),initialisation,end,false,1, 0)
+        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end) :base(name,hour,new List<GameDay>(),new List<TvOffset>(),initialisation,end,false,1, 0, -1)
         {
             _ranking = null;
         }

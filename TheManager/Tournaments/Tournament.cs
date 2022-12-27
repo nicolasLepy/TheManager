@@ -777,6 +777,28 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Return the last championship round of the tournament
+        /// TODO: Incorrect round returned when multiple championship rounds are in the tournament where the tournament is turned inactive
+        /// </summary>
+        /// <returns></returns>
+        public Round GetLastChampionshipRound()
+        {
+            Round res = null;
+            if ((rounds[0] as InactiveRound) != null)
+            {
+                res = rounds[0]; 
+            }
+            for(int i = rounds.Count-1; i>=0 && res == null; i--)
+            {
+                if ((rounds[i] as ChampionshipRound) != null)
+                {
+                    res = rounds[i];
+                }
+            }
+            return res;
+        }
+
+        /// <summary>
         /// Get Final Phase Clubs ranked from competition winner to first team eliminated
         /// TODO: Final phases with nested group rounds are not managed. Final phases can only be knockout rounds
         /// </summary>
@@ -784,7 +806,8 @@ namespace TheManager
         {
             List<Club> finalClubs = new List<Club>();
             Round finalRound = null;
-            _rounds[0].qualifications.ForEach(q => finalRound = (!q.isNextYear && q.tournament == this && q.roundId > 0 && q.ranking == 1) ? _rounds[q.roundId] : finalRound);
+            Round lastChampionshipRound = GetLastChampionshipRound(); //_rounds[0]
+            lastChampionshipRound.qualifications.ForEach(q => finalRound = (!q.isNextYear && q.tournament == this && q.roundId > 0 && q.ranking == 1) ? _rounds[q.roundId] : finalRound);
             //If the league winner is qualified on another round this year on this tournament then the tournament finish with a final phase
             List<Round> finalRounds = new List<Round>();
 

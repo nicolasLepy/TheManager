@@ -13,12 +13,16 @@ namespace TheManager.Comparators
         private readonly bool _inverted;
         private readonly bool _knockoutRound;
 
-        public ClubRankingComparator(List<Match> games, RankingType rankingType = RankingType.General, bool inverted = false, bool knockoutRound = false)
+        public ClubRankingComparator(List<Match> games, RankingType rankingType = RankingType.General, bool inverted = false, bool knockoutRound = false, Round addRankingFromThisRound = null)
         {
-            _round = games;
+            _round = new List<Match>(games);
             _rankingType = rankingType;
             _inverted = inverted;
             _knockoutRound = knockoutRound;
+            if(addRankingFromThisRound != null)
+            {
+                _round.AddRange(addRankingFromThisRound.matches);
+            }
         }
 
         public int CompareKnockoutRound(Club x, Club y)

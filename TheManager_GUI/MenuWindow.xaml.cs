@@ -143,7 +143,6 @@ namespace TheManager_GUI
                 {
                     comboRounds.SelectedItem = comboRounds.Items[0];
                 }
-
             }
         }
 
@@ -304,7 +303,6 @@ namespace TheManager_GUI
 
         private void ClassementClub()
         {
-
             if (_partie.club != null && _partie.club.Championship != null)
             {
                 _viewRanking = FactoryViewRanking.CreateView(_partie.club.Championship.rounds[0], 0.75, true, _partie.club, true);

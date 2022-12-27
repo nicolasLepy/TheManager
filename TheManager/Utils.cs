@@ -506,7 +506,6 @@ namespace TheManager
 
         public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, Tournament from, bool reservesCantBePromoted)
         {
-
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
             List<int> fixedRelegations = new List<int>(); // Contains ranking of teams that can't be saved
 

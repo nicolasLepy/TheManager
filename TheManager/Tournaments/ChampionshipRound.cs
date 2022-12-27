@@ -13,13 +13,13 @@ namespace TheManager
     public class ChampionshipRound : Round
     {
 
-        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int lastDaySameDay) : base(name, hour, days, offsets, initialisation,end, twoLegs, phases, lastDaySameDay)
+        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, int lastDaySameDay) : base(name, hour, days, offsets, initialisation,end, twoLegs, phases, lastDaySameDay, keepRankingFromPreviousRound)
         {
         }
 
         public override Round Copy()
         {
-            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, phases, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, programmation.lastMatchDaysSameDayNumber);
+            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, phases, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, keepRankingFromPreviousRound, programmation.lastMatchDaysSameDayNumber);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -272,7 +272,8 @@ namespace TheManager
 
         public List<Club> Ranking(RankingType rankingType = RankingType.General)
         {
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, rankingType);
+            Round previousRoundRanking = this.keepRankingFromPreviousRound > -1 ? this.Tournament.rounds[keepRankingFromPreviousRound] : null;
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, rankingType, false, false, previousRoundRanking);
             List<Club> ranking = new List<Club>(_clubs);
             ranking.Sort(comparator);
             return ranking;
@@ -280,6 +281,7 @@ namespace TheManager
 
         public List<Club> RankingWithoutReserves(int group)
         {
+            Round previousRoundRanking = this.keepRankingFromPreviousRound > -1 ? this.Tournament.rounds[keepRankingFromPreviousRound] : null;
             List<Club> res = new List<Club>();
             foreach (Club c in _clubs)
             {
@@ -288,7 +290,7 @@ namespace TheManager
                     res.Add(c);
                 }
             }
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, RankingType.General, false, false, previousRoundRanking);
             res.Sort(comparator);
             return res;
         }
@@ -369,8 +371,7 @@ namespace TheManager
 
         public override void DistributeGrants()
         {
-            List<Club> ranking = new List<Club>(_clubs);
-            ranking.Sort(new ClubRankingComparator(this.matches));
+            List<Club> ranking = this.Ranking();
             foreach(Prize d in _prizes)
             {
                 CityClub cc = ranking[d.Ranking-1] as CityClub;

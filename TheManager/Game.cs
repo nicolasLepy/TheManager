@@ -8,6 +8,7 @@ using MathNet.Numerics.Distributions;
 using TheManager.Tournaments;
 using System.Globalization;
 using System.IO.Compression;
+using System.Text.RegularExpressions;
 
 namespace TheManager
 {
@@ -584,8 +585,14 @@ namespace TheManager
                 List<Match> todayGames = new List<Match>();
                 if(c.currentRound > -1)
                 {
+                    List<Match> matchs = new List<Match>();
+                    foreach(Round r in c.rounds)
+                    {
+                        matchs.AddRange(r.matches);
+                    }
                     Round currentRound = c.rounds[c.currentRound];
-                    foreach (Match m in currentRound.matches)
+                    //matchs = currentRound.matches;
+                    foreach (Match m in matchs)
                     {
                         if (Utils.CompareDates(m.day, _date))
                         {

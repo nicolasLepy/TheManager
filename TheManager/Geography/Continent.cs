@@ -182,7 +182,7 @@ namespace TheManager
                 List<Club> registeredClubs = new List<Club>();
                 List<Club> clubs = new List<Club>();
                 Tournament firstDivisionChampionship = countriesRanking[i].FirstDivisionChampionship();
-                Round championshipRound = firstDivisionChampionship.rounds[0];
+                Round championshipRound = firstDivisionChampionship.GetLastChampionshipRound(); //firstDivisionChampionship.rounds[0];
                 List<Tournament> cups = countriesRanking[i].Cups();
                 List<Club> cupWinners = new List<Club>();
                 cups.ForEach(t => cupWinners.Add(t.Winner()));
@@ -195,7 +195,7 @@ namespace TheManager
                 {
                     clubs = (championshipRound as InactiveRound).Ranking();
                 }
-                if (championshipRound as GroupsRound != null)
+                if (championshipRound as GroupsRound != null) //TODO: No sense to do this, no tournament finish on a group round (maybe if one day Top and Bottom championships are merged in a group round phase)
                 {
                     clubs = new List<Club>(championshipRound.clubs);
                     clubs.Sort(new ClubRankingComparator(championshipRound.matches));

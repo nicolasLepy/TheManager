@@ -250,12 +250,16 @@ namespace TheManager
         [DataMember]
         protected List<Prize> _prizes;
 
+        [DataMember]
+        protected int _keepRankingFromPreviousRound;
+
 
         public string name { get => _name; }
         public List<Club> clubs { get => _clubs; }
         public List<Match> matches { get => _matches; }
         public bool twoLegs { get => _twoLegs; }
         public int phases { get => _phases; }
+        public int keepRankingFromPreviousRound { get => _keepRankingFromPreviousRound; }
         public RoundProgrammation programmation { get => _programmation; }
         public List<Qualification> qualifications { get => _qualifications; }
         public List<RecoverTeams> recuperedTeams { get => _recuperedTeams; }
@@ -299,7 +303,7 @@ namespace TheManager
             }
         }
 
-        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay)
+        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound)
         {
             _name = name;
             _clubs = new List<Club>();
@@ -312,6 +316,7 @@ namespace TheManager
             _rules = new List<Rule>();
             _prizes = new List<Prize>();
             _phases = phases;
+            _keepRankingFromPreviousRound = keepRankingFromPreviousRound;
         }
 
 
@@ -512,44 +517,54 @@ namespace TheManager
             return res;
         }
 
+        private List<Match> MatchesRanking()
+        {
+            List<Match> matchs = new List<Match>(_matches);
+            if (this.keepRankingFromPreviousRound > -1)
+            {
+                matchs.AddRange(this.Tournament.rounds[this.keepRankingFromPreviousRound].matches);
+            }
+            return matchs;
+        }
+
         public int Points(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Points(_matches, c, rankingType);
+            return Utils.Points(MatchesRanking(), c, rankingType);
         }
 
         public int Played(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Played(_matches, c, rankingType);
+            return Utils.Played(MatchesRanking(), c, rankingType);
         }
 
         public int Wins(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Wins(_matches, c, rankingType);
+            return Utils.Wins(MatchesRanking(), c, rankingType);
         }
 
         public int Draws(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Draws(_matches, c, rankingType);
+            return Utils.Draws(MatchesRanking(), c, rankingType);
         }
 
         public int Loses(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Loses(_matches, c, rankingType);
+            return Utils.Loses(MatchesRanking(), c, rankingType);
         }
 
         public int GoalsFor(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Gf(_matches, c, rankingType);
+            return Utils.Gf(MatchesRanking(), c, rankingType);
         }
 
         public int GoalsAgainst(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Ga(_matches, c, rankingType);
+            return Utils.Ga(MatchesRanking(), c, rankingType);
         }
 
         public int Difference(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Difference(_matches, c, rankingType);
+            return Utils.Difference(MatchesRanking(), c, rankingType);
         }
 
         public void Reset()
