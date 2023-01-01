@@ -18,7 +18,7 @@ namespace TheManager
         public List<Contract> Contracts { get => _players; }
         public CityClub FannionClub { get => _fannionClub; }
 
-        public ReserveClub(CityClub fannionClub, string name, string shortName, Manager manager) : base(name,manager,shortName,fannionClub.reputation/2,fannionClub.supporters/30,0,fannionClub.logo,fannionClub.stadium,fannionClub.goalMusic)
+        public ReserveClub(CityClub fannionClub, string name, string shortName, Manager manager) : base(name,manager,shortName,fannionClub.elo/2.0f,fannionClub.supporters/30,0,fannionClub.logo,fannionClub.stadium,fannionClub.goalMusic)
         {
             _fannionClub = fannionClub;
             _players = new List<Contract>();

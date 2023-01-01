@@ -784,7 +784,7 @@ namespace TheManager
         public Round GetLastChampionshipRound()
         {
             Round res = null;
-            if ((rounds[0] as InactiveRound) != null)
+            if ((rounds[0] as InactiveRound) != null || (rounds[0] as GroupsRound) != null)
             {
                 res = rounds[0]; 
             }

@@ -761,6 +761,25 @@ namespace TheManager
                 j.Recover();
             }
 
+            Console.WriteLine("[Clubs elo]");
+            List<Club> totalClubs = new List<Club>(this.kernel.Clubs);
+            totalClubs.Sort(new ClubComparator(ClubAttribute.ELO, false));
+            for(int i = 0; i < 10; i++)
+            {
+                Console.WriteLine(totalClubs[i].name + " - " + totalClubs[i].elo);
+            }
+            Console.WriteLine("...");
+            for (int i = totalClubs.Count-1; i > totalClubs.Count-10; i--)
+            {
+                Console.WriteLine(totalClubs[i].name + " - " + totalClubs[i].elo);
+            }
+            float totalElo = 0;
+            foreach(Club c in totalClubs)
+            {
+                totalElo += c.elo;
+            }
+            Console.WriteLine("Elo Sum = " + totalElo);
+
 
             return clubMatchs;
         }

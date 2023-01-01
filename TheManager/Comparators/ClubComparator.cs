@@ -14,7 +14,8 @@ namespace TheManager
         POTENTIEL,
         BUDGET,
         SPONSOR,
-        CONTINENTAL_COEFFICIENT
+        CONTINENTAL_COEFFICIENT,
+        ELO
     }
 
     public class ClubComparator : IComparer<Club>
@@ -80,6 +81,8 @@ namespace TheManager
                         res = 0;
                     }
                     break;
+                case ClubAttribute.ELO:
+                    return x.elo > y.elo ? -1 : 1;
                 default:
                     res = x.Level() > y.Level() ? -1 : 1;
                     break;

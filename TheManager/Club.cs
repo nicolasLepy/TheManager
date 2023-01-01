@@ -79,7 +79,7 @@ namespace TheManager
         [DataMember]
         private Manager _manager;
         [DataMember]
-        private int _reputation;
+        private float _elo;
         [DataMember]
         private int _supporters;
         [DataMember]
@@ -101,7 +101,7 @@ namespace TheManager
 
         public string name { get => _name; }
         public Manager manager { get => _manager; set => _manager = value; }
-        public int reputation { get => _reputation; }
+        public float elo { get => _elo; }
         public int supporters { get => _supporters; set => _supporters = value; }
         public int formationFacilities { get => _formationFacilities;}
         public Stadium stadium { get => _stadium; }
@@ -280,6 +280,11 @@ namespace TheManager
             }
         }
 
+        public void UpdateElo(float newElo)
+        {
+            _elo = newElo;
+        }
+
         /// <summary>
         /// </summary>
         /// <param name="date">From the date</param>
@@ -426,12 +431,13 @@ namespace TheManager
             }
         }
 
-        protected Club(string name, Manager manager, string shortName, int reputation, int supporters, int formationFacilities, string logo, Stadium stadium, string goalMusic)
+        protected Club(string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalMusic)
         {
             _name = name;
             _manager = manager;
             _shortName = shortName;
-            _reputation = reputation;
+            _elo = elo;
+            _elo = 1500;
             _supporters = supporters;
             _baseSupporters = supporters;
             _formationFacilities = formationFacilities;

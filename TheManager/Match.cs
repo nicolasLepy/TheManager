@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows.Input;
 using LiveCharts.Wpf;
 using TheManager.Comparators;
 
@@ -161,6 +162,12 @@ namespace TheManager
         private List<KeyValuePair<Media,Journalist>> _journalists;
         [DataMember]
         private List<Substitution> _substitutions;
+        [DataMember]
+        private float _odd1;
+        [DataMember]
+        private float _oddD;
+        [DataMember]
+        private float _odd2;
 
         public int attendance { get => _attendance; }
         [DataMember]
@@ -190,12 +197,48 @@ namespace TheManager
         /// </summary>
         public List<KeyValuePair<string,string>> actions { get => _actions; }
         public Statistics statistics { get => _statistics; }
-        [DataMember]
-        public float odd1 { get; set; }
-        [DataMember]
-        public float oddD { get; set; }
-        [DataMember]
-        public float odd2 { get; set; }
+        public float odd1
+        {
+            get
+            {
+                if(Played)
+                {
+                    return _odd1;
+                }
+                else
+                {
+                    return GetOdds()[0];
+                }
+            }
+        }
+        public float oddD
+        {
+            get
+            {
+                if (Played)
+                {
+                    return _oddD;
+                }
+                else
+                {
+                    return GetOdds()[1];
+                }
+            }
+        }
+        public float odd2
+        {
+            get
+            {
+                if (Played)
+                {
+                    return _odd2;
+                }
+                else
+                {
+                    return GetOdds()[2];
+                }
+            }
+        }
 
         [DataMember]
         public bool primeTimeGame { get; set; }
@@ -651,7 +694,36 @@ namespace TheManager
             }
         }
 
+        private float[] GetOdds()
+        {
+            return GetOddsFromNormalDistribution();
+        }
+
+        private float[] GetOddsFromNormalDistribution()
+        {
+            float dr = home.elo + 80 - away.elo;
+
+            double pDraw = 2*(1/(Math.Sqrt(2*Math.PI) * (Math.E))) * Math.Exp(-((Math.Pow(dr/100, 2))/(2*Math.Exp(2))));
+            double pWin = (1 / (1 + (Math.Pow(10, -dr/400)))) - (0.5 * pDraw);
+            double pLose = (1 / (1 + (Math.Pow(10, dr/400)))) - (0.5 * pDraw);
+            pWin = 1 / (pWin * 1.1);
+            pDraw = 1 / (pDraw * 1.05);
+            pLose = 1 / (pLose * 1.1);
+            float[] odds = new[] { (float)pWin, (float)pDraw, (float)pLose };
+
+            return odds;
+        }
+
         private void SetOdds()
+        {
+            float[] odds = GetOdds();
+            _odd1 = odds[0];
+            _oddD = odds[1];
+            _odd2 = odds[2];
+
+        }
+
+        private void SetOddsOld()
         {
             float homeN = home.Level() * 1.05f;
             float awayN = away.Level();
@@ -662,10 +734,10 @@ namespace TheManager
             float ratioE = awayN / homeN;
             ratioE *= ratioE * ratioE * ratioE * ratioE;
 
-            odd1 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioD - 3f))));
-            odd2 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioE - 3f))));
-            
-            oddD = (odd1 + odd2) / 2;
+            _odd1 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioD - 3f))));
+            _odd2 = (float)(1.01f + (1 / Math.Exp((2.5f * ratioE - 3f))));
+
+            _oddD = (odd1 + odd2) / 2;
         }
 
         public Match(Club homeTeam, Club awayTeam, DateTime matchDay, bool prolongationsIfDraw, Match firstLeg = null)
@@ -693,7 +765,6 @@ namespace TheManager
             _attendance = 0;
             _journalists = new List<KeyValuePair<Media, Journalist>>();
             _actions = new List<KeyValuePair<string, string>>();
-            SetOdds();
             primeTimeGame = false;
             _subs1 = new List<Player>();
             _subs2 = new List<Player>();
@@ -868,7 +939,9 @@ namespace TheManager
 
         private void EndOfGame()
         {
+            SetOdds();
             UpdateRecords();
+            UpdateElo();
             if(home as NationalTeam != null)
             {
                 (home as NationalTeam).UpdateFifaPointsAfterGame(this);
@@ -877,6 +950,107 @@ namespace TheManager
             {
                 (away as NationalTeam).UpdateFifaPointsAfterGame(this);
             }
+        }
+
+        private void UpdateElo(Club c, float k, bool noHomeAdjustement)
+        {
+
+            Club opponent = c == this.home ? away : home;
+            int scoreClub = c == this.home ? score1 : score2;
+            int scoreOpponent = c == this.home ? score2 : score1;
+            int goalDifference = Math.Abs(scoreClub - scoreOpponent);
+
+            float Ro = c.elo;
+            float dr = c.elo - opponent.elo;
+            if(!noHomeAdjustement)
+            {
+                if (c == home)
+                {
+                    dr = dr + 100;
+                }
+                else
+                {
+                    dr = dr - 100;
+                }
+            }
+            float W = this.Winner == c ? 1 : score1 == score2 ? 0.5f : 0;
+            float We = 1.0f/((float)Math.Pow(10, -dr/400)+1);
+            float kAdjustment = goalDifference == 2 ? 0.5f : goalDifference == 3 ? 0.75f : goalDifference > 3 ? 0.75f + ((goalDifference-3.0f)/8.0f) : 0;
+            k = k + (k * kAdjustment);
+
+            float newElo = Ro + k * (W - We);
+
+            c.UpdateElo(newElo);
+        }
+
+        private void UpdateElo()
+        {
+            /*Int. match : 
+            60 for World Cup;
+            50 for continental championship;
+            40 for qualifiers;
+            30 for all other tournaments;
+            20 for friendly matches.
+
+            Club match :
+
+            50 for international competitions
+            40 for domestic competitions
+            30 for domestic cups
+            20 for friendly matches
+             */
+
+
+            Tournament tournament = this.Tournament;
+            bool isInternational = tournament.IsInternational();
+
+            int k = 40;
+            if((this.home as NationalTeam) != null)
+            {
+                if (tournament.name == Utils.friendlyTournamentName) //Hum
+                {
+                    k = 20;
+                }
+                else if (isInternational && tournament.level == 3) //World cup
+                {
+                    k = 60;
+                }
+                else if(isInternational && tournament.level == 2) //Other international tournament
+                {
+                    k = 50;
+                }
+                else if(isInternational && tournament.level == 3) //Qualifiers
+                {
+                    k = 40;
+                }
+                else
+                {
+                    k = 30;
+                }
+            }
+            else
+            {
+                if(tournament.name == Utils.friendlyTournamentName) //Hum
+                {
+                    k = 20;
+                }
+                else if(isInternational)
+                {
+                    k = 50;
+                }
+                else if(!isInternational && !tournament.isChampionship)
+                {
+                    k = 30;
+                }
+                else
+                {
+                    k = 40;
+                }
+            }
+
+            UpdateElo(home, k, Round.rules.Contains(Rule.HostedByOneCountry));
+            UpdateElo(away, k, Round.rules.Contains(Rule.HostedByOneCountry));
+
         }
 
         private void UpdateRecords()
