@@ -230,26 +230,23 @@ namespace TheManager
             
         }
 
-        public string extendedName
+        public string extendedName(Tournament from, int year)
         {
-            get
+            Tournament clubChampionshipLevel = from;
+            Country country = Country();
+            string res = shortName.Length > 10 ? shortName.Substring(0, 10) : shortName;
+            foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
             {
-                string res = shortName.Length > 10 ? shortName.Substring(0, 10) : shortName;
-                foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
+                if(Session.Instance.Game.kernel.LocalisationTournament(c) == country && c.isChampionship && c.previousEditions.ContainsKey(year))
                 {
-                    if(Session.Instance.Game.kernel.LocalisationTournament(c) == Country() && c.isChampionship && c.previousEditions.Count > 0)
+                    if (c.previousEditions[year].rounds[0].clubs.Contains(this))
                     {
-                        int closestYear = c.previousEditions.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
-
-                        if (c.previousEditions[closestYear].rounds[0].clubs.Contains(this))
-                        {
-                            res = c.level > Championship.level ? res + " (P)" : c.level < Championship.level ? res + " (R)" : res;
-                        }
+                        res = c.level > from.level ? res + " (P) " : c.level < from.level ? res + " (R) " : res;
                     }
                 }
-                string adm = this.AdministrativeDivision() != null ? " (" + this.AdministrativeDivision().name + ")" : "";
-                return res + adm;
             }
+            string adm = this.AdministrativeDivision() != null ? " (" + this.AdministrativeDivision().name + ")" : "";
+            return res + adm;
         }
 
         public abstract Country Country();

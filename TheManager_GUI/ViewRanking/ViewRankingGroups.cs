@@ -11,7 +11,7 @@ using TheManager.Comparators;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class ViewRankingGroups : View
+    public class ViewRankingGroups : ViewRanking
     {
 
         private readonly GroupsRound _round;
@@ -19,7 +19,7 @@ namespace TheManager_GUI.VueClassement
         private readonly double _sizeMultiplier;
         private readonly Club _team;
 
-        public ViewRankingGroups(GroupsRound round, double sizeMultiplier, bool focusOnTeam, Club team)
+        public ViewRankingGroups(GroupsRound round, double sizeMultiplier, bool focusOnTeam, Club team) : base(round.Tournament)
         {
             _round = round;
             _focusOnTeam = focusOnTeam;
@@ -48,7 +48,19 @@ namespace TheManager_GUI.VueClassement
             }
 
 
-            Label l2 = ViewUtils.CreateLabel(_round.Tournament.isChampionship ? c.extendedName : c.shortName, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
+            string cupWinnerStr = "";
+            foreach (KeyValuePair<Tournament, Club> kvp in _cupsWinners)
+            {
+                if (kvp.Value == c)
+                {
+                    cupWinnerStr += " (" + kvp.Key.shortName + ") ";
+                }
+            }
+            if (_championshipTitleHolder == c)
+            {
+                cupWinnerStr += " (TT) ";
+            }
+            Label l2 = ViewUtils.CreateLabel((_round.Tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
             l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
             { clubNameButtonClick(c); };
 

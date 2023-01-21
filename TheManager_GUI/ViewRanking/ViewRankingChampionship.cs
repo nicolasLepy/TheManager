@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class ViewRankingChampionship : View
+    public class ViewRankingChampionship : ViewRanking
     {
 
         private readonly ChampionshipRound _round;
@@ -27,7 +27,7 @@ namespace TheManager_GUI.VueClassement
         /// <param name="sizeMultiplier">Width and font size multiplier</param>
         /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
         /// <param name="team">The team to focus ranking on</param>
-        public ViewRankingChampionship(ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false, RankingType rankingType = RankingType.General)
+        public ViewRankingChampionship(ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false, RankingType rankingType = RankingType.General) : base(round.Tournament)
         {
             _round = round;
             _sizeMultiplier = sizeMultiplier;
@@ -63,6 +63,30 @@ namespace TheManager_GUI.VueClassement
             return color;
         }
 
+        private bool QualificationCanLeadToRelegation(Round r, Tournament tournamentReference)
+        {
+            bool res = false;
+            foreach(Qualification q in r.qualifications)
+            {
+                if(q.isNextYear && q.tournament.level > tournamentReference.level)
+                {
+                    res = true;
+                }
+            }
+            if(!res)
+            {
+                foreach(Qualification q in r.qualifications)
+                {
+                    if (!q.isNextYear && q.tournament == tournamentReference && !q.tournament.IsInternational() && q.tournament.isChampionship)
+                    {
+                        res = QualificationCanLeadToRelegation(q.tournament.rounds[q.roundId], tournamentReference);
+                    }
+                }
+            }
+
+            return res;
+        }
+
         public override void Full(StackPanel spRanking)
         {
             spRanking.Children.Clear();
@@ -70,6 +94,16 @@ namespace TheManager_GUI.VueClassement
             int i = 0;
 
             List<Club> clubs = _round.Ranking(_rankingType);
+
+            // Get international qualifications
+            // Search if the round is an archived round to get qualified teams on the right year
+            // Else get qualification for the current season
+            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
+            Country country = localisation as Country;
+
+            Dictionary<Club, Qualification> continentalClubs = null;
+            continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, _year + 1) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country);
+
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around
             int indexTeam = -1;
@@ -125,16 +159,14 @@ namespace TheManager_GUI.VueClassement
                 StackPanel sp = new StackPanel();
                 sp.Orientation = Orientation.Horizontal;
 
-
                 sp.Children.Add(ViewUtils.CreateLabel(i.ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth/1.25));
 
-
-                if (_round.Tournament.IsInternational() && (c as CityClub) != null)
+                if (_tournament.IsInternational() && (c as CityClub) != null)
                 {
                     sp.Children.Add(ViewUtils.CreateFlag((c as CityClub).city.Country(), regularCellWidth / 1.5, regularCellWidth / 1.5));
 
                 }
-                else if (_round.Tournament.IsInternational() && (c as ReserveClub) != null)
+                else if (_tournament.IsInternational() && (c as ReserveClub) != null)
                 {
                     sp.Children.Add(ViewUtils.CreateFlag((c as ReserveClub).FannionClub.city.Country(), regularCellWidth / 1.5, regularCellWidth / 1.5));
                 }
@@ -143,7 +175,19 @@ namespace TheManager_GUI.VueClassement
                     sp.Children.Add(ViewUtils.CreateLogo(c, regularCellWidth / 1.5, regularCellWidth / 1.5));
                 }
 
-                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, _round.Tournament.isChampionship ? c.extendedName : c.shortName,"StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
+                string cupWinnerStr = "";
+                foreach(KeyValuePair<Tournament, Club> kvp in _cupsWinners)
+                {
+                    if(kvp.Value == c)
+                    {
+                        cupWinnerStr += " ("+kvp.Key.shortName+") ";
+                    }
+                }
+                if(_championshipTitleHolder == c)
+                {
+                    cupWinnerStr += " (TT) ";
+                }
+                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, (_tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr, "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
                 if(!_reduced)
@@ -163,43 +207,14 @@ namespace TheManager_GUI.VueClassement
             //Only show colors when the ranking is not focused on a team
             if (!_focusOnTeam)
             {
-                Club cupWinner = (Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Country)?.Cup(1)?.Winner();
-                int roundLevel = _round.Tournament.level;
-                ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament);
-                Country country = localisation as Country;
-                List<Club> registeredClubs = new List<Club>();
-                if(country != null && roundLevel == 1)
-                {
-                    Continent continent = country.Continent;
-                    int nationIndex = continent.associationRanking.IndexOf(country) + 1;
-                    int currentRanking = 0;
-                    int totalQualificationsFromLeague = (from qualification in continent.continentalQualifications where (qualification.ranking == nationIndex && !qualification.isNextYear) select qualification.qualifies).Sum();
+                int roundLevel = _tournament.level;
 
-                    foreach(Qualification q in continent.continentalQualifications)
-                    {
-                        //q.isNextYear refeer to cup winner qualification for continental competition
-                        if (q.ranking == nationIndex && (!q.isNextYear || registeredClubs.Contains(cupWinner) ))
-                        {
-                            for (int j = 0; j < q.qualifies; j++)
-                            {
-                                registeredClubs.Add(clubs[currentRanking]);
-                                string color = QualificationColor(q);
-                                SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-                                (spRanking.Children[currentRanking + 1] as StackPanel).Background = lineColor;
-                                currentRanking++;
-                            }
-                        }
-                        else if(q.ranking == nationIndex && q.isNextYear && clubs.Contains(cupWinner))
-                        {
-                            string color = QualificationColor(q);
-                            SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-                            (spRanking.Children[clubs.IndexOf(cupWinner) + 1] as StackPanel).Background = lineColor;
-                        }
-                    }
-                }
+                int qualificationsToTournamentNextRounds = 0;
                 foreach (Qualification q in _round.qualifications)
                 {
                     string color = "backgroundColor";
+
+                    qualificationsToTournamentNextRounds = !q.isNextYear && q.tournament == _tournament && !QualificationCanLeadToRelegation(q.tournament.rounds[q.roundId], _tournament) ? qualificationsToTournamentNextRounds + 1 : qualificationsToTournamentNextRounds;
                     if (q.tournament.isChampionship)
                     {
                         if (q.tournament.level < roundLevel)
@@ -210,32 +225,9 @@ namespace TheManager_GUI.VueClassement
                         {
                             color = "relegationColor";
                         }
-                        else if (q.tournament.level == roundLevel && q.roundId > _round.Tournament.rounds.IndexOf(_round))
+                        else if (q.tournament.level == roundLevel && q.roundId > _tournament.rounds.IndexOf(_round))
                         {
                             color = "barrageColor";
-                        }
-                    }
-                    else if(q.tournament.IsInternational())
-                    {
-                        if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
-                        {
-                            color = "cl1Color";
-                        }
-                        else if (q.tournament.level == 1)
-                        {
-                            color = "cl2Color";
-                        }
-                        else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
-                        {
-                            color = "el1Color";
-                        }
-                        else if (q.tournament.level == 2)
-                        {
-                            color = "el2Color";
-                        }
-                        else if (q.tournament.level == 3)
-                        {
-                            color = "el3Color";
                         }
                     }
 
@@ -246,6 +238,19 @@ namespace TheManager_GUI.VueClassement
                         (spRanking.Children[index] as StackPanel).Background = lineColor;
                     }
 
+                }
+
+                int counter = 0;
+                foreach (KeyValuePair<Club, Qualification> kvp in continentalClubs)
+                {
+                    counter++;
+                    int indexClub = clubs.IndexOf(kvp.Key);
+                    if (indexClub > -1 && counter > qualificationsToTournamentNextRounds)
+                    {
+                        string color = QualificationColor(kvp.Value);
+                        SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
+                        (spRanking.Children[indexClub + 1] as StackPanel).Background = lineColor;
+                    }
                 }
             }
             else

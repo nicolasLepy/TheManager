@@ -172,6 +172,122 @@ namespace TheManager
 
         }
 
+        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c, int year)
+        {
+            Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
+
+            int level = 1;
+            Tournament tournament = GetContinentalClubTournament(level);
+            while(tournament != null)
+            {
+                Tournament archive = year == Session.Instance.Game.CurrentSeason ? tournament : tournament.previousEditions[year];
+                foreach(Round r in archive.rounds)
+                {
+                    Console.WriteLine(r.clubs.Count);
+                    foreach(Club club in r.clubs)
+                    {
+                        if(club.Country() == c && (!res.ContainsKey(club) || Utils.IsBefore(r.DateInitialisationRound(), res[club].tournament.rounds[res[club].roundId].DateInitialisationRound())))
+                        {
+                            res.Add(club, new Qualification(1, archive.rounds.IndexOf(r), tournament, true, 0));
+                        }
+                    }
+                }
+                level++;
+                tournament = GetContinentalClubTournament(level);
+            }
+
+            return res;
+        }
+
+
+        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c)
+        {
+            Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
+
+            List<Country> countriesRanking = new List<Country>(associationRanking);
+            int index = countriesRanking.IndexOf(c);
+
+            List<Club> registeredClubs = new List<Club>();
+            List<Club> leagueClubs = new List<Club>();
+            Tournament firstDivisionChampionship = c.FirstDivisionChampionship();
+            Round championshipRound = firstDivisionChampionship.GetLastChampionshipRound();
+            List<Tournament> cups = c.Cups();
+            List<Club> cupWinners = new List<Club>();
+            foreach(Tournament cup in cups)
+            {
+                if (cup.currentRound == (cup.rounds.Count - 1) && cup.rounds.Last().matches[0].Played)
+                {
+                    cupWinners.Add(cup.Winner());
+                }
+                else
+                {
+                    cupWinners.Add(null);
+                }
+            }
+
+            if (championshipRound as ChampionshipRound != null)
+            {
+                leagueClubs = (championshipRound as ChampionshipRound).Ranking();
+            }
+            if (championshipRound as InactiveRound != null)
+            {
+                leagueClubs = (championshipRound as InactiveRound).Ranking();
+            }
+            if (championshipRound as GroupsRound != null) //TODO: No sense to do this, no tournament finish on a group round (maybe if one day Top and Bottom championships are merged in a group round phase)
+            {
+                leagueClubs = new List<Club>(championshipRound.clubs);
+                leagueClubs.Sort(new ClubRankingComparator(championshipRound.matches));
+            }
+
+            List<Club> finalPhasesClubs = firstDivisionChampionship.GetFinalPhasesClubs();
+            if (finalPhasesClubs.Count > 0)
+            {
+                for (int j = finalPhasesClubs.Count - 1; j >= 0; j--)
+                {
+                    leagueClubs.Remove(finalPhasesClubs[j]);
+                    leagueClubs.Insert(0, finalPhasesClubs[j]);
+                }
+            }
+            int rank = index + 1;
+            int currentLevel = 0;
+            int cupRank = 0;
+            foreach (Qualification q in _continentalQualifications)
+            {
+                if (q.ranking == rank)
+                {
+                    Club currentCupWinner = cupRank < cupWinners.Count ? cupWinners[cupRank] : null;
+                    bool cupWinnerNotDefinedYet = cupRank < cupWinners.Count && cupWinners[cupRank] == null;
+                    //isNextYear is used as "cup winner" here instead of league qualification
+                    if ((!q.isNextYear || registeredClubs.Contains(currentCupWinner)) || (currentCupWinner == null && !cupWinnerNotDefinedYet))
+                    {
+                        for (int j = 0; j < q.qualifies; j++)
+                        {
+                            Club qualifiedClub = leagueClubs[currentLevel];
+                            //If we get the cup winner and is already qualified, then we move to the next candidate team to avoid the cup winner entering two times in continental tournament
+                            while (registeredClubs.Contains(qualifiedClub))
+                            {
+                                currentLevel++;
+                                qualifiedClub = leagueClubs[currentLevel];
+                            }
+                            currentLevel++;
+                            res.Add(qualifiedClub, q);
+                            registeredClubs.Add(qualifiedClub);
+                        }
+                    }
+                    else if(!cupWinnerNotDefinedYet)
+                    {
+                        res.Add(currentCupWinner, q);
+                        registeredClubs.Add(currentCupWinner);
+                    }
+                    if (q.isNextYear)
+                    {
+                        cupRank++;
+                    }
+                }
+            }
+
+            return res;
+        }
 
         public void QualifiesClubForContinentalCompetitionNextYear()
         {
