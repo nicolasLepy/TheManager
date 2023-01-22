@@ -72,15 +72,13 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 
 | Environment                                                               | 
 | ------------------------------------------------------------------------- |
-| Simulation on multiple years                                              |
 | Managers                                                                  |
 | Medias                                                                    |
 | Free players transfers                                                    |
 
 | Games                                                                     | 
 | ------------------------------------------------------------------------- |
-| Match simulation (goals, possession, substitutions)                       |
-| Follow games in real-time (ranking, live results)                         |
+| Games simulation in real-time                                             |
 
 | Players                                                                   | 
 | ------------------------------------------------------------------------- |
@@ -91,7 +89,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | ------------------------------------------------------------------------- |
 | Evolution of club training facilities                                     |
 | Reserves teams                                                            |
-| Can be forbidden to recruit if their finances are bad                     |
+| Financial control (can be forbidden to recruit)                           |
 
 | Tournaments                                                               | 
 | ------------------------------------------------------------------------- |
@@ -100,7 +98,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | International tournaments                                                 |
 | International ranking                                                     |
 | Specials rules (lower team at home for domestic cups...)                  |
-| Reserves teams can't go too high in league structure                      |
 
 | Database                                                                  | 
 | ------------------------------------------------------------------------- |
@@ -110,7 +107,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 
 | GUI                                                                       | 
 | ------------------------------------------------------------------------- |
-| Sample GUI                                                                | 
+| Basic GUI                                                                 | 
 | Custom themes                                                             |
 
 
@@ -126,14 +123,11 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Search / observe players                                              | 🟡 In progress |
 | Negociate contracts / transferts with other clubs                     | 🔴 Not started |
 | **Environment**                                                       |                 |
-| Transferring players between clubs                                    | 🟡 In progress |
 | Controlling club finances                                             | 🟡 In progress |
 | **GUI**                                                               |                 |
 | View system                                                           | 🟡 In progress |
-| Make player search table faster                                       | 🟡 In progress |
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
-| Implement Machine Learning solution for transferts management         | 🔴 Not started |
 | Manage memory for long games                                          | 🔴 Not started |
 
 ## Next Features
@@ -141,7 +135,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Task                                                                  | Status           |
 | --------------------------------------------------------------------- | ---------------- |
 |  Data editor                                                          | 🔴 Not started |
-|  Generate Wiki with simulation data                                   | 🔴 Not started |
 |  3D Engine for games                                                  | 🔴 Not started |
 
 ## Authors
