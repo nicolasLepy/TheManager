@@ -99,7 +99,7 @@ namespace TheManager_GUI
 
         private void FillHistory()
         {
-            foreach(Continent c in Session.Instance.Game.kernel.continents)
+            foreach(Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
             {
                 if(c.countries.Count == 0 || nationalTeam.country.Continent == c)
                 {

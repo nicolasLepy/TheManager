@@ -497,6 +497,10 @@ namespace TheManager
             int maxAdmId = 0;
             foreach (XElement e in doc.Descendants("World"))
             {
+                string worldName = e.Attribute("name").Value;
+                string worldLogo = e.Attribute("logo").Value;
+                Continent world = new Continent(worldName, worldLogo);
+                _kernel.world = world;
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
@@ -539,12 +543,12 @@ namespace TheManager
                         }
                         c.countries.Add(p);
                     }
-                    _kernel.continents.Add(c);
+                    _kernel.world.continents.Add(c);
                 }
             }
 
             maxAdmId++;
-            foreach (Continent c in _kernel.continents)
+            foreach (Continent c in _kernel.world.continents)
             {
                 foreach (Country cc in c.countries)
                 {
@@ -1225,7 +1229,7 @@ namespace TheManager
                 {
                     if (cityClub.city == null)
                     {
-                        Country country = cityClub.Championship != null ? Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country : _kernel.continents[1].countries[0];
+                        Country country = cityClub.Championship != null ? Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country : _kernel.world.continents[1].countries[0];
                         if (country.cities.Count == 0)
                         {
                             country.cities.Add(new City(country.Name(), 0, 0, 0));
@@ -1297,7 +1301,7 @@ namespace TheManager
 
         public void GenerateNationalCup()
         {
-            foreach(Continent ct in Session.Instance.Game.kernel.continents)
+            foreach(Continent ct in Session.Instance.Game.kernel.world.continents)
             {
                 List<int> continentAvailableWeeks = new List<int>();
                 for (int i = 30; i < 52 + 15; i++)

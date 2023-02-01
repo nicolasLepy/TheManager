@@ -26,7 +26,7 @@ namespace TheManager_GUI
             InitializeComponent();
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             FillFifaRanking();
-            foreach(Continent c in Session.Instance.Game.kernel.continents)
+            foreach(Continent c in Session.Instance.Game.kernel.world.continents)
             {
                 //At least one continental club tournament
                 if(c.GetContinentalClubTournament(1) != null)

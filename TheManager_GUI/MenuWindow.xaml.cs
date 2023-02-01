@@ -48,7 +48,7 @@ namespace TheManager_GUI
 
             imgClub.Source = new BitmapImage(new Uri(Utils.Logo(_partie.club)));
             comboContinent.Items.Clear();
-            foreach (Continent c in _partie.kernel.continents)
+            foreach (Continent c in _partie.kernel.world.GetAllContinents())
             {
                 comboContinent.Items.Add(c);
             }

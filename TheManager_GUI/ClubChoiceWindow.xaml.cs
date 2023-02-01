@@ -21,7 +21,7 @@ namespace TheManager_GUI
             club = null;
             InitializeComponent();
 
-            foreach (Continent c in Session.Instance.Game.kernel.continents)
+            foreach (Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
             {
                 foreach (Country p in c.countries)
                 {
@@ -39,7 +39,7 @@ namespace TheManager_GUI
 
             tvClubs.Items.Clear();
 
-            foreach(Continent c in Session.Instance.Game.kernel.continents)
+            foreach(Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
             {
                 foreach(Country p in c.countries)
                 {

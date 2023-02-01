@@ -75,7 +75,7 @@ namespace TheManager_GUI
 
         private void FillComboBoxContinents()
         {
-            foreach (Continent c in Session.Instance.Game.kernel.continents)
+            foreach (Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
             {
                 ComboBoxItem cbi = new ComboBoxItem();
                 cbi.Content = c;

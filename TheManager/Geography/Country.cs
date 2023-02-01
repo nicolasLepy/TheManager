@@ -371,7 +371,7 @@ namespace TheManager
             get
             {
                 Continent res = null;
-                foreach(Continent c in Session.Instance.Game.kernel.continents)
+                foreach(Continent c in Session.Instance.Game.kernel.world.continents)
                 {
                     foreach(Country cy in c.countries)
                     {

@@ -29,6 +29,8 @@ namespace TheManager
         private List<Country> _associationRanking;
         [DataMember]
         private List<List<Country>> _archivalAssociationRanking;
+        [DataMember]
+        private List<Continent> _continents;
 
         /// <summary>
         /// As association ranking can be long to be computed (and change only at the end of the season), ranking is stored here to be reused without computing all ranking
@@ -48,6 +50,7 @@ namespace TheManager
         public List<List<Country>> archivalAssociationRanking => _archivalAssociationRanking;
 
         public List<Country> countries => _countries;
+        public List<Continent> continents => _continents;
         public List<Qualification> continentalQualifications => _continentalQualifications;
         public List<Tournament> Tournaments()
         {
@@ -63,7 +66,50 @@ namespace TheManager
         {
             return _logo;
         }
+
+        public Continent String2Continent(string name)
+        {
+            Continent res = null;
+            if(name == Name())
+            {
+                res = this;
+            }
+            else
+            {
+                foreach(Continent c in continents)
+                {
+                    res = res == null ? c.String2Continent(name) : res;
+                }
+            }
+            return res;
+        }
         
+        public List<Continent> GetAllContinents()
+        {
+            List<Continent> res = new List<Continent>();
+            res.Add(this);
+            foreach(Continent c in continents)
+            {
+                res.AddRange(c.GetAllContinents());
+            }
+
+            return res;
+        }
+
+        public List<Tournament> GetAllTournaments()
+        {
+            List<Tournament> res = new List<Tournament>();
+            res.AddRange(Tournaments());
+            foreach (Country p in countries)
+            {
+                res.AddRange(p.Tournaments());
+            }
+            foreach(Continent c in this.continents)
+            {
+                res.AddRange(c.GetAllTournaments());
+            }
+            return res;
+        }
 
         public Continent(string name, string logo)
         {
@@ -74,6 +120,7 @@ namespace TheManager
             _continentalQualifications = new List<Qualification>();
             _associationRanking = new List<Country>();
             _archivalAssociationRanking = new List<List<Country>>();
+            _continents = new List<Continent>();
         }
 
         /// <summary>

@@ -32,7 +32,7 @@ namespace TheManager
             if(_country == null)
             {
                 Country res = null;
-                foreach (Continent c in Session.Instance.Game.kernel.continents)
+                foreach (Continent c in Session.Instance.Game.kernel.world.continents)
                 {
                     foreach (Country p in c.countries)
                     {

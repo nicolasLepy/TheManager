@@ -304,7 +304,7 @@ namespace TheManager_GUI
         private void FillHistory()
         {
             List<Tournament> tournaments = new List<Tournament>(_club.Country().Cups());
-            foreach (Continent c in Session.Instance.Game.kernel.continents)
+            foreach (Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
             {
                 if (c.countries.Count == 0 || _club.Country().Continent == c)
                 {

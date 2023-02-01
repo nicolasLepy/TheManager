@@ -49,7 +49,7 @@ namespace TheManager
         [DataMember]
         private List<Manager> _freeManagers;
         [DataMember]
-        private List<Continent> _continents;
+        private Continent _world;
         [DataMember]
         private List<Language> _languages;
         [DataMember]
@@ -69,28 +69,12 @@ namespace TheManager
         {
             get
             {
-                List<Tournament> res = new List<Tournament>();
-                foreach(Continent c in _continents)
-                {
-                    foreach (Tournament cp in c.Tournaments())
-                    {
-                        res.Add(cp);
-                    }
-
-                    foreach (Country p in c.countries)
-                    {
-                        foreach (Tournament cp in p.Tournaments())
-                        {
-                            res.Add(cp);
-                        }
-                    }
-                }
-                return res;
+                return _world.GetAllTournaments();
             }
         }
         public List<Player> freePlayers { get => _freePlayers; }
         public List<Manager> freeManagers { get => _freeManagers; }
-        public List<Continent> continents { get => _continents; }
+        public Continent world { get => _world; set => _world = value; }
         public List<Language> languages { get => _languages; }
         public List<Media> medias { get => _medias; }
         public List<MatchEventCommentary> matchCommentaries { get => _matchCommentaries; }
@@ -100,7 +84,6 @@ namespace TheManager
         {
             _clubs = new List<Club>();
             _freePlayers = new List<Player>();
-            _continents = new List<Continent>();
             _languages = new List<Language>();
             _medias = new List<Media>();
             _freeManagers = new List<Manager>();
@@ -132,7 +115,7 @@ namespace TheManager
         public City String2City(string name)
         {
             City res = null;
-            foreach(Continent c in _continents)
+            foreach(Continent c in _world.continents)
             {
                 foreach(Country p in c.countries)
                 {
@@ -240,7 +223,7 @@ namespace TheManager
         {
             Country res = null;
 
-            foreach(Continent c in _continents)
+            foreach(Continent c in _world.continents)
             {
                 foreach(Country p in c.countries)
                 {
@@ -261,7 +244,7 @@ namespace TheManager
         {
             Country res = null;
 
-            foreach (Continent c in _continents)
+            foreach (Continent c in _world.continents)
             {
                 foreach (Country p in c.countries)
                 {
@@ -278,7 +261,7 @@ namespace TheManager
         {
             Stadium res = null;
 
-            foreach (Continent c in _continents)
+            foreach (Continent c in _world.continents)
             {
                 foreach(Country p in c.countries)
                 {
@@ -340,15 +323,7 @@ namespace TheManager
 
         public Continent String2Continent(string name)
         {
-            Continent res = null;
-            foreach (Continent c in _continents)
-            {
-                if (c.Name() == name)
-                {
-                    res = c;
-                }
-            }
-            return res;
+            return _world.String2Continent(name);
         }
 
         public int NumberPlayersOfCountry(Country p)
@@ -445,7 +420,7 @@ namespace TheManager
         public ILocalisation String2Localisation(string name)
         {
             ILocalisation res = null;
-            foreach(Continent c in _continents)
+            foreach(Continent c in _world.GetAllContinents())
             {
                 if (c.Name() == name)
                 {
@@ -465,7 +440,7 @@ namespace TheManager
         public AdministrativeDivision GetAdministrativeDivision(int idAdministrativeDivision)
         {
             AdministrativeDivision res = null;
-            foreach (Continent c in _continents)
+            foreach (Continent c in _world.continents)
             {
                 foreach (Country p in c.countries)
                 {
@@ -483,7 +458,7 @@ namespace TheManager
         {
             Continent res = null;
 
-            foreach(Continent c in _continents)
+            foreach(Continent c in _world.GetAllContinents())
             {
                 foreach(Tournament t in c.Tournaments())
                 {
@@ -510,7 +485,7 @@ namespace TheManager
         public ILocalisation LocalisationTournament(Tournament tournament)
         {
             ILocalisation res = null;
-            foreach(Continent c in _continents)
+            foreach(Continent c in _world.GetAllContinents())
             {
                 if (c.Tournaments().Contains(tournament))
                 {
@@ -527,7 +502,7 @@ namespace TheManager
             }
             if(res == null)
             {
-                foreach (Continent c in _continents)
+                foreach (Continent c in _world.continents)
                 {
                     foreach(Tournament t in c.Tournaments())
                     {

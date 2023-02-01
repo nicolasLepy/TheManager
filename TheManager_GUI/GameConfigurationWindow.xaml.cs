@@ -122,7 +122,7 @@ namespace TheManager_GUI
 
             Kernel g = Session.Instance.Game.kernel;
             
-            foreach(Continent c in g.continents)
+            foreach(Continent c in g.world.GetAllContinents())
             {
                 FillContinent(c);
             }
