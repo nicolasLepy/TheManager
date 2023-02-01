@@ -98,11 +98,10 @@ namespace TheManager_GUI.VueClassement
             // Get international qualifications
             // Search if the round is an archived round to get qualified teams on the right year
             // Else get qualification for the current season
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
-            Country country = localisation as Country;
+            Association tournamentAssociation = Session.Instance.Game.kernel.worldAssociation.GetAssociationOfTournament(_tournament);
 
             Dictionary<Club, Qualification> continentalClubs = null;
-            continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, _year + 1) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country);
+            continentalClubs = _year > -1 ? tournamentAssociation.Parent.GetClubsQualifiedForInternationalCompetitions(tournamentAssociation, _year + 1) : tournamentAssociation.Parent.GetClubsQualifiedForInternationalCompetitions(tournamentAssociation);
 
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around

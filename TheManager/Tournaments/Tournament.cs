@@ -420,7 +420,7 @@ namespace TheManager
 
 
                 //On garde le nombre d'équipes maximales des ligues sans équipes réserves : leur structure ne changera pas avec les années, on garde tout (ex. le N1 au 5ème tour avec les 18 équipes au lieu de 10 équipes calculés avec la méthode du ratio)
-                int lastLevelWithoutReserves = (Session.Instance.Game.kernel.LocalisationTournament(this) as Country).GetLastLeagueLevelWithoutReserves();
+                int lastLevelWithoutReserves = Session.Instance.Game.kernel.worldAssociation.GetAssociationOfTournament(this).GetLastLeagueLevelWithoutReserves();
                 List<LeagueCupApparition> lcaAddedByAnticipation = new List<LeagueCupApparition>();
                 foreach (LeagueCupApparition lca in leagueCupApparitions)
                 {
@@ -654,7 +654,7 @@ namespace TheManager
                     InitializeHost();
                 }
             }
-            if(!isChampionship && !IsInternational() && (Session.Instance.Game.kernel.LocalisationTournament(this) as Country).LeagueSystemWithReserves())
+            if(!isChampionship && !IsInternational() && Session.Instance.Game.kernel.worldAssociation.GetAssociationOfTournament(this).LeagueSystemWithReserves())
             {
                 UpdateCupQualifications();
             }
@@ -1089,7 +1089,7 @@ namespace TheManager
                 //If this round has less promotions than upper inactive round, then
                 if(iRound != null && _level > 1)
                 {
-                    InactiveRound upperIRound = (Session.Instance.Game.kernel.LocalisationTournament(this) as Country).League(_level - 1).rounds[0] as InactiveRound;
+                    InactiveRound upperIRound = Session.Instance.Game.kernel.worldAssociation.GetAssociationOfTournament(this).League(_level - 1).rounds[0] as InactiveRound;
                     if(upperIRound != null)
                     {
                         int totalRelegationsUpper = 0;

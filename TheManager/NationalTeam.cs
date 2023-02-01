@@ -40,13 +40,12 @@ namespace TheManager
 
         public override GeographicPosition Localisation()
         {
-            //TOOD
             return null;
         }
 
-        public override AdministrativeDivision AdministrativeDivision()
+        public override Association Association()
         {
-            return null;
+            return Session.Instance.Game.kernel.worldAssociation.Club2AssociationTeam(this);
         }
 
         public int Ranking()

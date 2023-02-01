@@ -26,21 +26,21 @@ namespace TheManager_GUI
             InitializeComponent();
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             FillFifaRanking();
-            foreach(Continent c in Session.Instance.Game.kernel.continents)
+            foreach(Association a in Session.Instance.Game.kernel.worldAssociation.associations)
             {
                 //At least one continental club tournament
-                if(c.GetContinentalClubTournament(1) != null)
+                if (a.GetAssociationClubTournament(1) != null)
                 {
-                    AddContinentalCountryRanking(c);
+                    AddContinentalCountryRanking(a);
                     //AddContinentalClubRanking(c);
                 }
             }
         }
 
-        private void AddContinentalCountryRanking(Continent c)
+        private void AddContinentalCountryRanking(Association c)
         {
             TabItem tab = new TabItem();
-            tab.Header = FindResource("str_ranking").ToString() + " " + c.Name() + " (associations)";
+            tab.Header = FindResource("str_ranking").ToString() + " " + c.name + " (associations)";
             tab.Style = Application.Current.FindResource("StyleTabHeader") as Style;
             ScrollViewer scrollViewer = new ScrollViewer();
             scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
@@ -59,19 +59,19 @@ namespace TheManager_GUI
             spHead.Children.Add(ViewUtils.CreateLabel("-2", "StyleLabel2Center", -1, 35, null, null, false));
             spHead.Children.Add(ViewUtils.CreateLabel("-1", "StyleLabel2Center", -1, 35, null, null, false));
             spHead.Children.Add(ViewUtils.CreateLabel("Total", "StyleLabel2Center", -1, 50, null, null, true));
-            for(int i = 0; i<c.ContinentalTournamentsCount; i++)
+            for(int i = 0; i<c.AssociationTournamentsCount; i++)
             {
-                spHead.Children.Add(ViewUtils.CreateLabel(c.GetContinentalClubTournament(i+1).shortName, "StyleLabel2Center", 10, 20, null, null, false));
+                spHead.Children.Add(ViewUtils.CreateLabel(c.GetAssociationClubTournament(i+1).shortName, "StyleLabel2Center", 10, 20, null, null, false));
             }
             spRanking.Children.Add(spHead);
 
             int rank = 0;
-            List<Country> countries = c.associationRanking;
-            foreach (Country ctr in countries)
+            List<Association> countriesAssociations = c.associationRanking;
+            foreach (Association aCtr in countriesAssociations)
             {
                 rank++;
                 Dictionary<int, int> qualifications = new Dictionary<int, int>();
-                foreach (Qualification q in c.continentalQualifications)
+                foreach (Qualification q in c.associationQualifications)
                 {
                     if (q.ranking == rank)
                     {
@@ -85,15 +85,15 @@ namespace TheManager_GUI
                 StackPanel spLine = new StackPanel();
                 spLine.Orientation = Orientation.Horizontal;
                 spLine.Children.Add(ViewUtils.CreateLabel(rank.ToString(), "StyleLabel2", -1, 30, null, null, true));
-                spLine.Children.Add(ViewUtils.CreateFlag(ctr, 20, 13));
-                spLine.Children.Add(ViewUtils.CreateLabel(ctr.Name(), "StyleLabel2", -1, 220, null, null, true));
-                spLine.Children.Add(ViewUtils.CreateLabel(ctr.YearAssociationCoefficient(-5).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
-                spLine.Children.Add(ViewUtils.CreateLabel(ctr.YearAssociationCoefficient(-4).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
-                spLine.Children.Add(ViewUtils.CreateLabel(ctr.YearAssociationCoefficient(-3).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
-                spLine.Children.Add(ViewUtils.CreateLabel(ctr.YearAssociationCoefficient(-2).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
-                spLine.Children.Add(ViewUtils.CreateLabel(ctr.YearAssociationCoefficient(-1).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
-                spLine.Children.Add(ViewUtils.CreateLabel(ctr.AssociationCoefficient.ToString("0.00"), "StyleLabel2Center", -1, 50, null, null, true));
-                for (int i = 0; i < c.ContinentalTournamentsCount; i++)
+                spLine.Children.Add(ViewUtils.CreateFlag(aCtr.localization, 20, 13));
+                spLine.Children.Add(ViewUtils.CreateLabel(aCtr.name, "StyleLabel2", -1, 220, null, null, true));
+                spLine.Children.Add(ViewUtils.CreateLabel(aCtr.YearAssociationCoefficient(-5).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
+                spLine.Children.Add(ViewUtils.CreateLabel(aCtr.YearAssociationCoefficient(-4).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
+                spLine.Children.Add(ViewUtils.CreateLabel(aCtr.YearAssociationCoefficient(-3).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
+                spLine.Children.Add(ViewUtils.CreateLabel(aCtr.YearAssociationCoefficient(-2).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
+                spLine.Children.Add(ViewUtils.CreateLabel(aCtr.YearAssociationCoefficient(-1).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
+                spLine.Children.Add(ViewUtils.CreateLabel(aCtr.AssociationCoefficient.ToString("0.00"), "StyleLabel2Center", -1, 50, null, null, true));
+                for (int i = 0; i < c.AssociationTournamentsCount; i++)
                 {
                     spLine.Children.Add(ViewUtils.CreateLabel(qualifications.ContainsKey(i+1) ? qualifications[i + 1].ToString() : "0", "StyleLabel2Center", 9, 20, null, null, true));
                 }

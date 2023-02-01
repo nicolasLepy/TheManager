@@ -31,21 +31,7 @@ namespace TheManager
         {
             if(_country == null)
             {
-                Country res = null;
-                foreach (Continent c in Session.Instance.Game.kernel.continents)
-                {
-                    foreach (Country p in c.countries)
-                    {
-                        foreach (City v in p.cities)
-                        {
-                            if (v == this)
-                            {
-                                res = p;
-                            }
-                        }
-                    }
-                }
-                _country = res;
+                return Session.Instance.Game.kernel.City2Country(this);
             }
             return _country;
         }

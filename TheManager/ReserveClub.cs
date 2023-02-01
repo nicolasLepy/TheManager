@@ -34,9 +34,9 @@ namespace TheManager
             return _fannionClub.city.Position;
         }
 
-        public override AdministrativeDivision AdministrativeDivision()
+        public override Association Association()
         {
-            return _fannionClub.AdministrativeDivision();
+            return _fannionClub.Association();
         }
 
         public override List<Player> Players()

@@ -43,7 +43,7 @@ namespace TheManager_GUI
 
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
 
-            cbContinent.SelectedItem = Session.Instance.Game.kernel.ContinentTournament(tournament);
+            cbContinent.SelectedItem = Session.Instance.Game.kernel.worldAssociation.GetAssociationOfTournament(tournament);
             cbCountry.SelectedItem = Session.Instance.Game.kernel.LocalisationTournament(tournament);
             cbCompetition.SelectedItem = tournament;
 

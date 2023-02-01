@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,6 +52,8 @@ namespace TheManager
         [DataMember]
         private List<Continent> _continents;
         [DataMember]
+        private Association _worldAssociation;
+        [DataMember]
         private List<Language> _languages;
         [DataMember]
         private List<GenericCalendar> _genericCalendars;
@@ -69,28 +72,12 @@ namespace TheManager
         {
             get
             {
-                List<Tournament> res = new List<Tournament>();
-                foreach(Continent c in _continents)
-                {
-                    foreach (Tournament cp in c.Tournaments())
-                    {
-                        res.Add(cp);
-                    }
-
-                    foreach (Country p in c.countries)
-                    {
-                        foreach (Tournament cp in p.Tournaments())
-                        {
-                            res.Add(cp);
-                        }
-                    }
-                }
-                return res;
+                return _worldAssociation.AllTournaments();
             }
         }
         public List<Player> freePlayers { get => _freePlayers; }
         public List<Manager> freeManagers { get => _freeManagers; }
-        public List<Continent> continents { get => _continents; }
+        public Association worldAssociation { get => _worldAssociation; }
         public List<Language> languages { get => _languages; }
         public List<Media> medias { get => _medias; }
         public List<MatchEventCommentary> matchCommentaries { get => _matchCommentaries; }
@@ -127,6 +114,11 @@ namespace TheManager
             }
 
             return res;
+        }
+
+        public Association String2Association(string name)
+        {
+            return _worldAssociation.String2Association(name);
         }
 
         public City String2City(string name)
@@ -338,19 +330,6 @@ namespace TheManager
             return res;
         }
 
-        public Continent String2Continent(string name)
-        {
-            Continent res = null;
-            foreach (Continent c in _continents)
-            {
-                if (c.Name() == name)
-                {
-                    res = c;
-                }
-            }
-            return res;
-        }
-
         public int NumberPlayersOfCountry(Country p)
         {
             int res = 0;
@@ -444,115 +423,27 @@ namespace TheManager
         /// <returns></returns>
         public ILocalisation String2Localisation(string name)
         {
-            ILocalisation res = null;
-            foreach(Continent c in _continents)
-            {
-                if (c.Name() == name)
-                {
-                    res = c;
-                }
-                foreach(Country p in c.countries)
-                {
-                    if (p.Name() == name)
-                    {
-                        res = p;
-                    }
-                }
-            }
-            return res;
+            return _worldAssociation.String2Localisation(name);
         }
 
-        public AdministrativeDivision GetAdministrativeDivision(int idAdministrativeDivision)
+        public Association GetAssociation(int idAssociation)
         {
-            AdministrativeDivision res = null;
-            foreach (Continent c in _continents)
-            {
-                foreach (Country p in c.countries)
-                {
-                    if (res == null)
-                    {
-                        res = p.GetAdministrativeDivision(idAdministrativeDivision);
-                    }
-                }
-            }
-
-            return res;
-        }
-
-        public Continent ContinentTournament(Tournament tournament)
-        {
-            Continent res = null;
-
-            foreach(Continent c in _continents)
-            {
-                foreach(Tournament t in c.Tournaments())
-                {
-                    if(t == tournament)
-                    {
-                        res = c;
-                    }
-                }
-                foreach(Country cy in c.countries)
-                {
-                    foreach(Tournament t in cy.Tournaments())
-                    {
-                        if(t == tournament)
-                        {
-                            res = c;
-                        }
-                    }
-                }
-            }
-
-            return res;
+            return _worldAssociation.GetAssociation(idAssociation);
         }
 
         public ILocalisation LocalisationTournament(Tournament tournament)
         {
-            ILocalisation res = null;
-            foreach(Continent c in _continents)
-            {
-                if (c.Tournaments().Contains(tournament))
-                {
-                    res = c;
-                }
-
-                foreach (Country p in c.countries)
-                {
-                    if (p.Tournaments().Contains(tournament))
-                    {
-                        res = p;
-                    }
-                }
-            }
+            ILocalisation res = _worldAssociation.GetAssociationOfTournament(tournament)?.localization;
             if(res == null)
             {
-                foreach (Continent c in _continents)
+                foreach(Tournament t in _worldAssociation.AllTournaments())
                 {
-                    foreach(Tournament t in c.Tournaments())
+                    foreach (KeyValuePair<int, Tournament> tt in t.previousEditions)
                     {
-                        foreach(KeyValuePair<int,Tournament> tt in t.previousEditions)
+                        if (tt.Value == tournament)
                         {
-                            if(tt.Value == tournament)
-                            {
-                                res = c;
-                            }
+                            res = _worldAssociation.GetAssociationOfTournament(tt.Value).localization;
                         }
-                    }
-
-                    foreach (Country p in c.countries)
-                    {
-                        foreach (Tournament t in p.Tournaments())
-                        {
-                            foreach (KeyValuePair<int, Tournament> tt in t.previousEditions)
-                            {
-                                if (tt.Value == tournament)
-                                {
-                                    res = p;
-                                }
-                            }
-                        }
-
                     }
                 }
             }
@@ -611,6 +502,34 @@ namespace TheManager
             nationalsTeams.Sort(new NationsFifaRankingComparator());
 
             return nationalsTeams;
+        }
+
+        public List<Association> AllAssociations()
+        {
+            List<Association> res = new List<Association>() { _worldAssociation };
+            _worldAssociation.AllAssociations();
+            return res;
+        }
+
+        public Country City2Country(City city)
+        {
+            return _worldAssociation.City2Country(city);
+        }
+
+        /// <summary>
+        /// Get list of associations of the nth level in the hierarchy.
+        /// 1 : continents
+        /// 2 : countries
+        /// 3 : districts
+        /// 4 : sub-districts
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        public List<Association> GetAssociationsOfHierarchyLevel(int level)
+        {
+            List<Association> res = new List<Association>();
+            res = worldAssociation.GetAssociationsOfHierarchyLevel(level);
+            return res;
         }
 
     }

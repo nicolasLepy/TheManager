@@ -365,12 +365,12 @@ namespace TheManager
             return total;
         }
 
-        public List<Club> GetClubsAdministrativeDivision(AdministrativeDivision adm)
+        public List<Club> GetClubsAssociation(Association a)
         {
             List<Club> res = new List<Club>();
             foreach(Club c in clubs)
             {
-                if (c.AdministrativeDivision() == adm || adm.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                if (c.Association() == a || a.ContainsAssociation(c.Association()))
                 {
                     res.Add(c);
                 }

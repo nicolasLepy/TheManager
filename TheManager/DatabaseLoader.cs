@@ -495,6 +495,7 @@ namespace TheManager
         {
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/continents.xml");
             int maxAdmId = 0;
+            int associationsBaseId = 10000;
             foreach (XElement e in doc.Descendants("World"))
             {
                 foreach (XElement e2 in e.Descendants("Continent"))
@@ -502,6 +503,8 @@ namespace TheManager
                     string continentName = e2.Attribute("name").Value;
                     string continentLogo = e2.Attribute("logo").Value;
                     Continent c = new Continent(continentName, continentLogo);
+                    Association associationContinent = new Association(associationsBaseId++, continentName, c, continentLogo, null);
+                    _kernel.worldAssociation.associations.Add(associationContinent);
                     foreach(XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
@@ -510,6 +513,8 @@ namespace TheManager
                         int countryShape = int.Parse(e3.Attribute("shape").Value);
                         Language l = _kernel.String2Language(language);
                         Country p = new Country(countrydBName,countryName,l, countryShape);
+                        Association associationCountry = new Association(associationsBaseId++, countryName, p, p.Flag, null);
+                        associationContinent.associations.Add(associationCountry);
                         foreach(XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -527,29 +532,28 @@ namespace TheManager
                             int administrationId = int.Parse(e4.Attribute("id").Value);
                             int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
                             maxAdmId = administrationId > maxAdmId ? administrationId : maxAdmId;
-                            AdministrativeDivision ad = new AdministrativeDivision(administrationId, administrationName);
+                            Association districtAssociation = new Association(administrationId, administrationName, null, "", null);
                             if (administrationParent > 0)
                             {
-                                p.GetAdministrativeDivision(administrationParent).divisions.Add(ad);
+                                associationCountry.GetAssociation(administrationParent).associations.Add(districtAssociation);
                             }
                             else
                             {
-                                p.administrativeDivisions.Add(ad);
+                                associationCountry.associations.Add(districtAssociation);
                             }
                         }
                         c.countries.Add(p);
                     }
-                    _kernel.continents.Add(c);
                 }
             }
 
             maxAdmId++;
-            foreach (Continent c in _kernel.continents)
+            foreach (Association associationContinent in _kernel.worldAssociation.associations)
             {
-                foreach (Country cc in c.countries)
+                foreach (Association countryAssociation in associationContinent.associations)
                 {
-                    AdministrativeDivision adCountry = new AdministrativeDivision(maxAdmId++, cc.Name());
-                    cc.administrativeDivisions.Add(adCountry);
+                    Association aCountry = new Association(maxAdmId++, countryAssociation.name, null, "", null);
+                    countryAssociation.associations.Add(aCountry);
                 }
             }
         }
@@ -655,16 +659,16 @@ namespace TheManager
                         }
                         
                         int idAdministrativeDivision = 0;
-                        AdministrativeDivision administrativeDivision = null;
+                        Association association = null;
                         if (e2.Attribute("administrativeDivision") != null)
                         {
                             idAdministrativeDivision = int.Parse(e2.Attribute("administrativeDivision").Value);
-                            administrativeDivision = _kernel.GetAdministrativeDivision(idAdministrativeDivision); //city?.Country().GetAdministrativeDivision(idAdministrativeDivision);
+                            association = _kernel.GetAssociation(idAdministrativeDivision);
                         }
 
-                        if (administrativeDivision == null)
+                        if (association == null)
                         {
-                            administrativeDivision = city?.Country().GetCountryAdministrativeDivision();
+                            association = city?.Country().GetAssociation().GetCountryGenericAssociation();
                         }
 
                         int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
@@ -689,7 +693,7 @@ namespace TheManager
                         reputation = centreFormation;
                         
                         bool equipePremiere = true;
-                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere, administrativeDivision);
+                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere, association);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -778,7 +782,7 @@ namespace TheManager
                         Console.WriteLine(name);
                         Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color);
                         tournament.InitializeQualificationsNextYearsLists(e2.Descendants("Tour").Count());
-                        localisation.Tournaments().Add(tournament);
+                        _kernel.worldAssociation.GetAssociationOfLocalizable(localisation).tournaments.Add(tournament);
                         //_gestionnaire.Competitions.Add(c);
                     }
                 }
@@ -938,7 +942,7 @@ namespace TheManager
                                 XAttribute continent = e4.Attribute("continent");
                                 if (continent != null)
                                 {
-                                    source = _kernel.String2Continent(continent.Value);
+                                    source = _kernel.worldAssociation.String2Association(continent.Value);
                                 }
                                 else
                                 {
@@ -1047,11 +1051,11 @@ namespace TheManager
                             {
                                 int administrativeId = int.Parse(e4.Attribute("administrative_id").Value);
                                 int relegations = int.Parse(e4.Attribute("relegations").Value);
-                                AdministrativeDivision ad = _kernel.GetAdministrativeDivision(administrativeId);
+                                Association a = _kernel.GetAssociation(administrativeId);
                                 GroupsRound gr = round as GroupsRound;
-                                if(gr != null && ad != null)
+                                if(gr != null && a != null)
                                 {
-                                    gr.relegationsByAdministrativeDivisions.Add(ad, relegations);
+                                    gr.relegationsByAssociations.Add(a, relegations);
                                 }
                             }
 
@@ -1122,7 +1126,7 @@ namespace TheManager
             {
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
-                    Continent continent = Session.Instance.Game.kernel.String2Continent(e2.Attribute("name").Value);
+                    Association associationContinent = Session.Instance.Game.kernel.String2Association(e2.Attribute("name").Value);
                     foreach(XElement e3 in e2.Descendants("Qualifications"))
                     {
                         int rank = int.Parse(e3.Attribute("rank").Value);
@@ -1137,7 +1141,7 @@ namespace TheManager
                         }
                         //Here qualification structure is used to store continental qualifications but meaning of field can differ than "classic" qualification (rank is nation coefficient rank instead of league rank and isNextYear is used for isCupWinner)
                         Qualification q = new Qualification(rank, roundId, targetTournament, isCupWinner, count);
-                        continent.continentalQualifications.Add(q);
+                        associationContinent.associationQualifications.Add(q);
                     }
                 }
             }
@@ -1225,7 +1229,7 @@ namespace TheManager
                 {
                     if (cityClub.city == null)
                     {
-                        Country country = cityClub.Championship != null ? Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country : _kernel.continents[1].countries[0];
+                        Country country = cityClub.Championship != null ? Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country : _kernel.worldAssociation.associations[1].associations[0].localization as Country;
                         if (country.cities.Count == 0)
                         {
                             country.cities.Add(new City(country.Name(), 0, 0, 0));
@@ -1297,7 +1301,7 @@ namespace TheManager
 
         public void GenerateNationalCup()
         {
-            foreach(Continent ct in Session.Instance.Game.kernel.continents)
+            foreach(Association continentAssociation in _kernel.worldAssociation.associations)
             {
                 List<int> continentAvailableWeeks = new List<int>();
                 for (int i = 30; i < 52 + 15; i++)
@@ -1306,7 +1310,7 @@ namespace TheManager
                     continentAvailableWeeks.Add(week);
                 }
 
-                foreach(Tournament t in ct.Tournaments())
+                foreach(Tournament t in continentAssociation.tournaments)
                 {
                     if(!t.isChampionship && t.periodicity == 1)
                     {
@@ -1327,15 +1331,16 @@ namespace TheManager
                 continentAvailableWeeks.Remove(51);
                 continentAvailableWeeks.Remove(52); //A mid-week game on the last year week lead to the next year
                 continentAvailableWeeks.Remove(0); //Bug 2027
-                foreach (Country c in ct.countries)
+                foreach (Association countryAssociations in continentAssociation.associations)
                 {
+                    //Country c = countryAssociations.localization as Country;
                     List<int> availableWeeks = new List<int>(continentAvailableWeeks);
 
                     Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
                     List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
                     bool noCup = true;
                     int totalTeams = 0;
-                    foreach (Tournament t in c.Tournaments())
+                    foreach (Tournament t in countryAssociations.tournaments)
                     {
                         if(!t.isChampionship)
                         {
@@ -1365,15 +1370,15 @@ namespace TheManager
                         }
                     }
 
-                    if (noCup && c.Tournaments().Count > 0 && totalTeams > 1)
+                    if (noCup && countryAssociations.tournaments.Count > 0 && totalTeams > 1)
                     {
 
                         string acr = "de ";
-                        if(c.Name()[0] == 'E' || c.Name()[0] == 'A' || c.Name()[0] == 'I' || c.Name()[0] == 'O' || c.Name()[0] == 'U')
+                        if(countryAssociations.localization.Name()[0] == 'E' || countryAssociations.localization.Name()[0] == 'A' || countryAssociations.localization.Name()[0] == 'I' || countryAssociations.localization.Name()[0] == 'O' || countryAssociations.localization.Name()[0] == 'U')
                         {
                             acr = "d'";
                         }
-                        string cupName = "Coupe " + acr + c.Name();
+                        string cupName = "Coupe " + acr + countryAssociations.localization.Name();
                         Tournament nationalCup = new Tournament(cupName, "",new GameDay(25,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0));
 
                         int roundCount = 0;
@@ -1461,7 +1466,7 @@ namespace TheManager
                             j /= 2;
                         }
 
-                        int maxPrize = c.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? c.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
+                        int maxPrize = countryAssociations.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? countryAssociations.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
 
                         for(int i = roundCount-1; i >= 0; i--)
                         {
@@ -1470,19 +1475,17 @@ namespace TheManager
                         }
 
                         nationalCup.InitializeQualificationsNextYearsLists();
-                        c.Tournaments().Add(nationalCup);
+                        countryAssociations.tournaments.Add(nationalCup);
 
 
 
 
 
 
-
-
-
+                        //For test purpose
                         if (!nationalCup.isChampionship && (Session.Instance.Game.kernel.LocalisationTournament(nationalCup) as Country) == Session.Instance.Game.kernel.String2Country("Azerbaïdjan"))
                         {
-                            Country azer = Session.Instance.Game.kernel.String2Country("Azerbaïdjan");
+                            Association azer = Session.Instance.Game.kernel.String2Country("Azerbaïdjan").GetAssociation();
                             Console.WriteLine("Initialise la coupe de l'azerbaidjan");
                             foreach (Round r in nationalCup.rounds)
                             {
@@ -1492,7 +1495,7 @@ namespace TheManager
                                     Console.WriteLine("[CDLA][" + r.name + "]. Ajoute " + rt.Number + " depuis " + (rt.Source as Round).Tournament.name);
                                 }
                             }
-                            foreach (Tournament t in azer.Tournaments())
+                            foreach (Tournament t in azer.tournaments)
                             {
                                 if (t.isChampionship)
                                 {

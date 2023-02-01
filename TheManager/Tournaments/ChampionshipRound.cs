@@ -208,7 +208,8 @@ namespace TheManager
             }
         }*/
 
-        private List<Qualification> AdjustQualificationsAdministrativeRetrogradation(List<Qualification> qualifications, Country country)
+        //Work in progress
+        private List<Qualification> AdjustQualificationsAdministrativeRetrogradation(List<Qualification> qualifications, Association countryAssociation)
         {
             Tournament tournament = Tournament;
             List<Club> ranking = Ranking();
@@ -217,7 +218,7 @@ namespace TheManager
             foreach (Club c in _clubs)
             {
                 //Aussi if reserve && reserve >= cible descente
-                if(country.administrativeRetrogradations.ContainsKey(c))
+                if(countryAssociation.administrativeRetrogradations.ContainsKey(c))
                 {
                     Qualification q = newQualifications[ranking.IndexOf(c)];
                     if ((q.isNextYear && q.tournament.level < tournament.level) )

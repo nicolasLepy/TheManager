@@ -92,7 +92,7 @@ namespace TheManager
 
         public List<Qualification> AdjustQualificationAccordingToAdministrativeDivisions(List<Qualification> baseQualifications, GroupsRound upperGroupRound, List<Club> ranking)
         {
-            Country c = _clubs[0].Country();
+            Association a = _clubs[0].Association();
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
             adjustedQualifications.Sort(new QualificationComparator());
 
@@ -128,10 +128,10 @@ namespace TheManager
                     upperRegularRelegations++;
                 }
             }
-            foreach (AdministrativeDivision ad in c.GetAdministrativeDivisionsLevel(upperGroupRound.administrativeLevel))
+            foreach (Association a2 in a.GetAssociationsLevel(upperGroupRound.administrativeLevel))
             {
                 
-                List<int> admGroups = upperGroupRound.GetGroupsFromAdministrativeDivision(ad);
+                List<int> admGroups = upperGroupRound.GetGroupsFromAssociation(a2);
                 int upperRelegations = 0;
 
                 foreach (int admGroup in admGroups)
@@ -148,14 +148,14 @@ namespace TheManager
                 int additionnalUpperRelegations = upperRelegations - upperRegularRelegations;
                 int relegations = relegationsSlotByAd > 0 ? relegationsSlotByAd + additionnalUpperRelegations : relegationsSlotByAd;
                 
-                Console.WriteLine("[" + Tournament.name + "][Ad " + ad.name + "] -> Rélégués du haut : " + upperRelegations + "(" + upperRegularRelegations + " normalement). " + relegations + " relegations");
+                Console.WriteLine("[" + Tournament.name + "][Ad " + a2.name + "] -> Rélégués du haut : " + upperRelegations + "(" + upperRegularRelegations + " normalement). " + relegations + " relegations");
 
                 int promotions = promotionsSlotByAd;
                 //Manage promotion
                 for (int i = 0; i < ranking.Count && promotions > 0; i++)
                 {
                     Club club = ranking[i];
-                    if (ad.ContainsAdministrativeDivision(club.AdministrativeDivision()))
+                    if (a2.ContainsAssociation(club.Association()))
                     {
                         for (int j = 0; j < adjustedQualifications.Count; j++)
                         {
@@ -174,15 +174,15 @@ namespace TheManager
                 int lowerRoundTeamsCount = 0;
                 if (lowerTournament != null)
                 {
-                    lowerRoundTeamsCount = lowerTournament.rounds[0].GetClubsAdministrativeDivision(ad).Count;
-                    Console.WriteLine("[" + lowerTournament.name + "][Ad " + ad.name + "] " + lowerRoundTeamsCount + " équipes de l'ADM, " + relegations +  " relegations.");
+                    lowerRoundTeamsCount = lowerTournament.rounds[0].GetClubsAssociation(a2).Count;
+                    Console.WriteLine("[" + lowerTournament.name + "][Ad " + a2.name + "] " + lowerRoundTeamsCount + " équipes de l'ADM, " + relegations +  " relegations.");
                 }
                 if (lowerRoundTeamsCount > 0)
                 {
                     for (int i = ranking.Count - 1; i >= 0 && relegations > 0; i--)
                     {
                         Club club = ranking[i];
-                        if (ad.ContainsAdministrativeDivision(club.AdministrativeDivision()))
+                        if (a2.ContainsAssociation(club.Association()))
                         {
                             for (int j = 0; j < adjustedQualifications.Count; j++)
                             {
@@ -218,7 +218,7 @@ namespace TheManager
                 int level = Tournament.level - 1;
                 while (upperGroupRound == null && level > 0)
                 {
-                    upperGroupRound = (_clubs[0].Country().League(level)?.rounds[0] as GroupsRound);
+                    upperGroupRound = (_clubs[0].Association().League(level)?.rounds[0] as GroupsRound);
                     if (upperGroupRound != null && upperGroupRound.RandomDrawingMethod != RandomDrawingMethod.Administrative)
                     {
                         upperGroupRound = null;
@@ -263,8 +263,7 @@ namespace TheManager
                 Club c = ranking[q.ranking - 1];
                 if (Tournament.level >= 8)
                 {
-                    Console.WriteLine("[" + q.ranking + "] " + c.name + " (" + c.AdministrativeDivision().name + ") -> " +
-                                      q.tournament.level);
+                    Console.WriteLine("[" + q.ranking + "] " + c.name + " (" + c.Association().name + ") -> " + q.tournament.level);
                 }
                 if (!q.isNextYear)
                 {

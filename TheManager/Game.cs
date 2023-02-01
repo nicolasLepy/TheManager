@@ -658,18 +658,17 @@ namespace TheManager
 
             if(weekNumber == 23 && date.DayOfWeek == DayOfWeek.Wednesday)
             {
-                foreach(Continent c in kernel.continents)
+                foreach(Association a in kernel.AllAssociations())
                 {
-                    c.QualifiesClubForContinentalCompetitionNextYear();
+                    a.QualifiesClubForContinentalCompetitionNextYear();
                 }
-
             }
 
             if(weekNumber == 27 && date.DayOfWeek == DayOfWeek.Wednesday)
             {
-                foreach(Continent c in kernel.continents)
+                foreach (Association a in kernel.AllAssociations())
                 {
-                    c.UpdateStoredAssociationRanking();
+                    a.UpdateStoredAssociationRanking();
                 }
             }
 
@@ -688,13 +687,11 @@ namespace TheManager
             //July 20th => teams set up tickets price
             if(date.Day == 20 && date.Month == 7)
             {
-                foreach(Continent ct in _kernel.continents)
+                foreach (Association a in kernel.AllAssociations())
                 {
-                    foreach(Country c in ct.countries)
-                    {
-                        c.administrativeRetrogradations.Clear();
-                    }
+                    a.administrativeRetrogradations.Clear();
                 }
+
                 foreach (Club c in kernel.Clubs)
                 {
                     c.SetTicketPrice();

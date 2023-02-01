@@ -120,12 +120,11 @@ namespace TheManager
         public float ClubYearCoefficient(int nSeason, bool associationCoefficient = false)
         {
             float res = 0;
-
-            Continent continent = Country().Continent;
-            int tournamentsCount = continent.ContinentalTournamentsCount;
+            Association continentalAssociation = this.Association().Parent;
+            int tournamentsCount = continentalAssociation.AssociationTournamentsCount;
             for (int i = 1; i <= tournamentsCount; i++)
             {
-                Tournament continentalTournament = continent.GetContinentalClubTournament(i);
+                Tournament continentalTournament = continentalAssociation.GetAssociationClubTournament(i);
                 int j = continentalTournament.previousEditions.Count - (-nSeason);
 
                 if (j >= 0)
@@ -245,7 +244,7 @@ namespace TheManager
                     }
                 }
             }
-            string adm = this.AdministrativeDivision() != null ? " (" + this.AdministrativeDivision().name + ")" : "";
+            string adm = this.Association() != null ? " (" + this.Association().name + ")" : "";
             return res + adm;
         }
 
@@ -253,7 +252,7 @@ namespace TheManager
 
         public abstract GeographicPosition Localisation();
 
-        public abstract AdministrativeDivision AdministrativeDivision();
+        public abstract Association Association();
 
 
         /// <summary>

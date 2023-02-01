@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 namespace TheManager.Comparators
 {
 
-    public enum CountryAttribute
+    public enum AssociationAttribute
     {
         CONTINENTAL_COEFFICIENT
     }
 
-    public class CountryComparator : IComparer<Country>
+    public class AssociationComparator : IComparer<Association>
     {
 
-        private readonly CountryAttribute _attribute;
+        private readonly AssociationAttribute _attribute;
         private bool _inverted;
 
-        public CountryComparator(CountryAttribute attribute, bool inverted = false)
+        public AssociationComparator(AssociationAttribute attribute, bool inverted = false)
         {
             _attribute = attribute;
             _inverted = inverted;
@@ -28,12 +28,12 @@ namespace TheManager.Comparators
             return _inverted ? -1 : 1;
         }
 
-        public int Compare(Country x, Country y)
+        public int Compare(Association x, Association y)
         {
             int res;
             switch (_attribute)
             {
-                case CountryAttribute.CONTINENTAL_COEFFICIENT:
+                case AssociationAttribute.CONTINENTAL_COEFFICIENT:
                     res = x.AssociationCoefficient > y.AssociationCoefficient ? -1 : 1;
                     break;
                 default:

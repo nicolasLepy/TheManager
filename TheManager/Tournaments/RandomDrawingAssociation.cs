@@ -4,11 +4,11 @@ using TheManager.Comparators;
 
 namespace TheManager.Tournaments
 {
-    public class RandomDrawingAdministrative : IRandomDrawing
+    public class RandomDrawingAssociation : IRandomDrawing
     {
         private readonly GroupsRound _round;
 
-        public RandomDrawingAdministrative(GroupsRound tour)
+        public RandomDrawingAssociation(GroupsRound tour)
         {
             _round = tour;
         }
@@ -29,13 +29,13 @@ namespace TheManager.Tournaments
         public void RandomDrawing()
         {
             Console.WriteLine("[Draw " + _round.Tournament.name + "]");
-            Country hostCountry = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Country;
+            Association hostAssociation = Session.Instance.Game.kernel.worldAssociation.GetAssociationOfTournament(_round.Tournament);
             List<List<Club>> groups = new List<List<Club>>();
             List<string> groupNames = new List<string>();
-            Console.WriteLine("Host country = " + hostCountry);
+            Console.WriteLine("Host country = " + hostAssociation);
             Console.WriteLine("Reference ClubsByGroup = " + _round.referenceClubsByGroup);
             Console.WriteLine("ClubsByGroup = " + _round.clubs.Count / _round.groupsCount);
-            if (hostCountry != null)
+            if (hostAssociation != null)
             {
                 int defaultMaxTeamsByGroup = _round.referenceClubsByGroup == 0 ? _round.clubs.Count / _round.groupsCount : _round.referenceClubsByGroup;
                 defaultMaxTeamsByGroup = _round.clubs.Count % _round.groupsCount != 0
@@ -43,11 +43,11 @@ namespace TheManager.Tournaments
                     : defaultMaxTeamsByGroup;
                 defaultMaxTeamsByGroup += 2;
                 Console.WriteLine("[MaxTeamsByGroup] " + defaultMaxTeamsByGroup);
-                foreach (AdministrativeDivision ad in hostCountry.GetAdministrativeDivisionsLevel(_round.administrativeLevel))
+                foreach (Association a in hostAssociation.GetAssociationsLevel(_round.administrativeLevel))
                 {
                     int admCounter = 0;
-                    List<Club> clubsAdm = _round.GetClubsAdministrativeDivision(ad);
-                    Console.WriteLine("[" + ad.name + "], équipes = " + clubsAdm.Count);
+                    List<Club> clubsAdm = _round.GetClubsAssociation(a);
+                    Console.WriteLine("[" + a.name + "], équipes = " + clubsAdm.Count);
                     if (clubsAdm.Count > 0)
                     {
 
@@ -56,7 +56,7 @@ namespace TheManager.Tournaments
                         for (int grp = 0; grp < groupsCount.Count; grp++)
                         {
                             groups.Add(splitClubs[grp]);
-                            groupNames.Add(ad.name + " " + ++admCounter);
+                            groupNames.Add(a.name + " " + ++admCounter);
                         }
                     }
                 }

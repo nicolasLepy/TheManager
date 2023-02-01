@@ -60,7 +60,7 @@
     <Compile Include="Algorithms\KMeansClustering.cs" />
     <Compile Include="Comparators\ClubComparator.cs" />
     <Compile Include="Color.cs" />
-    <Compile Include="Comparators\CountryComparator.cs" />
+    <Compile Include="Comparators\AssociationComparator.cs" />
     <Compile Include="Comparators\JournalistOffsetComparator.cs" />
     <Compile Include="Comparators\NationsFifaRankingComparator.cs" />
     <Compile Include="Comparators\QualificationComparator.cs" />
@@ -68,7 +68,7 @@
     <Compile Include="Comparators\TournamentComparator.cs" />
     <Compile Include="DatabaseLoader.cs" />
     <Compile Include="Club.cs" />
-    <Compile Include="Geography\AdministrativeDivision.cs" />
+    <Compile Include="Geography\Association.cs" />
     <Compile Include="Geography\Continent.cs" />
     <Compile Include="Geography\Country.cs" />
     <Compile Include="Geography\ILocalisation.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="Tournaments\InactiveRound.cs" />
     <Compile Include="Tournaments\IRandomDrawing.cs" />
     <Compile Include="Tournaments\KnockoutRound.cs" />
-    <Compile Include="Tournaments\RandomDrawingAdministrative.cs" />
+    <Compile Include="Tournaments\RandomDrawingAssociation.cs" />
     <Compile Include="Tournaments\RandomDrawingGeographic.cs" />
     <Compile Include="Tournaments\RandomDrawingLevel.cs" />
     <Compile Include="Tournaments\RandomDrawingMethod.cs" />

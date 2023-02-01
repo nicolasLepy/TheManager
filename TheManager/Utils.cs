@@ -452,7 +452,7 @@ namespace TheManager
                 if(reserveCount > 0)
                 {
                     ReserveClub upperReserve = clubReserve.FannionClub.reserves[reserveCount - 1];
-                    Tournament up = club.Country().League(baseLevel - 1);
+                    Tournament up = club.Association().League(baseLevel - 1);
                     foreach(Round r in up.rounds)
                     {
                         if(r.clubs.Contains(upperReserve))

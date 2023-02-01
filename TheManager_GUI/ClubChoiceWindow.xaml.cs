@@ -21,12 +21,9 @@ namespace TheManager_GUI
             club = null;
             InitializeComponent();
 
-            foreach (Continent c in Session.Instance.Game.kernel.continents)
+            foreach(Association a in Session.Instance.Game.kernel.GetAssociationsOfHierarchyLevel(2))
             {
-                foreach (Country p in c.countries)
-                {
-                    cbNationalite.Items.Add(p);
-                }
+                cbNationalite.Items.Add(a.localization as Country);
             }
             cbNationalite.SelectedIndex = 0;
 
@@ -39,54 +36,48 @@ namespace TheManager_GUI
 
             tvClubs.Items.Clear();
 
-            foreach(Continent c in Session.Instance.Game.kernel.continents)
+            foreach(Tournament cp in Session.Instance.Game.kernel.worldAssociation.AllTournaments())
             {
-                foreach(Country p in c.countries)
+                if(cp.isChampionship)
                 {
-                    foreach(Tournament cp in p.Tournaments())
-                    {
-                        if(cp.isChampionship)
-                        {
-                            TreeViewItem tv = new TreeViewItem();
-                            tv.Header = cp.name;
+                    TreeViewItem tv = new TreeViewItem();
+                    tv.Header = cp.name;
 
-                            if((cp.rounds[0] as InactiveRound) == null)
+                    if((cp.rounds[0] as InactiveRound) == null)
+                    {
+                        foreach (Club club in cp.rounds[0].clubs)
+                        {
+                            StackPanel sp = new StackPanel();
+                            sp.Orientation = Orientation.Horizontal;
+                            Image logo = new Image();
+                            logo.Width = 20;
+                            logo.Height = 20;
+                            logo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
+                            Button btnClub = new Button();
+                            btnClub.Content = club.name;
+                            btnClub.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
+                            btnClub.FontSize = 11;
+                            btnClub.Foreground = Brushes.Black;
+                            btnClub.Name = "club_" + Session.Instance.Game.kernel.Clubs.IndexOf(club).ToString();
+                            if (club as CityClub != null)
                             {
-                                foreach (Club club in cp.rounds[0].clubs)
-                                {
-                                    StackPanel sp = new StackPanel();
-                                    sp.Orientation = Orientation.Horizontal;
-                                    Image logo = new Image();
-                                    logo.Width = 20;
-                                    logo.Height = 20;
-                                    logo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
-                                    Button btnClub = new Button();
-                                    btnClub.Content = club.name;
-                                    btnClub.Style = Application.Current.FindResource("StyleButtonLabel") as Style;
-                                    btnClub.FontSize = 11;
-                                    btnClub.Foreground = Brushes.Black;
-                                    btnClub.Name = "club_" + Session.Instance.Game.kernel.Clubs.IndexOf(club).ToString();
-                                    if (club as CityClub != null)
-                                    {
-                                        btnClub.Click += new RoutedEventHandler(BtnClub_Click);
-                                    }
-                                    else
-                                    {
-                                        btnClub.Foreground = Brushes.DarkGray;
-                                    }
-                                    sp.Children.Add(logo);
-                                    sp.Children.Add(btnClub);
-                                    tv.Items.Add(sp);
-                                }
+                                btnClub.Click += new RoutedEventHandler(BtnClub_Click);
                             }
                             else
                             {
-                                tv.Items.Add(ViewUtils.CreateLabel("Compétition inactive", "StyleLabel2", 12, 100, Brushes.DarkGray));
+                                btnClub.Foreground = Brushes.DarkGray;
                             }
-
-                            tvClubs.Items.Add(tv);
+                            sp.Children.Add(logo);
+                            sp.Children.Add(btnClub);
+                            tv.Items.Add(sp);
                         }
                     }
+                    else
+                    {
+                        tv.Items.Add(ViewUtils.CreateLabel("Compétition inactive", "StyleLabel2", 12, 100, Brushes.DarkGray));
+                    }
+
+                    tvClubs.Items.Add(tv);
                 }
             }
             

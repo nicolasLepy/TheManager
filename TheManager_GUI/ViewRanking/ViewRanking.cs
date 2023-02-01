@@ -22,8 +22,7 @@ namespace TheManager_GUI.VueClassement
         public ViewRanking(Tournament tournament)
         {
             _tournament = tournament;
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
-            Country country = localisation as Country;
+            Association association = Session.Instance.Game.kernel.worldAssociation.GetAssociationOfTournament(tournament);
 
             _year = -1;
             foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
@@ -43,11 +42,11 @@ namespace TheManager_GUI.VueClassement
             if(tournament.isChampionship)
             {
                 //Get cups winner to add an annotation
-                foreach (Tournament cup in country.Cups())
+                foreach (Tournament cup in association.Cups())
                 {
                     _cupsWinners.Add(cup, _year > -1 ? cup.previousEditions[_year].Winner() : cup.Winner());
                 }
-                _championshipTitleHolder = country.FirstDivisionChampionship().previousEditions.ContainsKey(_absoluteYear - 1) ? country.FirstDivisionChampionship().previousEditions[_absoluteYear - 1].Winner() : null;
+                _championshipTitleHolder = association.FirstDivisionChampionship().previousEditions.ContainsKey(_absoluteYear - 1) ? association.FirstDivisionChampionship().previousEditions[_absoluteYear - 1].Winner() : null;
             }
         }
 

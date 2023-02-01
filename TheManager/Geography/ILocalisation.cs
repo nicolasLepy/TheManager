@@ -9,8 +9,6 @@ namespace TheManager
 {
     public interface ILocalisation
     {
-
-        List<Tournament> Tournaments();
         string Name();
     }
 }
