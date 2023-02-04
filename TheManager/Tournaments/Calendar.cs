@@ -54,198 +54,69 @@ namespace TheManager
             {
                 ConstructTables();
             }
-            List<int> level = _level2;
-            if(match.home.Championship != null)
+            List<List<int>> level = _level2;
+            List<List<float>> levelHalfHour = _level2HalfHourGameProbabilities;
+            if (match.home.Championship != null)
             {
                 switch(match.home.Championship.level)
                 {
-                    case 1: level = _level2; break;
-                    case 2: level = _level2; break;
-                    case 3: level = _level2; break;
-                    case 4: level = _level2; break;
-                    case 5: level = _level2; break;
-                    case 6: level = _level6; break;
-                    case 7 : level = _level6; break;
-                    default: level = _level6;break;
+                    case 1: case 2: case 3: case 4: case 5: level = _level2; levelHalfHour = _level2HalfHourGameProbabilities; break;
+                    case 6: case 7: default: level = _level6; levelHalfHour = _level6HalfHourGameProbabilities; break;
                 }
             }
-            int hourInt = level[Session.Instance.Random(0, _level2.Count)];
-            int dayOffset = hourInt % 10 - 1;
-            int hour = hourInt / 1000;
-            int minute = (hourInt / 10) % 100;
-            //match.day = match.day.AddDays(dayOffset);
+            int hourIndex = Session.Instance.Random(0, CountHours(level));
+            int listDay = 0;
+            int listHour = 0;
+            int counter = 0;
+            bool find = false;
+            for(int i = 0; i < level.Count && !find; i++)
+            {
+                for(int j = 0; j < level[i].Count && !find; j++)
+                {
+                    counter += level[i][j];
+                    if(counter >= hourIndex)
+                    {
+                        find = true;
+                        listDay = i;
+                        listHour = j;
+                    }
+                }
+            }
+            int dayOffset = listDay - 1;
+            int hour = listHour + 12;
+            int minute = Session.Instance.Random() < levelHalfHour[listDay][listHour] ? 30 : 0;
+            match.day = match.day.AddDays(dayOffset);
             match.day = match.day.AddHours(hour - match.day.Hour);
             match.day = match.day.AddMinutes(minute - match.day.Minute);
 
         }
 
-        private static List<int> _level2;
-        private static List<int> _level6;
+        private static List<List<int>> _level2;
+        private static List<List<int>> _level6;
+        private static List<List<float>> _level2HalfHourGameProbabilities;
+        private static List<List<float>> _level6HalfHourGameProbabilities;
+
+
+        private static int CountHours(List<List<int>> hoursList)
+        {
+            int res = 0;
+            foreach(List<int> list in hoursList)
+            {
+                foreach(int hour in list)
+                {
+                    res += hour;
+                }
+            }
+            return res;
+        }
 
         private static void ConstructTables()
         {
-            _level2 = new List<int>();
-            _level6 = new List<int>();
-            for (int i = 0; i < 2; i++)
-            {
-                _level2.Add(18000);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level2.Add(19000);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level2.Add(20000);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                _level2.Add(14001);
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                _level2.Add(14301);
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                _level2.Add(15001);
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                _level2.Add(16001);
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                _level2.Add(17001);
-            }
-            for (int i = 0; i < 25; i++)
-            {
-                _level2.Add(18001);
-            }
-            for (int i = 0; i < 11; i++)
-            {
-                _level2.Add(18301);
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                _level2.Add(19001);
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                _level2.Add(20001);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level2.Add(13302);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                _level2.Add(14002);
-            }
-            for (int i = 0; i < 7; i++)
-            {
-                _level2.Add(15002);
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                _level2.Add(16002);
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                _level2.Add(17002);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level2.Add(20002);
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                _level6.Add(15001);
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                _level6.Add(15301);
-            }
-            for (int i = 0; i < 6; i++)
-            {
-                _level6.Add(16001);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level6.Add(16301);
-            }
-            for (int i = 0; i < 9; i++)
-            {
-                _level6.Add(17001);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level6.Add(17301);
-            }
-            for (int i = 0; i < 18; i++)
-            {
-                _level6.Add(18001);
-            }
-            for (int i = 0; i < 5; i++)
-            {
-                _level6.Add(18301);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                _level6.Add(19001);
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                _level6.Add(19301);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level6.Add(20001);
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                _level6.Add(13002);
-            }
-            for (int i = 0; i < 7; i++)
-            {
-                _level6.Add(13302);
-            }
-            for (int i = 0; i < 14; i++)
-            {
-                _level6.Add(14002);
-            }
-            for (int i = 0; i < 8; i++)
-            {
-                _level6.Add(14302);
-            }
-            for (int i = 0; i < 66; i++)
-            {
-                _level6.Add(15002);
-            }
-            for (int i = 0; i < 10; i++)
-            {
-                _level6.Add(15302);
-            }
-            for (int i = 0; i < 4; i++)
-            {
-                _level6.Add(16002);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level6.Add(16302);
-            }
-            for (int i = 0; i < 2; i++)
-            {
-                _level6.Add(17002);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level6.Add(17302);
-            }
-            for (int i = 0; i < 1; i++)
-            {
-                _level6.Add(18002);
-            }
+            //Wednesday, Saturday, Sunday game probabilities between 12h and 20h
+            _level2 = new List<List<int>>() { new List<int>() { 0, 0, 0, 0, 0, 0, 2, 1, 1 }, new List<int>() { 0, 1, 4, 9, 3, 9, 40, 9, 2 }, new List<int>() { 0, 1, 5, 5, 1, 1, 0, 0, 0 } };
+            _level6 = new List<List<int>>() { new List<int>() { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new List<int>() { 0, 1, 3, 13, 3, 5, 10, 3, 0 }, new List<int>() { 0, 5, 35, 15, 3, 1, 1, 0, 0 } };
+            _level2HalfHourGameProbabilities = new List<List<float>>() { new List<float>() { 0, 0, 0, 0, 0, 0, 0.2f, 0.2f, 0.2f }, new List<float>() { 0, 0.2f, 0.75f, 0.1f, 0.1f, 0.05f, 0.2f, 0.05f, 0.02f }, new List<float>() { 0, 0.8f, 0.8f, 0.1f, 0.2f, 0.2f, 0, 0, 0 } };
+            _level6HalfHourGameProbabilities = new List<List<float>>() { new List<float>() { 0, 0, 0, 0, 0, 0, 0.2f, 0.2f, 0.2f }, new List<float>() { 0, 0.2f, 0.75f, 0.1f, 0.1f, 0.05f, 0.2f, 0.05f, 0.02f }, new List<float>() { 0, 0.8f, 0.8f, 0.1f, 0.2f, 0.2f, 0, 0, 0 } };
         }
 
         /// <summary>
