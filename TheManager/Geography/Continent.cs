@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -342,75 +343,11 @@ namespace TheManager
             
             for(int i = 0; i< countriesRanking.Count; i++)
             {
-                List<Club> registeredClubs = new List<Club>();
-                List<Club> clubs = new List<Club>();
-                Tournament firstDivisionChampionship = countriesRanking[i].FirstDivisionChampionship();
-                Round championshipRound = firstDivisionChampionship.GetLastChampionshipRound(); //firstDivisionChampionship.rounds[0];
-                List<Tournament> cups = countriesRanking[i].Cups();
-                List<Club> cupWinners = new List<Club>();
-                cups.ForEach(t => cupWinners.Add(t.Winner()));
-
-                if(championshipRound as ChampionshipRound != null)
+                Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i]);
+                foreach(KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
                 {
-                    clubs = (championshipRound as ChampionshipRound).Ranking();
-                }
-                if (championshipRound as InactiveRound != null)
-                {
-                    clubs = (championshipRound as InactiveRound).Ranking();
-                }
-                if (championshipRound as GroupsRound != null) //TODO: No sense to do this, no tournament finish on a group round (maybe if one day Top and Bottom championships are merged in a group round phase)
-                {
-                    clubs = new List<Club>(championshipRound.clubs);
-                    clubs.Sort(new ClubRankingComparator(championshipRound.matches));
-                }
-
-                List<Club> finalPhasesClubs = firstDivisionChampionship.GetFinalPhasesClubs();
-                if (finalPhasesClubs.Count > 0)
-                {
-                    for(int j = finalPhasesClubs.Count-1; j >= 0; j--)
-                    {
-                        clubs.Remove(finalPhasesClubs[j]);
-                        clubs.Insert(0, finalPhasesClubs[j]);
-                    }
-                }
-                int rank = i + 1;
-                int currentLevel = 0;
-                int cupRank = 0;
-                foreach(Qualification q in _continentalQualifications)
-                {
-                    if(q.ranking == rank)
-                    {
-                        Club currentCupWinner = cupRank < cupWinners.Count ? cupWinners[cupRank] : null;
-                        //isNextYear is used as "cup winner" here instead of league qualification
-                        if ((!q.isNextYear || registeredClubs.Contains(currentCupWinner)) || currentCupWinner == null)
-                        {
-                            for (int j = 0; j < q.qualifies; j++)
-                            {
-                                Club qualifiedClub = clubs[currentLevel];
-                                //If we get the cup winner and is already qualified, then we move to the next candidate team to avoid the cup winner entering two times in continental tournament
-                                while(registeredClubs.Contains(qualifiedClub))
-                                {
-                                    currentLevel++;
-                                    qualifiedClub = clubs[currentLevel];
-                                }
-                                currentLevel++;
-                                q.tournament.AddClubForNextYear(qualifiedClub, q.roundId);
-                                registeredClubs.Add(qualifiedClub);
-                                Console.WriteLine("Qualifie " + qualifiedClub.name + " pour la " + q.tournament.name + " (tour " + q.roundId + ")");
-                            }
-
-                        }
-                        else
-                        {
-                            q.tournament.AddClubForNextYear(currentCupWinner, q.roundId);
-                            registeredClubs.Add(currentCupWinner);
-                            Console.WriteLine("Qualifie " + currentCupWinner.name + " pour la " + q.tournament.name + " (tour " + q.roundId + ")");
-                        }
-                        if(q.isNextYear)
-                        {
-                            cupRank++;
-                        }
-                    }
+                    Utils.Debug("Qualifie " + kvp.Key.name + " pour la " + kvp.Value.tournament.name + " (tour " + kvp.Value.roundId + ")");
+                    kvp.Value.tournament.AddClubForNextYear(kvp.Key, kvp.Value.roundId);
                 }
             }
         }
