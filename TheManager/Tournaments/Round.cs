@@ -18,6 +18,7 @@ namespace TheManager
         OnlyFirstTeams,
         ReservesAreNotPromoted,
         OneClubByCountryInGroup,
+        OneTeamByContinentInGroup,
         HostedByOneCountry,
         UltramarineTeamsPlayHomeOrAway,
         UltramarineTeamsPlayAway,

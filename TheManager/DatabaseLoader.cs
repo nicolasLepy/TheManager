@@ -1012,6 +1012,9 @@ namespace TheManager
                                     case "UN_CLUB_PAR_PAYS_GROUPE":
                                         rule = Rule.OneClubByCountryInGroup;
                                         break;
+                                    case "ONE_TEAM_BY_CONTINENT_IN_GROUP":
+                                        rule = Rule.OneTeamByContinentInGroup;
+                                        break;
                                     case "HOSTED_BY_ONE_COUNTRY":
                                         rule = Rule.HostedByOneCountry;
                                         break;
