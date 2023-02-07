@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Navigation;
 using TheManager.Comparators;
 
 namespace TheManager
@@ -24,16 +25,16 @@ namespace TheManager
             try
             {
                 pot.Sort(new ClubComparator(_attribute, false));
-                if(pot[0] as NationalTeam != null)
+                if (pot[0] as NationalTeam != null)
                 {
                     List<NationalTeam> nationalsTeams = new List<NationalTeam>();
-                    foreach(Club c in pot)
+                    foreach (Club c in pot)
                     {
                         nationalsTeams.Add(c as NationalTeam);
                     }
                     nationalsTeams.Sort(new NationsFifaRankingComparator(false));
                     pot.Clear();
-                    foreach(NationalTeam nt in nationalsTeams)
+                    foreach (NationalTeam nt in nationalsTeams)
                     {
                         pot.Add(nt);
                     }
@@ -45,20 +46,20 @@ namespace TheManager
             }
             int minTeamsByGroup = _round.clubs.Count / _round.groupsCount;
 
-            List<Club>[] hats = new List<Club>[minTeamsByGroup];
-            
+            List<Club>[] baseHats = new List<Club>[minTeamsByGroup];
+
             //Some groups will get one more team
-            if(_round.clubs.Count % _round.groupsCount > 0)
+            if (_round.clubs.Count % _round.groupsCount > 0)
             {
-                hats = new List<Club>[minTeamsByGroup + 1];
+                baseHats = new List<Club>[minTeamsByGroup + 1];
             }
             int ind = 0;
             for (int i = 0; i < minTeamsByGroup; i++)
             {
-                hats[i] = new List<Club>();
+                baseHats[i] = new List<Club>();
                 for (int j = 0; j < _round.groupsCount; j++)
                 {
-                    hats[i].Add(pot[ind]);
+                    baseHats[i].Add(pot[ind]);
                     ind++;
                 }
 
@@ -66,160 +67,294 @@ namespace TheManager
             //Create last hat if there is remaining teams
             if (_round.clubs.Count % _round.groupsCount > 0)
             {
-                hats[hats.Length - 1] = new List<Club>();
-                for (int j = _round.groupsCount*minTeamsByGroup; j<_round.clubs.Count; j++)
+                baseHats[baseHats.Length - 1] = new List<Club>();
+                for (int j = _round.groupsCount * minTeamsByGroup; j < _round.clubs.Count; j++)
                 {
-                    hats[hats.Length - 1].Add(pot[j]);
+                    baseHats[baseHats.Length - 1].Add(pot[j]);
                 }
             }
 
-
-            //Count teams by countries and continent. Used if round contains OneClubByCountryInGroup or OneTeamByContinentInGroup rules.
-            Dictionary<Continent, int> teamsByContinent = _round.clubs.GroupBy(x => x.Country().Continent).ToDictionary(g => g.Key, g => g.Count());
-            Dictionary<Country, int> teamsByCountry = _round.clubs.GroupBy(x => x.Country()).ToDictionary(g => g.Key, g => g.Count());
-
-            //Foreach groups
-            for (int i = 0; i < _round.groupsCount; i++)
+            //Shuffle hats because of the case 2
+            for (int i = 0; i < baseHats.Count(); i++)
             {
-                //Foreach hats
-                for (int j = 0; j < hats.Length; j++)
+                baseHats[i].Shuffle();
+            }
+
+            bool succeed = false;
+            while(!succeed)
+            {
+                succeed = true;
+                for(int i = 0; i<_round.groupsCount; i++)
                 {
-                    if (hats[j].Count > 0)
+                    _round.groups[i].Clear();
+                }
+                try
+                {
+                    List<Club>[] hats = new List<Club>[baseHats.Length];
+                    for(int i = 0; i < baseHats.Length; i++)
                     {
-                        Club c;
-                        Club drawnClub;
+                        hats[i] = new List<Club>(baseHats[i]);
+                    }
 
-                        //TODO: Change the algorithm to avoid use of securityLoop variable
-                        int securityLoop = 0;
-                        bool ruleFixedCountry = true;
-                        bool ruleFixedContinent = true;
+                    bool ruleConcernsContinent = _round.rules.Contains(Rule.OneTeamByContinentInGroup);
 
-                        do
+                    //Foreach groups
+                    for (int i = 0; i < _round.groupsCount; i++)
+                    {
+
+                        //Create constraints dictionnary. Specify for each continent or country minimum and maximum numbers of teams on each group to respect rules.
+                        //Only used if round include OneTeamByContinentInGroup or OneClubByCountryInGroup rule
+                        Dictionary<ILocalisation, List<int>> constraintsContinents = new Dictionary<ILocalisation, List<int>>();
+                        Dictionary<ILocalisation, List<int>> constraintsCountry = new Dictionary<ILocalisation, List<int>>();
+                        foreach (Continent c in Session.Instance.Game.kernel.world.continents)
                         {
-                            securityLoop++;
-                            c = hats[j][Session.Instance.Random(0, hats[j].Count)];
-                            drawnClub = c;
-                            //The rule cannot be respected, switch current club with another club in the same hat but already placed
-                            bool ruleOneClubByCountryCantBeRespected = _round.rules.Contains(Rule.OneClubByCountryInGroup) && ContainsCountry(_round.groups[i], c.Country()) && ContainsOnlyTeamsWithCountry(hats[j], c.Country());
-                            bool ruleOneTeamByContinentCantBeRespected = _round.rules.Contains(Rule.OneTeamByContinentInGroup) && ContainsContinent(_round.groups[i], c.Country().Continent) && ContainsOnlyTeamsWithContinent(hats[j], c.Country().Continent);
-                            if (ruleOneClubByCountryCantBeRespected || ruleOneTeamByContinentCantBeRespected)
+                            int teamsCount = TeamsOfContinent(hats, c);
+                            float teamsRatio = teamsCount / (_round.groupsCount - i + 0.0f);
+                            constraintsContinents.Add(c, new List<int> { (int)Math.Floor(teamsRatio), (int)Math.Ceiling(teamsRatio) });
+                        }
+                        List<Country> roundCountries = new List<Country>();
+
+                        foreach (Club c in _round.clubs)
+                        {
+                            Country cCountry = c.Country();
+                            if (!roundCountries.Contains(cCountry))
                             {
-                                //For k from 0 to i, see if the k-j switch unlock the situation
-                                int k = 0;
-                                bool blocked = true;
-                                while (blocked)
-                                {
-                                    Club switchClub = _round.groups[k][j];
-                                    bool checkCountry = !_round.rules.Contains(Rule.OneClubByCountryInGroup) || (!ContainsCountry(_round.groups[i], switchClub.Country()) && !ContainsCountry(_round.groups[k], c.Country()));
-                                    bool checkContinent = !_round.rules.Contains(Rule.OneTeamByContinentInGroup) || (!ContainsContinent(_round.groups[i], switchClub.Country().Continent) && !ContainsContinent(_round.groups[k], c.Country().Continent));
-                                    if ((k + 1) == i || (checkContinent && checkCountry))
-                                    {
-                                        blocked = false;
-                                        if ((k + 1) != i)
-                                        {
-                                            _round.groups[k][j] = c;
-                                            c = switchClub;
-                                        }
-                                    }
-                                    k++;
-                                }
+                                roundCountries.Add(cCountry);
                             }
-                            ruleFixedCountry = _round.rules.Contains(Rule.OneClubByCountryInGroup) && (ContainsCountry(_round.groups[i], c.Country()) && !ContainsOnlyTeamsWithCountry(hats[j], c.Country()));
-                            ruleFixedContinent = _round.rules.Contains(Rule.OneTeamByContinentInGroup) && (ContainsContinent(_round.groups[i], c.Country().Continent) && !ContainsOnlyTeamsWithContinent(hats[j], c.Country().Continent));
-
-                            //Console.WriteLine(_round.Tournament + " - " + _round.rules.Contains(Rule.OneClubByCountryInGroup) + " - " + ContainsCountry(_round.groups[i], c.Country()) + " - " + !ContainsOnlyCountry(hats[j], c.Country()));
                         }
-                        while (securityLoop < 500 && (ruleFixedCountry || ruleFixedContinent));
-
-                        if(securityLoop == 500)
+                        foreach (Country c in roundCountries)
                         {
-                            Console.WriteLine("Security break used for " + _round.name + " (" + _round.Tournament.name + ")");
+                            int teamsCount = TeamsOfCountry(hats, c);
+                            float teamsRatio = teamsCount / (_round.groupsCount - i + 0.0f);
+                            constraintsCountry.Add(c, new List<int> { (int)Math.Floor(teamsRatio), (int)Math.Ceiling(teamsRatio) });
                         }
 
-                        hats[j].Remove(drawnClub);
-                        _round.groups[i].Add(c);
+                        //Foreach hats
+                        for (int j = 0; j < hats.Length; j++)
+                        {
+                            if (hats[j].Count > 0)
+                            {
+                                List<Club> possibleTeams = new List<Club>();
+
+                                foreach (Club hatClub in hats[j])
+                                {
+                                    if (!_round.rules.Contains(Rule.OneTeamByContinentInGroup) && !_round.rules.Contains(Rule.OneClubByCountryInGroup))
+                                    {
+                                        possibleTeams.Add(hatClub);
+                                    }
+                                    else
+                                    {
+                                        ILocalisation hcLocalisation = null;
+                                        if(ruleConcernsContinent)
+                                        {
+                                            hcLocalisation = hatClub.Country().Continent;
+                                        }
+                                        else
+                                        {
+                                            hcLocalisation = hatClub.Country();
+                                        }
+                                        Dictionary<ILocalisation, List<int>> constraintsLocalisable = ruleConcernsContinent ? constraintsContinents : constraintsCountry;
+                                        //Case 1
+                                        //Si le nombre d'équipes par groupe + les équipes qui sont obligées d'arriver (car certains chapeaux contiennent uniquement des équipes de tel pays) est inférieur au nombre maximal d'équipes autorisées dans le groupe, alors on peut l'ajouter aux équipes sélectionnables.
+                                        if (CountClubsOfLocalisation(_round.groups[i], hcLocalisation, ruleConcernsContinent) - HatsWithOnlyTeamsOfLocalizable(hats, j + 1, hcLocalisation, ruleConcernsContinent) < constraintsLocalisable[hcLocalisation][1])
+                                        {
+                                            possibleTeams.Add(hatClub);
+                                        }
+                                        //Case 2
+                                        // Si le nombre de chapeaux restants avec des équipes de tel pays est égal au nombre minimum d'équipes nécessaire qui manque dans le groupe, alors on est obligé de prendre cette équipe
+                                        if (RemainingHatsWithTeamsOfLocalizable(hats, j, hcLocalisation, ruleConcernsContinent) == constraintsLocalisable[hcLocalisation][0] - CountClubsOfLocalisation(_round.groups[i], hcLocalisation, ruleConcernsContinent))
+                                        {
+                                            possibleTeams = new List<Club> { hatClub };
+                                            break;
+                                        }
+                                        /*
+                                        if (_round.rules.Contains(Rule.OneTeamByContinentInGroup))
+                                        {
+                                            Continent hcContinent = hatClub.Country().Continent;
+                                            //Case 1
+                                            if (CountClubsOfContinent(_round.groups[i], hcContinent) - HatsWithOnlyTeamsOfContinent(hats, j + 1, hcContinent) < constraintsContinents[hcContinent][1])
+                                            {
+                                                possibleTeams.Add(hatClub);
+                                            }
+                                            //Case 2
+                                            if (RemainingHatsWithTeamsOfContinent(hats, j, hcContinent) == constraintsContinents[hcContinent][0] - CountClubsOfContinent(_round.groups[i], hcContinent))
+                                            {
+                                                possibleTeams = new List<Club> { hatClub };
+                                                break;
+                                            }
+                                        }
+                                        else if (_round.rules.Contains(Rule.OneClubByCountryInGroup))
+                                        {
+                                            Country hcCountry = hatClub.Country();
+                                            //Case 1
+                                            if (CountClubsOfCountry(_round.groups[i], hcCountry) - HatsWithOnlyTeamsOfCountry(hats, j + 1, hcCountry) < constraintsCountry[hcCountry][1])
+                                            {
+                                                possibleTeams.Add(hatClub);
+                                            }
+                                            //Case 2
+                                            if (RemainingHatsWithTeamsOfCountry(hats, j, hcCountry) == constraintsCountry[hcCountry][0] - CountClubsOfCountry(_round.groups[i], hcCountry))
+                                            {
+                                                possibleTeams = new List<Club> { hatClub };
+                                                break;
+                                            }
+                                        }*/
+                                    }
+
+                                }
+
+                                Club selectedTeam = possibleTeams[Session.Instance.Random(0, possibleTeams.Count)];
+                                _round.groups[i].Add(selectedTeam);
+                                hats[j].Remove(selectedTeam);
+                            }
+                        }
+                    }
+                }
+                catch(Exception e)
+                {
+                    Utils.Debug(_round.Tournament.name + " (" + _round.name + ") Echec du tirage au sort de ce tour. Nouvelle tentative");
+                    succeed = false;
+                }
+            }
+
+        }
+        
+        private int CountClubsOfLocalisation(List<Club> clubs, ILocalisation localizable, bool withContinents)
+        {
+            int res = 0;
+            foreach (Club c in clubs)
+            {
+                ILocalisation comp = null;
+                if (withContinents)
+                {
+                    comp = c.Country().Continent;
+                }
+                else
+                {
+                    comp = c.Country();
+                }
+
+                if (comp == localizable)
+                {
+                    res++;
+                }
+            }
+            return res;
+        }
+
+        private int TeamsOfCountry(List<Club>[] hats, Country country)
+        {
+            int res = 0;
+            foreach (List<Club> lc in hats)
+            {
+                foreach (Club c in lc)
+                {
+                    if (c.Country() == country)
+                    {
+                        res++;
                     }
                 }
             }
-        }
-
-        private bool ContainsOnlyTeamsWithCountry(List<Club> clubs, Country country)
-        {
-            bool res = true;
-
-            foreach(Club c in clubs)
-            {
-                if(c.Country() != country)
-                {
-                    res = false;
-                }
-            }
-
             return res;
         }
 
-        private bool ContainsOnlyTeamsWithContinent(List<Club> clubs, Continent continent)
-        {
-            bool res = true;
-
-            foreach (Club c in clubs)
-            {
-                if (c.Country().Continent != continent)
-                {
-                    res = false;
-                }
-            }
-
-            return res;
-        }
-
-        private int CountClubsOfCountry(List<Club> clubs, Country country)
+        private int TeamsOfContinent(List<Club>[] hats, Continent continent)
         {
             int res = 0;
-            foreach(Club c in clubs)
+            foreach (List<Club> lc in hats)
             {
-                if(c.Country() == country)
+                foreach (Club c in lc)
+                {
+                    if (c.Country().Continent == continent)
+                    {
+                        res++;
+                    }
+                }
+            }
+            return res;
+        }
+
+        private int TeamsOfLocalizable(List<Club>[] hats, ILocalisation localizable, bool withContinents)
+        {
+            int res = 0;
+            foreach (List<Club> lc in hats)
+            {
+                foreach (Club c in lc)
+                {
+                    ILocalisation comp = null;
+                    if (withContinents)
+                    {
+                        comp = c.Country().Continent;
+                    }
+                    else
+                    {
+                        comp = c.Country();
+                    }
+
+                    if (comp == localizable)
+                    {
+                        res++;
+                    }
+                }
+            }
+            return res;
+        }
+
+        private int RemainingHatsWithTeamsOfLocalizable(List<Club>[] hats, int currentHat, ILocalisation localizable, bool withContinents)
+        {
+            int res = 0;
+            for (int i = currentHat; i < hats.Count(); i++)
+            {
+                bool teamsOfContinent = false;
+                foreach (Club c in hats[i])
+                {
+                    ILocalisation comp = null;
+                    if (withContinents)
+                    {
+                        comp = c.Country().Continent;
+                    }
+                    else
+                    {
+                        comp = c.Country();
+                    }
+
+                    if (comp == localizable)
+                    {
+                        teamsOfContinent = true;
+                    }
+                }
+                if (teamsOfContinent)
                 {
                     res++;
                 }
             }
             return res;
         }
-        private int CountClubsOfContinent(List<Club> clubs, Continent continent)
+
+        private int HatsWithOnlyTeamsOfLocalizable(List<Club>[] hats, int currentHat, ILocalisation localizable, bool continent)
         {
             int res = 0;
-            foreach (Club c in clubs)
+            for (int i = currentHat; i < hats.Count(); i++)
             {
-                if (c.Country().Continent == continent)
+                bool onlyTeam = true;
+                foreach (Club c in hats[i])
+                {
+                    ILocalisation comp = null;
+                    if(continent)
+                    {
+                        comp = c.Country().Continent;
+                    }
+                    else
+                    {
+                        comp = c.Country();
+                    }
+                    if (comp != localizable)
+                    {
+                        onlyTeam = false;
+                    }
+                }
+                if (onlyTeam)
                 {
                     res++;
-                }
-            }
-            return res;
-        }
-        private bool ContainsCountry(List<Club> clubs, Country country)
-        {
-            bool res = false;
-
-            foreach(Club c in clubs)
-            {
-                if(c.Country() == country)
-                {
-                    res = true;
-                }
-            }
-            return res;
-        }
-
-        private bool ContainsContinent(List<Club> clubs, Continent continent)
-        {
-            bool res = false;
-
-            foreach (Club c in clubs)
-            {
-                if (c.Country().Continent == continent)
-                {
-                    res = true;
                 }
             }
             return res;

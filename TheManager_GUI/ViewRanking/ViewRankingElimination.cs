@@ -92,7 +92,7 @@ namespace TheManager_GUI.VueClassement
                     spFirstTeam.Children.Add(ViewUtils.CreateLabel(pair[1].score2.ToString(), "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
                     spSecondTeam.Children.Add(ViewUtils.CreateLabel(pair[1].score1.ToString(), "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
 
-                    if(pair[1].prolongations)
+                    if (pair[1].prolongations)
                     {
                         spFirstTeam.Children.Add(ViewUtils.CreateLabel(pair[1].Winner == pair[0].home ? "p." : "", "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
                         spSecondTeam.Children.Add(ViewUtils.CreateLabel(pair[1].Winner != pair[0].home ? "p." : "", "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
@@ -103,7 +103,7 @@ namespace TheManager_GUI.VueClassement
                         spFirstTeam.Children.Add(ViewUtils.CreateLabel(pair[1].penaltyShootout2.ToString(), "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
                         spSecondTeam.Children.Add(ViewUtils.CreateLabel(pair[1].penaltyShootout1.ToString(), "StyleLabel2", 10 * _sizeMultiplier, 25 * _sizeMultiplier));
                     }
-
+                
                     spRanking.Children.Add(spFirstTeam);
                     spRanking.Children.Add(spSecondTeam);
                     spRanking.Children.Add(new Separator());

@@ -101,9 +101,11 @@ namespace TheManager_GUI.VueClassement
             ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
             Country country = localisation as Country;
 
-            Dictionary<Club, Qualification> continentalClubs = null;
-            continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, _year + 1) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country);
-
+            Dictionary<Club, Qualification> continentalClubs = new Dictionary<Club, Qualification>();
+            if(country != null)
+            {
+                continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, _year + 1) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country);
+            }
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around
             int indexTeam = -1;
@@ -209,6 +211,7 @@ namespace TheManager_GUI.VueClassement
             {
                 int roundLevel = _tournament.level;
 
+                bool nationalTeamTournament = _round.clubs.Count > 0 && ((_round.clubs[0] as NationalTeam) != null);
                 int qualificationsToTournamentNextRounds = 0;
                 foreach (Qualification q in _round.qualifications)
                 {
@@ -229,6 +232,22 @@ namespace TheManager_GUI.VueClassement
                         {
                             color = "barrageColor";
                         }
+                    }
+                    else if(nationalTeamTournament)
+                    {
+                        if (q.tournament.level == roundLevel && q.tournament != _round.Tournament)
+                        {
+                            color = "cl1Color";
+                        }
+                        else if (q.tournament.level == roundLevel && q.tournament == _round.Tournament)
+                        {
+                            color = "cl2Color";
+                        }
+                        else if (q.tournament.level > roundLevel)
+                        {
+                            color = q.qualifies >= 0 ? "el1Color" : "barrageRelegationColor";
+                        }
+
                     }
 
                     int index = q.ranking > 0 ? q.ranking : clubs.Count + q.ranking + 1;
