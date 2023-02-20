@@ -167,6 +167,11 @@ namespace TheManager
             return (float)(deg * (Math.PI / 180.0f));
         }
 
+        public static int Modulo(int k, int n) 
+        { 
+            return ((k %= n) < 0) ? k + n : k;
+        }
+
         public static float Distance(City a, City b)
         {
             return Distance(a.Position, b.Position);

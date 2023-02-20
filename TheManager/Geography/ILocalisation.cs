@@ -12,5 +12,7 @@ namespace TheManager
 
         List<Tournament> Tournaments();
         string Name();
+
+        Continent GetContinent();
     }
 }

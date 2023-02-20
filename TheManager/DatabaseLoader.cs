@@ -964,6 +964,12 @@ namespace TheManager
                                     case "aleatoire":
                                         method = RecuperationMethod.Randomly;
                                         break;
+                                    case "international":
+                                        method = RecuperationMethod.QualifiedForInternationalCompetition;
+                                        break;
+                                    case "notinternational":
+                                        method = RecuperationMethod.NotQualifiedForInternationalCompetitionBest;
+                                        break;
                                     default:
                                         method = RecuperationMethod.Best;
                                         break;
@@ -1306,7 +1312,7 @@ namespace TheManager
         {
             foreach(Continent ct in Session.Instance.Game.kernel.world.continents)
             {
-                List<int> continentAvailableWeeks = new List<int>();
+                /*List<int> continentAvailableWeeks = new List<int>();
                 for (int i = 30; i < 52 + 15; i++)
                 {
                     int week = i % 52;
@@ -1333,11 +1339,12 @@ namespace TheManager
                 
                 continentAvailableWeeks.Remove(51);
                 continentAvailableWeeks.Remove(52); //A mid-week game on the last year week lead to the next year
-                continentAvailableWeeks.Remove(0); //Bug 2027
+                continentAvailableWeeks.Remove(0); //Bug 2027*/
+
                 foreach (Country c in ct.countries)
                 {
-                    List<int> availableWeeks = new List<int>(continentAvailableWeeks);
-
+                    List<int> availableWeeks = c.GetAvailableCalendarDates(true); // new List<int>(continentAvailableWeeks);
+                    
                     Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
                     List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
                     bool noCup = true;
@@ -1359,16 +1366,6 @@ namespace TheManager
 
                             totalTeams += t.rounds[0].CountWithoutReserves();
 
-                            foreach(Round r in t.rounds)
-                            {
-                                foreach(GameDay gd in r.programmation.gamesDays)
-                                {
-                                    if(gd.MidWeekGame)
-                                    {
-                                        availableWeeks.Remove(gd.WeekNumber);
-                                    }
-                                }
-                            }
                         }
                     }
 

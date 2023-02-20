@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -384,5 +385,61 @@ namespace TheManager
                 return res;
             }
         }
+
+        public Continent GetContinent()
+        {
+            return Continent;
+        }
+
+        public List<int> GetAvailableCalendarDates(bool withContinentalDates)
+        {
+            Continent ct = GetContinent();
+            List<int> continentAvailableWeeks = new List<int>();
+            for (int i = 27; i < 52 + 15; i++) //TODO: A modifier si mise à jour de l'association différente
+            {
+                int week = i % 52;
+                continentAvailableWeeks.Add(week);
+            }
+
+            List<Tournament> tournaments = new List<Tournament>();
+            if(withContinentalDates)
+            {
+                foreach (Tournament t in ct.Tournaments())
+                {
+                    if (!t.isChampionship && t.periodicity == 1)
+                    {
+                        tournaments.Add(t);
+                    }
+                }
+            }
+            foreach (Tournament t in this.Tournaments())
+            {
+                if(t.periodicity == 1)
+                {
+                    tournaments.Add(t);
+                }
+            }
+            foreach (Tournament t in tournaments)
+            {
+                Console.WriteLine("[C] " + t.name);
+                foreach (Round r in t.rounds)
+                {
+                    foreach (GameDay gd in r.programmation.gamesDays)
+                    {
+                        if (gd.MidWeekGame)
+                        {
+                            Console.WriteLine("Remove " + gd.WeekNumber);
+                            continentAvailableWeeks.Remove(gd.WeekNumber);
+                        }
+                    }
+                }
+            }
+
+            continentAvailableWeeks.Remove(51);
+            continentAvailableWeeks.Remove(52); //A mid-week game on the last year week lead to the next year
+            continentAvailableWeeks.Remove(0); //Bug 2027
+            return continentAvailableWeeks;
+        }
+
     }
 }

@@ -352,9 +352,37 @@ namespace TheManager
             }
         }
 
+
+        public List<Club> GetContinentalClubs(List<Club> clubs)
+        {
+            List<Club> internationalClubs = new List<Club>();
+            int level = 1;
+            Tournament internationalTournament = GetContinentalClubTournament(level);
+            while (internationalTournament != null)
+            {
+                foreach (Round r in internationalTournament.rounds)
+                {
+                    foreach (Club club in clubs)
+                    {
+                        if (r.clubs.Contains(club) && !internationalClubs.Contains(club))
+                        {
+                            internationalClubs.Add(club);
+                        }
+                    }
+                }
+                internationalTournament = GetContinentalClubTournament(++level);
+            }
+            return internationalClubs;
+        }
+
         public override string ToString()
         {
             return _name;
+        }
+
+        public Continent GetContinent()
+        {
+            return this;
         }
     }
 }

@@ -38,7 +38,10 @@ namespace TheManager
     {
         Randomly,
         Best,
-        Worst
+        Worst,
+        QualifiedForInternationalCompetition,
+        NotQualifiedForInternationalCompetitionWorst,
+        NotQualifiedForInternationalCompetitionBest
     }
 
     [DataContract]
@@ -653,9 +656,6 @@ namespace TheManager
         /// <returns>Matches of game day j</returns>
         public abstract List<Match> GamesDay(int journey);
 
-
-
-
         public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
             List<Club> roundClubs = new List<Club>(_clubs);
@@ -702,6 +702,27 @@ namespace TheManager
                     catch(Exception e)
                     {
                         Utils.Debug("Erreur sort Club_Niveau_Comparator pour " + name);
+                    }
+                    break;
+                case RecuperationMethod.QualifiedForInternationalCompetition:
+                    roundClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinent().GetContinentalClubs(roundClubs);
+                    if (number == -1)
+                    {
+                        number = roundClubs.Count;
+                    }
+                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
+                    break;
+                case RecuperationMethod.NotQualifiedForInternationalCompetitionBest:
+                case RecuperationMethod.NotQualifiedForInternationalCompetitionWorst:
+                    List<Club> internationalClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinent().GetContinentalClubs(roundClubs);
+                    foreach (Club c in internationalClubs)
+                    {
+                        roundClubs.Remove(c);
+                    }
+                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL, method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst));
+                    if (number == -1)
+                    {
+                        number = roundClubs.Count;
                     }
                     break;
                 default:
