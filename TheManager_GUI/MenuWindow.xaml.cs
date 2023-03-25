@@ -180,14 +180,57 @@ namespace TheManager_GUI
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
+            foreach(Club c in Session.Instance.Game.kernel.Clubs)
+            {
+                //Prepare test cases for retrogradations
+                /*if(c.name.Equals("RC Strasbourg Alsace"))
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(5));
+                }*/
+                /*if (c.name == "FC Lorient")
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(5));
+                }
+                if (c.name == "Rodez AF")
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(5));
+                }
+                if (c.name == "FC Sochaux-Montbéliard")
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(6));
+                }
+                if (c.name == "SA Épinal")
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(7));
+                }
+                if (c.name == "Efc Frejus ST Rapha.")
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(7));
+                }
+                if (c.name == "RC Lons LE Saunier")
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(7));
+                }
+                if (c.name == "AF Virois")
+                {
+                    fr.administrativeRetrogradations.Add(c, fr.League(5));
+                }*/
+            }
+
             Avancer();
-            while (!(_partie.date.Month == 6 && _partie.date.Day == 1))
+            while (!(_partie.date.Month == 6 && _partie.date.Day == 6))
             {
                 Avancer();
             }
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Utils.Debug("Total execution " + elapsedMs + "ms");
+            Console.WriteLine(fr.Name());
+            foreach(KeyValuePair<Club, Tournament> ra in fr.administrativeRetrogradations)
+            {
+                Console.WriteLine(ra.Key.name + " -> " + ra.Value.name);
+            }
 
         }
 

@@ -656,7 +656,7 @@ namespace TheManager
                 UpdateClubs();
             }
 
-            if(weekNumber == 23 && date.DayOfWeek == DayOfWeek.Wednesday)
+            if(weekNumber == 25 && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25
             {
                 foreach(Continent c in kernel.world.continents)
                 {
@@ -665,7 +665,7 @@ namespace TheManager
 
             }
 
-            if(weekNumber == 27 && date.DayOfWeek == DayOfWeek.Wednesday)
+            if (weekNumber == 27 && date.DayOfWeek == DayOfWeek.Wednesday)
             {
                 foreach(Continent c in kernel.world.continents)
                 {

@@ -126,14 +126,12 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Search / observe players                                              | 🟡 In progress |
 | Negociate contracts / transferts with other clubs                     | 🔴 Not started |
 | **Environment**                                                       |                 |
-| Transferring players between clubs                                    | 🟡 In progress |
+| Transferts management				                                    | 🟡 In progress |
 | Controlling club finances                                             | 🟡 In progress |
 | **GUI**                                                               |                 |
 | View system                                                           | 🟡 In progress |
-| Make player search table faster                                       | 🟡 In progress |
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
-| Implement Machine Learning solution for transferts management         | 🔴 Not started |
 | Manage memory for long games                                          | 🔴 Not started |
 
 ## Next Features
@@ -141,7 +139,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Task                                                                  | Status           |
 | --------------------------------------------------------------------- | ---------------- |
 |  Data editor                                                          | 🔴 Not started |
-|  Generate Wiki with simulation data                                   | 🔴 Not started |
+|  Wiki with simulation data    		                                | 🔴 Not started |
 |  3D Engine for games                                                  | 🔴 Not started |
 
 ## Authors

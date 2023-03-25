@@ -229,14 +229,13 @@ namespace TheManager
                     }
                 }
             }
-            
         }
+
         public override Club Winner()
         {
             Club res = null;
             if(_clubs.Count > 0)
             {
-                res = _clubs[0];
                 //It's a final
                 if(_clubs.Count == 2 && _matches.Count > 0)
                 {

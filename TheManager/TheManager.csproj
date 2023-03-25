@@ -123,7 +123,7 @@
     <Compile Include="Tournaments\Round.cs" />
     <Compile Include="Tournaments\Tournament.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="City.cs" />
+    <Compile Include="Geography\City.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

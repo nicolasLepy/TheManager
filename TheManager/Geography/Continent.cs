@@ -188,6 +188,20 @@ namespace TheManager
             }
         }
 
+        public List<Tournament> GetContinentalClubTournaments()
+        {
+            List<Tournament> res = new List<Tournament>();
+            int i = 1;
+            Tournament t = GetContinentalClubTournament(i);
+            while(t != null)
+            {
+                res.Add(t);
+                t = GetContinentalClubTournament(++i);
+            }
+            return res;
+        }
+
+
         public Tournament GetContinentalClubTournament(int level)
         {
             Tournament res = null;
@@ -250,10 +264,13 @@ namespace TheManager
 
         public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c)
         {
+
             Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
 
             List<Country> countriesRanking = new List<Country>(associationRanking);
             int index = countriesRanking.IndexOf(c);
+            int rank = index + 1;
+            List<Qualification> associationQualifications = (from q in _continentalQualifications where q.ranking == rank select q).ToList();
 
             List<Club> registeredClubs = new List<Club>();
             List<Club> leagueClubs = new List<Club>();
@@ -296,10 +313,56 @@ namespace TheManager
                     leagueClubs.Insert(0, finalPhasesClubs[j]);
                 }
             }
-            int rank = index + 1;
+            //Rule R1 : The association of the winner of a continental tournament get one additionnal place because the winner is automatically qualified
+            bool ruleR1 = GetContinentalClubTournament(1) != null ? GetContinentalClubTournament(1).rules.Contains(TournamentRule.OnWinnerQualifiedAdaptClubsQualifications) : false;
+            //On rajoute le clubs aux vainqueurs de coupe, on rajoute la qualification au bon endroit. Si le club est déjà enregistré et à une meilleure position
+            if (ruleR1)
+            {
+                List<Tournament> continentalTournaments = GetContinentalClubTournaments();
+                for(int i = leagueClubs.Count-1; i >=0; i--)
+                {
+                    Club club = leagueClubs[i];
+                    KeyValuePair<Tournament, int> cdq = new KeyValuePair<Tournament, int>(null, 0);
+                    foreach (Tournament t in continentalTournaments)
+                    {
+                        Club tWinner = t.rounds.Last().Winner();
+                        List<Qualification> tQualifications = t.rounds.Last().qualifications;
+                        if (tWinner == club && tQualifications.Count > 0 && tQualifications[0].isNextYear && tQualifications[0].ranking == 1)
+                        {
+                            cdq = new KeyValuePair<Tournament, int>(tQualifications[0].tournament, tQualifications[0].roundId);
+                        }
+                    }
+
+                    bool clubQualifiedAsWinner = cdq.Key != null;
+                    if (clubQualifiedAsWinner)
+                    {
+                        //Add a new qualification corresponding to the place reserved to the international cup winner
+                        Qualification qualificationCupWinner = new Qualification(rank, cdq.Value, cdq.Key, true, 1);
+                        associationQualifications.Add(qualificationCupWinner);
+                        //Sort to put the new qualification at the right place
+                        associationQualifications.Sort((x, y) => x.tournament.level != y.tournament.level ? x.tournament.level - y.tournament.level : y.roundId - x.roundId);
+                        int indexQ = -1;
+                        List<Qualification> cupQualifications = (from a in associationQualifications where a.isNextYear select a).ToList();
+                        for (int q = 0; q < cupQualifications.Count; q++)
+                        {
+                            //Reminder isNextYear is used for isCupWinner
+                            indexQ = (indexQ == -1 && cupQualifications[q].roundId == cdq.Value && cupQualifications[q].tournament == cdq.Key) ? q : indexQ;
+                        }
+                        //Resort cup winners to match added qualification
+                        if(cupWinners.IndexOf(club) > -1 && cupWinners.IndexOf(club) < indexQ)
+                        {
+                            indexQ--;
+                        }
+                        cupWinners.Remove(club);
+                        cupWinners.Insert(indexQ, club);
+                    }
+
+                }
+            }
+
             int currentLevel = 0;
             int cupRank = 0;
-            foreach (Qualification q in _continentalQualifications)
+            foreach(Qualification q in associationQualifications)
             {
                 if (q.ranking == rank)
                 {
@@ -344,7 +407,24 @@ namespace TheManager
             for(int i = 0; i< countriesRanking.Count; i++)
             {
                 Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i]);
-                foreach(KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
+                bool ruleR1 = GetContinentalClubTournament(1) != null ? GetContinentalClubTournament(1).rules.Contains(TournamentRule.OnWinnerQualifiedAdaptClubsQualifications) : false;
+                if(ruleR1)
+                {
+                    foreach (Tournament t in GetContinentalClubTournaments())
+                    {
+                        for (int j = 0; j < t.nextYearQualified.Length; j++)
+                        {
+                            for (int k = t.nextYearQualified[j].Count - 1; k >= 0; k--)
+                            {
+                                if (t.nextYearQualified[j][k].Country() == countriesRanking[i])
+                                {
+                                    t.nextYearQualified[j].Remove(t.nextYearQualified[j][k]);
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach (KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
                 {
                     Utils.Debug("Qualifie " + kvp.Key.name + " pour la " + kvp.Value.tournament.name + " (tour " + kvp.Value.roundId + ")");
                     kvp.Value.tournament.AddClubForNextYear(kvp.Key, kvp.Value.roundId);

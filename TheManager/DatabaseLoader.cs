@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Xml;
 using TheManager.Tournaments;
+using System.Data;
 
 namespace TheManager
 {
@@ -761,6 +762,7 @@ namespace TheManager
                         string shortName = e2.Attribute("nomCourt").Value;
                         string logo = e2.Attribute("logo").Value;
                         string seasonBeginning = e2.Attribute("debut_saison").Value;
+                        string tournamentRuleStr = e2.Attribute("rule") != null ? e2.Attribute("rule").Value : null;
                         bool isChampionship = e2.Attribute("championnat").Value == "oui" ? true : false;
                         int level = int.Parse(e2.Attribute("niveau").Value);
                         ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
@@ -781,9 +783,24 @@ namespace TheManager
 
                         Console.WriteLine(name);
                         Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color);
+                        if (tournamentRuleStr != null)
+                        {
+                            TournamentRule tRule;
+                            switch (tournamentRuleStr)
+                            {
+                                case "OnWinnerQualifiedAdaptClubsQualifications":
+                                    tRule = TournamentRule.OnWinnerQualifiedAdaptClubsQualifications;
+                                    break;
+                                case "OnWinnerQualifiedAdaptAssociationQualifications":
+                                default:
+                                    tRule = TournamentRule.OnWinnerQualifiedAdaptAssociationQualifications;
+                                    break;
+                            }
+                            tournament.rules.Add(tRule);
+                        }
+
                         tournament.InitializeQualificationsNextYearsLists(e2.Descendants("Tour").Count());
                         localisation.Tournaments().Add(tournament);
-                        //_gestionnaire.Competitions.Add(c);
                     }
                 }
 
@@ -1312,38 +1329,9 @@ namespace TheManager
         {
             foreach(Continent ct in Session.Instance.Game.kernel.world.continents)
             {
-                /*List<int> continentAvailableWeeks = new List<int>();
-                for (int i = 30; i < 52 + 15; i++)
-                {
-                    int week = i % 52;
-                    continentAvailableWeeks.Add(week);
-                }
-
-                foreach(Tournament t in ct.Tournaments())
-                {
-                    if(!t.isChampionship && t.periodicity == 1)
-                    {
-                        foreach(Round r in t.rounds)
-                        {
-                            foreach(GameDay gd in r.programmation.gamesDays)
-                            {
-                                if (gd.MidWeekGame)
-                                {
-                                    continentAvailableWeeks.Remove(gd.WeekNumber);
-                                }
-                            }
-                        }
-
-                    }
-                }
-                
-                continentAvailableWeeks.Remove(51);
-                continentAvailableWeeks.Remove(52); //A mid-week game on the last year week lead to the next year
-                continentAvailableWeeks.Remove(0); //Bug 2027*/
-
                 foreach (Country c in ct.countries)
                 {
-                    List<int> availableWeeks = c.GetAvailableCalendarDates(true); // new List<int>(continentAvailableWeeks);
+                    List<int> availableWeeks = c.GetAvailableCalendarDates(true);
                     
                     Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
                     List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();

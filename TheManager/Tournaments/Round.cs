@@ -11,7 +11,6 @@ using TheManager.Tournaments;
 namespace TheManager
 {
 
-
     public enum Rule
     {
         AtHomeIfTwoLevelDifference,

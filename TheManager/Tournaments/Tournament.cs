@@ -17,6 +17,14 @@ using System.Diagnostics;
 namespace TheManager
 {
 
+
+    public enum TournamentRule
+    {
+        NoRule,
+        OnWinnerQualifiedAdaptClubsQualifications,
+        OnWinnerQualifiedAdaptAssociationQualifications
+    }
+
     [DataContract]
     public struct TournamentStatistics : IEquatable<TournamentStatistics>
     {
@@ -97,8 +105,8 @@ namespace TheManager
         private Color _color;
         [DataMember]
         private List<Stadium> _hostStadiums;
-
-        public List<Club>[] nextYearQualified;
+        [DataMember]
+        private List<TournamentRule> _rules;
 
         public string name { get => _name; }
         public Color color => _color;
@@ -106,6 +114,8 @@ namespace TheManager
         public string logo { get => _logo; }
         [DataMember]
         public int currentRound { get; set; }
+
+        public List<Club>[] nextYearQualified => _nextYearQualified;
 
         public List<Stadium> hostStadiums => _hostStadiums;
         public bool isHostedByOneCountry
@@ -142,6 +152,11 @@ namespace TheManager
         /// Level in the hierarchy (L1 = 1, L2 = 2 ...)
         /// </summary>
         public int level => _level;
+        
+        /// <summary>
+        /// General rules applied to the tournament
+        /// </summary>
+        public List<TournamentRule> rules => _rules;
 
         public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color)
         {
@@ -160,6 +175,7 @@ namespace TheManager
             _color = color;
             _hostStadiums = new List<Stadium>();
             _extraRounds = 0;
+            _rules = new List<TournamentRule>();
         }
 
         public void InitializeQualificationsNextYearsLists(int count = -1)
@@ -208,11 +224,6 @@ namespace TheManager
                 }
                 Console.WriteLine("=================================");
             }
-
-        }
-
-        private void ShiftRoundsQualification(int newRounds)
-        {
 
         }
 
