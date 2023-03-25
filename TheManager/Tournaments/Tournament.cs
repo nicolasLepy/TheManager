@@ -986,6 +986,17 @@ namespace TheManager
             }
         }
 
+        public Tournament LastEdition()
+        {
+            Tournament res = null;
+            if(previousEditions.Count > 0)
+            {
+                int closestYear = previousEditions.Aggregate((l, r) => l.Key > r.Key ? l : r).Key;
+                res = previousEditions[closestYear];
+            }
+            return res;
+        }
+
         private void UpdateRecords()
         {
             foreach(Round r in _rounds)

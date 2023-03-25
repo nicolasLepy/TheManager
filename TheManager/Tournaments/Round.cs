@@ -686,7 +686,7 @@ namespace TheManager
                 case RecuperationMethod.Best:
                     try
                     {
-                        roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
+                        roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
                     }
                     catch(Exception e)
                     {
@@ -696,7 +696,7 @@ namespace TheManager
                 case RecuperationMethod.Worst :
                     try
                     {
-                        roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL, true));
+                        roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, true));
                     }
                     catch(Exception e)
                     {

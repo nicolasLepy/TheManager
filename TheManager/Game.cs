@@ -780,7 +780,6 @@ namespace TheManager
             }
             Console.WriteLine("Elo Sum = " + totalElo);
 
-
             return clubMatchs;
         }
     }

@@ -236,6 +236,20 @@ namespace TheManager
             
         }
         
+        public List<Tournament> Leagues()
+        {
+            List<Tournament> res = new List<Tournament>();
+            foreach(Tournament t in Tournaments())
+            {
+                if(t.isChampionship)
+                {
+                    res.Add(t);
+                }
+            }
+            res.Sort((x, y) => x.level.CompareTo(y.level));
+            return res;
+        }
+
         public Tournament League(int leagueRank)
         {
             return GetTournamentByLevel(leagueRank, true);

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheManager.Comparators;
 
 namespace TheManager
 {
@@ -15,7 +17,8 @@ namespace TheManager
         BUDGET,
         SPONSOR,
         CONTINENTAL_COEFFICIENT,
-        ELO
+        ELO,
+        PAST_RANKING
     }
 
     public class ClubComparator : IComparer<Club>
@@ -82,7 +85,34 @@ namespace TheManager
                     }
                     break;
                 case ClubAttribute.ELO:
-                    return x.elo > y.elo ? -1 : 1;
+                    res = x.elo > y.elo ? -1 : 1;
+                    break;
+                case ClubAttribute.PAST_RANKING:
+                    CityClub xc = x as CityClub;
+                    CityClub yc = y as CityClub;
+                    res = 0;
+                    if(xc != null && yc != null)
+                    {
+                        Round xChampionship = (from Tournament t in xc.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(xc) select t.LastEdition().rounds[0]).FirstOrDefault();
+                        Round yChampionship = (from Tournament t in yc.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(yc) select t.LastEdition().rounds[0]).FirstOrDefault();
+                        if(xChampionship != default(Round) && yChampionship != default(Round))
+                        {
+                            Tournament xTournament = xChampionship.Tournament;
+                            Tournament yTournament = yChampionship.Tournament;
+                            res = xChampionship.Tournament.level - yChampionship.Tournament.level;
+                            if(res == 0)
+                            {
+                                List<Club> xRankingClubs = new List<Club>(xChampionship.clubs);
+                                xRankingClubs.Sort(new ClubRankingComparator(xChampionship.matches));
+                                int xRanking = xRankingClubs.IndexOf(xc);
+                                List<Club> yRankingClubs = new List<Club>(yChampionship.clubs);
+                                yRankingClubs.Sort(new ClubRankingComparator(yChampionship.matches));
+                                int yRanking = yRankingClubs.IndexOf(yc);
+                                res = xRanking - yRanking;
+                            }
+                        }
+                    }
+                    return res;
                 default:
                     res = x.Level() > y.Level() ? -1 : 1;
                     break;
