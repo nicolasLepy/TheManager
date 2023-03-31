@@ -542,6 +542,62 @@ namespace TheManager
                                 p.administrativeDivisions.Add(ad);
                             }
                         }
+
+                        foreach(bool weekdaysDates in new[] {false, true})
+                        {
+                            string[] days = weekdaysDates ? new[] { "Monday", "Tuesday", "Wednesday", "Thursday" } : new[] { "Friday", "Saturday", "Sunday", "Monday" };
+                            int previousLevel = -1;
+                            foreach (XElement e4 in e3.Descendants("GamesTimes"))
+                            {
+                                if(((e4.Attribute("weekdays") == null || e4.Attribute("weekdays").Value == "false") && !weekdaysDates) || (e4.Attribute("weekdays") != null && e4.Attribute("weekdays").Value == "true" && weekdaysDates))
+                                {
+                                    int level = int.Parse(e4.Attribute("level").Value);
+                                    if (previousLevel != -1)
+                                    {
+                                        for (int i = previousLevel; i < level; i++)
+                                        {
+                                            float[] last = weekdaysDates ? p.gamesTimesWeekdays.Last() : p.gamesTimesWeekend.Last();
+                                            float[] newArray = new float[Utils.gamesTimesHoursCount * Utils.gamesTimesDaysCount];
+                                            for (int d1 = 0; d1 < last.Length; d1++)
+                                            {
+                                                newArray[d1] = last[d1];
+                                            }
+                                            if (weekdaysDates)
+                                            {
+                                                p.gamesTimesWeekdays.Add(newArray);
+                                            }
+                                            else
+                                            {
+                                                p.gamesTimesWeekend.Add(newArray);
+                                            }
+                                        }
+                                    }
+                                    previousLevel = level;
+                                    float[] gamesTimes = new float[Utils.gamesTimesHoursCount * Utils.gamesTimesDaysCount];
+                                    foreach (XElement e5 in e4.Descendants("GamesDay"))
+                                    {
+                                        int dayIndex = Array.IndexOf(days, e5.Attribute("day").Value);
+                                        for (int j = 0; j < Utils.gamesTimesHoursCount; j++)
+                                        {
+                                            if (e5.Attribute("h" + j) != null)
+                                            {
+                                                float value = float.Parse(e5.Attribute("h" + j).Value, CultureInfo.InvariantCulture);
+                                                gamesTimes[dayIndex * Utils.gamesTimesHoursCount + j] = value;
+                                            }
+                                        }
+                                    }
+                                    if (weekdaysDates)
+                                    {
+                                        p.gamesTimesWeekdays.Add(gamesTimes);
+                                    }
+                                    else
+                                    {
+                                        p.gamesTimesWeekend.Add(gamesTimes);
+                                    }
+                                }
+                            }
+                        }
+                        
                         c.countries.Add(p);
                     }
                     _kernel.world.continents.Add(c);

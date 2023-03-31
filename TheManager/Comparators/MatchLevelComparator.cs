@@ -10,7 +10,7 @@ namespace TheManager.Comparators
     {
         public int Compare(Match x, Match y)
         {
-            return (int)(((y.home.Level() + y.away.Level())) - (x.home.Level() + x.away.Level()));
+            return (int)(((y.home.elo + y.away.elo)) - (x.home.elo + x.away.elo));
         }
     }
 }

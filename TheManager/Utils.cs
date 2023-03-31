@@ -27,6 +27,10 @@ namespace TheManager
         public readonly static string musicFolderName = "music";
 
         public readonly static string friendlyTournamentName = "Matchs amicaux";
+
+        public readonly static int gamesTimesHoursCount = 24;
+        public readonly static int gamesTimesDaysCount = 4;
+
         public static int DaysNumberBetweenTwoDates(DateTime a, DateTime b)
         {
             TimeSpan ts = a - b;

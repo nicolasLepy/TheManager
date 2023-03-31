@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -50,73 +51,48 @@ namespace TheManager
         /// </summary>
         public static void Hour(Match match)
         {
-            if (_level2 == null)
+            Tournament matchChampionship = match.home.Championship;
+            bool weekendGame = match.day.DayOfWeek == DayOfWeek.Saturday;
+            if (matchChampionship != null)
             {
-                ConstructTables();
-            }
-            List<List<int>> level = _level2;
-            List<List<float>> levelHalfHour = _level2HalfHourGameProbabilities;
-            if (match.home.Championship != null)
-            {
-                switch(match.home.Championship.level)
+                List<float[]> gamesTimesList = weekendGame ? match.home.Country().gamesTimesWeekend : match.home.Country().gamesTimesWeekdays;
+                if(gamesTimesList.Count > 0)
                 {
-                    case 1: case 2: case 3: case 4: case 5: level = _level2; levelHalfHour = _level2HalfHourGameProbabilities; break;
-                    case 6: case 7: default: level = _level6; levelHalfHour = _level6HalfHourGameProbabilities; break;
-                }
-            }
-            int hourIndex = Session.Instance.Random(0, CountHours(level));
-            int listDay = 0;
-            int listHour = 0;
-            int counter = 0;
-            bool find = false;
-            for(int i = 0; i < level.Count && !find; i++)
-            {
-                for(int j = 0; j < level[i].Count && !find; j++)
-                {
-                    counter += level[i][j];
-                    if(counter >= hourIndex)
+                    float[] gamesTimes = gamesTimesList.Count > (matchChampionship.level - 1) ? gamesTimesList[matchChampionship.level - 1] : gamesTimesList[gamesTimesList.Count - 1];
+                    int hourIndex = Session.Instance.Random(1, CountHours(gamesTimes));
+                    int dayIndex = 0;
+                    float halfTimeProbability = 0f;
+                    int counter = 0;
+                    int hour = 0;
+                    bool find = false;
+                    for (int i = 0; i < gamesTimes.Length && !find; i++)
                     {
-                        find = true;
-                        listDay = i;
-                        listHour = j;
+                        counter += (int)Math.Floor(gamesTimes[i]);
+                        if (counter >= hourIndex)
+                        {
+                            find = true;
+                            halfTimeProbability = (float)(gamesTimes[i] - Math.Truncate(gamesTimes[i]));
+                            dayIndex = i/Utils.gamesTimesHoursCount;
+                            hour = i % Utils.gamesTimesHoursCount;
+                        }
                     }
+                    int dayOffset = dayIndex - (weekendGame ? 1 : 2);
+                    int minute = Session.Instance.Random() < halfTimeProbability ? 30 : 0;
+                    match.day = match.day.AddDays(dayOffset);
+                    match.day = match.day.AddHours(hour - match.day.Hour);
+                    match.day = match.day.AddMinutes(minute - match.day.Minute);
                 }
             }
-            int dayOffset = listDay - 1;
-            int hour = listHour + 12;
-            int minute = Session.Instance.Random() < levelHalfHour[listDay][listHour] ? 30 : 0;
-            match.day = match.day.AddDays(dayOffset);
-            match.day = match.day.AddHours(hour - match.day.Hour);
-            match.day = match.day.AddMinutes(minute - match.day.Minute);
-
         }
 
-        private static List<List<int>> _level2;
-        private static List<List<int>> _level6;
-        private static List<List<float>> _level2HalfHourGameProbabilities;
-        private static List<List<float>> _level6HalfHourGameProbabilities;
-
-
-        private static int CountHours(List<List<int>> hoursList)
+        private static int CountHours(float[] hoursList)
         {
             int res = 0;
-            foreach(List<int> list in hoursList)
+            for(int i = 0; i < hoursList.Length; i++)
             {
-                foreach(int hour in list)
-                {
-                    res += hour;
-                }
+                res += (int)Math.Floor(hoursList[i]);
             }
             return res;
-        }
-
-        private static void ConstructTables()
-        {
-            //Wednesday, Saturday, Sunday game probabilities between 12h and 20h
-            _level2 = new List<List<int>>() { new List<int>() { 0, 0, 0, 0, 0, 0, 2, 1, 1 }, new List<int>() { 0, 1, 4, 9, 3, 9, 40, 9, 2 }, new List<int>() { 0, 1, 5, 5, 1, 1, 0, 0, 0 } };
-            _level6 = new List<List<int>>() { new List<int>() { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, new List<int>() { 0, 1, 3, 13, 3, 5, 10, 3, 0 }, new List<int>() { 0, 5, 35, 15, 3, 1, 1, 0, 0 } };
-            _level2HalfHourGameProbabilities = new List<List<float>>() { new List<float>() { 0, 0, 0, 0, 0, 0, 0.2f, 0.2f, 0.2f }, new List<float>() { 0, 0.2f, 0.75f, 0.1f, 0.1f, 0.05f, 0.2f, 0.05f, 0.02f }, new List<float>() { 0, 0.8f, 0.8f, 0.1f, 0.2f, 0.2f, 0, 0, 0 } };
-            _level6HalfHourGameProbabilities = new List<List<float>>() { new List<float>() { 0, 0, 0, 0, 0, 0, 0.2f, 0.2f, 0.2f }, new List<float>() { 0, 0.2f, 0.75f, 0.1f, 0.1f, 0.05f, 0.2f, 0.05f, 0.02f }, new List<float>() { 0, 0.8f, 0.8f, 0.1f, 0.2f, 0.2f, 0, 0, 0 } };
         }
 
         /// <summary>

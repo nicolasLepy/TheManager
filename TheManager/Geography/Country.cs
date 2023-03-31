@@ -30,13 +30,21 @@ namespace TheManager
         private List<AdministrativeDivision> _administrativeDivisions;
         [DataMember]
         private Dictionary<Club, Tournament> _administrativeRetrogradations;
+        [DataMember]
+        private List<float[]> _gamesTimesWeekend;
+        [DataMember]
+        private List<float[]> _gamesTimesWeekdays;
+
         public List<City> cities { get { return _cities; } }
         public List<Stadium> stadiums { get { return _stadiums; } }
         public Language language { get => _language; }
 
         public List<AdministrativeDivision> administrativeDivisions => _administrativeDivisions;
         public Dictionary<Club, Tournament> administrativeRetrogradations => _administrativeRetrogradations;
-        
+
+        public List<float[]> gamesTimesWeekend => _gamesTimesWeekend;
+        public List<float[]> gamesTimesWeekdays => _gamesTimesWeekdays;
+
         public string Flag
         {
             get
@@ -143,6 +151,8 @@ namespace TheManager
             _shapeNumber = shapeNumber;
             _administrativeDivisions = new List<AdministrativeDivision>();
             _administrativeRetrogradations = new Dictionary<Club, Tournament>();
+            _gamesTimesWeekend = new List<float[]>();
+            _gamesTimesWeekdays = new List<float[]>();
         }
 
         public AdministrativeDivision GetCountryAdministrativeDivision()
