@@ -14,9 +14,15 @@ using System.Runtime.InteropServices;
 using System.Data;
 using System.Diagnostics;
 
+/*
+ * TODO: Factorisations possibles :
+ * club.status, competition.status
+ * 
+ * competition.reset, (country.reset), continent.reset
+ */
+
 namespace TheManager
 {
-
 
     public enum TournamentRule
     {
@@ -107,11 +113,15 @@ namespace TheManager
         private List<Stadium> _hostStadiums;
         [DataMember]
         private List<TournamentRule> _rules;
+        [DataMember]
+        private ClubStatus _status;
 
         public string name { get => _name; }
         public Color color => _color;
         public List<Round> rounds { get => _rounds; }
         public string logo { get => _logo; }
+        public ClubStatus status => _status;
+
         [DataMember]
         public int currentRound { get; set; }
 
@@ -158,7 +168,7 @@ namespace TheManager
         /// </summary>
         public List<TournamentRule> rules => _rules;
 
-        public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color)
+        public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status)
         {
             _rounds = new List<Round>();
             _name = name;
@@ -176,6 +186,7 @@ namespace TheManager
             _hostStadiums = new List<Stadium>();
             _extraRounds = 0;
             _rules = new List<TournamentRule>();
+            _status = status;
         }
 
         public void InitializeQualificationsNextYearsLists(int count = -1)
@@ -384,7 +395,7 @@ namespace TheManager
             {
                 res = rt.Number;
             }
-            else if(rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest)
+            else if(rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || rt.Method == RecuperationMethod.StatusPro)
             {
                 res = rt.Source.RetrieveTeams(-1, rt.Method, false).Count;
             }
@@ -434,7 +445,7 @@ namespace TheManager
             {
                 for(int i = 0; i < lrt.Count; i++)
                 {
-                    if(lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || lrt[i].Method == RecuperationMethod.QualifiedForInternationalCompetition)
+                    if(lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || lrt[i].Method == RecuperationMethod.QualifiedForInternationalCompetition || lrt[i].Method == RecuperationMethod.StatusPro)
                     {
                         lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i]), lrt[i].Method);
                     }
@@ -915,7 +926,7 @@ namespace TheManager
                 _remainingYears = _periodicity;
             
                 UpdateRecords();
-                Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color);
+                Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status);
 
                 int gamesCount = 0;
                 foreach (Round r in rounds)
@@ -952,12 +963,23 @@ namespace TheManager
                     }
 
                     rounds[i].Reset();
+                    //Ignore first extra rounds created for this edition of the tournament
                     if(i >= _extraRounds)
                     {
                         List<Club> clubs = new List<Club>(_nextYearQualified[i - _extraRounds]);
                         foreach (Club c in clubs)
                         {
                             rounds[i].clubs.Add(c);
+                            CityClub cc = c as CityClub;
+                            if (cc != null && cc.history.elements.Count > 0)
+                            {
+                                HistoricEntry lastHe = cc.history.elements.Last();
+                                if (status != ClubStatus.SemiProfessional || cc.status != ClubStatus.Professional || (status == ClubStatus.SemiProfessional && cc.status == ClubStatus.Professional && copyForArchives.rounds[0].clubs.Contains(cc)))
+                                {
+                                    c.ChangeStatus(status);
+                                }
+                            }
+
                         }
                     }
                 }
@@ -1060,13 +1082,6 @@ namespace TheManager
 
         public List<Round> GetFinalPhaseTree(Round round, List<Round> allRounds)
         {
-            String allRoundsStr = "";
-            foreach(Round r in allRounds)
-            {
-                allRoundsStr += r.name + ",";
-            }
-            Console.WriteLine("Get Final Phase Tree from " + round.name + " with " + allRounds.Count + " (" + allRoundsStr + ") precomputed rounds");
-
             allRounds.Add(round);
             int roundIndex = this.rounds.IndexOf(round);
             List<Round> res = new List<Round>() { round};

@@ -62,7 +62,14 @@ namespace TheManager
             return Amount > other.Amount;
         }
     }
-    
+
+    public enum ClubStatus
+    {
+        Professional,
+        SemiProfessional,
+        Amateur
+    }
+
     [DataContract(IsReference =true)]
     [KnownType(typeof(CityClub))]
     [System.Xml.Serialization.XmlInclude(typeof(CityClub))]
@@ -94,6 +101,8 @@ namespace TheManager
         private int _ticketPrice;
         [DataMember]
         private ClubRecords _records = new ClubRecords();
+        [DataMember]
+        protected ClubStatus _status;
         
 
         [DataMember]
@@ -110,6 +119,7 @@ namespace TheManager
         public int ticketPrice { get => _ticketPrice; }
         public string goalMusic { get => _goalMusic; }
         public ClubRecords records { get => _records; }
+        public ClubStatus status => _status;
 
         /// <summary>
         /// 
@@ -326,33 +336,6 @@ namespace TheManager
         }
 
         /// <summary>
-        /// Donne le nombre de jours entre la date et le match le plus proche joué
-        /// </summary>
-        /// <param name="date">Regarder par rapport à cette date</param>
-        /// <returns></returns>
-        /*public int NombreJoursMatchPlusProche(DateTime date)
-        {
-                int res = -1;
-                List<Match> matchs = Matchs;
-                foreach(Match m in matchs)
-                {
-                    if(m.Jour.CompareTo(date) > 0)
-                    {
-                        //On a dépassé ajd
-                        int diffM = Utils.NombreJoursEntreDeuxDates(m.Jour, date); //Match à venir
-                        int indexMatch = matchs.IndexOf(m);
-                        int diffN = indexMatch > 0 ? Utils.NombreJoursEntreDeuxDates(matchs[indexMatch-1].Jour, date) : -1; //Dernier match du club
-                        res = diffM >= diffN ? diffN : diffM;
-                    }
-                }
-                if (res == -1 && matchs.Count > 0)
-                    res = Utils.NombreJoursEntreDeuxDates(date, matchs[matchs.Count - 1].Jour);
-            if (res == -1) res = 365;
-                return res;
-            
-        }*/
-
-        /// <summary>
         /// Championship where play the club
         /// <returns>null if the club don't play in championship (for example national teams)</returns>
         /// </summary>
@@ -428,7 +411,7 @@ namespace TheManager
             }
         }
 
-        protected Club(string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalMusic)
+        protected Club(string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalMusic, ClubStatus status)
         {
             _name = name;
             _manager = manager;
@@ -441,6 +424,7 @@ namespace TheManager
             _logo = logo;
             _stadium = stadium;
             _goalMusic = goalMusic;
+            _status = status;
         }
 
         public List<Player> ListPlayersByPosition(Position position)
@@ -601,6 +585,8 @@ namespace TheManager
                 }
             }
         }
+
+        public abstract void ChangeStatus(ClubStatus newStatus);
 
 
         public override string ToString()

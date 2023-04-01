@@ -31,11 +31,13 @@ namespace TheManager_GUI.VueClassement
             if(_round.twoLegs)
             {
                 List<Match>[] pairs = new List<Match>[matchs.Count/2];
-                for (int i = 0; i < matchs.Count / 2; i++) pairs[i] = new List<Match>();
+                for (int i = 0; i < matchs.Count / 2; i++)
+                {
+                    pairs[i] = new List<Match>();
+                }
 
                 foreach(Match m in matchs)
                 {
-                    Utils.Debug(m.home.ToString() + " - " + m.away.ToString());
                     bool foundPair = false;
                     foreach(List<Match> pair in pairs)
                     {

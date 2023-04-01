@@ -45,7 +45,7 @@ namespace TheManager
         {
             int res = -1;
 
-            foreach(KeyValuePair<int,Club> kvp in _clubsId)
+            foreach (KeyValuePair<int, Club> kvp in _clubsId)
             {
                 if (kvp.Key > res)
                 {
@@ -118,9 +118,9 @@ namespace TheManager
 
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs.xml");
 
-            foreach(XElement x in doc.Descendants("Clubs"))
+            foreach (XElement x in doc.Descendants("Clubs"))
             {
-                foreach(XElement x2 in x.Descendants("Club"))
+                foreach (XElement x2 in x.Descendants("Club"))
                 {
                     XAttribute attr_id = new XAttribute("id", id);
                     x2.Add(attr_id);
@@ -142,7 +142,7 @@ namespace TheManager
         {
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/competitions.xml");
 
-            foreach(XElement x in doc.Descendants("Club"))
+            foreach (XElement x in doc.Descendants("Club"))
             {
                 string nom = x.Attribute("nom").Value;
                 Club club = _kernel.String2Club(nom);
@@ -184,24 +184,24 @@ namespace TheManager
                     string type = e2.Attribute("type").Value;
                     string content = e2.Value;
                     GameEvent gameEvent;
-                    switch(type)
+                    switch (type)
                     {
-                        case "tir": 
-                            gameEvent = GameEvent.Shot; 
+                        case "tir":
+                            gameEvent = GameEvent.Shot;
                             break;
-                        case "but": 
-                            gameEvent = GameEvent.Goal; 
+                        case "but":
+                            gameEvent = GameEvent.Goal;
                             break;
-                        case "but_pen": 
-                            gameEvent = GameEvent.PenaltyGoal; 
+                        case "but_pen":
+                            gameEvent = GameEvent.PenaltyGoal;
                             break;
-                        case "carton_jaune": 
-                            gameEvent = GameEvent.YellowCard; 
+                        case "carton_jaune":
+                            gameEvent = GameEvent.YellowCard;
                             break;
-                        case "carton_rouge": 
-                            gameEvent = GameEvent.RedCard; 
+                        case "carton_rouge":
+                            gameEvent = GameEvent.RedCard;
                             break;
-                        default : 
+                        default:
                             gameEvent = GameEvent.Goal;
                             break;
                     }
@@ -292,7 +292,7 @@ namespace TheManager
                         }
                         if (e3.Attribute("national") != null)
                         {
-                            if(e3.Attribute("national").Value == "oui")
+                            if (e3.Attribute("national").Value == "oui")
                             {
                                 isNational = true;
                             }
@@ -346,29 +346,29 @@ namespace TheManager
                     int level = int.Parse(e2.Attribute("niveau").Value);
                     int potential = int.Parse(e2.Attribute("potentiel").Value);
                     int clubId = int.Parse(e2.Attribute("club").Value);
-                    CityClub club = clubId > 0 ? _clubsId[clubId] as CityClub : null ;
+                    CityClub club = clubId > 0 ? _clubsId[clubId] as CityClub : null;
                     Position position;
                     string positionName = e2.Attribute("poste").Value;
                     string playerBirthName = e2.Attribute("naissance").Value;
                     DateTime playerBirth = new DateTime(int.Parse(playerBirthName.Split('-')[2]), int.Parse(playerBirthName.Split('-')[1]), int.Parse(playerBirthName.Split('-')[0]));
-                    switch(positionName)
+                    switch (positionName)
                     {
-                        case "DEFENSEUR": 
-                            position = Position.Defender; 
+                        case "DEFENSEUR":
+                            position = Position.Defender;
                             break;
-                        case "MILIEU": 
-                            position = Position.Midfielder; 
+                        case "MILIEU":
+                            position = Position.Midfielder;
                             break;
-                        case "ATTAQUANT": 
-                            position = Position.Striker; 
+                        case "ATTAQUANT":
+                            position = Position.Striker;
                             break;
-                        default :
+                        default:
                             position = Position.Goalkeeper;
                             break;
                     }
                     Country playerCountry = _kernel.String2Country(e2.Attribute("pays").Value);
                     Player j = new Player(firstName, lastName, playerBirth, level, potential, playerCountry == null ? _kernel.String2Country("France") : playerCountry, position);
-                    if(club != null)
+                    if (club != null)
                     {
                         club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear, Utils.beginningYear + 5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
                     }
@@ -416,7 +416,7 @@ namespace TheManager
                         {
                             population = int.Parse(e2.Attribute("Population").Value);
                         }
-                        catch(Exception exception)
+                        catch (Exception exception)
                         {
                             population = 0;
                         }
@@ -465,14 +465,14 @@ namespace TheManager
                         {
                             e2.Attribute("M").Remove();
                         }
-                        if(e2.Attribute("Population") == null)
+                        if (e2.Attribute("Population") == null)
                         {
                             toDelete.Add(e2);
                         }
                     }
                 }
 
-                foreach(XElement toDel in toDelete)
+                foreach (XElement toDel in toDelete)
                 {
                     toDel.Remove();
                 }
@@ -483,7 +483,7 @@ namespace TheManager
                     Console.WriteLine(elements);
                     e.Elements().Remove();
                     e.Add(elements);
-                    
+
                 }
 
                 doc.Save("data/old_rawdb/rawcities/all.xml");
@@ -507,15 +507,15 @@ namespace TheManager
                     string continentName = e2.Attribute("name").Value;
                     string continentLogo = e2.Attribute("logo").Value;
                     Continent c = new Continent(continentName, continentLogo);
-                    foreach(XElement e3 in e2.Descendants("Country"))
+                    foreach (XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
                         string countrydBName = e3.Attribute("db_name").Value;
                         string language = e3.Attribute("langue").Value;
                         int countryShape = int.Parse(e3.Attribute("shape").Value);
                         Language l = _kernel.String2Language(language);
-                        Country p = new Country(countrydBName,countryName,l, countryShape);
-                        foreach(XElement e4 in e3.Descendants("Ville"))
+                        Country p = new Country(countrydBName, countryName, l, countryShape);
+                        foreach (XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
                             int population = int.Parse(e4.Attribute("population").Value);
@@ -543,13 +543,13 @@ namespace TheManager
                             }
                         }
 
-                        foreach(bool weekdaysDates in new[] {false, true})
+                        foreach (bool weekdaysDates in new[] { false, true })
                         {
                             string[] days = weekdaysDates ? new[] { "Monday", "Tuesday", "Wednesday", "Thursday" } : new[] { "Friday", "Saturday", "Sunday", "Monday" };
                             int previousLevel = -1;
                             foreach (XElement e4 in e3.Descendants("GamesTimes"))
                             {
-                                if(((e4.Attribute("weekdays") == null || e4.Attribute("weekdays").Value == "false") && !weekdaysDates) || (e4.Attribute("weekdays") != null && e4.Attribute("weekdays").Value == "true" && weekdaysDates))
+                                if (((e4.Attribute("weekdays") == null || e4.Attribute("weekdays").Value == "false") && !weekdaysDates) || (e4.Attribute("weekdays") != null && e4.Attribute("weekdays").Value == "true" && weekdaysDates))
                                 {
                                     int level = int.Parse(e4.Attribute("level").Value);
                                     if (previousLevel != -1)
@@ -597,7 +597,7 @@ namespace TheManager
                                 }
                             }
                         }
-                        
+
                         c.countries.Add(p);
                     }
                     _kernel.world.continents.Add(c);
@@ -632,10 +632,14 @@ namespace TheManager
             }
         }
 
-        private string RemoveClubDenomination(string name, string denomination)
+        private string RemoveClubDenomination(string name, string[] denominations)
         {
-            string res = name.Replace(denomination + " ", "");
-            res = res.Replace(" " + denomination, "");
+            string res = name;
+            foreach(string denomination in denominations)
+            {
+                res = res.Replace(denomination + " ", "");
+                res = res.Replace(" " + denomination, "");
+            }
             return res;
         }
 
@@ -653,15 +657,17 @@ namespace TheManager
 
         public void LoadClubs()
         {
-
-            foreach(string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/clubs/"))
+            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/clubs/"))
             {
                 //XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs/clubs.xml");
                 Utils.Debug(xmlFile);
                 XDocument doc = XDocument.Load(xmlFile);
 
+                string[] denominations = new [] { "Olympique", "FC", "AS", "US", "RC", "AC", "ES", "SO", "USM", "OC" };
+
                 foreach (XElement e in doc.Descendants("Clubs"))
                 {
+                    ClubStatus generalStatus = e.Attribute("status") != null ? String2ClubStatus(e.Attribute("status").Value) : ClubStatus.Professional;
                     foreach (XElement e2 in e.Descendants("Club"))
                     {
                         int id = int.Parse(e2.Attribute("id").Value);
@@ -669,21 +675,13 @@ namespace TheManager
                         string shortName = e2.Attribute("nomCourt") != null ? e2.Attribute("nomCourt").Value : "";
                         if (shortName == "")
                         {
-                            shortName = name;
-                            shortName = RemoveClubDenomination(shortName, "Olympique");
-                            shortName = RemoveClubDenomination(shortName, "FC");
-                            shortName = RemoveClubDenomination(shortName, "AS");
-                            shortName = RemoveClubDenomination(shortName, "US");
-                            shortName = RemoveClubDenomination(shortName, "RC");
-                            shortName = RemoveClubDenomination(shortName, "AC");
-                            shortName = RemoveClubDenomination(shortName, "ES");
-                            shortName = RemoveClubDenomination(shortName, "SO");
-                            shortName = RemoveClubDenomination(shortName, "USM");
+                            shortName = RemoveClubDenomination(name, denominations);
                         }
 
                         int reputation = int.Parse(e2.Attribute("reputation").Value);
                         int budget = int.Parse(e2.Attribute("budget").Value);
                         int supporters = int.Parse(e2.Attribute("supporters").Value);
+                        ClubStatus status = e2.Attribute("status") != null ? String2ClubStatus(e2.Attribute("status").Value) : generalStatus;
 
                         string cityName = e2.Attribute("ville").Value;
                         City city = _kernel.String2City(cityName);
@@ -750,7 +748,7 @@ namespace TheManager
                         reputation = centreFormation;
                         
                         bool equipePremiere = true;
-                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere, administrativeDivision);
+                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere, administrativeDivision, status);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -820,6 +818,11 @@ namespace TheManager
                         string seasonBeginning = e2.Attribute("debut_saison").Value;
                         string tournamentRuleStr = e2.Attribute("rule") != null ? e2.Attribute("rule").Value : null;
                         bool isChampionship = e2.Attribute("championnat").Value == "oui" ? true : false;
+                        ClubStatus tournamentStatus = ClubStatus.Professional;
+                        if(isChampionship)
+                        {
+                            tournamentStatus = String2ClubStatus(e2.Attribute("status").Value);
+                        }
                         int level = int.Parse(e2.Attribute("niveau").Value);
                         ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
                         GameDay debut = String2GameDay(seasonBeginning);
@@ -838,7 +841,7 @@ namespace TheManager
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Console.WriteLine(name);
-                        Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color);
+                        Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus);
                         if (tournamentRuleStr != null)
                         {
                             TournamentRule tRule;
@@ -1042,6 +1045,9 @@ namespace TheManager
                                         break;
                                     case "notinternational":
                                         method = RecuperationMethod.NotQualifiedForInternationalCompetitionBest;
+                                        break;
+                                    case "pro":
+                                        method = RecuperationMethod.StatusPro;
                                         break;
                                     default:
                                         method = RecuperationMethod.Best;
@@ -1422,7 +1428,7 @@ namespace TheManager
                             acr = "d'";
                         }
                         string cupName = "Coupe " + acr + c.Name();
-                        Tournament nationalCup = new Tournament(cupName, "",new GameDay(25,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0));
+                        Tournament nationalCup = new Tournament(cupName, "",new GameDay(25,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0), ClubStatus.Professional);
 
                         int roundCount = 0;
                         int j = 1;
@@ -1564,6 +1570,24 @@ namespace TheManager
             h.Hours = int.Parse(split[0]);
             h.Minutes = int.Parse(split[1]);
             return h;
+        }
+
+        private ClubStatus String2ClubStatus(string status)
+        {
+            ClubStatus res = ClubStatus.Professional;
+            if(status == "pro")
+            {
+                res = ClubStatus.Professional;
+            }
+            else if (status == "semi-pro")
+            {
+                res = ClubStatus.SemiProfessional;
+            }
+            else if (status == "amateur")
+            {
+                res = ClubStatus.Amateur;
+            }
+            return res;
         }
 
         private RandomDrawingMethod String2DrawingMethod(string method)

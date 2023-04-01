@@ -80,7 +80,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Games                                                                     | 
 | ------------------------------------------------------------------------- |
 | Match simulation (goals, possession, substitutions)                       |
-| Follow games in real-time (ranking, live results)                         |
+| Games in real-time (ranking, live results)                                |
 
 | Players                                                                   | 
 | ------------------------------------------------------------------------- |
@@ -91,7 +91,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | ------------------------------------------------------------------------- |
 | Evolution of club training facilities                                     |
 | Reserves teams                                                            |
-| Can be forbidden to recruit if their finances are bad                     |
+| Can be forbidden to recruit if bad finances                               |
 
 | Tournaments                                                               | 
 | ------------------------------------------------------------------------- |
@@ -106,7 +106,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | ------------------------------------------------------------------------- |
 | Savegame                                                                  |
 | XML Database                                                              |
-| HTML exportation                                                          |
 
 | GUI                                                                       | 
 | ------------------------------------------------------------------------- |
@@ -119,17 +118,15 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Task                                                                  | Status           |
 | --------------------------------------------------------------------- | ---------------- |
 | **Stability**                                                         |                  |
-| Improve world stability                                               | 🟡 In progress |
+| Improve game stability                                                | 🟡 In progress  |
 | **Managing**                                                          |                 |
 | Staff management                                                      | 🔴 Not started |
 | Youth team management                                                 | 🔴 Not started |
-| Search / observe players                                              | 🟡 In progress |
-| Negociate contracts / transferts with other clubs                     | 🔴 Not started |
+| Recruitment tasks                                                     | 🟡 In progress |
 | **Environment**                                                       |                 |
 | Transferts management				                                    | 🟡 In progress |
-| Controlling club finances                                             | 🟡 In progress |
+| Club finances                                                         | 🟡 In progress |
 | **GUI**                                                               |                 |
-| View system                                                           | 🟡 In progress |
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
 | Manage memory for long games                                          | 🔴 Not started |
@@ -138,7 +135,6 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 
 | Task                                                                  | Status           |
 | --------------------------------------------------------------------- | ---------------- |
-|  Data editor                                                          | 🔴 Not started |
 |  Wiki with simulation data    		                                | 🔴 Not started |
 |  3D Engine for games                                                  | 🔴 Not started |
 

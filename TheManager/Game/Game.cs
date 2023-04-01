@@ -321,7 +321,7 @@ namespace TheManager
                     {
                         totalAttendance /= totalGames;
                     }
-                    cv.history.elements.Add(new HistoricEntry(new DateTime(date.Year, date.Month, date.Day), cv.budget, cv.formationFacilities, totalAttendance));
+                    cv.history.elements.Add(new HistoricEntry(new DateTime(date.Year, date.Month, date.Day), cv.budget, cv.formationFacilities, totalAttendance, cv.status));
                     //Prolong the players
                     List<Contract> playersToFree = new List<Contract>();
                     foreach (Contract ct in cv.allContracts)
@@ -650,7 +650,8 @@ namespace TheManager
             }
 
             //Yearly update of clubs (sponsors, formation facilities, contracts)
-            if (date.Day == 16 && date.Month == 6)
+            //if (date.Day == 16 && date.Month == 6)
+            if(weekNumber == 24 && date.DayOfWeek == DayOfWeek.Wednesday)
             {
                 UpdateGameUniverseData();
                 UpdateClubs();
@@ -761,7 +762,7 @@ namespace TheManager
                 j.Recover();
             }
 
-            Console.WriteLine("[Clubs elo]");
+            /*Console.WriteLine("[Clubs elo]");
             List<Club> totalClubs = new List<Club>(this.kernel.Clubs);
             totalClubs.Sort(new ClubComparator(ClubAttribute.ELO, false));
             for(int i = 0; i < 10; i++)
@@ -778,7 +779,7 @@ namespace TheManager
             {
                 totalElo += c.elo;
             }
-            Console.WriteLine("Elo Sum = " + totalElo);
+            Console.WriteLine("Elo Sum = " + totalElo);*/
 
             return clubMatchs;
         }

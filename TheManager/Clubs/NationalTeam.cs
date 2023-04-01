@@ -24,7 +24,7 @@ namespace TheManager
         public double officialFifaPoints { get => _archivalFifaPoints[_archivalFifaPoints.Count-1]; }
         public List<double> archivalFifaPoints { get => _archivalFifaPoints; }
 
-        public NationalTeam(string name, Manager manager, string shortName,int reputation, int supporters, int formationFacilities, string logo, Stadium stadium, Country country, string goalMusic, double fifaPoints) : base(name,manager, shortName,reputation,supporters,formationFacilities,logo,stadium,goalMusic)
+        public NationalTeam(string name, Manager manager, string shortName,int reputation, int supporters, int formationFacilities, string logo, Stadium stadium, Country country, string goalMusic, double fifaPoints) : base(name,manager, shortName,reputation,supporters,formationFacilities,logo,stadium,goalMusic,ClubStatus.Professional)
         {
             _selected = new List<Player>();
             _country = country;
@@ -139,5 +139,11 @@ namespace TheManager
             SelectPlayersByPosition(Position.Midfielder, players, 7);
             SelectPlayersByPosition(Position.Striker, players, 6);
         }
+
+        public override void ChangeStatus(ClubStatus newStatus)
+        {
+            this._status = newStatus;
+        }
+
     }
 }

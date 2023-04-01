@@ -115,6 +115,7 @@ namespace TheManager_GUI
             lbStadium.Content = club.stadium.name + " (" + club.stadium.capacity + " "+ FindResource("str_seats").ToString() + ")";
             lbBudget.Content = FindResource("str_budget").ToString() + " : " + Utils.FormatMoney((club as CityClub).budget);
             lbCountry.Content = club.Country().Name();
+            lbStatus.Content = FindResource(Utils.ClubStatus2ResourceString(club.status)).ToString();
             FillSquad(club);
             spEtoiles.Children.Clear();
             try

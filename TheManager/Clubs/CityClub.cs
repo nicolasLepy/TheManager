@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
@@ -17,7 +18,6 @@ namespace TheManager
         OtherOfferAlreadyAccepted,
         NoAgreementWithPlayer,
         NoAgreementWithClub
-
     }
 
     [DataContract]
@@ -155,7 +155,7 @@ namespace TheManager
             }
         }
 
-        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalMusic, bool isFannion, AdministrativeDivision administrativeDivision) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic)
+        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalMusic, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic, status)
         {
             _budget = budget;
             _city = city;
@@ -893,8 +893,15 @@ namespace TheManager
                 }
 
             }
-
         }
 
+        public override void ChangeStatus(ClubStatus newStatus)
+        {
+            this._status = newStatus;
+            foreach(ReserveClub rc in this.reserves)
+            {
+                rc.ChangeStatus(newStatus);
+            }
+        }
     }
 }

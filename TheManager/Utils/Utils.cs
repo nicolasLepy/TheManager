@@ -8,6 +8,7 @@ using System.Runtime.Remoting.Messaging;
 using System.Text;
 using TheManager.Algorithms;
 using TheManager.Comparators;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace TheManager
 {
@@ -658,6 +659,24 @@ namespace TheManager
             }
 
             return negative ? "-" : "" + money.ToString("#,0") + " €";
+        }
+
+        public static string ClubStatus2ResourceString(ClubStatus status)
+        {
+            string res = "";
+            switch (status)
+            {
+                case ClubStatus.Professional:
+                    res = "str_pro";
+                    break;
+                case ClubStatus.SemiProfessional:
+                    res = "str_semipro";
+                    break;
+                case ClubStatus.Amateur:
+                    res = "str_amateur";
+                    break;
+            }
+            return res;
         }
 
         public static string GetDescription(this Enum value)

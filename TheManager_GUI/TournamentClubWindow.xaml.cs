@@ -81,7 +81,7 @@ namespace TheManager_GUI
                         e5 = Utils.Image("demistar.png");
                     }
 
-                    dgClubs.Items.Add(new ClubElement { Nom = cl.shortName, Niveau = cl.Level(), Budget = budget, Affluence = c.AverageAttendance(cl), MasseSalariale = masseSalariale, Star1=e1, Star2=e2, Star3=e3, Star4=e4,Star5=e5 });
+                    dgClubs.Items.Add(new ClubElement { Nom = cl.shortName, Niveau = cl.Level(), Budget = budget, Affluence = c.AverageAttendance(cl), MasseSalariale = masseSalariale, Status = FindResource(Utils.ClubStatus2ResourceString(cl.status)).ToString(), Star1=e1, Star2=e2, Star3=e3, Star4=e4,Star5=e5 });
                 }
             }
         }
@@ -99,6 +99,7 @@ namespace TheManager_GUI
         public int Budget { get; set; }
         public int Affluence { get; set; }
         public int MasseSalariale { get; set; }
+        public string Status { get; set; }
         public string Star1 { get; set; }
         public string Star2 { get; set; }
         public string Star3 { get; set; }

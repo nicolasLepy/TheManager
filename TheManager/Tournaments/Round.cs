@@ -40,7 +40,8 @@ namespace TheManager
         Worst,
         QualifiedForInternationalCompetition,
         NotQualifiedForInternationalCompetitionWorst,
-        NotQualifiedForInternationalCompetitionBest
+        NotQualifiedForInternationalCompetitionBest,
+        StatusPro
     }
 
     [DataContract]
@@ -720,6 +721,22 @@ namespace TheManager
                     }
                     roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL, method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst));
                     if (number == -1)
+                    {
+                        number = roundClubs.Count;
+                    }
+                    break;
+                case RecuperationMethod.StatusPro:
+                    List<Club> pro = new List<Club>();
+                    foreach(Club c in roundClubs)
+                    {
+                        if(c.status == ClubStatus.Professional)
+                        {
+                            pro.Add(c);
+                        }
+                    }
+                    roundClubs.Clear();
+                    roundClubs.AddRange(pro);
+                    if(number == -1)
                     {
                         number = roundClubs.Count;
                     }

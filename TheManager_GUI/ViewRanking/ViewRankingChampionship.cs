@@ -7,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 using System.Linq;
+using System.Text;
 
 namespace TheManager_GUI.VueClassement
 {
@@ -177,19 +178,19 @@ namespace TheManager_GUI.VueClassement
                     sp.Children.Add(ViewUtils.CreateLogo(c, regularCellWidth / 1.5, regularCellWidth / 1.5));
                 }
 
-                string cupWinnerStr = "";
+                StringBuilder cupWinnerStr = new StringBuilder("");
                 foreach(KeyValuePair<Tournament, Club> kvp in _cupsWinners)
                 {
                     if(kvp.Value == c)
                     {
-                        cupWinnerStr += " ("+kvp.Key.shortName+") ";
+                        cupWinnerStr.Append(" (").Append(kvp.Key.shortName).Append(") ");
                     }
                 }
                 if(_championshipTitleHolder == c)
                 {
-                    cupWinnerStr += " (TT) ";
+                    cupWinnerStr.Append(" (TT) ");
                 }
-                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, (_tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr, "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
+                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, (_tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr.ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
                 if(!_reduced)

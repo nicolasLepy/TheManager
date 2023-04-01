@@ -19,13 +19,16 @@ namespace TheManager
         public int formationFacilities { get; set; }
         [DataMember]
         public int averageAttendance { get; set; }
+        [DataMember]
+        public ClubStatus status { get; set; }
 
-        public HistoricEntry(DateTime date, int budget, int formation, int averageAttendance)
+        public HistoricEntry(DateTime date, int budget, int formation, int averageAttendance, ClubStatus status)
         {
             this.date = date;
             this.budget = budget;
             this.averageAttendance = averageAttendance;
-            formationFacilities = formation;
+            this.formationFacilities = formation;
+            this.status = status;
         }
 
         public bool Equals(HistoricEntry other)

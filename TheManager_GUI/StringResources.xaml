@@ -128,5 +128,8 @@
 	<system:String x:Key="str_error">Error</system:String>
 	<system:String x:Key="str_notQualified">Not qualified</system:String>
 	<system:String x:Key="str_winner">Winner</system:String>
+	<system:String x:Key="str_amateur">Amateur</system:String>
+	<system:String x:Key="str_semipro">Semi-pro</system:String>
+	<system:String x:Key="str_pro">Pro</system:String>
 
 </ResourceDictionary>

@@ -16,6 +16,7 @@
 					<DataGridTextColumn Header="Budget" Binding="{Binding Budget}"/>
 					<DataGridTextColumn Header="Affluence" Binding="{Binding Affluence}"/>
 					<DataGridTextColumn Header="Masse" Binding="{Binding MasseSalariale}"/>
+					<DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
 					<DataGridTemplateColumn Width="100">
 						<DataGridTemplateColumn.CellTemplate>
 							<DataTemplate>

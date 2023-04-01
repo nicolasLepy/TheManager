@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -48,19 +49,19 @@ namespace TheManager_GUI.VueClassement
             }
 
 
-            string cupWinnerStr = "";
+            StringBuilder cupWinnerStr = new StringBuilder("");
             foreach (KeyValuePair<Tournament, Club> kvp in _cupsWinners)
             {
                 if (kvp.Value == c)
                 {
-                    cupWinnerStr += " (" + kvp.Key.shortName + ") ";
+                    cupWinnerStr.Append(" (").Append(kvp.Key.shortName).Append(") ");
                 }
             }
             if (_championshipTitleHolder == c)
             {
-                cupWinnerStr += " (TT) ";
+                cupWinnerStr.Append(" (TT) ");
             }
-            Label l2 = ViewUtils.CreateLabel((_round.Tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr, "StyleLabel2", fontBase, 150 * _sizeMultiplier);
+            Label l2 = ViewUtils.CreateLabel((_round.Tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr.ToString(), "StyleLabel2", fontBase, 150 * _sizeMultiplier);
             l2.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
             { clubNameButtonClick(c); };
 
