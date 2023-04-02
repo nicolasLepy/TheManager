@@ -423,8 +423,15 @@ namespace TheManager
         public List<int> GetAvailableCalendarDates(bool withContinentalDates)
         {
             Continent ct = GetContinent();
+            Tournament firstDivision = League(1);
+            int startWeek = Utils.Modulo(resetWeek + 2, 52);
+            int endWeek = firstDivision != null ? firstDivision.rounds.Last().programmation.end.WeekNumber : Utils.Modulo(resetWeek - 15, 52);
+            if(endWeek < startWeek)
+            {
+                endWeek = 52 + endWeek;
+            }
             List<int> continentAvailableWeeks = new List<int>();
-            for (int i = 27; i < 52 + 15; i++) //TODO: A modifier si mise à jour de l'association différente
+            for (int i = startWeek; i < endWeek; i++)
             {
                 int week = i % 52;
                 continentAvailableWeeks.Add(week);

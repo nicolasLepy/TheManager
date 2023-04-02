@@ -139,6 +139,19 @@ namespace TheManager
             _gameUniverse = new GameWorld();
         }
 
+        public void SetBeginDate(GameDay begin)
+        {
+            _date = begin.ConvertToDateTime(_startYear);
+            Console.WriteLine("[New begin date] " + _date.ToShortDateString() + " (" + begin.WeekNumber + ")");
+            foreach(Tournament t in _kernel.world.Tournaments())
+            {
+                if(t.name == Utils.friendlyTournamentName)
+                {
+                    t.NextRound();
+                }
+            }
+        }
+
         /// <summary>
         /// Get current season year (for eg. 2021-2022 => 2022)
         /// TODO: Better to have a season by association and not a global season calendar
@@ -690,7 +703,7 @@ namespace TheManager
 
             foreach (Continent c in kernel.world.continents)
             {
-                if(weekNumber == c.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
+                if(weekNumber == c.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25. Game starts this day
                 {
                     c.QualifiesClubForContinentalCompetitionNextYear();
                 }

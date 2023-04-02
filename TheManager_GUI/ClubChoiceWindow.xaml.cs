@@ -160,6 +160,7 @@ namespace TheManager_GUI
             if(club != null)
             {
                 Session.Instance.Game.club = club as CityClub;
+                Session.Instance.Game.SetBeginDate(new TheManager.Tournaments.GameDay(club.Country().resetWeek, true, 0, 0));
                 Manager manager = new Manager(prenom, nom, 70, birthday, nationality);
                 Session.Instance.Game.club.ChangeManager(manager);
                 Windows_Menu wm = new Windows_Menu();
