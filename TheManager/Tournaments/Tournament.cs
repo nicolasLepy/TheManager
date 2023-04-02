@@ -973,7 +973,6 @@ namespace TheManager
                             CityClub cc = c as CityClub;
                             if (cc != null && cc.history.elements.Count > 0)
                             {
-                                HistoricEntry lastHe = cc.history.elements.Last();
                                 if (status != ClubStatus.SemiProfessional || cc.status != ClubStatus.Professional || (status == ClubStatus.SemiProfessional && cc.status == ClubStatus.Professional && copyForArchives.rounds[0].clubs.Contains(cc)))
                                 {
                                     c.ChangeStatus(status);

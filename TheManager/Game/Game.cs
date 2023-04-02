@@ -204,43 +204,46 @@ namespace TheManager
         /// <summary>
         /// Manage departures of journalists from a year to the next year
         /// </summary>
-        public void UpdateJournalists()
+        public void UpdateJournalists(Country country)
         {
             foreach(Media m in _kernel.medias)
             {
-                for(int i = 0;i<m.journalists.Count; i++)
+                if(m.country == country)
                 {
-                    Journalist j = m.journalists[i];
-                    j.age++;
-                    if (j.age > 65)
+                    for (int i = 0; i < m.journalists.Count; i++)
                     {
-                        if (Session.Instance.Random(1, 4) == 1)
+                        Journalist j = m.journalists[i];
+                        j.age++;
+                        if (j.age > 65)
                         {
-                            m.journalists.Remove(j);
-                            i--;
-                        }
-                    }
-                    else
-                    {
-                        int commentedGamesNumber = j.NumberOfCommentedGames;
-                        if(commentedGamesNumber < 10)
-                        {
-                            int chanceToLeave = commentedGamesNumber - 1;
-                            if (chanceToLeave < 1)
+                            if (Session.Instance.Random(1, 4) == 1)
                             {
-                                chanceToLeave = 1;
+                                m.journalists.Remove(j);
+                                i--;
                             }
-                            if(Session.Instance.Random(0,chanceToLeave) == 0)
+                        }
+                        else
+                        {
+                            int commentedGamesNumber = j.NumberOfCommentedGames;
+                            if (commentedGamesNumber < 10)
                             {
-                                if(m.journalists.Remove(j))
+                                int chanceToLeave = commentedGamesNumber - 1;
+                                if (chanceToLeave < 1)
                                 {
-                                    _kernel.freeJournalists.Add(j);
-                                    i--;
+                                    chanceToLeave = 1;
+                                }
+                                if (Session.Instance.Random(0, chanceToLeave) == 0)
+                                {
+                                    if (m.journalists.Remove(j))
+                                    {
+                                        _kernel.freeJournalists.Add(j);
+                                        i--;
+                                    }
                                 }
                             }
                         }
-                    }
 
+                    }
                 }
             }
         }
@@ -291,20 +294,23 @@ namespace TheManager
             _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageGoals, (indebtedClubs+0.0f)/(clubsCount+0.0f));
         }
 
-        public void UpdateClubs()
+        public void UpdateClubs(Country country)
         {
 
             //Update free players level
             foreach (Player j in _kernel.freePlayers)
             {
-                j.UpdateLevel();
+                if(j.nationality == country)
+                {
+                    j.UpdateLevel();
+                }
             }
 
             //We check all clubs
             foreach (Club c in _kernel.Clubs)
             {
                 CityClub cv = c as CityClub;
-                if (cv != null)
+                if (cv != null && cv.Country() == country)
                 {
                     DNCGPassage(cv);
                     int totalGames = 0;
@@ -644,20 +650,57 @@ namespace TheManager
 
             }
 
+            /*
             if (date.Month == 6 && date.Day == 15)
             {
                 UpdateJournalists();
+            }*/
+
+            foreach (Country c in kernel.world.GetAllCountries())
+            {
+                if(Utils.Modulo(c.resetWeek-1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday)
+                {
+                    UpdateClubs(c);
+                    UpdateJournalists(c);
+                }
+
+                if (Utils.Modulo(c.resetWeek+5, 52) == weekNumber)
+                {
+                    c.administrativeRetrogradations.Clear();
+                    foreach (Club club in kernel.Clubs)
+                    {
+                        if(club.Country() == c)
+                        {
+                            club.SetTicketPrice();
+                        }
+                    }
+                }
+
             }
+            /*if(weekNumber == 24 && date.DayOfWeek == DayOfWeek.Wednesday)
+            {
+                UpdateClubs();
+            }*/
 
             //Yearly update of clubs (sponsors, formation facilities, contracts)
-            //if (date.Day == 16 && date.Month == 6)
-            if(weekNumber == 24 && date.DayOfWeek == DayOfWeek.Wednesday)
+            if (weekNumber == kernel.world.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
             {
                 UpdateGameUniverseData();
-                UpdateClubs();
             }
 
-            if(weekNumber == 25 && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25
+            foreach (Continent c in kernel.world.continents)
+            {
+                if(weekNumber == c.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
+                {
+                    c.QualifiesClubForContinentalCompetitionNextYear();
+                }
+                if(weekNumber == (c.resetWeek + 2)%52 && date.DayOfWeek == DayOfWeek.Wednesday)
+                {
+                    c.UpdateStoredAssociationRanking();
+                }
+            }
+
+            /*if(weekNumber == 25 && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25
             {
                 foreach(Continent c in kernel.world.continents)
                 {
@@ -672,7 +715,7 @@ namespace TheManager
                 {
                     c.UpdateStoredAssociationRanking();
                 }
-            }
+            }*/
 
             //Transfers market
             if (options.transfersEnabled)
@@ -686,21 +729,6 @@ namespace TheManager
                 _kernel.RetirementOfFreePlayers();
             }
 
-            //July 20th => teams set up tickets price
-            if(date.Day == 20 && date.Month == 7)
-            {
-                foreach(Continent ct in _kernel.world.continents)
-                {
-                    foreach(Country c in ct.countries)
-                    {
-                        c.administrativeRetrogradations.Clear();
-                    }
-                }
-                foreach (Club c in kernel.Clubs)
-                {
-                    c.SetTicketPrice();
-                }
-            }
 
             //Teams are completed at the end of the transfers market if they are not enough players
             if(date.Day == 1 && date.Month == 9)

@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using TheManager;
+using TheManager.Tournaments;
 
 namespace TheManagerTests
 {
@@ -37,6 +38,8 @@ namespace TheManagerTests
             Assert.IsFalse(Utils.CompareDates(new DateTime(2020, 1, 1), new DateTime(2022, 1, 1)));
             Assert.IsTrue(Utils.CompareDates(new DateTime(2022, 1, 1), new DateTime(2022, 1, 1)));
             Assert.IsFalse(Utils.CompareDates(new DateTime(2022, 10, 1), new DateTime(2022, 1, 1)));
+            Assert.IsTrue(Utils.CompareDates(new GameDay(25, false, 0, -3).ConvertToDateTime(2022), new DateTime(2022, 6, 22)));
+            Assert.IsTrue(Utils.CompareDates(new GameDay(2, false, 0, -3).ConvertToDateTime(2022).AddDays(-14), new DateTime(2021, 12, 29)));
         }
 
         [TestMethod]

@@ -34,6 +34,8 @@ namespace TheManager
         private List<float[]> _gamesTimesWeekend;
         [DataMember]
         private List<float[]> _gamesTimesWeekdays;
+        [DataMember]
+        private int _resetWeek;
 
         public List<City> cities { get { return _cities; } }
         public List<Stadium> stadiums { get { return _stadiums; } }
@@ -44,6 +46,8 @@ namespace TheManager
 
         public List<float[]> gamesTimesWeekend => _gamesTimesWeekend;
         public List<float[]> gamesTimesWeekdays => _gamesTimesWeekdays;
+
+        public int resetWeek => _resetWeek;
 
         public string Flag
         {
@@ -140,7 +144,7 @@ namespace TheManager
             }
         }
 
-        public Country(string dbName, string name, Language language, int shapeNumber)
+        public Country(string dbName, string name, Language language, int shapeNumber, int resetWeek)
         {
             _dbName = dbName;
             _name = name;
@@ -153,6 +157,7 @@ namespace TheManager
             _administrativeRetrogradations = new Dictionary<Club, Tournament>();
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
+            _resetWeek = resetWeek;
         }
 
         public AdministrativeDivision GetCountryAdministrativeDivision()

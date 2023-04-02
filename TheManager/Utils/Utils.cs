@@ -675,6 +675,9 @@ namespace TheManager
                 case ClubStatus.Amateur:
                     res = "str_amateur";
                     break;
+                default:
+                    res = "";
+                    break;
             }
             return res;
         }

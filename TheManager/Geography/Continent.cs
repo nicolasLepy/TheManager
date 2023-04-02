@@ -20,6 +20,8 @@ namespace TheManager
         private string _name;
         [DataMember]
         private string _logo;
+        [DataMember]
+        private int _resetWeek;
 
         /**
          * Represent qualification in continental clubs competitions in function of the country place in the coefficient ranking
@@ -53,6 +55,7 @@ namespace TheManager
         public List<Country> countries => _countries;
         public List<Continent> continents => _continents;
         public List<Qualification> continentalQualifications => _continentalQualifications;
+        public int resetWeek => _resetWeek;
         public List<Tournament> Tournaments()
         {
             return _tournaments;
@@ -97,6 +100,17 @@ namespace TheManager
             return res;
         }
 
+        public List<Country> GetAllCountries()
+        {
+            List<Country> res = new List<Country>();
+            res.AddRange(countries);
+            foreach(Continent c in continents)
+            {
+                res.AddRange(c.GetAllCountries());
+            }
+            return res;
+        }
+
         public List<Tournament> GetAllTournaments()
         {
             List<Tournament> res = new List<Tournament>();
@@ -112,7 +126,7 @@ namespace TheManager
             return res;
         }
 
-        public Continent(string name, string logo)
+        public Continent(string name, string logo, int resetWeek)
         {
             _name = name;
             _logo = logo;
@@ -122,6 +136,7 @@ namespace TheManager
             _associationRanking = new List<Country>();
             _archivalAssociationRanking = new List<List<Country>>();
             _continents = new List<Continent>();
+            _resetWeek = resetWeek;
         }
 
         /// <summary>

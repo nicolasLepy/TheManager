@@ -500,13 +500,15 @@ namespace TheManager
             {
                 string worldName = e.Attribute("name").Value;
                 string worldLogo = e.Attribute("logo").Value;
-                Continent world = new Continent(worldName, worldLogo);
+                int worldResetWeek = int.Parse(e.Attribute("reset_week").Value);
+                Continent world = new Continent(worldName, worldLogo, worldResetWeek);
                 _kernel.world = world;
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
                     string continentLogo = e2.Attribute("logo").Value;
-                    Continent c = new Continent(continentName, continentLogo);
+                    int continentResetWeek = int.Parse(e2.Attribute("reset_week").Value);
+                    Continent c = new Continent(continentName, continentLogo, continentResetWeek);
                     foreach (XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
@@ -514,7 +516,8 @@ namespace TheManager
                         string language = e3.Attribute("langue").Value;
                         int countryShape = int.Parse(e3.Attribute("shape").Value);
                         Language l = _kernel.String2Language(language);
-                        Country p = new Country(countrydBName, countryName, l, countryShape);
+                        int countryResetWeek = int.Parse(e3.Attribute("reset_week").Value);
+                        Country p = new Country(countrydBName, countryName, l, countryShape, countryResetWeek);
                         foreach (XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
