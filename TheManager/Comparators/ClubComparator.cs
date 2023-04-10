@@ -4,6 +4,7 @@ using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using TheManager.Comparators;
 
 namespace TheManager
@@ -102,17 +103,41 @@ namespace TheManager
                             res = xChampionship.Tournament.level - yChampionship.Tournament.level;
                             if(res == 0)
                             {
-                                List<Club> xRankingClubs = new List<Club>(xChampionship.clubs);
-                                xRankingClubs.Sort(new ClubRankingComparator(xChampionship.matches));
-                                int xRanking = xRankingClubs.IndexOf(xc);
-                                List<Club> yRankingClubs = new List<Club>(yChampionship.clubs);
-                                yRankingClubs.Sort(new ClubRankingComparator(yChampionship.matches));
-                                int yRanking = yRankingClubs.IndexOf(yc);
+                                //TODO: Need a Ranking() method for each round type
+                                int xRanking = 0;
+                                InactiveRound xIr = xChampionship as InactiveRound;
+                                if (xIr != null)
+                                {
+                                    xRanking = xIr.Ranking().IndexOf(xc);
+                                }
+                                else
+                                {
+                                    List<Club> xRankingClubs = new List<Club>(xChampionship.clubs);
+                                    xRankingClubs.Sort(new ClubRankingComparator(xChampionship.matches));
+                                    xRanking = xRankingClubs.IndexOf(xc);
+                                }
+
+                                int yRanking = 0;
+                                InactiveRound yIr = yChampionship as InactiveRound;
+                                if(yIr != null)
+                                {
+                                    yRanking = yIr.Ranking().IndexOf(yc);
+                                }
+                                else
+                                {
+                                    List<Club> yRankingClubs = new List<Club>(yChampionship.clubs);
+                                    yRankingClubs.Sort(new ClubRankingComparator(yChampionship.matches));
+                                    yRanking = yRankingClubs.IndexOf(yc);
+                                }
                                 res = xRanking - yRanking;
                             }
                         }
+                        else
+                        {
+                            res = x.Level() > y.Level() ? -1 : 1;
+                        }
                     }
-                    return res;
+                    break;
                 default:
                     res = x.Level() > y.Level() ? -1 : 1;
                     break;
