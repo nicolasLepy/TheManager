@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
+using TheManager.Tournaments;
 using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
@@ -116,6 +117,9 @@ namespace TheManager_GUI
             lbBudget.Content = FindResource("str_budget").ToString() + " : " + Utils.FormatMoney((club as CityClub).budget);
             lbCountry.Content = club.Country().Name();
             lbStatus.Content = FindResource(Utils.ClubStatus2ResourceString(club.status)).ToString();
+            DateTime beginDate = Session.Instance.Game.GetBeginDate(club.Country());
+            lbBeginDate.Content = string.Format("{0} : {1}", FindResource("str_startDate").ToString(), beginDate.ToShortDateString());
+
             FillSquad(club);
             spEtoiles.Children.Clear();
             try
@@ -124,7 +128,7 @@ namespace TheManager_GUI
             }
             catch
             {
-                Utils.Debug("Pas de logo disponible pour " + club.logo);
+                Utils.Debug("No logo available for " + club.logo + " (" + club.name + ")");
             }
 
             spEtoiles.Children.Add(ViewUtils.CreateStarNotation(club.Stars, 25));
@@ -160,14 +164,13 @@ namespace TheManager_GUI
             if(club != null)
             {
                 Session.Instance.Game.club = club as CityClub;
+                Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Country()));
                 Manager manager = new Manager(prenom, nom, 70, birthday, nationality);
                 Session.Instance.Game.club.ChangeManager(manager);
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
                 Close();
             }
-
         }
     }
-
 }

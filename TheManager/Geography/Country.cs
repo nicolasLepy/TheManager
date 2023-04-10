@@ -34,6 +34,8 @@ namespace TheManager
         private List<float[]> _gamesTimesWeekend;
         [DataMember]
         private List<float[]> _gamesTimesWeekdays;
+        [DataMember]
+        private int _resetWeek;
 
         public List<City> cities { get { return _cities; } }
         public List<Stadium> stadiums { get { return _stadiums; } }
@@ -44,6 +46,8 @@ namespace TheManager
 
         public List<float[]> gamesTimesWeekend => _gamesTimesWeekend;
         public List<float[]> gamesTimesWeekdays => _gamesTimesWeekdays;
+
+        public int resetWeek => _resetWeek;
 
         public string Flag
         {
@@ -140,7 +144,7 @@ namespace TheManager
             }
         }
 
-        public Country(string dbName, string name, Language language, int shapeNumber)
+        public Country(string dbName, string name, Language language, int shapeNumber, int resetWeek)
         {
             _dbName = dbName;
             _name = name;
@@ -153,6 +157,7 @@ namespace TheManager
             _administrativeRetrogradations = new Dictionary<Club, Tournament>();
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
+            _resetWeek = resetWeek;
         }
 
         public AdministrativeDivision GetCountryAdministrativeDivision()
@@ -418,8 +423,15 @@ namespace TheManager
         public List<int> GetAvailableCalendarDates(bool withContinentalDates)
         {
             Continent ct = GetContinent();
+            Tournament firstDivision = League(1);
+            int startWeek = Utils.Modulo(resetWeek + 2, 52);
+            int endWeek = firstDivision != null ? firstDivision.rounds.Last().programmation.end.WeekNumber : Utils.Modulo(resetWeek - 15, 52);
+            if(endWeek < startWeek)
+            {
+                endWeek = 52 + endWeek;
+            }
             List<int> continentAvailableWeeks = new List<int>();
-            for (int i = 27; i < 52 + 15; i++) //TODO: A modifier si mise à jour de l'association différente
+            for (int i = startWeek; i < endWeek; i++)
             {
                 int week = i % 52;
                 continentAvailableWeeks.Add(week);
@@ -452,7 +464,6 @@ namespace TheManager
                     {
                         if (gd.MidWeekGame)
                         {
-                            Console.WriteLine("Remove " + gd.WeekNumber);
                             continentAvailableWeeks.Remove(gd.WeekNumber);
                         }
                     }

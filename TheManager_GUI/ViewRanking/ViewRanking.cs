@@ -52,6 +52,5 @@ namespace TheManager_GUI.VueClassement
         }
 
         public abstract override void Full(StackPanel spRanking);
-
     }
 }

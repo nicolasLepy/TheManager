@@ -22,6 +22,10 @@ namespace TheManager_GUI.VueClassement
             {
                 res = new ViewRankingGroups(round as GroupsRound, sizeMultiplier, focusOnTeam, team);
             }
+            if (round as InactiveRound != null)
+            {
+                res = new ViewRankingInactive(round as InactiveRound, sizeMultiplier, focusOnTeam, team);
+            }
             //TODO: For inactive rounds
 
             return res;

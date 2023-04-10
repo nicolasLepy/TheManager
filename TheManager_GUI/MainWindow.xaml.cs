@@ -152,7 +152,7 @@ namespace TheManager_GUI
                 lbCreationPartie.Content = "Chargement des joueurs";
                 cbdd.LoadPlayers();
 
-                pbLoading.Value = 60;
+                pbLoading.Value = 50;
                 lbCreationPartie.Content = "Chargement des entraîneurs";
                 cbdd.LoadManagers();
 
@@ -160,23 +160,27 @@ namespace TheManager_GUI
                 lbCreationPartie.Content = "Initialisation des équipes";
                 cbdd.InitTeams();
 
-                pbLoading.Value = 90;
+                pbLoading.Value = 80;
                 lbCreationPartie.Content = "Initialisation des joueurs";
                 cbdd.InitPlayers();
 
-                pbLoading.Value = 92;
+                pbLoading.Value = 90;
                 lbCreationPartie.Content = "Initialisation des compétitions";
                 cbdd.InitTournaments();
 
-                pbLoading.Value = 95;
+                pbLoading.Value = 92;
                 lbCreationPartie.Content = "Chargement des médias";
                 cbdd.LoadMedias();
 
-                pbLoading.Value = 98;
+                pbLoading.Value = 95;
                 lbCreationPartie.Content = "Chargement des commentaires de match";
                 cbdd.LoadGamesComments();
                 cbdd.LoadRules();
                 cbdd.GenerateNationalCup();
+
+                pbLoading.Value = 98;
+                lbCreationPartie.Content = "Chargement des archives";
+                cbdd.LoadArchives();
 
                 pbLoading.Value = 100;
 

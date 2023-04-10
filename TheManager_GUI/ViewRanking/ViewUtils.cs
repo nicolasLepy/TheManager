@@ -159,7 +159,7 @@ namespace TheManager_GUI
             main.Height = 83;
             main.Orientation = Orientation.Vertical;
 
-            main.Children.Add(CreateLabel(time.ToString("dddd dd"), "StyleLabel2", 10, -1));
+            main.Children.Add(CreateLabel(time.ToString("dddd dd/MM"), "StyleLabel2", 10, -1));
 
             if(match != null)
             {

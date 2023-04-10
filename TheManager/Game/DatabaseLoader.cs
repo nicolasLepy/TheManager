@@ -500,13 +500,15 @@ namespace TheManager
             {
                 string worldName = e.Attribute("name").Value;
                 string worldLogo = e.Attribute("logo").Value;
-                Continent world = new Continent(worldName, worldLogo);
+                int worldResetWeek = int.Parse(e.Attribute("reset_week").Value);
+                Continent world = new Continent(worldName, worldLogo, worldResetWeek);
                 _kernel.world = world;
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
                     string continentLogo = e2.Attribute("logo").Value;
-                    Continent c = new Continent(continentName, continentLogo);
+                    int continentResetWeek = int.Parse(e2.Attribute("reset_week").Value);
+                    Continent c = new Continent(continentName, continentLogo, continentResetWeek);
                     foreach (XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
@@ -514,7 +516,8 @@ namespace TheManager
                         string language = e3.Attribute("langue").Value;
                         int countryShape = int.Parse(e3.Attribute("shape").Value);
                         Language l = _kernel.String2Language(language);
-                        Country p = new Country(countrydBName, countryName, l, countryShape);
+                        int countryResetWeek = int.Parse(e3.Attribute("reset_week").Value);
+                        Country p = new Country(countrydBName, countryName, l, countryShape, countryResetWeek);
                         foreach (XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -802,6 +805,43 @@ namespace TheManager
 
         }
         
+        public void LoadArchives()
+        {
+            foreach(string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/arch/"))
+            {
+                XDocument doc = XDocument.Load(xmlFile);
+                foreach(XElement a in doc.Descendants("Archives"))
+                {
+                    foreach (XElement e in a.Descendants("HistoricEntry"))
+                    {
+                        int season = int.Parse(e.Attribute("season").Value);
+                        string tournamentName = e.Attribute("tournament").Value;
+                        Tournament t = _kernel.String2Tournament(tournamentName);
+                        Tournament archive = t.CopyForArchive(true);
+                        foreach (Round r in archive.rounds)
+                        {
+                            r.matches.Clear();
+                            r.clubs.Clear();
+                        }
+
+                        foreach (XElement e2 in e.Descendants("Ranking"))
+                        {
+                            int roundId = int.Parse(e2.Attribute("round").Value);
+                            (archive.rounds[roundId] as InactiveRound).Ranking().Clear();
+                            foreach (XElement e3 in e2.Descendants("Club"))
+                            {
+                                int clubId = int.Parse(e3.Attribute("id").Value);
+                                Club c = _clubsId[clubId];
+                                (archive.rounds[roundId] as InactiveRound).clubs.Add(c);
+                                (archive.rounds[roundId] as InactiveRound).Ranking().Add(c);
+                            }
+                        }
+                        t.previousEditions.Add(season, archive);
+                    }
+                }
+            }
+        }
+
         public void LoadTournaments()
         {
             foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/comp/"))
@@ -827,9 +867,9 @@ namespace TheManager
                         ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
                         GameDay debut = String2GameDay(seasonBeginning);
                         int periodicity = 1;
-                        if (e2.Attribute("periodicite") != null)
+                        if (e2.Attribute("periodicity") != null)
                         {
-                            periodicity = int.Parse(e2.Attribute("periodicite").Value);
+                            periodicity = int.Parse(e2.Attribute("periodicity").Value);
                         }
                         int remainingYears = 1;
                         if (e2.Attribute("anneesRestantes") != null)
@@ -1428,7 +1468,7 @@ namespace TheManager
                             acr = "d'";
                         }
                         string cupName = "Coupe " + acr + c.Name();
-                        Tournament nationalCup = new Tournament(cupName, "",new GameDay(25,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0), ClubStatus.Professional);
+                        Tournament nationalCup = new Tournament(cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0), ClubStatus.Professional);
 
                         int roundCount = 0;
                         int j = 1;

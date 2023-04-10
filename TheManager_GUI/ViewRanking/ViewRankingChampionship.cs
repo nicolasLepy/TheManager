@@ -105,7 +105,27 @@ namespace TheManager_GUI.VueClassement
             Dictionary<Club, Qualification> continentalClubs = new Dictionary<Club, Qualification>();
             if(country != null)
             {
-                continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, _year + 1) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country);
+                /*if(_year > -1)
+                {
+                    DateTime tournamentEnd = _round.Tournament.rounds.Last().programmation.end.ConvertToDateTime(_year);
+                    Console.WriteLine("[Tournament " + _round.Tournament.name + " " + _year + "] End : " + tournamentEnd.ToShortDateString());
+                }*/
+
+                int weekStartContinental = country.Continent.GetContinentalClubTournaments().First().rounds.First().programmation.initialisation.WeekNumber;
+                int weekEndContinental = country.Continent.GetContinentalClubTournaments().First().rounds.Last().programmation.end.WeekNumber;
+                int continentalYear = _year; //International tournament edition where clubs are qualified
+                //If the domestic league calendar is not the same than continental association calendar (civil year vs rolling year), clubs are qualified for international tournaments playing one year after
+                if (_round.Tournament.rounds.Last().programmation.end.WeekNumber > weekStartContinental)
+                {
+                    continentalYear += 1;
+                }
+                //If the international tournament is set on a civil year
+                if(weekEndContinental < weekStartContinental)
+                {
+                    continentalYear += 1;
+                }
+
+                continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, continentalYear) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country, true);
             }
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around

@@ -91,8 +91,16 @@ namespace TheManager
     [DataContract(IsReference =true)]
     public class Game
     {
+        /// <summary>
+        /// Current date of the game
+        /// </summary>
         [DataMember]
         private DateTime _date;
+        /// <summary>
+        /// Official begin date of the game
+        /// </summary>
+        [DataMember]
+        private DateTime _beginDate;
         [DataMember]
         private Kernel _kernel;
         [DataMember]
@@ -103,14 +111,12 @@ namespace TheManager
         private List<Article> _articles;
         [DataMember]
         private GameWorld _gameUniverse;
-        [DataMember]
-        private int _startYear;
 
         /// <summary>
         /// Date of the day
         /// </summary>
         public DateTime date => _date;
-        public int startYear => _startYear;
+
         public Kernel kernel { get => _kernel; }
         public Options options { get => _options; }
         /// <summary>
@@ -127,16 +133,76 @@ namespace TheManager
         public GameWorld gameUniverse => _gameUniverse;
 
 
+
         public Game()
         {
             _articles = new List<Article>();
-            _startYear = 2021;
-            GameDay beginSeasons = new GameDay(25, true, 0, 0);
-            _date = beginSeasons.ConvertToDateTime(_startYear);
+            GameDay beginSeasons = new GameDay(Utils.defaultStartWeek, true, 0, 0);
+            _date = beginSeasons.ConvertToDateTime(Utils.beginningYear);
             _kernel = new Kernel();
             _options = new Options();
             _club = null;
             _gameUniverse = new GameWorld();
+        }
+
+        public DateTime GetBeginDate(Country c)
+        {
+            GameDay begin = new GameDay(c.resetWeek, true, 0, 0);
+            DateTime res = begin.ConvertToDateTime(begin.WeekNumber > Utils.defaultStartWeek ? Utils.beginningYear - 1 : Utils.beginningYear);
+            return res;
+        }
+
+        public void SetBeginDate(DateTime begin)
+        {
+            _beginDate = begin;
+            DateTime defaultStart = _date;
+
+            DateTime kernelStart = _date;
+            foreach (Continent ct in _kernel.world.continents)
+            {
+                foreach (Country co in ct.countries)
+                {
+                    if (co.Tournaments().Count > 0)
+                    {
+                        DateTime beginCountry = GetBeginDate(co);
+                        if (Utils.IsBefore(beginCountry, kernelStart))
+                        {
+                            Console.Write("--");
+                            kernelStart = beginCountry;
+                        }
+                        Console.WriteLine("[" + co.Name() + "] Start date : " + beginCountry.ToShortDateString());
+                    }
+                }
+            }
+
+            _date = kernelStart;
+
+            Utils.Debug("[Kernel start date] " + _date.ToShortDateString());
+            Utils.Debug("[Game start date] " + begin.ToShortDateString());
+
+            //_date = begin;
+            foreach (Tournament t in _kernel.world.GetAllTournaments())
+            {
+                DateTime tBegin = t.seasonBeginning.ConvertToDateTime(Utils.beginningYear);
+                if(Utils.IsBefore(_date, tBegin) && Utils.IsBefore(tBegin, defaultStart))
+                {
+                    Utils.Debug("[AddYearToRemainingYears] " + t.name + " (" + defaultStart.ToShortDateString() + ", " + tBegin.ToShortDateString() + ", " + _date.ToShortDateString());
+                    t.AddYearToRemainingYears();
+                }
+                if(t.name == Utils.friendlyTournamentName)
+                {
+                    t.NextRound();
+                }
+            }
+
+            options.simulateGames = true;
+            while (!Utils.CompareDates(date, begin))
+            {
+                Utils.Debug("[Date] " + date.ToShortDateString());
+                this.NextDay();
+                this.UpdateTournaments();
+            }
+            options.simulateGames = false;
         }
 
         /// <summary>
@@ -204,43 +270,46 @@ namespace TheManager
         /// <summary>
         /// Manage departures of journalists from a year to the next year
         /// </summary>
-        public void UpdateJournalists()
+        public void UpdateJournalists(Country country)
         {
             foreach(Media m in _kernel.medias)
             {
-                for(int i = 0;i<m.journalists.Count; i++)
+                if(m.country == country)
                 {
-                    Journalist j = m.journalists[i];
-                    j.age++;
-                    if (j.age > 65)
+                    for (int i = 0; i < m.journalists.Count; i++)
                     {
-                        if (Session.Instance.Random(1, 4) == 1)
+                        Journalist j = m.journalists[i];
+                        j.age++;
+                        if (j.age > 65)
                         {
-                            m.journalists.Remove(j);
-                            i--;
-                        }
-                    }
-                    else
-                    {
-                        int commentedGamesNumber = j.NumberOfCommentedGames;
-                        if(commentedGamesNumber < 10)
-                        {
-                            int chanceToLeave = commentedGamesNumber - 1;
-                            if (chanceToLeave < 1)
+                            if (Session.Instance.Random(1, 4) == 1)
                             {
-                                chanceToLeave = 1;
+                                m.journalists.Remove(j);
+                                i--;
                             }
-                            if(Session.Instance.Random(0,chanceToLeave) == 0)
+                        }
+                        else
+                        {
+                            int commentedGamesNumber = j.NumberOfCommentedGames;
+                            if (commentedGamesNumber < 10)
                             {
-                                if(m.journalists.Remove(j))
+                                int chanceToLeave = commentedGamesNumber - 1;
+                                if (chanceToLeave < 1)
                                 {
-                                    _kernel.freeJournalists.Add(j);
-                                    i--;
+                                    chanceToLeave = 1;
+                                }
+                                if (Session.Instance.Random(0, chanceToLeave) == 0)
+                                {
+                                    if (m.journalists.Remove(j))
+                                    {
+                                        _kernel.freeJournalists.Add(j);
+                                        i--;
+                                    }
                                 }
                             }
                         }
-                    }
 
+                    }
                 }
             }
         }
@@ -291,21 +360,24 @@ namespace TheManager
             _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageGoals, (indebtedClubs+0.0f)/(clubsCount+0.0f));
         }
 
-        public void UpdateClubs()
+        public void UpdateClubs(Country country)
         {
-
             //Update free players level
             foreach (Player j in _kernel.freePlayers)
             {
-                j.UpdateLevel();
+                if(j.nationality == country)
+                {
+                    j.UpdateLevel();
+                }
             }
 
             //We check all clubs
             foreach (Club c in _kernel.Clubs)
             {
                 CityClub cv = c as CityClub;
-                if (cv != null)
+                if (cv != null && cv.Country() == country)
                 {
+                    Console.WriteLine("[UpdateClub]" + cv.name);
                     DNCGPassage(cv);
                     int totalGames = 0;
                     int totalAttendance = 0;
@@ -525,6 +597,7 @@ namespace TheManager
                 {
                     if (c.remainingYears == c.periodicity)
                     {
+
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
                             t.QualifyClubs();
@@ -644,31 +717,41 @@ namespace TheManager
 
             }
 
-            if (date.Month == 6 && date.Day == 15)
+            foreach (Country c in kernel.world.GetAllCountries())
             {
-                UpdateJournalists();
-            }
-
-            //Yearly update of clubs (sponsors, formation facilities, contracts)
-            //if (date.Day == 16 && date.Month == 6)
-            if(weekNumber == 24 && date.DayOfWeek == DayOfWeek.Wednesday)
-            {
-                UpdateGameUniverseData();
-                UpdateClubs();
-            }
-
-            if(weekNumber == 25 && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25
-            {
-                foreach(Continent c in kernel.world.continents)
+                if(Utils.Modulo(c.resetWeek-1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(_beginDate, _date))
                 {
-                    c.QualifiesClubForContinentalCompetitionNextYear();
+                    UpdateClubs(c);
+                    UpdateJournalists(c);
+                }
+
+                if (Utils.Modulo(c.resetWeek+5, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday)
+                {
+                    c.administrativeRetrogradations.Clear();
+                    foreach (Club club in kernel.Clubs)
+                    {
+                        if(club.Country() == c)
+                        {
+                            club.SetTicketPrice();
+                        }
+                    }
                 }
 
             }
 
-            if (weekNumber == 27 && date.DayOfWeek == DayOfWeek.Wednesday)
+            //Yearly update of clubs (sponsors, formation facilities, contracts)
+            if (weekNumber == kernel.world.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
             {
-                foreach(Continent c in kernel.world.continents)
+                UpdateGameUniverseData();
+            }
+
+            foreach (Continent c in kernel.world.continents)
+            {
+                if(weekNumber == c.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25. Game starts this day
+                {
+                    c.QualifiesClubForContinentalCompetitionNextYear();
+                }
+                if(weekNumber == (c.resetWeek + 2)%52 && date.DayOfWeek == DayOfWeek.Wednesday)
                 {
                     c.UpdateStoredAssociationRanking();
                 }
@@ -686,21 +769,6 @@ namespace TheManager
                 _kernel.RetirementOfFreePlayers();
             }
 
-            //July 20th => teams set up tickets price
-            if(date.Day == 20 && date.Month == 7)
-            {
-                foreach(Continent ct in _kernel.world.continents)
-                {
-                    foreach(Country c in ct.countries)
-                    {
-                        c.administrativeRetrogradations.Clear();
-                    }
-                }
-                foreach (Club c in kernel.Clubs)
-                {
-                    c.SetTicketPrice();
-                }
-            }
 
             //Teams are completed at the end of the transfers market if they are not enough players
             if(date.Day == 1 && date.Month == 9)

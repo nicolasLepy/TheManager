@@ -915,6 +915,33 @@ namespace TheManager
 
         }
 
+        public Tournament CopyForArchive(bool makeRoundsInactive)
+        {
+            Tournament copy = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status);
+            foreach (Round r in rounds)
+            {
+                Round roundCopy = r.Copy();
+                if(makeRoundsInactive)
+                {
+                    roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end);
+                }
+                for (int i = 0; i < roundCopy.qualifications.Count; i++)
+                {
+                    Qualification q = roundCopy.qualifications[i];
+                    if (roundCopy.qualifications[i].tournament == this)
+                    {
+                        q.tournament = copy;
+                        roundCopy.qualifications[i] = q;
+                    }
+                }
+                copy.rounds.Add(roundCopy);
+            }
+            copy.statistics = statistics;
+            copy.currentRound = copy.rounds.Count - 1;
+
+            return copy;
+        }
+
         /// <summary>
         /// End of the season, all rounds are reset and qualified teams for next years are dispatched
         /// </summary>
@@ -926,28 +953,17 @@ namespace TheManager
                 _remainingYears = _periodicity;
             
                 UpdateRecords();
-                Tournament copyForArchives = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status);
+                Tournament copyForArchives = CopyForArchive(false);
 
                 int gamesCount = 0;
-                foreach (Round r in rounds)
+                foreach(Round r in copyForArchives.rounds)
                 {
-                    Round roundCopy = r.Copy();
-                    for(int i = 0; i < roundCopy.qualifications.Count; i++)
-                    {
-                        Qualification q = roundCopy.qualifications[i];
-                        if (roundCopy.qualifications[i].tournament == this)
-                        {
-                            q.tournament = copyForArchives;
-                            roundCopy.qualifications[i] = q;
-                        }
-                    }
-                    copyForArchives.rounds.Add(roundCopy);
                     gamesCount += r.matches.Count;
                 }
-                copyForArchives.statistics = statistics;
-                if(_periodicity == 1 || (_periodicity > 1 && gamesCount > 0))
+                if (_periodicity == 1 || (_periodicity > 1 && gamesCount > 0))
                 {
-                    _previousEditions.Add(_periodicity == 1 ? Session.Instance.Game.date.Year : Session.Instance.Game.date.Year - periodicity, copyForArchives);
+                    int editionYear = copyForArchives.rounds.Last().programmation.end.WeekNumber > this.seasonBeginning.WeekNumber ? Session.Instance.Game.date.Year - 1 : Session.Instance.Game.date.Year;
+                    _previousEditions.Add(_periodicity == 1 ? editionYear : editionYear - periodicity, copyForArchives);
                 }
                 for (int i = 0; i<rounds.Count; i++)
                 {
@@ -973,7 +989,6 @@ namespace TheManager
                             CityClub cc = c as CityClub;
                             if (cc != null && cc.history.elements.Count > 0)
                             {
-                                HistoricEntry lastHe = cc.history.elements.Last();
                                 if (status != ClubStatus.SemiProfessional || cc.status != ClubStatus.Professional || (status == ClubStatus.SemiProfessional && cc.status == ClubStatus.Professional && copyForArchives.rounds[0].clubs.Contains(cc)))
                                 {
                                     c.ChangeStatus(status);
@@ -1017,6 +1032,14 @@ namespace TheManager
                 res = previousEditions[closestYear];
             }
             return res;
+        }
+
+        /// <summary>
+        /// TODO: Bad pattern. This attribute must not be modified by an external class
+        /// </summary>
+        public void AddYearToRemainingYears()
+        {
+            _remainingYears++;
         }
 
         private void UpdateRecords()
