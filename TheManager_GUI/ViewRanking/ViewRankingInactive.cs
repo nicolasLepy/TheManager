@@ -13,10 +13,10 @@ namespace TheManager_GUI.VueClassement
     public class ViewRankingInactive : ViewRanking
     {
 
-        private InactiveRound _round;
-        private bool _focusOnTeam;
-        private double _sizeMultiplier;
-        private Club _team;
+        private readonly InactiveRound _round;
+        private readonly bool _focusOnTeam;
+        private readonly double _sizeMultiplier;
+        private readonly Club _team;
 
         public ViewRankingInactive(InactiveRound round, double sizeMultiplier, bool focusOnTeam, Club team) : base(round.Tournament)
         {

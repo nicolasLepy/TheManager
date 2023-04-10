@@ -9,6 +9,7 @@ using TheManager.Tournaments;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
+using LiveCharts;
 
 namespace TheManager
 {
@@ -96,11 +97,6 @@ namespace TheManager
         /// </summary>
         [DataMember]
         private DateTime _date;
-        /// <summary>
-        /// Official begin date of the game
-        /// </summary>
-        [DataMember]
-        private DateTime _beginDate;
         [DataMember]
         private Kernel _kernel;
         [DataMember]
@@ -152,9 +148,14 @@ namespace TheManager
             return res;
         }
 
+        /// <summary>
+        /// Change the begin date of the game according to the selected club.
+        /// A club selected from Ireland for example move the beginning of the game back to january.
+        /// For games starting in June, simulate tournament playing between january and june (Ireland league, Copa Libertadores...)
+        /// </summary>
+        /// <param name="begin"></param>
         public void SetBeginDate(DateTime begin)
         {
-            _beginDate = begin;
             DateTime defaultStart = _date;
 
             DateTime kernelStart = _date;
@@ -167,10 +168,8 @@ namespace TheManager
                         DateTime beginCountry = GetBeginDate(co);
                         if (Utils.IsBefore(beginCountry, kernelStart))
                         {
-                            Console.Write("--");
                             kernelStart = beginCountry;
                         }
-                        Console.WriteLine("[" + co.Name() + "] Start date : " + beginCountry.ToShortDateString());
                     }
                 }
             }
@@ -180,7 +179,6 @@ namespace TheManager
             Utils.Debug("[Kernel start date] " + _date.ToShortDateString());
             Utils.Debug("[Game start date] " + begin.ToShortDateString());
 
-            //_date = begin;
             foreach (Tournament t in _kernel.world.GetAllTournaments())
             {
                 DateTime tBegin = t.seasonBeginning.ConvertToDateTime(Utils.beginningYear);
@@ -719,7 +717,8 @@ namespace TheManager
 
             foreach (Country c in kernel.world.GetAllCountries())
             {
-                if(Utils.Modulo(c.resetWeek-1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(_beginDate, _date))
+                //Update clubs before resetting league. Don't update clubs if the game date is before the start of the season of this country.
+                if(Utils.Modulo(c.resetWeek-1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(new GameDay(c.resetWeek, true, 0, 0).ConvertToDateTime(Utils.beginningYear), _date))
                 {
                     UpdateClubs(c);
                     UpdateJournalists(c);
@@ -728,11 +727,11 @@ namespace TheManager
                 if (Utils.Modulo(c.resetWeek+5, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday)
                 {
                     c.administrativeRetrogradations.Clear();
-                    foreach (Club club in kernel.Clubs)
+                    foreach (Club countryClub in kernel.Clubs)
                     {
-                        if(club.Country() == c)
+                        if(countryClub.Country() == c)
                         {
-                            club.SetTicketPrice();
+                            countryClub.SetTicketPrice();
                         }
                     }
                 }
