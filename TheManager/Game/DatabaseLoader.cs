@@ -805,6 +805,43 @@ namespace TheManager
 
         }
         
+        public void LoadArchives()
+        {
+            foreach(string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/arch/"))
+            {
+                XDocument doc = XDocument.Load(xmlFile);
+                foreach(XElement a in doc.Descendants("Archives"))
+                {
+                    foreach (XElement e in a.Descendants("HistoricEntry"))
+                    {
+                        int season = int.Parse(e.Attribute("season").Value);
+                        string tournamentName = e.Attribute("tournament").Value;
+                        Tournament t = _kernel.String2Tournament(tournamentName);
+                        Tournament archive = t.CopyForArchive(true);
+                        foreach (Round r in archive.rounds)
+                        {
+                            r.matches.Clear();
+                            r.clubs.Clear();
+                        }
+
+                        foreach (XElement e2 in e.Descendants("Ranking"))
+                        {
+                            int roundId = int.Parse(e2.Attribute("round").Value);
+                            (archive.rounds[roundId] as InactiveRound).Ranking().Clear();
+                            foreach (XElement e3 in e2.Descendants("Club"))
+                            {
+                                int clubId = int.Parse(e3.Attribute("id").Value);
+                                Club c = _clubsId[clubId];
+                                (archive.rounds[roundId] as InactiveRound).clubs.Add(c);
+                                (archive.rounds[roundId] as InactiveRound).Ranking().Add(c);
+                            }
+                        }
+                        t.previousEditions.Add(season, archive);
+                    }
+                }
+            }
+        }
+
         public void LoadTournaments()
         {
             foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/comp/"))
@@ -830,9 +867,9 @@ namespace TheManager
                         ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
                         GameDay debut = String2GameDay(seasonBeginning);
                         int periodicity = 1;
-                        if (e2.Attribute("periodicite") != null)
+                        if (e2.Attribute("periodicity") != null)
                         {
-                            periodicity = int.Parse(e2.Attribute("periodicite").Value);
+                            periodicity = int.Parse(e2.Attribute("periodicity").Value);
                         }
                         int remainingYears = 1;
                         if (e2.Attribute("anneesRestantes") != null)
@@ -1431,7 +1468,7 @@ namespace TheManager
                             acr = "d'";
                         }
                         string cupName = "Coupe " + acr + c.Name();
-                        Tournament nationalCup = new Tournament(cupName, "",new GameDay(25,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0), ClubStatus.Professional);
+                        Tournament nationalCup = new Tournament(cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0), ClubStatus.Professional);
 
                         int roundCount = 0;
                         int j = 1;

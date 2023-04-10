@@ -59,8 +59,10 @@ namespace TheManager_GUI
 
             foreach (KeyValuePair<int,Tournament> history in _competition.previousEditions)
             {
+                //It's a civil year championship is the last round ending is after the season beginning on the same year
+                bool civilYearChampionship = history.Value.rounds.Last().programmation.end.WeekNumber > history.Value.seasonBeginning.WeekNumber;
                 cbi = new ComboBoxItem();
-                cbi.Content = FindResource("str_season").ToString() + " " + (history.Key - 1) + "-" + history.Key;
+                cbi.Content = FindResource("str_season").ToString() + " " + (!civilYearChampionship ? (history.Key - 1) + "-" : "") + history.Key;
                 cbi.Selected += new RoutedEventHandler((s, e) => NewYearSelected(history));
                 cbYear.Items.Add(cbi);
             }
@@ -124,13 +126,13 @@ namespace TheManager_GUI
 
         private List<Match> Journee()
         {
-            return _competition.rounds[_indexTour].GamesDay(_indexJournee);            
+            return _competition.rounds[_indexTour].matches.Count > 0 ? _competition.rounds[_indexTour].GamesDay(_indexJournee) : new List<Match>();
         }
 
         private void Ranking(RankingType rankingType)
         {
-            View vue = FactoryViewRanking.CreateView(_competition.rounds[_indexTour], 1, false, null, false, rankingType);
-            vue.Full(spRanking);
+            View view = FactoryViewRanking.CreateView(_competition.rounds[_indexTour], 1, false, null, false, rankingType);
+            view.Full(spRanking);
         }
 
         private void InitWidgets(bool initMap)

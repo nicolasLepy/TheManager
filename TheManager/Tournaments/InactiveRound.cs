@@ -23,7 +23,8 @@ namespace TheManager
 
         public override Round Copy()
         {
-            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, phases, programmation.initialisation, programmation.end, RandomDrawingMethod.Random, false);
+            Round t = new InactiveRound(name, this.programmation.defaultHour, programmation.initialisation, programmation.end);
+            //Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, phases, programmation.initialisation, programmation.end, RandomDrawingMethod.Random, false);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -32,6 +33,11 @@ namespace TheManager
             foreach (Club c in this.clubs)
             {
                 t.clubs.Add(c);
+            }
+
+            foreach(Qualification q in this.qualifications)
+            {
+                t.qualifications.Add(q);
             }
             return t;
 

@@ -15,7 +15,8 @@ namespace TheManager
     public static class Utils
     {
 
-        public readonly static int beginningYear = 2019;
+        public readonly static int beginningYear = 2021;
+        public readonly static int defaultStartWeek = 25;
         public readonly static string imagesFolderName = "images";
         public readonly static string tournamentLogoFolderName = "tournaments";
         public readonly static string clubLogoFolderName = "clubs";

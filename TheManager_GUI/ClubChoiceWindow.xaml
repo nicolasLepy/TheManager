@@ -49,6 +49,7 @@
 								<Label Name="lbStadium" Style="{StaticResource StyleLabel2}" Content=""/>
 								<Label Name="lbCountry" Style="{StaticResource StyleLabel2}" Content=""/>
 								<Label Name="lbStatus" Style="{StaticResource StyleLabel2}" Content=""/>
+								<Label Name="lbBeginDate" Style="{StaticResource StyleLabel2}" Content=""/>
 							</StackPanel>
 						</Border>
 

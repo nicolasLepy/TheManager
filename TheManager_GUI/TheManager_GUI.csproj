@@ -103,6 +103,7 @@
     <Compile Include="ViewRanking\FactoryViewRanking.cs" />
     <Compile Include="ViewRanking\View.cs" />
     <Compile Include="ViewRanking\ViewRanking.cs" />
+    <Compile Include="ViewRanking\ViewRankingInactive.cs" />
     <Compile Include="ViewRanking\ViewUtils.cs" />
     <Compile Include="ViewRanking\ViewRankingChampionship.cs" />
     <Compile Include="ViewRanking\ViewRankingElimination.cs" />

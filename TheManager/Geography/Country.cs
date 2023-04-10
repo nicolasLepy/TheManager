@@ -464,7 +464,6 @@ namespace TheManager
                     {
                         if (gd.MidWeekGame)
                         {
-                            Console.WriteLine("Remove " + gd.WeekNumber);
                             continentAvailableWeeks.Remove(gd.WeekNumber);
                         }
                     }

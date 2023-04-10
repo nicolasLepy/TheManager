@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -232,6 +233,7 @@ namespace TheManager
 
         public void UpdateStoredAssociationRanking()
         {
+            Console.WriteLine("[UpdateStoredAssociationRanking] " + Name());
             if(_associationRanking != null && _associationRanking.Count > 0)
             {
                 _archivalAssociationRanking.Add(new List<Country>(_associationRanking));
@@ -251,6 +253,11 @@ namespace TheManager
 
         public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c, int year)
         {
+            // Special case when getting clubs of the finished edition (Ireland 2022 for example) for an international tournament not started yet (CL 2023-2024 for example)
+            if(year == Session.Instance.Game.CurrentSeason + 1)
+            {
+                return GetClubsQualifiedForInternationalCompetitions(c, false);
+            }
             Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
 
             int level = 1;
@@ -260,7 +267,6 @@ namespace TheManager
                 Tournament archive = year == Session.Instance.Game.CurrentSeason ? tournament : tournament.previousEditions[year];
                 foreach(Round r in archive.rounds)
                 {
-                    Console.WriteLine(r.clubs.Count);
                     foreach(Club club in r.clubs)
                     {
                         if(club.Country() == c && (!res.ContainsKey(club) || Utils.IsBefore(r.DateInitialisationRound(), res[club].tournament.rounds[res[club].roundId].DateInitialisationRound())))
@@ -277,7 +283,19 @@ namespace TheManager
         }
 
 
-        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c)
+        /// <summary>
+        /// Get at this date the qualified clubs for a country for international tournaments
+        /// </summary>
+        /// <param name="c">Country</param>
+        /// <param name="onlyCurrentLeagueEdition">
+        /// Change only behavior for country that use a different calendar of continental association (Ireland for exemple).
+        /// Qualified clubs of these country are taken from an older league edition and not from the current running division. A new edition is started at this time.
+        /// When this argument is true, show teams that will be qualified for the CL edition when this edition will be finished.
+        /// This argument is ignored when league and continent use the same calendar because the current running league is always the league where teams will be taken by continental association for the next CL edition.
+        /// [TODO] Possible refactor to avoid this parameter     [(round = (last_round).finished ? last_round : previous_edition.rounds.last) could avoid date comparaison but not this parameter]
+        /// </param>
+        /// <returns></returns>
+        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c, bool onlyCurrentLeagueEdition)
         {
 
             Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
@@ -290,11 +308,30 @@ namespace TheManager
             List<Club> registeredClubs = new List<Club>();
             List<Club> leagueClubs = new List<Club>();
             Tournament firstDivisionChampionship = c.FirstDivisionChampionship();
+            //Manage association where calendar is not the same as the continent calendar
+            //Eg. August-May calendar for Europe and Febuary-November calendar for Ireland
+            //If the current first division championship of a country is not finished the day of the continental reset, we take teams from the previous league edition
+            //For the CL 2022-2023, teams are picked from the 2021 Airtriciy League.
+            //TODO: Quid of league finishing in Febuary (if any)
+            if(!onlyCurrentLeagueEdition && !Utils.IsBefore(firstDivisionChampionship.rounds.Last().DateEndRound(), new GameDay(resetWeek, false, 0, 0).ConvertToDateTime()) && firstDivisionChampionship.previousEditions.Count > 0)
+            {
+                var maxValueKey = firstDivisionChampionship.previousEditions.Aggregate((x, y) => x.Key > y.Key ? x : y).Key;
+                firstDivisionChampionship = firstDivisionChampionship.previousEditions[maxValueKey];
+            }
+
             Round championshipRound = firstDivisionChampionship.GetLastChampionshipRound();
             List<Tournament> cups = c.Cups();
             List<Club> cupWinners = new List<Club>();
-            foreach(Tournament cup in cups)
+            for(int i = 0; i < cups.Count; i++)
             {
+                Tournament cup = cups[i];
+                //Same way to manage association where calendar is not the same as the continent calendar
+                if(!onlyCurrentLeagueEdition && !Utils.IsBefore(cup.rounds.Last().DateEndRound(), new GameDay(resetWeek, false, 0, 0).ConvertToDateTime()) && cup.previousEditions.Count > 0)
+                {
+                    var maxValueKey = cup.previousEditions.Aggregate((x, y) => x.Key > y.Key ? x : y).Key;
+                    cup = cup.previousEditions[maxValueKey];
+                }
+                //If the cup is finished
                 if (cup.currentRound == (cup.rounds.Count - 1) && cup.rounds.Last().matches[0].Played)
                 {
                     cupWinners.Add(cup.Winner());
@@ -418,10 +455,9 @@ namespace TheManager
         public void QualifiesClubForContinentalCompetitionNextYear()
         {
             List<Country> countriesRanking = new List<Country>(associationRanking);
-            
             for(int i = 0; i< countriesRanking.Count; i++)
             {
-                Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i]);
+                Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i], false);
                 bool ruleR1 = GetContinentalClubTournament(1) != null ? GetContinentalClubTournament(1).rules.Contains(TournamentRule.OnWinnerQualifiedAdaptClubsQualifications) : false;
                 if(ruleR1)
                 {
