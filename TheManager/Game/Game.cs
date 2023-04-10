@@ -91,8 +91,16 @@ namespace TheManager
     [DataContract(IsReference =true)]
     public class Game
     {
+        /// <summary>
+        /// Current date of the game
+        /// </summary>
         [DataMember]
         private DateTime _date;
+        /// <summary>
+        /// Official begin date of the game
+        /// </summary>
+        [DataMember]
+        private DateTime _beginDate;
         [DataMember]
         private Kernel _kernel;
         [DataMember]
@@ -108,6 +116,7 @@ namespace TheManager
         /// Date of the day
         /// </summary>
         public DateTime date => _date;
+
         public Kernel kernel { get => _kernel; }
         public Options options { get => _options; }
         /// <summary>
@@ -145,6 +154,7 @@ namespace TheManager
 
         public void SetBeginDate(DateTime begin)
         {
+            _beginDate = begin;
             DateTime defaultStart = _date;
 
             DateTime kernelStart = _date;
@@ -707,15 +717,9 @@ namespace TheManager
 
             }
 
-            /*
-            if (date.Month == 6 && date.Day == 15)
-            {
-                UpdateJournalists();
-            }*/
-
             foreach (Country c in kernel.world.GetAllCountries())
             {
-                if(Utils.Modulo(c.resetWeek-1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday)
+                if(Utils.Modulo(c.resetWeek-1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(_beginDate, _date))
                 {
                     UpdateClubs(c);
                     UpdateJournalists(c);
@@ -734,10 +738,6 @@ namespace TheManager
                 }
 
             }
-            /*if(weekNumber == 24 && date.DayOfWeek == DayOfWeek.Wednesday)
-            {
-                UpdateClubs();
-            }*/
 
             //Yearly update of clubs (sponsors, formation facilities, contracts)
             if (weekNumber == kernel.world.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
@@ -756,23 +756,6 @@ namespace TheManager
                     c.UpdateStoredAssociationRanking();
                 }
             }
-
-            /*if(weekNumber == 25 && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25
-            {
-                foreach(Continent c in kernel.world.continents)
-                {
-                    c.QualifiesClubForContinentalCompetitionNextYear();
-                }
-
-            }
-
-            if (weekNumber == 27 && date.DayOfWeek == DayOfWeek.Wednesday)
-            {
-                foreach(Continent c in kernel.world.continents)
-                {
-                    c.UpdateStoredAssociationRanking();
-                }
-            }*/
 
             //Transfers market
             if (options.transfersEnabled)
