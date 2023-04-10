@@ -712,7 +712,6 @@ namespace TheManager
                 {
                     m.Play();
                 }
-
             }
 
             foreach (Country c in kernel.world.GetAllCountries())

@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
 using TheManager.Algorithms;
 using TheManager.Comparators;
 using TheManager.Tournaments;
@@ -226,8 +227,8 @@ namespace TheManager
                 {
                     jour = tournamentRound.programmation.gamesDays[programmationIndice].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
                 }
-                jour = jour.AddHours(tournamentRound.programmation.defaultHour.Hours);
-                jour = jour.AddMinutes(tournamentRound.programmation.defaultHour.Minutes);
+                jour = jour.AddHours(tournamentRound.programmation.defaultHour.Hours - jour.Hour);
+                jour = jour.AddMinutes(tournamentRound.programmation.defaultHour.Minutes - jour.Minute);
 
                 Match game = new Match(club1, club2, jour, false);
                 res.Add(game);
@@ -536,8 +537,8 @@ namespace TheManager
                 //Console.WriteLine("Ajoute une année");
                 day = programmation.gamesDays[0].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
             }
-            day.AddHours(programmation.defaultHour.Hours);
-            day.AddMinutes(programmation.defaultHour.Minutes);
+            day = day.AddHours(programmation.defaultHour.Hours);
+            day = day.AddMinutes(programmation.defaultHour.Minutes);
             //Console.WriteLine("FIN PROGRAMMATION\n");
             return day;
         }
@@ -554,8 +555,8 @@ namespace TheManager
                 {
                     day = programmation.gamesDays[1].ConvertToDateTime(Session.Instance.Game.date.Year + 1);
                 }
-                day.AddHours(programmation.defaultHour.Hours);
-                day.AddMinutes(programmation.defaultHour.Minutes);
+                day = day.AddHours(programmation.defaultHour.Hours);
+                day = day.AddMinutes(programmation.defaultHour.Minutes);
 
                 Match secondRound = new Match(m.away, m.home, day, !round.twoLegs, m);
                 games.Add(secondRound);

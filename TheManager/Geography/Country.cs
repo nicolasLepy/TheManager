@@ -457,7 +457,6 @@ namespace TheManager
             }
             foreach (Tournament t in tournaments)
             {
-                Console.WriteLine("[C] " + t.name);
                 foreach (Round r in t.rounds)
                 {
                     foreach (GameDay gd in r.programmation.gamesDays)
