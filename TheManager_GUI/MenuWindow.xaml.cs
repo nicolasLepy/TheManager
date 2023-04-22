@@ -181,7 +181,7 @@ namespace TheManager_GUI
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             Country fr = Session.Instance.Game.kernel.String2Country("France");
-            foreach(Club c in Session.Instance.Game.kernel.Clubs)
+            foreach (Club c in Session.Instance.Game.kernel.Clubs)
             {
                 //Prepare test cases for retrogradations
                 /*if(c.name.Equals("RC Strasbourg Alsace"))
@@ -226,11 +226,45 @@ namespace TheManager_GUI
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Utils.Debug("Total execution " + elapsedMs + "ms");
-            Console.WriteLine(fr.Name());
+            /*Console.WriteLine(fr.Name());
             foreach(KeyValuePair<Club, Tournament> ra in fr.administrativeRetrogradations)
             {
                 Console.WriteLine(ra.Key.name + " -> " + ra.Value.name);
-            }
+            }*/
+
+            /*
+            foreach(Club c in Session.Instance.Game.kernel.Clubs)
+            {
+                if(c.Country() == fr)
+                {
+                    Console.WriteLine("PRINT GAMES FOR " + c.name);
+                    List<Match> games = c.Games;
+                    games.Sort(new MatchDateComparator());
+                    DateTime currentDate = new DateTime(2000, 1, 1);
+                    foreach (Match m in games)
+                    {
+                        int daysDiff = Utils.DaysNumberBetweenTwoDates(currentDate, m.day);
+                        string alert = "";
+                        switch (daysDiff)
+                        {
+                            case 0:
+                                alert = "||| ";
+                                break;
+                            case 1:
+                                alert = "|| ";
+                                break;
+                            case 2:
+                                alert = "| ";
+                                break;
+                            default:
+                                alert = "";
+                                break;
+                        }
+                        Console.WriteLine(alert + m.day.ToShortDateString() + " [" + m.Tournament + "]" + m.home.name + " - " + m.away.name);
+                        currentDate = m.day;
+                    }
+                }
+            }*/
 
         }
 

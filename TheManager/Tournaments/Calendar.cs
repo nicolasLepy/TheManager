@@ -212,7 +212,7 @@ namespace TheManager
             }
 
             int calendarIndex = 0;
-            for (int i = 0; i < games.Count; i++) //games.Count and not totalNonConferencesGames because some due to algo some games are removed because of ghost team
+            for (int i = 0; i < games.Count; i++) //games.Count and not totalNonConferencesGames because due to algo some games are removed because of ghost team
             {
                 Club club1 = games[i][0];
                 Club club2 = games[i][1];

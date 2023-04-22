@@ -702,6 +702,12 @@ namespace TheManager
             return null;
         }
 
+        public static bool EqualsDate(this DateTime dt1, DateTime dt2)
+        {
+            return dt1.Year == dt2.Year && dt1.Month == dt2.Month && dt1.Day == dt2.Day;
+        }
+
+
         public static int[] GetClustersCapacity(int clubsCount, int clusterCount)
         {
             int[] res = new int[clusterCount];

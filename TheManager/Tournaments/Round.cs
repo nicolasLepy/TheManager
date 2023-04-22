@@ -81,6 +81,8 @@ namespace TheManager
         private GameDay _end;
         [DataMember]
         private int _lastMatchDaysSameDayNumber;
+        [DataMember]
+        private int _gamesPriority;
 
         public Hour defaultHour { get => _defaultHour; }
         public List<GameDay> gamesDays { get => _gamesDays; }
@@ -88,8 +90,9 @@ namespace TheManager
         public GameDay initialisation { get => _initialisation; }
         public GameDay end { get => _end; }
         public int lastMatchDaysSameDayNumber { get => _lastMatchDaysSameDayNumber; }
+        public int gamesPriority => _gamesPriority;
 
-        public RoundProgrammation(Hour hour, List<GameDay> days, List<TvOffset> tvSchedule, GameDay initialisation, GameDay end, int lastDaySameDay)
+        public RoundProgrammation(Hour hour, List<GameDay> days, List<TvOffset> tvSchedule, GameDay initialisation, GameDay end, int lastDaySameDay, int gamesPriority)
         {
             _defaultHour = hour;
             _gamesDays = new List<GameDay>(days);
@@ -97,6 +100,7 @@ namespace TheManager
             _initialisation = initialisation;
             _end = end;
             _lastMatchDaysSameDayNumber = lastDaySameDay;
+            _gamesPriority = gamesPriority;
         }
     }
 
@@ -307,12 +311,12 @@ namespace TheManager
             }
         }
 
-        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound)
+        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
         {
             _name = name;
             _clubs = new List<Club>();
             _matches = new List<Match>();
-            _programmation = new RoundProgrammation(hour, dates, tvOffsets, initialisation, end, lastDaysSameDay);
+            _programmation = new RoundProgrammation(hour, dates, tvOffsets, initialisation, end, lastDaysSameDay, gamesPriority);
             _twoLegs = twoLegs;
             _qualifications = new List<Qualification>();
             _recuperedTeams = new List<RecoverTeams>();
@@ -382,6 +386,13 @@ namespace TheManager
             return res;
         }
         
+        protected void CheckConflicts()
+        {
+            foreach(Match match in _matches)
+            {
+                match.CheckConflicts();
+            }
+        }
         public float GoalsAverage()
         {
             float res = 0;

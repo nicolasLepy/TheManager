@@ -541,6 +541,13 @@ namespace TheManager
             amc.rounds[0].matches.Add(m);
         }
 
+        public void CancelFriendlyGame(Match m)
+        {
+            Tournament amc = String2Tournament("Matchs amicaux");
+            amc.rounds[0].matches.Remove(m);
+        }
+
+
         public void AddMatchCommentary(GameEvent gameEvent, string commentary)
         {
             foreach(MatchEventCommentary cem in _matchCommentaries)

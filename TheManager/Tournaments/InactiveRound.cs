@@ -16,7 +16,7 @@ namespace TheManager
 
         private List<Club> _ranking;
 
-        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end) :base(name,hour,new List<GameDay>(),new List<TvOffset>(),initialisation,end,false,1, 0, -1)
+        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end) :base(name,hour,new List<GameDay>(),new List<TvOffset>(),initialisation,end,false,1, 0, -1, 0)
         {
             _ranking = null;
         }
@@ -66,7 +66,7 @@ namespace TheManager
                 }
             }
             _ranking = null;
-
+            CheckConflicts();
         }
 
         public override List<Match> NextMatchesDay()

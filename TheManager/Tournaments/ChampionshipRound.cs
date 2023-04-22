@@ -13,13 +13,13 @@ namespace TheManager
     public class ChampionshipRound : Round
     {
 
-        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, int lastDaySameDay) : base(name, hour, days, offsets, initialisation,end, twoLegs, phases, lastDaySameDay, keepRankingFromPreviousRound)
+        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, int lastDaySameDay, int gamesPriority) : base(name, hour, days, offsets, initialisation,end, twoLegs, phases, lastDaySameDay, keepRankingFromPreviousRound, gamesPriority)
         {
         }
 
         public override Round Copy()
         {
-            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, phases, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, keepRankingFromPreviousRound, programmation.lastMatchDaysSameDayNumber);
+            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, phases, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, keepRankingFromPreviousRound, programmation.lastMatchDaysSameDayNumber, programmation.gamesPriority);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -74,7 +74,7 @@ namespace TheManager
                 }
             }
             _matches = Calendar.GenerateCalendar(this.clubs, this, twoLegs);
-
+            CheckConflicts();
         }
 
         /// <summary>

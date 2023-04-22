@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -7,9 +8,13 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Input;
+using System.Xml.Linq;
 using LiveCharts.Wpf;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -368,6 +373,11 @@ namespace TheManager
                 time += "°";
                 return time;
             }
+        }
+
+        public override string ToString()
+        {
+            return home.name + "-" + away.name + " (" + Tournament.shortName + ")";
         }
 
         private int[] GetCumulativeScores()
@@ -796,6 +806,171 @@ namespace TheManager
                 {
                     dateBase = dateBase.AddDays(1);
                 }
+            }
+            CheckConflicts();
+        }
+
+        /// <summary>
+        /// Check match date conflicts with other games and reschedule the game if needed
+        /// Rules :
+        /// - If the game is in conflict with another game but this game has a higher priority, the other game is rescheduled
+        /// - If not, check every free dates between the day of the game and the end of the round
+        /// - If no free dates are available but if there is a scheduled game with a lower priority between the date of the game and the end of the round, reschedule this other game.
+        /// </summary>
+        public void CheckConflicts()
+        {
+            int gamePriority = Round.programmation.gamesPriority;
+            List<Match> homeGames = home.Games;
+            homeGames.Sort(new MatchDateComparator());
+            List<Match> awayGames = away.Games;
+            awayGames.Sort(new MatchDateComparator());
+
+            List<DateTime> homeBestDates = new List<DateTime>();
+            List<DateTime> awayBestDates = new List<DateTime>();
+            //Store games with lower priority and the date where this game could be played instead
+            Dictionary<Match, DateTime> homePossibleDates = new Dictionary<Match, DateTime>();
+            Dictionary<Match, DateTime> awayPossibleDates = new Dictionary<Match, DateTime>();
+
+            /*
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
+            Tournament cdf = fr.Cup(1);
+            Tournament cdl = fr.Cup(2);
+            if (Tournament == cdf || Tournament == cdl)
+            {
+                Console.WriteLine("[CC " + Tournament.shortName + "]");
+                Console.WriteLine("Check conflit of " + home.name + "-" + away.name + " (" + Round.Tournament.name + ", " + Round.name + ", priorité de "+ gamePriority + ") le " + day.ToShortDateString());
+            }*/
+
+            DateTime baseDay = day;
+            DateTime dt = day;
+            DateTime dtEnd = Round.DateEndRound();
+            bool findCommonFreeDate = false;
+            //Check for free dates and games with lower priority between game date and end of the round
+            while (!Utils.CompareDates(dt, dtEnd) && !findCommonFreeDate)
+            {
+                bool homeFreeDate = true;
+                
+                foreach(Match hMatch in homeGames)
+                {
+                    if(hMatch != this)
+                    {
+                        //If this game is too close
+                        if (Utils.DaysNumberBetweenTwoDates(hMatch.day, dt) < 3)
+                        {
+                            int hMatchPriority = hMatch.Round.programmation.gamesPriority;
+
+                            //If this game is scheduled the same day and his priority is lower, this game will be rescheduled and let the priority to the current game so the date is always free
+                            if(!dt.EqualsDate(baseDay) || hMatchPriority >= gamePriority)
+                            {
+                                homeFreeDate = false;
+                            }
+                            //Keep this game in memory because it has a lower priority
+                            if (hMatchPriority < gamePriority && hMatch.day.EqualsDate(dt))
+                            {
+                                if (!homePossibleDates.ContainsKey(hMatch))
+                                {
+                                    homePossibleDates.Add(hMatch, dt);
+                                }
+                            }
+
+                        }
+                    }
+                }
+                if (homeFreeDate)
+                {
+                    homeBestDates.Add(dt);
+                }
+                //Same logic for away games
+                bool awayFreeDate = true;
+                foreach (Match aMatch in awayGames)
+                {
+                    if(aMatch != this)
+                    {
+                        if (Utils.DaysNumberBetweenTwoDates(aMatch.day, dt) < 3)
+                        {
+                            int aMatchPriority = aMatch.Round.programmation.gamesPriority;
+                            if (!dt.EqualsDate(baseDay) || aMatchPriority >= gamePriority)
+                            {
+                                awayFreeDate = false;
+                            }
+                            if (aMatchPriority < gamePriority && aMatch.day.EqualsDate(dt))
+                            {
+                                if (!awayPossibleDates.ContainsKey(aMatch))
+                                {
+                                    awayPossibleDates.Add(aMatch, dt);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (awayFreeDate)
+                {
+                    awayBestDates.Add(dt);
+                }
+                findCommonFreeDate = awayFreeDate && homeFreeDate;
+
+                dt = dt.AddDays(1);
+            }
+
+            //Check the first common free date between the two clubs
+            DateTime bestDate = new DateTime(2000, 1, 1);
+            for(int i = 0; i < homeBestDates.Count && bestDate.Year == 2000; i++)
+            {
+                if (awayBestDates.Contains(homeBestDates[i]))
+                {
+                    bestDate = homeBestDates[i];
+                }
+            }
+
+            //If a common free date is found
+            if (bestDate.Year > 2000)
+            {
+                day = bestDate;
+                //In the case where a game with a lower priority was at the same date of this game, this game is rescheduled
+                foreach(Match hGame in homeGames)
+                {
+                    if (hGame != this && Utils.DaysNumberBetweenTwoDates(hGame.day, bestDate) < 3)
+                    {
+                        hGame.CheckConflicts();
+                    }
+                }
+                //Same logic with away games
+                foreach (Match aGame in awayGames)
+                {
+                    if (aGame != this && Utils.DaysNumberBetweenTwoDates(aGame.day, bestDate) < 3)
+                    {
+                        aGame.CheckConflicts();
+                    }
+                }
+            }
+            else
+            {
+                //In the case of no common free dates are found, this game take the place of a game with a lower priority
+                bool find = false;
+
+                foreach (KeyValuePair<Match, DateTime> kvpHome in homePossibleDates)
+                {
+                    if (!find && awayBestDates.Contains(kvpHome.Value))
+                    {
+                        find = true;
+                        day = kvpHome.Value;
+                        kvpHome.Key.CheckConflicts(); //Reschedule the other game
+                    }
+                }
+                //Same logic for away games if a common game is still not found
+                foreach (KeyValuePair<Match, DateTime> kvpAway in awayPossibleDates)
+                {
+                    if (!find && homeBestDates.Contains(kvpAway.Value))
+                    {
+                        find = true;
+                        day = kvpAway.Value;
+                        kvpAway.Key.CheckConflicts();
+                    }
+                }
+            }
+            if(!Utils.CompareDates(baseDay, day))
+            {
+                Utils.Debug("[" + Tournament.shortName + "] " + home.name + "-" + away.name + " reprogrammé le " + day.ToShortDateString());
             }
         }
 
@@ -1358,25 +1533,6 @@ namespace TheManager
             {
                 lookbacks = MatchIteration(a, b, 21, 26, 208, 213);
             }
-            /*if (diff < 1) IterationMatch(a, b, 1, 6, 8, 13);
-            if (diff >= 1 && diff <= 2) IterationMatch(a, b, 1, 7, 8, 13);
-            if (diff >= 3 && diff <= 4) IterationMatch(a, b, 1, 8, 9, 14);
-            if (diff >= 5 && diff <= 7) IterationMatch(a, b, 1, 9, 10, 14);
-            if (diff >= 8 && diff <= 10) IterationMatch(a, b, 1, 10, 12, 16);
-            if (diff >= 11 && diff <= 14) IterationMatch(a, b, 1, 11, 15, 19);
-            if (diff >= 15 && diff <= 18) IterationMatch(a, b, 1, 12, 17, 21);
-            if (diff >= 19 && diff <= 23) IterationMatch(a, b, 1, 13, 20, 22);
-            if (diff >= 24 && diff <= 28) IterationMatch(a, b, 1, 14, 23, 25);
-            if (diff >= 29 && diff <= 33) IterationMatch(a, b, 1, 16, 23, 25);
-            if (diff >= 34 && diff <= 40) IterationMatch(a, b, 1, 18, 23, 24);
-            if (diff >= 40 && diff <= 47) IterationMatch(a, b, 1, 20, 23, 24);
-            if (diff >= 48 && diff <= 55) IterationMatch(a, b, 1, 22, 23, 24);
-            if (diff >= 55 && diff <= 63) IterationMatch(a, b, 1, 24, 25, 26);
-            if (diff >= 64 && diff <= 70) IterationMatch(a, b, 1, 26, 40, 40);
-            if (diff >= 71 && diff <= 79) IterationMatch(a, b, 1, 36, 40, 40);
-            if (diff >= 80 && diff <= 89) IterationMatch(a, b, 1, 39, 40, 40);
-            if (diff >= 90 && diff <= 100) IterationMatch(a, b, 1, 43, 44, 44);*/
-
             return lookbacks;
         }
 

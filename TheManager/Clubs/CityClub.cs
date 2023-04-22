@@ -578,10 +578,11 @@ namespace TheManager
                     begin = begin.AddDays(Session.Instance.Random(-30, -10));
                     begin = begin.AddHours(Session.Instance.Random(12, 22));
                     Match game = new Match(this, adv, begin, false);
+                    Session.Instance.Game.kernel.AddFriendlyGame(game);
                     game.Reprogram(0);
-                    if (Utils.CompareDates(game.day, begin) && game.day.CompareTo(Session.Instance.Game.date.AddDays(1)) > 0 && adv != this)
+                    if (!(Utils.CompareDates(game.day, begin) && game.day.CompareTo(Session.Instance.Game.date.AddDays(1)) > 0 && adv != this))
                     {
-                        Session.Instance.Game.kernel.AddFriendlyGame(game);
+                        Session.Instance.Game.kernel.CancelFriendlyGame(game);
                     }
                 }
             }

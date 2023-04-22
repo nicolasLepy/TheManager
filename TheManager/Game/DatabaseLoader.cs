@@ -945,12 +945,16 @@ namespace TheManager
                                     gd.DayOffset = offset;
                                 }
                             }
-
+                            int gamesPriority = 0;
+                            if(e3.Attribute("gamesPriority") != null)
+                            {
+                                gamesPriority = int.Parse(e3.Attribute("gamesPriority").Value);
+                            }
                             if (type == "championnat")
                             {
                                 int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
 
-                                round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, twoLegged, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour);
+                                round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, twoLegged, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
                             }
                             else if (type == "elimination")
                             {
@@ -964,7 +968,7 @@ namespace TheManager
                                 {
                                     noRandomDrawing = e3.Attribute("noRandomDrawing").Value == "true";
                                 }
-                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, phases, initialisationDate, endDate, method, noRandomDrawing);
+                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, phases, initialisationDate, endDate, method, noRandomDrawing, gamesPriority);
                             }
                             else if (type == "poules")
                             {
@@ -978,7 +982,7 @@ namespace TheManager
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday);
+                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1491,7 +1495,7 @@ namespace TheManager
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
                             GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
-                            Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, RandomDrawingMethod.Random, false);
+                            Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                             round.rules.Add(Rule.OnlyFirstTeams);
                             round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
@@ -1535,7 +1539,7 @@ namespace TheManager
                             GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
                             GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
                             GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
-                            Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false);
+                            Round round = new KnockoutRound(name, hour, new List<GameDay>() { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
                             round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                             round.rules.Add(Rule.OnlyFirstTeams);
                             if (j > 2)
