@@ -645,7 +645,6 @@ namespace TheManager
 
             List<Match> toPlay = new List<Match>();
             List<Match> clubMatchs = new List<Match>();
-
             foreach (Media m in _kernel.medias)
             {
                 m.FreeJournalists();
@@ -846,7 +845,7 @@ namespace TheManager
                 totalElo += c.elo;
             }
             Console.WriteLine("Elo Sum = " + totalElo);*/
-
+            
             return clubMatchs;
         }
     }

@@ -595,7 +595,6 @@ namespace TheManager
         /// </summary>
         public void AddTeamsToRecover()
         {
-
             for (int i = 0; i< _recuperedTeams.Count; i++)
             {
                 RecoverTeams re = _recuperedTeams[i];
@@ -669,10 +668,12 @@ namespace TheManager
 
         public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
         {
+            Console.WriteLine("[" + Tournament.name + "] recover + " + number + " teams, onlyfirstteams -> " + onlyFirstTeams);
             List<Club> roundClubs = new List<Club>(_clubs);
-            
+            Console.WriteLine(roundClubs.Count + " clubs in the round");
+
             //If we have decided to have only first teams, we delete all reserves teams of the list
-            if(onlyFirstTeams)
+            if (onlyFirstTeams)
             {
                 List<Club> toDelete = new List<Club>();
                 foreach (Club c in roundClubs)
@@ -698,9 +699,11 @@ namespace TheManager
                 case RecuperationMethod.Best:
                     try
                     {
+                        Console.WriteLine("sort clubs");
                         roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
+                        Console.WriteLine("sorted clubs");
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         Utils.Debug("Erreur sort Club_Niveau_Comparator pour " + name);
                     }
@@ -759,6 +762,7 @@ namespace TheManager
             }
             List<Club> res = new List<Club>();
 
+            Console.WriteLine("get " + number + " clubs");
             for (int i = 0; i < number; i++)
             {
                 res.Add(roundClubs[i]);

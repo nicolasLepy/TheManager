@@ -145,7 +145,6 @@ namespace TheManager
                     r.AddTeamsToRecover();
                 }
             }
-
             if(_noRandomDrawing)
             {
                 Round previousRound = Tournament.rounds[Tournament.rounds.IndexOf(this) - 1];
