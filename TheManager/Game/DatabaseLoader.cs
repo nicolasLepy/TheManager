@@ -1010,6 +1010,14 @@ namespace TheManager
                             {
                                 round = new InactiveRound(nomTour, String2Hour(hourByDefault), initialisationDate, endDate);
                             }
+                            foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
+                            {
+                                int administrativeId = int.Parse(e4.Attribute("id").Value);
+                                AdministrativeDivision ad = _kernel.GetAdministrativeDivision(administrativeId);
+                                int teamsCount = int.Parse(e4.Attribute("teams").Value);
+                                round.teamsByAdministrativeDivision.Add(ad, teamsCount);
+                            }
+
                             c.rounds.Add(round);
                             foreach (XElement e4 in e3.Descendants("Club"))
                             {
@@ -1430,6 +1438,24 @@ namespace TheManager
             _kernel.NationalTeamsCall();
         }
 
+        /// <summary>
+        /// Split each cup with regional qualification to multiple regional competitions
+        /// </summary>
+        public void CreateRegionalPathForCups()
+        {
+            foreach(Continent ct in Session.Instance.Game.kernel.world.continents)
+            {
+                foreach(Country c in ct.countries)
+                {
+                    List<Tournament> ts = new List<Tournament>(c.Tournaments());
+                    foreach(Tournament t in ts)
+                    {
+                        t.CreateRegionalPathForCup();
+                    }
+                }
+            }
+
+        }
         public void GenerateNationalCup()
         {
             foreach(Continent ct in Session.Instance.Game.kernel.world.continents)

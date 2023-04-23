@@ -147,7 +147,7 @@ namespace TheManager
         /// <param name="methode"></param>
         /// <param name="onlyFirstTeams"></param>
         /// <returns></returns>
-        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
+        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, AdministrativeDivision associationFilter)
         {
             List<NationalTeam> nationalsTeams = new List<NationalTeam>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)

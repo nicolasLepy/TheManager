@@ -781,8 +781,11 @@ namespace TheManager
                     }
                 }
 
-                KMeansClustering kmeans = new KMeansClustering(allClubs, groupsNumber, clubsToDispatch);
-                hats = kmeans.CreateClusters();
+                if(allClubs.Count > 0)
+                {
+                    KMeansClustering kmeans = new KMeansClustering(allClubs, groupsNumber, clubsToDispatch);
+                    hats = kmeans.CreateClusters();
+                }
             }
             //Random
             else

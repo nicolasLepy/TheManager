@@ -8,7 +8,15 @@ namespace TheManager
 {
     public interface IRecoverableTeams
     {
-        List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams);
+        /// <summary>
+        /// Get teams from a source (a round or a continent)
+        /// </summary>
+        /// <param name="number">Number of teams to retrieve</param>
+        /// <param name="method">How to select these teams</param>
+        /// <param name="onlyFirstTeams">Remove reserves teams from selection</param>
+        /// <param name="associationFilter">Only select teams from a defined region/district if not null</param>
+        /// <returns></returns>
+        List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, AdministrativeDivision associationFilter);
         int CountWithoutReserves();
     }
 }

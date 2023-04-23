@@ -261,6 +261,13 @@ namespace TheManager
         [DataMember]
         protected int _keepRankingFromPreviousRound;
 
+        /// <summary>
+        /// Qualified
+        /// Used for tournaments like French Cup where every regions sent a defined number of teams at the seventh round.
+        /// </summary>
+        [DataMember]
+        protected Dictionary<AdministrativeDivision, int> _teamsByAdministrativeDivision;
+
 
         public string name { get => _name; }
         public List<Club> clubs { get => _clubs; }
@@ -274,6 +281,7 @@ namespace TheManager
         public List<RecoverTeams> baseRecuperedTeams { get => _baseRecuperedTeams; }
         public List<Rule> rules { get => _rules; }
         public List<Prize> prizes { get => _prizes; }
+        public Dictionary<AdministrativeDivision, int> teamsByAdministrativeDivision => _teamsByAdministrativeDivision;
 
         public Tournament Tournament
         {
@@ -325,6 +333,7 @@ namespace TheManager
             _prizes = new List<Prize>();
             _phases = phases;
             _keepRankingFromPreviousRound = keepRankingFromPreviousRound;
+            _teamsByAdministrativeDivision = new Dictionary<AdministrativeDivision, int>();
         }
 
 
@@ -366,6 +375,23 @@ namespace TheManager
             foreach(Club c in _clubs)
             {
                 if(c as ReserveClub == null)
+                {
+                    total++;
+                }
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Give the number of first team in the round of a specific association
+        /// </summary>
+        /// <returns></returns>
+        public int CountWithoutReserves(AdministrativeDivision administrativeDivision)
+        {
+            int total = 0;
+            foreach (Club c in _clubs)
+            {
+                if (c as ReserveClub == null && administrativeDivision.ContainsAdministrativeDivision(c.AdministrativeDivision()))
                 {
                     total++;
                 }
@@ -614,11 +640,10 @@ namespace TheManager
                 {
                     teamsToGrab = re.Source.CountWithoutReserves();
                 }
-                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams)))
+                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Tournament.parent.Key))
                 {
                     _clubs.Add(c);
                 }
-
             }
         }
 
@@ -666,7 +691,7 @@ namespace TheManager
         /// <returns>Matches of game day j</returns>
         public abstract List<Match> GamesDay(int journey);
 
-        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams)
+        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, AdministrativeDivision associationFilter)
         {
             List<Club> roundClubs = new List<Club>(_clubs);
 
@@ -687,7 +712,24 @@ namespace TheManager
                     roundClubs.Remove(c);
                 }
             }
+            //If a association filter is defined, keep only clubs from this association
+            if(associationFilter != null)
+            {
+                List<Club> toDelete = new List<Club>();
+                foreach (Club c in roundClubs)
+                {
+                    if (!associationFilter.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                    {
+                        toDelete.Add(c);
+                    }
+                }
 
+                foreach (Club c in toDelete)
+                {
+                    roundClubs.Remove(c);
+                }
+
+            }
 
             switch (method)
             {

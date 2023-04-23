@@ -177,6 +177,7 @@ namespace TheManager_GUI
                 cbdd.LoadGamesComments();
                 cbdd.LoadRules();
                 cbdd.GenerateNationalCup();
+                cbdd.CreateRegionalPathForCups();
 
                 pbLoading.Value = 98;
                 lbCreationPartie.Content = "Chargement des archives";

@@ -39,6 +39,8 @@ namespace TheManager
             {
                 t.qualifications.Add(q);
             }
+            t.rules.AddRange(rules);
+
             return t;
 
         }

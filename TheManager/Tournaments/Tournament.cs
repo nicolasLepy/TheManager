@@ -115,6 +115,11 @@ namespace TheManager
         private List<TournamentRule> _rules;
         [DataMember]
         private ClubStatus _status;
+        /// <summary>
+        /// Case of regional cup tournament (French cup)
+        /// </summary>
+        [DataMember]
+        private KeyValuePair<AdministrativeDivision, Tournament> _parent;
 
         public string name { get => _name; }
         public Color color => _color;
@@ -168,6 +173,8 @@ namespace TheManager
         /// </summary>
         public List<TournamentRule> rules => _rules;
 
+        public KeyValuePair<AdministrativeDivision, Tournament> parent => _parent;
+
         public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status)
         {
             _rounds = new List<Round>();
@@ -187,6 +194,7 @@ namespace TheManager
             _extraRounds = 0;
             _rules = new List<TournamentRule>();
             _status = status;
+            _parent = new KeyValuePair<AdministrativeDivision, Tournament>();
         }
 
         public void InitializeQualificationsNextYearsLists(int count = -1)
@@ -397,7 +405,7 @@ namespace TheManager
             }
             else if(rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || rt.Method == RecuperationMethod.StatusPro)
             {
-                res = rt.Source.RetrieveTeams(-1, rt.Method, false).Count;
+                res = rt.Source.RetrieveTeams(-1, rt.Method, false, null).Count;
             }
             return res;
         }
@@ -580,22 +588,66 @@ namespace TheManager
             }
         }
 
+
+        /// <summary>
+        /// Split cup between final phase and multiple qualifications tournaments for each region
+        /// Example : French Cup before/after 7th round
+        /// </summary>
+        public void CreateRegionalPathForCup()
+        {
+            int idRoundPivot = -1;
+            //Find round where qualified teams depends of regions
+            for(int i = 0; i < rounds.Count && idRoundPivot == -1; i++)
+            {
+                Round r = rounds[i];
+                if(r.teamsByAdministrativeDivision.Count > 0)
+                {
+                    idRoundPivot = i;
+                }
+            }
+            if(idRoundPivot > -1)
+            {
+                Round pivotRound = rounds[idRoundPivot];
+                foreach (KeyValuePair<AdministrativeDivision, int> kvp in pivotRound.teamsByAdministrativeDivision)
+                {
+                    //Copie du tournoi est créée
+                    Tournament regionalTournament = CopyForArchive(false);
+                    regionalTournament.currentRound = -1;
+                    regionalTournament._name = string.Format("{0} - {1}", regionalTournament, kvp.Key.name);
+                    regionalTournament._level = 100; //Un niveau exagérément élevé est mis pour éviter d'aller chercher les vainqueurs de ces compétitions pour les places européennes par exemple
+                    regionalTournament._parent = new KeyValuePair<AdministrativeDivision, Tournament>(kvp.Key, this); //Cette compétition dépend du tournoi principal
+                    regionalTournament.InitializeQualificationsNextYearsLists();
+                    for (int id = rounds.Count-1; id >= idRoundPivot; id--)
+                    {
+                        regionalTournament.rounds.RemoveAt(id);
+                    }
+                    //Le dernier tour doit qualifier à la compétition principale, CopyForArchive ayant reporté les autres qualifications à la nouvelle compétition
+                    for (int i = 0; i < regionalTournament.rounds.Last().qualifications.Count; i++)
+                    {
+                        Qualification qualification = regionalTournament.rounds.Last().qualifications[i];
+                        if (qualification.tournament == regionalTournament && !qualification.isNextYear)
+                        {
+                            regionalTournament.rounds.Last().qualifications[i] = new Qualification(qualification.ranking, qualification.roundId, this, qualification.isNextYear, qualification.qualifies);
+                        }
+                    }
+                    Session.Instance.Game.kernel.LocalisationTournament(this).Tournaments().Add(regionalTournament);
+                    regionalTournament.UpdateCupQualifications();
+                }
+                //Dans un premier temps pour éviter les rework qualifs et qualifs outre-mer ne pas supprimer les premiers tours mais les équipes qui y rentrent
+                for(int i = 0; i < idRoundPivot; i++)
+                {
+                    rounds[i].recuperedTeams.Clear();
+                }
+            }
+        }
+
         /// <summary>
         /// Update national cup qualifications due to annual league structure modifications
         /// </summary>
         public void UpdateCupQualifications()
         {
-
             //Sauvegarde en mémoire les qualifications en coupe par défaut, elles pourraient être amenées à changer en cas de modification de la structure de la ligue
-            bool alreadyStoredRecuperedTeams = false;
-            foreach(Round r in _rounds)
-            {
-                if(r.baseRecuperedTeams.Count > 0)
-                {
-                    alreadyStoredRecuperedTeams = true;
-                }
-            }
-            if(!alreadyStoredRecuperedTeams)
+            if(!AlreadyStoredRecuperedTeams())
             {
                 foreach(Round r in _rounds)
                 {
@@ -603,12 +655,24 @@ namespace TheManager
                 }
             }
 
-            // Les qualifications de chaque ligue à chaque tour sont remises par défaut
-            foreach(Round r in _rounds)
+            // Les qualifications de chaque ligues à chaque tour sont remises par défaut
+            foreach (Round r in _rounds)
             {
                 r.recuperedTeams.Clear();
                 r.recuperedTeams.AddRange(new List<RecoverTeams>(r.baseRecuperedTeams));
             }
+
+            //[Section probablement inutile car les compétitions régionales sont créées en début de partie et sont gardées en mémoire]
+            //Supprime les tournois régionaux
+            //TODO: Doit sauvegarder les matchs des tournois régionaux dans l'édition principale de la coupe.
+            /*for (int i = Session.Instance.Game.kernel.LocalisationTournament(this).Tournaments().Count - 1; i >= 0; i--)
+            {
+                if (Session.Instance.Game.kernel.LocalisationTournament(this).Tournaments()[i].parent.Value == this)
+                {
+                    Session.Instance.Game.kernel.LocalisationTournament(this).Tournaments().RemoveAt(i);
+                }
+            }
+            CreateRegionalPathForCup();*/
 
             bool leagueCupLike = false;
             foreach(Round r in _rounds)
@@ -634,6 +698,7 @@ namespace TheManager
                     teamsFromOutsideLeagueSystem[i] = 0;
                 }
 
+                //Garde en mémoire les équipes qui participent à la compétition sans participer aux ligues (cas des équipes outre-mer en coupe de France) afin de garder leurs places.
                 foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
                 {
                     if (!t.IsInternational() && t != this)
@@ -650,22 +715,42 @@ namespace TheManager
                         }
                     }
                 }
+                foreach(Round r in this.rounds)
+                {
+                    foreach (KeyValuePair<AdministrativeDivision, int> regionalPath in r.teamsByAdministrativeDivision)
+                    {
+                        teamsFromOutsideLeagueSystem[rounds.IndexOf(r)] += regionalPath.Value;
+                    }
+                }
 
-                // Obtient le nombre d'équipes une fois toutes les ligues entrées dans la compétition
+                //Obtient le nombre d'équipes une fois toutes les ligues entrées dans la compétition (64 en Coupe de France)
+                //Dans le cas d'une phase qualificative régionale avant la phase nationale, 
+                int teamsAtTheLastRound = 2;
+                if(parent.Value != null)
+                {
+                    AdministrativeDivision concernedRegion = parent.Key;
+                    foreach(Round r in parent.Value.rounds)
+                    {
+                        if(r.teamsByAdministrativeDivision.ContainsKey(concernedRegion))
+                        {
+                            teamsAtTheLastRound = r.teamsByAdministrativeDivision[concernedRegion] * 2;
+                        }
+                    }
+                }
+
                 int teamsKnockout = 0;
                 int j = 0;
                 for (int i = _rounds.Count - 1; i >= 0 && teamsKnockout == 0; i--)
                 {
-                    j++;
                     Round r = _rounds[i];
                     if (r.recuperedTeams.Count > 0)
                     {
-                        teamsKnockout = (int)Math.Pow(2, j);
+                        teamsKnockout = teamsAtTheLastRound * (int)Math.Pow(2, j);
                     }
+                    j++;
                 }
 
-
-                //Crée la liste qui résume à quel moment chaque ligue entre dans la compétition et combien d'équipes entrent par ligue
+                //Crée la liste qui résume à quel moment chaque division entre dans la compétition et combien d'équipes entrent par division
                 foreach (Round r in _rounds)
                 {
                     List<RecoverTeams> recovers = new List<RecoverTeams>(r.recuperedTeams);
@@ -674,7 +759,7 @@ namespace TheManager
                         Round rtRound = rt.Source as Round;
                         if (rtRound != null)
                         {
-                            int clubsCount = rtRound.CountWithoutReserves();
+                            int clubsCount = _parent.Value == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(_parent.Key);
                             RecoverTeams otherRecoverTeams = GetOtherRecoverTeamsOfRound(rt);
                             if (otherRecoverTeams.Source != null)
                             {
@@ -687,6 +772,7 @@ namespace TheManager
 
                 //Trie la liste en fonction du niveau de la compétition (et si jamais une ligue entre dans la compétition en deux fois avec meilleurs/plus mauvaises équipes)
                 leagueCupApparitions.Sort((a, b) => (a.tournament.level != b.tournament.level ? a.tournament.level - b.tournament.level : (a.teams > 0 ? -1 : 0)));
+
 
                 int roundStart = 0;
                 foreach (LeagueCupApparition lca in leagueCupApparitions)
@@ -915,12 +1001,27 @@ namespace TheManager
 
         }
 
+        private bool AlreadyStoredRecuperedTeams()
+        {
+            bool alreadyStoredRecuperedTeams = false;
+            foreach (Round r in _rounds)
+            {
+                if (r.baseRecuperedTeams.Count > 0)
+                {
+                    alreadyStoredRecuperedTeams = true;
+                }
+            }
+            return alreadyStoredRecuperedTeams;
+        }
+
         public Tournament CopyForArchive(bool makeRoundsInactive)
         {
             Tournament copy = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status);
             foreach (Round r in rounds)
             {
                 Round roundCopy = r.Copy();
+
+                roundCopy.recuperedTeams.AddRange(AlreadyStoredRecuperedTeams() ? r.baseRecuperedTeams : r.recuperedTeams);
                 if(makeRoundsInactive)
                 {
                     roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end);
