@@ -307,19 +307,57 @@ namespace TheManager
             List<Club> registeredClubs = new List<Club>();
             List<Club> leagueClubs = new List<Club>();
 
-            Tournament firstDivisionChampionship = c.FirstDivisionChampionship();
-            //Manage association where calendar is not the same as the continent calendar
-            //Eg. August-May calendar for Europe and Febuary-November calendar for Ireland
-            //If the current first division championship of a country is not finished the day of the continental reset, we take teams from the previous league edition
-            //For the CL 2022-2023, teams are picked from the 2021 Airtriciy League.
-            //TODO: Quid of league finishing in Febuary (if any)
-            if(!onlyCurrentLeagueEdition && !Utils.IsBefore(firstDivisionChampionship.rounds.Last().DateEndRound(), new GameDay(resetWeek, false, 0, 0).ConvertToDateTime()) && firstDivisionChampionship.previousEditions.Count > 0)
+            int leagueLevel = 1;
+            Tournament leagueDivisionChampionship = c.League(leagueLevel);
+            while(leagueDivisionChampionship != null)
             {
-                var maxValueKey = firstDivisionChampionship.previousEditions.Aggregate((x, y) => x.Key > y.Key ? x : y).Key;
-                firstDivisionChampionship = firstDivisionChampionship.previousEditions[maxValueKey];
+                //Manage association where calendar is not the same as the continent calendar
+                //Eg. August-May calendar for Europe and Febuary-November calendar for Ireland
+                //If the current first division championship of a country is not finished the day of the continental reset, we take teams from the previous league edition
+                //For the CL 2022-2023, teams are picked from the 2021 Airtriciy League.
+                //TODO: Quid of league finishing in Febuary (if any)
+                if (!onlyCurrentLeagueEdition && !Utils.IsBefore(leagueDivisionChampionship.rounds.Last().DateEndRound(), new GameDay(resetWeek, false, 0, 0).ConvertToDateTime()) && leagueDivisionChampionship.previousEditions.Count > 0)
+                {
+                    var maxValueKey = leagueDivisionChampionship.previousEditions.Aggregate((x, y) => x.Key > y.Key ? x : y).Key;
+                    leagueDivisionChampionship = leagueDivisionChampionship.previousEditions[maxValueKey];
+                }
+
+                Round championshipRound = leagueDivisionChampionship.GetLastChampionshipRound();
+                if (championshipRound as ChampionshipRound != null)
+                {
+                    leagueClubs.AddRange((championshipRound as ChampionshipRound).Ranking());
+                }
+                if (championshipRound as InactiveRound != null)
+                {
+                    leagueClubs.AddRange((championshipRound as InactiveRound).Ranking());
+                }
+                if (championshipRound as GroupsRound != null) //Only to store clubs from lower division (uncommon to have a league playing as groups without final phase)
+                {
+                    List<Club> roundClubs = new List<Club>(championshipRound.clubs);
+                    if (leagueLevel == 1 || roundClubs.Count < 60)
+                    {
+                        roundClubs.Sort(new ClubRankingComparator(championshipRound.matches));
+                    }
+                    leagueClubs.AddRange(roundClubs);
+                }
+
+                //Get final phase clubs tree from first league in case of
+                if(leagueLevel == 1)
+                {
+                    List<Club> finalPhasesClubs = leagueDivisionChampionship.GetFinalPhasesClubs();
+                    if (finalPhasesClubs.Count > 0)
+                    {
+                        for (int j = finalPhasesClubs.Count - 1; j >= 0; j--)
+                        {
+                            leagueClubs.Remove(finalPhasesClubs[j]);
+                            leagueClubs.Insert(0, finalPhasesClubs[j]);
+                        }
+                    }
+                }
+
+                leagueDivisionChampionship = c.League(++leagueLevel);
             }
 
-            Round championshipRound = firstDivisionChampionship.GetLastChampionshipRound();
             List<Tournament> cups = c.Cups();
             List<Club> cupWinners = new List<Club>();
             for(int i = 0; i < cups.Count; i++)
@@ -340,54 +378,6 @@ namespace TheManager
                 {
                     cupWinners.Add(null);
                 }
-            }
-
-            if (championshipRound as ChampionshipRound != null)
-            {
-                leagueClubs = (championshipRound as ChampionshipRound).Ranking();
-            }
-            if (championshipRound as InactiveRound != null)
-            {
-                leagueClubs = (championshipRound as InactiveRound).Ranking();
-            }
-            if (championshipRound as GroupsRound != null) //TODO: No sense to do this, no tournament finish on a group round (maybe if one day Top and Bottom championships are merged in a group round phase)
-            {
-                leagueClubs = new List<Club>(championshipRound.clubs);
-                leagueClubs.Sort(new ClubRankingComparator(championshipRound.matches));
-            }
-            List<Club> finalPhasesClubs = firstDivisionChampionship.GetFinalPhasesClubs();
-            if (finalPhasesClubs.Count > 0)
-            {
-                for (int j = finalPhasesClubs.Count - 1; j >= 0; j--)
-                {
-                    leagueClubs.Remove(finalPhasesClubs[j]);
-                    leagueClubs.Insert(0, finalPhasesClubs[j]);
-                }
-            }
-            //Add teams from lower divisions
-            int leagueLevel = 2;
-            Tournament league = c.League(leagueLevel);
-            while(league != null)
-            {
-                Round r = league.GetLastChampionshipRound();
-                if (r as ChampionshipRound != null)
-                {
-                    leagueClubs.AddRange((r as ChampionshipRound).Ranking());
-                }
-                if (r as InactiveRound != null)
-                {
-                    leagueClubs.AddRange((r as InactiveRound).Ranking());
-                }
-                if (r as GroupsRound != null) //TODO: No sense to do this, no tournament finish on a group round (maybe if one day Top and Bottom championships are merged in a group round phase)
-                {
-                    List<Club> roundClubs = new List<Club>(r.clubs);
-                    if(leagueLevel == 1 || roundClubs.Count < 60)
-                    {
-                        roundClubs.Sort(new ClubRankingComparator(r.matches));
-                    }
-                    leagueClubs.AddRange(roundClubs);
-                }
-                league = c.League(++leagueLevel);
             }
 
             //Rule R1 : The association of the winner of a continental tournament get one additionnal place because the winner is automatically qualified
