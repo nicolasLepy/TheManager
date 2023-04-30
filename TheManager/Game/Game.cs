@@ -16,6 +16,8 @@ using System.Collections;
 using System.Reflection;
 using Newtonsoft.Json;
 using System.Text;
+using System.Xml;
+using System.Runtime.InteropServices;
 
 namespace TheManager
 {
@@ -244,7 +246,7 @@ namespace TheManager
             {
                 using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
-                    DataContractSerializerSettings dcss = new DataContractSerializerSettings() { MaxItemsInObjectGraph = int.MaxValue };
+                    DataContractSerializerSettings dcss = new DataContractSerializerSettings() { MaxItemsInObjectGraph = int.MaxValue, PreserveObjectReferences=true };
                     DataContractSerializer ser = new DataContractSerializer(typeof(Game), dcss);
                     ser.WriteObject(writer, this);
                 }
@@ -252,7 +254,7 @@ namespace TheManager
             if (serializationMethod == SerializationMethod.NewtonsoftJsonSerializer)
             {
                 JsonSerializer jsonSerializer = new JsonSerializer();
-                string output = JsonConvert.SerializeObject(this, Formatting.None, new JsonSerializerSettings() 
+                string output = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.None, new JsonSerializerSettings() 
                 { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
                 using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {

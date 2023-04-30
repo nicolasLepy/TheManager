@@ -130,6 +130,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
 | Manage memory for long games                                          | 🔴 Not started |
+| Improve serialization to manage large objects graph                   | 🔴 Not started |
 
 ## Next Features
 
