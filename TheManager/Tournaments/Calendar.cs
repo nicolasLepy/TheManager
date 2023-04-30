@@ -654,7 +654,7 @@ namespace TheManager
         /// <returns>The list of games of this round</returns>
         public static List<Match> Draw(KnockoutRound round)
         {
-            Console.WriteLine("Tirage au sort " + round.name + " (" + round.Tournament.name + "), initialisé le " + round.DateInitialisationRound().ToString() + ", du " + Session.Instance.Game.date.ToString());
+            Console.WriteLine("Tirage au sort " + round.name + " (" + round.Tournament.name + "), initialisé le " + round.DateInitialisationRound().ToString() + ", au " + round.DateEndRound().ToString());
             if(round.Tournament.rounds.IndexOf(round) > 0 && round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].matches.Count > 0)
             {
                 Console.WriteLine("Précédent tour : " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].name + " initialisé le " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].DateInitialisationRound().ToString());

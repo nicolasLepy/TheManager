@@ -10,7 +10,7 @@ using TheManager.Tournaments;
 namespace TheManager
 {
 
-    [DataContract]
+    [DataContract(IsReference =true)]
     public class MatchEventCommentary
     {
         [DataMember]
@@ -35,10 +35,10 @@ namespace TheManager
             return brutCommentary;
         }
     }
-    
+
 
     [DataContract(IsReference =true)]
-    [KnownType(typeof(Continent))]
+    //[KnownType(typeof(Continent))]
     public class Kernel
     {
 

@@ -81,9 +81,14 @@ namespace TheManager
             return _clubs[0];
         }
 
+        public void SetRanking(List<Club> ranking)
+        {
+            _ranking = new List<Club>(ranking);
+        }
+
         public List<Club> Ranking()
         {
-            if(_ranking == null)
+            if (_ranking == null)
             {
                 _ranking = new List<Club>(_clubs);
                 try
@@ -95,7 +100,7 @@ namespace TheManager
                     Utils.Debug("Le classement aléatoire n'a pu être généré");
                 }
             }
-            return _ranking;
+            return new List<Club>(_ranking);
         }
 
         public List<Qualification> AdjustQualificationAccordingToAdministrativeDivisions(List<Qualification> baseQualifications, GroupsRound upperGroupRound, List<Club> ranking)

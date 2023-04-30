@@ -10,14 +10,26 @@ using System.Globalization;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
 using LiveCharts;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections;
+using System.Reflection;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace TheManager
 {
 
+    public enum SerializationMethod
+    {
+        DataContractSerializer,
+        NewtonsoftJsonSerializer
+    }
+
     /// <summary>
     /// Store data about game universe to verify its long-term stability (budgets, players ...)
     /// </summary>
-    [DataContract]
+    [DataContract(IsReference = true)]
     public class GameWorld
     {
         [DataMember]
@@ -225,14 +237,53 @@ namespace TheManager
 
         public void Save(string path)
         {
+            SerializationMethod serializationMethod = SerializationMethod.DataContractSerializer;
+
             path = path.Replace(".csave", ".save");
-            using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
+            if (serializationMethod == SerializationMethod.DataContractSerializer)
             {
-                DataContractSerializer ser = new DataContractSerializer(typeof(Game));
-                ser.WriteObject(writer, this);
+                using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
+                {
+                    DataContractSerializerSettings dcss = new DataContractSerializerSettings() { MaxItemsInObjectGraph = int.MaxValue };
+                    DataContractSerializer ser = new DataContractSerializer(typeof(Game), dcss);
+                    ser.WriteObject(writer, this);
+                }
+            }
+            if (serializationMethod == SerializationMethod.NewtonsoftJsonSerializer)
+            {
+                JsonSerializer jsonSerializer = new JsonSerializer();
+                string output = JsonConvert.SerializeObject(this, Formatting.None, new JsonSerializerSettings() 
+                { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
+                using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
+                {
+                    var sr = new StreamWriter(writer);
+                    sr.Write(output);
+                }
             }
 
-            if(File.Exists(path.Split('.')[0] + ".csave"))
+            //ObjectGraphValidator ogv = new ObjectGraphValidator();
+            //ogv.ValidateObjectGraph(this);
+
+            /*FileStream fs = new FileStream(path.Replace(".csave", ".bin"), FileMode.Create);
+
+            // Construct a BinaryFormatter and use it to serialize the data to the stream.
+            BinaryFormatter formatter = new BinaryFormatter();
+            try
+            {
+                formatter.Serialize(fs, this);
+            }
+            catch (SerializationException e)
+            {
+                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
+                throw;
+            }
+            finally
+            {
+                fs.Close();
+            }*/
+
+
+            if (File.Exists(path.Split('.')[0] + ".csave"))
             {
                 File.Delete(path.Split('.')[0] + ".csave");
             }
@@ -249,20 +300,38 @@ namespace TheManager
         public void Load(string path)
         {
 
-            Game loadObj;
-            using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
+            SerializationMethod serializationMethod = SerializationMethod.DataContractSerializer;
+
+            Game loadObj = null;
+            if (serializationMethod == SerializationMethod.DataContractSerializer)
             {
-                ZipArchiveEntry cFile = zip.GetEntry("save.save");
-                DataContractSerializer ser = new DataContractSerializer(typeof(Game));
-                loadObj = (Game)ser.ReadObject(cFile.Open());
-                this._options = loadObj.options;
-                this._kernel = loadObj.kernel;
-                this._date = loadObj.date;
-                this._club = loadObj.club;
-                this._gameUniverse = loadObj.gameUniverse;
-                this._articles = loadObj.articles;
-                zip.Dispose();
+                using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
+                {
+                    ZipArchiveEntry cFile = zip.GetEntry("save.save");
+                    DataContractSerializer ser = new DataContractSerializer(typeof(Game));
+                    loadObj = (Game)ser.ReadObject(cFile.Open());
+                    zip.Dispose();
+                }
             }
+            if(serializationMethod == SerializationMethod.NewtonsoftJsonSerializer)
+            {
+                using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
+                {
+                    ZipArchiveEntry cFile = zip.GetEntry("save.save");
+                    StreamReader osr = new StreamReader(cFile.Open(), Encoding.Default);
+                    string content = osr.ReadToEnd();
+                    loadObj = JsonConvert.DeserializeObject<Game>(content, new JsonSerializerSettings()
+                    { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
+                    zip.Dispose();
+                }
+            }
+            this._options = loadObj.options;
+            this._kernel = loadObj.kernel;
+            this._date = loadObj.date;
+            this._club = loadObj.club;
+            this._gameUniverse = loadObj.gameUniverse;
+            this._articles = loadObj.articles;
+
         }
 
         /// <summary>

@@ -297,7 +297,6 @@ namespace TheManager
         /// <returns></returns>
         public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c, bool onlyCurrentLeagueEdition)
         {
-
             Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
 
             List<Country> countriesRanking = new List<Country>(associationRanking);
@@ -307,6 +306,7 @@ namespace TheManager
 
             List<Club> registeredClubs = new List<Club>();
             List<Club> leagueClubs = new List<Club>();
+
             Tournament firstDivisionChampionship = c.FirstDivisionChampionship();
             //Manage association where calendar is not the same as the continent calendar
             //Eg. August-May calendar for Europe and Febuary-November calendar for Ireland
@@ -355,7 +355,6 @@ namespace TheManager
                 leagueClubs = new List<Club>(championshipRound.clubs);
                 leagueClubs.Sort(new ClubRankingComparator(championshipRound.matches));
             }
-
             List<Club> finalPhasesClubs = firstDivisionChampionship.GetFinalPhasesClubs();
             if (finalPhasesClubs.Count > 0)
             {
@@ -365,6 +364,32 @@ namespace TheManager
                     leagueClubs.Insert(0, finalPhasesClubs[j]);
                 }
             }
+            //Add teams from lower divisions
+            int leagueLevel = 2;
+            Tournament league = c.League(leagueLevel);
+            while(league != null)
+            {
+                Round r = league.GetLastChampionshipRound();
+                if (r as ChampionshipRound != null)
+                {
+                    leagueClubs.AddRange((r as ChampionshipRound).Ranking());
+                }
+                if (r as InactiveRound != null)
+                {
+                    leagueClubs.AddRange((r as InactiveRound).Ranking());
+                }
+                if (r as GroupsRound != null) //TODO: No sense to do this, no tournament finish on a group round (maybe if one day Top and Bottom championships are merged in a group round phase)
+                {
+                    List<Club> roundClubs = new List<Club>(r.clubs);
+                    if(leagueLevel == 1 || roundClubs.Count < 60)
+                    {
+                        roundClubs.Sort(new ClubRankingComparator(r.matches));
+                    }
+                    leagueClubs.AddRange(roundClubs);
+                }
+                league = c.League(++leagueLevel);
+            }
+
             //Rule R1 : The association of the winner of a continental tournament get one additionnal place because the winner is automatically qualified
             bool ruleR1 = GetContinentalClubTournament(1) != null ? GetContinentalClubTournament(1).rules.Contains(TournamentRule.OnWinnerQualifiedAdaptClubsQualifications) : false;
             //On rajoute le clubs aux vainqueurs de coupe, on rajoute la qualification au bon endroit. Si le club est déjà enregistré et à une meilleure position
@@ -411,7 +436,6 @@ namespace TheManager
 
                 }
             }
-
             int currentLevel = 0;
             int cupRank = 0;
             foreach(Qualification q in associationQualifications)
@@ -448,7 +472,6 @@ namespace TheManager
                     }
                 }
             }
-
             return res;
         }
 

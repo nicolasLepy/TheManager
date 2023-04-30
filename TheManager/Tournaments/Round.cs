@@ -762,7 +762,7 @@ namespace TheManager
                     {
                         number = roundClubs.Count;
                     }
-                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
+                    roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
                     break;
                 case RecuperationMethod.NotQualifiedForInternationalCompetitionBest:
                 case RecuperationMethod.NotQualifiedForInternationalCompetitionWorst:
@@ -771,7 +771,7 @@ namespace TheManager
                     {
                         roundClubs.Remove(c);
                     }
-                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL, method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst));
+                    roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst));
                     if (number == -1)
                     {
                         number = roundClubs.Count;

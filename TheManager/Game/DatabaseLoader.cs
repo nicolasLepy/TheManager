@@ -827,14 +827,16 @@ namespace TheManager
                         foreach (XElement e2 in e.Descendants("Ranking"))
                         {
                             int roundId = int.Parse(e2.Attribute("round").Value);
-                            (archive.rounds[roundId] as InactiveRound).Ranking().Clear();
+                            List<Club> ranking = new List<Club>();
                             foreach (XElement e3 in e2.Descendants("Club"))
                             {
                                 int clubId = int.Parse(e3.Attribute("id").Value);
                                 Club c = _clubsId[clubId];
+                                ranking.Add(c);
                                 (archive.rounds[roundId] as InactiveRound).clubs.Add(c);
                                 (archive.rounds[roundId] as InactiveRound).Ranking().Add(c);
                             }
+                            (archive.rounds[roundId] as InactiveRound).SetRanking(ranking);
                         }
                         t.previousEditions.Add(season, archive);
                     }

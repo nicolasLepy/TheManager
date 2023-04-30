@@ -1025,7 +1025,7 @@ namespace TheManager
             {
                 List<RecoverTeams> recoverTeams = rounds[i].recuperedTeams;
                 cupTeams += TeamsCountRound(recoverTeams);
-                cupTeams += teamsFromOutsideLeagueSystem[i];
+                cupTeams += i < teamsFromOutsideLeagueSystem.Length ? teamsFromOutsideLeagueSystem[i] : 0;
                 Console.WriteLine("_____ Round " + i + " _____ " + rounds[i].name);
                 Console.WriteLine("Initialisé le " + rounds[i].programmation.initialisation.WeekNumber + " " + rounds[i].programmation.initialisation.MidWeekGame);
                 Console.WriteLine("Se joue le " + rounds[i].programmation.gamesDays[0].WeekNumber + " " + rounds[i].programmation.initialisation.MidWeekGame);
