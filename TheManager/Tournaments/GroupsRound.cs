@@ -23,6 +23,12 @@ namespace TheManager
 
         [DataMember]
         private RandomDrawingMethod _randomDrawingMethod;
+        /// <summary>
+        /// Administrative level of the round.
+        /// 0 : National round
+        /// 1 : Regional round
+        /// 2 : Departemental/District round
+        /// </summary>
         [DataMember]
         private int _administrativeLevel;
         [DataMember]
@@ -216,7 +222,7 @@ namespace TheManager
                     }
                 }
             }
-            ranking.Sort(new ClubRankingComparator(_matches));
+            ranking.Sort(new ClubRankingComparator(_matches, _tiebreakers));
             return ranking;
         }
         
@@ -458,7 +464,7 @@ namespace TheManager
                             rankingI.Add(Ranking(i)[ranking]);
                         }
 
-                        rankingI.Sort(new ClubRankingComparator(_matches));
+                        rankingI.Sort(new ClubRankingComparator(_matches, _tiebreakers));
                         if (rankingI.IndexOf(groupConcerned) >= extraPromotions)
                         {
                             UpdateQualificationTournament(adjustedQualifications, ranking, tournament);
@@ -811,8 +817,8 @@ namespace TheManager
 
             for (int i = 0; i < maxClubsInGroup; i++)
             {
-                clubsByRanking[i].Sort(new ClubRankingComparator(_matches));
-                clubsByRankingDescending[i].Sort(new ClubRankingComparator(_matches));
+                clubsByRanking[i].Sort(new ClubRankingComparator(_matches, _tiebreakers));
+                clubsByRankingDescending[i].Sort(new ClubRankingComparator(_matches, _tiebreakers));
             }
 
             for (int i = 0; i < _groupsNumber; i++)
@@ -924,7 +930,7 @@ namespace TheManager
         public List<Club> Ranking(int group, bool inverse=false)
         {
             List<Club> res = new List<Club>(_groups[group]);
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, RankingType.General, inverse);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, RankingType.General, inverse);
             res.Sort(comparator);
             return res;
         }
@@ -939,7 +945,7 @@ namespace TheManager
                     res.Add(c);
                 }
             }
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers);
             res.Sort(comparator);
             return res;
         }

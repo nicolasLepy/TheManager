@@ -143,9 +143,9 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 Nicolas Lépy
 
 ## Tools used
+*   .NET Framework 4.8 and WPF
 *   Visual Studio
 *   Rider
-*   WPF
 *   Windows Media Player library
 *   MapWindow GIS
 

@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using TheManager.Comparators;
 using TheManager.Tournaments;
 
 namespace TheManager
@@ -215,6 +216,17 @@ namespace TheManager
             return res;
         }
 
+        public int GetLevelOfAdministrativeDivision(AdministrativeDivision administrativeDivision)
+        {
+            int level = 0;
+            AdministrativeDivision admAtLevel = null;
+            while(admAtLevel != administrativeDivision)
+            {
+                admAtLevel = GetAdministrativeDivisionLevel(administrativeDivision, ++level);
+            }
+            return level;
+        }
+
         public AdministrativeDivision GetAdministrativeDivisionLevel(AdministrativeDivision administrativeDivision, int level)
         {
             AdministrativeDivision res = null;
@@ -272,14 +284,23 @@ namespace TheManager
 
         public List<Tournament> Cups()
         {
-            int i = 1;
             List<Tournament> res = new List<Tournament>();
+            foreach(Tournament t in Tournaments())
+            {
+                if(!t.isChampionship && t.periodicity == 1)
+                {
+                    res.Add(t);
+                }
+            }
+            res.Sort(new TournamentComparator());
+            /*
+            int i = 1;
             Tournament cup = GetTournamentByLevel(i, false);
             while(cup != null)
             {
                 res.Add(cup);
                 cup = GetTournamentByLevel(++i, false);
-            }
+            }*/
             return res;
 
         }
@@ -420,7 +441,13 @@ namespace TheManager
             return Continent;
         }
 
-        public List<int> GetAvailableCalendarDates(bool withContinentalDates)
+        /// <summary>
+        /// Get list of available dates on a calendar
+        /// </summary>
+        /// <param name="withContinentalDates">Remove date taken by continental dates</param>
+        /// <param name="removeDateOfCupUntilLevel">Ignore dates of cup below specified level</param>
+        /// <returns></returns>
+        public List<int> GetAvailableCalendarDates(bool withContinentalDates, int maxCupLevel)
         {
             Continent ct = GetContinent();
             Tournament firstDivision = League(1);
@@ -450,7 +477,7 @@ namespace TheManager
             }
             foreach (Tournament t in this.Tournaments())
             {
-                if(t.periodicity == 1)
+                if(t.periodicity == 1 && (t.isChampionship || t.level <= maxCupLevel))
                 {
                     tournaments.Add(t);
                 }

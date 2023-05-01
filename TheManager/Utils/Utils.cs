@@ -325,6 +325,22 @@ namespace TheManager
             return res;
         }
 
+        public static int CountEvent(GameEvent gameEvent, List<Match> matchs, Club c, RankingType rankingType = RankingType.General)
+        {
+            int res = 0;
+            foreach(Match m in MatchesOfClub(matchs, c, rankingType))
+            {
+                foreach(MatchEvent me in m.events)
+                {
+                    if(me.type == gameEvent && me.club == c)
+                    {
+                        res++;
+                    }
+                }
+            }
+            return res;
+        }
+
         public static int Difference(List<Match> games, Club c, RankingType rankingType = RankingType.General)
         {
             return Gf(games, c, rankingType) - Ga(games, c, rankingType);

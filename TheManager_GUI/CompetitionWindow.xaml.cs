@@ -157,7 +157,16 @@ namespace TheManager_GUI
                 spRanking.Children.Add(l);
                 rulesCount++;
             }
-
+            string tbStr = "";
+            foreach(Tiebreaker tb in _competition.rounds[_indexTour].tiebreakers)
+            {
+                tbStr += string.Format("{0} - ", tb.ToString());
+            }
+            if(tbStr.Length > 3)
+            {
+                tbStr.Remove(tbStr.Length - 3);
+            }
+            spRanking.Children.Add(ViewUtils.CreateLabel(tbStr, "StyleLabel2", -1, -1));
 
         }
 

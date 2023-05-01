@@ -883,7 +883,7 @@ namespace TheManager
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Console.WriteLine(name);
-                        Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus);
+                        Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, new KeyValuePair<AdministrativeDivision, Tournament>());
                         if (tournamentRuleStr != null)
                         {
                             TournamentRule tRule;
@@ -1135,42 +1135,30 @@ namespace TheManager
                             }
                             foreach (XElement e4 in e3.Descendants("Regle"))
                             {
-                                Rule rule;
-                                switch (e4.Attribute("nom").Value)
-                                {
-                                    case "RECOIT_SI_DEUX_DIVISION_ECART":
-                                        rule = Rule.AtHomeIfTwoLevelDifference;
-                                        break;
-                                    case "EQUIPES_PREMIERES_UNIQUEMENT":
-                                        rule = Rule.OnlyFirstTeams;
-                                        break;
-                                    case "RESERVES_NE_MONTENT_PAS":
-                                        rule = Rule.ReservesAreNotPromoted;
-                                        break;
-                                    case "UN_CLUB_PAR_PAYS_GROUPE":
-                                        rule = Rule.OneClubByCountryInGroup;
-                                        break;
-                                    case "ONE_TEAM_BY_CONTINENT_IN_GROUP":
-                                        rule = Rule.OneTeamByContinentInGroup;
-                                        break;
-                                    case "HOSTED_BY_ONE_COUNTRY":
-                                        rule = Rule.HostedByOneCountry;
-                                        break;
-                                    case "ULTRAMARINE_TEAMS_CAN_PLAY_HOME_OR_AWAY":
-                                        rule = Rule.UltramarineTeamsPlayHomeOrAway;
-                                        break;
-                                    case "ULTRAMARINE_TEAMS_PLAY_AWAY":
-                                        rule = Rule.UltramarineTeamsPlayAway;
-                                        break;
-                                    case "ULTRAMARINE_TEAMS_CANT_COMPETE_AGAINST":
-                                        rule = Rule.UltramarineTeamsCantCompeteAgainst;
-                                        break;
-                                    default:
-                                        rule = Rule.OnlyFirstTeams;
-                                        break;
-                                }
+                                Rule rule = String2Rule(e4.Attribute("nom").Value);
                                 round.rules.Add(rule);
                             }
+                            List<Tiebreaker> tiebreakers = new List<Tiebreaker> { Tiebreaker.GoalDifference, Tiebreaker.GoalFor, Tiebreaker.GoalAgainst, Tiebreaker.HeadToHead, Tiebreaker.Discipline };
+                            if(e3.Attribute("tiebreakers") != null)
+                            {
+                                List<Tiebreaker> definedTiebreakers = new List<Tiebreaker>();
+                                string tiebreakersStr = e3.Attribute("tiebreakers").Value;
+                                string[] tiebreakersArray = tiebreakersStr.Replace(" ", "").Split(',');
+                                foreach(string tiebreakerStr in tiebreakersArray)
+                                {
+                                    Tiebreaker tiebreaker = String2Tiebreaker(tiebreakerStr);
+                                    definedTiebreakers.Add(tiebreaker);
+                                }
+                                foreach(Tiebreaker tb in tiebreakers)
+                                {
+                                    if(!definedTiebreakers.Contains(tb))
+                                    {
+                                        definedTiebreakers.Add(tb);
+                                    }
+                                }
+                                tiebreakers = definedTiebreakers;
+                            }
+                            round.tiebreakers.AddRange(tiebreakers);
                             foreach (XElement e4 in e3.Descendants("Dotation"))
                             {
                                 int ranking = int.Parse(e4.Attribute("classement").Value);
@@ -1458,180 +1446,241 @@ namespace TheManager
             }
 
         }
+
+        public void GenerateRegionalCup(Country c, AdministrativeDivision administrativeDivision, int level, bool reservesAllowed)
+        {
+            Utils.Debug(string.Format("[{0}] New regional Cup", administrativeDivision.name));
+            int admTeams = 0;
+            bool regionalLeagueExists = false;
+            bool regionalCupExist = false; //TODO
+            foreach(Tournament t in c.Leagues())
+            {
+                GroupsRound groupRound = t.GetLastChampionshipRound() as GroupsRound;
+                if (groupRound != null && groupRound.administrativeLevel == level)
+                {
+                    regionalLeagueExists = true;
+                    foreach(Club cl in groupRound.clubs)
+                    {
+                        admTeams = administrativeDivision.ContainsAdministrativeDivision(cl.AdministrativeDivision()) ? admTeams + 1 : admTeams;
+                    }
+                }
+            }
+            if(regionalLeagueExists && admTeams > 1 && !regionalCupExist)
+            {
+                CreateNationalCup(c, administrativeDivision, false, false, reservesAllowed);
+            }
+            foreach (AdministrativeDivision ad in administrativeDivision.divisions)
+            {
+                GenerateRegionalCup(c, ad, level + 1, reservesAllowed);
+            }
+        }
+
         public void GenerateNationalCup()
         {
             foreach(Continent ct in Session.Instance.Game.kernel.world.continents)
             {
-                foreach (Country c in ct.countries)
+                foreach(Country c in ct.countries)
                 {
-                    List<int> availableWeeks = c.GetAvailableCalendarDates(true);
-                    
-                    Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
-                    List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
                     bool noCup = true;
                     int totalTeams = 0;
                     foreach (Tournament t in c.Tournaments())
                     {
-                        if(!t.isChampionship)
+                        if (!t.isChampionship)
                         {
                             noCup = false;
                         }
                         else
                         {
-                            if(!teamsByLevel.ContainsKey(t.level))
-                            {
-                                teamsByLevel.Add(t.level, 0);
-                            }
-                            teamsByLevel[t.level] += t.rounds[0].CountWithoutReserves();
-                            teamsByTournaments.Add(new KeyValuePair<Tournament, int>(t, t.rounds[0].CountWithoutReserves()));
-
                             totalTeams += t.rounds[0].CountWithoutReserves();
-
                         }
                     }
-
                     if (noCup && c.Tournaments().Count > 0 && totalTeams > 1)
                     {
-
-                        string acr = "de ";
-                        if(c.Name()[0] == 'E' || c.Name()[0] == 'A' || c.Name()[0] == 'I' || c.Name()[0] == 'O' || c.Name()[0] == 'U')
+                        CreateNationalCup(c, null, false, true, false);
+                    }
+                    if(c.Tournaments().Count > 0 && totalTeams > 1)
+                    {
+                        foreach (AdministrativeDivision ad in c.administrativeDivisions)
                         {
-                            acr = "d'";
+                            GenerateRegionalCup(c, ad, 1, false);
                         }
-                        string cupName = "Coupe " + acr + c.Name();
-                        Tournament nationalCup = new Tournament(cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, 1, 1, 1, new Color(200, 0, 0), ClubStatus.Professional);
-
-                        int roundCount = 0;
-                        int j = 1;
-                        while((j*2) <= totalTeams)
-                        {
-                            j *= 2;
-                            roundCount++;
-                        }
-                        int preliRoundTeams = (totalTeams - j) * 2;
-                        if(j != totalTeams)
-                        {
-                            roundCount++;
-                        }
-
-                        int indexRound = 0;
-                        //Prelimiary round
-                        if (j != totalTeams)
-                        {
-                            Hour hour = new Hour() { Hours = 20, Minutes = 0 };
-                            GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
-                            GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, true, 0, 0);
-                            GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
-                            Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
-                            round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                            round.rules.Add(Rule.OnlyFirstTeams);
-                            round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
-                            int currentAddedTeams = 0;
-                            while(currentAddedTeams < preliRoundTeams)
-                            {
-                                KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
-                                int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams-currentAddedTeams;
-                                RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, RecuperationMethod.Worst);
-                                round.recuperedTeams.Add(rt);
-                                currentAddedTeams += teamsToAdd;
-                                if(currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)
-                                {
-                                    teamsByTournaments[teamsByTournaments.Count - 1] = new KeyValuePair<Tournament, int>(lowerTournament.Key, lowerTournament.Value - teamsToAdd);
-                                }
-                                else
-                                {
-                                    teamsByTournaments.RemoveAt(teamsByTournaments.Count - 1);
-                                }
-                            }
-                            nationalCup.rounds.Add(round);
-                            indexRound++;
-                        }
-                        while (j != 1) 
-                        {
-                            string name = (j/2) + "èmes de finale";
-                            if(j == 8)
-                            {
-                                name = "Quarts de finale";
-                            }
-                            else if (j == 4)
-                            {
-                                name = "Demis-finale";
-                            }
-                            else if (j == 2)
-                            {
-                                name = "Finale";
-                            }
-
-                            Hour hour = new Hour() { Hours = 20, Minutes = 0 };
-                            GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
-                            GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
-                            GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
-                            Round round = new KnockoutRound(name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
-                            round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                            round.rules.Add(Rule.OnlyFirstTeams);
-                            if (j > 2)
-                            {
-                                round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
-                            }
-                            //First final round : add not added teams
-                            foreach(KeyValuePair<Tournament, int> kvp in teamsByTournaments)
-                            {
-                                RecoverTeams rt = new RecoverTeams(kvp.Key.rounds[0], kvp.Value, RecuperationMethod.Best);
-                                round.recuperedTeams.Add(rt);
-                            }
-                            teamsByTournaments.Clear();
-
-                            nationalCup.rounds.Add(round);
-                            indexRound++;
-                            j /= 2;
-                        }
-
-                        int maxPrize = c.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? c.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
-
-                        for(int i = roundCount-1; i >= 0; i--)
-                        {
-                            nationalCup.rounds[i].prizes.Add(new Prize(1, maxPrize));
-                            maxPrize /= 2;
-                        }
-
-                        nationalCup.InitializeQualificationsNextYearsLists();
-                        c.Tournaments().Add(nationalCup);
-
-
-
-
-
-
-
-
-
-                        if (!nationalCup.isChampionship && (Session.Instance.Game.kernel.LocalisationTournament(nationalCup) as Country) == Session.Instance.Game.kernel.String2Country("Azerbaïdjan"))
-                        {
-                            Country azer = Session.Instance.Game.kernel.String2Country("Azerbaïdjan");
-                            Console.WriteLine("Initialise la coupe de l'azerbaidjan");
-                            foreach (Round r in nationalCup.rounds)
-                            {
-                                Console.WriteLine("[CDLA] " + r.name);
-                                foreach (RecoverTeams rt in r.recuperedTeams)
-                                {
-                                    Console.WriteLine("[CDLA][" + r.name + "]. Ajoute " + rt.Number + " depuis " + (rt.Source as Round).Tournament.name);
-                                }
-                            }
-                            foreach (Tournament t in azer.Tournaments())
-                            {
-                                if (t.isChampionship)
-                                {
-                                    Console.WriteLine("[CDLA][" + t.name + "]. Clubs : " + t.rounds[0].clubs.Count + " (" + t.rounds[0].CountWithoutReserves() + " équipes premières");
-                                }
-                            }
-                        }
-
-
-
-
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Count teams of a round excluding reserves
+        /// </summary>
+        /// <param name="r">Count teams of this round</param>
+        /// <param name="administrativeDivision">Filter with a particular association</param>
+        private int CountTeamsWithoutReserves(Round r, AdministrativeDivision administrativeDivision)
+        {
+            int total = 0;
+            foreach (Club c in r.clubs)
+            {
+                if (c as ReserveClub == null)
+                {
+                    if(administrativeDivision == null || administrativeDivision.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                    {
+                        total++;
+                    }
+                }
+            }
+            return total;
+        }
+
+        /// <summary>
+        /// Create a national/regional cup
+        /// </summary>
+        /// <param name="country">Create cup for this country</param>
+        /// <param name="administrativeDivision">Only teams of this association are allowed to enter</param>
+        /// <param name="allowTeamsOfSubAdministrativesDivision">Teams playing on a child association can enter</param>
+        /// <param name="midweekGames">TODO: Not used yet. Games are played wednesday</param>
+        /// <param name="reservesAllowed">Reserves allowed to enter</param>
+        public void CreateNationalCup(Country c, AdministrativeDivision administrativeDivision, bool allowTeamsOfSubAdministrativesDivision, bool midweekGames, bool reservesAllowed)
+        {
+            Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
+            List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
+            int totalTeams = 0;
+            int administrativeDivisionLevel = c.GetLevelOfAdministrativeDivision(administrativeDivision);
+            int currentAdministrativeLevel = 0;
+            foreach (Tournament t in c.Tournaments())
+            {
+                GroupsRound roundChampionship = (t.GetLastChampionshipRound() as GroupsRound);
+                if(roundChampionship != null)
+                {
+                    currentAdministrativeLevel = roundChampionship.administrativeLevel;
+                }
+                bool administrativeDivisionGoodLevel = administrativeDivision == null || (administrativeDivisionLevel == currentAdministrativeLevel || (allowTeamsOfSubAdministrativesDivision && administrativeDivisionLevel < currentAdministrativeLevel));
+
+
+                if (t.isChampionship && administrativeDivisionGoodLevel)
+                {
+                    if(!teamsByLevel.ContainsKey(t.level))
+                    {
+                        teamsByLevel.Add(t.level, 0);
+                    }
+                    teamsByLevel[t.level] += CountTeamsWithoutReserves(t.rounds[0], administrativeDivision);
+                    teamsByTournaments.Add(new KeyValuePair<Tournament, int>(t, CountTeamsWithoutReserves(t.rounds[0], administrativeDivision)));
+
+                    totalTeams += CountTeamsWithoutReserves(t.rounds[0], administrativeDivision);
+                }
+            }
+
+            List<int> availableWeeks = c.GetAvailableCalendarDates(true, 2);
+
+            string tournamentName = administrativeDivision == null ? c.Name() : administrativeDivision.name;
+            string acr = "de ";
+            if(tournamentName[0] == 'E' || tournamentName[0] == 'A' || tournamentName[0] == 'I' || tournamentName[0] == 'O' || tournamentName[0] == 'U')
+            {
+                acr = "d'";
+            }
+            string cupName = "Coupe " + acr + tournamentName;
+            int cupLevel = administrativeDivision != null ? 3 : 1; //c.Cups().Count + 1;
+            Tournament nationalCup = new Tournament(cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new KeyValuePair<AdministrativeDivision, Tournament>(administrativeDivision, null));
+
+            int roundCount = 0;
+            int j = 1;
+            while((j*2) <= totalTeams)
+            {
+                j *= 2;
+                roundCount++;
+            }
+            int preliRoundTeams = (totalTeams - j) * 2;
+            if(j != totalTeams)
+            {
+                roundCount++;
+            }
+
+            int indexRound = 0;
+            //Prelimiary round
+            if (j != totalTeams)
+            {
+                Hour hour = new Hour() { Hours = 20, Minutes = 0 };
+                GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
+                GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, true, 0, 0);
+                GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
+                Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
+                round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
+                if(!reservesAllowed)
+                {
+                    round.rules.Add(Rule.OnlyFirstTeams);
+                }
+                round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
+                int currentAddedTeams = 0;
+                while(currentAddedTeams < preliRoundTeams)
+                {
+                    KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
+                    int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams-currentAddedTeams;
+                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, RecuperationMethod.Worst);
+                    round.recuperedTeams.Add(rt);
+                    currentAddedTeams += teamsToAdd;
+                    if(currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)
+                    {
+                        teamsByTournaments[teamsByTournaments.Count - 1] = new KeyValuePair<Tournament, int>(lowerTournament.Key, lowerTournament.Value - teamsToAdd);
+                    }
+                    else
+                    {
+                        teamsByTournaments.RemoveAt(teamsByTournaments.Count - 1);
+                    }
+                }
+                nationalCup.rounds.Add(round);
+                indexRound++;
+            }
+            while (j != 1) 
+            {
+                string name = (j/2) + "èmes de finale";
+                if(j == 8)
+                {
+                    name = "Quarts de finale";
+                }
+                else if (j == 4)
+                {
+                    name = "Demis-finale";
+                }
+                else if (j == 2)
+                {
+                    name = "Finale";
+                }
+
+                Hour hour = new Hour() { Hours = 20, Minutes = 0 };
+                GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
+                GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
+                GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
+                Round round = new KnockoutRound(name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
+                round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
+                if(!reservesAllowed)
+                {
+                    round.rules.Add(Rule.OnlyFirstTeams);
+                }
+                if (j > 2)
+                {
+                    round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
+                }
+                //First final round : add not added teams
+                foreach(KeyValuePair<Tournament, int> kvp in teamsByTournaments)
+                {
+                    RecoverTeams rt = new RecoverTeams(kvp.Key.rounds[0], kvp.Value, RecuperationMethod.Best);
+                    round.recuperedTeams.Add(rt);
+                }
+                teamsByTournaments.Clear();
+
+                nationalCup.rounds.Add(round);
+                indexRound++;
+                j /= 2;
+            }
+
+            int maxPrize = c.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? c.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
+
+            for(int i = roundCount-1; i >= 0; i--)
+            {
+                nationalCup.rounds[i].prizes.Add(new Prize(1, maxPrize));
+                maxPrize /= 2;
+            }
+
+            nationalCup.InitializeQualificationsNextYearsLists();
+            c.Tournaments().Add(nationalCup);
         }
 
         private Hour String2Hour(string hour)
@@ -1695,6 +1744,71 @@ namespace TheManager
             }
 
             return res;
+        }
+
+        private Tiebreaker String2Tiebreaker(string value)
+        {
+            Tiebreaker res = Tiebreaker.GoalDifference;
+            if(value == "goal-difference")
+            {
+                res = Tiebreaker.GoalDifference;
+            }
+            else if (value == "head-to-head")
+            {
+                res = Tiebreaker.HeadToHead;
+            }
+            else if (value == "goal-for")
+            {
+                res = Tiebreaker.GoalFor;
+            }
+            else if (value == "goal-against")
+            {
+                res = Tiebreaker.GoalAgainst;
+            }
+            else if (value == "discipline")
+            {
+                res = Tiebreaker.Discipline;
+            }
+            return res;
+        }
+
+        private Rule String2Rule(string value)
+        {
+            Rule rule;
+            switch (value)
+            {
+                case "RECOIT_SI_DEUX_DIVISION_ECART":
+                    rule = Rule.AtHomeIfTwoLevelDifference;
+                    break;
+                case "EQUIPES_PREMIERES_UNIQUEMENT":
+                    rule = Rule.OnlyFirstTeams;
+                    break;
+                case "RESERVES_NE_MONTENT_PAS":
+                    rule = Rule.ReservesAreNotPromoted;
+                    break;
+                case "UN_CLUB_PAR_PAYS_GROUPE":
+                    rule = Rule.OneClubByCountryInGroup;
+                    break;
+                case "ONE_TEAM_BY_CONTINENT_IN_GROUP":
+                    rule = Rule.OneTeamByContinentInGroup;
+                    break;
+                case "HOSTED_BY_ONE_COUNTRY":
+                    rule = Rule.HostedByOneCountry;
+                    break;
+                case "ULTRAMARINE_TEAMS_CAN_PLAY_HOME_OR_AWAY":
+                    rule = Rule.UltramarineTeamsPlayHomeOrAway;
+                    break;
+                case "ULTRAMARINE_TEAMS_PLAY_AWAY":
+                    rule = Rule.UltramarineTeamsPlayAway;
+                    break;
+                case "ULTRAMARINE_TEAMS_CANT_COMPETE_AGAINST":
+                    rule = Rule.UltramarineTeamsCantCompeteAgainst;
+                    break;
+                default:
+                    rule = Rule.OnlyFirstTeams;
+                    break;
+            }
+            return rule;
         }
     }
 }

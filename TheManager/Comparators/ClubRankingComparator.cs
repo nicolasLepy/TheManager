@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Windows.Media.TextFormatting;
 
 namespace TheManager.Comparators
 {
@@ -10,16 +11,18 @@ namespace TheManager.Comparators
     {
         private readonly List<Match> _round;
         private readonly RankingType _rankingType;
+        private readonly List<Tiebreaker> _tiebreakers;
         private readonly bool _inverted;
         private readonly bool _knockoutRound;
 
-        public ClubRankingComparator(List<Match> games, RankingType rankingType = RankingType.General, bool inverted = false, bool knockoutRound = false, Round addRankingFromThisRound = null)
+        public ClubRankingComparator(List<Match> games, List<Tiebreaker> tiebreakers, RankingType rankingType = RankingType.General, bool inverted = false, bool knockoutRound = false, Round addRankingFromThisRound = null)
         {
             _round = new List<Match>(games);
             _rankingType = rankingType;
             _inverted = inverted;
             _knockoutRound = knockoutRound;
-            if(addRankingFromThisRound != null)
+            _tiebreakers = tiebreakers;
+            if (addRankingFromThisRound != null)
             {
                 _round.AddRange(addRankingFromThisRound.matches);
             }
@@ -47,7 +50,7 @@ namespace TheManager.Comparators
 
         public int Compare(Club x, Club y)
         {
-            int res = 1;
+            int res = 0;
             if(_knockoutRound)
             {
                 res = CompareKnockoutRound(x, y);
@@ -60,22 +63,98 @@ namespace TheManager.Comparators
                 {
                     res = -1;
                 }
-                else if (pointsY == pointsX)
+                if (pointsY > pointsX)
                 {
-                    int differenceY = Difference(y);
-                    int differenceX = Difference(x);
-                    if (differenceY < differenceX)
+                    res = 1;
+                }
+                if (res == 0)
+                {
+                    for (int i = 0; i < _tiebreakers.Count && res == 0; i++)
                     {
-                        res = -1;
-                    }
-                    else if (differenceX == differenceY)
-                    {
-                        int goalForY = GoalFor(y);
-                        int goalForX = GoalFor(x);
-                        if (goalForY < goalForX)
+                        Tiebreaker tb = _tiebreakers[i];
+                        switch (tb)
                         {
-                            res = -1;
+                            case Tiebreaker.GoalDifference:
+                                int differenceY = Difference(y);
+                                int differenceX = Difference(x);
+                                if (differenceY < differenceX)
+                                {
+                                    res = -1;
+                                }
+                                if (differenceY > differenceX)
+                                {
+                                    res = 1;
+                                }
+                                break;
+                            case Tiebreaker.GoalFor:
+                                int goalForY = GoalFor(y);
+                                int goalForX = GoalFor(x);
+                                if (goalForY < goalForX)
+                                {
+                                    res = -1;
+                                }
+                                if (goalForY > goalForX)
+                                {
+                                    res = 1;
+                                }
+                                break;
+                            case Tiebreaker.GoalAgainst:
+                                int goalAgainstY = GoalAgainst(y);
+                                int goalAgainstX = GoalAgainst(x);
+                                if (goalAgainstY > goalAgainstX)
+                                {
+                                    res = -1;
+                                }
+                                if (goalAgainstY < goalAgainstX)
+                                {
+                                    res = 1;
+                                }
+                                break;
+                            case Tiebreaker.HeadToHead:
+                                List<Tiebreaker> tiebreakersH2H = new List<Tiebreaker>(_tiebreakers);
+                                tiebreakersH2H.Remove(Tiebreaker.HeadToHead);
+                                int points = Points(x);
+                                List<Club> roundClub = ClubsFromGames();
+                                List<Club> clubs = new List<Club>() { x, y };
+                                foreach (Club c in roundClub)
+                                {
+                                    if(!clubs.Contains(c) && Points(c) == points)
+                                    {
+                                        clubs.Add(c);
+                                    }
+                                }
+                                List<Match> games = new List<Match>();
+                                foreach(Match game in _round)
+                                {
+                                    if(game.Played && clubs.Contains(game.home) && clubs.Contains(game.away))
+                                    {
+                                        games.Add(game);
+                                    }
+                                }
+                                if(games.Count > 0)
+                                {
+                                    clubs.Sort(new ClubRankingComparator(games, tiebreakersH2H, _rankingType, false, _knockoutRound));
+                                    res = clubs.IndexOf(y) > clubs.IndexOf(x) ? -1 : 1;
+                                }
+                                break;
+                            case Tiebreaker.Discipline:
+                            default:
+                                int disciplineX = Discipline(y);
+                                int disciplineY = Discipline(x);
+                                if (disciplineY > disciplineX)
+                                {
+                                    res = -1;
+                                }
+                                if (disciplineY < disciplineX)
+                                {
+                                    res = 1;
+                                }
+                                break;
                         }
+                    }
+                    if(res == 0)
+                    {
+                        res = y.name.CompareTo(x.name);
                     }
                 }
             }
@@ -95,6 +174,33 @@ namespace TheManager.Comparators
         private int GoalFor(Club c)
         {
             return Utils.Gf(_round, c, _rankingType);
+        }
+
+        private int GoalAgainst(Club c)
+        {
+            return Utils.Ga(_round, c, _rankingType);
+        }
+
+        private int Discipline(Club c)
+        {
+            return Utils.CountEvent(GameEvent.YellowCard, _round, c, _rankingType) + (3 * Utils.CountEvent(GameEvent.RedCard, _round, c, _rankingType));
+        }
+
+        private List<Club> ClubsFromGames()
+        {
+            List<Club> res = new List<Club>();
+            foreach(Match m in _round)
+            {
+                if(!res.Contains(m.home))
+                {
+                    res.Add(m.home);
+                }
+                if (!res.Contains(m.away))
+                {
+                    res.Add(m.away);
+                }
+            }
+            return res;
         }
     }
 }

@@ -194,7 +194,7 @@ namespace TheManager_GUI.VueClassement
                             int correspondingGroupRanking = q.ranking > 0 ? q.ranking : _round.groups[i].Count + q.ranking + 1;
                             concernedClubs.Add(_round.Ranking(i)[correspondingGroupRanking-1]);
                         }
-                        concernedClubs.Sort(new ClubRankingComparator(_round.matches));
+                        concernedClubs.Sort(new ClubRankingComparator(_round.matches, _round.tiebreakers));
                         int j = 0;
                         foreach(Club c in concernedClubs)
                         {

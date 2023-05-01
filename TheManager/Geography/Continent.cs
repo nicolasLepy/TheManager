@@ -336,7 +336,7 @@ namespace TheManager
                     List<Club> roundClubs = new List<Club>(championshipRound.clubs);
                     if (leagueLevel == 1 || roundClubs.Count < 60)
                     {
-                        roundClubs.Sort(new ClubRankingComparator(championshipRound.matches));
+                        roundClubs.Sort(new ClubRankingComparator(championshipRound.matches, championshipRound.tiebreakers));
                     }
                     leagueClubs.AddRange(roundClubs);
                 }

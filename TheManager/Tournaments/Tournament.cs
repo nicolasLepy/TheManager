@@ -175,7 +175,7 @@ namespace TheManager
 
         public KeyValuePair<AdministrativeDivision, Tournament> parent => _parent;
 
-        public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status)
+        public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, KeyValuePair<AdministrativeDivision, Tournament> parent)
         {
             _rounds = new List<Round>();
             _name = name;
@@ -194,7 +194,7 @@ namespace TheManager
             _extraRounds = 0;
             _rules = new List<TournamentRule>();
             _status = status;
-            _parent = new KeyValuePair<AdministrativeDivision, Tournament>();
+            _parent = parent;
         }
 
         public void InitializeQualificationsNextYearsLists(int count = -1)
@@ -243,7 +243,6 @@ namespace TheManager
                 }
                 Console.WriteLine("=================================");
             }
-
         }
 
         public List<Tournament> GetChildTournaments()
@@ -516,7 +515,7 @@ namespace TheManager
             {
                 int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
                 Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
-                List<int> availableDatesAll = (localisation as Country).GetAvailableCalendarDates(false);
+                List<int> availableDatesAll = (localisation as Country).GetAvailableCalendarDates(false, 2);
                 List<int> availableDates = new List<int>();
                 int beginningCompetition = this._seasonBeginning.WeekNumber;
                 int beginningRounds = rounds.First().programmation.initialisation.WeekNumber;
@@ -635,7 +634,7 @@ namespace TheManager
                     Tournament regionalTournament = CopyForArchive(false);
                     regionalTournament.currentRound = -1;
                     regionalTournament._name = string.Format("{0} - {1}", regionalTournament, kvp.Key.name);
-                    regionalTournament._level = 100; //Un niveau exagérément élevé est mis pour éviter d'aller chercher les vainqueurs de ces compétitions pour les places européennes par exemple
+                    regionalTournament._level = 1000; //Un niveau exagérément élevé est mis pour éviter d'aller chercher les vainqueurs de ces compétitions pour les places européennes par exemple
                     regionalTournament._parent = new KeyValuePair<AdministrativeDivision, Tournament>(kvp.Key, this); //Cette compétition dépend du tournoi principal
                     regionalTournament.InitializeQualificationsNextYearsLists();
                     for (int id = rounds.Count-1; id >= idRoundPivot; id--)
@@ -667,7 +666,7 @@ namespace TheManager
         /// </summary>
         public void UpdateCupQualifications()
         {
-            Console.WriteLine("[UpdateCupQualifications " + name + "]");
+            Console.WriteLine("[UpdateCupQualifications " + name + "] (" + parent.Key + ")");
             //Sauvegarde en mémoire les qualifications en coupe par défaut, elles pourraient être amenées à changer en cas de modification de la structure de la ligue
             if(!AlreadyStoredRecuperedTeams())
             {
@@ -798,7 +797,7 @@ namespace TheManager
                         Round rtRound = rt.Source as Round;
                         if (rtRound != null)
                         {
-                            int clubsCount = _parent.Value == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(_parent.Key);
+                            int clubsCount = _parent.Key == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(_parent.Key);
                             RecoverTeams otherRecoverTeams = GetOtherRecoverTeamsOfRound(rt);
                             if (otherRecoverTeams.Source != null)
                             {
@@ -1056,7 +1055,7 @@ namespace TheManager
 
         public Tournament CopyForArchive(bool makeRoundsInactive)
         {
-            Tournament copy = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status);
+            Tournament copy = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent);
             foreach (Round r in rounds)
             {
                 Round roundCopy = r.Copy();
@@ -1334,7 +1333,7 @@ namespace TheManager
             for (int i = finalRounds.Count-1; i>=0; i--)
             {
                 List<Club> roundClubs = new List<Club>(finalRounds[i].clubs);
-                roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
+                roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, finalRounds[i].tiebreakers, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
 
                 foreach (Club c in roundClubs)
                 {

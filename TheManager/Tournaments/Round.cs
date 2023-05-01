@@ -32,7 +32,6 @@ namespace TheManager
         
     }
 
-
     public enum RecuperationMethod
     {
         Randomly,
@@ -42,6 +41,15 @@ namespace TheManager
         NotQualifiedForInternationalCompetitionWorst,
         NotQualifiedForInternationalCompetitionBest,
         StatusPro
+    }
+
+    public enum Tiebreaker
+    {
+        GoalDifference,
+        GoalFor,
+        GoalAgainst,
+        HeadToHead,
+        Discipline
     }
 
     [DataContract]
@@ -253,6 +261,12 @@ namespace TheManager
         protected List<Rule> _rules;
 
         /// <summary>
+        /// Rules to decide how to rank teams with the same number of points
+        /// </summary>
+        [DataMember]
+        protected List<Tiebreaker> _tiebreakers;
+
+        /// <summary>
         /// List of prizes given to the clubs at the end of the round
         /// </summary>
         [DataMember]
@@ -280,6 +294,7 @@ namespace TheManager
         public List<RecoverTeams> recuperedTeams { get => _recuperedTeams; }
         public List<RecoverTeams> baseRecuperedTeams { get => _baseRecuperedTeams; }
         public List<Rule> rules { get => _rules; }
+        public List<Tiebreaker> tiebreakers { get => _tiebreakers; }
         public List<Prize> prizes { get => _prizes; }
         public Dictionary<AdministrativeDivision, int> teamsByAdministrativeDivision => _teamsByAdministrativeDivision;
 
@@ -330,6 +345,7 @@ namespace TheManager
             _recuperedTeams = new List<RecoverTeams>();
             _baseRecuperedTeams = new List<RecoverTeams>();
             _rules = new List<Rule>();
+            _tiebreakers = new List<Tiebreaker>();
             _prizes = new List<Prize>();
             _phases = phases;
             _keepRankingFromPreviousRound = keepRankingFromPreviousRound;

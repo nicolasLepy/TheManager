@@ -24,6 +24,27 @@ namespace TheManager
             _divisions = new List<AdministrativeDivision>();
         }
 
+        public int GetLevelOfAdministrativeDivision(AdministrativeDivision association, int currentLevel)
+        {
+            if(association == this)
+            {
+                return currentLevel;
+            }
+            else
+            {
+                int newLevel = -1;
+                foreach(AdministrativeDivision ad in _divisions)
+                {
+                    int adLevel = ad.GetLevelOfAdministrativeDivision(association, currentLevel + 1);
+                    if(adLevel != -1)
+                    {
+                        newLevel = adLevel;
+                    }
+                }
+                return newLevel;
+            }
+        }
+
         public List<AdministrativeDivision> GetAdministrativeDivisionsLevel(int level)
         {
             List<AdministrativeDivision> res = new List<AdministrativeDivision>();

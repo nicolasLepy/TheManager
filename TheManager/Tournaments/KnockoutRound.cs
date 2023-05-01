@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using TheManager.Comparators;
-using TheManager.Comparators;
 using TheManager.Tournaments;
 
 namespace TheManager
