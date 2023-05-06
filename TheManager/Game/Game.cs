@@ -694,6 +694,7 @@ namespace TheManager
         public List<Match> NextDay()
         {
             _date = _date.AddDays(1);
+            //Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("France"));
 
             int weekNumber = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
 

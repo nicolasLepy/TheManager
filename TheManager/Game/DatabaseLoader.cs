@@ -1569,6 +1569,10 @@ namespace TheManager
             }
 
             List<int> availableWeeks = c.GetAvailableCalendarDates(true, 2);
+            /*for(int week=25; week<40; week++)
+            {
+                availableWeeks.Remove(week);
+            }*/
 
             string tournamentName = administrativeDivision == null ? c.Name() : administrativeDivision.name;
             string acr = "de ";
@@ -1613,7 +1617,8 @@ namespace TheManager
                 {
                     KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
                     int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams-currentAddedTeams;
-                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, RecuperationMethod.Worst);
+                    RecuperationMethod recuperationMethod = teamsToAdd == lowerTournament.Value ? RecuperationMethod.Best : RecuperationMethod.Worst;
+                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, recuperationMethod);
                     round.recuperedTeams.Add(rt);
                     currentAddedTeams += teamsToAdd;
                     if(currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)

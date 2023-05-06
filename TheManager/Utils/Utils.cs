@@ -736,5 +736,43 @@ namespace TheManager
             return res;
         }
 
+        /// <summary>
+        /// Util function for debugging purpose.
+        /// Check if a team is entered more than one time in a cup
+        /// </summary>
+        /// <param name="c"></param>
+        public static void CheckDuplicates(Country c)
+        {
+            Console.WriteLine("[Search for duplicates]");
+            foreach(Tournament t in c.Cups())
+            {
+                foreach(Round r in t.rounds)
+                {
+                    List<Club> clubs = new List<Club>();
+                    List<Club> duplicates = new List<Club>();
+                    foreach(Match m in r.matches)
+                    {
+                        List<Club> matchClubs = new List<Club>() { m.home, m.away };
+                        foreach(Club mc in matchClubs)
+                        {
+                            if (clubs.Contains(mc))
+                            {
+                                duplicates.Add(mc);
+                            }
+                            else
+                            {
+                                clubs.Add(mc);
+                            }
+                        }
+                    }
+                    Console.WriteLine(string.Format("[{0}, {1}] Duplicates : {2}", t.name, r.name, duplicates.Count));
+                    foreach(Club dc in duplicates)
+                    {
+                        Console.WriteLine(dc.name);
+                    }
+                }
+            }
+            Console.WriteLine("[Search for duplicates finished]");
+        }
     }
 }

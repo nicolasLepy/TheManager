@@ -774,10 +774,6 @@ namespace TheManager
                     break;
                 case RecuperationMethod.QualifiedForInternationalCompetition:
                     roundClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinent().GetContinentalClubs(roundClubs);
-                    if (number == -1)
-                    {
-                        number = roundClubs.Count;
-                    }
                     roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
                     break;
                 case RecuperationMethod.NotQualifiedForInternationalCompetitionBest:
@@ -788,10 +784,6 @@ namespace TheManager
                         roundClubs.Remove(c);
                     }
                     roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst));
-                    if (number == -1)
-                    {
-                        number = roundClubs.Count;
-                    }
                     break;
                 case RecuperationMethod.StatusPro:
                     List<Club> pro = new List<Club>();
@@ -804,15 +796,15 @@ namespace TheManager
                     }
                     roundClubs.Clear();
                     roundClubs.AddRange(pro);
-                    if(number == -1)
-                    {
-                        number = roundClubs.Count;
-                    }
                     break;
                 default:
                     roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
                     break;
 
+            }
+            if (number == -1)
+            {
+                number = roundClubs.Count;
             }
             List<Club> res = new List<Club>();
 

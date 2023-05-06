@@ -121,6 +121,14 @@ namespace TheManager_GUI
 
         private void BtnAvancer_Click(object sender, RoutedEventArgs e)
         {
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("France"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Martinique"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Guadeloupe"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Réunion"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Guyane"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Mayotte"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Tahiti"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Nouvelle-Calédonie"));
             Avancer();
         }
         private void BtnSearch_Click(object sender, RoutedEventArgs e)
