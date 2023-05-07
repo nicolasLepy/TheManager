@@ -412,11 +412,12 @@ namespace TheManager
         private int TeamsCount(RecoverTeams rt)
         {
             int res = 0;
-            if(rt.Method == RecuperationMethod.Best || rt.Method == RecuperationMethod.Worst || rt.Method == RecuperationMethod.Randomly)
+            if (rt.Method == RecuperationMethod.Best || rt.Method == RecuperationMethod.Worst || rt.Method == RecuperationMethod.Randomly)
             {
-                res = this.parent.Key == null ? rt.Number : rt.Source.RetrieveTeams(-1, rt.Method, true, parent.Key).Count; //Take into account teams count variation due to administrative divisions (in remplacement of res = rt.Number);
+                res = rt.Number;
+                //res = (this.parent.Key == null) ? rt.Number : rt.Source.RetrieveTeams(-1, rt.Method, true, parent.Key).Count; //Take into account teams count variation due to administrative divisions (in remplacement of res = rt.Number);
             }
-            else if(rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || rt.Method == RecuperationMethod.StatusPro)
+            else if (rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || rt.Method == RecuperationMethod.StatusPro)
             {
                 res = rt.Source.RetrieveTeams(-1, rt.Method, false, parent.Key).Count;
             }
@@ -425,6 +426,7 @@ namespace TheManager
 
         /// <summary>
         /// Update league cup qualifications due to clubs qualified for international competitions and professionnals teams count changes
+        /// Regional competitions (with parent.key != null) and national league cup competitions (with teams appearing in function of their international qualifications) are incompatible
         /// </summary>
         public void UpdateLeagueCupQualifications()
         {
@@ -433,6 +435,33 @@ namespace TheManager
             List<List<RecoverTeams>> newRecoverTeams = new List<List<RecoverTeams>>();
             //Contains new extra rounds created if necessary
             List<Round> newRounds = new List<Round>();
+
+            if (parent.Key != null && (localisation as Country) != null)
+            {
+                int levelsCount = (localisation as Country).Leagues().Count;
+                int[] teamsByLevel = new int[levelsCount];
+                for(int i = 0; i < levelsCount; i++)
+                {
+                    teamsByLevel[i] = 0;
+                }
+                for(int i = 0; i < _rounds.Count; i++)
+                {
+                    Round round = _rounds[i];
+                    for(int j = round.recuperedTeams.Count-1; j >= 0; j--)
+                    {
+                        RecoverTeams rt = round.recuperedTeams[j];
+                        int newTeamsCount = rt.Method == RecuperationMethod.Best ? rt.Source.RetrieveTeams(-1, rt.Method, true, parent.Key).Count : 0;
+                        if(newTeamsCount > 0)
+                        {
+                            round.recuperedTeams[j] = new RecoverTeams(rt.Source, newTeamsCount, rt.Method);
+                        }
+                        else
+                        {
+                            round.recuperedTeams.RemoveAt(j);
+                        }
+                    }
+                }
+            }
             
             //First phase : go through tournament qualifications with the new league system to check if adaptations must be made
             List<int> teamsRounds = new List<int>();
@@ -445,7 +474,8 @@ namespace TheManager
                 newTeams = 0;
                 foreach(RecoverTeams app in round.recuperedTeams)
                 {
-                    newTeams += TeamsCount(app);
+                    int newTeamsRound = TeamsCount(app);
+                    newTeams += newTeamsRound;
                 }
                 if (currentTeams <= newTeams && i > 0)
                 {
@@ -462,13 +492,18 @@ namespace TheManager
             }
 
             //Replace old RecoverTeams with new RecoverTeams with actual count of clubs (non continental or continental)
-            foreach(List<RecoverTeams> lrt in newRecoverTeams)
+            
+            //Case national League Cup
+            if(parent.Key == null)
             {
-                for(int i = 0; i < lrt.Count; i++)
+                foreach (List<RecoverTeams> lrt in newRecoverTeams)
                 {
-                    if(lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || lrt[i].Method == RecuperationMethod.QualifiedForInternationalCompetition || lrt[i].Method == RecuperationMethod.StatusPro)
+                    for (int i = 0; i < lrt.Count; i++)
                     {
-                        lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i]), lrt[i].Method);
+                        if (lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || lrt[i].Method == RecuperationMethod.QualifiedForInternationalCompetition || lrt[i].Method == RecuperationMethod.StatusPro)
+                        {
+                            lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i]), lrt[i].Method);
+                        }
                     }
                 }
             }
@@ -483,6 +518,7 @@ namespace TheManager
             //Ex. Coupe de la Ligue : certaines équipes de L2 entrent directement au deuxième tour
             //Case 3 : currentTeams > 0
             //Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour
+            Utils.Debug("[currentTeams] " + currentTeams);
             if (currentTeams == 0)
             {
                 Utils.Debug("Parfait !");
@@ -553,6 +589,7 @@ namespace TheManager
                     }
                     newRounds.Add(new KnockoutRound("Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.twoLegs, firstRound.phases, new GameDay(availableDates[(availableDates.Count - 2) - (2 * roundCreated)]-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[(availableDates.Count - 2) - (2 * roundCreated)]+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
                     newRounds[newRounds.Count - 1].recuperedTeams.AddRange(worstTeams);
+                    newRounds[newRounds.Count - 1].rules.AddRange(firstRound.rules);
                     newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, this, false, -1));
                     roundCreated++;
                     if (teamsToAdd > 0)
@@ -725,7 +762,7 @@ namespace TheManager
                 }
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
-            if (leagueCupLike)// || (this.parent.Value == null && this.parent.Key != null))
+            if (leagueCupLike || (this.parent.Value == null && this.parent.Key != null)) //Regional cup are updated following league cup algorithm
             {
                 UpdateLeagueCupQualifications();
             }
@@ -1102,7 +1139,6 @@ namespace TheManager
                     Console.WriteLine("Résumé de la compétition " + this.name);
                     foreach (Round r in _rounds)
                     {
-
                         Console.WriteLine("= " + r.name + " =");
                         foreach (RecoverTeams rt in r.recuperedTeams)
                         {
@@ -1110,7 +1146,6 @@ namespace TheManager
                         }
                     }
                 }
-
             }
 
             PrintTournamentResume(teamsFromOutsideLeagueSystem);
@@ -1131,7 +1166,8 @@ namespace TheManager
                 Console.WriteLine("Cloturé le " + rounds[i].programmation.end.WeekNumber + " " + rounds[i].programmation.end.MidWeekGame);
                 foreach (RecoverTeams rt in recoverTeams)
                 {
-                    Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + TeamsCount(rt) + " - " + rt.Method);
+                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), parent.Key).Count; //TeamsCount(rt)
+                    Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + totalAdmTeamsCount + " - " + rt.Method);
                 }
                 Console.WriteLine(cupTeams + " équipes pour " + (cupTeams / 2) + " matchs");
                 cupTeams /= 2;
@@ -1926,6 +1962,19 @@ namespace TheManager
                 }
             }
             return res;
+        }
+
+        public void PrintCupResume()
+        {
+            Utils.Debug("[" + name + "]");
+            foreach (Round r in rounds)
+            {
+                Utils.Debug(String.Format("-Résumé tour {0} | Initialisé le {1}, cloture le {2}- [{3} clubs, {4} matchs]", r.name, r.DateInitialisationRound().ToShortDateString(), r.DateEndRound().ToShortDateString(), r.clubs.Count, r.matches.Count));
+                foreach (Match m in r.matches)
+                {
+                    Utils.Debug(m.ToString());
+                }
+            }
         }
     }
 }

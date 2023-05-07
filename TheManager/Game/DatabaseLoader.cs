@@ -1568,11 +1568,11 @@ namespace TheManager
                 }
             }
 
-            List<int> availableWeeks = c.GetAvailableCalendarDates(true, 2);
-            /*for(int week=25; week<40; week++)
+            List<int> availableWeeks = c.GetAvailableCalendarDates(administrativeDivision == null, 2);
+            for(int week=25; week<(administrativeDivision == null ? 40 : 50); week++)
             {
                 availableWeeks.Remove(week);
-            }*/
+            }
 
             string tournamentName = administrativeDivision == null ? c.Name() : administrativeDivision.name;
             string acr = "de ";

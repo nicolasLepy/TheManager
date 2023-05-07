@@ -370,6 +370,7 @@ namespace TheManager
                     cup = cup.previousEditions[maxValueKey];
                 }
                 //If the cup is finished
+                //cup.PrintCupResume();
                 if (cup.currentRound == (cup.rounds.Count - 1) && cup.rounds.Last().matches[0].Played)
                 {
                     cupWinners.Add(cup.Winner());

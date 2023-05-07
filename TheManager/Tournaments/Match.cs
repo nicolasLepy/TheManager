@@ -377,7 +377,7 @@ namespace TheManager
 
         public override string ToString()
         {
-            return home.name + "-" + away.name + " (" + Tournament.shortName + ")";
+            return "[" + day.ToString() + "] " + home.name + "-" + away.name + " (" + Tournament.shortName + ")";
         }
 
         private int[] GetCumulativeScores()
