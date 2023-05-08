@@ -197,7 +197,7 @@ namespace TheManager.Exportation
                             nbEquipesParPoules = poules.Count;
                         }
                         List<Club> classement = new List<Club>(poules);
-                        classement.Sort(new ClubRankingComparator(t.matches, t.tiebreakers));
+                        classement.Sort(new ClubRankingComparator(t.matches, t.tiebreakers, t.pointsDeduction));
                         output.Append("<p>Groupe</p><table>");
                         foreach (Club club in classement)
                         {

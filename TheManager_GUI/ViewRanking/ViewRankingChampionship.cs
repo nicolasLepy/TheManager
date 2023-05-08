@@ -292,6 +292,7 @@ namespace TheManager_GUI.VueClassement
                         (spRanking.Children[indexClub + 1] as StackPanel).Background = lineColor;
                     }
                 }
+                PrintPointsDeductions(spRanking, _round, _sizeMultiplier);
             }
             else
             {

@@ -222,7 +222,7 @@ namespace TheManager
                     }
                 }
             }
-            ranking.Sort(new ClubRankingComparator(_matches, _tiebreakers));
+            ranking.Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
             return ranking;
         }
         
@@ -464,7 +464,7 @@ namespace TheManager
                             rankingI.Add(Ranking(i)[ranking]);
                         }
 
-                        rankingI.Sort(new ClubRankingComparator(_matches, _tiebreakers));
+                        rankingI.Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
                         if (rankingI.IndexOf(groupConcerned) >= extraPromotions)
                         {
                             UpdateQualificationTournament(adjustedQualifications, ranking, tournament);
@@ -817,8 +817,8 @@ namespace TheManager
 
             for (int i = 0; i < maxClubsInGroup; i++)
             {
-                clubsByRanking[i].Sort(new ClubRankingComparator(_matches, _tiebreakers));
-                clubsByRankingDescending[i].Sort(new ClubRankingComparator(_matches, _tiebreakers));
+                clubsByRanking[i].Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
+                clubsByRankingDescending[i].Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
             }
 
             for (int i = 0; i < _groupsNumber; i++)
@@ -930,7 +930,7 @@ namespace TheManager
         public List<Club> Ranking(int group, bool inverse=false)
         {
             List<Club> res = new List<Club>(_groups[group]);
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, RankingType.General, inverse);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, pointsDeduction, RankingType.General, inverse);
             res.Sort(comparator);
             return res;
         }
@@ -945,7 +945,7 @@ namespace TheManager
                     res.Add(c);
                 }
             }
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, pointsDeduction);
             res.Sort(comparator);
             return res;
         }

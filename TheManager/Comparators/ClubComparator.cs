@@ -50,7 +50,7 @@ namespace TheManager
                 else
                 {
                     roundRanking = new List<Club>(round.clubs);
-                    roundRanking.Sort(new ClubRankingComparator(round.matches, round.tiebreakers));
+                    roundRanking.Sort(new ClubRankingComparator(round.matches, round.tiebreakers, round.pointsDeduction));
                 }
                 _rankings.Add(round, roundRanking);
             }

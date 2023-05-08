@@ -9,22 +9,26 @@ namespace TheManager.Comparators
 {
     public class ClubRankingComparator : IComparer<Club>
     {
-        private readonly List<Match> _round;
+        private readonly List<Match> _games;
         private readonly RankingType _rankingType;
         private readonly List<Tiebreaker> _tiebreakers;
         private readonly bool _inverted;
         private readonly bool _knockoutRound;
+        private readonly Dictionary<Club, List<PointDeduction>> _pointsDeductions;
+        private readonly Round _roundResultsKept;
 
-        public ClubRankingComparator(List<Match> games, List<Tiebreaker> tiebreakers, RankingType rankingType = RankingType.General, bool inverted = false, bool knockoutRound = false, Round addRankingFromThisRound = null)
+        public ClubRankingComparator(List<Match> games, List<Tiebreaker> tiebreakers, Dictionary<Club, List<PointDeduction>> pointsDeductions, RankingType rankingType = RankingType.General, bool inverted = false, bool knockoutRound = false, Round addRankingFromThisRound = null)
         {
-            _round = new List<Match>(games);
+            _games = new List<Match>(games);
             _rankingType = rankingType;
             _inverted = inverted;
             _knockoutRound = knockoutRound;
             _tiebreakers = tiebreakers;
+            _pointsDeductions = pointsDeductions;
+            _roundResultsKept = addRankingFromThisRound;
             if (addRankingFromThisRound != null)
             {
-                _round.AddRange(addRankingFromThisRound.matches);
+                _games.AddRange(addRankingFromThisRound.matches);
             }
         }
 
@@ -32,9 +36,9 @@ namespace TheManager.Comparators
         {
             int res = 0;
             bool gameFound = false;
-            for(int j = this._round.Count-1; j >= 0 && !gameFound; j--)
+            for(int j = this._games.Count-1; j >= 0 && !gameFound; j--)
             {
-                Match game = this._round[j];
+                Match game = this._games[j];
                 if((game.home == x && game.away == y) || (game.home == y && game.away == x))
                 {
                     res = 1;
@@ -124,7 +128,7 @@ namespace TheManager.Comparators
                                     }
                                 }
                                 List<Match> games = new List<Match>();
-                                foreach(Match game in _round)
+                                foreach(Match game in _games)
                                 {
                                     if(game.Played && clubs.Contains(game.home) && clubs.Contains(game.away))
                                     {
@@ -133,7 +137,7 @@ namespace TheManager.Comparators
                                 }
                                 if(games.Count > 0)
                                 {
-                                    clubs.Sort(new ClubRankingComparator(games, tiebreakersH2H, _rankingType, false, _knockoutRound));
+                                    clubs.Sort(new ClubRankingComparator(games, tiebreakersH2H, _pointsDeductions, _rankingType, false, _knockoutRound));
                                     res = clubs.IndexOf(y) > clubs.IndexOf(x) ? -1 : 1;
                                 }
                                 break;
@@ -161,35 +165,53 @@ namespace TheManager.Comparators
             return _inverted ? -res : res;
         }
 
+        //TODO: Duplicates with Round.GetPointsDeduction
+        private int GetPointsDeduction(Club c)
+        {
+            int points = 0;
+            if (_pointsDeductions.ContainsKey(c))
+            {
+                foreach (PointDeduction entry in _pointsDeductions[c])
+                {
+                    points += entry.points;
+                }
+            }
+            if(_roundResultsKept != null)
+            {
+                points += _roundResultsKept.GetPointsDeduction(c);
+            }
+            return points;
+        }
+
         private int Points(Club c)
         {
-            return Utils.Points(_round, c, _rankingType);
+            return Utils.Points(_games, c, _rankingType) - (_rankingType == RankingType.General ? GetPointsDeduction(c) : 0);
         }
 
         private int Difference(Club c)
         {
-            return Utils.Difference(_round, c, _rankingType);
+            return Utils.Difference(_games, c, _rankingType);
         }
 
         private int GoalFor(Club c)
         {
-            return Utils.Gf(_round, c, _rankingType);
+            return Utils.Gf(_games, c, _rankingType);
         }
 
         private int GoalAgainst(Club c)
         {
-            return Utils.Ga(_round, c, _rankingType);
+            return Utils.Ga(_games, c, _rankingType);
         }
 
         private int Discipline(Club c)
         {
-            return Utils.CountEvent(GameEvent.YellowCard, _round, c, _rankingType) + (3 * Utils.CountEvent(GameEvent.RedCard, _round, c, _rankingType));
+            return Utils.CountEvent(GameEvent.YellowCard, _games, c, _rankingType) + (3 * Utils.CountEvent(GameEvent.RedCard, _games, c, _rankingType));
         }
 
         private List<Club> ClubsFromGames()
         {
             List<Club> res = new List<Club>();
-            foreach(Match m in _round)
+            foreach(Match m in _games)
             {
                 if(!res.Contains(m.home))
                 {

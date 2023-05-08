@@ -10,6 +10,46 @@ using TheManager.Tournaments;
 
 namespace TheManager
 {
+
+    public enum SanctionType
+    {
+        EnteringAdministration,
+        Forfeit,
+        IneligiblePlayer,
+        FinancialIrregularities
+    }
+
+    [DataContract]
+    public struct AdministrativeSanction
+    {
+        [DataMember]
+        private SanctionType _type;
+        [DataMember]
+        private int _minPointsDeduction;
+        [DataMember]
+        private int _maxPointsDeduction;
+        [DataMember]
+        private int _minRetrogradation;
+        [DataMember]
+        private int _maxRetrogradation;
+
+        public SanctionType type => _type;
+        public int minPointsDeduction => _minPointsDeduction;
+        public int maxPointsDeduction => _maxPointsDeduction;
+        public int minRetrogradation => _minRetrogradation;
+        public int maxRetrogradation => _maxRetrogradation;
+
+        public AdministrativeSanction(SanctionType type, int minPointsDeduction, int maxPointsDeduction, int minRetrogradation, int maxRetrogradation)
+        {
+            _type = type;
+            _minPointsDeduction = minPointsDeduction;
+            _maxPointsDeduction = maxPointsDeduction;
+            _minRetrogradation = minRetrogradation;
+            _maxRetrogradation = maxRetrogradation;
+        }
+
+    }
+
     [DataContract(IsReference =true)]
     public class Country : ILocalisation
     {
@@ -37,6 +77,8 @@ namespace TheManager
         private List<float[]> _gamesTimesWeekdays;
         [DataMember]
         private int _resetWeek;
+        [DataMember]
+        private List<AdministrativeSanction> _administrativeSanctionsDefinitions;
 
         public List<City> cities { get { return _cities; } }
         public List<Stadium> stadiums { get { return _stadiums; } }
@@ -92,6 +134,18 @@ namespace TheManager
             }
         }
 
+        public AdministrativeSanction GetSanction(SanctionType sanctionType)
+        {
+            AdministrativeSanction res = default;
+            foreach(AdministrativeSanction admS in _administrativeSanctionsDefinitions)
+            {
+                if(admS.type == sanctionType)
+                {
+                    res = admS;
+                }
+            }
+            return res;
+        }
 
         public float YearAssociationCoefficient(int nSeason)
         {
@@ -145,7 +199,7 @@ namespace TheManager
             }
         }
 
-        public Country(string dbName, string name, Language language, int shapeNumber, int resetWeek)
+        public Country(string dbName, string name, Language language, int shapeNumber, int resetWeek, List<AdministrativeSanction> administrativeSanctionsDefinitions)
         {
             _dbName = dbName;
             _name = name;
@@ -159,6 +213,7 @@ namespace TheManager
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
             _resetWeek = resetWeek;
+            _administrativeSanctionsDefinitions = administrativeSanctionsDefinitions;
         }
 
         public AdministrativeDivision GetCountryAdministrativeDivision()

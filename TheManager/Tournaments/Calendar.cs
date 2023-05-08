@@ -738,7 +738,7 @@ namespace TheManager
 
                 for (int i = 0; i < clubsByRankPosition.Length; i++)
                 {
-                    clubsByRankPosition[i].Sort(new ClubRankingComparator(previousRound.matches, previousRound.tiebreakers));
+                    clubsByRankPosition[i].Sort(new ClubRankingComparator(previousRound.matches, previousRound.tiebreakers, previousRound.pointsDeduction));
                     allClubs.AddRange(clubsByRankPosition[i]);
                 }
 

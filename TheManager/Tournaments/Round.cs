@@ -194,6 +194,32 @@ namespace TheManager
         }
     }
 
+    [DataContract]
+    public struct PointDeduction
+    {
+        [DataMember]
+        private SanctionType _sanctionType;
+
+        [DataMember]
+        private DateTime _date;
+
+        [DataMember]
+        private int _points;
+
+        public SanctionType sanctionType => _sanctionType;
+
+        public DateTime date => _date;
+
+        public int points => _points;
+
+        public PointDeduction(SanctionType sanction, DateTime date, int points)
+        {
+            _sanctionType = sanction;
+            _date = date;
+            _points = points;
+        }
+    }
+
     [DataContract(IsReference =true)]
     [KnownType(typeof(ChampionshipRound))]
     [System.Xml.Serialization.XmlInclude(typeof(ChampionshipRound))]
@@ -282,6 +308,11 @@ namespace TheManager
         [DataMember]
         protected Dictionary<AdministrativeDivision, int> _teamsByAdministrativeDivision;
 
+        /// <summary>
+        /// Store every points deductions for clubs
+        /// </summary>
+        [DataMember]
+        protected Dictionary<Club, List<PointDeduction>> _pointsDeduction;
 
         public string name { get => _name; }
         public List<Club> clubs { get => _clubs; }
@@ -297,6 +328,7 @@ namespace TheManager
         public List<Tiebreaker> tiebreakers { get => _tiebreakers; }
         public List<Prize> prizes { get => _prizes; }
         public Dictionary<AdministrativeDivision, int> teamsByAdministrativeDivision => _teamsByAdministrativeDivision;
+        public Dictionary<Club, List<PointDeduction>> pointsDeduction => _pointsDeduction;
 
         public Tournament Tournament
         {
@@ -350,8 +382,34 @@ namespace TheManager
             _phases = phases;
             _keepRankingFromPreviousRound = keepRankingFromPreviousRound;
             _teamsByAdministrativeDivision = new Dictionary<AdministrativeDivision, int>();
+            _pointsDeduction = new Dictionary<Club, List<PointDeduction>>();
         }
 
+        public void AddPointsDeduction(Club c, SanctionType sanction, DateTime date, int points)
+        {
+            if(!_pointsDeduction.ContainsKey(c))
+            {
+                _pointsDeduction.Add(c, new List<PointDeduction>());
+            }
+            _pointsDeduction[c].Add(new PointDeduction(sanction, date, points));
+        }
+
+        public int GetPointsDeduction(Club c)
+        {
+            int points = 0;
+            if(_pointsDeduction.ContainsKey(c))
+            {
+                foreach(PointDeduction entry in _pointsDeduction[c])
+                {
+                    points += entry.points;
+                }
+            }
+            if (_keepRankingFromPreviousRound > -1)
+            {
+                points += Tournament.rounds[_keepRankingFromPreviousRound].GetPointsDeduction(c);
+            }
+            return points;
+        }
 
         public DateTime DateInitialisationRound()
         {
@@ -586,7 +644,7 @@ namespace TheManager
 
         public int Points(Club c, RankingType rankingType = RankingType.General)
         {
-            return Utils.Points(MatchesRanking(), c, rankingType);
+            return Utils.Points(MatchesRanking(), c, rankingType) - (rankingType == RankingType.General ? GetPointsDeduction(c) : 0);
         }
 
         public int Played(Club c, RankingType rankingType = RankingType.General)

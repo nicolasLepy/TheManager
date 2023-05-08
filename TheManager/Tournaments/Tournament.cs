@@ -1467,7 +1467,7 @@ namespace TheManager
             for (int i = finalRounds.Count-1; i>=0; i--)
             {
                 List<Club> roundClubs = new List<Club>(finalRounds[i].clubs);
-                roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, finalRounds[i].tiebreakers, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
+                roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, finalRounds[i].tiebreakers, finalRounds[i].pointsDeduction, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
 
                 foreach (Club c in roundClubs)
                 {

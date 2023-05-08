@@ -194,7 +194,7 @@ namespace TheManager_GUI.VueClassement
                             int correspondingGroupRanking = q.ranking > 0 ? q.ranking : _round.groups[i].Count + q.ranking + 1;
                             concernedClubs.Add(_round.Ranking(i)[correspondingGroupRanking-1]);
                         }
-                        concernedClubs.Sort(new ClubRankingComparator(_round.matches, _round.tiebreakers));
+                        concernedClubs.Sort(new ClubRankingComparator(_round.matches, _round.tiebreakers, _round.pointsDeduction));
                         int j = 0;
                         foreach(Club c in concernedClubs)
                         {
@@ -208,15 +208,12 @@ namespace TheManager_GUI.VueClassement
                         }
                     }
                 }
+                PrintPointsDeductions(spRanking, _round, _sizeMultiplier);
             }
-
-
 
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
             if (_round.groups[0].Count > 0 && !_focusOnTeam)
             {
-
-
                 List<Club>[] groups = new List<Club>[_round.groupsCount];
                 for (int i = 0; i < _round.groupsCount; i++)
                 {

@@ -9,6 +9,7 @@ using System.IO;
 using System.Xml;
 using TheManager.Tournaments;
 using System.Data;
+using static System.Collections.Specialized.BitVector32;
 
 namespace TheManager
 {
@@ -517,7 +518,40 @@ namespace TheManager
                         int countryShape = int.Parse(e3.Attribute("shape").Value);
                         Language l = _kernel.String2Language(language);
                         int countryResetWeek = int.Parse(e3.Attribute("reset_week").Value);
-                        Country p = new Country(countrydBName, countryName, l, countryShape, countryResetWeek);
+
+                        List<AdministrativeSanction> sanctions = new List<AdministrativeSanction>();
+                        sanctions.Add(new AdministrativeSanction(SanctionType.Forfeit, 0, 0, 0, 0));
+                        sanctions.Add(new AdministrativeSanction(SanctionType.IneligiblePlayer, 1, 1, 0, 0));
+                        sanctions.Add(new AdministrativeSanction(SanctionType.FinancialIrregularities, 2, 15, 0, 0));
+                        sanctions.Add(new AdministrativeSanction(SanctionType.EnteringAdministration, 3, 3, 0, 0));
+
+                        foreach(XElement e4 in e3.Descendants("Sanction"))
+                        {
+                            SanctionType sanctionType = String2SanctionType(e4.Attribute("type").Value);
+                            int minPoints = 0;
+                            int maxPoints = 0;
+                            int minRetrogradation = 0;
+                            int maxRetrogradation = 0;
+                            string strPointsDeduction = e4.Attribute("points-deduction").Value;
+                            minPoints = strPointsDeduction.Contains('-') ? int.Parse(strPointsDeduction.Split('-')[0]) : int.Parse(strPointsDeduction);
+                            maxPoints = strPointsDeduction.Contains('-') ? int.Parse(strPointsDeduction.Split('-')[1]) : int.Parse(strPointsDeduction);
+                            if (e4.Attribute("retrogradation") != null)
+                            {
+                                string strRetrogradation = e4.Attribute("retrogradation").Value;
+                                minRetrogradation = strRetrogradation.Contains('-') ? int.Parse(strRetrogradation.Split('-')[0]) : int.Parse(strRetrogradation);
+                                maxRetrogradation = strRetrogradation.Contains('-') ? int.Parse(strRetrogradation.Split('-')[1]) : int.Parse(strRetrogradation);
+                            }
+                            AdministrativeSanction newAs = new AdministrativeSanction(sanctionType, minPoints, maxPoints, minRetrogradation, maxRetrogradation);
+                            for(int i = 0; i < sanctions.Count; i++)
+                            {
+                                if (sanctions[i].type == sanctionType)
+                                {
+                                    sanctions[i] = newAs;
+                                }
+                            }
+                        }
+
+                        Country p = new Country(countrydBName, countryName, l, countryShape, countryResetWeek, sanctions);
                         foreach (XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -1777,6 +1811,27 @@ namespace TheManager
             return res;
         }
 
+        private SanctionType String2SanctionType(string value)
+        {
+            SanctionType type;
+            switch(value)
+            {
+                case "entering-administration":
+                    type = SanctionType.EnteringAdministration;
+                    break;
+                case "forfeit":
+                    type = SanctionType.Forfeit;
+                    break;
+                case "ineligible-player":
+                    type = SanctionType.IneligiblePlayer;
+                    break;
+                case "financial-irregularities":
+                default:
+                    type = SanctionType.FinancialIrregularities;
+                    break;
+            }
+            return type;
+        }
         private Rule String2Rule(string value)
         {
             Rule rule;

@@ -51,6 +51,32 @@ namespace TheManager_GUI.VueClassement
             }
         }
 
+        protected void PrintPointsDeductions(StackPanel spHost, Round round, double sizeMultiplier)
+        {
+            foreach (Club c in round.clubs)
+            {
+                int pointsDeduction = round.GetPointsDeduction(c);
+                if (pointsDeduction > 0)
+                {
+                    List<SanctionType> clubSanctions = new List<SanctionType>();
+                    foreach(PointDeduction pd in round.pointsDeduction[c])
+                    {
+                        if(!clubSanctions.Contains(pd.sanctionType))
+                        {
+                            clubSanctions.Add(pd.sanctionType);
+                        }
+                    }
+                    string reasons = "";
+                    foreach (SanctionType st in clubSanctions)
+                    {
+                        reasons = String.Format("{0}, {1}", reasons, st.ToString());
+                    }
+                    reasons = reasons.Remove(0, 2);
+                    spHost.Children.Add(ViewUtils.CreateLabel(String.Format("{0} : {1} points ({2})", c.name, -pointsDeduction, reasons), "StyleLabel2", (int)(14 * sizeMultiplier), -1));
+                }
+            }
+        }
+
         public abstract override void Full(StackPanel spRanking);
     }
 }

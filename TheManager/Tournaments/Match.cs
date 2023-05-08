@@ -530,11 +530,24 @@ namespace TheManager
             {
                 _score1 = 0;
                 _score2 = 3;
+                if (Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+                {
+                    Round.AddPointsDeduction(home, SanctionType.Forfeit, day, home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
+                }
             }
             if (forfeitTeam == away)
             {
                 _score1 = 3;
                 _score2 = 0;
+                if (Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+                {
+                    Round.AddPointsDeduction(away, SanctionType.Forfeit, day, away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
+                }
+            }
+            if (forfeitTeam == null && Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+            {
+                Round.AddPointsDeduction(home, SanctionType.Forfeit, day, home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
+                Round.AddPointsDeduction(away, SanctionType.Forfeit, day, away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
             }
         }
 

@@ -274,7 +274,7 @@ namespace TheManager
         public List<Club> Ranking(RankingType rankingType = RankingType.General)
         {
             Round previousRoundRanking = this.keepRankingFromPreviousRound > -1 ? this.Tournament.rounds[keepRankingFromPreviousRound] : null;
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, rankingType, false, false, previousRoundRanking);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, pointsDeduction, rankingType, false, false, previousRoundRanking);
             List<Club> ranking = new List<Club>(_clubs);
             ranking.Sort(comparator);
             return ranking;
@@ -291,7 +291,7 @@ namespace TheManager
                     res.Add(c);
                 }
             }
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, RankingType.General, false, false, previousRoundRanking);
+            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, pointsDeduction, RankingType.General, false, false, previousRoundRanking);
             res.Sort(comparator);
             return res;
         }
