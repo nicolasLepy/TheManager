@@ -17,6 +17,7 @@
 	<system:String x:Key="str_enableAll">Tout activer</system:String>
 	<system:String x:Key="str_launch">Lancer</system:String>
 	<system:String x:Key="str_budget">Budget</system:String>
+	<system:String x:Key="str_budget_report">Rapport budgétaire</system:String>
 	<system:String x:Key="str_seats">places</system:String>
 	<system:String x:Key="str_advance">Avancer</system:String>
 	<system:String x:Key="str_1y">Sim. 1 an</system:String>
@@ -132,6 +133,20 @@
 	<system:String x:Key="str_semipro">Semi-pro</system:String>
 	<system:String x:Key="str_pro">Pro</system:String>
 	<system:String x:Key="str_startDate">Début de la partie</system:String>
-
+	<system:String x:Key="str_income">Produits</system:String>
+	<system:String x:Key="str_broadcasting_rights">Droits audiovisuels</system:String>
+	<system:String x:Key="str_sponsors_ads">Sponsors - Pubs</system:String>
+	<system:String x:Key="str_gate_receipts">Recettes matchs</system:String>
+	<system:String x:Key="str_other_income">Autres produits</system:String>
+	<system:String x:Key="str_expenses">Charges</system:String>
+	<system:String x:Key="str_payroll">Rémunération</system:String>
+	<system:String x:Key="str_transfer_amortization">Amortissement mutations</system:String>
+	<system:String x:Key="str_agents_fees">Honoraires agents</system:String>
+	<system:String x:Key="str_other_expenses">Autres charges</system:String>
+	<system:String x:Key="str_operating_result">Résultats hors mutations</system:String>
+	<system:String x:Key="str_result_from_transfers">Results mutations</system:String>
+	<system:String x:Key="str_result_before_tax">Résultats avant impôts</system:String>
+	<system:String x:Key="str_net_results">Résultats nets</system:String>
+	<system:String x:Key="str_income_tax">Impôts société</system:String>
 
 </ResourceDictionary>

@@ -17,6 +17,7 @@
 	<system:String x:Key="str_enableAll">Enable all</system:String>
 	<system:String x:Key="str_launch">Launch</system:String>
 	<system:String x:Key="str_budget">Budget</system:String>
+	<system:String x:Key="str_budget_report">Budget report</system:String>
 	<system:String x:Key="str_seats">seats</system:String>
 	<system:String x:Key="str_advance">Advance</system:String>
 	<system:String x:Key="str_1y">Sim. 1 year</system:String>
@@ -132,5 +133,20 @@
 	<system:String x:Key="str_semipro">Semi-pro</system:String>
 	<system:String x:Key="str_pro">Pro</system:String>
 	<system:String x:Key="str_startDate">Start date</system:String>
+	<system:String x:Key="str_income">Income</system:String>
+	<system:String x:Key="str_broadcasting_rights">Broadcasting rights</system:String>
+	<system:String x:Key="str_sponsors_ads">Sponsors - Ads</system:String>
+	<system:String x:Key="str_gate_receipts">Gate receipts</system:String>
+	<system:String x:Key="str_other_income">Other income</system:String>
+	<system:String x:Key="str_expenses">Expenses</system:String>
+	<system:String x:Key="str_payroll">Total payroll</system:String>
+	<system:String x:Key="str_transfer_amortization">Amortisation of transfer compensation</system:String>
+	<system:String x:Key="str_agents_fees">Agents fees</system:String>
+	<system:String x:Key="str_other_expenses">Other expenses</system:String>
+	<system:String x:Key="str_operating_result">Operating result</system:String>
+	<system:String x:Key="str_result_from_transfers">Results from transfers</system:String>
+	<system:String x:Key="str_result_before_tax">Result before tax</system:String>
+	<system:String x:Key="str_net_results">Net result</system:String>
+	<system:String x:Key="str_income_tax">Income tax</system:String>
 
 </ResourceDictionary>

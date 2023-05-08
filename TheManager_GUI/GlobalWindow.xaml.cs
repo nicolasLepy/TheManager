@@ -22,7 +22,7 @@ namespace TheManager_GUI
     /// </summary>
     public partial class GlobalWindow : Window
     {
-        private Func<double, string> YFormatter { get; set; }
+        //private Func<double, string> YFormatter { get; set; }
 
 
         public GlobalWindow()
@@ -30,7 +30,7 @@ namespace TheManager_GUI
             InitializeComponent();
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
 
-            YFormatter = value => value.ToString("C");
+            Func<double, string> YFormatter = value => value.ToString("C");
 
             string[] years = new string[Session.Instance.Game.gameUniverse.AverageClubLevelInGame.Count];
             int year = 2021;
@@ -42,66 +42,23 @@ namespace TheManager_GUI
             }
 
             ChartValues<float> averageClubLevelInGame = new ChartValues<float>(Session.Instance.Game.gameUniverse.AverageClubLevelInGame);
-            CreateChart(years, "Average Club Level In Game", averageClubLevelInGame, false, "Niveau", 0, 100, "Années");
+            ViewUtils.CreateYearChart(spMain, years, "Average Club Level In Game", averageClubLevelInGame, false, "Niveau", 0, 100, "Années", YFormatter);
 
             ChartValues<float> averageGoals = new ChartValues<float>(Session.Instance.Game.gameUniverse.AverageGoals);
-            CreateChart(years, "Average goals by game", averageGoals, false, "Buts", 0, double.NaN, "Années");
+            ViewUtils.CreateYearChart(spMain, years, "Average goals by game", averageGoals, false, "Buts", 0, double.NaN, "Années", YFormatter);
 
             ChartValues<float> averagePlayerLevel = new ChartValues<float>(Session.Instance.Game.gameUniverse.AveragePlayerLevelInGame);
-            CreateChart(years, "Average Player Level In Game", averagePlayerLevel, false, "Niveau", 0, 100, "Années");
+            ViewUtils.CreateYearChart(spMain, years, "Average Player Level In Game", averagePlayerLevel, false, "Niveau", 0, 100, "Années", YFormatter);
 
             ChartValues<int> playersInGame = new ChartValues<int>(Session.Instance.Game.gameUniverse.PlayersInGame);
-            CreateChart(years, "Players in game", playersInGame, false, "Total", 0, double.NaN, "Années");
+            ViewUtils.CreateYearChart(spMain, years, "Players in game", playersInGame, false, "Total", 0, double.NaN, "Années", YFormatter);
 
             ChartValues<float> indebtesClubs = new ChartValues<float>(Session.Instance.Game.gameUniverse.RateIndebtesClubs);
-            CreateChart(years, "Rate of indebtes clubs", indebtesClubs, false, "Taux", 0, 1, "Années");
+            ViewUtils.CreateYearChart(spMain, years, "Rate of indebtes clubs", indebtesClubs, false, "Taux", 0, 1, "Années", YFormatter);
 
             ChartValues<int> totalBugetInGame = new ChartValues<int>(Session.Instance.Game.gameUniverse.TotalBudgetInGame);
-            CreateChart(years, "Total money in game", totalBugetInGame, true, "Argent", double.NaN, double.NaN, "Années");
+            ViewUtils.CreateYearChart(spMain, years, "Total money in game", totalBugetInGame, true, "Argent", double.NaN, double.NaN, "Années", YFormatter);
 
-
-        }
-
-        private void CreateChart(string[] years, string title, IChartValues values, bool isMoney, string axisYtitle, double minValue, double maxValue, string axisXtitle)
-        {
-
-            Label labelTitle = ViewUtils.CreateLabel(title, "StyleLabel2Center", 18, -1);
-
-            spMain.Children.Add(labelTitle);
-
-            SeriesCollection averageClubLevelInGameCollection = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Title = title,
-                    Values = values,
-                }
-            };
-
-            CartesianChart cc = new CartesianChart();
-            cc.Width = 800;
-            cc.Height = 375;
-
-            cc.Series = averageClubLevelInGameCollection;
-
-            Axis axisY = new Axis();
-            axisY.Title = axisYtitle;
-            axisY.MinValue = minValue;
-            axisY.MaxValue = maxValue;
-
-            if (isMoney)
-            {
-                axisY.LabelFormatter = YFormatter;
-            }
-
-
-            Axis axisX = new Axis();
-            axisX.Title = axisXtitle;
-            axisX.Labels = years;
-
-            cc.AxisY.Add(axisY);
-            cc.AxisX.Add(axisX);
-            spMain.Children.Add(cc);
 
         }
 

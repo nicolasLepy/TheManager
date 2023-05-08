@@ -109,6 +109,17 @@
 					</StackPanel>
 
 				</TabItem>
+				<TabItem Header="{StaticResource str_budget_report}" Style="{StaticResource StyleTabHeader}" HorizontalAlignment="Left">
+
+					<ScrollViewer VerticalScrollBarVisibility="Auto" Height="600">
+						<StackPanel Orientation="Vertical" Width="700">
+							<ComboBox Name="cbSeason" Style="{StaticResource StyleComboBox}" Width="150"/>
+							<StackPanel Orientation="Vertical" Width="700" Name="spBudgetReport"/>
+							<StackPanel Orientation="Vertical" Name="spBudgetReportChart"/>
+						</StackPanel>
+					</ScrollViewer>
+
+				</TabItem>
 				<TabItem Header="{StaticResource str_history}" Style="{StaticResource StyleTabHeader}" HorizontalAlignment="Left" Width="65">
 					<StackPanel Orientation="Horizontal">
 						<StackPanel Orientation="Vertical" Width="500">

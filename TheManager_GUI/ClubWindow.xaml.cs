@@ -3,6 +3,7 @@ using LiveCharts.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,6 +21,20 @@ namespace TheManager_GUI
         {
             return y.Annee - x.Annee;
         }
+    }
+
+    public enum BudgetReportEntry
+    {
+        BroadcastRights,
+        Sponsors,
+        GateReceipts,
+        OtherIncome,
+        Payroll,
+        TransferAmortization,
+        Agents,
+        OtherExpenses,
+        IncomeTax,
+        Transfers
     }
 
     /// <summary>
@@ -43,6 +58,172 @@ namespace TheManager_GUI
                 dictionnary.Add(key, 0);
             }
             dictionnary[key] += value;
+        }
+
+        private StackPanel CreateBudgetReportEntry(string name, float value, BudgetReportEntry budgetReportEntry)
+        {
+            StackPanel spEntry = new StackPanel();
+            spEntry.Orientation = Orientation.Horizontal;
+            spEntry.Children.Add(ViewUtils.CreateLabelOpenWindow<BudgetReportEntry>(budgetReportEntry, UpdateBudgetReportChartSelected, name, "StyleLabel2", 12, 400));
+            spEntry.Children.Add(ViewUtils.CreateLabel(Utils.FormatMoney(value), "StyleLabel2", 12, 150, value < 0 ? Brushes.Red : Brushes.DarkGreen));
+            return spEntry;
+        }
+
+        private List<BudgetModificationReason> GetBudgetEntries(BudgetReportEntry budgetEntry)
+        {
+            List<BudgetModificationReason> res = new List<BudgetModificationReason>();
+            switch (budgetEntry)
+            {
+                case BudgetReportEntry.BroadcastRights:
+                    break;
+                case BudgetReportEntry.Sponsors:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.SponsorGrant };
+                    break;
+                case BudgetReportEntry.GateReceipts:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.StadiumAttendance };
+                    break;
+                case BudgetReportEntry.OtherIncome:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.TournamentGrant };
+                    break;
+                case BudgetReportEntry.Payroll:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.PayWages };
+                    break;
+                case BudgetReportEntry.TransferAmortization:
+                    break;
+                case BudgetReportEntry.Agents:
+                    break;
+                case BudgetReportEntry.OtherExpenses:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.UpdateFormationFacilities };
+                    break;
+                case BudgetReportEntry.IncomeTax:
+                    break;
+                case BudgetReportEntry.Transfers:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.TransferIndemnity };
+                    break;
+            }
+            return res;
+        }
+
+        public void UpdateBudgetReportChartSelected(BudgetReportEntry budgetReportEntry)
+        {
+            string title = budgetReportEntry.ToString();
+            List<BudgetModificationReason> budgetEntries = GetBudgetEntries(budgetReportEntry);
+            spBudgetReportChart.Children.Clear();
+            List<string> years = new List<string>();
+            List<float> amount = new List<float>();
+            Func<double, string> YFormatter = value => value.ToString("C");
+            foreach (DateTime dt in GetHistoryEntriesDates())
+            {
+                years.Add(dt.Year.ToString());
+                amount.Add(GetBudgetOnYear(dt, budgetEntries));
+            }
+            ChartValues<float> amountValues = new ChartValues<float>(amount);
+            float min = Math.Min(amount.Min(), 0);
+            float max = Math.Max(amount.Max(), 0);
+            if(min == 0 && max == 0)
+            {
+                spBudgetReportChart.Children.Add(ViewUtils.CreateLabel("Aucune entrée enregistrée", "StyleLabel2", 14, 400));
+            }
+            else
+            {
+                ViewUtils.CreateYearChart(spBudgetReportChart, years.ToArray(), title, amountValues, true, "Total", min, max, title, YFormatter, 0.75);
+            }
+        }
+
+        private float GetBudgetOnYear(DateTime date, List<BudgetModificationReason> budgetEntries)
+        {
+            CityClub cc = _club as CityClub;
+            float totalAmount = 0;
+            DateTime beginningDate = date.AddYears(-1);
+            List<BudgetEntry> allBudgetEntries = cc.budgetHistory.Where(c => Utils.IsBefore(c.Date, date) && Utils.IsBefore(beginningDate, c.Date)).ToList();
+            foreach (BudgetEntry be in allBudgetEntries)
+            {
+                if(budgetEntries.Contains(be.Reason))
+                {
+                    totalAmount += be.Amount;
+                }
+            }
+
+            return totalAmount;
+        }
+
+        private void NewBudgetReportSelected(DateTime date)
+        {
+            CityClub cc = _club as CityClub;
+            DateTime beginningDate = date.AddYears(-1);
+
+            float broadcastingRights = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.BroadcastRights));
+            float sponsorsAds = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Sponsors));
+            float gateReceipts = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.GateReceipts));
+            float otherIncome = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.OtherIncome));
+
+            float payroll = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Payroll));
+            float transferAmortization = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.TransferAmortization));
+            float agentsFees = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Agents));
+            float otherExpenses = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.OtherExpenses));
+
+            float incomeTax = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.IncomeTax));
+            float transfersResult = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Transfers));
+
+            float totalIncomes = broadcastingRights + sponsorsAds + gateReceipts + otherIncome;
+            float totalExpenses = payroll + transferAmortization + agentsFees + otherExpenses;
+            float operatingResult = totalIncomes + totalExpenses;
+            float resultBeforeTax = operatingResult + transfersResult;
+            float netResult = resultBeforeTax + incomeTax;
+
+            spBudgetReport.Children.Clear();
+            spBudgetReport.Children.Add(ViewUtils.CreateLabel(FindResource("str_income").ToString(), "StyleLabel2", 14, 200));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_broadcasting_rights").ToString(), broadcastingRights, BudgetReportEntry.BroadcastRights));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_sponsors_ads").ToString(), sponsorsAds, BudgetReportEntry.Sponsors));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_gate_receipts").ToString(), gateReceipts, BudgetReportEntry.GateReceipts));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_other_income").ToString(), otherIncome, BudgetReportEntry.OtherIncome));
+
+
+            spBudgetReport.Children.Add(ViewUtils.CreateLabel(FindResource("str_expenses").ToString(), "StyleLabel2", 14, 200));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_payroll").ToString(), payroll, BudgetReportEntry.Payroll));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_transfer_amortization").ToString(), transferAmortization, BudgetReportEntry.TransferAmortization));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_agents_fees").ToString(), agentsFees, BudgetReportEntry.Agents));
+            StackPanel spOtherExpenses = CreateBudgetReportEntry(FindResource("str_other_expenses").ToString(), otherExpenses, BudgetReportEntry.OtherExpenses);
+            spOtherExpenses.Margin = new Thickness(0, 0, 0, 50);
+            spBudgetReport.Children.Add(spOtherExpenses);
+
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_operating_result").ToString().ToUpper(), operatingResult, BudgetReportEntry.OtherIncome));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_result_from_transfers").ToString().ToUpper(), transfersResult, BudgetReportEntry.Transfers));
+
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_result_before_tax").ToString().ToUpper(), resultBeforeTax, BudgetReportEntry.OtherIncome));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_income_tax").ToString(), incomeTax, BudgetReportEntry.OtherIncome));
+            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_net_results").ToString().ToUpper(), netResult, BudgetReportEntry.OtherIncome));
+        }
+
+        public List<DateTime> GetHistoryEntriesDates()
+        {
+            List<DateTime> historyEntriesDates = new List<DateTime>();
+            CityClub cc = _club as CityClub;
+            if(cc != null)
+            {
+                foreach(HistoricEntry he in cc.history.elements)
+                {
+                    historyEntriesDates.Add(he.date);
+                }
+            }
+            return historyEntriesDates;
+
+        }
+
+        public void FillBudgetReport()
+        {
+            CityClub cc = _club as CityClub;
+            if(cc != null)
+            {
+                cbSeason.Items.Clear();
+                foreach (HistoricEntry history in cc.history.elements)
+                {
+                    ComboBoxItem cbi = new ComboBoxItem();
+                    cbi.Content = history.date.ToShortDateString();
+                    cbi.Selected += new RoutedEventHandler((s, e) => NewBudgetReportSelected(history.date));
+                    cbSeason.Items.Add(cbi);
+                }
+            }
         }
 
         public void FillBudget()
@@ -178,6 +359,7 @@ namespace TheManager_GUI
             Palmares(c);
             FillGames();
             FillBudget();
+            FillBudgetReport();
             FillHistory();
 
             List<Player> newContracts = new List<Player>();

@@ -173,6 +173,8 @@ namespace TheManager
         private float _oddD;
         [DataMember]
         private float _odd2;
+        [DataMember]
+        private bool _forfeit;
 
         public int attendance { get => _attendance; }
         [DataMember]
@@ -244,6 +246,8 @@ namespace TheManager
                 }
             }
         }
+        public bool forfeit => _forfeit;
+
 
         [DataMember]
         public bool primeTimeGame { get; set; }
@@ -337,7 +341,7 @@ namespace TheManager
         {
             get
             {
-                bool res = _minute > 0 || _period > 1;
+                bool res = _minute > 0 || _period > 1 || forfeit;
 
                 return res;
             }
@@ -516,6 +520,21 @@ namespace TheManager
                     }
                 }
                 return res;
+            }
+        }
+
+        private void DeclareForfeit(Club forfeitTeam)
+        {
+            _forfeit = true;
+            if (forfeitTeam == home)
+            {
+                _score1 = 0;
+                _score2 = 3;
+            }
+            if (forfeitTeam == away)
+            {
+                _score1 = 3;
+                _score2 = 0;
             }
         }
 
@@ -1073,8 +1092,18 @@ namespace TheManager
             _subs1OnBench = new List<Player>(_subs1);
             _subs2OnBench = new List<Player>(_subs2);
 
-            UpdatePlayersMatchPlayedStat(home, _compo1);
-            UpdatePlayersMatchPlayedStat(away, _compo2);
+            if(_compo1.Count < 8)
+            {
+                DeclareForfeit(home);
+            }
+            if (_compo2.Count < 8)
+            {
+                DeclareForfeit(away);
+            }
+            if (_compo2.Count < 8 && _compo1.Count < 8)
+            {
+                DeclareForfeit(null);
+            }
 
         }
 
@@ -1092,6 +1121,7 @@ namespace TheManager
 
         /// <summary>
         /// Set directly a composition by passing it in parameter
+        /// TODO: Remove this function and create one generic for player selected compo and auto compo
         /// </summary>
         /// <param name="compo">Players</param>
         /// <param name="club">Club</param>
@@ -1102,14 +1132,21 @@ namespace TheManager
                 _compo1 = new List<Player>(compo);
                 _compo1Terrain = new List<Player>(compo);
                 _subs1 = new List<Player>(subs);
+                if(_compo1.Count < 11)
+                {
+                    DeclareForfeit(club);
+                }
             }
             else if(club == away)
             {
                 _compo2 = new List<Player>(compo);
                 _compo2Terrain = new List<Player>(compo);
                 _subs2 = new List<Player>(subs);
+                if (_compo2.Count < 11)
+                {
+                    DeclareForfeit(club);
+                }
             }
-            UpdatePlayersMatchPlayedStat(club, compo);
         }
 
         private void EndOfGame()
@@ -1244,100 +1281,111 @@ namespace TheManager
 
         public List<RetourMatch> NextMinute()
         {
-            //At the beginning of the game
-            if(_minute == 0 && _period == 1)
+            List<RetourMatch> lookbacks = new List<RetourMatch>();
+            if (!forfeit)
             {
-                CalculateLevelDifference();
-                SetAttendance();
-            }
-
-            Club a = home;
-            Club b = away;
-
-            _minute++;
-            
-            List<RetourMatch> lookbacks = PlayMinute(a, b);
-
-            int periodDuration = (_period < 3) ? 45 : 15;
-            //End of regular time
-            if (_minute == periodDuration)
-            {
-                _extraTime = Session.Instance.Random(1, 6);
-            }
-
-            //End half-time
-            if (_minute == periodDuration + _extraTime)
-            {
-                _period++;
-                _minute = 0;
-                _extraTime = 0;
-                if(_period == 3)
+                //At the beginning of the game
+                if (_minute == 0 && _period == 1)
                 {
-                    if ((_prolongationsIfDraw && (_score1 == _score2)) || SecondLegIsDraw())
+                    CalculateLevelDifference();
+                    SetAttendance();
+                    UpdatePlayersMatchPlayedStat(home, _compo1);
+                    UpdatePlayersMatchPlayedStat(away, _compo2);
+                }
+
+                Club a = home;
+                Club b = away;
+
+                _minute++;
+                lookbacks = PlayMinute(a, b);
+
+                int periodDuration = (_period < 3) ? 45 : 15;
+                //End of regular time
+                if (_minute == periodDuration)
+                {
+                    _extraTime = Session.Instance.Random(1, 6);
+                }
+
+                //End half-time
+                if (_minute == periodDuration + _extraTime)
+                {
+                    _period++;
+                    _minute = 0;
+                    _extraTime = 0;
+                    if (_period == 3)
                     {
-                        _prolongations = true;
+                        if ((_prolongationsIfDraw && (_score1 == _score2)) || SecondLegIsDraw())
+                        {
+                            _prolongations = true;
+                        }
+                        else
+                        {
+                            lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                            EndOfGame();
+
+                        }
                     }
-                    else
+                    if (_period == 5)
                     {
+                        if ((_prolongationsIfDraw && _score1 == _score2) || SecondLegIsDraw())
+                        {
+                            PlayPenaltyShootout();
+                        }
                         lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
                         EndOfGame();
-
                     }
-                }
-                if(_period == 5)
-                {
-                    if ((_prolongationsIfDraw && _score1 == _score2) || SecondLegIsDraw())
-                    {
-                        PlayPenaltyShootout();
-                    }
-                    lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
-                    EndOfGame();
                 }
             }
-
-            
+            else
+            {
+                lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+            }
             return lookbacks;
-
         }
 
         public void Play()
         {
-            Club a = home;
-            Club b = away;
-            CalculateLevelDifference();
-            SetAttendance();
-
-            for (_period = 1; _period < 3; _period++)
+            if(!forfeit)
             {
-                for (_minute = 1; _minute < 50; _minute++)
-                {
-                    PlayMinute(a, b);
-                }
-            }
+                Club a = home;
+                Club b = away;
+                CalculateLevelDifference();
+                SetAttendance();
+                UpdatePlayersMatchPlayedStat(home, _compo1);
+                UpdatePlayersMatchPlayedStat(away, _compo2);
 
-            if((_prolongationsIfDraw && (_score1 == _score2)) || SecondLegIsDraw())
-            {
-                _prolongations = true;
-                for(_period = 3; _period<5;_period++)
+                for (_period = 1; _period < 3; _period++)
                 {
-                    for(_minute = 1; _minute<16; _minute++)
+                    for (_minute = 1; _minute < 50; _minute++)
                     {
                         PlayMinute(a, b);
                     }
                 }
-                if((_prolongationsIfDraw && _score1 == _score2) || SecondLegIsDraw())
-                {
-                    PlayPenaltyShootout();
-                }
-            }
 
-            if(home == Session.Instance.Game.club || away == Session.Instance.Game.club)
-            {
-                string res = ArticleGenerator.Instance.GenerateArticle(this);
-                Article article = new Article(res, "", new DateTime(day.Year, day.Month, day.Day), 2);
-                Session.Instance.Game.articles.Add(article);
+                if ((_prolongationsIfDraw && (_score1 == _score2)) || SecondLegIsDraw())
+                {
+                    _prolongations = true;
+                    for (_period = 3; _period < 5; _period++)
+                    {
+                        for (_minute = 1; _minute < 16; _minute++)
+                        {
+                            PlayMinute(a, b);
+                        }
+                    }
+                    if ((_prolongationsIfDraw && _score1 == _score2) || SecondLegIsDraw())
+                    {
+                        PlayPenaltyShootout();
+                    }
+                }
+
+                if (home == Session.Instance.Game.club || away == Session.Instance.Game.club)
+                {
+                    string res = ArticleGenerator.Instance.GenerateArticle(this);
+                    Article article = new Article(res, "", new DateTime(day.Year, day.Month, day.Day), 2);
+                    Session.Instance.Game.articles.Add(article);
+                }
+                EndOfGame();
             }
-            EndOfGame();
         }
 
         private bool SecondLegIsDraw()
@@ -1727,6 +1775,10 @@ namespace TheManager
             if(PenaltyShootout)
             {
                 res = res + " (" + penaltyShootout1 + "-" + penaltyShootout2 + " t.)";
+            }
+            if(forfeit)
+            {
+                res = res + " forf.";
             }
             return res;
         }

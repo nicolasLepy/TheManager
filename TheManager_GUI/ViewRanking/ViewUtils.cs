@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LiveCharts.Wpf;
+using LiveCharts;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
@@ -25,6 +27,67 @@ namespace TheManager_GUI
         </DataTemplate>");
             XmlReader xmlReader = XmlReader.Create(stringReader);
             return XamlReader.Load(xmlReader) as DataTemplate;
+        }
+
+
+        /// <summary>
+        /// Create a chart showing data every years
+        /// </summary>
+        /// <param name="host">StackPanel host</param>
+        /// <param name="years">List of years</param>
+        /// <param name="title">Chart title</param>
+        /// <param name="values">Chart values</param>
+        /// <param name="isMoney">Data represents money</param>
+        /// <param name="axisYtitle">Title of Y axis</param>
+        /// <param name="minValue">Min value of Y axis</param>
+        /// <param name="maxValue">Max value of Y axis</param>
+        /// <param name="axisXtitle">Title of X axis</param>
+        /// <param name="Yformatter">How to format Y axis values</param>
+        /// <param name="sizeMultiplier">Size multiplier of the chart</param>
+        /// <returns></returns>
+        public static CartesianChart CreateYearChart(StackPanel host, string[] years, string title, IChartValues values, bool isMoney, string axisYtitle, double minValue, double maxValue, string axisXtitle, Func<double, string> Yformatter, double sizeMultiplier = 1.0)
+        {
+
+            Label labelTitle = ViewUtils.CreateLabel(title, "StyleLabel2Center", 18, -1);
+
+            host.Children.Add(labelTitle);
+
+            SeriesCollection averageClubLevelInGameCollection = new SeriesCollection
+            {
+                new LineSeries
+                {
+                    Title = title,
+                    Values = values,
+                }
+            };
+
+            CartesianChart cc = new CartesianChart();
+            cc.Width = 800 * sizeMultiplier;
+            cc.Height = 375 * sizeMultiplier;
+
+            cc.Series = averageClubLevelInGameCollection;
+
+            Axis axisY = new Axis();
+            axisY.Title = axisYtitle;
+            axisY.MinValue = minValue;
+            axisY.MaxValue = maxValue;
+
+            if (isMoney)
+            {
+                axisY.LabelFormatter = Yformatter;
+            }
+
+
+            Axis axisX = new Axis();
+            axisX.Title = axisXtitle;
+            axisX.Labels = years;
+
+            cc.AxisY.Add(axisY);
+            cc.AxisX.Add(axisX);
+            host.Children.Add(cc);
+
+            return cc;
+
         }
 
 
