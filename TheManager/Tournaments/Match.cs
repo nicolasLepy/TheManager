@@ -530,24 +530,35 @@ namespace TheManager
             {
                 _score1 = 0;
                 _score2 = 3;
-                if (Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+                int pointsSanctions = home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
+                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
                 {
-                    Round.AddPointsDeduction(home, SanctionType.Forfeit, day, home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
+                    Round.AddPointsDeduction(home, SanctionType.Forfeit, day, pointsSanctions);
                 }
             }
             if (forfeitTeam == away)
             {
                 _score1 = 3;
                 _score2 = 0;
-                if (Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+                int pointsSanctions = away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
+                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
                 {
-                    Round.AddPointsDeduction(away, SanctionType.Forfeit, day, away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
+                    Round.AddPointsDeduction(away, SanctionType.Forfeit, day, pointsSanctions);
                 }
             }
             if (forfeitTeam == null && Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
             {
-                Round.AddPointsDeduction(home, SanctionType.Forfeit, day, home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
-                Round.AddPointsDeduction(away, SanctionType.Forfeit, day, away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction);
+                int homePointsSanctions = home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
+                int awayPointsSanctions = away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
+                //Usually homePointsSanctions == awayPointsSanctions
+                if (homePointsSanctions > 0)
+                {
+                    Round.AddPointsDeduction(home, SanctionType.Forfeit, day, homePointsSanctions);
+                }
+                if(awayPointsSanctions > 0)
+                {
+                    Round.AddPointsDeduction(away, SanctionType.Forfeit, day, awayPointsSanctions);
+                }
             }
         }
 

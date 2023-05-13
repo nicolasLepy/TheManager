@@ -11,6 +11,20 @@ using TheManager.Comparators;
 namespace TheManager
 {
 
+    public enum BudgetReportEntry
+    {
+        BroadcastRights,
+        Sponsors,
+        GateReceipts,
+        OtherIncome,
+        Payroll,
+        TransferAmortization,
+        Agents,
+        OtherExpenses,
+        IncomeTax,
+        Transfers
+    }
+
     public enum ContractOfferResult
     {
         Waiting,
@@ -903,6 +917,84 @@ namespace TheManager
             {
                 rc.ChangeStatus(newStatus);
             }
+        }
+
+        public List<BudgetModificationReason> GetBudgetEntries(BudgetReportEntry budgetEntry)
+        {
+            List<BudgetModificationReason> res = new List<BudgetModificationReason>();
+            switch (budgetEntry)
+            {
+                case BudgetReportEntry.BroadcastRights:
+                    break;
+                case BudgetReportEntry.Sponsors:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.SponsorGrant };
+                    break;
+                case BudgetReportEntry.GateReceipts:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.StadiumAttendance };
+                    break;
+                case BudgetReportEntry.OtherIncome:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.TournamentGrant };
+                    break;
+                case BudgetReportEntry.Payroll:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.PayWages };
+                    break;
+                case BudgetReportEntry.TransferAmortization:
+                    break;
+                case BudgetReportEntry.Agents:
+                    break;
+                case BudgetReportEntry.OtherExpenses:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.UpdateFormationFacilities };
+                    break;
+                case BudgetReportEntry.IncomeTax:
+                    break;
+                case BudgetReportEntry.Transfers:
+                    res = new List<BudgetModificationReason>() { BudgetModificationReason.TransferIndemnity };
+                    break;
+            }
+            return res;
+        }
+
+        public float GetTotalExpensesOnYear(DateTime date)
+        {
+            float payroll = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.Payroll));
+            float transferAmortization = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.TransferAmortization));
+            float agentsFees = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.Agents));
+            float otherExpenses = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.OtherExpenses));
+
+            float totalExpenses = payroll + transferAmortization + agentsFees + otherExpenses;
+            return totalExpenses;
+        }
+
+        public float GetTransfersResultOnYear(DateTime date)
+        {
+            return GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.Transfers));
+        }
+
+        public float GetTotalIncomeOnYear(DateTime date)
+        {
+            float broadcastingRights = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.BroadcastRights));
+            float sponsorsAds = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.Sponsors));
+            float gateReceipts = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.GateReceipts));
+            float otherIncome = GetBudgetOnYear(date, GetBudgetEntries(BudgetReportEntry.OtherIncome));
+
+            float totalIncomes = broadcastingRights + sponsorsAds + gateReceipts + otherIncome;
+            return totalIncomes;
+        }
+
+        public float GetBudgetOnYear(DateTime date, List<BudgetModificationReason> budgetEntries)
+        {
+            float totalAmount = 0;
+            DateTime beginningDate = date.AddYears(-1);
+            List<BudgetEntry> allBudgetEntries = budgetHistory.Where(c => Utils.IsBefore(c.Date, date) && Utils.IsBefore(beginningDate, c.Date)).ToList();
+            foreach (BudgetEntry be in allBudgetEntries)
+            {
+                if (budgetEntries.Contains(be.Reason))
+                {
+                    totalAmount += be.Amount;
+                }
+            }
+
+            return totalAmount;
         }
     }
 }

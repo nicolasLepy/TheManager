@@ -34,6 +34,10 @@ namespace TheManager
             {
                 t.qualifications.Add(q);
             }
+            foreach (KeyValuePair<Club, List<PointDeduction>> sanctions in this.pointsDeduction)
+            {
+                t.pointsDeduction.Add(sanctions.Key, sanctions.Value);
+            }
             t.rules.AddRange(rules);
             return t;
         }

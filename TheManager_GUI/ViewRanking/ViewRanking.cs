@@ -59,11 +59,14 @@ namespace TheManager_GUI.VueClassement
                 if (pointsDeduction > 0)
                 {
                     List<SanctionType> clubSanctions = new List<SanctionType>();
-                    foreach(PointDeduction pd in round.pointsDeduction[c])
+                    if(round.pointsDeduction.ContainsKey(c))
                     {
-                        if(!clubSanctions.Contains(pd.sanctionType))
+                        foreach (PointDeduction pd in round.pointsDeduction[c])
                         {
-                            clubSanctions.Add(pd.sanctionType);
+                            if (!clubSanctions.Contains(pd.sanctionType))
+                            {
+                                clubSanctions.Add(pd.sanctionType);
+                            }
                         }
                     }
                     string reasons = "";
@@ -71,7 +74,7 @@ namespace TheManager_GUI.VueClassement
                     {
                         reasons = String.Format("{0}, {1}", reasons, st.ToString());
                     }
-                    reasons = reasons.Remove(0, 2);
+                    reasons = reasons.Length > 2 ? reasons.Remove(0, 2) : reasons;
                     spHost.Children.Add(ViewUtils.CreateLabel(String.Format("{0} : {1} points ({2})", c.name, -pointsDeduction, reasons), "StyleLabel2", (int)(14 * sizeMultiplier), -1));
                 }
             }

@@ -686,6 +686,7 @@ namespace TheManager
         {
             _matches = new List<Match>();
             _clubs = new List<Club>();
+            _pointsDeduction = new Dictionary<Club, List<PointDeduction>>();
         }
 
         /// <summary>

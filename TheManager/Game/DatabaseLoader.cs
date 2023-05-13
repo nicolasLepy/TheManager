@@ -520,7 +520,7 @@ namespace TheManager
                         int countryResetWeek = int.Parse(e3.Attribute("reset_week").Value);
 
                         List<AdministrativeSanction> sanctions = new List<AdministrativeSanction>();
-                        sanctions.Add(new AdministrativeSanction(SanctionType.Forfeit, 0, 0, 0, 0));
+                        sanctions.Add(new AdministrativeSanction(SanctionType.Forfeit, 1, 1, 0, 0));
                         sanctions.Add(new AdministrativeSanction(SanctionType.IneligiblePlayer, 1, 1, 0, 0));
                         sanctions.Add(new AdministrativeSanction(SanctionType.FinancialIrregularities, 2, 15, 0, 0));
                         sanctions.Add(new AdministrativeSanction(SanctionType.EnteringAdministration, 3, 3, 0, 0));

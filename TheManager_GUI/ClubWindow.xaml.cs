@@ -23,19 +23,7 @@ namespace TheManager_GUI
         }
     }
 
-    public enum BudgetReportEntry
-    {
-        BroadcastRights,
-        Sponsors,
-        GateReceipts,
-        OtherIncome,
-        Payroll,
-        TransferAmortization,
-        Agents,
-        OtherExpenses,
-        IncomeTax,
-        Transfers
-    }
+
 
     /// <summary>
     /// Logique d'interaction pour Windows_Club.xaml
@@ -69,82 +57,34 @@ namespace TheManager_GUI
             return spEntry;
         }
 
-        private List<BudgetModificationReason> GetBudgetEntries(BudgetReportEntry budgetEntry)
-        {
-            List<BudgetModificationReason> res = new List<BudgetModificationReason>();
-            switch (budgetEntry)
-            {
-                case BudgetReportEntry.BroadcastRights:
-                    break;
-                case BudgetReportEntry.Sponsors:
-                    res = new List<BudgetModificationReason>() { BudgetModificationReason.SponsorGrant };
-                    break;
-                case BudgetReportEntry.GateReceipts:
-                    res = new List<BudgetModificationReason>() { BudgetModificationReason.StadiumAttendance };
-                    break;
-                case BudgetReportEntry.OtherIncome:
-                    res = new List<BudgetModificationReason>() { BudgetModificationReason.TournamentGrant };
-                    break;
-                case BudgetReportEntry.Payroll:
-                    res = new List<BudgetModificationReason>() { BudgetModificationReason.PayWages };
-                    break;
-                case BudgetReportEntry.TransferAmortization:
-                    break;
-                case BudgetReportEntry.Agents:
-                    break;
-                case BudgetReportEntry.OtherExpenses:
-                    res = new List<BudgetModificationReason>() { BudgetModificationReason.UpdateFormationFacilities };
-                    break;
-                case BudgetReportEntry.IncomeTax:
-                    break;
-                case BudgetReportEntry.Transfers:
-                    res = new List<BudgetModificationReason>() { BudgetModificationReason.TransferIndemnity };
-                    break;
-            }
-            return res;
-        }
-
         public void UpdateBudgetReportChartSelected(BudgetReportEntry budgetReportEntry)
         {
-            string title = budgetReportEntry.ToString();
-            List<BudgetModificationReason> budgetEntries = GetBudgetEntries(budgetReportEntry);
-            spBudgetReportChart.Children.Clear();
-            List<string> years = new List<string>();
-            List<float> amount = new List<float>();
-            Func<double, string> YFormatter = value => value.ToString("C");
-            foreach (DateTime dt in GetHistoryEntriesDates())
-            {
-                years.Add(dt.Year.ToString());
-                amount.Add(GetBudgetOnYear(dt, budgetEntries));
-            }
-            ChartValues<float> amountValues = new ChartValues<float>(amount);
-            float min = Math.Min(amount.Min(), 0);
-            float max = Math.Max(amount.Max(), 0);
-            if(min == 0 && max == 0)
-            {
-                spBudgetReportChart.Children.Add(ViewUtils.CreateLabel("Aucune entrée enregistrée", "StyleLabel2", 14, 400));
-            }
-            else
-            {
-                ViewUtils.CreateYearChart(spBudgetReportChart, years.ToArray(), title, amountValues, true, "Total", min, max, title, YFormatter, 0.75);
-            }
-        }
-
-        private float GetBudgetOnYear(DateTime date, List<BudgetModificationReason> budgetEntries)
-        {
             CityClub cc = _club as CityClub;
-            float totalAmount = 0;
-            DateTime beginningDate = date.AddYears(-1);
-            List<BudgetEntry> allBudgetEntries = cc.budgetHistory.Where(c => Utils.IsBefore(c.Date, date) && Utils.IsBefore(beginningDate, c.Date)).ToList();
-            foreach (BudgetEntry be in allBudgetEntries)
+            if(cc != null)
             {
-                if(budgetEntries.Contains(be.Reason))
+                string title = budgetReportEntry.ToString();
+                List<BudgetModificationReason> budgetEntries = cc.GetBudgetEntries(budgetReportEntry);
+                spBudgetReportChart.Children.Clear();
+                List<string> years = new List<string>();
+                List<float> amount = new List<float>();
+                Func<double, string> YFormatter = value => value.ToString("C");
+                foreach (DateTime dt in GetHistoryEntriesDates())
                 {
-                    totalAmount += be.Amount;
+                    years.Add(dt.Year.ToString());
+                    amount.Add(cc.GetBudgetOnYear(dt, budgetEntries));
+                }
+                ChartValues<float> amountValues = new ChartValues<float>(amount);
+                float min = Math.Min(amount.Min(), 0);
+                float max = Math.Max(amount.Max(), 0);
+                if (min == 0 && max == 0)
+                {
+                    spBudgetReportChart.Children.Add(ViewUtils.CreateLabel("Aucune entrée enregistrée", "StyleLabel2", 14, 400));
+                }
+                else
+                {
+                    ViewUtils.CreateYearChart(spBudgetReportChart, years.ToArray(), title, amountValues, true, "Total", min, max, title, YFormatter, 0.75);
                 }
             }
-
-            return totalAmount;
         }
 
         private void NewBudgetReportSelected(DateTime date)
@@ -152,47 +92,50 @@ namespace TheManager_GUI
             CityClub cc = _club as CityClub;
             DateTime beginningDate = date.AddYears(-1);
 
-            float broadcastingRights = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.BroadcastRights));
-            float sponsorsAds = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Sponsors));
-            float gateReceipts = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.GateReceipts));
-            float otherIncome = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.OtherIncome));
+            if(cc != null)
+            {
+                float broadcastingRights = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.BroadcastRights));
+                float sponsorsAds = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.Sponsors));
+                float gateReceipts = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.GateReceipts));
+                float otherIncome = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.OtherIncome));
 
-            float payroll = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Payroll));
-            float transferAmortization = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.TransferAmortization));
-            float agentsFees = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Agents));
-            float otherExpenses = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.OtherExpenses));
+                float payroll = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.Payroll));
+                float transferAmortization = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.TransferAmortization));
+                float agentsFees = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.Agents));
+                float otherExpenses = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.OtherExpenses));
 
-            float incomeTax = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.IncomeTax));
-            float transfersResult = GetBudgetOnYear(beginningDate, GetBudgetEntries(BudgetReportEntry.Transfers));
+                float incomeTax = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.IncomeTax));
+                float transfersResult = cc.GetBudgetOnYear(beginningDate, cc.GetBudgetEntries(BudgetReportEntry.Transfers));
 
-            float totalIncomes = broadcastingRights + sponsorsAds + gateReceipts + otherIncome;
-            float totalExpenses = payroll + transferAmortization + agentsFees + otherExpenses;
-            float operatingResult = totalIncomes + totalExpenses;
-            float resultBeforeTax = operatingResult + transfersResult;
-            float netResult = resultBeforeTax + incomeTax;
+                float totalIncomes = broadcastingRights + sponsorsAds + gateReceipts + otherIncome;
+                float totalExpenses = payroll + transferAmortization + agentsFees + otherExpenses;
+                float operatingResult = totalIncomes + totalExpenses;
+                float resultBeforeTax = operatingResult + transfersResult;
+                float netResult = resultBeforeTax + incomeTax;
 
-            spBudgetReport.Children.Clear();
-            spBudgetReport.Children.Add(ViewUtils.CreateLabel(FindResource("str_income").ToString(), "StyleLabel2", 14, 200));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_broadcasting_rights").ToString(), broadcastingRights, BudgetReportEntry.BroadcastRights));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_sponsors_ads").ToString(), sponsorsAds, BudgetReportEntry.Sponsors));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_gate_receipts").ToString(), gateReceipts, BudgetReportEntry.GateReceipts));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_other_income").ToString(), otherIncome, BudgetReportEntry.OtherIncome));
+                spBudgetReport.Children.Clear();
+                spBudgetReport.Children.Add(ViewUtils.CreateLabel(FindResource("str_income").ToString(), "StyleLabel2", 14, 200));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_broadcasting_rights").ToString(), broadcastingRights, BudgetReportEntry.BroadcastRights));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_sponsors_ads").ToString(), sponsorsAds, BudgetReportEntry.Sponsors));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_gate_receipts").ToString(), gateReceipts, BudgetReportEntry.GateReceipts));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_other_income").ToString(), otherIncome, BudgetReportEntry.OtherIncome));
 
 
-            spBudgetReport.Children.Add(ViewUtils.CreateLabel(FindResource("str_expenses").ToString(), "StyleLabel2", 14, 200));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_payroll").ToString(), payroll, BudgetReportEntry.Payroll));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_transfer_amortization").ToString(), transferAmortization, BudgetReportEntry.TransferAmortization));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_agents_fees").ToString(), agentsFees, BudgetReportEntry.Agents));
-            StackPanel spOtherExpenses = CreateBudgetReportEntry(FindResource("str_other_expenses").ToString(), otherExpenses, BudgetReportEntry.OtherExpenses);
-            spOtherExpenses.Margin = new Thickness(0, 0, 0, 50);
-            spBudgetReport.Children.Add(spOtherExpenses);
+                spBudgetReport.Children.Add(ViewUtils.CreateLabel(FindResource("str_expenses").ToString(), "StyleLabel2", 14, 200));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_payroll").ToString(), payroll, BudgetReportEntry.Payroll));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_transfer_amortization").ToString(), transferAmortization, BudgetReportEntry.TransferAmortization));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_agents_fees").ToString(), agentsFees, BudgetReportEntry.Agents));
+                StackPanel spOtherExpenses = CreateBudgetReportEntry(FindResource("str_other_expenses").ToString(), otherExpenses, BudgetReportEntry.OtherExpenses);
+                spOtherExpenses.Margin = new Thickness(0, 0, 0, 50);
+                spBudgetReport.Children.Add(spOtherExpenses);
 
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_operating_result").ToString().ToUpper(), operatingResult, BudgetReportEntry.OtherIncome));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_result_from_transfers").ToString().ToUpper(), transfersResult, BudgetReportEntry.Transfers));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_operating_result").ToString().ToUpper(), operatingResult, BudgetReportEntry.OtherIncome));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_result_from_transfers").ToString().ToUpper(), transfersResult, BudgetReportEntry.Transfers));
 
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_result_before_tax").ToString().ToUpper(), resultBeforeTax, BudgetReportEntry.OtherIncome));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_income_tax").ToString(), incomeTax, BudgetReportEntry.OtherIncome));
-            spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_net_results").ToString().ToUpper(), netResult, BudgetReportEntry.OtherIncome));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_result_before_tax").ToString().ToUpper(), resultBeforeTax, BudgetReportEntry.OtherIncome));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_income_tax").ToString(), incomeTax, BudgetReportEntry.OtherIncome));
+                spBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_net_results").ToString().ToUpper(), netResult, BudgetReportEntry.OtherIncome));
+            }
         }
 
         public List<DateTime> GetHistoryEntriesDates()

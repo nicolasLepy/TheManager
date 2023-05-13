@@ -664,6 +664,31 @@ namespace TheManager
                 int i = 0;
                 foreach (Round t in c.rounds)
                 {
+                    //First game day of the season
+                    if (c.isChampionship && c.rounds.IndexOf(t) == 0 && t.programmation.gamesDays.Count > 0 && Utils.CompareDates(t.programmation.gamesDays[0].ConvertToDateTime(), _date))
+                    {
+                        foreach(Club cl in t.clubs)
+                        {
+                            CityClub cc = cl as CityClub;
+                            if(cc != null)
+                            {
+                                if (cc.budget < 0)
+                                {
+                                    //Ratio perte gains
+                                    float totalIncome = cc.GetTotalIncomeOnYear(_date) + cc.GetTransfersResultOnYear(_date);
+                                    float totalExpenses = cc.GetTotalExpensesOnYear(_date);
+                                    float ratio = -totalExpenses / (totalIncome + 0.0f);
+                                    ratio = ratio < 1 ? 1 : ratio;
+                                    ratio = ratio > 2 ? 2 : ratio;
+                                    ratio--;
+                                    int maxPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).maxPointsDeduction;
+                                    int minPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).minPointsDeduction;
+                                    int pointsDeduction = (int)Math.Floor((maxPoints - minPoints) * ratio) + minPoints;
+                                    t.AddPointsDeduction(cl, SanctionType.FinancialIrregularities, _date, pointsDeduction);
+                                }
+                            }
+                        }
+                    }
                     if (c.remainingYears == c.periodicity)
                     {
 
@@ -678,6 +703,7 @@ namespace TheManager
                     }
                     i++;
                 }
+
 
                 if (Utils.CompareDates(c.seasonBeginning.ConvertToDateTime(), _date))
                 {

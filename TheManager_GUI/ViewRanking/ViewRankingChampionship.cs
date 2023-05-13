@@ -125,7 +125,10 @@ namespace TheManager_GUI.VueClassement
                     continentalYear += 1;
                 }
 
-                continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, continentalYear) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country, true);
+                if(_round == _tournament.GetLastChampionshipRound())
+                {
+                    continentalClubs = _year > -1 ? country.Continent.GetClubsQualifiedForInternationalCompetitions(country, continentalYear) : country.Continent.GetClubsQualifiedForInternationalCompetitions(country, true);
+                }
             }
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around

@@ -144,6 +144,10 @@ namespace TheManager
             {
                 t.relegationsByAdministrativeDivisions.Add(kvp.Key, kvp.Value);
             }
+            foreach (KeyValuePair<Club, List<PointDeduction>> sanctions in this.pointsDeduction)
+            {
+                t.pointsDeduction.Add(sanctions.Key, sanctions.Value);
+            }
             foreach (Qualification q in this.qualifications)
             {
                 t.qualifications.Add(q);
