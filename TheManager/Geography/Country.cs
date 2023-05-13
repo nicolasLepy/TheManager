@@ -502,21 +502,22 @@ namespace TheManager
         /// <param name="withContinentalDates">Remove date taken by continental dates</param>
         /// <param name="removeDateOfCupUntilLevel">Ignore dates of cup below specified level</param>
         /// <returns></returns>
-        public List<int> GetAvailableCalendarDates(bool withContinentalDates, int maxCupLevel)
+        public List<GameDay> GetAvailableCalendarDates(bool withContinentalDates, int maxCupLevel, List<int> leaguesLevel, bool weekdays, bool weekend)
         {
+            List<GameDay> availableDates = new List<GameDay>();
             Continent ct = GetContinent();
             Tournament firstDivision = League(1);
             int startWeek = Utils.Modulo(resetWeek + 2, 52);
-            int endWeek = firstDivision != null ? firstDivision.rounds.Last().programmation.end.WeekNumber : Utils.Modulo(resetWeek - 15, 52);
+            int endWeek = firstDivision != null ? (firstDivision.rounds.Last().programmation.end.WeekNumber+1) : Utils.Modulo(resetWeek - 15, 52);
             if(endWeek < startWeek)
             {
                 endWeek = 52 + endWeek;
             }
-            List<int> continentAvailableWeeks = new List<int>();
             for (int i = startWeek; i < endWeek; i++)
             {
                 int week = i % 52;
-                continentAvailableWeeks.Add(week);
+                availableDates.Add(new GameDay(week, true, 0, 0));
+                availableDates.Add(new GameDay(week, false, 0, 0));
             }
 
             List<Tournament> tournaments = new List<Tournament>();
@@ -532,7 +533,7 @@ namespace TheManager
             }
             foreach (Tournament t in this.Tournaments())
             {
-                if(t.periodicity == 1 && (t.isChampionship || t.level <= maxCupLevel))
+                if(t.periodicity == 1 && ( (t.isChampionship && leaguesLevel.Contains(t.level)) || t.level <= maxCupLevel))
                 {
                     tournaments.Add(t);
                 }
@@ -543,18 +544,19 @@ namespace TheManager
                 {
                     foreach (GameDay gd in r.programmation.gamesDays)
                     {
-                        if (gd.MidWeekGame)
+                        if( (gd.MidWeekGame && !weekdays) || (!gd.MidWeekGame && !weekend))
                         {
-                            continentAvailableWeeks.Remove(gd.WeekNumber);
+                            availableDates.RemoveAll(s => s.WeekNumber == gd.WeekNumber && s.MidWeekGame == gd.MidWeekGame);
                         }
                     }
                 }
             }
 
-            continentAvailableWeeks.Remove(51);
-            continentAvailableWeeks.Remove(52); //A mid-week game on the last year week lead to the next year
-            continentAvailableWeeks.Remove(0); //Bug 2027
-            return continentAvailableWeeks;
+            availableDates.RemoveAll(s => s.WeekNumber == 51);
+            availableDates.RemoveAll(s => s.WeekNumber == 52); //A mid-week game on the last year week lead to the next year
+            availableDates.RemoveAll(s => s.WeekNumber == 0); //Bug 2027
+
+            return availableDates;
         }
 
     }

@@ -436,6 +436,8 @@ namespace TheManager
             //Contains new extra rounds created if necessary
             List<Round> newRounds = new List<Round>();
 
+            List<int> leagueLevelsRepresented = new List<int>();
+
             if (parent.Key != null && (localisation as Country) != null)
             {
                 int levelsCount = (localisation as Country).Leagues().Count;
@@ -458,6 +460,11 @@ namespace TheManager
                         else
                         {
                             round.recuperedTeams.RemoveAt(j);
+                        }
+
+                        if(rt.Source as Round != null)
+                        {
+                            leagueLevelsRepresented.Add((rt.Source as Round).Tournament.level);
                         }
                     }
                 }
@@ -552,15 +559,15 @@ namespace TheManager
             {
                 int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
                 Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
-                List<int> availableDatesAll = (localisation as Country).GetAvailableCalendarDates(false, 2);
-                List<int> availableDates = new List<int>();
+                List<GameDay> availableDatesAll = (localisation as Country).GetAvailableCalendarDates(this.parent.Key == null, 2, leagueLevelsRepresented, true, false);
+                List<GameDay> availableDates = new List<GameDay>();
                 int beginningCompetition = this._seasonBeginning.WeekNumber;
                 int beginningRounds = rounds.First().programmation.initialisation.WeekNumber;
                 //Filter to get available dates to play the new round
-                foreach(int ad in availableDatesAll)
+                foreach (GameDay ad in availableDatesAll)
                 {
                     //Les dates sont centrées sur le début de la compétition -> pas de problème en cas de passage d'une année à l'autre (semaines 52 puis semaine 02 par ex.)
-                    int absoluteAd = Utils.Modulo(ad - beginningCompetition, 53); // TODO: Des fois 52 ou 53 semaines !
+                    int absoluteAd = Utils.Modulo(ad.WeekNumber - beginningCompetition, 53); // TODO: Des fois 52 ou 53 semaines !
                     int absoluteBeginFirstRound = Utils.Modulo(beginningRounds - beginningCompetition, 53); // TODO: Des fois 52 ou 53 semaines !
 
                     if (absoluteAd < absoluteBeginFirstRound && absoluteAd > 0)
@@ -568,6 +575,13 @@ namespace TheManager
                         availableDates.Add(ad);
                     }
                 }
+
+                /*Console.WriteLine("availableDates");
+                foreach (GameDay dd in availableDates)
+                {
+                    Console.WriteLine(dd.WeekNumber);
+                }*/
+
 
                 while (teamsToAdd > 0)
                 {
@@ -582,12 +596,12 @@ namespace TheManager
                     newRecoverTeams.Add(worstTeams);
                     Round firstRound = this.rounds[0];
                     List<GameDay> newRoundTimes = new List<GameDay>();
+                    int dateIndex = (availableDates.Count - 2) - (3 * roundCreated);
                     foreach (GameDay dt in firstRound.programmation.gamesDays)
                     {
-                        int dateIndex = (availableDates.Count - 2) - (2 * roundCreated);
-                        newRoundTimes.Add(new GameDay(availableDates[dateIndex], dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
+                        newRoundTimes.Add(new GameDay(availableDates[dateIndex].WeekNumber, dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
                     }
-                    newRounds.Add(new KnockoutRound("Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.twoLegs, firstRound.phases, new GameDay(availableDates[(availableDates.Count - 2) - (2 * roundCreated)]-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[(availableDates.Count - 2) - (2 * roundCreated)]+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
+                    newRounds.Add(new KnockoutRound("Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.twoLegs, firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
                     newRounds[newRounds.Count - 1].recuperedTeams.AddRange(worstTeams);
                     newRounds[newRounds.Count - 1].rules.AddRange(firstRound.rules);
                     newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, this, false, -1));

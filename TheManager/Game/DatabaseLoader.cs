@@ -1602,10 +1602,10 @@ namespace TheManager
                 }
             }
 
-            List<int> availableWeeks = c.GetAvailableCalendarDates(administrativeDivision == null, 2);
-            for(int week=25; week<(administrativeDivision == null ? 40 : 50); week++)
+            List<GameDay> availableWeeks = c.GetAvailableCalendarDates(administrativeDivision == null, 2, teamsByLevel.Keys.ToList(), true, false);
+            for(int week=25; week<(administrativeDivision == null ? 40 : 52); week++)
             {
-                availableWeeks.Remove(week);
+                availableWeeks.RemoveAll(s => s.WeekNumber == week);
             }
 
             string tournamentName = administrativeDivision == null ? c.Name() : administrativeDivision.name;
@@ -1636,9 +1636,10 @@ namespace TheManager
             if (j != totalTeams)
             {
                 Hour hour = new Hour() { Hours = 20, Minutes = 0 };
-                GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
-                GameDay beginDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]-1) % 52, true, 0, 0);
-                GameDay endDate = new GameDay( (availableWeeks[(availableWeeks.Count / roundCount) * indexRound]+1) % 52, false, 0, 0);
+                int weekIndex = (availableWeeks.Count / roundCount) * indexRound;
+                GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
+                GameDay beginDate = new GameDay( (availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
+                GameDay endDate = new GameDay( (availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
                 Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
@@ -1684,9 +1685,10 @@ namespace TheManager
                 }
 
                 Hour hour = new Hour() { Hours = 20, Minutes = 0 };
-                GameDay gameDate = new GameDay(availableWeeks[(availableWeeks.Count / roundCount) * indexRound], true, 0, 0);
-                GameDay beginDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] - 1) % 52, true, 0, 0);
-                GameDay endDate = new GameDay((availableWeeks[(availableWeeks.Count / roundCount) * indexRound] + 1) % 52, false, 0, 0);
+                int weekIndex = (availableWeeks.Count / roundCount) * indexRound;
+                GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
+                GameDay beginDate = new GameDay((availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
+                GameDay endDate = new GameDay((availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
                 Round round = new KnockoutRound(name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
