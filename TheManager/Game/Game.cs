@@ -689,13 +689,17 @@ namespace TheManager
                             }
                         }
                     }
-                    if (c.remainingYears == c.periodicity)
-                    {
 
+                    //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
+                    if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
+                    {
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
                             t.QualifyClubs();
                         }
+                    }
+                    if (c.remainingYears == (c.periodicity - t.programmation.initialisation.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.initialisation.YearOffset)
+                    {
                         if (Utils.CompareDates(t.DateInitialisationRound(), _date) && c.currentRound + 1 == i)
                         {
                             c.NextRound();

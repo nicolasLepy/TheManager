@@ -422,7 +422,8 @@ namespace TheManager
             {
                 year = year - 1;
             }
-            return _programmation.initialisation.ConvertToDateTime(year).AddDays(-1);
+            //Yearoffset : see DateEndRound()
+            return _programmation.initialisation.ConvertToDateTime(year - _programmation.initialisation.YearOffset).AddDays(-1);
         }
 
         public DateTime DateEndRound()
@@ -436,7 +437,9 @@ namespace TheManager
             {
                 year = year - 1;
             }
-            return _programmation.end.ConvertToDateTime(year).AddDays(1);
+            //Year offset is retranched because it is taken in account on ConvertToDateTime, to have a date corresponding to this year and not to the year + yearOffset
+            //yearOffset is ignored because DateEndRound() is called to end a round whe a check taking in account yearOffset is already performed (so we want the date of this year and not year+yearOffset).
+            return _programmation.end.ConvertToDateTime(year - _programmation.end.YearOffset).AddDays(1);
         }
 
         /// <summary>
