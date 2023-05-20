@@ -266,3 +266,6 @@ FifaDatabaseAnalysis/players_20.csv
 *.xlsx
 *.rar
 *.csave
+
+# Code Coverage
+coveragereport

@@ -100,35 +100,11 @@ namespace TheManager
 
         /*
          * Identical logic with GetGroupQualification of GroupRound : merge function on Round class
+         * Qualifications are not adjusted (reserves, retrogradations...).
          */
         public List<Qualification> GetQualifications()
         {
-            List<Qualification> adjustedQualifications = new List<Qualification>(qualifications);
-            //Adapt qualifications to adapt negative ranking to real ranking in the group
-
-            List<int> allRankings = Enumerable.Range(1, clubs.Count).ToList();
-
-            for (int i = 0; i < adjustedQualifications.Count; i++)
-            {
-                Qualification q = adjustedQualifications[i];
-                if (q.ranking < 0)
-                {
-                    adjustedQualifications[i] = new Qualification(clubs.Count + q.ranking + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies);
-                }
-
-                // This ranking have a qualification to another round, remove it from the list
-                allRankings.Remove(adjustedQualifications[i].ranking);
-            }
-
-            // Add qualification to every ranking with no qualifications
-            if (Tournament.isChampionship)
-            {
-                foreach (int remainingRanking in allRankings)
-                {
-                    adjustedQualifications.Add(new Qualification(remainingRanking, 0, Tournament, true, 0));
-                }
-            }
-            return adjustedQualifications;
+            return AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
         }
 
         //TODO : Gestion des relégations administratives
@@ -239,16 +215,22 @@ namespace TheManager
             return newQualifications;
         }
 
+        public List<Qualification> GetAdjustedQualifications()
+        {
+            List<Club> ranking = Ranking();
+            List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
+            adjustedQualifications.Sort(new QualificationComparator());
+            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, rules.Contains(Rule.ReservesAreNotPromoted));
+            return adjustedQualifications;
+        }
+
         public override void QualifyClubs()
         {
             List<Club> ranking = Ranking();
 
             List<Club> qualifies = new List<Club>();
-            List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
-            
-            adjustedQualifications.Sort(new QualificationComparator());
-            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, rules.Contains(Rule.ReservesAreNotPromoted));
-            
+            List<Qualification> adjustedQualifications = GetAdjustedQualifications();
+
             foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking-1];

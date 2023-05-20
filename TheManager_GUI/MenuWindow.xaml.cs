@@ -53,6 +53,7 @@ namespace TheManager_GUI
                 comboContinent.Items.Add(c);
             }
             Refresh();
+            this.KeyDown += new KeyEventHandler(KeyPress);
         }
 
         private void RefreshTransferListPanel()
@@ -184,47 +185,40 @@ namespace TheManager_GUI
             wo.Show();
         }
 
+        private void KeyPress(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.R)
+            {
+                Console.WriteLine("Relegations");
+                Country fr = Session.Instance.Game.kernel.String2Country("France");
+                foreach (Club c in Session.Instance.Game.kernel.Clubs)
+                {
+                    //Prepare test cases for retrogradations
+                    if(c.name.Equals("RC Strasbourg Alsace"))
+                    {
+                        fr.administrativeRetrogradations.Add(c, fr.League(4));
+                    }
+                    if (c.name.Equals("Olympique Lyonnais")) //A la place de sa réserve
+                    {
+                        fr.administrativeRetrogradations.Add(c, fr.League(4));
+                    }
+                    if (c.name == "FC Lorient")
+                    {
+                        fr.administrativeRetrogradations.Add(c, fr.League(3));
+                    }
+                    if (c.name == "Clermont Foot 63")
+                    {
+                        fr.administrativeRetrogradations.Add(c, fr.League(3));
+                    }
+                }
+            }
+        }
+
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
         {
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             Country fr = Session.Instance.Game.kernel.String2Country("France");
-            foreach (Club c in Session.Instance.Game.kernel.Clubs)
-            {
-                //Prepare test cases for retrogradations
-                /*if(c.name.Equals("RC Strasbourg Alsace"))
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(5));
-                }*/
-                /*if (c.name == "FC Lorient")
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(5));
-                }
-                if (c.name == "Rodez AF")
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(5));
-                }
-                if (c.name == "FC Sochaux-Montbéliard")
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(6));
-                }
-                if (c.name == "SA Épinal")
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(7));
-                }
-                if (c.name == "Efc Frejus ST Rapha.")
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(7));
-                }
-                if (c.name == "RC Lons LE Saunier")
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(7));
-                }
-                if (c.name == "AF Virois")
-                {
-                    fr.administrativeRetrogradations.Add(c, fr.League(5));
-                }*/
-            }
 
             Avancer();
             while (!(_partie.date.Month == 6 && _partie.date.Day == 6))

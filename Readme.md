@@ -2,7 +2,7 @@
 
 The Manager is a soccer simulator aiming to simulate tournaments, matchs, and clubs/players evolution, inspired by games such as Football Manager, FIFA Manager.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/981285a9e5e542f79c39d71e14b04c59)](https://app.codacy.com/manual/lepynicolas/TheManager?utm_source=github.com&utm_medium=referral&utm_content=nicolasLepy/TheManager&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/cd29bda54a73415fac1a7449fdbc4b3a)](https://app.codacy.com/gh/nicolasLepy/TheManager/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## Screenshots
 
