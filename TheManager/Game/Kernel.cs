@@ -378,18 +378,6 @@ namespace TheManager
             return res;
         }
 
-        public void NationalTeamsCall()
-        {
-            foreach(Club c in _clubs)
-            {
-                NationalTeam sn = c as NationalTeam;
-                if (sn != null)
-                {
-                    sn.CallInSelection(GetPlayersByCountry(sn.country));
-                }
-            }
-        }
-
         /// <summary>
         ///  Retires free players who are too old
         /// </summary>

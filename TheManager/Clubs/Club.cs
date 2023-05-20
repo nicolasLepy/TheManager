@@ -437,7 +437,8 @@ namespace TheManager
             List<Player> res = new List<Player>();
             foreach (Player j in Players())
             {
-                if (j.position == position && !j.suspended)
+                bool nationalTeam = this as NationalTeam != null;
+                if (j.position == position && !j.suspended && (nationalTeam || !j.inSelection))
                 {
                     res.Add(j);
                 }

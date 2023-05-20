@@ -126,7 +126,7 @@ namespace TheManager_GUI
                 cbdd.LoadLanguages();
                 pbLoading.Value = 2;
                 lbCreationPartie.Content = "Chargement de l'environnement";
-                cbdd.LoadGeography();
+                cbdd.LoadWorld();
 
                 pbLoading.Value = 3;
                 lbCreationPartie.Content = "Chargement des calendriers";
@@ -147,6 +147,7 @@ namespace TheManager_GUI
                 pbLoading.Value = 30;
                 lbCreationPartie.Content = "Chargement des compétitions";
                 cbdd.LoadTournaments();
+                cbdd.LoadInternationalDates();
 
                 pbLoading.Value = 40;
                 lbCreationPartie.Content = "Chargement des joueurs";

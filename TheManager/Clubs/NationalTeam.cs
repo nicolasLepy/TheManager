@@ -131,9 +131,25 @@ namespace TheManager
             }
         }
 
-        public void CallInSelection(List<Player> players)
+        public void JoinPlayers()
         {
-            _selected = new List<Player>();
+            foreach(Player player in _selected)
+            {
+                player.inSelection = true;
+            }
+        }
+
+        public void ReleasePlayers()
+        {
+            foreach(Player player in _selected)
+            {
+                player.inSelection = false;
+            }
+        }
+
+        public void CallPlayers(List<Player> players)
+        {
+            _selected.Clear();
             SelectPlayersByPosition(Position.Goalkeeper, players, 3);
             SelectPlayersByPosition(Position.Defender, players, 7);
             SelectPlayersByPosition(Position.Midfielder, players, 7);

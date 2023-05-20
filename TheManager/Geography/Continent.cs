@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Tracing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -10,6 +11,62 @@ using TheManager.Tournaments;
 
 namespace TheManager
 {
+
+    [DataContract]
+    public struct InternationalDates
+    {
+        [DataMember]
+        private GameDay _start;
+        [DataMember]
+        private GameDay _end;
+        [DataMember]
+        private Tournament _tournament;
+        [DataMember]
+        private bool _currentlyCalled;
+
+        public GameDay start => _start;
+        public GameDay end => _end;
+
+        public bool currentlyCalled { get => _currentlyCalled; set => _currentlyCalled = value; }
+
+        public Tournament tournament => _tournament;
+
+        public bool IsValid()
+        {
+            return tournament == null || ((tournament.currentRound > -1) && (tournament.currentRound < tournament.rounds.Count - 1));
+        }
+
+        public bool IsEquals(InternationalDates obj)
+        {
+            return start == obj.start && end == obj.end && _tournament == tournament;
+        }
+
+        public int StartYear(int currentWeekNumber)
+        {
+            bool startIsNextYear = start.WeekNumber < (currentWeekNumber);
+            return Session.Instance.Game.date.Year + (startIsNextYear ? 1 : 0);
+        }
+
+        public int EndYear(int currentWeekNumber)
+        {
+            bool endIsNextYear = end.WeekNumber < (currentWeekNumber-2); //-1 because players are release 2 days after the _end week definition so probably the next week, to avoiding getting a day one year after
+            return Session.Instance.Game.date.Year + (endIsNextYear? 1 : 0);
+        }
+
+        public InternationalDates(GameDay start, GameDay end, Tournament tournament, bool currentlyCalled = false)
+        {
+            _start = start;
+            _end = end;
+            _tournament = tournament;
+            _currentlyCalled = currentlyCalled;
+            if(tournament != null)
+            {
+                _start = tournament.rounds.First().programmation.gamesDays.First();
+                _end = tournament.rounds.Last().programmation.gamesDays.Last();
+            }
+        }
+    }
+
     [DataContract(IsReference = true)]
     public class Continent : IRecoverableTeams, ILocalisation
     {
@@ -35,6 +92,8 @@ namespace TheManager
         private List<List<Country>> _archivalAssociationRanking;
         [DataMember]
         private List<Continent> _continents;
+        [DataMember]
+        private List<InternationalDates> _internationalDates;
 
         /// <summary>
         /// As association ranking can be long to be computed (and change only at the end of the season), ranking is stored here to be reused without computing all ranking
@@ -57,6 +116,7 @@ namespace TheManager
         public List<Continent> continents => _continents;
         public List<Qualification> continentalQualifications => _continentalQualifications;
         public int resetWeek => _resetWeek;
+        public List<InternationalDates> internationalDates => _internationalDates;
         public List<Tournament> Tournaments()
         {
             return _tournaments;
@@ -138,6 +198,7 @@ namespace TheManager
             _archivalAssociationRanking = new List<List<Country>>();
             _continents = new List<Continent>();
             _resetWeek = resetWeek;
+            _internationalDates = new List<InternationalDates>();
         }
 
         /// <summary>

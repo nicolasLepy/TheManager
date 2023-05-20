@@ -159,7 +159,7 @@ namespace TheManager
         {
             /*
             LoadLanguages();
-            LoadGeography();
+            LoadWorld();
             LoadCities();
             LoadStadiums();
             LoadClubs();
@@ -493,7 +493,22 @@ namespace TheManager
 
         }
 
-        public void LoadGeography()
+        public void LoadInternationalDates()
+        {
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/world.xml");
+            foreach(XElement e in doc.Descendants("World"))
+            {
+                foreach (XElement e2 in e.Descendants("InternationalDates"))
+                {
+                    GameDay start = e2.Attribute("start") != null ? String2GameDay(e2.Attribute("start").Value) : null;
+                    GameDay end = e2.Attribute("end") != null ? String2GameDay(e2.Attribute("end").Value) : null;
+                    Tournament t = e2.Attribute("tournament") != null ? _kernel.String2Tournament(e2.Attribute("tournament").Value) : null;
+                    _kernel.world.internationalDates.Add(new InternationalDates(start, end, t));
+                }
+            }
+        }
+
+        public void LoadWorld()
         {
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/world.xml");
             int maxAdmId = 0;
@@ -510,6 +525,7 @@ namespace TheManager
                     string continentLogo = e2.Attribute("logo").Value;
                     int continentResetWeek = int.Parse(e2.Attribute("reset_week").Value);
                     Continent c = new Continent(continentName, continentLogo, continentResetWeek);
+                    
                     foreach (XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
@@ -1459,7 +1475,6 @@ namespace TheManager
                     }
                 }
             }
-            _kernel.NationalTeamsCall();
         }
 
         /// <summary>

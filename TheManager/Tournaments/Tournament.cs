@@ -1462,6 +1462,20 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Get clubs playing on the tournament
+        /// </summary>
+        /// <returns></returns>
+        public List<Club> Clubs()
+        {
+            List<Club> tournamentClubs = new List<Club>();
+            foreach (Round r in rounds)
+            {
+                tournamentClubs.AddRange(r.clubs);
+            }
+            return tournamentClubs;
+        }
+
+        /// <summary>
         /// Get Final Phase Clubs ranked from competition winner to first team eliminated
         /// TODO: Final phases with nested group rounds are not managed. Final phases can only be knockout rounds
         /// </summary>

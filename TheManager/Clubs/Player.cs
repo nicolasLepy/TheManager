@@ -63,11 +63,15 @@ namespace TheManager
         private Dictionary<Club, int> _playedGames;
         [DataMember]
         private Dictionary<Club, int> _goalsScored;
+        [DataMember]
+        private bool _inSelection;
 
         public int level { get => _level; set => _level = value; }
         public int potential { get => _potential; }
         public Position position { get => _position;}
         public bool suspended { get => _suspended; set => _suspended = value; }
+        public bool inSelection { get => _inSelection; set => _inSelection = value; }
+
         public List<PlayerHistory> history
         {
             get
@@ -90,7 +94,8 @@ namespace TheManager
         /// <summary>
         /// Level of the player taking into consideration his energy
         /// </summary>
-        public float effectiveLevel => level * ((energy / 200.0f) + 0.5f);
+        //public float effectiveLevel => level * ((energy / 200.0f) + 0.5f);
+        public float effectiveLevel => level;
 
         //TODO: Maybe better to have a isRetired attribute (performance)
         public bool IsRetired
@@ -195,7 +200,7 @@ namespace TheManager
             _playedGames = new Dictionary<Club, int>();
             _offers = new List<ContractOffer>();
             _foundANewClubThisSeason = false;
-
+            _inSelection = false;
         }
 
         

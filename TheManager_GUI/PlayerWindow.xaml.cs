@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using TheManager;
+using TheManager.Comparators;
 using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
@@ -113,8 +114,9 @@ namespace TheManager_GUI
 
         private void FillPlayerGames()
         {
-            //spPlayerGames
-            ViewMatches view = new ViewMatches(_player.PlayedGamesThisYear(), true, false, false, false, false, true);
+            List<Match> games = _player.PlayedGamesThisYear();
+            games.Sort(new MatchDateComparator());
+            ViewMatches view = new ViewMatches(games, true, false, false, false, false, true);
             view.Full(spPlayerGames);
         }
 

@@ -45,7 +45,7 @@ namespace TheManager.Parsers
 
             DatabaseLoader dl = new DatabaseLoader(Session.Instance.Game.kernel);
             dl.LoadLanguages();
-            dl.LoadGeography();
+            dl.LoadWorld();
             dl.LoadCities();
             dl.LoadClubs();
 
