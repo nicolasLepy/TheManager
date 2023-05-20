@@ -94,9 +94,8 @@ namespace TheManager
         /// <summary>
         /// Level of the player taking into consideration his energy
         /// </summary>
-        //public float effectiveLevel => level * ((energy / 200.0f) + 0.5f);
-        public float effectiveLevel => level;
-
+        public float effectiveLevel => level * ((energy / 200.0f) + 0.5f);
+        
         //TODO: Maybe better to have a isRetired attribute (performance)
         public bool IsRetired
         {

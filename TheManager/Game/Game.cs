@@ -844,19 +844,19 @@ namespace TheManager
             //Check every international window
             for (int i = 0; i < kernel.world.internationalDates.Count; i++)
             {
-                InternationalDates date = kernel.world.internationalDates[i];
+                InternationalDates intDate = kernel.world.internationalDates[i];
                 //Valid if no tournament is associated to the window or if it's a year with the tournament playing
-                if (date.IsValid())
+                if (intDate.IsValid())
                 {
                     List<Club> specialTournamentDate = new List<Club>();
-                    DateTime startDate = date.start.ConvertToDateTime(date.StartYear(weekNumber));
-                    DateTime endDate = date.end.ConvertToDateTime(date.EndYear(weekNumber));
+                    DateTime startDate = intDate.start.ConvertToDateTime(intDate.StartYear(weekNumber));
+                    DateTime endDate = intDate.end.ConvertToDateTime(intDate.EndYear(weekNumber));
                     //Get teams engaged with an international tournament playing at the same time of this window
-                    if (date.tournament == null)
+                    if (intDate.tournament == null)
                     {
                         foreach (InternationalDates iDate in kernel.world.internationalDates)
                         {
-                            if (!iDate.IsEquals(date) && iDate.tournament != null && iDate.IsValid())
+                            if (!iDate.IsEquals(intDate) && iDate.tournament != null && iDate.IsValid())
                             {
                                 DateTime otherStartDate = iDate.start.ConvertToDateTime(iDate.StartYear(weekNumber));
                                 DateTime otherEndDate = iDate.end.ConvertToDateTime(iDate.EndYear(weekNumber));
@@ -872,30 +872,30 @@ namespace TheManager
                     }
 
                     //Players are called two weeks before int. games for classic windows. Players are called 1 month before for a specific tournament
-                    int daysBefore = date.tournament != null ? -31 : -14;
-                    if (Utils.CompareDates(date.start.ConvertToDateTime(date.StartYear(weekNumber)).AddDays(daysBefore), _date))
+                    int daysBefore = intDate.tournament != null ? -31 : -14;
+                    if (Utils.CompareDates(intDate.start.ConvertToDateTime(intDate.StartYear(weekNumber)).AddDays(daysBefore), _date))
                     {
                         foreach (NationalTeam nt in nationalTeams)
                         {
                             Match nextGame = nt.NextGame;
                             //Call players if a game of the team is scheduled and not for a specific tournament (specific tournament has priority)
-                            if (!specialTournamentDate.Contains(nt) && nextGame != null && Utils.IsBefore(nextGame.day, date.end.ConvertToDateTime(date.EndYear(weekNumber))))
+                            if (!specialTournamentDate.Contains(nt) && nextGame != null && Utils.IsBefore(nextGame.day, intDate.end.ConvertToDateTime(intDate.EndYear(weekNumber))))
                             {
-                                Console.WriteLine(_date.ToShortDateString() + " [Appel] " + nt.name + (date.tournament != null ? " pour " + date.tournament.name + ", " + date.tournament.currentRound + " sur " + date.tournament.rounds.Count : ""));
+                                Console.WriteLine(_date.ToShortDateString() + " [Appel] " + nt.name + (intDate.tournament != null ? " pour " + intDate.tournament.name + ", " + intDate.tournament.currentRound + " sur " + intDate.tournament.rounds.Count : ""));
                                 nt.CallPlayers(kernel.GetPlayersByCountry(nt.country));
-                                kernel.world.internationalDates[i] = new InternationalDates(date.start, date.end, date.tournament, true);
+                                kernel.world.internationalDates[i] = new InternationalDates(intDate.start, intDate.end, intDate.tournament, true);
                             }
                         }
                     }
                 }
                 //Players join selection 2 days before the beginning of the window (or 10 days for a specific tournament like World Cup)
-                int callPlayersDaysBefore = date.tournament != null ? -10 : -2;
-                if (date.currentlyCalled && Utils.CompareDates(date.start.ConvertToDateTime(date.StartYear(weekNumber)).AddDays(callPlayersDaysBefore), _date))
+                int callPlayersDaysBefore = intDate.tournament != null ? -10 : -2;
+                if (intDate.currentlyCalled && Utils.CompareDates(intDate.start.ConvertToDateTime(intDate.StartYear(weekNumber)).AddDays(callPlayersDaysBefore), _date))
                 {
-                    List<Club> tournamentClubs = date.tournament != null ? date.tournament.Clubs() : new List<Club>();
+                    List<Club> tournamentClubs = intDate.tournament != null ? intDate.tournament.Clubs() : new List<Club>();
                     foreach (NationalTeam nt in nationalTeams)
                     {
-                        if (date.tournament == null || tournamentClubs.Contains(nt))
+                        if (intDate.tournament == null || tournamentClubs.Contains(nt))
                         {
                             nt.JoinPlayers();
                         }
@@ -903,15 +903,15 @@ namespace TheManager
                 }
 
                 //Players are freed 2 days after the end of the tournament or the window
-                if (date.currentlyCalled && Utils.CompareDates(date.end.ConvertToDateTime(date.EndYear(weekNumber)).AddDays(2), _date))
+                if (intDate.currentlyCalled && Utils.CompareDates(intDate.end.ConvertToDateTime(intDate.EndYear(weekNumber)).AddDays(2), _date))
                 {
-                    List<Club> tournamentClubs = date.tournament != null ? date.tournament.Clubs() : new List<Club>();
+                    List<Club> tournamentClubs = intDate.tournament != null ? intDate.tournament.Clubs() : new List<Club>();
                     foreach (NationalTeam nt in nationalTeams)
                     {
-                        if (date.tournament == null || tournamentClubs.Contains(nt))
+                        if (intDate.tournament == null || tournamentClubs.Contains(nt))
                         {
                             nt.ReleasePlayers();
-                            kernel.world.internationalDates[i] = new InternationalDates(date.start, date.end, date.tournament, false);
+                            kernel.world.internationalDates[i] = new InternationalDates(intDate.start, intDate.end, intDate.tournament, false);
                         }
                     }
                 }

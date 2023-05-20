@@ -503,7 +503,7 @@ namespace TheManager
                     GameDay start = e2.Attribute("start") != null ? String2GameDay(e2.Attribute("start").Value) : null;
                     GameDay end = e2.Attribute("end") != null ? String2GameDay(e2.Attribute("end").Value) : null;
                     Tournament t = e2.Attribute("tournament") != null ? _kernel.String2Tournament(e2.Attribute("tournament").Value) : null;
-                    _kernel.world.internationalDates.Add(new InternationalDates(start, end, t));
+                    _kernel.world.internationalDates.Add(new InternationalDates(start, end, t, false));
                 }
             }
         }

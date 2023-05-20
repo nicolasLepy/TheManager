@@ -13,7 +13,7 @@ namespace TheManager
 {
 
     [DataContract]
-    public struct InternationalDates
+    public struct InternationalDates : IEquatable<InternationalDates>
     {
         [DataMember]
         private GameDay _start;
@@ -53,7 +53,12 @@ namespace TheManager
             return Session.Instance.Game.date.Year + (endIsNextYear? 1 : 0);
         }
 
-        public InternationalDates(GameDay start, GameDay end, Tournament tournament, bool currentlyCalled = false)
+        public bool Equals(InternationalDates other)
+        {
+            throw new NotImplementedException();
+        }
+
+        public InternationalDates(GameDay start, GameDay end, Tournament tournament, bool currentlyCalled)
         {
             _start = start;
             _end = end;
