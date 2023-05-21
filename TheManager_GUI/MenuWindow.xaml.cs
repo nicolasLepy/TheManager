@@ -221,7 +221,7 @@ namespace TheManager_GUI
             Country fr = Session.Instance.Game.kernel.String2Country("France");
 
             Avancer();
-            while (!(_partie.date.Month == 6 && _partie.date.Day == 6))
+            while (!(_partie.date.Month == 5 && _partie.date.Day == 30))
             {
                 Avancer();
             }

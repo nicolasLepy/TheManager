@@ -237,7 +237,8 @@ namespace TheManager_GUI.VueClassement
 
                 bool nationalTeamTournament = _round.clubs.Count > 0 && ((_round.clubs[0] as NationalTeam) != null);
                 int qualificationsToTournamentNextRounds = 0;
-                foreach (Qualification q in _round.qualifications)
+                List<Qualification> qualifications = _round.GetAdjustedQualifications(); //_round.qualifications;
+                foreach (Qualification q in qualifications)
                 {
                     string color = "backgroundColor";
 
@@ -247,6 +248,10 @@ namespace TheManager_GUI.VueClassement
                         if (q.tournament.level < roundLevel)
                         {
                             color = "promotionColor";
+                        }
+                        else if ((q.tournament.level - _tournament.level) > 1)
+                        {
+                            color = "retrogradationColor";
                         }
                         else if (q.tournament.level > roundLevel)
                         {
@@ -271,7 +276,6 @@ namespace TheManager_GUI.VueClassement
                         {
                             color = q.qualifies >= 0 ? "el1Color" : "barrageRelegationColor";
                         }
-
                     }
 
                     int index = q.ranking > 0 ? q.ranking : clubs.Count + q.ranking + 1;
@@ -295,7 +299,7 @@ namespace TheManager_GUI.VueClassement
                         (spRanking.Children[indexClub + 1] as StackPanel).Background = lineColor;
                     }
                 }
-                PrintPointsDeductions(spRanking, _round, _sizeMultiplier);
+                PrintSanctions(spRanking, _round, _sizeMultiplier);
             }
             else
             {

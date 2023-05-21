@@ -19,6 +19,7 @@
 		<Color x:Key="UpperPlayOff">#5E7004</Color>
 		<Color x:Key="BottomPlayOff">#8c3236</Color>
 		<Color x:Key="Relegation">#7C0004</Color>
+		<Color x:Key="Retrogradation">#630003</Color>
 		<Color x:Key="CL1">#00478a</Color>
 		<Color x:Key="CL2">#006cd1</Color>
 		<Color x:Key="EL1">#785400</Color>
@@ -49,6 +50,7 @@
 		<SolidColorBrush x:Key="barrageColor" Color="{DynamicResource UpperPlayOff}"/>
 		<SolidColorBrush x:Key="barrageRelegationColor" Color="{DynamicResource BottomPlayOff}"/>
 		<SolidColorBrush x:Key="relegationColor" Color="{DynamicResource Relegation}"/>
+		<SolidColorBrush x:Key="retrogradationColor" Color="{DynamicResource Retrogradation}"/>
 
 		<SolidColorBrush x:Key="victoireColor" Color="#033e00"/>
 		<SolidColorBrush x:Key="defaiteColor" Color="#3e1500"/>

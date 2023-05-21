@@ -16,7 +16,7 @@ namespace TheManagerTests
         //Results are stored into TestResults folder
         //Install tool for html report
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
-        // reportgenerator -reports:"TheManagerTests\TestResults\64e2fbc0-000f-4bcb-af7b-98fe4541e803\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+        // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
         private void InitGame(string dataset, bool keepOnlyFrance)
         {

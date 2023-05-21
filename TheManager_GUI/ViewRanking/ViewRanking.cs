@@ -51,7 +51,7 @@ namespace TheManager_GUI.VueClassement
             }
         }
 
-        protected void PrintPointsDeductions(StackPanel spHost, Round round, double sizeMultiplier)
+        protected void PrintSanctions(StackPanel spHost, Round round, double sizeMultiplier)
         {
             foreach (Club c in round.clubs)
             {
@@ -76,6 +76,17 @@ namespace TheManager_GUI.VueClassement
                     }
                     reasons = reasons.Length > 2 ? reasons.Remove(0, 2) : reasons;
                     spHost.Children.Add(ViewUtils.CreateLabel(String.Format("{0} : {1} points ({2})", c.name, -pointsDeduction, reasons), "StyleLabel2", (int)(14 * sizeMultiplier), -1));
+                }
+            }
+            Country ctry = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament) as Country;
+            if(ctry != null)
+            {
+                foreach(Club c in round.clubs)
+                {
+                    if(ctry.administrativeRetrogradations.Keys.ToList().Contains(c))
+                    {
+                        spHost.Children.Add(ViewUtils.CreateLabel(String.Format("{0} retrogradé en {1}", c.name, ctry.administrativeRetrogradations[c].name), "StyleLabel2", (int)(14 * sizeMultiplier), -1));
+                    }
                 }
             }
         }

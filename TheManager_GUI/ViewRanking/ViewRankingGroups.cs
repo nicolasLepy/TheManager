@@ -208,7 +208,7 @@ namespace TheManager_GUI.VueClassement
                         }
                     }
                 }
-                PrintPointsDeductions(spRanking, _round, _sizeMultiplier);
+                PrintSanctions(spRanking, _round, _sizeMultiplier);
             }
 
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
@@ -233,6 +233,10 @@ namespace TheManager_GUI.VueClassement
                             if (q.tournament.level < niveau)
                             {
                                 couleur = q.qualifies != 0 ? "el1Color" : "promotionColor";
+                            }
+                            else if ((q.tournament.level - _tournament.level) > 1)
+                            {
+                                couleur = "retrogradationColor";
                             }
                             else if (q.tournament.level > niveau)
                             {

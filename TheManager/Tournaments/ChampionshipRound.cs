@@ -189,38 +189,44 @@ namespace TheManager
             }
         }*/
 
-        private List<Qualification> AdjustQualificationsAdministrativeRetrogradation(List<Qualification> qualifications, Country country)
+        private List<Qualification> AdjustQualificationsAdministrativeRetrogradation(List<Qualification> qualifications)
         {
             Tournament tournament = Tournament;
-            List<Club> ranking = Ranking();
+            Country country = Session.Instance.Game.kernel.LocalisationTournament(tournament) as Country;
             List<Qualification> newQualifications = new List<Qualification>(qualifications);
-            newQualifications.Sort(new QualificationComparator());
-            foreach (Club c in _clubs)
+            if (country != null)
             {
-                //Aussi if reserve && reserve >= cible descente
-                if(country.administrativeRetrogradations.ContainsKey(c))
-                {
-                    Qualification q = newQualifications[ranking.IndexOf(c)];
-                    if ((q.isNextYear && q.tournament.level < tournament.level) )
-                    {
+                List<Club> ranking = Ranking();
+                newQualifications.Sort(new QualificationComparator());
 
+                foreach (Club c in _clubs)
+                {
+                    //Aussi if reserve && reserve >= cible descente
+                    if (country.administrativeRetrogradations.ContainsKey(c))
+                    {
+                        Qualification q = newQualifications[ranking.IndexOf(c)];
+                        if (q.isNextYear)
+                        {
+                            newQualifications[ranking.IndexOf(c)] = new Qualification(q.ranking, 0, country.administrativeRetrogradations[c], q.isNextYear, q.qualifies);
+                        }
                     }
-                    //Si promovable ou barrage, on change
-                    //Si relegable, on change rien pour ce groupe
                 }
             }
-
-            //Check autres descend voir si ici on est concerné
 
             return newQualifications;
         }
 
+        /// <summary>
+        /// Get all clubs qualifications with adjustements
+        /// </summary>
+        /// <returns></returns>
         public List<Qualification> GetAdjustedQualifications()
         {
             List<Club> ranking = Ranking();
             List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
             adjustedQualifications.Sort(new QualificationComparator());
             adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, rules.Contains(Rule.ReservesAreNotPromoted));
+            adjustedQualifications = AdjustQualificationsAdministrativeRetrogradation(adjustedQualifications);
             return adjustedQualifications;
         }
 
@@ -228,7 +234,6 @@ namespace TheManager
         {
             List<Club> ranking = Ranking();
 
-            List<Club> qualifies = new List<Club>();
             List<Qualification> adjustedQualifications = GetAdjustedQualifications();
 
             foreach (Qualification q in adjustedQualifications)
@@ -366,7 +371,6 @@ namespace TheManager
                 {
                     cc.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
                 }
-                    
             }
         }
 
