@@ -1230,6 +1230,17 @@ namespace TheManager
             return copy;
         }
 
+        public void QualifyClubsNextYear()
+        {
+            if(_remainingYears == 1)
+            {
+                foreach (Round r in rounds)
+                {
+                    r.QualifyClubs(true);
+                }
+            }
+        }
+
         /// <summary>
         /// End of the season, all rounds are reset and qualified teams for next years are dispatched
         /// </summary>

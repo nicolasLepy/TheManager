@@ -745,7 +745,7 @@ namespace TheManager
         /// <summary>
         /// Quality clubs for next rounds
         /// </summary>
-        public abstract void QualifyClubs();
+        public abstract void QualifyClubs(bool forNextYear);
         public abstract Round Copy();
         public abstract void DistributeGrants();
         /// <summary>

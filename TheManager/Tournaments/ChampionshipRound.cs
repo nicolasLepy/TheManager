@@ -230,7 +230,7 @@ namespace TheManager
             return adjustedQualifications;
         }
 
-        public override void QualifyClubs()
+        public override void QualifyClubs(bool forNextYear)
         {
             List<Club> ranking = Ranking();
 
@@ -239,11 +239,11 @@ namespace TheManager
             foreach (Qualification q in adjustedQualifications)
             {
                 Club c = ranking[q.ranking-1];
-                if (!q.isNextYear)
+                if (!q.isNextYear && !forNextYear)
                 {
                     q.tournament.rounds[q.roundId].clubs.Add(c);
                 }
-                else
+                else if(q.isNextYear && forNextYear)
                 {
                     q.tournament.AddClubForNextYear(c, q.roundId);
                 }

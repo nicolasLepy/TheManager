@@ -251,7 +251,7 @@ namespace TheManager
             return adjustedQualifications;
         }
 
-        public override void QualifyClubs()
+        public override void QualifyClubs(bool forNextYear)
         {
 
             List<Club> ranking = Ranking();
@@ -284,11 +284,11 @@ namespace TheManager
                     Console.WriteLine("[" + q.ranking + "] " + c.name + " (" + c.AdministrativeDivision().name + ") -> " +
                                       q.tournament.level);
                 }
-                if (!q.isNextYear)
+                if (!q.isNextYear && !forNextYear)
                 {
                     q.tournament.rounds[q.roundId].clubs.Add(c);
                 }
-                else
+                else if(q.isNextYear && forNextYear)
                 {
                     q.tournament.AddClubForNextYear(c, q.roundId);
                 }

@@ -696,7 +696,11 @@ namespace TheManager
                     {
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
-                            t.QualifyClubs();
+                            t.QualifyClubs(false);
+                            if(!c.isChampionship)
+                            {
+                                t.QualifyClubs(true);
+                            }
                         }
                     }
                     if (c.remainingYears == (c.periodicity - t.programmation.initialisation.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.initialisation.YearOffset)
@@ -709,6 +713,13 @@ namespace TheManager
                     i++;
                 }
 
+                if(c.isChampionship && Utils.CompareDates(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
+                {
+                    if(c.currentRound > -1)
+                    {
+                        c.QualifyClubsNextYear();
+                    }
+                }
 
                 if (Utils.CompareDates(c.seasonBeginning.ConvertToDateTime(), _date))
                 {

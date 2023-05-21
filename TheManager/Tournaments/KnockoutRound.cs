@@ -172,7 +172,7 @@ namespace TheManager
             CheckConflicts();
         }
 
-        public override void QualifyClubs()
+        public override void QualifyClubs(bool forNextYear)
         {
             List<Match> matches = new List<Match>();
             if (!twoLegs)
@@ -196,11 +196,11 @@ namespace TheManager
                     if (q.ranking == 1)
                     {
                         c = m.Winner;
-                        if (!q.isNextYear)
+                        if (!q.isNextYear && !forNextYear)
                         {
                             q.tournament.rounds[q.roundId].clubs.Add(c);
                         }
-                        else
+                        else if (q.isNextYear && forNextYear)
                         {
                             q.tournament.AddClubForNextYear(c, q.roundId);
                         }
@@ -209,11 +209,11 @@ namespace TheManager
                     else if (q.ranking == 2)
                     {
                         c = m.Looser;
-                        if (!q.isNextYear)
+                        if (!q.isNextYear && !forNextYear)
                         {
                             q.tournament.rounds[q.roundId].clubs.Add(c);
                         }
-                        else
+                        else if(q.isNextYear && forNextYear)
                         {
                             q.tournament.AddClubForNextYear(c, q.roundId);
                         }

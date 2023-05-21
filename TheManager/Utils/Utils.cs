@@ -536,7 +536,7 @@ namespace TheManager
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
             List<int> fixedRelegations = new List<int>(); // Contains ranking of teams that can't be saved
 
-            for (int i = 0; i<qualifications.Count; i++)
+            for (int i = 0; i<qualifications.Count && ranking.Count > 0; i++)
             {
                 qualifications.Sort(new QualificationComparator());
                 Qualification q = qualifications[i];

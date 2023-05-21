@@ -788,7 +788,7 @@ namespace TheManager
 
         }
 
-        public override void QualifyClubs()
+        public override void QualifyClubs(bool forNextYear)
         {
             int maxClubsInGroup = _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber; //Theorical formula
             if (_referenceClubsByGroup != 0)
@@ -861,11 +861,11 @@ namespace TheManager
                     
                     if(q.qualifies == 0 || caseQualifieMoreThan0 || caseQualifieLessThan0)
                     {
-                        if (!q.isNextYear)
+                        if (!q.isNextYear && !forNextYear)
                         {
                             q.tournament.rounds[q.roundId].clubs.Add(c);
                         }
-                        else
+                        else if(q.isNextYear && forNextYear)
                         {
                             q.tournament.AddClubForNextYear(c, q.roundId);
                             if (Tournament.level == 5)
