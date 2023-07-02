@@ -720,7 +720,7 @@ namespace TheManager
         /// </summary>
         public void UpdateCupQualifications()
         {
-            Utils.Debug("[UpdateCupQualifications " + name + "] (" + parent.Key + ")");
+            Utils.Debug(Session.Instance.Game.date.ToShortDateString() + " [UpdateCupQualifications " + name + "] (" + parent.Key + ")");
             //Sauvegarde en mémoire les qualifications en coupe par défaut, elles pourraient être amenées à changer en cas de modification de la structure de la ligue
             if(!AlreadyStoredRecuperedTeams())
             {

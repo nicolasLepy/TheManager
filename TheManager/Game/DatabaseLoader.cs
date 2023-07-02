@@ -1618,7 +1618,7 @@ namespace TheManager
             }
 
             List<GameDay> availableWeeks = c.GetAvailableCalendarDates(administrativeDivision == null, 2, teamsByLevel.Keys.ToList(), true, false);
-            for(int week=25; week<(administrativeDivision == null ? 40 : 52); week++)
+            for(int week=25; week<(administrativeDivision == null ? 40 : 48); week++) //52
             {
                 availableWeeks.RemoveAll(s => s.WeekNumber == week);
             }
@@ -1880,6 +1880,9 @@ namespace TheManager
                     break;
                 case "ULTRAMARINE_TEAMS_CANT_COMPETE_AGAINST":
                     rule = Rule.UltramarineTeamsCantCompeteAgainst;
+                    break;
+                case "BOTTOM_TEAM_NOT_ELIGIBLE_FOR_REPECHAGE":
+                    rule = Rule.BottomTeamNotEligibleForRepechage;
                     break;
                 default:
                     rule = Rule.OnlyFirstTeams;

@@ -83,9 +83,9 @@ namespace TheManager_GUI.VueClassement
             {
                 foreach(Club c in round.clubs)
                 {
-                    if(ctry.administrativeRetrogradations.Keys.ToList().Contains(c))
+                    if(ctry.GetRetrogradations().Keys.ToList().Contains(c))
                     {
-                        spHost.Children.Add(ViewUtils.CreateLabel(String.Format("{0} retrogradé en {1}", c.name, ctry.administrativeRetrogradations[c].name), "StyleLabel2", (int)(14 * sizeMultiplier), -1));
+                        spHost.Children.Add(ViewUtils.CreateLabel(String.Format("{0} retrogradé en {1}", c.name, ctry.GetRetrogradations()[c].name), "StyleLabel2", (int)(14 * sizeMultiplier), -1));
                     }
                 }
             }

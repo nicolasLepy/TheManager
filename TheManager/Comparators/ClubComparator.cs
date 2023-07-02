@@ -19,7 +19,8 @@ namespace TheManager
         SPONSOR,
         CONTINENTAL_COEFFICIENT,
         ELO,
-        PAST_RANKING
+        PAST_RANKING,
+        CURRENT_RANKING
     }
 
     public class ClubComparator : IComparer<Club>
@@ -27,34 +28,68 @@ namespace TheManager
 
         private readonly ClubAttribute _attribute;
         private readonly bool _inverted;
-        private Dictionary<Round, List<Club>> _rankings;
+        private Dictionary<Round, List<Club>[]> _rankings;
+        private Dictionary<Round, List<Club>> _fullRankings;
 
         public ClubComparator(ClubAttribute attribute, bool inverted = false)
         {
             _attribute = attribute;
             _inverted = inverted;
-            _rankings = new Dictionary<Round, List<Club>>();
+            _rankings = new Dictionary<Round, List<Club>[]>();
+            _fullRankings = new Dictionary<Round, List<Club>>();
         }
 
-        private List<Club> GetRanking(Round round)
+        private int CompareRanking(GroupsRound round, Club x, Club y)
+        {
+            if(!_fullRankings.ContainsKey(round))
+            {
+                List<Club> roundClubs = new List<Club>(round.clubs);
+                roundClubs.Sort(new ClubRankingComparator(round.matches, round.tiebreakers, round.pointsDeduction));
+                _fullRankings.Add(round, roundClubs);
+            }
+            List<Club> clubs = _fullRankings[round];
+            return clubs.IndexOf(x) - clubs.IndexOf(y);
+        }
+
+        public int GetRanking(Round round, Club c)
         {
             if(!_rankings.ContainsKey(round))
             {
                 InactiveRound ir = round as InactiveRound;
+                ChampionshipRound cr = round as ChampionshipRound;
+                GroupsRound gr = round as GroupsRound;
                 List<Club> roundRanking;
                 //TODO: Need a Ranking() method for each round type
                 if (ir != null)
                 {
                     roundRanking = ir.Ranking();
+                    _rankings.Add(round, new List<Club>[]{ roundRanking});
                 }
-                else
+                else if(cr != null)
                 {
                     roundRanking = new List<Club>(round.clubs);
                     roundRanking.Sort(new ClubRankingComparator(round.matches, round.tiebreakers, round.pointsDeduction));
+                    _rankings.Add(round, new List<Club>[] { roundRanking });
                 }
-                _rankings.Add(round, roundRanking);
+                else if(gr != null)
+                {
+                    List<Club>[] rankings = new List<Club>[gr.groups.Length];
+                    for(int i = 0; i< gr.groups.Length; i++)
+                    {
+                        rankings[i] = gr.Ranking(i);
+                    }
+                    _rankings.Add(round, rankings);
+                }
             }
-            return _rankings[round];
+            int ranking = -1;
+            foreach(List<Club> clubs in _rankings[round])
+            {
+                if(clubs.Contains(c))
+                {
+                    ranking = clubs.IndexOf(c);
+                }
+            }
+            return ranking;
         }
 
         private int Inverted()
@@ -111,19 +146,36 @@ namespace TheManager
                     res = x.elo > y.elo ? -1 : 1;
                     break;
                 case ClubAttribute.PAST_RANKING:
+                case ClubAttribute.CURRENT_RANKING:
                     res = 0;
-                    Round xChampionship = (from Tournament t in x.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(x) select t.LastEdition().rounds[0]).FirstOrDefault();
-                    Round yChampionship = (from Tournament t in y.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(y) select t.LastEdition().rounds[0]).FirstOrDefault();
-                    if(xChampionship != default(Round) && yChampionship != default(Round))
+                    Round xChampionship;
+                    Round yChampionship;
+                    if(_attribute == ClubAttribute.PAST_RANKING)
+                    {
+                        xChampionship = (from Tournament t in x.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(x) select t.LastEdition().rounds[0]).FirstOrDefault();
+                        yChampionship = (from Tournament t in y.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(y) select t.LastEdition().rounds[0]).FirstOrDefault();
+                    }
+                    else
+                    {
+                        xChampionship = (from Tournament t in x.Country().Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(x) select t.rounds[0]).FirstOrDefault();
+                        yChampionship = (from Tournament t in y.Country().Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(y) select t.rounds[0]).FirstOrDefault();
+                    }
+                    if (xChampionship != default(Round) && yChampionship != default(Round))
                     {
                         Tournament xTournament = xChampionship.Tournament;
                         Tournament yTournament = yChampionship.Tournament;
                         res = xChampionship.Tournament.level - yChampionship.Tournament.level;
                         if(res == 0)
                         {
-                            int xRanking = GetRanking(xChampionship).IndexOf(x);
-                            int yRanking = GetRanking(yChampionship).IndexOf(y);
+                            int xRanking = GetRanking(xChampionship, x);
+                            int yRanking = GetRanking(yChampionship, y);
+                            //Console.WriteLine("[Ranking " + x.name + " : "+xRanking+ "][Ranking " + y.name + " : "+yRanking+"]");
                             res = xRanking - yRanking;
+                        }
+                        GroupsRound xGroup = xTournament.rounds[0] as GroupsRound;
+                        if (res == 0 && xGroup != null) //If the ranking of the clubs are the same, they are playing in the groups league
+                        {
+                            res = CompareRanking(xGroup, x, y);
                         }
                     }
                     else

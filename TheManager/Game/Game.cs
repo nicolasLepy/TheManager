@@ -378,7 +378,6 @@ namespace TheManager
                                 }
                             }
                         }
-
                     }
                 }
             }
@@ -493,7 +492,7 @@ namespace TheManager
                     //cv.UpdateTransfertList();
 
                     //If savegame size is alleged, we delete all the budget change entry history
-                    if (Session.Instance.Game.options.reduceSaveSize)
+                    if (options.reduceSaveSize)
                     {
                         cv.budgetHistory.Clear();
                     }
@@ -663,6 +662,7 @@ namespace TheManager
             foreach (Tournament c in _kernel.Competitions)
             {
                 int i = 0;
+                Country tc = (_kernel.LocalisationTournament(c) as Country);
                 foreach (Round t in c.rounds)
                 {
                     //First game day of the season
@@ -701,6 +701,10 @@ namespace TheManager
                             {
                                 t.QualifyClubs(true);
                             }
+                            else if(tc != null)
+                            {
+                                tc.ClearAdministrativeRetrogradationsCache();
+                            }
                         }
                     }
                     if (c.remainingYears == (c.periodicity - t.programmation.initialisation.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.initialisation.YearOffset)
@@ -713,11 +717,22 @@ namespace TheManager
                     i++;
                 }
 
+                //Case of leagues playing on more than 1 year ?
                 if(c.isChampionship && Utils.CompareDates(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
                 {
                     if(c.currentRound > -1)
                     {
                         c.QualifyClubsNextYear();
+                    }
+                }
+
+                //if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-2), _date))
+                if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
+                {
+                    Country ctry = kernel.LocalisationTournament(c) as Country;
+                    if(ctry != null && c.remainingYears == 1 && ctry.CountAdministrativeRetrogradations() > 0)
+                    {
+                        ctry.ApplyAdministrativeRetrogradations();
                     }
                 }
 
@@ -839,7 +854,6 @@ namespace TheManager
 
                 if (Utils.Modulo(c.resetWeek+5, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday)
                 {
-                    c.administrativeRetrogradations.Clear();
                     foreach (Club countryClub in kernel.Clubs)
                     {
                         if(countryClub.Country() == c)
@@ -1019,26 +1033,31 @@ namespace TheManager
                 j.Recover();
             }
 
-            /*Console.WriteLine("[Clubs elo]");
+            // PrintClubElo();
+            
+            return clubMatchs;
+        }
+
+        private void PrintClubElo()
+        {
+            Console.WriteLine("[Clubs elo]");
             List<Club> totalClubs = new List<Club>(this.kernel.Clubs);
             totalClubs.Sort(new ClubComparator(ClubAttribute.ELO, false));
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Console.WriteLine(totalClubs[i].name + " - " + totalClubs[i].elo);
             }
             Console.WriteLine("...");
-            for (int i = totalClubs.Count-1; i > totalClubs.Count-10; i--)
+            for (int i = totalClubs.Count - 1; i > totalClubs.Count - 10; i--)
             {
                 Console.WriteLine(totalClubs[i].name + " - " + totalClubs[i].elo);
             }
             float totalElo = 0;
-            foreach(Club c in totalClubs)
+            foreach (Club c in totalClubs)
             {
                 totalElo += c.elo;
             }
-            Console.WriteLine("Elo Sum = " + totalElo);*/
-            
-            return clubMatchs;
+            Console.WriteLine("Elo Sum = " + totalElo);
         }
     }
 }

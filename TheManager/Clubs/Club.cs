@@ -245,6 +245,7 @@ namespace TheManager
             Tournament clubChampionshipLevel = from;
             Country country = Country();
             string res = shortName.Length > 10 ? shortName.Substring(0, 10) : shortName;
+            res = shortName;
             foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
             {
                 if(Session.Instance.Game.kernel.LocalisationTournament(c) == country && c.isChampionship && c.previousEditions.ContainsKey(year))
@@ -256,6 +257,7 @@ namespace TheManager
                 }
             }
             string adm = this.AdministrativeDivision() != null ? " (" + this.AdministrativeDivision().name + ")" : "";
+            adm = "";
             return res + adm;
         }
 

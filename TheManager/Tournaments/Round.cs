@@ -21,7 +21,8 @@ namespace TheManager
         HostedByOneCountry,
         UltramarineTeamsPlayHomeOrAway,
         UltramarineTeamsPlayAway,
-        UltramarineTeamsCantCompeteAgainst
+        UltramarineTeamsCantCompeteAgainst,
+        BottomTeamNotEligibleForRepechage
     }
 
     public enum RankingType
@@ -744,9 +745,11 @@ namespace TheManager
         public abstract void Initialise();
         /// <summary>
         /// Quality clubs for next rounds
+        /// <paramref name="forNextYear">Qualify clubs to tournaments competing next year</paramref>
         /// </summary>
         public abstract void QualifyClubs(bool forNextYear);
         public abstract Round Copy();
+
         public abstract void DistributeGrants();
         /// <summary>
         /// Winner of the round
@@ -872,7 +875,7 @@ namespace TheManager
 
             for (int i = 0; i < number; i++)
             {
-                res.Add(roundClubs[i]);
+               res.Add(roundClubs[i]);
             }
             return res;
         }

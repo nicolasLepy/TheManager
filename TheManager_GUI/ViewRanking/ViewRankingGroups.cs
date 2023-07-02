@@ -81,6 +81,10 @@ namespace TheManager_GUI.VueClassement
 
         public override void Full(StackPanel spRanking)
         {
+
+            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
+            Country country = localisation as Country;
+
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
             spRanking.Children.Clear();
@@ -142,13 +146,14 @@ namespace TheManager_GUI.VueClassement
                         spRanking.Children.Add(CreateRanking(i, c));
                     }
 
-
                     int roundLevel = _round.Tournament.level;
 
                     if (_round.groups[poule].Count > 0)
                     {
                         foreach (Qualification q in qualifications[poule])
                         {
+                            int index = q.ranking;
+
                             string color = "backgroundColor";
                             if (q.tournament.level == roundLevel && q.tournament != _round.Tournament)
                             {
@@ -166,7 +171,6 @@ namespace TheManager_GUI.VueClassement
                             {
                                 color = q.qualifies >= 0 ? "el1Color" : "barrageRelegationColor";
                             }
-                            int index = q.ranking;
                             if (color != "backgroundColor")
                             {
                                 SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
@@ -214,6 +218,7 @@ namespace TheManager_GUI.VueClassement
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
             if (_round.groups[0].Count > 0 && !_focusOnTeam)
             {
+                List<Club>[] retrogradations = country.GetAdministrativeRetrogradations();
                 List<Club>[] groups = new List<Club>[_round.groupsCount];
                 for (int i = 0; i < _round.groupsCount; i++)
                 {
@@ -228,31 +233,39 @@ namespace TheManager_GUI.VueClassement
                     {
                         if (q.tournament.isChampionship && q.ranking <= ranking.Count)
                         {
-                            int niveau = _round.Tournament.level;
-                            string couleur = "backgroundColor";
-                            if (q.tournament.level < niveau)
+
+                            int index = q.ranking; //Ranking index + 1 for the group headline
+                            int clubNextLevel = Array.FindIndex(retrogradations, w => w.Contains(groups[j][index - 1])) + 1;
+
+                            int roundLevel = _round.Tournament.level;
+                            string color = "backgroundColor";
+                            if (q.tournament.level < roundLevel || (clubNextLevel > 0 && clubNextLevel < roundLevel))
                             {
-                                couleur = q.qualifies != 0 ? "el1Color" : "promotionColor";
+                                color = q.qualifies != 0 ? "el1Color" : "promotionColor";
+                            }
+                            else if ((clubNextLevel - roundLevel) > 1)
+                            {
+                                color = "retrogradationColor";
                             }
                             else if ((q.tournament.level - _tournament.level) > 1)
                             {
-                                couleur = "retrogradationColor";
+                                color = "retrogradationColor";
                             }
-                            else if (q.tournament.level > niveau)
+                            else if (q.tournament.level > roundLevel)
                             {
-                                couleur = q.qualifies != 0 ? "barrageRelegationColor" : "relegationColor";
+                                color = q.qualifies != 0 ? "barrageRelegationColor" : "relegationColor";
+                                color = clubNextLevel == roundLevel ? "backgroundColor" : color; //Don't forget case were club is rescued
+
                             }
-                            else if (q.tournament.level == niveau && q.roundId > _round.Tournament.rounds.IndexOf(_round))
+                            else if (q.tournament.level == roundLevel && q.roundId > _round.Tournament.rounds.IndexOf(_round))
                             {
-                                couleur = "barrageColor";
+                                color = "barrageColor";
                             }
 
-                            int index = q.ranking; //Ranking index + 1 for the group headline
-
-                            SolidColorBrush color = Application.Current.TryFindResource(couleur) as SolidColorBrush;
+                            SolidColorBrush colorBrush = Application.Current.TryFindResource(color) as SolidColorBrush;
                             
                             StackPanel sp = (spRanking.Children[cumulatedChildrenCount + index] as StackPanel);
-                            sp.Background = color;
+                            sp.Background = colorBrush;
                         }
                     }
                     cumulatedChildrenCount += _round.groups[j].Count +1 ;

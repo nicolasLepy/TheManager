@@ -52,6 +52,8 @@ namespace TheManager
         [DataMember]
         private List<Qualification>[] _storedGroupQualifications = null;
 
+        private List<Club>[] _cacheRanking;
+
         public int referenceClubsByGroup => _referenceClubsByGroup;
 
 
@@ -121,6 +123,16 @@ namespace TheManager
             _nonGroupGamesByTeams = nonGroupGamesByTeams;
             _nonGroupGamesByGameday = nonGroupGamesByGameday;
             _fusionGroupAndNoGroupGames = fusionGroupAndNoGroupGames;
+            _cacheRanking = new List<Club>[0];
+        }
+
+        public void ClearCache()
+        {
+            _cacheRanking = new List<Club>[_groups.Length];
+            for(int i = 0; i < _groups.Length; i++)
+            {
+                _cacheRanking[i] = new List<Club>();
+            }
         }
 
         public override Round Copy()
@@ -353,8 +365,10 @@ namespace TheManager
             Country country = _groups[group][0].Country();
             //Get the district of the group (at the good regional level)
             AdministrativeDivision administrativeDivision = country.GetAdministrativeDivisionLevel(_groups[group][0].AdministrativeDivision(), _administrativeLevel);
+            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "]");
             bool isHigherRegionalLevel = country.GetHigherRegionalTournament(administrativeLevel) == tournament;
-            int teamsSentToHigherRegionalLevel = !isHigherRegionalLevel ? GetTeamsCountSentToHigherRegionalLevel(administrativeDivision, country) : 0;
+            //int teamsSentToHigherRegionalLevel = !isHigherRegionalLevel ? GetTeamsCountSentToHigherRegionalLevel(administrativeDivision, country) : 0;
+            int teamsSentToHigherRegionalLevel = 0;
             int admGroupCount = GetGroupsFromAdministrativeDivision(administrativeDivision).Count;
             int extraPromotions = 0;
 
@@ -374,6 +388,8 @@ namespace TheManager
             {
                 bottomTournament = tournament;
             }
+
+            teamsSentToHigherRegionalLevel = 1;
 
             //If this league is this first district league, automatically compute promotion slots
             GroupsRound upperGroupRound = country.League(tournament.level - 1).rounds[0] as GroupsRound;
@@ -401,26 +417,30 @@ namespace TheManager
                 if(upperGroupRound.relegationsByAdministrativeDivisions.ContainsKey(upperAdministrativeDivision))
                 {
                     promotionSlots = upperGroupRound.relegationsByAdministrativeDivisions[upperAdministrativeDivision];
+                    Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Promotions slots calculés automatiquement : " + (promotionSlots+1));
                 }
 
                 promotionSlots = promotionSlots + 1; // 1; //TODO : +1 or +offset national/regional
                 
                 //Dispatche les places de promotion attribué au groupe si la région administrative possède plusieurs groupes dans la division
-                int promotionByGroup = promotionSlots / admGroupUpper;
+                int promotionForAdm = promotionSlots / admGroupUpper;
+                teamsSentToHigherRegionalLevel = promotionForAdm;
                 extraPromotions = promotionSlots % admGroupUpper;
-                for (int i = 1; i <= promotionByGroup; i++)
+                Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] " + admGroupUpper + " groupes administratifs : " + promotionForAdm + " promotions (avec " + extraPromotions + " extra slot)");
+                for (int i = 1; i <= promotionForAdm; i++)
                 {
                     UpdateQualificationTournament(adjustedQualifications, i, upperGroupRound.Tournament);
                 }
 
                 if (extraPromotions > 0)
                 {
-                    List<Club> rankingRank = RankingByRank(promotionByGroup + 1, upperAdministrativeDivision);
-                    Club concerned = groupRanking[promotionByGroup];
+                    List<Club> rankingRank = RankingByRank(promotionForAdm + 1, upperAdministrativeDivision);
+                    Club concerned = groupRanking[promotionForAdm];
                     if (rankingRank.IndexOf(concerned) < extraPromotions)
                     {
-                        UpdateQualificationTournament(adjustedQualifications, promotionByGroup+1, upperGroupRound.Tournament);
+                        UpdateQualificationTournament(adjustedQualifications, promotionForAdm + 1, upperGroupRound.Tournament);
                         extraPromotionOnGroup = true;
+                        teamsSentToHigherRegionalLevel++;
                     }
                 }
             }
@@ -446,7 +466,8 @@ namespace TheManager
                         relegationPlaces = adjustedQualifications.Count - q.ranking + 1;
                     }
                 }
-                Console.WriteLine("Etape 0 : " + relegationPlaces);
+                Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Etape 0 : " + relegationPlaces + " places de rélégations");
+                Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Etape 0 : " + promotionPlaces + " places de promotions");
                 if (promotionPlaces > 0)
                 {
                     int promotionByGroup = promotionPlaces / admGroupCount;
@@ -476,7 +497,7 @@ namespace TheManager
                     }
                 }
 
-                //Ignore qualifications relegations but take predefined relegations number of administrative divsiion
+                //Ignore qualifications relegations but take predefined relegations number of administrative division
                 if (relegationsByAdministrativeDivisions.ContainsKey(administrativeDivision))
                 {
                     relegationPlaces = relegationsByAdministrativeDivisions[administrativeDivision];
@@ -548,17 +569,17 @@ namespace TheManager
                     promotionsCount++;
                 }
             }
-            if(isHigherRegionalLevel)
+            /*if(isHigherRegionalLevel)
             {
                 teamsSentToHigherRegionalLevel = promotionsCount;
-            }
+            }*/
             //Système un peu brut. On admet qu'une région envoie une équipe au niveau régional au dessus. On gère donc seulement si on est dans le cas où on envoie plus d'une équipe au niveau régional au dessus.
             //On applique cette modification uniquement si on est à l'échelon régional le plus élevé car les échelons du dessous s'appuierons sur le nombre de relegués à ce niveau pour gérer leur propre nombre de relégué (donc pour éviter d'appliquer cette réduction du nombre de relegués plusieurs fois)
-            /**if (teamsSentToHigherRegionalLevel != 1 && isHigherRegionalLevel)
+            if (teamsSentToHigherRegionalLevel != 1 && isHigherRegionalLevel)
             {
                 relegationPlaces -= (teamsSentToHigherRegionalLevel - 1);
-            }*/
-            Console.WriteLine("Etape 1 : " + relegationPlaces + " (teams sent to higher regional level)" + teamsSentToHigherRegionalLevel);
+            }
+            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Etape 1 : " + relegationPlaces + " rel. places (higher level ? "+ isHigherRegionalLevel + " : teams sent to higher regional level : " + teamsSentToHigherRegionalLevel + ")");
 
             int admRelegables = 0;
 
@@ -573,6 +594,7 @@ namespace TheManager
                 //Case 1
                 if (upperGroupRound.administrativeLevel < administrativeLevel)
                 {
+                    Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Case 1");
                     //It's probably to create a function in GroupsRound that return relegables teams
                     //Et dangereux de faire comme ça car compatibilité entre relegations au milieu de classement (réserve qui tombe, rétrogradation adm) sont pas forcément compatible avec le classement des meilleurs nième
                     AdministrativeDivision admAtLevel = upperGroupRound.administrativeLevel > 0 ? country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound._administrativeLevel) : null;
@@ -590,7 +612,7 @@ namespace TheManager
                                 {
                                     admRelegables++;
                                 }
-                                else if (q.qualifies != 0 && q.tournament == this.Tournament)
+                                else if (q.qualifies != 0 && q.tournament == tournament)
                                 {
                                     List<Club> rankingOfRank = upperGroupRound.RankingByRank(q.ranking - upperGroupRoundClubsCount - 1, null);
                                     int threshold = q.qualifies > 0 ? q.qualifies : q.qualifies + upperGroupRound._groupsNumber;
@@ -606,6 +628,7 @@ namespace TheManager
                 //Case 2
                 else
                 {
+                    Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Case 2");
                     List<Qualification> regularQualifications = upperGroupRound.qualifications;
                     int regularQualificationsCount = 0;
                     AdministrativeDivision upperAdministrativeDivision = country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound.administrativeLevel);
@@ -646,7 +669,7 @@ namespace TheManager
                 }
             }
 
-            Console.WriteLine("Relegations places " + relegationPlaces);
+            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Relegations places " + relegationPlaces);
             relegationPlaces += admRelegables;
             //Dans le cas par exemple avec deux groupes et trois montées, un groupe aura une montée additionelle. On enlève alors une relégation à ce groupe pour maintenir le même nombre d'équipes dans le groupe
             /*if (extraPromotionOnGroup)
@@ -673,7 +696,7 @@ namespace TheManager
                     relegationOnGroup++;
                 }
             }
-            Console.WriteLine("[" + this.GroupName(group) + "] " + promotionsCount + " Adm Relegables : " + admRelegables + " -> total : " + relegationPlaces + ", relegationOnGroup ? " + relegationOnGroup);
+            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Promotions : " + promotionsCount + "; AdmRelegables : " + admRelegables + " -> total : " + relegationPlaces + "rélégations, " + relegationOnGroup + " pour ce groupe");
 
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
             //Check if bottom round is a group round or an inactive round (could be factorized)
@@ -933,9 +956,13 @@ namespace TheManager
 
         public List<Club> Ranking(int group, bool inverse=false)
         {
+            int gamesPlayed = matches.Count(p => p.Played);
             List<Club> res = new List<Club>(_groups[group]);
-            ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, pointsDeduction, RankingType.General, inverse);
-            res.Sort(comparator);
+            if (gamesPlayed > 0)
+            {
+                ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, pointsDeduction, RankingType.General, inverse);
+                res.Sort(comparator);
+            }
             return res;
         }
 

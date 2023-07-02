@@ -107,115 +107,6 @@ namespace TheManager
             return AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
         }
 
-        //TODO : Gestion des relégations administratives
-        /*
-        private void RequalifyClubsAdministrativeRetrogradation()
-        {
-            Tournament tournament = Tournament;
-            List<KeyValuePair<Club, Tournament>> qualifications = new List<KeyValuePair<Club, Tournament>>();
-            List<Club> ranking = Ranking();
-            foreach(Club c in ranking)
-            {
-                qualifications.Add(new KeyValuePair<Club, Tournament>(c, tournament));
-            }
-
-            Country country = Session.Instance.Game.kernel.LocalisationTournament(tournament) as Country;
-            for(int i = tournament.level-1; i < tournament.level+2; i++)
-            {
-                Tournament tournamentI = country.League(i);
-                if(tournamentI != null)
-                {
-                    List<Club> nextYearQualified = tournamentI.nextYearQualified[0];
-                    for(int j = 0; j < qualifications.Count; j++)
-                    {
-                        KeyValuePair<Club, Tournament> kvp = qualifications[j];
-                        if (nextYearQualified.Contains(kvp.Key))
-                        {
-                            qualifications[j] = new KeyValuePair<Club, Tournament>(kvp.Key, tournamentI);
-                        }
-                    }
-                }
-            }
-
-            for(int i = 0; i<ranking.Count; i++)
-            {
-                Club c = ranking[i];
-                KeyValuePair<Club, Tournament> qualification = qualifications[i];
-                foreach (KeyValuePair<Club, Tournament> retrogradation in country.administrativeRetrogradations)
-                {
-                    if (retrogradation.Key == c)
-                    {
-                        List<Qualification> roundQualifications = GetQualifications();
-                        //Le club est promu
-                        if (qualification.Value.level < tournament.level)
-                        {
-                            qualification.Value.nextYearQualified[0].Remove(c);
-
-                            //Ajouter le premier club non promu à être promu s'il respecte les règles
-                            bool ok = false;
-                            for(int j = 0; j < ranking.Count && !ok; j++)
-                            {
-                                Club candidate = ranking[j];
-                                KeyValuePair<Club, Tournament> nextYearCandidate = qualifications[j];
-                                if (nextYearCandidate.Value == tournament && Utils.RuleIsRespected(candidate, roundQualifications[j], tournament.level, tournament.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted)) == Utils.RuleStatus.RuleRespected)
-                                {
-                                    ok = true;
-                                    qualification.Value.nextYearQualified[0].Add(candidate);
-                                    tournament.nextYearQualified[0].Remove(candidate);
-
-                                }
-                            }
-                        }
-                        if(qualification.Value.level == tournament.level)
-                        {
-                            //Sauver le premier candidat relegue s'il respecte les règles
-                            bool ok = false;
-                            for (int j = 0; j < ranking.Count && !ok; j++)
-                            {
-                                Club candidate = ranking[j];
-                                KeyValuePair<Club, Tournament> nextYearCandidate = qualifications[j];
-                                if (nextYearCandidate.Value.level > tournament.level && Utils.RuleIsRespected(candidate, roundQualifications[j], tournament.level, tournament.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted)) == Utils.RuleStatus.RuleRespected)
-                                {
-                                    ok = true;
-                                    nextYearCandidate.Value.nextYearQualified[0].Remove(candidate);
-                                    tournament.nextYearQualified[0].Add(candidate);
-
-                                }
-                            }
-                        }
-                        retrogradation.Value.AddClubForNextYear(c, 0);
-                    }
-                }
-            }
-        }*/
-
-        private List<Qualification> AdjustQualificationsAdministrativeRetrogradation(List<Qualification> qualifications)
-        {
-            Tournament tournament = Tournament;
-            Country country = Session.Instance.Game.kernel.LocalisationTournament(tournament) as Country;
-            List<Qualification> newQualifications = new List<Qualification>(qualifications);
-            if (country != null)
-            {
-                List<Club> ranking = Ranking();
-                newQualifications.Sort(new QualificationComparator());
-
-                foreach (Club c in _clubs)
-                {
-                    //Aussi if reserve && reserve >= cible descente
-                    if (country.administrativeRetrogradations.ContainsKey(c))
-                    {
-                        Qualification q = newQualifications[ranking.IndexOf(c)];
-                        if (q.isNextYear)
-                        {
-                            newQualifications[ranking.IndexOf(c)] = new Qualification(q.ranking, 0, country.administrativeRetrogradations[c], q.isNextYear, q.qualifies);
-                        }
-                    }
-                }
-            }
-
-            return newQualifications;
-        }
-
         /// <summary>
         /// Get all clubs qualifications with adjustements
         /// </summary>
@@ -226,7 +117,6 @@ namespace TheManager
             List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
             adjustedQualifications.Sort(new QualificationComparator());
             adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, rules.Contains(Rule.ReservesAreNotPromoted));
-            adjustedQualifications = AdjustQualificationsAdministrativeRetrogradation(adjustedQualifications);
             return adjustedQualifications;
         }
 

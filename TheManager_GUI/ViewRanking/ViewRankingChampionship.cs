@@ -227,8 +227,10 @@ namespace TheManager_GUI.VueClassement
                 sp.Children.Add(ViewUtils.CreateLabel(_round.Difference(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 1.25));
 
                 spRanking.Children.Add(sp);
-
             }
+
+            List<Club>[] retrogradations = country.GetAdministrativeRetrogradations();
+            int level = _tournament.level;
 
             //Only show colors when the ranking is not focused on a team
             if (!_focusOnTeam)
@@ -240,22 +242,25 @@ namespace TheManager_GUI.VueClassement
                 List<Qualification> qualifications = _round.GetAdjustedQualifications(); //_round.qualifications;
                 foreach (Qualification q in qualifications)
                 {
+                    int index = q.ranking > 0 ? q.ranking : clubs.Count + q.ranking + 1;
+                    int clubNextLevel = Array.FindIndex(retrogradations, w => w.Contains(clubs[index - 1])) + 1;
+
                     string color = "backgroundColor";
 
                     qualificationsToTournamentNextRounds = !q.isNextYear && q.tournament == _tournament && !QualificationCanLeadToRelegation(q.tournament.rounds[q.roundId], _tournament) ? qualificationsToTournamentNextRounds + 1 : qualificationsToTournamentNextRounds;
                     if (q.tournament.isChampionship)
                     {
-                        if (q.tournament.level < roundLevel)
+                        if (q.tournament.level < roundLevel || (clubNextLevel > 0 && clubNextLevel < roundLevel))
                         {
                             color = "promotionColor";
                         }
-                        else if ((q.tournament.level - _tournament.level) > 1)
+                        else if ((clubNextLevel - roundLevel) > 1)
                         {
                             color = "retrogradationColor";
                         }
                         else if (q.tournament.level > roundLevel)
                         {
-                            color = "relegationColor";
+                            color = clubNextLevel == roundLevel ? "backgroundColor" : "relegationColor"; //Don't forget case were club is rescued
                         }
                         else if (q.tournament.level == roundLevel && q.roundId > _tournament.rounds.IndexOf(_round))
                         {
@@ -278,7 +283,6 @@ namespace TheManager_GUI.VueClassement
                         }
                     }
 
-                    int index = q.ranking > 0 ? q.ranking : clubs.Count + q.ranking + 1;
                     if (color != "backgroundColor" && clubs.Count > 0)
                     {
                         SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;

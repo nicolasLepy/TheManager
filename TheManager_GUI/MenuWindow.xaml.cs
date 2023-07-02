@@ -185,34 +185,105 @@ namespace TheManager_GUI
             wo.Show();
         }
 
+        private void SetAdministrativeRetrogradationsFr()
+        {
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
+
+            foreach (Tournament t in fr.Leagues())
+            {
+                foreach (Round r in t.rounds)
+                {
+                    if ((r as ChampionshipRound) != null || (r as GroupsRound) != null)
+                    {
+                        r.rules.Add(Rule.BottomTeamNotEligibleForRepechage);
+                    }
+                }
+            }
+
+            Dictionary<string, int> retrogradations = new Dictionary<string, int>()
+            {
+                ["Dijon FCO"] = 5,
+                ["AJ Auxerre"] = 4,
+                ["SC Bastia"] = 7,
+                ["Gfc Ajaccio"] = 5,
+                ["Amiens SC"] = 5,
+                ["CS Sedan Ardennes"] = 5,
+                ["SO Cholet"] = 5,
+                ["US Boulogne CO"] = 5,
+                ["FC Chambly"] = 5,
+                ["Stade Lavallois"] = 5,
+                ["Jura Lacs F"] = 7,
+//                ["RC Lons LE Saunier"] = 7,
+//                ["US ST Vit"] = 7,
+//                ["AS Levier"] = 7,
+//                ["Football Club DE Vesoul"] = 7,
+                ["CA DE Pontarlier"] = 7,
+                ["AS ST Apollinaire"] = 7,
+                ["Paron F C"] = 7,
+                ["FC Grandvillars"] = 7
+            };
+
+
+            foreach (Club c in Session.Instance.Game.kernel.Clubs)
+            {
+                if (retrogradations.ContainsKey(c.name))
+                {
+                    Console.WriteLine("Relegue " + c.name);
+                    fr.AddAdministrativeRetrogradation(c, fr.League(retrogradations[c.name]));
+                }
+            }
+        }
+
+        /*
+        private void SetAdministrativeRetrogradationsAz()
+        {
+            Country az = Session.Instance.Game.kernel.String2Country("Azerbaïdjan");
+
+            foreach (Tournament t in az.Leagues())
+            {
+                foreach (Round r in t.rounds)
+                {
+                    if ((r as ChampionshipRound) != null || (r as GroupsRound) != null)
+                    {
+                        r.rules.Add(Rule.BottomTeamNotEligibleForRepechage);
+                    }
+                }
+            }
+
+            Dictionary<string, int> retrogradations = new Dictionary<string, int>()
+            {
+                ["Club Nord N1 2"] = 7,
+                ["Club Nord N1 3"] = 7,
+                ["Club Sud9"] = 5,
+                ["Club Sud8"] = 5,
+                ["Club Nord N1 8"] = 8,
+                ["Club Nord N2 6"] = 8,
+                ["Club Nord N1 14"] = 8,
+                ["Club Nord N1 9"] = 8,
+                ["Club Nord N2 6"] = 8,
+                ["Club Ouest O1 7"] = 8,
+                ["Club Est E2 6"] = 6
+            };
+
+
+            foreach (Club c in Session.Instance.Game.kernel.Clubs)
+            {
+                if (retrogradations.ContainsKey(c.name))
+                {
+                    Console.WriteLine("Relegue " + c.name);
+                    az.AddAdministrativeRetrogradation(c, az.League(retrogradations[c.name]));
+                }
+            }
+        }
+
         private void KeyPress(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.R)
             {
                 Console.WriteLine("Relegations");
-                Country fr = Session.Instance.Game.kernel.String2Country("France");
-                foreach (Club c in Session.Instance.Game.kernel.Clubs)
-                {
-                    //Prepare test cases for retrogradations
-                    if(c.name.Equals("RC Strasbourg Alsace"))
-                    {
-                        fr.administrativeRetrogradations.Add(c, fr.League(4));
-                    }
-                    if (c.name.Equals("Olympique Lyonnais")) //A la place de sa réserve
-                    {
-                        fr.administrativeRetrogradations.Add(c, fr.League(4));
-                    }
-                    if (c.name == "FC Lorient")
-                    {
-                        fr.administrativeRetrogradations.Add(c, fr.League(3));
-                    }
-                    if (c.name == "Clermont Foot 63")
-                    {
-                        fr.administrativeRetrogradations.Add(c, fr.League(3));
-                    }
-                }
+                SetAdministrativeRetrogradationsFr();
             }
-        }
+        }*/
 
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
         {
