@@ -742,7 +742,7 @@ namespace TheManager
 
         public List<Club>[] GetAdministrativeRetrogradations()
         {
-            if(_cacheAdministrativeRetrogradationsChanges != null)
+            if (_cacheAdministrativeRetrogradationsChanges != null)
             {
                 return _cacheAdministrativeRetrogradationsChanges;
             }
@@ -755,8 +755,40 @@ namespace TheManager
                 clubsByLeagues[i] = new List<Club>(leagues[i].nextYearQualified[0]);
                 ClubComparator comparator = new ClubComparator(ClubAttribute.CURRENT_RANKING, false);
                 clubsByLeagues[i].Sort(comparator);
+                Console.WriteLine(clubsByLeagues[i].Count);
 
-                Console.WriteLine("=====" + leagues[i].name + "=====");
+                //Replace raw ranking by playoff order
+                List<KeyValuePair<Club, int>> promotionPlayOffs = leagues[i].GetTopPlayOffClubs();
+                promotionPlayOffs.Reverse();
+                promotionPlayOffs.Sort(new ClubPlayoffsComparator(new List<Club>(clubsByLeagues[i])));
+                foreach(KeyValuePair<Club, int> kvpC in promotionPlayOffs)
+                {
+                    Club c = kvpC.Key;
+                    if (clubsByLeagues[i].Contains(c))
+                    {
+                        clubsByLeagues[i].Remove(c);
+                        if (c.Championship.level < leagues[i].level)
+                        {
+                            clubsByLeagues[i].Insert(0, c);
+                        }
+                        else
+                        {
+                            int j = 0;
+                            while (clubsByLeagues[i][j].Championship.level < leagues[i].level)
+                            {
+                                j++;
+                            }
+                            clubsByLeagues[i].Insert(j, c);
+                        }
+                    }
+                }
+                
+
+                Console.WriteLine("=====" + leagues[i].name + "===== " + clubsByLeagues[i].Count);
+                foreach(KeyValuePair<Club, int> c in promotionPlayOffs)
+                {
+                    Console.WriteLine("[playoffs] " + c.Key.name);
+                }
                 foreach (Club c in clubsByLeagues[i])
                 {
                     Round clubC = (from Tournament t in Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();

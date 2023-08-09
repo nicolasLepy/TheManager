@@ -1495,6 +1495,14 @@ namespace TheManager
             return res;
         }
 
+        /// <summary>
+        /// Same of GetFinalPhaseTree, but for promotion playoffs, so can scan rounds outside of the league
+        /// Probably mergeable with GetFinalPhaseTree
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <param name="round"></param>
+        /// <param name="allRounds"></param>
+        /// <returns></returns>
         public List<Round> GetPlayOffsTree(Tournament tournament, Round round, List<Round> allRounds)
         {
             allRounds.Add(round);
@@ -1653,26 +1661,18 @@ namespace TheManager
             {
                 finalRounds = GetFinalPhaseTree(finalRound, new List<Round>()) ;
             }
-            finalClubs = ExtractClubsFromPlayOffs(finalRounds);
-            /*for (int i = finalRounds.Count-1; i>=0; i--)
+            List<KeyValuePair<Club, int>> clubsDictionnary = ExtractClubsFromPlayOffs(finalRounds);
+            foreach(KeyValuePair<Club, int> kvp in clubsDictionnary)
             {
-                List<Club> roundClubs = new List<Club>(finalRounds[i].clubs);
-                roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, finalRounds[i].tiebreakers, finalRounds[i].pointsDeduction, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
-
-                foreach (Club c in roundClubs)
-                {
-                    if(!finalClubs.Contains(c))
-                    {
-                        finalClubs.Add(c);
-                    }
-                }
-            }*/
+                finalClubs.Add(kvp.Key);
+            }
             return finalClubs;
         }
 
-        private List<Club> ExtractClubsFromPlayOffs(List<Round> finalRounds)
+        private List<KeyValuePair<Club, int>> ExtractClubsFromPlayOffs(List<Round> finalRounds)
         {
-            List<Club> finalClubs = new List<Club>();
+            List<KeyValuePair<Club, int>> finalClubs = new List<KeyValuePair<Club, int>>();
+            List<Club> clubs = new List<Club>();
             for (int i = finalRounds.Count - 1; i >= 0; i--)
             {
                 List<Club> roundClubs = new List<Club>(finalRounds[i].clubs);
@@ -1680,9 +1680,10 @@ namespace TheManager
 
                 foreach (Club c in roundClubs)
                 {
-                    if (!finalClubs.Contains(c))
+                    if (!clubs.Contains(c))
                     {
-                        finalClubs.Add(c);
+                        finalClubs.Add(new KeyValuePair<Club, int>(c, i));
+                        clubs.Add(c);
                     }
                 }
             }
@@ -1693,9 +1694,9 @@ namespace TheManager
         /// Get clubs involved in promotion playoffs, ordered
         /// </summary>
         /// <returns></returns>
-        public List<Club> GetTopPlayOffClubs()
+        public List<KeyValuePair<Club, int>> GetTopPlayOffClubs()
         {
-            List<Club> res = new List<Club>();
+            List<KeyValuePair<Club, int>> res = new List<KeyValuePair<Club, int>>();
             Round topPlayOffRound = GetFinalTopPlayOffRound();
             if (topPlayOffRound != null)
             {
