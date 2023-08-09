@@ -559,21 +559,20 @@ namespace TheManager
             }
         }
 
-        private void SetUpMediasForTournaments(List<Match> gamesList, Tournament c)
+        private void SetUpMediasForTournaments(List<Match> gamesList, Tournament c, Round r)
         {
             List<Match> games = new List<Match>(gamesList);
             foreach(Media media in _kernel.medias)
             {
-                if(media.Cover(c,c.currentRound))
+                if(media.Cover(c,c.rounds.IndexOf(r)))
                 {
                     int numberOfGamesToFollow = games.Count;
                     TournamentCoverage cc = media.GetCoverage(c);
                     if (cc.MinimumGamesNumberOfMultiplex != -1 && games.Count >= cc.MinimumGamesNumberOfMultiplex)
                     {
-                        Round t = c.rounds[c.currentRound];
-                        int nbMatchsParJournee = t.clubs.Count/2;
-                        int nbJournees = t.matches.Count / nbMatchsParJournee;
-                        int j = (t.matches.IndexOf(gamesList[0]) / nbMatchsParJournee) + 1;
+                        int nbMatchsParJournee = r.clubs.Count/2;
+                        int nbJournees = r.matches.Count / nbMatchsParJournee;
+                        int j = (r.matches.IndexOf(gamesList[0]) / nbMatchsParJournee) + 1;
 
 
                         Normal n = new Normal(3, 1);
@@ -590,19 +589,19 @@ namespace TheManager
 
                         if (nbJournees-j == 1)
                         {
-                            games.Sort(new MatchRankingComparator(t as ChampionshipRound));
+                            games.Sort(new MatchRankingComparator(r as ChampionshipRound));
                         }
                         else if (nbJournees - j == 0)
                         {
-                            games.Sort(new MatchRankingComparator(t as ChampionshipRound));
+                            games.Sort(new MatchRankingComparator(r as ChampionshipRound));
                         }
                         else if(j<3)
                         {
                             games.Sort(new MatchLevelComparator());
                         }
-                        else if(t as ChampionshipRound != null) 
+                        else if(r as ChampionshipRound != null) 
                         {
-                            games.Sort(new MatchRankingComparator(t as ChampionshipRound));
+                            games.Sort(new MatchRankingComparator(r as ChampionshipRound));
                         }
                         else
                         {
@@ -781,42 +780,46 @@ namespace TheManager
 
             foreach (Tournament c in _kernel.Competitions)
             {
-                List<Match> todayGames = new List<Match>();
+                Dictionary<Round, List<Match>> games = new Dictionary<Round, List<Match>>();
                 if(c.currentRound > -1)
                 {
-                    List<Match> matchs = new List<Match>();
                     foreach(Round r in c.rounds)
                     {
-                        matchs.AddRange(r.matches);
-                    }
-                    Round currentRound = c.rounds[c.currentRound];
-                    //matchs = currentRound.matches;
-                    foreach (Match m in matchs)
-                    {
-                        if (Utils.CompareDates(m.day, _date))
+                        foreach(Match m in r.matches)
                         {
-                            todayGames.Add(m);
-                            m.SetCompo();
-                            if ((m.home == club || m.away == club) && !options.simulateGames)
+                            if (Utils.CompareDates(m.day, _date))
                             {
-                                clubMatchs.Add(m);
-                            }
-                            else
-                            {
-                                if (c.isChampionship && (date.Month == 1 || date.Month == 12) &&
-                                    Session.Instance.Random(1, 26) == 2)
+                                if(!games.ContainsKey(r))
                                 {
-                                    m.Reprogram(3);
+                                    games.Add(r, new List<Match>());
+                                }
+                                games[r].Add(m);
+                                m.SetCompo();
+                                if ((m.home == club || m.away == club) && !options.simulateGames)
+                                {
+                                    clubMatchs.Add(m);
                                 }
                                 else
                                 {
-                                    toPlay.Add(m);
+                                    if (c.isChampionship && (date.Month == 1 || date.Month == 12) &&
+                                        Session.Instance.Random(1, 26) == 2)
+                                    {
+                                        m.Reprogram(3);
+                                    }
+                                    else
+                                    {
+                                        toPlay.Add(m);
+                                    }
                                 }
                             }
-                            
                         }
                     }
-                    SetUpMediasForTournaments(todayGames, c);
+                    Round currentRound = c.rounds[c.currentRound];
+
+                    foreach(KeyValuePair<Round, List<Match>> gamesByRound in games)
+                    {
+                        SetUpMediasForTournaments(gamesByRound.Value, c, gamesByRound.Key);
+                    }
                 }
 
                 foreach(Round round in c.rounds)

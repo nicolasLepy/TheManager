@@ -13,6 +13,7 @@ using TheManager.Comparators;
 using System.Runtime.InteropServices;
 using System.Data;
 using System.Diagnostics;
+using System.Net.Http.Headers;
 
 /*
  * TODO: Factorisations possibles :
@@ -352,6 +353,65 @@ namespace TheManager
             }
         }
 
+        public int[] GetTeamsAtEachRound()
+        {
+            int[] teamsAtEachRound = new int[rounds.Count];
+            Country country = Session.Instance.Game.kernel.LocalisationTournament(this) as Country;
+            List<Tournament> otherTournaments = country != null ? country.Leagues() : Session.Instance.Game.kernel.Competitions;
+            foreach (Tournament t in otherTournaments)
+            {
+                List<Round> rounds = t != this ? t.rounds : new List<Round>() { t.rounds[0] };
+                int i = 0;
+                foreach (Round r in rounds)
+                {
+                    foreach (Qualification q in r.qualifications)
+                    {
+                        if (!q.isNextYear && q.tournament == this)
+                        {
+                            if ((r as KnockoutRound) == null)
+                            {
+                                teamsAtEachRound[q.roundId]++;
+                            }
+                            else
+                            {
+                                teamsAtEachRound[q.roundId] += t.GetTeamsAtEachRound()[i] / 2;
+                            }
+                        }
+                    }
+                    i++;
+                }
+            }
+            return teamsAtEachRound;
+        }
+
+        /// <summary>
+        /// Get number of teams relegated or promoted after playoffs of the tournament. Assume playoffs are knockout games
+        /// TODO: Management of inactive tournaments ...
+        /// CONSIDER COUNT OF TEAMS OF THE LEAGUE QUALIFIES AFTER PLAYOFFS ONLY WHEN PLAYOFFS DOESN'T SHUFFLE TWO LEAGUES, OTHERWISE CAN'T MAKE ASSUMPTION OF TEAMS COUNT OF THIS LEAGUE
+        /// </summary>
+        /// <param name="relegation">Consider relegation if relegation is True, otherwise consider promotion</param>
+        /// <returns></returns>
+        public int TeamsQualifyAfterPlayOffs(bool relegation)
+        {
+            int res = 0;
+            int[] teamsAtEachRound = GetTeamsAtEachRound();
+            for (int i = 1; i < rounds.Count; i++)
+            {
+                int games = teamsAtEachRound[i] / 2;
+                foreach (Qualification q in rounds[i].qualifications)
+                {
+                    if (q.isNextYear && ((relegation && q.tournament.level > level) || (!relegation && q.tournament.level < level)))
+                    {
+                        res += games;
+                    }
+                    else if (!q.isNextYear && q.tournament == this)
+                    {
+                        teamsAtEachRound[q.roundId] += games;
+                    }
+                }
+            }
+            return res;
+        }
 
         private void GetBestTeams(List<RecoverTeams> recoverTeams, int count, bool selectWorstTeams, ref List<RecoverTeams> bestTeams, ref List<RecoverTeams> worstTeams, ref int missingTeams)
         {
@@ -1402,6 +1462,96 @@ namespace TheManager
             }
         }
 
+        /// <summary>
+        /// Get final playoffs round leading to accession or win on this tournament.
+        /// Final round could be played inside another tournament
+        /// (L2 playoffs finishing in L1)
+        /// </summary>
+        /// <returns></returns>
+        public Round GetFinalTopPlayOffRound()
+        {
+            Round res = null;
+
+            List<Round> browsed = new List<Round>();
+            List<Round> tas = new List<Round>() { rounds[0] };
+            while (tas.Count > 0)
+            {
+                Round r = tas[0];
+                tas.Remove(r);
+                browsed.Add(r);
+                foreach (Qualification q in r.qualifications)
+                {
+                    if (q.isNextYear && q.tournament.isChampionship && q.tournament.level < level)
+                    {
+                        res = r;
+                    }
+                    if (!q.isNextYear && q.tournament.isChampionship && !browsed.Contains(q.tournament.rounds[q.roundId]))
+                    {
+                        tas.Add(q.tournament.rounds[q.roundId]);
+                    }
+                }
+            }
+
+            return res;
+        }
+
+        public List<Round> GetPlayOffsTree(Tournament tournament, Round round, List<Round> allRounds)
+        {
+            allRounds.Add(round);
+            int roundIndex = tournament.rounds.IndexOf(round);
+            List<Round> res = new List<Round>() { round };
+            //Step 1 : Append rounds with losing teams
+            foreach (Qualification q in round.qualifications)
+            {
+                if (!q.isNextYear && q.tournament.isChampionship && q.ranking > 1)
+                {
+                    Tournament targetTournament = q.tournament;
+                    Round targetRound = q.tournament.rounds[q.roundId];
+                    if (!allRounds.Contains(targetRound))
+                    {
+                        res.AddRange(GetPlayOffsTree(targetTournament, targetRound, allRounds));
+                    }
+                }
+            }
+            //Step 2 : Append rounds with winning teams
+            foreach (Qualification q in round.qualifications)
+            {
+                if (!q.isNextYear && q.tournament.isChampionship && q.ranking == 1)
+                {
+                    Tournament targetTournament = q.tournament;
+                    Round targetRound = this.rounds[q.roundId];
+                    if (!allRounds.Contains(targetRound))
+                    {
+                        res.AddRange(GetPlayOffsTree(targetTournament, targetRound, allRounds));
+                    }
+                }
+            }
+            //Step 3 : Insert in first positions rounds where teams come from
+            for (int i = 1; i < this.rounds.Count; i++)
+            {
+                Round ri = this.rounds[i];
+                if ((ri as KnockoutRound) != null && !allRounds.Contains(ri))
+                {
+                    foreach (Qualification q in ri.qualifications)
+                    {
+                        if (!q.isNextYear && q.tournament.isChampionship && q.roundId == roundIndex && q.ranking == 1)
+                        {
+                            Tournament targetTournament = q.tournament;
+                            res.InsertRange(0, GetPlayOffsTree(targetTournament, ri, allRounds));
+                        }
+                    }
+                }
+
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Get list of rounds that consists of final championship playoffs
+        /// </summary>
+        /// <param name="round">Round currently scanned</param>
+        /// <param name="allRounds">List of rounds already scanned</param>
+        /// <returns></returns>
         public List<Round> GetFinalPhaseTree(Round round, List<Round> allRounds)
         {
             allRounds.Add(round);
@@ -1494,7 +1644,7 @@ namespace TheManager
         {
             List<Club> finalClubs = new List<Club>();
             Round finalRound = null;
-            Round lastChampionshipRound = GetLastChampionshipRound(); //_rounds[0]
+            Round lastChampionshipRound = GetLastChampionshipRound();
             lastChampionshipRound.qualifications.ForEach(q => finalRound = (!q.isNextYear && q.tournament == this && q.roundId > 0 && q.ranking == 1) ? _rounds[q.roundId] : finalRound);
             //If the league winner is qualified on another round this year on this tournament then the tournament finish with a final phase
             List<Round> finalRounds = new List<Round>();
@@ -1503,7 +1653,8 @@ namespace TheManager
             {
                 finalRounds = GetFinalPhaseTree(finalRound, new List<Round>()) ;
             }
-            for (int i = finalRounds.Count-1; i>=0; i--)
+            finalClubs = ExtractClubsFromPlayOffs(finalRounds);
+            /*for (int i = finalRounds.Count-1; i>=0; i--)
             {
                 List<Club> roundClubs = new List<Club>(finalRounds[i].clubs);
                 roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, finalRounds[i].tiebreakers, finalRounds[i].pointsDeduction, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
@@ -1515,8 +1666,47 @@ namespace TheManager
                         finalClubs.Add(c);
                     }
                 }
+            }*/
+            return finalClubs;
+        }
+
+        private List<Club> ExtractClubsFromPlayOffs(List<Round> finalRounds)
+        {
+            List<Club> finalClubs = new List<Club>();
+            for (int i = finalRounds.Count - 1; i >= 0; i--)
+            {
+                List<Club> roundClubs = new List<Club>(finalRounds[i].clubs);
+                roundClubs.Sort(new ClubRankingComparator(finalRounds[i].matches, finalRounds[i].tiebreakers, finalRounds[i].pointsDeduction, RankingType.General, false, (finalRounds[i] as KnockoutRound) != null));
+
+                foreach (Club c in roundClubs)
+                {
+                    if (!finalClubs.Contains(c))
+                    {
+                        finalClubs.Add(c);
+                    }
+                }
             }
             return finalClubs;
+        }
+
+        /// <summary>
+        /// Get clubs involved in promotion playoffs, ordered
+        /// </summary>
+        /// <returns></returns>
+        public List<Club> GetTopPlayOffClubs()
+        {
+            List<Club> res = new List<Club>();
+            Round topPlayOffRound = GetFinalTopPlayOffRound();
+            if (topPlayOffRound != null)
+            {
+                if (topPlayOffRound != rounds[0])
+                {
+                    List<Round> rounds = new List<Round>();
+                    rounds = GetPlayOffsTree(topPlayOffRound.Tournament, topPlayOffRound, new List<Round>());
+                    res = ExtractClubsFromPlayOffs(rounds);
+                }
+            }
+            return res;
         }
 
         public void NextRound()

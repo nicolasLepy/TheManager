@@ -219,6 +219,24 @@ namespace TheManager
             return adjustedQualifications;
         }
 
+        public int CountRelegations()
+        {
+            Tournament tournament = Tournament;
+            int res = 0;
+            List<Qualification> adjustedQualifications = new List<Qualification>(_qualifications);
+            adjustedQualifications.Sort(new QualificationComparator());
+            adjustedQualifications = AdaptQualificationsToRanking(adjustedQualifications, clubs.Count);
+
+            foreach (Qualification q in adjustedQualifications)
+            {
+                if (q.tournament.level > tournament.level)
+                {
+                    res++;
+                }
+            }
+            return res;
+        }
+
         public List<Qualification> GetQualifications()
         {
             List<Club> ranking = Ranking();
@@ -227,7 +245,7 @@ namespace TheManager
 
             adjustedQualifications = AdaptQualificationsToRanking(adjustedQualifications, clubs.Count);
 
-            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, _rules.Contains(Rule.ReservesAreNotPromoted));
+            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, null, Tournament, this, _rules.Contains(Rule.ReservesAreNotPromoted), CountRelegations(), 1);
 
             if (_clubs.Count > 0)
             {

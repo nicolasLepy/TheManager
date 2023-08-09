@@ -566,6 +566,37 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Get list of fixtures when the precedent round is a championship round and no random drawing is performed
+        /// The best team receive the worst, the second best the second worst ...
+        /// </summary>
+        /// <param name="round"></param>
+        /// <param name="previousRound"></param>
+        /// <returns></returns>
+        public static List<Match> DrawNoRandomDrawing(KnockoutRound round, ChampionshipRound previousRound)
+        {
+            RoundProgrammation programmation = round.programmation;
+            DateTime day = GetRoundProgrammationDate(round, programmation);
+
+            List<Match> res = new List<Match>();
+            List<Club> teams = new List<Club>(round.clubs);
+            teams.Sort(new ClubComparator(ClubAttribute.CURRENT_RANKING));
+            for (int i = 0; i < round.clubs.Count / 2; i++)
+            {
+                Club clubA = teams[i];
+                Club clubB = teams[teams.Count - i - 1];
+                res.Add(new Match(!round.twoLegs ? clubA : clubB,!round.twoLegs ? clubB : clubA, day, !round.twoLegs));
+            }
+
+            TVSchedule(res, round.programmation.tvScheduling, 0);
+            if (round.twoLegs)
+            {
+                CreateSecondLegKnockOutRound(res, round, programmation);
+            }
+
+            return res;
+        }
+
+        /// <summary>
         /// Get list of fixtures when the precedent round is a group round and no random drawing is performed
         /// TODO: Currently only work when there is two qualified teams by group
         /// </summary>
@@ -609,7 +640,7 @@ namespace TheManager
         /// <param name="round">The round to draw</param>
         /// <param name="previousRound">The previous round</param>
         /// <returns></returns>
-        public static List<Match> DrawNoRandomDrawing(KnockoutRound round, KnockoutRound previousRound)
+        public static List<Match> DrawNoRandomDrawingFixed(KnockoutRound round, KnockoutRound previousRound)
         {
             //We assume teams are added in round in the order of the games
             List<Match> res = new List<Match>();
@@ -636,6 +667,49 @@ namespace TheManager
                     away = switchedTeams[1];
                 }
                 res.Add(new Match(home, away, day, !round.twoLegs));
+            }
+
+            TVSchedule(res, round.programmation.tvScheduling, 0);
+            if (round.twoLegs)
+            {
+                CreateSecondLegKnockOutRound(res, round, programmation);
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Get list of fixtures when the precedent round is a knockout round and no random drawing is performed
+        /// </summary>
+        /// <param name="round">The round to draw</param>
+        /// <param name="previousRound">The previous round</param>
+        /// <returns></returns>
+        public static List<Match> DrawNoRandomDrawingRanking(KnockoutRound round, KnockoutRound previousRound)
+        {
+            List<Match> res = new List<Match>();
+
+            //We assume teams are added in round in the order of the games
+            List<Club> clubsFromPreviousRound = new List<Club>(round.clubs);
+            List<Club> newClubs = new List<Club>();
+            List<Club> clubs = new List<Club>();
+            foreach(Club c in round.clubs)
+            {
+                if(!previousRound.clubs.Contains(c))
+                {
+                    newClubs.Add(c);
+                    clubsFromPreviousRound.Remove(c);
+                }
+            }
+            clubs = newClubs.Concat(clubsFromPreviousRound).ToList();
+
+            RoundProgrammation programmation = round.programmation;
+            DateTime day = GetRoundProgrammationDate(round, programmation);
+
+            for (int i = 0; i < clubs.Count/2; i++)
+            {
+                Club clubA = clubs[i];
+                Club clubB = clubs[clubs.Count - 1 - i];
+                res.Add(new Match(!round.twoLegs ? clubA : clubB, !round.twoLegs ? clubB : clubA, day, !round.twoLegs));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);

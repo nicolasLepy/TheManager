@@ -45,7 +45,10 @@ namespace TheManager_GUI.VueClassement
                 //Get cups winner to add an annotation
                 foreach (Tournament cup in country.Cups())
                 {
-                    _cupsWinners.Add(cup, _year > -1 ? cup.previousEditions[_year].Winner() : cup.Winner());
+                    if(cup.parent.Value == null)
+                    {
+                        _cupsWinners.Add(cup, _year > -1 ? cup.previousEditions[_year].Winner() : cup.Winner());
+                    }
                 }
                 _championshipTitleHolder = country.FirstDivisionChampionship().previousEditions.ContainsKey(_absoluteYear - 1) ? country.FirstDivisionChampionship().previousEditions[_absoluteYear - 1].Winner() : null;
             }

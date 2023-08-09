@@ -207,6 +207,19 @@ namespace TheManager_GUI
                 Game p = new Game();
                 p.Load(openFileDialog.FileName);
                 Session.Instance.Game = p;
+
+                foreach(Tournament t in p.kernel.Competitions)
+                {
+                    foreach (Round round in t.rounds)
+                    {
+                        GroupsRound gRound = round as GroupsRound;
+                        if (gRound != null)
+                        {
+                            gRound.InitStoredGroupQualifications();
+                        }
+                    }
+                }
+
                 Windows_Menu wm = new Windows_Menu();
                 wm.Show();
             }

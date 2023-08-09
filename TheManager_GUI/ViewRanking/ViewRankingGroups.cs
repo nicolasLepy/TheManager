@@ -218,7 +218,7 @@ namespace TheManager_GUI.VueClassement
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
             if (_round.groups[0].Count > 0 && !_focusOnTeam)
             {
-                List<Club>[] retrogradations = country.GetAdministrativeRetrogradations();
+                List<Club>[] retrogradations = country != null ? country.GetAdministrativeRetrogradations() : new List<Club>[0];
                 List<Club>[] groups = new List<Club>[_round.groupsCount];
                 for (int i = 0; i < _round.groupsCount; i++)
                 {

@@ -107,6 +107,20 @@ namespace TheManager
             return AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
         }
 
+        public int CountDirectRelegations()
+        {
+            Tournament tournament = Tournament;
+            int res = 0;
+            foreach(Qualification q in this.qualifications)
+            {
+                if(q.isNextYear && q.tournament.level > tournament.level)
+                {
+                    res++;
+                }
+            }
+            return res;
+        }
+
         /// <summary>
         /// Get all clubs qualifications with adjustements
         /// </summary>
@@ -116,7 +130,7 @@ namespace TheManager
             List<Club> ranking = Ranking();
             List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
             adjustedQualifications.Sort(new QualificationComparator());
-            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, Tournament, rules.Contains(Rule.ReservesAreNotPromoted));
+            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, null, Tournament, this, rules.Contains(Rule.ReservesAreNotPromoted), CountDirectRelegations(), 1);
             return adjustedQualifications;
         }
 

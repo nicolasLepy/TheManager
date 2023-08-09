@@ -185,6 +185,46 @@ namespace TheManager_GUI
             wo.Show();
         }
 
+        private void CheckPlayoffTrees()
+        {
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
+            foreach(Tournament league in fr.Leagues())
+            {
+                Console.WriteLine("PLAYOFFS " + league.name);
+                Round topPlayOffRound = league.GetFinalTopPlayOffRound();
+                if(topPlayOffRound != null)
+                {
+                    Console.WriteLine("topPlayOffRound " + topPlayOffRound.Tournament.name + ", " + topPlayOffRound.name);
+                    if(topPlayOffRound != league.rounds[0])
+                    {
+                        List<Round> rounds = new List<Round>();
+                        rounds = league.GetPlayOffsTree(topPlayOffRound.Tournament, topPlayOffRound, new List<Round>());
+                        foreach (Round r in rounds)
+                        {
+                            Console.WriteLine("- " + r.Tournament.name + ", " + r.name);
+                        }
+                        foreach(Club c in league.GetTopPlayOffClubs())
+                        {
+                            Console.WriteLine("-- " + c.name);
+                        }
+                    }
+                }
+                Console.WriteLine("========================");
+            }
+        }
+
+        private void RemovingPoints()
+        {
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
+            Round r = fr.League(4).rounds[0];
+            r.AddPointsDeduction(Session.Instance.Game.kernel.String2Club("Stade de Reims B"), SanctionType.Forfeit, Session.Instance.Game.date, 30);
+            r.AddPointsDeduction(Session.Instance.Game.kernel.String2Club("Olympique de Marseille B"), SanctionType.Forfeit, Session.Instance.Game.date, 30);
+            r.AddPointsDeduction(Session.Instance.Game.kernel.String2Club("FC Nantes B"), SanctionType.Forfeit, Session.Instance.Game.date, 30);
+            r.AddPointsDeduction(Session.Instance.Game.kernel.String2Club("FC Metz B"), SanctionType.Forfeit, Session.Instance.Game.date, 30);
+            r.AddPointsDeduction(Session.Instance.Game.kernel.String2Club("AJ Auxerre B"), SanctionType.Forfeit, Session.Instance.Game.date, 30);
+            r.AddPointsDeduction(Session.Instance.Game.kernel.String2Club("Paris Saint-Germain B"), SanctionType.Forfeit, Session.Instance.Game.date, 30);
+        }
+
         private void SetAdministrativeRetrogradationsFr()
         {
             Country fr = Session.Instance.Game.kernel.String2Country("France");
@@ -274,16 +314,24 @@ namespace TheManager_GUI
                     az.AddAdministrativeRetrogradation(c, az.League(retrogradations[c.name]));
                 }
             }
-        }
+        }*/
 
         private void KeyPress(object sender, KeyEventArgs e)
         {
+            if(e.Key == Key.P)
+            {
+                RemovingPoints();
+            }
+            if(e.Key == Key.O)
+            {
+                CheckPlayoffTrees();
+            }
             if(e.Key == Key.R)
             {
                 Console.WriteLine("Relegations");
                 SetAdministrativeRetrogradationsFr();
             }
-        }*/
+        }
 
         private void BtnSimuler_Click(object sender, RoutedEventArgs e)
         {
@@ -292,7 +340,7 @@ namespace TheManager_GUI
             Country fr = Session.Instance.Game.kernel.String2Country("France");
 
             Avancer();
-            while (!(_partie.date.Month == 5 && _partie.date.Day == 30))
+            while (!(_partie.date.Month == 5 && _partie.date.Day == 21))
             {
                 Avancer();
             }

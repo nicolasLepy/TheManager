@@ -851,6 +851,7 @@ namespace TheManager
                 }
             }
             CheckConflicts();
+            journalists.Clear();
         }
 
         /// <summary>

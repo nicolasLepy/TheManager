@@ -138,30 +138,49 @@ namespace TheManager
 
         public override void Initialise()
         {
-            if (!Tournament.IsInternational())
+            Tournament tournament = Tournament;
+            if (!tournament.IsInternational())
             {
                 AddTeamsToRecover();
             }
             //If it's an international tournament (national teams or continental cup eg), we add all teams to recover for all rounds now because ranking can fluctuate after and the same team could be selected for 2 differents rounds
-            else if (Tournament.rounds[0] == this)
+            else if (tournament.rounds[0] == this)
             {
-                foreach (Round r in Tournament.rounds)
+                foreach (Round r in tournament.rounds)
                 {
                     r.AddTeamsToRecover();
                 }
             }
             if(_noRandomDrawing)
             {
-                Round previousRound = Tournament.rounds[Tournament.rounds.IndexOf(this) - 1];
+                Round previousRound = null;
+                int candidateIndex = tournament.rounds.IndexOf(this) - 1;
+                while (previousRound == null)
+                {
+                    Round candidate = tournament.rounds[candidateIndex];
+                    foreach(Qualification q in candidate.qualifications)
+                    {
+                        if(q.roundId == tournament.rounds.IndexOf(this))
+                        {
+                            previousRound = candidate;
+                        }
+                    }
+                    candidateIndex--;
+                }
                 if(previousRound as KnockoutRound != null)
                 {
                     KnockoutRound previousRoundKO = previousRound as KnockoutRound;
-                    _matches = Calendar.DrawNoRandomDrawing(this, previousRoundKO);
+                    _matches = this._randomDrawingMethod == RandomDrawingMethod.Ranking ? Calendar.DrawNoRandomDrawingRanking(this, previousRoundKO) : Calendar.DrawNoRandomDrawingFixed(this, previousRoundKO);
                 }
                 else if (previousRound as GroupsRound != null)
                 {
                     GroupsRound previousRoundG = previousRound as GroupsRound;
                     _matches = Calendar.DrawNoRandomDrawing(this, previousRoundG);
+                }
+                else if (previousRound as ChampionshipRound != null)
+                {
+                    ChampionshipRound previousRoundC = previousRound as ChampionshipRound;
+                    _matches = Calendar.DrawNoRandomDrawing(this, previousRoundC);
                 }
             }
             else
