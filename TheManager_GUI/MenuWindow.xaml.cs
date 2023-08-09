@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -187,13 +188,14 @@ namespace TheManager_GUI
 
         private void CheckPlayoffTrees()
         {
-            Country fr = Session.Instance.Game.kernel.String2Country("Angleterre");
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
             Console.WriteLine("Final Phases Clubs");
             foreach(Club c in fr.Leagues()[0].GetFinalPhasesClubs())
             {
                 Console.WriteLine(". " + c.name);
             }
-            foreach(Tournament league in fr.Leagues())
+            List<Tournament> leagues = fr.Leagues();
+            foreach (Tournament league in leagues)
             {
                 Console.WriteLine("PLAYOFFS " + league.name);
                 Round topPlayOffRound = league.GetFinalTopPlayOffRound();
@@ -211,6 +213,19 @@ namespace TheManager_GUI
                     }
                 }
                 Console.WriteLine("========================");
+            }
+            int i = 0;
+            ClubComparator comparator = new ClubComparator(ClubAttribute.CURRENT_RANKING, false);
+            foreach (List<Club> clubs in fr.GetAdministrativeRetrogradations())
+            {
+                Console.WriteLine("============" + leagues[i].name + "==========");
+                foreach (Club c in clubs)
+                {
+                    Round clubC = (from Tournament t in leagues where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
+                    string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + fr.GetAdministrativeDivisionLevel(c.AdministrativeDivision(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
+                    Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
+                }
+                i++;
             }
         }
 

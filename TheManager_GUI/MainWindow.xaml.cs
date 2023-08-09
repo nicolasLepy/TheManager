@@ -215,7 +215,7 @@ namespace TheManager_GUI
                         GroupsRound gRound = round as GroupsRound;
                         if (gRound != null)
                         {
-                            gRound.InitStoredGroupQualifications();
+                            gRound.ClearCache();
                         }
                     }
                 }

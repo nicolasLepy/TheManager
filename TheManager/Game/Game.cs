@@ -696,9 +696,10 @@ namespace TheManager
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
                             t.QualifyClubs(false);
-                            if(!c.isChampionship)
+                            t.QualifyClubs(true);
+                            if (!c.isChampionship)
                             {
-                                t.QualifyClubs(true);
+                                //t.QualifyClubs(true);
                             }
                             else if(tc != null)
                             {
@@ -721,7 +722,7 @@ namespace TheManager
                 {
                     if(c.currentRound > -1)
                     {
-                        c.QualifyClubsNextYear();
+                        //c.QualifyClubsNextYear();
                     }
                 }
 
@@ -827,7 +828,7 @@ namespace TheManager
                     GroupsRound gRound = round as GroupsRound;
                     if (gRound != null)
                     {
-                        gRound.InitStoredGroupQualifications();
+                        gRound.ClearCache();
                     }
                 }
             }

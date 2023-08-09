@@ -1222,7 +1222,7 @@ namespace TheManager
                 }
             }
 
-            PrintTournamentResume(teamsFromOutsideLeagueSystem);
+            //PrintTournamentResume(teamsFromOutsideLeagueSystem);
         }
 
         private void PrintTournamentResume(int[] teamsFromOutsideLeagueSystem)
@@ -1240,7 +1240,7 @@ namespace TheManager
                 Console.WriteLine("Cloturé le " + rounds[i].programmation.end.WeekNumber + " " + rounds[i].programmation.end.MidWeekGame);
                 foreach (RecoverTeams rt in recoverTeams)
                 {
-                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), parent.Key).Count; //TeamsCount(rt)
+                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), parent.Key).Count;
                     Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + totalAdmTeamsCount + " - " + rt.Method);
                 }
                 Console.WriteLine(cupTeams + " équipes pour " + (cupTeams / 2) + " matchs");

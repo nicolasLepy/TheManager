@@ -53,6 +53,10 @@ namespace TheManager
         [DataMember]
         private List<Qualification>[] _storedGroupQualifications = null;
 
+        /// <summary>
+        /// Contains ranking cache
+        /// Currently cleared every day. Should be cleared when a game is finished
+        /// </summary>
         private List<Club>[] _cacheRanking;
 
         /// <summary>
@@ -135,8 +139,14 @@ namespace TheManager
 
         public void ClearCache()
         {
+            ClearRankingCache();
+            InitStoredGroupQualifications();
+        }
+
+        public void ClearRankingCache()
+        {
             _cacheRanking = new List<Club>[_groups.Length];
-            for(int i = 0; i < _groups.Length; i++)
+            for (int i = 0; i < _groups.Length; i++)
             {
                 _cacheRanking[i] = new List<Club>();
             }
@@ -832,6 +842,7 @@ namespace TheManager
             }
             else
             {
+                ClearRankingCache();
                 Tournament tournament = Tournament;
                 List<Qualification> allQualifications = new List<Qualification>(qualifications);
                 int countChampionshipQualifications = 0;
@@ -1044,12 +1055,29 @@ namespace TheManager
 
         public List<Club> Ranking(int group, bool inverse=false)
         {
-            int gamesPlayed = matches.Count(p => p.Played);
-            List<Club> res = new List<Club>(_groups[group]);
-            if (gamesPlayed > 0)
+            List<Club> res = new List<Club>();
+            if(_cacheRanking == null || _cacheRanking.Length != _groups.Length) //TODO: Normally, _cacheRanking can't be null. To remove.
             {
-                ClubRankingComparator comparator = new ClubRankingComparator(this.matches, tiebreakers, pointsDeduction, RankingType.General, inverse);
-                res.Sort(comparator);
+                ClearCache();
+            }
+            if (_cacheRanking.Length > group && _cacheRanking[group].Count > 0)
+            {
+                res = new List<Club>(_cacheRanking[group]);
+                if(inverse)
+                {
+                    res.Reverse();
+                }
+            }
+            else
+            {
+                int gamesPlayed = matches.Count(p => p.Played);
+                res = new List<Club>(_groups[group]);
+                if (gamesPlayed > 0)
+                {
+                    ClubRankingComparator comparator = new ClubRankingComparator(matches, tiebreakers, pointsDeduction, RankingType.General, inverse);
+                    res.Sort(comparator);
+                }
+                _cacheRanking[group] = inverse ? Enumerable.Reverse(res).ToList() : res;
             }
             return res;
         }
