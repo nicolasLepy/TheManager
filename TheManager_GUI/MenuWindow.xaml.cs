@@ -188,7 +188,7 @@ namespace TheManager_GUI
 
         private void CheckPlayoffTrees()
         {
-            Country fr = Session.Instance.Game.kernel.String2Country("France");
+            Country fr = Session.Instance.Game.kernel.String2Country("Angleterre");
             Console.WriteLine("Final Phases Clubs");
             foreach(Club c in fr.Leagues()[0].GetFinalPhasesClubs())
             {

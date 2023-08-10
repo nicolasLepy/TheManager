@@ -1496,12 +1496,12 @@ namespace TheManager
         }
 
         /// <summary>
-        /// Same of GetFinalPhaseTree, but for promotion playoffs, so can scan rounds outside of the league
-        /// Probably mergeable with GetFinalPhaseTree
+        /// Get list of rounds that consists of final championship playoffs (for title or promotion)
+        /// Can scan rounds outside of the league
         /// </summary>
-        /// <param name="tournament"></param>
-        /// <param name="round"></param>
-        /// <param name="allRounds"></param>
+        /// <param name="tournament">Tournament of round currently scanned</param>
+        /// <param name="round">Round currently scanned</param>
+        /// <param name="allRounds">List of rounds already scanned</param>
         /// <returns></returns>
         public List<Round> GetPlayOffsTree(Tournament tournament, Round round, List<Round> allRounds)
         {
@@ -1554,7 +1554,8 @@ namespace TheManager
             return res;
         }
 
-        /// <summary>
+        /* Merged with GetPlayOffsTree, could be deleted
+         * /// <summary>
         /// Get list of rounds that consists of final championship playoffs
         /// </summary>
         /// <param name="round">Round currently scanned</param>
@@ -1606,7 +1607,7 @@ namespace TheManager
 
             }
             return res;
-        }
+        }*/
 
         /// <summary>
         /// Return the last championship round of the tournament
@@ -1659,7 +1660,7 @@ namespace TheManager
 
             if (finalRound != null)
             {
-                finalRounds = GetFinalPhaseTree(finalRound, new List<Round>()) ;
+                finalRounds = GetPlayOffsTree(this, finalRound, new List<Round>()) ;
             }
             List<KeyValuePair<Club, int>> clubsDictionnary = ExtractClubsFromPlayOffs(finalRounds);
             foreach(KeyValuePair<Club, int> kvp in clubsDictionnary)
