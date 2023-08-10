@@ -759,10 +759,11 @@ namespace TheManager
                     int rankingRelegationLimit = qualifications.Where(x => x.tournament == bottomTournament).Min(x => x.ranking);
                     int maxRanking = qualifications.Max(x => x.ranking);
                     //Special feature for championship round :
-                    //If relegation barrage, move them just up 
+                    //If relegation barrage, move them just up direct relegations places so there is no offset between barrage places and direct relegations places
                     List<Qualification> relegationsBarrages = new List<Qualification>();
                     if((round as ChampionshipRound) != null)
                     {
+                        //Get all barrages qualifications places
                         Round relegationBarrageFinalRound = from.GetFinalTopPlayOffRound(true);
                         List<Round> relegationBarrageRounds = from.GetPlayOffsTree(relegationBarrageFinalRound.Tournament, relegationBarrageFinalRound, new List<Round>());
                         rankingRelegationLimit--;
