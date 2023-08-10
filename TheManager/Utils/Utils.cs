@@ -648,7 +648,7 @@ namespace TheManager
 
         /// <summary>
         /// Clear all relegation places and replace them by qualifications to current tournament. Qualifications to play-offs are not affected
-        /// Assume no relegations playoffs !
+        /// Assume no relegations playoffs, because not managed ! (except for Championship Round)
         /// </summary>
         /// <param name="initialQualifications">Qualifications to changes</param>
         /// <param name="baseTournament">Base tournament</param>
@@ -694,6 +694,19 @@ namespace TheManager
                     qualifications[j] = new Qualification(q.ranking, eraseRoundId > -1 ? eraseRoundId : q.roundId, tournament, q.isNextYear, qualifies);
                 }
             }
+        }
+
+        public static bool RankLeadingToRelegationBarrage(List<Qualification> qualifications, int rank, List<Round> relegationBarrageRounds)
+        {
+            bool res = false;
+            foreach(Qualification q in qualifications)
+            {
+                if(q.ranking == rank && !q.isNextYear && relegationBarrageRounds.Contains(q.tournament.rounds[q.roundId]))
+                {
+                    res = true;
+                }
+            }
+            return res;
         }
 
         public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, AdministrativeDivision association, Tournament from, Round round, bool reservesCantBePromoted, int totalRelegations, int groupsCount)
@@ -743,14 +756,47 @@ namespace TheManager
                 Console.WriteLine("new relegations places : " + newRelegationPlaces + " (+" + additionalRelegationPlaces + ")");
                 if(bottomTournament != null)
                 {
+                    int rankingRelegationLimit = qualifications.Where(x => x.tournament == bottomTournament).Min(x => x.ranking);
                     int maxRanking = qualifications.Max(x => x.ranking);
+                    //Special feature for championship round :
+                    //If relegation barrage, move them just up 
+                    List<Qualification> relegationsBarrages = new List<Qualification>();
+                    if((round as ChampionshipRound) != null)
+                    {
+                        Round relegationBarrageFinalRound = from.GetFinalTopPlayOffRound(true);
+                        List<Round> relegationBarrageRounds = from.GetPlayOffsTree(relegationBarrageFinalRound.Tournament, relegationBarrageFinalRound, new List<Round>());
+                        rankingRelegationLimit--;
+                        while (RankLeadingToRelegationBarrage(qualifications, rankingRelegationLimit, relegationBarrageRounds))
+                        {
+                            foreach(Qualification q in qualifications)
+                            {
+                                if(q.ranking == rankingRelegationLimit)
+                                {
+                                    relegationsBarrages.Add(q);
+                                }
+                            }
+                            rankingRelegationLimit--;
+                        }
+                    }
                     qualifications = ClearRelegations(qualifications, from);
                     for (int i = maxRanking; i > maxRanking - newRelegationPlaces; i--)
                     {
                         Console.WriteLine("=> Update Ranking " + i + " to " + bottomTournament.name);
                         UpdateQualificationTournament(qualifications, i, bottomTournament);
                     }
-                    if(groupsCount > 1 && additionalRelegationPlaces != 0)
+
+                    //NOT TESTED.
+                    //For championship rounds, relegation barrages are allowed. If ever there are reserves automatically relegated (probably very rare),
+                    //so we move relegation barrages according to match with new relegations places
+                    int barrageIndex = maxRanking - newRelegationPlaces;
+                    foreach (Qualification q in relegationsBarrages)
+                    {
+                        Console.WriteLine("=> Update barrage Ranking " + q.ranking + " to " + q.tournament.name);
+                        UpdateQualificationTournament(qualifications, barrageIndex, q.tournament, q.qualifies, true, q.roundId);
+                        barrageIndex--;
+                    }
+                    
+                    if (groupsCount > 1 && additionalRelegationPlaces != 0)
                     {
                         bool teamOfGroupIsUp = gRound.TeamIsTopRBottom(ranking, maxRanking - newRelegationPlaces, groupsCount - additionalRelegationPlaces, association);
                         Tournament targetTournament = teamOfGroupIsUp ? from : bottomTournament;

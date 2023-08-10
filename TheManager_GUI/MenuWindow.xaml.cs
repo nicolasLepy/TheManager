@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -188,7 +189,7 @@ namespace TheManager_GUI
 
         private void CheckPlayoffTrees()
         {
-            Country fr = Session.Instance.Game.kernel.String2Country("Angleterre");
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
             Console.WriteLine("Final Phases Clubs");
             foreach(Club c in fr.Leagues()[0].GetFinalPhasesClubs())
             {
@@ -227,6 +228,7 @@ namespace TheManager_GUI
                 }
                 i++;
             }
+
         }
 
         private void RemovingPoints()

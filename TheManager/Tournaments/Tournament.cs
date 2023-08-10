@@ -1467,8 +1467,9 @@ namespace TheManager
         /// Final round could be played inside another tournament
         /// (L2 playoffs finishing in L1)
         /// </summary>
+        /// <param name="relegation">If true, get final playoffs leading to relegation</param>
         /// <returns></returns>
-        public Round GetFinalTopPlayOffRound()
+        public Round GetFinalTopPlayOffRound(bool relegation=false)
         {
             Round res = null;
 
@@ -1481,7 +1482,7 @@ namespace TheManager
                 browsed.Add(r);
                 foreach (Qualification q in r.qualifications)
                 {
-                    if (q.isNextYear && q.tournament.isChampionship && q.tournament.level < level)
+                    if (q.isNextYear && q.tournament.isChampionship && ((!relegation && q.tournament.level < level) || (relegation && q.tournament.level > level)) )
                     {
                         res = r;
                     }
@@ -1491,7 +1492,6 @@ namespace TheManager
                     }
                 }
             }
-
             return res;
         }
 
@@ -1534,15 +1534,22 @@ namespace TheManager
                     }
                 }
             }
-            //Step 3 : Insert in first positions rounds where teams come from
-            for (int i = 1; i < this.rounds.Count; i++)
+
+            List<Round> otherRounds = new List<Round>(this.rounds);
+            foreach(Tournament kT in Session.Instance.Game.kernel.Competitions)
             {
-                Round ri = this.rounds[i];
+                otherRounds.AddRange(kT.rounds);
+            }
+            //Step 3 : Insert in first positions rounds where teams come from
+            for (int i = 1; i < otherRounds.Count; i++)
+            {
+                Round ri = otherRounds[i];
                 if ((ri as KnockoutRound) != null && !allRounds.Contains(ri))
                 {
                     foreach (Qualification q in ri.qualifications)
                     {
-                        if (!q.isNextYear && q.tournament.isChampionship && q.roundId == roundIndex && q.ranking == 1)
+                        //Don't know if q.ranking == 1 is mandatory or not. Isn't adequate with some relegation barrages where the qualified team is the looser team
+                        if (!q.isNextYear && q.tournament == tournament && q.roundId == roundIndex /*&& q.ranking == 1*/)
                         {
                             Tournament targetTournament = q.tournament;
                             res.InsertRange(0, GetPlayOffsTree(targetTournament, ri, allRounds));
@@ -1703,8 +1710,7 @@ namespace TheManager
             {
                 if (topPlayOffRound != rounds[0])
                 {
-                    List<Round> rounds = new List<Round>();
-                    rounds = GetPlayOffsTree(topPlayOffRound.Tournament, topPlayOffRound, new List<Round>());
+                    List<Round> rounds = GetPlayOffsTree(topPlayOffRound.Tournament, topPlayOffRound, new List<Round>());
                     res = ExtractClubsFromPlayOffs(rounds);
                 }
             }

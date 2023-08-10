@@ -887,7 +887,7 @@ namespace TheManager
         /// <param name="qualificationsList">List of qualifications (can be specific to round or a group)</param>
         /// <param name="totalClubsInRanking">Clubs count on the table (round club count for ChampionshipRound, group club count for specific group)</param>
         /// <returns></returns>
-        protected List<Qualification> AdaptQualificationsToRanking(List<Qualification> qualificationsList, int totalClubsInRanking)
+        public List<Qualification> AdaptQualificationsToRanking(List<Qualification> qualificationsList, int totalClubsInRanking)
         {
             //Adapt qualifications to adapt negative ranking to real ranking in the group
             List<int> allRankings = Enumerable.Range(1, totalClubsInRanking).ToList();
