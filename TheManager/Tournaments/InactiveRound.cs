@@ -15,15 +15,17 @@ namespace TheManager
     {
 
         private List<Club> _ranking;
+        private int _associationLevel;
 
-        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end) :base(name,hour,new List<GameDay>(),new List<TvOffset>(),initialisation,end,false,1, 0, -1, 0)
+        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end, int associationLevel) : base(name, hour, new List<GameDay>(), new List<TvOffset>(), initialisation, end, false, 1, 0, -1, 0)
         {
             _ranking = null;
+            _associationLevel = associationLevel;
         }
 
         public override Round Copy()
         {
-            Round t = new InactiveRound(name, this.programmation.defaultHour, programmation.initialisation, programmation.end);
+            Round t = new InactiveRound(name, this.programmation.defaultHour, programmation.initialisation, programmation.end, _associationLevel);
             //Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, phases, programmation.initialisation, programmation.end, RandomDrawingMethod.Random, false);
             foreach (Match m in this.matches)
             {
@@ -146,9 +148,9 @@ namespace TheManager
                     upperRegularRelegations++;
                 }
             }
+            
             foreach (AdministrativeDivision ad in c.GetAdministrativeDivisionsLevel(upperGroupRound.administrativeLevel))
-            {
-                
+            {    
                 List<int> admGroups = upperGroupRound.GetGroupsFromAdministrativeDivision(ad);
                 int upperRelegations = 0;
 

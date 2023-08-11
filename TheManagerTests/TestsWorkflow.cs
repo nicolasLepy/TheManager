@@ -64,10 +64,11 @@ namespace TheManagerTests
             Session.Instance.Game.options.simulateGames = true;
         }
 
+        [TestMethod]
         public void TestSeasonsNational()
         {
-            InitGame("dataset_france_nat", true);
-            int years = 1;
+            InitGame("database_france_nat", true);
+            int years = 2;
             for (int i = 0; i < 365*years; i++)
             {
                 Session.Instance.Game.NextDay();
@@ -81,7 +82,7 @@ namespace TheManagerTests
         {
             InitGame("database_france_light", false);
 
-            int years = 1;
+            int years = 2;
             for(int i = 0; i < 365*years; i++)
             {
                 Session.Instance.Game.NextDay();

@@ -1271,7 +1271,8 @@ namespace TheManager
                 roundCopy.recuperedTeams.AddRange(AlreadyStoredRecuperedTeams() ? r.baseRecuperedTeams : r.recuperedTeams);
                 if(makeRoundsInactive)
                 {
-                    roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end);
+                    int associationLevel = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).administrativeLevel : 0;
+                    roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end, associationLevel);
                 }
                 for (int i = 0; i < roundCopy.qualifications.Count; i++)
                 {
@@ -1859,7 +1860,8 @@ namespace TheManager
             int i = 0;
             foreach(Round t in _rounds)
             {
-                InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end);
+                int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
+                InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end, associationLevel);
                 newRound.rules.AddRange(t.rules);
                 newRounds.Add(newRound);
 

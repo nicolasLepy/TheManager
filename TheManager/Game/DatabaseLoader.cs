@@ -1060,7 +1060,12 @@ namespace TheManager
                             }
                             else if (type == "inactif")
                             {
-                                round = new InactiveRound(nomTour, String2Hour(hourByDefault), initialisationDate, endDate);
+                                int administrativeLevel = 0;
+                                if(e3.Attribute("administrative_level") != null)
+                                {
+                                    administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
+                                }
+                                round = new InactiveRound(nomTour, String2Hour(hourByDefault), initialisationDate, endDate, administrativeLevel);
                             }
                             foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
                             {
