@@ -1790,14 +1790,19 @@ namespace TheManager
             _actions.Add(new KeyValuePair<string, string>(minute, action));
         }
 
-        public string ScoreToString()
+        public string PenaltyShootoutToString()
+        {
+            return String.Format("({0}-{1} t.)", penaltyShootout1, penaltyShootout2);
+        }
+
+        public string ScoreToString(bool withTabs)
         {
             string res = Played ? score1 + " - " + score2 : "";
             if(prolongations)
             {
                 res = res + " ap";
             }
-            if(PenaltyShootout)
+            if(PenaltyShootout && withTabs)
             {
                 res = res + " (" + penaltyShootout1 + "-" + penaltyShootout2 + " t.)";
             }

@@ -1,0 +1,274 @@
+﻿<Window x:Class="TheManager_GUI.NewGameView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="NewGameView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0">
+						<StackPanel Orientation="Horizontal"
+								Height="35"
+								Margin="15, 25, 0, 40">
+							<Image Source="icone.ico" Height="30"/>
+							<TextBlock Text="The Manager"
+								   Style="{StaticResource textTitle}"
+								   Margin="10, 0, 0, 0"/>
+						</StackPanel>
+
+						<!--Menu Buttons-->
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="Quitter" Click="buttonQuit_Click"/>
+
+					</StackPanel>
+
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<ProgressBar Style="{StaticResource progressBarStyle}" Height="25" Value="20" Minimum="0" Maximum="100" Padding="5">
+							</ProgressBar>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+					<Grid Grid.Row="2">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+
+						<!-- Main Panel : Game Selection Panel -->
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0.35*"/>
+								<ColumnDefinition Width="0.65*"/>
+							</Grid.ColumnDefinitions>
+
+							<!-- Database selection / players info -->
+							<Grid Grid.Column="0">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="0.10*"/>
+									<RowDefinition Height="0.10*"/>
+									<RowDefinition Height="0.15*"/>
+									<RowDefinition Height="0.6*"/>
+								</Grid.RowDefinitions>
+
+								<Border Grid.Row="0" Background="{StaticResource colorPanel3}">
+									<TextBlock Text="1. Select database" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
+								</Border>
+								<ComboBox Grid.Row="1" x:Name="comboBoxDatabase" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" Width="200" HorizontalContentAlignment="Center"/>
+								<Button Grid.Row="2" x:Name="buttonSelectDatabase" Style="{StaticResource buttonMenu}" Content="Valider"/>
+
+								<Grid Grid.Row="3">
+									<!-- Player informations -->
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+									</Grid.RowDefinitions>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="0.3*"/>
+										<ColumnDefinition Width="0.7*"/>
+									</Grid.ColumnDefinitions>
+									<Border Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Background="{StaticResource colorPanel3}">
+										<TextBlock Text="3. Enter player informations" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
+									</Border>
+									<TextBlock Grid.Column="0" Grid.Row="1" Text="First name" Style="{StaticResource textPlain}" Margin="10, 0, 0, 0"/>
+									<TextBlock Grid.Column="0" Grid.Row="2" Text="Last name" Style="{StaticResource textPlain}" Margin="10, 0, 0, 0"/>
+									<TextBlock Grid.Column="0" Grid.Row="3" Text="Country" Style="{StaticResource textPlain}" Margin="10, 0, 0, 0"/>
+									<TextBlock Grid.Column="0" Grid.Row="4" Text="Birth date" Style="{StaticResource textPlain}" Margin="10, 0, 0, 0"/>
+									<TextBox Grid.Column="1" Grid.Row="1" x:Name="textBoxFirstName" Margin="10" Style="{StaticResource textBoxStyle}" Text="Prenom" />
+									<TextBox Grid.Column="1" Grid.Row="2" x:Name="textBoxLastName" Margin="10" Style="{StaticResource textBoxStyle}" Text="Nom" />
+									<ComboBox Grid.Column="1" Grid.Row="3" x:Name="comboBoxCountry2" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" Width="200" HorizontalContentAlignment="Center"/>
+									<DatePicker Grid.Column="1" Grid.Row="4" Margin="10" Name="datePickerBirthDate" Style="{StaticResource datePickerStyle}" SelectedDate="01/01/1950"/>
+								</Grid>
+
+							</Grid>
+
+							<!-- Leagues Selection Grid -->
+							<Grid Grid.Column="1">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="0.1*"/>
+									<RowDefinition Height="0.9*"/>
+								</Grid.RowDefinitions>
+								<Border Grid.Row="0" Background="{StaticResource colorPanel3}">
+									<TextBlock Text="2. Select leagues" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
+								</Border>
+								<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+									<Grid x:Name="gridCountriesSelection">
+
+									</Grid>
+								</ScrollViewer>
+							</Grid>
+
+						</Grid>
+
+						<!-- Main Panel : Club selection -->
+						<Grid Grid.Row="1">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0.25*"/>
+								<ColumnDefinition Width="0.2*"/>
+								<ColumnDefinition Width="0.55*"/>
+							</Grid.ColumnDefinitions>
+
+							<!-- Player : League -->
+							<Grid Grid.Column="0">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="0.1*"/>
+									<RowDefinition Height="0.9*"/>
+								</Grid.RowDefinitions>
+								<Border Grid.Row="0" Background="{StaticResource colorPanel3}">
+									<TextBlock Text="4. Select player league" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
+								</Border>
+								<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+									
+								</ScrollViewer>
+							</Grid>
+
+							<!-- Player : Club -->
+							<Grid Grid.Column="1">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="0.1*"/>
+									<RowDefinition Height="0.9*"/>
+								</Grid.RowDefinitions>
+								<Border Grid.Row="0" Background="{StaticResource colorPanel3}">
+									<TextBlock Text="5. Select player club" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
+								</Border>
+								<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+
+								</ScrollViewer>
+							</Grid>
+
+							<Grid Grid.Column="2">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="0.1*"/>
+									<RowDefinition Height="0.75*"/>
+									<RowDefinition Height="0.15*"/>
+								</Grid.RowDefinitions>
+								<Border Grid.Row="0" Background="{StaticResource colorPanel3}">
+								</Border>
+								<!-- Player : Club Infos -->
+								<Grid Grid.Row="1">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="0.4*"/>
+										<ColumnDefinition Width="0.6*"/>
+									</Grid.ColumnDefinitions>
+									<Grid Grid.Column="0">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="1*"/>
+											<RowDefinition Height="1*"/>
+											<RowDefinition Height="1*"/>
+											<RowDefinition Height="1*"/>
+											<RowDefinition Height="1*"/>
+										</Grid.RowDefinitions>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.15*"/>
+											<ColumnDefinition Width="0.4*"/>
+											<ColumnDefinition Width="0.6*"/>
+										</Grid.ColumnDefinitions>
+										<Image Grid.Column="0" Grid.Row="0" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image Grid.Column="0" Grid.Row="1" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image Grid.Column="0" Grid.Row="2" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image Grid.Column="0" Grid.Row="3" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image Grid.Column="0" Grid.Row="4" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<TextBlock Grid.Column="1" Grid.Row="0" Style="{StaticResource textPlain}" Text="Budget"/>
+										<TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource textPlain}" Text="Stade"/>
+										<TextBlock Grid.Column="1" Grid.Row="2" Style="{StaticResource textPlain}" Text="Pays"/>
+										<TextBlock Grid.Column="1" Grid.Row="3" Style="{StaticResource textPlain}" Text="Status"/>
+										<TextBlock Grid.Column="1" Grid.Row="4" Style="{StaticResource textPlain}" Text="Date de début"/>
+										<TextBlock Grid.Column="2" Grid.Row="0" Style="{StaticResource textPlain}" Text="405K"/>
+										<TextBlock Grid.Column="2" Grid.Row="1" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Stade de la route de Lorient"/>
+										<TextBlock Grid.Column="2" Grid.Row="2" Style="{StaticResource textPlain}" Text="Angleterre"/>
+										<TextBlock Grid.Column="2" Grid.Row="3" Style="{StaticResource textPlain}" Text="Semi-professionnel"/>
+										<TextBlock Grid.Column="2" Grid.Row="4" Style="{StaticResource textPlain}" Text="01/09/2023"/>
+									</Grid>
+
+								</Grid>
+								<Button Grid.Row="2" x:Name="buttonSelectClub" Style="{StaticResource buttonMenu}" Content="Valider"/>
+							</Grid>
+
+						</Grid>
+					</Grid>
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

@@ -90,16 +90,6 @@ namespace TheManager_GUI
                     }
                 }
             }
-            
-            /*
-             * <TreeViewItem Header="Employee1">
-					<TreeViewItem Header="Jesper Aaberg">
-						<StackPanel Orientation="Horizontal">
-							<Label Content="ha"/>
-							<Label Content="ha"/>
-						</StackPanel>
-					</TreeViewItem>
-             */
         }
 
         private void FillSquad(Club c)
@@ -131,7 +121,7 @@ namespace TheManager_GUI
                 Utils.Debug("No logo available for " + club.logo + " (" + club.name + ")");
             }
 
-            spEtoiles.Children.Add(ViewUtils.CreateStarNotation(club.Stars, 25));
+            spEtoiles.Children.Add(ViewUtils.CreateStarsView(club.Stars, 25));
 
         }
         
@@ -167,8 +157,9 @@ namespace TheManager_GUI
                 Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Country()));
                 Manager manager = new Manager(prenom, nom, 70, birthday, nationality);
                 Session.Instance.Game.club.ChangeManager(manager);
-                Windows_Menu wm = new Windows_Menu();
-                wm.Show();
+                MainMenuView view = new MainMenuView();
+                //Windows_Menu wm = new Windows_Menu();
+                view.Show();
                 Close();
             }
         }

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using TheManager;
+using TheManager_GUI.Styles;
 
 namespace TheManager_GUI.VueClassement
 {
@@ -14,33 +15,22 @@ namespace TheManager_GUI.VueClassement
     {
 
         private readonly InactiveRound _round;
-        private readonly bool _focusOnTeam;
-        private readonly double _sizeMultiplier;
-        private readonly Club _team;
 
-        public ViewRankingInactive(InactiveRound round, double sizeMultiplier, bool focusOnTeam, Club team) : base(round.Tournament)
+        public override Round Round()
         {
-            _round = round;
-            _focusOnTeam = focusOnTeam;
-            _sizeMultiplier = sizeMultiplier;
-            _team = team;
+            return _round;
         }
 
-        public void AddLabel(Club c, StackPanel stackPanel)
+        public ViewRankingInactive(InactiveRound round, double sizeMultiplier, bool focusOnTeam, Club team) : base(round, round.Tournament, false, sizeMultiplier, RankingType.General, focusOnTeam, team)
         {
-            string name = (c as ReserveClub != null) ? string.Format("[{0}]", c.name) : c.name;
-            SolidColorBrush backgroundColor = _focusOnTeam && _team == c ? Application.Current.TryFindResource("UpperPlayOff") as SolidColorBrush : null;
-            Label labelClub = ViewUtils.CreateLabel(name, "StyleLabel2", (int)(14 * _sizeMultiplier), -1, null, backgroundColor);
-            stackPanel.Children.Add(labelClub);
-
+            _round = round;
         }
 
         public override void Full(StackPanel spRanking)
         {
             spRanking.Children.Clear();
 
-            StackPanel spList = new StackPanel();
-            spList.Orientation = Orientation.Vertical;
+            double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);
 
             Dictionary<AdministrativeDivision, List<Club>> clubsByAdministrativeDivision = new Dictionary<AdministrativeDivision, List<Club>>();
             List<Club> clubsWithoutAssociation = new List<Club>();
@@ -62,20 +52,36 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
+            int rowsNumber = clubsByAdministrativeDivision.Count + clubsWithoutAssociation.Count + 1;
             foreach (KeyValuePair<AdministrativeDivision, List<Club>> adm in clubsByAdministrativeDivision)
             {
-                Label labelAdm = ViewUtils.CreateLabel(adm.Key.name, "StyleLabel2", (int)(14 * _sizeMultiplier), -1, null, null, true);
-                spList.Children.Add(labelAdm);
+                rowsNumber += adm.Value.Count;
+            }
+            Grid grid = new Grid();
+            for(int row = 0; row < rowsNumber; row++)
+            {
+                grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
+            }
+
+            int i = 0;
+            foreach (KeyValuePair<AdministrativeDivision, List<Club>> adm in clubsByAdministrativeDivision)
+            {
+                TextBlock tbAdm = ViewUtils.CreateTextBlock(adm.Key.name, StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                AddElementToGrid(grid, tbAdm, i++, 0);
+
                 foreach (Club c in adm.Value)
                 {
-                    AddLabel(c, spList);
+                    TextBlock tbClub = ViewUtils.CreateTextBlock(c.name, StyleDefinition.styleTextPlain, fontSize * _sizeMultiplier);
+                    AddElementToGrid(grid, tbClub, i++, 0);
                 }
             }
+            i++;
             foreach(Club c in clubsWithoutAssociation)
             {
-                AddLabel(c, spList);
+                TextBlock tbClub = ViewUtils.CreateTextBlock(c.name, StyleDefinition.styleTextPlain, fontSize * _sizeMultiplier);
+                AddElementToGrid(grid, tbClub, i++, 0);
             }
-            spRanking.Children.Add(spList);
+            spRanking.Children.Add(grid);
         }
     }
 }

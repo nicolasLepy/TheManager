@@ -650,7 +650,7 @@ namespace TheManager_GUI
                 Label homeLabel = ViewUtils.CreateLabel(next.home.shortName, "StyleLabel2Center", 16, -1);
                 homeLabel.HorizontalAlignment = HorizontalAlignment.Center;
                 spHomeTeam.Children.Add(homeLabel);
-                StackPanel homeStars = ViewUtils.CreateStarNotation(next.home.Stars, 25);
+                Border homeStars = ViewUtils.CreateStarsView(next.home.Stars, 25);
                 homeStars.HorizontalAlignment = HorizontalAlignment.Center;
                 spHomeTeam.Children.Add(homeStars);
 
@@ -659,7 +659,7 @@ namespace TheManager_GUI
                 Label awayLabel = ViewUtils.CreateLabel(next.away.shortName, "StyleLabel2Center", 16, -1);
                 awayLabel.HorizontalAlignment = HorizontalAlignment.Center;
                 spAwayTeam.Children.Add(awayLabel);
-                StackPanel awayStars = ViewUtils.CreateStarNotation(next.away.Stars, 25);
+                Border awayStars = ViewUtils.CreateStarsView(next.away.Stars, 25);
                 awayStars.HorizontalAlignment = HorizontalAlignment.Center;
                 spAwayTeam.Children.Add(awayStars);
 

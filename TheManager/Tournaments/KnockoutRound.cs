@@ -274,6 +274,11 @@ namespace TheManager
             return _twoLegs ? 2 : 1;
         }
 
+        public override bool IsKnockOutRound()
+        {
+            return true;
+        }
+
         public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();

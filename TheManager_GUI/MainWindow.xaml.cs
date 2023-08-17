@@ -100,6 +100,9 @@ namespace TheManager_GUI
         private void BtnNouvellePartie_Click(object sender, RoutedEventArgs e)
         {
 
+            NewGameView newGameView = new NewGameView();
+            newGameView.Show();
+            return;
 
             /*
             FifaDataParser fifaDataParser = new FifaDataParser();
@@ -220,8 +223,10 @@ namespace TheManager_GUI
                     }
                 }
 
-                Windows_Menu wm = new Windows_Menu();
-                wm.Show();
+                MainMenuView view = new MainMenuView();
+                view.Show();
+                /*Windows_Menu wm = new Windows_Menu();
+                wm.Show();*/
             }
         }
     }

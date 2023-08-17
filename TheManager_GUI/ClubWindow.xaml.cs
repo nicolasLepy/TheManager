@@ -1,5 +1,6 @@
 ﻿using LiveCharts;
 using LiveCharts.Wpf;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 using TheManager_GUI.ViewMisc;
+using TheManager_GUI.views;
 
 namespace TheManager_GUI
 {
@@ -193,8 +195,26 @@ namespace TheManager_GUI
                     }
                 }
 
-                CreatePieChart(depenses);
-                CreatePieChart(incomes);
+                List<string> depensesLabels = new List<string>();
+                List<double> depensesValue = new List<double>();
+                foreach (KeyValuePair<BudgetModificationReason, double> kvp in depenses)
+                {
+                    depensesLabels.Add(kvp.Key.ToString());
+                    depensesValue.Add(kvp.Value);
+                }
+                List<string> incomeLabels = new List<string>();
+                List<double> incomeValue = new List<double>();
+                foreach (KeyValuePair<BudgetModificationReason, double> kvp in incomes)
+                {
+                    incomeLabels.Add(kvp.Key.ToString());
+                    incomeValue.Add(kvp.Value);
+                }
+
+                ChartView depensesChart = new ChartView(ChartType.PIE_CHART, "", "", "", depensesLabels, false, 1, depensesValue, 200, 200);
+                depensesChart.RenderChart(spRepartitions);
+
+                ChartView incomesChart = new ChartView(ChartType.PIE_CHART, "", "", "", incomeLabels, false, 1, incomeValue, 200, 200);
+                incomesChart.RenderChart(spRepartitions);
 
             }
         }
@@ -242,7 +262,7 @@ namespace TheManager_GUI
             }
         }
 
-        private void CreatePieChart(Dictionary<BudgetModificationReason, double> values)
+        /*private void CreatePieChart(Dictionary<BudgetModificationReason, double> values)
         {
             SeriesCollection series = new SeriesCollection();
 
@@ -262,7 +282,7 @@ namespace TheManager_GUI
             pc.Series = series;
 
             spRepartitions.Children.Add(pc);
-        }
+        }*/
 
         public Windows_Club(CityClub c)
         {
@@ -362,16 +382,16 @@ namespace TheManager_GUI
                 spHistory.Children.Add(spHistoryEntry);
             }
 
-            
             ChartValues<int> budgets = new ChartValues<int>();
-            ChartValues<int> centreFormation = new ChartValues<int>();
             ChartValues<int> attendance = new ChartValues<int>();
+            List<double> centreFormation = new List<double>();
             foreach (HistoricEntry eh in c.history.elements)
             {
                 budgets.Add(eh.budget);
                 centreFormation.Add(eh.formationFacilities);
                 attendance.Add(eh.averageAttendance);
             }
+            DataContext = this;
 
             BudgetsCollection = new SeriesCollection
             {
@@ -379,17 +399,6 @@ namespace TheManager_GUI
                 {
                     Title = FindResource("str_budget").ToString(),
                     Values = budgets,
-                }
-            };
-
-            //Formation facilities
-            
-            CFCollection = new SeriesCollection
-            {
-                new LineSeries
-                {
-                    Title = FindResource("str_level").ToString(),
-                    Values = centreFormation,
                 }
             };
 
@@ -413,7 +422,6 @@ namespace TheManager_GUI
             }
             YFormatter = value => value.ToString("C");
             
-            DataContext = this;
 
             if(c.records.BiggestWin != null)
             {
@@ -423,6 +431,9 @@ namespace TheManager_GUI
             {
                 lbBiggestLose.Content = c.records.BiggestLose.home.name + " " + c.records.BiggestLose.score1 + " - " + c.records.BiggestLose.score2 + " " + c.records.BiggestLose.away.name;
             }
+
+            ChartView formationCentreChart = new ChartView(ChartType.LINE_CHART, FindResource("str_formationCentre").ToString(), FindResource("str_level").ToString(), FindResource("str_year").ToString(), LabelsAnnees.ToList(), false, 1, centreFormation.ToList(), 450, 300, 0, 100);
+            formationCentreChart.RenderChart(spChartRight);
 
         }
 

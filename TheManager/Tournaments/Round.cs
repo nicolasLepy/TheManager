@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -579,6 +580,35 @@ namespace TheManager
         }
 
         /// <summary>
+        /// WARNING : Performance
+        /// </summary>
+        /// <returns></returns>
+        public int NextMatchesGameDay()
+        {
+            int res = -1;
+            List<Match> nextMatches = NextMatches();
+            if (nextMatches.Count > 0)
+            {
+                res = -1;
+                int i = 1;
+                int matchDayNumber = MatchesDayNumber();
+                while (res == -1 && i <= matchDayNumber)
+                {
+                    if (GamesDay(i).Contains(nextMatches[0]))
+                    {
+                        res = i;
+                    }
+                    i++;
+                }
+            }
+            else if (matches.Count > 0)
+            {
+                res = MatchesDayNumber();
+            }
+            return res;
+        }
+
+        /// <summary>
         /// Return list to next matches to be played according to the date
         /// </summary>
         /// <returns></returns>
@@ -764,6 +794,8 @@ namespace TheManager
         public abstract List<Match> NextMatchesDay();
 
         public abstract int MatchesDayNumber();
+
+        public abstract bool IsKnockOutRound();
 
         /// <summary>
         /// List the matches of the games day

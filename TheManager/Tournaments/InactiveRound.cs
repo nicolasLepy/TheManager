@@ -330,6 +330,11 @@ namespace TheManager
             return 0;
         }
 
+        public override bool IsKnockOutRound()
+        {
+            return false;
+        }
+
         public override List<Match> GamesDay(int journey)
         {
             return new List<Match>();

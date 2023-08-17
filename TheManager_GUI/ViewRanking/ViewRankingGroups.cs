@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using TheManager;
 using TheManager.Comparators;
+using TheManager_GUI.Styles;
 
 namespace TheManager_GUI.VueClassement
 {
@@ -16,16 +17,15 @@ namespace TheManager_GUI.VueClassement
     {
 
         private readonly GroupsRound _round;
-        private readonly bool _focusOnTeam;
-        private readonly double _sizeMultiplier;
-        private readonly Club _team;
 
-        public ViewRankingGroups(GroupsRound round, double sizeMultiplier, bool focusOnTeam, Club team) : base(round.Tournament)
+        public ViewRankingGroups(GroupsRound round, double sizeMultiplier, bool focusOnTeam, Club team) : base(round, round.Tournament, false, sizeMultiplier, RankingType.General, focusOnTeam, team)
         {
             _round = round;
-            _focusOnTeam = focusOnTeam;
-            _sizeMultiplier = sizeMultiplier;
-            _team = team;
+        }
+
+        public override Round Round()
+        {
+            return _round;
         }
 
         private StackPanel CreateRanking(int index, Club c)
@@ -82,11 +82,14 @@ namespace TheManager_GUI.VueClassement
         public override void Full(StackPanel spRanking)
         {
 
+            Grid grid = new Grid();
+            InitColumns(grid);
+
             ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
             Country country = localisation as Country;
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
-
+            double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);
             spRanking.Children.Clear();
 
             //Split qualifications in several list because according to group qualifications can be differents (if reserves are not promoted for instance)
@@ -100,7 +103,7 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
-
+            
             //If focusing on a team, only show five teams around the current team
             if (_focusOnTeam)
             {
@@ -134,7 +137,15 @@ namespace TheManager_GUI.VueClassement
             {
                 for (int poule = 0; poule < _round.groupsCount; poule++)
                 {
-                    Label labelPoule = new Label();
+                    grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
+                    TextBlock tbGroupName = ViewUtils.CreateTextBlock(_round.GroupName(poule), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                    AddElementToGrid(grid, tbGroupName, grid.RowDefinitions.Count-1, 0, grid.ColumnDefinitions.Count);
+
+                    FillRanking(grid, grid.RowDefinitions.Count, _round.Ranking(poule), qualifications[poule]);
+                    
+                    grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
+
+                    /*Label labelPoule = new Label();
                     labelPoule.Content = _round.GroupName(poule);
                     labelPoule.Style = Application.Current.FindResource("StyleLabel1") as Style;
                     labelPoule.FontSize *= _sizeMultiplier;
@@ -181,10 +192,40 @@ namespace TheManager_GUI.VueClassement
                                 }
                             }
                         }
+                    }*/
+                }
+
+                // Specific ranking of each teams by rank
+                List<int> scannedRanking = new List<int>();
+                foreach (Qualification q in _round.qualifications)
+                {
+                    if (q.qualifies != 0 && _round.matches.Count > 0 && !scannedRanking.Contains(q.ranking))
+                    {
+                        scannedRanking.Add(q.ranking);
+                        int rankingName = q.ranking > 0 ? q.ranking : _round.groups.Last().Count + q.ranking + 1;
+
+                        grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
+                        TextBlock tbRankingTitle = ViewUtils.CreateTextBlock(String.Format("Classement des {0}èmes", rankingName), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                        AddElementToGrid(grid, tbRankingTitle, grid.RowDefinitions.Count - 1, 0, grid.ColumnDefinitions.Count);
+
+                        List<Club> concernedClubs = new List<Club>();
+                        for (int i = 0; i < _round.groupsCount; i++)
+                        {
+                            int correspondingGroupRanking = q.ranking > 0 ? q.ranking : _round.groups[i].Count + q.ranking + 1;
+                            concernedClubs.Add(_round.Ranking(i)[correspondingGroupRanking - 1]);
+                        }
+                        concernedClubs.Sort(new ClubRankingComparator(_round.matches, _round.tiebreakers, _round.pointsDeduction));
+                        List<Qualification> rankQualifications = new List<Qualification>();
+                        for (int i = 0; i < Math.Abs(q.qualifies); i++)
+                        {
+                            int rank = q.qualifies > 0 ? i + 1 : concernedClubs.Count - i;
+                            rankQualifications.Add(new Qualification(rank, q.roundId, q.tournament, q.isNextYear, 0));
+                        }
+                        FillRanking(grid, grid.RowDefinitions.Count, concernedClubs, rankQualifications);
                     }
                 }
 
-                List<int> rankingDone = new List<int>();
+                /*List<int> rankingDone = new List<int>();
                 foreach(Qualification q in _round.qualifications)
                 {
                     if(q.qualifies != 0 && _round.matches.Count > 0 && !rankingDone.Contains(q.ranking))
@@ -211,12 +252,11 @@ namespace TheManager_GUI.VueClassement
                             spRanking.Children.Add(spLine);
                         }
                     }
-                }
-                PrintSanctions(spRanking, _round, _sizeMultiplier);
+                }*/
             }
 
             //Only show qualification if teams were dispatched in groups (if not useless to show qualifications color) and if we are not focusing on a team
-            if (_round.groups[0].Count > 0 && !_focusOnTeam)
+            /*if (_round.groups[0].Count > 0 && !_focusOnTeam)
             {
                 List<Club>[] retrogradations = country != null ? country.GetAdministrativeRetrogradations() : new List<Club>[0];
                 List<Club>[] groups = new List<Club>[_round.groupsCount];
@@ -271,8 +311,13 @@ namespace TheManager_GUI.VueClassement
                     cumulatedChildrenCount += _round.groups[j].Count +1 ;
                 }
                 
-            }
+            }*/
 
+            spRanking.Children.Add(grid);
+            if(!_focusOnTeam)
+            {
+                PrintSanctions(spRanking, _round, _sizeMultiplier);
+            }
             watch.Stop();
             Console.WriteLine("Affichage classement :" + watch.ElapsedMilliseconds);
             Console.WriteLine("Nombre d'équipes : (" + _round.Tournament.name + ") : " + _round.clubs.Count);

@@ -1,0 +1,292 @@
+﻿<Window x:Class="TheManager_GUI.MainMenuView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="MainMenuView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+			
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0">
+						<StackPanel Orientation="Horizontal"
+								Height="35"
+								Margin="15, 25, 0, 40">
+							<Image Source="icone.ico" Height="30"/>
+							<TextBlock Text="The Manager"
+								   Style="{StaticResource textTitle}"
+								   Margin="10, 0, 0, 0"/>
+						</StackPanel>
+
+						<!--Menu Buttons-->
+						<Button x:Name="buttonPlay" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="Avancer" Click="buttonPlay_Click"/>
+						<Button x:Name="buttonSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="Simuler 1 an" Click="buttonSimulation_Click"/>
+						<Button x:Name="buttonLongSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="Simuler 10 ans" Click="buttonLongSimulation_Click"/>
+						<Button x:Name="buttonSearch" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/search.png" Content="Rechercher" Click="buttonSearch_Click"/>
+						<Button x:Name="buttonOptions" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/options.png" Content="Options" Click="buttonOptions_Click"/>
+						<Button x:Name="buttonSave" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/save.png" Content="Sauvegarder" Click="buttonSave_Click"/>
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="Quitter" Click="buttonQuit_Click"/>
+
+					</StackPanel>
+					<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top">
+						<TreeView x:Name="tvTournaments" PreviewMouseWheel="tvTournaments_PreviewMouseWheel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedItemChanged="tvTournaments_SelectedItemChanged">
+								<TreeView.Resources>
+									<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource colorHighlight1}" />
+								</TreeView.Resources>
+
+								<TreeViewItem Margin="0, 2, 0, 2">
+									<TreeViewItem.Header>
+										<StackPanel Orientation="Horizontal">
+											<Image Style="{StaticResource image}" Source="icons/play.png" Height="15" Margin="0, 0, 10, 0"/>
+											<TextBlock Style="{StaticResource textNavigation}" Text="Europe" VerticalAlignment="Center"/>
+										</StackPanel>
+									</TreeViewItem.Header>
+									<StackPanel Orientation="Horizontal" Margin="0, 2, 0, 2">
+										<Image Style="{StaticResource image}" Source="icons/play.png" Height="15" Margin="0, 0, 10, 0"/>
+										<TextBlock Style="{StaticResource textNavigation}" Text="Ligue des Champions" VerticalAlignment="Center"/>
+									</StackPanel>
+									<StackPanel Orientation="Horizontal" Margin="0, 2, 0, 2">
+										<Image Style="{StaticResource image}" Source="icons/play.png" Height="15" Margin="0, 0, 10, 0"/>
+										<TextBlock Style="{StaticResource textNavigation}" Text="Ligue Europa" VerticalAlignment="Center"/>
+									</StackPanel>
+									<TreeViewItem Margin="0, 2, 0, 2">
+										<TreeViewItem.Header>
+											<StackPanel Orientation="Horizontal" Margin="0, 2, 0, 2">
+												<Image Style="{StaticResource image}" Source="icons/play.png" Height="15" Margin="0, 0, 10, 0"/>
+												<TextBlock Style="{StaticResource textNavigation}" Text="Allemagne" VerticalAlignment="Center"/>
+											</StackPanel>
+										</TreeViewItem.Header>
+										<StackPanel Orientation="Horizontal" Margin="0, 2, 0, 2">
+											<Image Style="{StaticResource image}" Source="icons/play.png" Height="15" Margin="0, 0, 10, 0"/>
+											<TextBlock Style="{StaticResource textNavigation}" Text="Bundesliga 1" VerticalAlignment="Center"/>
+										</StackPanel>
+										<StackPanel Orientation="Horizontal" Margin="0, 2, 0, 2">
+											<Image Style="{StaticResource image}" Source="icons/play.png" Height="15" Margin="0, 0, 10, 0"/>
+											<TextBlock Style="{StaticResource textNavigation}" Text="Bundesliga 2" VerticalAlignment="Center"/>
+										</StackPanel>
+
+									</TreeViewItem>
+								</TreeViewItem>
+							</TreeView>
+					</ScrollViewer>
+
+				</Grid>
+
+			</Border>
+
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter"> 
+						
+					</StackPanel>
+
+					<!-- Main Window : Caption Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+								<Button x:Name="buttonWorldCoefficients" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/ranking.png" Content="Coefficients internationaux" Margin="25, 0, 0, 0" Click="buttonWorldCoefficients_Click"/>
+								<Button x:Name="buttonWorldRankings" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/ranking.png" Content="Classements internationaux" Margin="25, 0, 0, 0" Click="buttonWorldRankings_Click"/>
+								<TextBlock x:Name="tbGameDate" Style="{StaticResource textSecondary}" Text="20 janvier 2023" Width="250" Margin="0, 0, 25, 0" TextAlignment="Right" />
+							</StackPanel>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+					<Grid Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="200"/>
+						</Grid.ColumnDefinitions>
+
+						<!-- Main Panel : Game Panel-->
+						<Grid Grid.Column="0">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="0.35*"/>
+								<RowDefinition Height="0.65*"/>
+							</Grid.RowDefinitions>
+
+							<!-- Club Grid -->
+							<Grid Grid.Row="0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.325*"/>
+									<ColumnDefinition Width="0.245*"/>
+									<ColumnDefinition Width="0.185*"/>
+									<ColumnDefinition Width="0.245*"/>
+								</Grid.ColumnDefinitions>
+
+								
+								
+								<!-- Logo Panel -->
+								<StackPanel Grid.Column="0" x:Name="spLogo">
+									<Image x:Name="imageClub" RenderOptions.BitmapScalingMode="HighQuality" OpacityMask="{StaticResource HeaderBackgroundOpacityMask}" Source="icons/save.png" Height="300" Width="300" RenderTransformOrigin="-.2,1.3">
+										<Image.RenderTransform>
+											<RotateTransform Angle="-20" />
+										</Image.RenderTransform>
+									</Image>
+								</StackPanel>
+
+								<!-- Next Game - Home Team Panel -->
+								<StackPanel Grid.Column="1" x:Name="spHomeTeam" Margin="10, 25, 10, 10" HorizontalAlignment="Center">
+									<TextBlock x:Name="tbNextGameHomeTeam" Style="{StaticResource textTitle}" TextAlignment="Center" Text="FC SOCHAUX-MONTBELIARD"/>
+									<Image x:Name="imageNextGameHomeLogo" RenderOptions.BitmapScalingMode="HighQuality" Source="icons/quit.png" Height="150" Margin="0, 25, 0, 25"></Image>
+									<StackPanel x:Name="spNextGameHomeStars">
+									</StackPanel>
+									
+								</StackPanel>
+
+								<!-- Next Game - Game Panel -->
+								<StackPanel Grid.Column="2" x:Name="spGame" Margin="10, 25, 10, 10" HorizontalAlignment="Center" VerticalAlignment="Center">
+									<TextBlock x:Name="tbNextGameDate" Style="{StaticResource textTitle}" TextAlignment="Center" Text="22/01/2023"/>
+									<TextBlock x:Name="tbNextGameHour" Style="{StaticResource textTitle}" TextAlignment="Center" Text="20:45"/>
+									<TextBlock x:Name="tbNextGameStadiumName" Style="{StaticResource textSecondary}" TextAlignment="Center" Text="Stade Gaston Gérard"/>
+									<Image x:Name="imageNextGameTournamentLogo" RenderOptions.BitmapScalingMode="HighQuality" Source="icons/options.png" Height="100" Margin="0, 25, 0, 25"></Image>
+									<TextBlock x:Name="tbNextGameTournamentName" Style="{StaticResource textSecondary}" TextAlignment="Center" Text="LIGUE 2"/>
+								</StackPanel>
+
+								<!-- Next Game - Away Team Panel -->
+								<StackPanel Grid.Column="3" x:Name="spAwayTeam" Margin="10, 25, 10, 10" HorizontalAlignment="Center">
+									<TextBlock x:Name="tbNextGameAwayTeam" Style="{StaticResource textTitle}" TextAlignment="Center" Text="DIJON FCO"/>
+									<Image x:Name="imageNextGameAwayLogo" RenderOptions.BitmapScalingMode="HighQuality" Source="icons/quit.png" Height="150" Margin="0, 25, 0, 25"></Image>
+									<StackPanel x:Name="spNextGameAwayStars">
+									</StackPanel>
+								</StackPanel>
+
+							</Grid>
+
+							<!-- Tournament Grid -->
+							<Grid Grid.Row="1" Margin="0, 25, 0, 0">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.325*"/>
+									<ColumnDefinition Width="0.675*"/>
+								</Grid.ColumnDefinitions>
+
+								<!-- Ranking Panel -->
+								<ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+									<StackPanel x:Name="spRanking">
+
+									</StackPanel>
+								</ScrollViewer>
+
+								<!-- Results Grid -->
+								<Grid Grid.Column="1" x:Name="gridResults">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.075*"/>
+										<RowDefinition Height="0.925*"/>
+									</Grid.RowDefinitions>
+									<!-- Results navigation Panel -->
+									<Grid Grid.Row="0" Background="{StaticResource colorPanel3}">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.25*"/>
+											<ColumnDefinition Width="0.5*"/>
+											<ColumnDefinition Width="0.25*"/>
+										</Grid.ColumnDefinitions>
+
+										<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+											<Button x:Name="buttonScoresLeft" Style="{StaticResource buttonIcon}" tm:TMButtonProperties.Image="icons/left.png" Height="25" Margin="5, 5, 25, 5" Click="buttonScoresLeft_Click"/>
+											<ComboBox x:Name="comboBoxGameDay" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" SelectionChanged="comboBoxGameDay_SelectionChanged" Width="200" HorizontalContentAlignment="Center"/>
+											<Button x:Name="buttonScoreRight" Style="{StaticResource buttonIcon}" tm:TMButtonProperties.Image="icons/right.png" Height="25" Content="Droite" Margin="25, 5, 5, 5" Click="buttonScoreRight_Click"/>
+										</StackPanel>
+										<StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+											<Button x:Name="buttonSwitchScoresMode" Style="{StaticResource buttonMenu}" Height="25" Content="Voir tous les matchs" Margin="5, 5, 25, 5" Click="buttonSwitchScoresMode_Click"/>
+										</StackPanel>
+
+									</Grid>
+									<!-- Results score Panel -->
+									<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+										<StackPanel x:Name="spRoundScores">
+
+										</StackPanel>
+									</ScrollViewer>
+								</Grid>
+							</Grid>
+						</Grid>
+						
+						<!-- Main Panel : News -->
+						<Border Grid.Column="1">
+							<Border.Background>
+								<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+									<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+									<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+								</LinearGradientBrush>
+							</Border.Background>
+							<StackPanel Orientation="Vertical" Margin="10, 25, 10, 10">
+								<TextBlock Style="{StaticResource textSecondary}" Text="News Title 1" Margin="0, 0, 0, 10"/>
+								<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
+								<Rectangle VerticalAlignment="Stretch" Width="100" Margin="30" Stroke="{StaticResource colorTitle2}" />
+								<TextBlock Style="{StaticResource textSecondary}" Text="News Title 2" Margin="0, 0, 0, 10"/>
+								<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
+								<Rectangle VerticalAlignment="Stretch" Width="100" Margin="30" Stroke="{StaticResource colorTitle2}" />
+								<TextBlock Style="{StaticResource textSecondary}" Text="News Title 3" Margin="0, 0, 0, 10"/>
+								<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
+								<Rectangle VerticalAlignment="Stretch" Width="100" Margin="30" Stroke="{StaticResource colorTitle2}" />
+							</StackPanel>
+						</Border>
+					</Grid>
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

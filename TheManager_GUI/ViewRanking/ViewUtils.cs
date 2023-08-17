@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Xml;
 using TheManager;
 using TheManager.Comparators;
+using Application = System.Windows.Application;
+using System.Windows.Annotations;
 
 namespace TheManager_GUI
 {
@@ -102,6 +104,62 @@ namespace TheManager_GUI
         /// <param name="width">Width of the label box (-1 to define no width)</param>
         /// <param name="color">Color of the label</param>
         /// <returns></returns>
+        public static TextBlock CreateTextBlock(string content, string styleName, double fontSize = -1, double width = -1, Brush color = null, Brush backgroundColor = null, bool bold = false)
+        {
+            TextBlock textBlock = new TextBlock();
+            textBlock.Text = content;
+            Style style = Application.Current.FindResource(styleName) as Style;
+            textBlock.Style = style;
+
+            if (fontSize > -1)
+            {
+                textBlock.FontSize = fontSize;
+            }
+            if (width > -1)
+            {
+                textBlock.Width = width;
+            }
+            if (color != null)
+            {
+                textBlock.Foreground = color;
+            }
+            if (backgroundColor != null)
+            {
+                textBlock.Background = backgroundColor;
+            }
+
+            if (bold)
+            {
+                textBlock.FontWeight = FontWeights.Bold;
+                // textBlock.FontFamily = App.Current.TryFindResource("BoldFont") as FontFamily;
+            }
+            
+            //For layout debug
+            textBlock.MouseEnter += TextBlock_MouseEnter;
+            textBlock.MouseLeave += TextBlock_MouseLeave;
+
+            return textBlock;
+        }
+
+        private static void TextBlock_MouseLeave(object sender, MouseEventArgs e)
+        {
+            (sender as TextBlock).Background = Brushes.Transparent;
+        }
+
+        private static void TextBlock_MouseEnter(object sender, MouseEventArgs e)
+        {
+            (sender as TextBlock).Background = Application.Current.TryFindResource("cl2Color") as SolidColorBrush;
+        }
+
+        /// <summary>
+        /// Create a WPF label object
+        /// </summary>
+        /// <param name="content">Text of the label</param>
+        /// <param name="style">Style of the label</param>
+        /// <param name="fontSize">Font size (-1 to let style default font size)</param>
+        /// <param name="width">Width of the label box (-1 to define no width)</param>
+        /// <param name="color">Color of the label</param>
+        /// <returns></returns>
         public static Label CreateLabel(string content, string styleName, double fontSize, double width, Brush color = null, Brush backgroundColor = null, bool bold = false)
         {
             Label label = new Label();
@@ -140,6 +198,13 @@ namespace TheManager_GUI
             Label res = CreateLabel(content, style, fontSize, width, color);
             res.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(t));
             return res;
+        }
+
+        public static TextBlock CreateTextBlockOpenWindow<T>(T t, OpenWindowOnButtonClick<T> onClick, string content, string style, double fontSize, double width, Brush color = null)
+        {
+            TextBlock tbBlock = CreateTextBlock(content, style, fontSize, width, color);
+            tbBlock.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(t));
+            return tbBlock;
         }
 
         public static ProgressBar CreateProgressBar(float value, float minimum = 0, float maximum = 100, float width = 60, float height = 10)
@@ -185,6 +250,7 @@ namespace TheManager_GUI
             sprite.Source = new BitmapImage(uri);
             sprite.Width = width;
             sprite.Height = height;
+            sprite.Style = Application.Current.FindResource("image") as Style;
             return sprite;
         }
 
@@ -232,7 +298,7 @@ namespace TheManager_GUI
                 spMatch.Children.Add(CreateLogo(match.home, 26, 26));
                 if(match.Played)
                 {
-                    spMatch.Children.Add(CreateLabel(match.ScoreToString(), "StyleLabel2", 9, -1));
+                    spMatch.Children.Add(CreateLabel(match.ScoreToString(true), "StyleLabel2", 9, -1));
                 }
                 spMatch.Children.Add(CreateLogo(match.away, 26, 26));
             }
@@ -378,10 +444,47 @@ namespace TheManager_GUI
                 default:
                     return "S";
             }
-            return "-";
         }
 
-        public static StackPanel CreateStarNotation(float notation, float starsSize)
+        public static Border CreateStarsView(float stars, float starSize)
+        {
+            Border border = new Border();
+            border.Padding = new Thickness(5);
+            border.Background = Application.Current.TryFindResource("colorBackgroundStars") as SolidColorBrush;
+            border.CornerRadius = new CornerRadius(starSize);
+            border.Width = (starSize + 5) * 6;
+            StackPanel spStars = new StackPanel();
+            spStars.Margin = new Thickness(starSize/2, 0, 0, 0);
+            spStars.Orientation = Orientation.Horizontal;
+            spStars.HorizontalAlignment = HorizontalAlignment.Left;
+
+            int fullStars = (int)Math.Floor(stars);
+            for (int i = 1; i <= fullStars; i++)
+            {
+                Image img = new Image();
+                img.Height = starSize;
+                img.Width = starSize;
+                img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
+                img.Margin = new Thickness(0, 0, 5, 0);
+                RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
+                spStars.Children.Add(img);
+            }
+            if (stars - fullStars != 0)
+            {
+                Image img = new Image();
+                img.Height = starSize;
+                img.Width = starSize;
+                img.Source = new BitmapImage(new Uri(Utils.Image("star_half.png")));
+                img.Margin = new Thickness(0, 0, 5, 0);
+                RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
+                spStars.Children.Add(img);
+            }
+            border.Child = spStars;
+
+            return border;
+        }
+
+        /*public static StackPanel CreateStarNotation(float notation, float starsSize)
         {
             StackPanel res = new StackPanel();
             res.Orientation = Orientation.Horizontal;
@@ -407,7 +510,7 @@ namespace TheManager_GUI
             res.Width = starsSize * 6;
 
             return res;
-        }
+        }*/
 
 
 

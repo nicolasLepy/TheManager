@@ -103,8 +103,8 @@ namespace TheManager_GUI
             {
                 lbContract.Content = FindResource("str_noClub").ToString();
             }
-            spLevel.Children.Add(ViewUtils.CreateStarNotation(_player.Stars, 15));
-            spPotentiel.Children.Add(ViewUtils.CreateStarNotation(_player.StarsPotential, 15));
+            spLevel.Children.Add(ViewUtils.CreateStarsView(_player.Stars, 15));
+            spPotentiel.Children.Add(ViewUtils.CreateStarsView(_player.StarsPotential, 15));
         }
 
         private void BtnQuitter_Click(object sender, RoutedEventArgs e)

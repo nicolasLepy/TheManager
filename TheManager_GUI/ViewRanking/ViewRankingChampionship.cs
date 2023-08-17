@@ -8,6 +8,9 @@ using System.Windows.Media.Imaging;
 using TheManager;
 using System.Linq;
 using System.Text;
+using TheManager_GUI.Styles;
+using System.Windows.Shapes;
+using Newtonsoft.Json.Linq;
 
 namespace TheManager_GUI.VueClassement
 {
@@ -15,11 +18,7 @@ namespace TheManager_GUI.VueClassement
     {
 
         private readonly ChampionshipRound _round;
-        private readonly double _sizeMultiplier;
-        private readonly bool _focusOnTeam;
-        private readonly Club _team;
-        private readonly bool _reduced;
-        private readonly RankingType _rankingType;
+        
 
         /// <summary>
         /// 
@@ -28,64 +27,14 @@ namespace TheManager_GUI.VueClassement
         /// <param name="sizeMultiplier">Width and font size multiplier</param>
         /// <param name="focusOnTeam">If true, only show 5 rows, focus the ranking around the team</param>
         /// <param name="team">The team to focus ranking on</param>
-        public ViewRankingChampionship(ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false, RankingType rankingType = RankingType.General) : base(round.Tournament)
+        public ViewRankingChampionship(ChampionshipRound round, double sizeMultiplier, bool focusOnTeam = false, Club team = null, bool reduced = false, RankingType rankingType = RankingType.General) : base(round, round.Tournament, reduced, sizeMultiplier, rankingType, focusOnTeam, team)
         {
             _round = round;
-            _sizeMultiplier = sizeMultiplier;
-            _focusOnTeam = focusOnTeam;
-            _team = team;
-            _reduced = reduced;
-            _rankingType = rankingType;
         }
 
-        private string QualificationColor(Qualification q)
+        public override Round Round()
         {
-            string color = "backgroundColor";
-            if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
-            {
-                color = "cl1Color";
-            }
-            else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound == null)
-            {
-                color = "cl2Color";
-            }
-            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
-            {
-                color = "el1Color";
-            }
-            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound == null)
-            {
-                color = "el2Color";
-            }
-            else if (q.tournament.level == 3)
-            {
-                color = "ecl1Color";
-            }
-            return color;
-        }
-
-        private bool QualificationCanLeadToRelegation(Round r, Tournament tournamentReference)
-        {
-            bool res = false;
-            foreach(Qualification q in r.qualifications)
-            {
-                if(q.isNextYear && q.tournament.level > tournamentReference.level)
-                {
-                    res = true;
-                }
-            }
-            if(!res)
-            {
-                foreach(Qualification q in r.qualifications)
-                {
-                    if (!q.isNextYear && q.tournament == tournamentReference && !q.tournament.IsInternational() && q.tournament.isChampionship)
-                    {
-                        res = QualificationCanLeadToRelegation(q.tournament.rounds[q.roundId], tournamentReference);
-                    }
-                }
-            }
-
-            return res;
+            return _round;
         }
 
         public override void Full(StackPanel spRanking)
@@ -95,8 +44,13 @@ namespace TheManager_GUI.VueClassement
             int i = 0;
 
             List<Club> clubs = _round.Ranking(_rankingType);
+            List<Qualification> qualificationsRound = new List<Qualification>(_round.qualifications);
+            List<Border> borders = new List<Border>();
+            Grid gridTable = new Grid();
+            InitColumns(gridTable);
+            FillRanking(gridTable, 0, clubs, qualificationsRound);
 
-            // Get international qualifications
+            /*// Get international qualifications
             // Search if the round is an archived round to get qualified teams on the right year
             // Else get qualification for the current season
             ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
@@ -105,12 +59,6 @@ namespace TheManager_GUI.VueClassement
             Dictionary<Club, Qualification> continentalClubs = new Dictionary<Club, Qualification>();
             if(country != null)
             {
-                /*if(_year > -1)
-                {
-                    DateTime tournamentEnd = _round.Tournament.rounds.Last().programmation.end.ConvertToDateTime(_year);
-                    Console.WriteLine("[Tournament " + _round.Tournament.name + " " + _year + "] End : " + tournamentEnd.ToShortDateString());
-                }*/
-
                 int weekStartContinental = country.Continent.GetContinentalClubTournaments().First().rounds.First().programmation.initialisation.WeekNumber;
                 int weekEndContinental = country.Continent.GetContinentalClubTournaments().First().rounds.Last().programmation.end.WeekNumber;
                 int continentalYear = _year; //International tournament edition where clubs are qualified
@@ -160,46 +108,59 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
-            double fontSize = (double)Application.Current.FindResource("TailleMoyenne");
-            double regularCellWidth = 36 * _sizeMultiplier;
-
-            StackPanel spTitle = new StackPanel();
-            spTitle.Orientation = Orientation.Horizontal;
-            spTitle.Children.Add(ViewUtils.CreateLabel("", "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth/1.25 + regularCellWidth / 1.5 + regularCellWidth*3.5));
-            spTitle.Children.Add(ViewUtils.CreateLabel("Pts", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
-            spTitle.Children.Add(ViewUtils.CreateLabel("J", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+            double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);
+            double logoSize = fontSize * 5 / 3;
+            
+            int rows = 1 + clubs.Count; //Rows numbers
+            for(int row = 0; row < rows; row++)
+            {
+                gridTable.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
+            }
+            int cols = _reduced ? 6 : 11;
+            float[] colsWidths = _reduced ? new float[] {8, 10, 70, 10, 10, 10} : new float[] {8, 10, 70, 10, 10, 10, 10, 10, 10, 10, 10};
+            for(int col = 0; col < cols; col++)
+            {
+                gridTable.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(colsWidths[col], GridUnitType.Star) });
+            }
+            AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("Equipe", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 0, 3);
+            AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("Pts", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 3);
+            AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("J", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 4);
             if(!_reduced)
             {
-                spTitle.Children.Add(ViewUtils.CreateLabel("G", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
-                spTitle.Children.Add(ViewUtils.CreateLabel("N", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
-                spTitle.Children.Add(ViewUtils.CreateLabel("P", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
-                spTitle.Children.Add(ViewUtils.CreateLabel("p.", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
-                spTitle.Children.Add(ViewUtils.CreateLabel("c.", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth));
+                AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("G", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 5);
+                AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("N", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 6);
+                AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("P", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 7);
+                AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("p.", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 8);
+                AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("c.", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, 9);
             }
-            spTitle.Children.Add(ViewUtils.CreateLabel("Diff", "StyleLabel2Center", fontSize * _sizeMultiplier, regularCellWidth * 1.25));
-            spRanking.Children.Add(spTitle);
+            AddElementToGrid(gridTable, ViewUtils.CreateTextBlock("Diff", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), 0, _reduced ? 5 : 10);
 
             foreach (Club c in clubs)
             {
+                Console.WriteLine("Create " + c.name);
                 i++;
-                StackPanel sp = new StackPanel();
-                sp.Orientation = Orientation.Horizontal;
 
-                sp.Children.Add(ViewUtils.CreateLabel(i.ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth/1.25));
+                Border borderRanking = CreateBorder();
+                TextBlock tbRanking = ViewUtils.CreateTextBlock(i.ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                borderRanking.Child = tbRanking;
+                AddElementToGrid(gridTable, borderRanking, i, 0);
+                borders.Add(borderRanking);
 
+                Image imageRanking = null;
                 if (_tournament.IsInternational() && (c as CityClub) != null)
                 {
-                    sp.Children.Add(ViewUtils.CreateFlag((c as CityClub).city.Country(), regularCellWidth / 1.5, regularCellWidth / 1.5));
+                    imageRanking = ViewUtils.CreateFlag((c as CityClub).city.Country(), logoSize, logoSize);
 
                 }
                 else if (_tournament.IsInternational() && (c as ReserveClub) != null)
                 {
-                    sp.Children.Add(ViewUtils.CreateFlag((c as ReserveClub).FannionClub.city.Country(), regularCellWidth / 1.5, regularCellWidth / 1.5));
+                    imageRanking = ViewUtils.CreateFlag((c as ReserveClub).FannionClub.city.Country(), logoSize, logoSize);
                 }
                 else
                 {
-                    sp.Children.Add(ViewUtils.CreateLogo(c, regularCellWidth / 1.5, regularCellWidth / 1.5));
+                    imageRanking = ViewUtils.CreateLogo(c, logoSize, logoSize);
                 }
+                AddElementToGrid(gridTable, imageRanking, i, 1);
 
                 StringBuilder cupWinnerStr = new StringBuilder("");
                 foreach(KeyValuePair<Tournament, Club> kvp in _cupsWinners)
@@ -213,23 +174,30 @@ namespace TheManager_GUI.VueClassement
                 {
                     cupWinnerStr.Append(" (TT) ");
                 }
-                sp.Children.Add(ViewUtils.CreateLabelOpenWindow<Club>(c, OpenClub, (_tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr.ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 3.5));
-                sp.Children.Add(ViewUtils.CreateLabel(_round.Points(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth, null, null, true));
-                sp.Children.Add(ViewUtils.CreateLabel(_round.Played(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                if(!_reduced)
+                TextBlock tbClub = ViewUtils.CreateTextBlockOpenWindow<Club>(c, OpenClub, (_tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear-1) : c.shortName) + cupWinnerStr.ToString(), StyleDefinition.styleTextPlain, fontSize * _sizeMultiplier, -1);
+                AddElementToGrid(gridTable, tbClub, i, 2);
+                TextBlock tbPoints = ViewUtils.CreateTextBlock(_round.Points(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier, -1, null, null, true);
+                AddElementToGrid(gridTable, tbPoints, i, 3);
+                TextBlock tbPlayed = ViewUtils.CreateTextBlock(_round.Played(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                AddElementToGrid(gridTable, tbPlayed, i, 4);
+                if (!_reduced)
                 {
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.Wins(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.Draws(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.Loses(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsFor(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
-                    sp.Children.Add(ViewUtils.CreateLabel(_round.GoalsAgainst(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth));
+                    TextBlock tbWins = ViewUtils.CreateTextBlock(_round.Wins(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                    AddElementToGrid(gridTable, tbWins, i, 5);
+                    TextBlock tbDraws = ViewUtils.CreateTextBlock(_round.Draws(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                    AddElementToGrid(gridTable, tbDraws, i, 6);
+                    TextBlock tbLoses = ViewUtils.CreateTextBlock(_round.Loses(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                    AddElementToGrid(gridTable, tbLoses, i, 7);
+                    TextBlock tbGoalsFor = ViewUtils.CreateTextBlock(_round.GoalsFor(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                    AddElementToGrid(gridTable, tbGoalsFor, i, 8);
+                    TextBlock tbGoalsAgainst = ViewUtils.CreateTextBlock(_round.GoalsAgainst(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                    AddElementToGrid(gridTable, tbGoalsAgainst, i, 9);
                 }
-                sp.Children.Add(ViewUtils.CreateLabel(_round.Difference(c, _rankingType).ToString(), "StyleLabel2", fontSize * _sizeMultiplier, regularCellWidth * 1.25));
-
-                spRanking.Children.Add(sp);
+                TextBlock tbGoalsDifference = ViewUtils.CreateTextBlock(_round.Difference(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
+                AddElementToGrid(gridTable, tbGoalsDifference, i, _reduced ? 5 : 10);
             }
 
-            List<Club>[] retrogradations = country.GetAdministrativeRetrogradations();
+            List<Club>[] retrogradations = country != null ? country.GetAdministrativeRetrogradations() : new List<Club>[0];
             int level = _tournament.level;
 
             //Only show colors when the ranking is not focused on a team
@@ -239,11 +207,11 @@ namespace TheManager_GUI.VueClassement
 
                 bool nationalTeamTournament = _round.clubs.Count > 0 && ((_round.clubs[0] as NationalTeam) != null);
                 int qualificationsToTournamentNextRounds = 0;
-                List<Qualification> qualifications = _round.GetAdjustedQualifications(); //_round.qualifications;
+                List<Qualification> qualifications = _round.GetAdjustedQualifications();
                 foreach (Qualification q in qualifications)
                 {
-                    int index = q.ranking > 0 ? q.ranking : clubs.Count + q.ranking + 1;
-                    int clubNextLevel = Array.FindIndex(retrogradations, w => w.Contains(clubs[index - 1])) + 1;
+                    int index = q.ranking > 0 ? q.ranking - 1: clubs.Count + q.ranking;
+                    int clubNextLevel = Array.FindIndex(retrogradations, w => w.Contains(clubs[index])) + 1;
 
                     string color = "backgroundColor";
 
@@ -286,7 +254,7 @@ namespace TheManager_GUI.VueClassement
                     if (color != "backgroundColor" && clubs.Count > 0)
                     {
                         SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-                        (spRanking.Children[index] as StackPanel).Background = lineColor;
+                        borders[index].Background = lineColor;
                     }
 
                 }
@@ -300,16 +268,20 @@ namespace TheManager_GUI.VueClassement
                     {
                         string color = QualificationColor(kvp.Value);
                         SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-                        (spRanking.Children[indexClub + 1] as StackPanel).Background = lineColor;
+                        borders[indexClub].Background = lineColor;
                     }
                 }
-                PrintSanctions(spRanking, _round, _sizeMultiplier);
             }
             else
             {
                 SolidColorBrush color = new SolidColorBrush((System.Windows.Media.Color)Application.Current.TryFindResource("ColorDate"));
                 color.Opacity = 0.6;
-                (spRanking.Children[indexTeam + 1] as StackPanel).Background = color;
+                borders[indexTeam].Background = color;
+            }*/
+            spRanking.Children.Add(gridTable);
+            if(!_focusOnTeam)
+            {
+                PrintSanctions(spRanking, _round, _sizeMultiplier);
             }
         }
     }

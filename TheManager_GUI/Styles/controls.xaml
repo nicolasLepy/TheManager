@@ -1,0 +1,349 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+					xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+					xmlns:tm_views="clr-namespace:TheManager_GUI.views"
+					xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+					xmlns:core="clr-namespace:System;assembly=mscorlib">
+
+	<core:Double x:Key="fontSizeTitle">20</core:Double>
+	<core:Double x:Key="fontSizeSecondary">16.5</core:Double>
+	<core:Double x:Key="fontSizeRegular">13.5</core:Double>
+	<core:Double x:Key="fontSizeNavigation">11</core:Double>
+
+	<SolidColorBrush x:Key="ComboBox.Static.Background" Color="Transparent"/>
+	<SolidColorBrush x:Key="ComboBox.Static.Editable.Background" Color="Transparent"/>
+
+	<FontFamily x:Key="fontFamily">Montserrat</FontFamily>
+
+	<Style x:Key="textTitle" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{StaticResource colorTitle1}"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontWeight" Value="Medium"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeTitle}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
+	<Style x:Key="textSecondary" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{StaticResource colorTitle2}"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontWeight" Value="Medium"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeSecondary}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
+	<Style x:Key="textPlain" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{StaticResource colorTitle2}"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontWeight" Value="Medium"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeRegular}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
+	<Style x:Key="textPlainCenter" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource textPlain}">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+	</Style>
+
+	<Style x:Key="textButton" TargetType="TextBlock" BasedOn="{StaticResource textTitle}">
+		<Setter Property="Foreground" Value="{Binding Path=Foreground, RelativeSource={RelativeSource AncestorType=Button}}"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeRegular}"/>
+	</Style>
+
+	<Style x:Key="textNavigation" TargetType="TextBlock" BasedOn="{StaticResource textTitle}">
+		<Setter Property="Foreground" Value="{StaticResource colorTitle2}"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeNavigation}"/>
+	</Style>
+
+	<Style x:Key="buttonIconMenu" TargetType="Button">
+		<Setter Property="Height" Value="50"/>
+		<Setter Property="Margin" Value="-5, 0, 0, 5"/>
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type Button}">
+					<Border Background="{TemplateBinding Background}">
+						<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+
+		<Setter Property="ContentTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<Image RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding Path=(tm:TMButtonProperties.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Height="30" Margin="0, 0, 10, 0"></Image>
+						<TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Style="{StaticResource textButton}"></TextBlock>
+					</StackPanel>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+
+
+		<Style.Triggers>
+			<Trigger Property="IsMouseOver" Value="True">
+				<Setter Property="Background" Value="{StaticResource colorButtonOver}"/>
+				<Setter Property="Foreground" Value="{StaticResource colorTitle1}"/>
+				<Setter Property="BorderBrush" Value="{Binding Path=Tag, RelativeSource={RelativeSource Self}}"/>
+			</Trigger>
+		</Style.Triggers>
+
+	</Style>
+
+	<Style x:Key="buttonIcon" TargetType="Button" BasedOn="{StaticResource buttonIconMenu}">
+		<Setter Property="ContentTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<Image RenderOptions.BitmapScalingMode="HighQuality" Source="{Binding Path=(tm:TMButtonProperties.Image), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Height="30" Margin="0, 0, 10, 0"></Image>
+					</StackPanel>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="buttonMenu" TargetType="Button" BasedOn="{StaticResource buttonIconMenu}">
+		<Setter Property="ContentTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Style="{StaticResource textButton}"></TextBlock>
+					</StackPanel>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="image" TargetType="Image">
+		<Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
+	</Style>
+
+	<Style x:Name="treeViewNavigation" TargetType="TreeView">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+	</Style>
+
+	<Style x:Key="comboBoxStyleItem" TargetType="{x:Type ComboBoxItem}">
+		<Setter Property="FontSize" Value="{StaticResource fontSizeSecondary}"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="Background" Value="{StaticResource colorPanel3}" />
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+	</Style>
+
+	<Style x:Key="comboBoxStyle" TargetType="{x:Type ComboBox}">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeSecondary}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+		<Setter Property="ItemContainerStyle" Value="{StaticResource comboBoxStyleItem}"/>
+	</Style>
+
+	<LinearGradientBrush
+    x:Key="HeaderBackgroundOpacityMask"
+    StartPoint="0,0"
+    EndPoint="1,1">
+		<GradientStop Color="#00FFFFFF" Offset="0"/>
+		<GradientStop Color="#00FFFFFF" Offset="0.2"/>
+		<GradientStop Color="#88FFFFFF" Offset="0.5"/>
+		<GradientStop Color="#00FFFFFF" Offset="0.8"/>
+		<GradientStop Color="#00FFFFFF" Offset="1"/>
+	</LinearGradientBrush>
+
+
+	<!-- https://stackoverflow.com/a/35160762/8880893 -->
+	<ControlTemplate TargetType="ToggleButton" x:Key="ComboBoxToggleButtonTemplate">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition Width="16" />
+			</Grid.ColumnDefinitions>
+			<Border Grid.ColumnSpan="2" Name="Border" BorderBrush="Transparent" CornerRadius="0" BorderThickness="1, 1, 1, 1" Background="Transparent" />
+			<Border Grid.Column="1" Margin="1, 1, 1, 1" BorderBrush="#444" Name="ButtonBorder" CornerRadius="0, 0, 0, 0" BorderThickness="0, 0, 0, 0" Background="Transparent" />
+			<Path x:Name="Arrow" Grid.Column="1" HorizontalAlignment="Center" Margin="1,-1,0,0" VerticalAlignment="Center" Data="M 0 0 L 4 4 L 8 0 Z" Fill="{StaticResource colorPlainText1}"/>
+		</Grid>
+		<ControlTemplate.Triggers>
+			<Trigger Property="UIElement.IsMouseOver" Value="True">
+				<Setter Property="Panel.Background" TargetName="ButtonBorder" Value="{StaticResource colorButtonOver}"/>
+				<Setter Property="Shape.Fill" TargetName="Arrow" Value="{StaticResource colorPlainText1}" />
+			</Trigger>
+			<Trigger Property="UIElement.IsMouseOver" Value="False">
+				<Setter Property="Panel.Background" TargetName="ButtonBorder" Value="Transparent"/>
+				<Setter Property="Shape.Fill" TargetName="Arrow" Value="{StaticResource colorPlainText1}" />
+			</Trigger>
+		</ControlTemplate.Triggers>
+	</ControlTemplate>
+
+	
+	<Style x:Key="ComboBoxFlatStyle"  TargetType="{x:Type ComboBox}">
+		<Setter Property="UIElement.SnapsToDevicePixels" Value="True"/>
+		<Setter Property="FrameworkElement.OverridesDefaultStyle" Value="True"/>
+		<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+		<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+		<Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+		<Setter Property="FrameworkElement.FocusVisualStyle" Value="{x:Null}"/>
+
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeSecondary}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+		<Setter Property="ItemContainerStyle" Value="{StaticResource comboBoxStyleItem}"/>
+
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ComboBox">
+					<Grid>
+						<ToggleButton Name="PART_ToggleButton" Grid.Column="2" ClickMode="Press" Focusable="False" IsChecked="{Binding Path=IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}" Template="{StaticResource ComboBoxToggleButtonTemplate}"/>
+						<ContentPresenter Name="ContentSite" Margin="5, 3, 23, 3" IsHitTestVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{TemplateBinding ComboBox.SelectionBoxItem}" ContentTemplate="{TemplateBinding ComboBox.SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"/>
+						<TextBox Name="PART_EditableTextBox" Margin="3, 3, 23, 3" IsReadOnly="{TemplateBinding IsReadOnly}" Visibility="Hidden" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Center" Focusable="True" >
+							<TextBox.Template>
+								<ControlTemplate TargetType="TextBox" >
+									<Border Name="PART_ContentHost" Focusable="False" />
+								</ControlTemplate>
+							</TextBox.Template>
+						</TextBox>
+						<Border Name="OutlineBoder" BorderBrush="LightBlue" IsHitTestVisible="False" />
+						<!-- Popup showing items -->
+						<Popup Name="PART_Popup" Placement="Bottom" Focusable="False" AllowsTransparency="True" IsOpen="{TemplateBinding ComboBox.IsDropDownOpen}" PopupAnimation="Slide">
+							<Grid Name="DropDown" SnapsToDevicePixels="True" MinWidth="{TemplateBinding FrameworkElement.ActualWidth}" MaxHeight="{TemplateBinding ComboBox.MaxDropDownHeight}">
+								<Border Name="DropDownBorder" Background="{StaticResource colorButtonOver}" Margin="0, 1, 0, 0" CornerRadius="0" BorderThickness="1,1,1,1" BorderBrush="Transparent"/>
+								<ScrollViewer Margin="4" SnapsToDevicePixels="True">
+									<ItemsPresenter KeyboardNavigation.DirectionalNavigation="Contained" />
+								</ScrollViewer>
+							</Grid>
+						</Popup>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="ItemsControl.HasItems" Value="False">
+							<Setter Property="FrameworkElement.MinHeight" TargetName="DropDownBorder" Value="95"/>
+						</Trigger>
+						<Trigger Property="UIElement.IsEnabled" Value="False">
+							<Setter Property="TextElement.Foreground" Value="#888"/>
+						</Trigger>
+						<Trigger Property="ItemsControl.IsGrouping" Value="True">
+							<Setter Property="ScrollViewer.CanContentScroll" Value="False"/>
+						</Trigger>
+						<Trigger Property="ComboBox.IsEditable" Value="True">
+							<Setter Property="KeyboardNavigation.IsTabStop" Value="False"/>
+							<Setter Property="UIElement.Visibility" TargetName="PART_EditableTextBox" Value="Visible"/>
+							<Setter Property="UIElement.Visibility" TargetName="ContentSite" Value="Hidden"/>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="liveChartAxisStyle" TargetType="{x:Type lvc:Axis}">
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeRegular}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+	</Style>
+
+	<tm_views:MoneyValueForegroundConverter x:Key="moneyValueForegroundConverter"/>
+	
+	<Style x:Key="liveChartPieSerieStyle" TargetType="lvc:PieSeries">
+		<Setter Property="Stroke" Value="Transparent"/>
+		<Setter Property="StrokeThickness" Value="5"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeRegular}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorTitle1}"/>
+		<Setter Property="DataLabelsTemplate">
+			<Setter.Value>
+				<DataTemplate DataType="lvc:DataLabelViewModel">
+					<StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+						<TextBlock x:Name="dataLabelValue" Style="{StaticResource textNavigation}" HorizontalAlignment="Center" Foreground="{StaticResource colorLight}" Text="{Binding Point.Instance.label}"/>
+						<TextBlock x:Name="dataLabelDisplayedValue" Style="{StaticResource textSecondary}" HorizontalAlignment="Center" Foreground="{StaticResource colorLight}" Text="{Binding Point.Instance.displayValue}"/> <!-- Point leads to ChartPoint and Instance lead to the PointChartValue associated struct-->
+					</StackPanel>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="liveChartLineDataTooltipStyle" TargetType="lvc:DefaultTooltip">
+		<Setter Property="Background" Value="{StaticResource colorPanel1}"></Setter>
+		<Setter Property="Foreground" Value="{StaticResource colorTitle1}"></Setter>
+		<Setter Property="ShowTitle" Value="False"></Setter>
+		<Setter Property="ShowSeries" Value="True"></Setter>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeNavigation}"></Setter>
+		<Setter Property="CornerRadius" Value="5"></Setter>
+		<Setter Property="BorderThickness" Value="0"></Setter>
+	</Style>
+
+	<Style x:Key="liveChartPieDataTooltipStyle" TargetType="lvc:DefaultTooltip">
+		<Setter Property="SelectionMode" Value="OnlySender"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+		<Setter Property="Background" Value="{StaticResource colorPanel1}" />
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="BulletSize" Value="10" />
+		<Setter Property="CornerRadius" Value="5"></Setter>
+	</Style>
+
+	<Style x:Key="liveChartCartesianChartStyle" TargetType="lvc:CartesianChart">
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+		<Style.Resources>
+			<Style BasedOn="{StaticResource liveChartLineDataTooltipStyle}" TargetType="lvc:DefaultTooltip"/>
+		</Style.Resources>
+	</Style>
+
+	<Style x:Key="liveChartPieChartStyle" TargetType="lvc:PieChart">
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}"/>
+		<Style.Resources>
+			<Style BasedOn="{StaticResource liveChartPieDataTooltipStyle}" TargetType="lvc:DefaultTooltip"/>
+		</Style.Resources>
+	</Style>
+
+	<Style x:Key="progressBarStyle" TargetType="{x:Type ProgressBar}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ProgressBar}">
+					<Border x:Name="BorderBackground" CornerRadius="15" BorderThickness="0"
+                            BorderBrush="Transparent"
+                            Background="{StaticResource colorPanel1}">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Determinate" />
+									<VisualState x:Name="Indeterminate" />
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Border x:Name="PART_Track" Margin="0" BorderThickness="0" CornerRadius="15" />
+							<Border x:Name="PART_Indicator" Margin="0" BorderThickness="0" CornerRadius="15" HorizontalAlignment="Left"
+                                    Background="{StaticResource colorButtonOver}" ClipToBounds="True">
+							</Border>
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+
+	<Style x:Key="textBoxStyle" TargetType="{x:Type TextBox}">
+		<Setter Property="FontFamily" Value="{DynamicResource fontFamily}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}" />
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="Padding" Value="5"/>
+	</Style>
+
+	<Style x:Key="datePickerStyle" TargetType="{x:Type DatePicker}">
+		<Setter Property="FontFamily" Value="{DynamicResource fontFamily}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}" />
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="VerticalAlignment" Value="Center"/>
+		<Setter Property="Padding" Value="5"/>
+		<Style.Resources>
+			<Style TargetType="DatePickerTextBox">
+				<Setter Property="Background" Value="Transparent"/>
+			</Style>
+		</Style.Resources>
+	</Style>
+
+
+
+</ResourceDictionary>

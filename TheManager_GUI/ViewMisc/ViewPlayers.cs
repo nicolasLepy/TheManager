@@ -164,7 +164,7 @@ namespace TheManager_GUI.ViewMisc
                 {
                     if(!LevelsInNumbers)
                     {
-                        spPlayer.Children.Add(ViewUtils.CreateStarNotation(player.Stars, FontSize * 1.5f));
+                        spPlayer.Children.Add(ViewUtils.CreateStarsView(player.Stars, FontSize * 1.5f));
                     }
                     else
                     {
@@ -175,7 +175,7 @@ namespace TheManager_GUI.ViewMisc
                 {
                     if (!LevelsInNumbers)
                     {
-                        spPlayer.Children.Add(ViewUtils.CreateStarNotation(player.StarsPotential, FontSize * 1.5f));
+                        spPlayer.Children.Add(ViewUtils.CreateStarsView(player.StarsPotential, FontSize * 1.5f));
                     }
                     else
                     {

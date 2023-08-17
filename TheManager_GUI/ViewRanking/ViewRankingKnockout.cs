@@ -5,32 +5,109 @@ using System.Windows.Controls;
 using TheManager;
 using TheManager.Comparators;
 using System.Windows.Media.Imaging;
+using TheManager_GUI.Styles;
+using System.Linq;
 
 namespace TheManager_GUI.VueClassement
 {
-    public class ViewRankingElimination : View
+    public class ViewRankingKnockout : View
     {
 
         private readonly KnockoutRound _round;
         private readonly double _sizeMultiplier;
 
-        public ViewRankingElimination(KnockoutRound round, double sizeMultiplier)
+        public ViewRankingKnockout(KnockoutRound round, double sizeMultiplier)
         {
             _round = round;
             _sizeMultiplier = sizeMultiplier;
         }
 
+        public void FillOpposition(Grid grid, List<Match> pair, bool isInternational, bool nationalCup, int row)
+        {
+            Image homeLogo = null;
+            Image awayLogo = null;
+            Match lastMatch = pair.Last();
+            bool lastMatchInversed = pair.Count == 2;
+            if (isInternational)
+            {
+                homeLogo = ViewUtils.CreateFlag(pair[0].home.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier);
+                awayLogo = ViewUtils.CreateFlag(pair[0].away.Country(), 15 * _sizeMultiplier, 15 * _sizeMultiplier);
+            }
+            else
+            {
+                homeLogo = ViewUtils.CreateLogo(pair[0].home, 15 * _sizeMultiplier, 15 * _sizeMultiplier);
+                awayLogo = ViewUtils.CreateLogo(pair[0].away, 15 * _sizeMultiplier, 15 * _sizeMultiplier);
+            }
+            AddElementToGrid(grid, homeLogo, row, 0);
+            AddElementToGrid(grid, awayLogo, row+1, 0);
+
+            if (!isInternational && !_round.Tournament.isChampionship)
+            {
+                TextBlock tbChampionshipHome = ViewUtils.CreateTextBlock(pair[0].home.Championship.shortName, StyleDefinition.styleTextPlain, 10 * _sizeMultiplier, 30 * _sizeMultiplier);
+                TextBlock tbChampionshipAway = ViewUtils.CreateTextBlock(pair[0].away.Championship.shortName, StyleDefinition.styleTextPlain, 10 * _sizeMultiplier, 30 * _sizeMultiplier);
+                AddElementToGrid(grid, tbChampionshipHome, row, 1);
+                AddElementToGrid(grid, tbChampionshipAway, row+1, 1);
+            }
+
+            TextBlock tbHomeName = ViewUtils.CreateTextBlock(pair[0].home.name, StyleDefinition.styleTextPlain, -1, -1, null, null, lastMatch.Winner == pair[0].home ? true : false);
+            TextBlock tbAwayName = ViewUtils.CreateTextBlock(pair[0].away.name, StyleDefinition.styleTextPlain, -1, -1, null, null, lastMatch.Winner == pair[0].away ? true : false);
+            AddElementToGrid(grid, tbHomeName, row, 2);
+            AddElementToGrid(grid, tbAwayName, row+1, 2);
+
+            string homeScore1 = pair[0].Played ? pair[0].score1.ToString() : "";
+            string awayScore1 = pair[0].Played ? pair[0].score2.ToString() : "";
+            TextBlock tbHomeScore1 = ViewUtils.CreateTextBlock(homeScore1, StyleDefinition.styleTextPlainCenter);
+            TextBlock tbAwayScore1 = ViewUtils.CreateTextBlock(awayScore1, StyleDefinition.styleTextPlainCenter);
+            AddElementToGrid(grid, tbHomeScore1, row, 3);
+            AddElementToGrid(grid, tbAwayScore1, row + 1, 3);
+
+            if(pair.Count > 1)
+            {
+                string homeScore2 = pair[1].Played ? pair[1].score1.ToString() : "";
+                string awayScore2 = pair[1].Played ? pair[1].score2.ToString() : "";
+                TextBlock tbHomeScore2 = ViewUtils.CreateTextBlock(awayScore2, StyleDefinition.styleTextPlainCenter);
+                TextBlock tbAwayScore2 = ViewUtils.CreateTextBlock(homeScore2, StyleDefinition.styleTextPlainCenter);
+                AddElementToGrid(grid, tbHomeScore2, row, 4);
+                AddElementToGrid(grid, tbAwayScore2, row + 1, 4);
+            }
+            
+            if (lastMatch.prolongations)
+            {
+                TextBlock tbHomeExtra = ViewUtils.CreateTextBlock(lastMatch.Winner == pair[0].home ? "p." : "", StyleDefinition.styleTextPlainCenter);
+                TextBlock tbAwayExtra = ViewUtils.CreateTextBlock(lastMatch.Winner != pair[0].home ? "p." : "", StyleDefinition.styleTextPlainCenter);
+                AddElementToGrid(grid, tbHomeExtra, row, 5);
+                AddElementToGrid(grid, tbAwayExtra, row + 1, 5);
+            }
+
+            if (lastMatch.PenaltyShootout)
+            {
+                TextBlock tbHomePen = ViewUtils.CreateTextBlock(lastMatchInversed ? lastMatch.penaltyShootout2.ToString() : lastMatch.penaltyShootout1.ToString(), StyleDefinition.styleTextPlainCenter);
+                TextBlock tbAwayPen = ViewUtils.CreateTextBlock(lastMatchInversed ? lastMatch.penaltyShootout1.ToString() : lastMatch.penaltyShootout2.ToString(), StyleDefinition.styleTextPlainCenter);
+                AddElementToGrid(grid, tbHomePen, row, 6);
+                AddElementToGrid(grid, tbAwayPen, row + 1, 6);
+            }
+        }
+
         public override void Full(StackPanel spRanking)
         {
-            spRanking.Children.Clear();
+            bool internationalTournament = _round.Tournament.IsInternational();
+            bool nationalCup = !internationalTournament && !_round.Tournament.isChampionship;
+
+
             List<Match> matchs = new List<Match>(_round.matches);
             matchs.Sort(new MatchDateComparator());
 
-            bool internationalTournament = _round.Tournament.IsInternational();
-
-            if(_round.twoLegs)
+            Grid grid = new Grid();
+            float[] colsWidths = new float[] { 10, nationalCup ? 10 : 0, 100, 10, 10, 10, 10 };
+            for(int col = 0; col < colsWidths.Length; col++)
             {
-                List<Match>[] pairs = new List<Match>[matchs.Count/2];
+                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(colsWidths[col], GridUnitType.Star) });
+            }
+
+            List<Match>[] pairs;
+            if (_round.twoLegs)
+            {
+                pairs = new List<Match>[matchs.Count / 2];
                 for (int i = 0; i < matchs.Count / 2; i++)
                 {
                     pairs[i] = new List<Match>();
@@ -60,7 +137,7 @@ namespace TheManager_GUI.VueClassement
                     }
                 }
 
-                foreach(List<Match> pair in pairs)
+                /*foreach(List<Match> pair in pairs)
                 {
 
                     StackPanel spFirstTeam = new StackPanel();
@@ -109,18 +186,18 @@ namespace TheManager_GUI.VueClassement
                     spRanking.Children.Add(spFirstTeam);
                     spRanking.Children.Add(spSecondTeam);
                     spRanking.Children.Add(new Separator());
-                }
+                }*/
             }
             else
             {
-                Dictionary<int, int> clubsByLevel = new Dictionary<int, int>();
-                for(int i = 1; i<10; i++)
+                pairs = new List<Match>[matchs.Count];
+                int i = 0;
+                foreach (Match m in matchs)
                 {
-                    clubsByLevel[i] = 0;
-                }
-                foreach(Match m in matchs)
-                {
-                    StackPanel spFirstTeam = new StackPanel();
+                    pairs[i] = new List<Match>() { m };
+                    i++;
+
+                    /*StackPanel spFirstTeam = new StackPanel();
                     spFirstTeam.Orientation = Orientation.Horizontal;
                     StackPanel spSecondTeam = new StackPanel();
                     spSecondTeam.Orientation = Orientation.Horizontal;
@@ -138,8 +215,6 @@ namespace TheManager_GUI.VueClassement
 
                     if (!internationalTournament && !_round.Tournament.isChampionship)
                     {
-                        clubsByLevel[m.home.Championship.level]++;
-                        clubsByLevel[m.away.Championship.level]++;
                         spFirstTeam.Children.Add(ViewUtils.CreateLabel(m.home.Championship.shortName, "StyleLabel2", 10 * _sizeMultiplier, 30 * _sizeMultiplier));
                         spSecondTeam.Children.Add(ViewUtils.CreateLabel(m.away.Championship.shortName, "StyleLabel2", 10 * _sizeMultiplier, 30 * _sizeMultiplier));
                     }
@@ -164,10 +239,25 @@ namespace TheManager_GUI.VueClassement
 
                     spRanking.Children.Add(spFirstTeam);
                     spRanking.Children.Add(spSecondTeam);
-                    spRanking.Children.Add(new Separator());
+                    spRanking.Children.Add(new Separator());*/
 
                 }
             }
+
+            for (int row = 0; row < pairs.Length * 3; row++)
+            {
+                int gridSize = (row + 1) % 3 == 0 ? 20 : 30;
+                grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(gridSize, GridUnitType.Pixel) });
+            }
+
+
+            for (int i = 0; i < pairs.Length; i++)
+            {
+                FillOpposition(grid, pairs[i], internationalTournament, nationalCup, i * 3);
+            }
+
+            spRanking.Children.Clear();
+            spRanking.Children.Add(grid);
         }
     }
 }

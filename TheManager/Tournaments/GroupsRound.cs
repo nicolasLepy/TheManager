@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -1019,6 +1021,11 @@ namespace TheManager
 
         }
 
+        public override bool IsKnockOutRound()
+        {
+            return false;
+        }
+
         public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
@@ -1045,7 +1052,8 @@ namespace TheManager
 
         public override int MatchesDayNumber()
         {
-            return _matches.Count / _groupsNumber / GroupMatchesPerGamesDay();
+            int groupMatchsPerGamesDay = GroupMatchesPerGamesDay();
+            return groupMatchsPerGamesDay == 0 || _groupsNumber == 0 ? 0 : _matches.Count / _groupsNumber / groupMatchsPerGamesDay;
         }
 
         public int GroupMatchesPerGamesDay()

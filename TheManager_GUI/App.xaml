@@ -4,27 +4,11 @@
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
 			 xmlns:local="clr-namespace:TheManager_GUI"
              StartupUri="MainWindow.xaml">
-    <Application.Resources>
+	<Application.Resources>
 
 		<ResourceDictionary>
 
 			<local:DataGridTournamentColumnConverter x:Key="DataGridTournamentColumnConverter"/>
-
-
-		<Color x:Key="Color1">#20833c</Color> 
-		<Color x:Key="Color2">#a4f17a</Color>
-		<Color x:Key="ColorDate">#D3D3D3</Color>
-		<Color x:Key="BackgroundColor">#1c262b</Color>
-		<Color x:Key="Promotion">#075002</Color>
-		<Color x:Key="UpperPlayOff">#5E7004</Color>
-		<Color x:Key="BottomPlayOff">#8c3236</Color>
-		<Color x:Key="Relegation">#7C0004</Color>
-		<Color x:Key="Retrogradation">#630003</Color>
-		<Color x:Key="CL1">#00478a</Color>
-		<Color x:Key="CL2">#006cd1</Color>
-		<Color x:Key="EL1">#785400</Color>
-		<Color x:Key="EL2">#ab7800</Color>
-		<Color x:Key="ECL1">#81008a</Color>
 
 		<FontFamily x:Key="Font">Bahnschrift Light</FontFamily>
 		<FontFamily x:Key="BoldFont">Bahnschrift SemiBold</FontFamily>
@@ -51,6 +35,7 @@
 		<SolidColorBrush x:Key="barrageRelegationColor" Color="{DynamicResource BottomPlayOff}"/>
 		<SolidColorBrush x:Key="relegationColor" Color="{DynamicResource Relegation}"/>
 		<SolidColorBrush x:Key="retrogradationColor" Color="{DynamicResource Retrogradation}"/>
+		<SolidColorBrush x:Key="colorTransparent" Color="Transparent"/>
 
 		<SolidColorBrush x:Key="victoireColor" Color="#033e00"/>
 		<SolidColorBrush x:Key="defaiteColor" Color="#3e1500"/>
@@ -60,7 +45,7 @@
 			<Setter Property="Stylus.IsFlicksEnabled"
             Value="false" />
 			<Setter Property="Foreground"
-            Value="{DynamicResource color2}" />
+            Value="{DynamicResource colorTitle2}" />
 			<Setter Property="Background"
             Value="Transparent" />
 			<Setter Property="Width"
@@ -479,6 +464,8 @@
 		</Style>
 
 			<ResourceDictionary.MergedDictionaries>
+				<ResourceDictionary Source="/Styles/colors.xaml"/>
+				<ResourceDictionary Source="/Styles/controls.xaml"/>
 				<ResourceDictionary Source="StringResources.fr.xaml"/>
 				<ResourceDictionary Source="StringResources.xaml"/>
 			</ResourceDictionary.MergedDictionaries>

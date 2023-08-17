@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TheManager_GUI"
+        xmlns:localviews="clr-namespace:TheManager_GUI.views"
 		xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 		mc:Ignorable="d"
         Title="Windows_Club" Height="900" Width="1300" Style="{StaticResource StyleWindows}" Left="50" Top="50">
@@ -49,7 +50,7 @@
 
 
 						</StackPanel>
-						<StackPanel Orientation="Vertical">
+						<StackPanel Orientation="Vertical" x:Name="spChartRight">
 							<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5">
 								<StackPanel Orientation="Vertical">
 									<Label Content="{StaticResource str_games}" Style="{StaticResource StyleLabel2}"/>
@@ -60,15 +61,6 @@
 								</StackPanel>
 							</Border>
 							<Label Content="{StaticResource str_formationCentre}" Style="{StaticResource StyleLabel2}"/>
-							<lvc:CartesianChart Width="450" Height="300" Series="{Binding CFCollection}" LegendLocation="Right" >
-								<lvc:CartesianChart.AxisY>
-									<lvc:Axis Title="{StaticResource str_level}" MinValue="0" MaxValue="100"></lvc:Axis>
-								</lvc:CartesianChart.AxisY>
-								<lvc:CartesianChart.AxisX>
-									<lvc:Axis Title="{StaticResource str_years}" Labels="{Binding LabelsAnnees}"></lvc:Axis>
-								</lvc:CartesianChart.AxisX>
-							</lvc:CartesianChart>
-
 						</StackPanel>
 					</StackPanel>
 				</TabItem>

@@ -16,7 +16,7 @@ namespace TheManager_GUI.VueClassement
             }
             if (round as KnockoutRound != null)
             {
-                res = new ViewRankingElimination(round as KnockoutRound, sizeMultiplier+0.2);
+                res = new ViewRankingKnockout(round as KnockoutRound, sizeMultiplier+0.2);
             }
             if (round as GroupsRound != null)
             {

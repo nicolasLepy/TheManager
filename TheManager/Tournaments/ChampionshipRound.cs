@@ -193,6 +193,10 @@ namespace TheManager
 
         public override int MatchesDayNumber()
         {
+            if(clubs.Count == 0)
+            {
+                return 0;
+            }
             int nbTeams = clubs.Count;
             int nbMatches = matches.Count;
             if (nbTeams % 2 == 1)
@@ -204,9 +208,17 @@ namespace TheManager
             {
                 nbMatchesDays *= 2;
             }
-            return nbMatchesDays ;
+            if(phases > 2)
+            {
+                nbMatchesDays = nbMatchesDays + ((phases - 2) * (nbMatches / nbTeams));
+            }
+            return nbMatchesDays;
         }
-        
+        public override bool IsKnockOutRound()
+        {
+            return false;
+        }
+
         public override List<Match> NextMatchesDay()
         {
             List<Match> res;
