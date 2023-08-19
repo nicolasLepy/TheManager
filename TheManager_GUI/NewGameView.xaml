@@ -61,6 +61,14 @@
 
 					</StackPanel>
 
+					<StackPanel Grid.Row="1" VerticalAlignment="Bottom" Margin="15">
+						<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_activeClubs}"/>
+						<TextBlock x:Name="tbActiveClubs" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 25"/>
+						<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_playersEstimation}"/>
+						<TextBlock x:Name="tbPlayersEstimation" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 25"/>
+
+					</StackPanel>
+
 				</Grid>
 
 			</Border>
@@ -97,16 +105,18 @@
 							</LinearGradientBrush>
 						</Border.Background>
 						<StackPanel VerticalAlignment="Center">
-							<ProgressBar Style="{StaticResource progressBarStyle}" Height="25" Value="20" Minimum="0" Maximum="100" Padding="5">
-							</ProgressBar>
+							<Grid>
+								<ProgressBar x:Name="progressBarLoading" Style="{StaticResource progressBarStyle}" Height="25" Value="5" Minimum="0" Maximum="100" Padding="5"/>
+								<TextBlock x:Name="textBlockLoading" Text="" Style="{StaticResource textPlain}" Margin="10, 0, 0, 0"/>
+							</Grid>
 						</StackPanel>
 					</Border>
 
 					<!-- Main Window : Main Panel -->
 					<Grid Grid.Row="2">
 						<Grid.RowDefinitions>
-							<RowDefinition Height="*"/>
-							<RowDefinition Height="*"/>
+							<RowDefinition Height="0.55*"/>
+							<RowDefinition Height="0.45*"/>
 						</Grid.RowDefinitions>
 
 						<!-- Main Panel : Game Selection Panel -->
@@ -129,7 +139,7 @@
 									<TextBlock Text="1. Select database" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
 								</Border>
 								<ComboBox Grid.Row="1" x:Name="comboBoxDatabase" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" Width="200" HorizontalContentAlignment="Center"/>
-								<Button Grid.Row="2" x:Name="buttonSelectDatabase" Style="{StaticResource buttonMenu}" Content="Valider"/>
+								<Button Grid.Row="2" x:Name="buttonSelectDatabase" Style="{StaticResource buttonMenu}" Content="Valider" Click="buttonSelectDatabase_Click"/>
 
 								<Grid Grid.Row="3">
 									<!-- Player informations -->
@@ -153,7 +163,7 @@
 									<TextBlock Grid.Column="0" Grid.Row="4" Text="Birth date" Style="{StaticResource textPlain}" Margin="10, 0, 0, 0"/>
 									<TextBox Grid.Column="1" Grid.Row="1" x:Name="textBoxFirstName" Margin="10" Style="{StaticResource textBoxStyle}" Text="Prenom" />
 									<TextBox Grid.Column="1" Grid.Row="2" x:Name="textBoxLastName" Margin="10" Style="{StaticResource textBoxStyle}" Text="Nom" />
-									<ComboBox Grid.Column="1" Grid.Row="3" x:Name="comboBoxCountry2" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" Width="200" HorizontalContentAlignment="Center"/>
+									<ComboBox Grid.Column="1" Grid.Row="3" x:Name="comboBoxCountry" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" Width="200" HorizontalContentAlignment="Center"/>
 									<DatePicker Grid.Column="1" Grid.Row="4" Margin="10" Name="datePickerBirthDate" Style="{StaticResource datePickerStyle}" SelectedDate="01/01/1950"/>
 								</Grid>
 
@@ -163,16 +173,27 @@
 							<Grid Grid.Column="1">
 								<Grid.RowDefinitions>
 									<RowDefinition Height="0.1*"/>
-									<RowDefinition Height="0.9*"/>
+									<RowDefinition Height="0.8*"/>
+									<RowDefinition Height="0.1*"/>
 								</Grid.RowDefinitions>
 								<Border Grid.Row="0" Background="{StaticResource colorPanel3}">
 									<TextBlock Text="2. Select leagues" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
 								</Border>
 								<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-									<Grid x:Name="gridCountriesSelection">
-
+									<Grid x:Name="gridCountriesSelection" Margin="10">
 									</Grid>
 								</ScrollViewer>
+								<Grid Grid.Row="2">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="0.4*"/>
+										<ColumnDefinition Width="0.4*"/>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+									</Grid.ColumnDefinitions>
+									<Button Grid.Column="1" x:Name="buttonLeaguesValidation" Style="{StaticResource buttonMenu}" Content="Valider" Click="buttonLeaguesValidation_Click"/>
+									<Button Grid.Column="2" x:Name="buttonEnableAllLeagues" Style="{StaticResource buttonMenu}" Content="Enable All" Click="buttonEnableAllLeagues_Click"/>
+									<Button Grid.Column="3" x:Name="buttonDisableAllLeagues" Style="{StaticResource buttonMenu}" Content="Disable All" Click="buttonDisableAllLeagues_Click"/>
+								</Grid>
 							</Grid>
 
 						</Grid>
@@ -180,8 +201,8 @@
 						<!-- Main Panel : Club selection -->
 						<Grid Grid.Row="1">
 							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="0.25*"/>
 								<ColumnDefinition Width="0.2*"/>
+								<ColumnDefinition Width="0.25*"/>
 								<ColumnDefinition Width="0.55*"/>
 							</Grid.ColumnDefinitions>
 
@@ -195,7 +216,8 @@
 									<TextBlock Text="4. Select player league" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
 								</Border>
 								<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-									
+									<TreeView x:Name="tvSelectLeague" Style="{StaticResource tournamentsTreeViewStyle}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+									</TreeView>
 								</ScrollViewer>
 							</Grid>
 
@@ -208,8 +230,14 @@
 								<Border Grid.Row="0" Background="{StaticResource colorPanel3}">
 									<TextBlock Text="5. Select player club" Style="{StaticResource textSecondary}" Margin="10, 0, 0, 0"/>
 								</Border>
-								<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-
+								<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="10">
+									<Grid x:Name="gridSelectClub">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.1*"/>
+											<ColumnDefinition Width="0.55*"/>
+											<ColumnDefinition Width="0.35*"/>
+										</Grid.ColumnDefinitions>
+									</Grid>
 								</ScrollViewer>
 							</Grid>
 
@@ -224,8 +252,8 @@
 								<!-- Player : Club Infos -->
 								<Grid Grid.Row="1">
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="0.4*"/>
-										<ColumnDefinition Width="0.6*"/>
+										<ColumnDefinition Width="0.35*"/>
+										<ColumnDefinition Width="0.65*"/>
 									</Grid.ColumnDefinitions>
 									<Grid Grid.Column="0">
 										<Grid.RowDefinitions>
@@ -240,25 +268,30 @@
 											<ColumnDefinition Width="0.4*"/>
 											<ColumnDefinition Width="0.6*"/>
 										</Grid.ColumnDefinitions>
-										<Image Grid.Column="0" Grid.Row="0" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
-										<Image Grid.Column="0" Grid.Row="1" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
-										<Image Grid.Column="0" Grid.Row="2" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
-										<Image Grid.Column="0" Grid.Row="3" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
-										<Image Grid.Column="0" Grid.Row="4" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
-										<TextBlock Grid.Column="1" Grid.Row="0" Style="{StaticResource textPlain}" Text="Budget"/>
-										<TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource textPlain}" Text="Stade"/>
-										<TextBlock Grid.Column="1" Grid.Row="2" Style="{StaticResource textPlain}" Text="Pays"/>
-										<TextBlock Grid.Column="1" Grid.Row="3" Style="{StaticResource textPlain}" Text="Status"/>
-										<TextBlock Grid.Column="1" Grid.Row="4" Style="{StaticResource textPlain}" Text="Date de début"/>
-										<TextBlock Grid.Column="2" Grid.Row="0" Style="{StaticResource textPlain}" Text="405K"/>
-										<TextBlock Grid.Column="2" Grid.Row="1" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Stade de la route de Lorient"/>
-										<TextBlock Grid.Column="2" Grid.Row="2" Style="{StaticResource textPlain}" Text="Angleterre"/>
-										<TextBlock Grid.Column="2" Grid.Row="3" Style="{StaticResource textPlain}" Text="Semi-professionnel"/>
-										<TextBlock Grid.Column="2" Grid.Row="4" Style="{StaticResource textPlain}" Text="01/09/2023"/>
+										<Image x:Name="imagePresentationBudget" Grid.Column="0" Grid.Row="0" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image x:Name="imagePresentationStadium" Grid.Column="0" Grid.Row="1" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image x:Name="imagePresentationCountry" Grid.Column="0" Grid.Row="2" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image x:Name="imagePresentationStatus" Grid.Column="0" Grid.Row="3" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<Image x:Name="imagePresentationStartDate" Grid.Column="0" Grid.Row="4" Source="icons\ranking.png" Height="30" Style="{StaticResource image}"></Image>
+										<TextBlock x:Name="tbPresentationBudget" Grid.Column="1" Grid.Row="0" Style="{StaticResource textPlain}" Text="Budget"/>
+										<TextBlock x:Name="tbPresentationStadium" Grid.Column="1" Grid.Row="1" Style="{StaticResource textPlain}" Text="Stade"/>
+										<TextBlock x:Name="tbPresentationCountry" Grid.Column="1" Grid.Row="2" Style="{StaticResource textPlain}" Text="Pays"/>
+										<TextBlock x:Name="tbPresentationStatus" Grid.Column="1" Grid.Row="3" Style="{StaticResource textPlain}" Text="Status"/>
+										<TextBlock x:Name="tbPresentationStartDate" Grid.Column="1" Grid.Row="4" Style="{StaticResource textPlain}" Text="Date de début"/>
+										<TextBlock x:Name="tbClubBudget" Grid.Column="2" Grid.Row="0" Style="{StaticResource textPlain}" Text=""/>
+										<TextBlock x:Name="tbClubStadium" Grid.Column="2" Grid.Row="1" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text=""/>
+										<TextBlock x:Name="tbClubCountry" Grid.Column="2" Grid.Row="2" Style="{StaticResource textPlain}" Text=""/>
+										<TextBlock x:Name="tbClubStatus" Grid.Column="2" Grid.Row="3" Style="{StaticResource textPlain}" Text=""/>
+										<TextBlock x:Name="tbClubStartDate" Grid.Column="2" Grid.Row="4" Style="{StaticResource textPlain}" Text=""/>
 									</Grid>
+									<ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto" Margin="10">
+										<StackPanel x:Name="spClubPlayers" Orientation="Vertical">
+											
+										</StackPanel>
+									</ScrollViewer>
 
 								</Grid>
-								<Button Grid.Row="2" x:Name="buttonSelectClub" Style="{StaticResource buttonMenu}" Content="Valider"/>
+								<Button Grid.Row="2" x:Name="buttonSelectClub" Style="{StaticResource buttonMenu}" Content="Valider" Click="buttonSelectClub_Click"/>
 							</Grid>
 
 						</Grid>

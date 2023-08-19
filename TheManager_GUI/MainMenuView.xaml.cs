@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TheManager;
 using TheManager.Comparators;
+using TheManager_GUI.controls;
 using TheManager_GUI.Styles;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.views;
@@ -167,6 +168,21 @@ namespace TheManager_GUI
                 tbGameDate.Text = _game.date.ToString("dddd dd MMMM yyyy");
                 Match nextGame = _game.club.NextGame;
                 FillNextGamePanel(nextGame);
+                FillNews();
+            }
+        }
+
+        private void FillNews()
+        {
+            spNews.Children.Clear();
+            for (int i = Session.Instance.Game.articles.Count - 1, total=0; i >= 0 && total < 5; i--, total++)
+            {
+                Article article = Session.Instance.Game.articles[i];
+                int days = Utils.DaysNumberBetweenTwoDates(Session.Instance.Game.date, article.publication);
+                string dateString = days == 0 ? spNews.FindResource("str_today").ToString() : String.Format(spNews.FindResource("str_daysAgo").ToString(), days, (days == 1 ? "" : "s"));
+                ControlNewsItem controlNewsItem = new ControlNewsItem() { Title = dateString, NewsContent = article.title };
+                spNews.Children.Add(controlNewsItem);
+
             }
         }
 
@@ -259,83 +275,10 @@ namespace TheManager_GUI
 
         private void FillTournamentsTreeView()
         {
-            tvTournaments.Items.Clear();
-            tvTournaments.Items.Add(CreateNavigationContinent(_game.kernel.world));
-        }
-
-        private StackPanel CreateTreeViewItemComponent(string itemName, string imagePath)
-        {
-            StackPanel spNavigationItem = new StackPanel();
-            spNavigationItem.Orientation = Orientation.Horizontal;
-            spNavigationItem.Margin = new Thickness(0, 2, 0, 2);
-            Image logoTournament = new Image();
-            logoTournament.Style = Application.Current.FindResource("image") as Style;
-            logoTournament.Source = new BitmapImage(new Uri(imagePath));
-            logoTournament.Height = 14;
-            logoTournament.Width = 21;
-            logoTournament.Margin = new Thickness(0, 0, 10, 0);
-            TextBlock tbTournament = new TextBlock();
-            tbTournament.Style = Application.Current.FindResource("textNavigation") as Style;
-            tbTournament.Text = itemName;
-            tbTournament.VerticalAlignment = VerticalAlignment.Center;
-
-            spNavigationItem.Children.Add(logoTournament);
-            spNavigationItem.Children.Add(tbTournament);
-
-            return spNavigationItem;
-        }
-
-        private StackPanel CreateNavigationTournament(Tournament tournament)
-        {
-            StackPanel spTournament = CreateTreeViewItemComponent(tournament.name, Utils.LogoTournament(tournament));
-            spTournament.MouseLeftButtonUp += (sender, e) => stackPanelNavigation_OnClick(sender, e, tournament);
-            return spTournament;
-        }
-        
-        private TreeViewItem CreateNavigationContinent(Continent continent)
-        {
-            TreeViewItem treeViewItemContainer = new TreeViewItem();
-            treeViewItemContainer.Margin = new Thickness(0, 2, 0, 2);
-
-            StackPanel spTreeViewItemHeader = CreateTreeViewItemComponent(continent.Name(), Utils.Logo(continent));
-            treeViewItemContainer.Header = spTreeViewItemHeader;
-
-            foreach (Tournament t in continent.Tournaments())
-            {
-                treeViewItemContainer.Items.Add(CreateNavigationTournament(t));
-            }
-
-            foreach(Continent subContinent in continent.continents)
-            {
-                treeViewItemContainer.Items.Add(CreateNavigationContinent(subContinent));
-            }
-
-            foreach(Country country in continent.countries)
-            {
-                if(country.Tournaments().Count > 0)
-                {
-                    treeViewItemContainer.Items.Add(CreateNavigationCountry(country));
-                }
-            }
-
-            return treeViewItemContainer;
-
-        }
-
-        private TreeViewItem CreateNavigationCountry(Country country)
-        {
-            TreeViewItem treeViewItemContainer = new TreeViewItem();
-            treeViewItemContainer.Margin = new Thickness(0, 2, 0, 2);
-
-            StackPanel spTreeViewItemHeader = CreateTreeViewItemComponent(country.Name(), Utils.Flag(country));
-            treeViewItemContainer.Header = spTreeViewItemHeader;
-
-            foreach(Tournament t in country.Tournaments())
-            {
-                treeViewItemContainer.Items.Add(CreateNavigationTournament(t));
-            }
-
-            return treeViewItemContainer;
+            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvTournaments, _game.kernel.world);
+            controller.TournamentValidator = (t) => true;
+            controller.OnClickTournament = stackPanelNavigation_OnClick;
+            controller.Fill();
         }
 
         /* EVENTS HANDLER */
@@ -357,23 +300,6 @@ namespace TheManager_GUI
         private void buttonQuit_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }
-
-        private void tvTournaments_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            if (sender is TreeView && !e.Handled)
-            {
-                e.Handled = true;
-                var eventArg = new MouseWheelEventArgs(e.MouseDevice, e.Timestamp, e.Delta);
-                eventArg.RoutedEvent = UIElement.MouseWheelEvent;
-                eventArg.Source = sender;
-                var parent = ((Control)sender).Parent as UIElement;
-                parent.RaiseEvent(eventArg);
-            }
-        }
-
-        private void tvTournaments_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
         }
 
         private void stackPanelNavigation_OnClick(object sender, RoutedEventArgs e, Tournament tournament)

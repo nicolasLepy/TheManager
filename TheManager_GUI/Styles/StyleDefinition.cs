@@ -18,6 +18,7 @@ namespace TheManager_GUI.Styles
         public static string styleLiveChartPieChart = "liveChartPieChartStyle";
         public static string styleLiveChartPieSerie = "liveChartPieSerieStyle";
         public static string styleLiveChartCartesianChart = "liveChartCartesianChartStyle";
+        public static string styleCheckBox = "checkBoxStyle";
 
         public static string fontSizeTitle = "fontSizeTitle";
         public static string fontSizeSecondary = "fontSizeSecondary";

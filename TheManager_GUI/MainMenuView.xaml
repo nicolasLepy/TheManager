@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
         xmlns:local="clr-namespace:TheManager_GUI"
+		xmlns:uc="clr-namespace:TheManager_GUI.controls"
         mc:Ignorable="d"
 		Background="Transparent"
 		WindowStartupLocation="CenterScreen"
@@ -66,12 +67,8 @@
 
 					</StackPanel>
 					<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top">
-						<TreeView x:Name="tvTournaments" PreviewMouseWheel="tvTournaments_PreviewMouseWheel" ScrollViewer.HorizontalScrollBarVisibility="Disabled" SelectedItemChanged="tvTournaments_SelectedItemChanged">
-								<TreeView.Resources>
-									<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource colorHighlight1}" />
-								</TreeView.Resources>
-
-								<TreeViewItem Margin="0, 2, 0, 2">
+						<TreeView Style="{StaticResource tournamentsTreeViewStyle}" x:Name="tvTournaments" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
+							<TreeViewItem Margin="0, 2, 0, 2">
 									<TreeViewItem.Header>
 										<StackPanel Orientation="Horizontal">
 											<Image Style="{StaticResource image}" Source="icons/play.png" Height="15" Margin="0, 0, 10, 0"/>
@@ -268,16 +265,8 @@
 									<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
 								</LinearGradientBrush>
 							</Border.Background>
-							<StackPanel Orientation="Vertical" Margin="10, 25, 10, 10">
-								<TextBlock Style="{StaticResource textSecondary}" Text="News Title 1" Margin="0, 0, 0, 10"/>
-								<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
-								<Rectangle VerticalAlignment="Stretch" Width="100" Margin="30" Stroke="{StaticResource colorTitle2}" />
-								<TextBlock Style="{StaticResource textSecondary}" Text="News Title 2" Margin="0, 0, 0, 10"/>
-								<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
-								<Rectangle VerticalAlignment="Stretch" Width="100" Margin="30" Stroke="{StaticResource colorTitle2}" />
-								<TextBlock Style="{StaticResource textSecondary}" Text="News Title 3" Margin="0, 0, 0, 10"/>
-								<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
-								<Rectangle VerticalAlignment="Stretch" Width="100" Margin="30" Stroke="{StaticResource colorTitle2}" />
+							<StackPanel x:Name="spNews" Orientation="Vertical" Margin="10, 25, 10, 10">
+								<uc:ControlNewsItem Title="News Title 1" NewsContent="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
 							</StackPanel>
 						</Border>
 					</Grid>

@@ -135,7 +135,7 @@ namespace TheManager_GUI.views
                 StackPanel spScoreBlock = new StackPanel();
                 spScoreBlock.Orientation = Orientation.Vertical;
                 spScoreBlock.VerticalAlignment = VerticalAlignment.Center;
-                TextBlock tbScore = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.ScoreToString(false), StyleDefinition.styleTextPlain, fontSize, -1);
+                TextBlock tbScore = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.ScoreToString(false), StyleDefinition.styleTextPlain, fontSize, -1, null, true);
                 string fontColor = "defaiteColor";
                 if (colorizeResult)
                 {

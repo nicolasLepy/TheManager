@@ -49,11 +49,11 @@ namespace TheManager_GUI.views
             }
             if (level)
             {
-                columns.Add(new GridColumnDefinition(GridColumn.PLAYER_LEVEL, 100, 3));
+                columns.Add(new GridColumnDefinition(GridColumn.PLAYER_LEVEL, levelsInNumbers ? 50 : 100, 3));
             }
             if (potential)
             {
-                columns.Add(new GridColumnDefinition(GridColumn.PLAYER_POTENTIAL, 100, 4));
+                columns.Add(new GridColumnDefinition(GridColumn.PLAYER_POTENTIAL, levelsInNumbers ? 50 : 100, 4));
             }
             if (games)
             {

@@ -15,6 +15,7 @@ using TheManager;
 using TheManager.Comparators;
 using Application = System.Windows.Application;
 using System.Windows.Annotations;
+using TheManager_GUI.Styles;
 
 namespace TheManager_GUI
 {
@@ -104,7 +105,7 @@ namespace TheManager_GUI
         /// <param name="width">Width of the label box (-1 to define no width)</param>
         /// <param name="color">Color of the label</param>
         /// <returns></returns>
-        public static TextBlock CreateTextBlock(string content, string styleName, double fontSize = -1, double width = -1, Brush color = null, Brush backgroundColor = null, bool bold = false)
+        public static TextBlock CreateTextBlock(string content, string styleName, double fontSize = -1, double width = -1, Brush color = null, Brush backgroundColor = null, bool bold = false, bool highlightOnMouseHover = false)
         {
             TextBlock textBlock = new TextBlock();
             textBlock.Text = content;
@@ -133,22 +134,23 @@ namespace TheManager_GUI
                 textBlock.FontWeight = FontWeights.Bold;
                 // textBlock.FontFamily = App.Current.TryFindResource("BoldFont") as FontFamily;
             }
-            
+
             //For layout debug
-            textBlock.MouseEnter += TextBlock_MouseEnter;
-            textBlock.MouseLeave += TextBlock_MouseLeave;
+            //textBlock.MouseEnter += TextBlock_MouseEnter;
+            //textBlock.MouseLeave += TextBlock_MouseLeave;
+            if (highlightOnMouseHover)
+            {
+                Brush baseBrush = textBlock.Background;
+                textBlock.MouseEnter += (sender, e) => TextBlock_ChangeColor(sender, e, Application.Current.FindResource(StyleDefinition.solidColorBrushColorButtonOver) as Brush);
+                textBlock.MouseLeave += (sender, e) => TextBlock_ChangeColor(sender, e, baseBrush);
+            }
 
             return textBlock;
         }
 
-        private static void TextBlock_MouseLeave(object sender, MouseEventArgs e)
+        private static void TextBlock_ChangeColor(object sender, MouseEventArgs e, Brush color)
         {
-            (sender as TextBlock).Background = Brushes.Transparent;
-        }
-
-        private static void TextBlock_MouseEnter(object sender, MouseEventArgs e)
-        {
-            (sender as TextBlock).Background = Application.Current.TryFindResource("cl2Color") as SolidColorBrush;
+            (sender as TextBlock).Background = color;
         }
 
         /// <summary>
@@ -200,9 +202,9 @@ namespace TheManager_GUI
             return res;
         }
 
-        public static TextBlock CreateTextBlockOpenWindow<T>(T t, OpenWindowOnButtonClick<T> onClick, string content, string style, double fontSize, double width, Brush color = null)
+        public static TextBlock CreateTextBlockOpenWindow<T>(T t, OpenWindowOnButtonClick<T> onClick, string content, string style, double fontSize, double width, Brush color = null, bool highlightOnMouseHover = false)
         {
-            TextBlock tbBlock = CreateTextBlock(content, style, fontSize, width, color);
+            TextBlock tbBlock = CreateTextBlock(content, style, fontSize, width, color, null, false, highlightOnMouseHover);
             tbBlock.MouseLeftButtonUp += new MouseButtonEventHandler((s, e) => onClick(t));
             return tbBlock;
         }

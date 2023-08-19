@@ -112,6 +112,9 @@
     <Compile Include="CalendarWindow.xaml.cs">
       <DependentUpon>CalendarWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="controls\ControlNewsItem.xaml.cs">
+      <DependentUpon>ControlNewsItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="CountryWindow.xaml.cs">
       <DependentUpon>CountryWindow.xaml</DependentUpon>
     </Compile>
@@ -197,8 +200,13 @@
     <Compile Include="views\ChartView.cs" />
     <Compile Include="views\MoneyValueForegroundConverted.cs" />
     <Compile Include="views\PlayersView.cs" />
+    <Compile Include="views\TournamentsTreeView.cs" />
     <Compile Include="views\ViewScores.cs" />
     <Page Include="CalendarWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlNewsItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

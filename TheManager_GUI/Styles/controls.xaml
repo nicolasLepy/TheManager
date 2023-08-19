@@ -120,6 +120,14 @@
 		<Setter Property="RenderOptions.BitmapScalingMode" Value="HighQuality"/>
 	</Style>
 
+	<Style x:Key="tournamentsTreeViewStyle" TargetType="TreeView">
+		<Setter Property="Background" Value="Transparent"/>
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Style.Resources>
+			<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{StaticResource colorHighlight1}" />
+		</Style.Resources>
+	</Style>
+	
 	<Style x:Name="treeViewNavigation" TargetType="TreeView">
 		<Setter Property="Background" Value="Transparent"/>
 		<Setter Property="BorderBrush" Value="Transparent"/>
@@ -344,6 +352,42 @@
 		</Style.Resources>
 	</Style>
 
-
+	<!-- https://stackoverflow.com/a/65630513/8880893 -->
+	<Style x:Key="checkBoxStyle" TargetType="{x:Type CheckBox}">
+		<Setter Property="FontSize" Value="{StaticResource fontSizeNavigation}"/>
+		<Setter Property="FontFamily" Value="{DynamicResource fontFamily}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorPlainText1}" />
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type CheckBox}">
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" >
+						<Border BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" Width="15" Height="15">
+							<Path Stretch="Uniform" Width="15" Height="10" Fill="{StaticResource colorPlainText1}" Name="eliCheck" Data="F1 M 9.97498,1.22334L 4.6983,9.09834L 4.52164,9.09834L 0,5.19331L 1.27664,3.52165L 4.255,6.08833L 8.33331,1.52588e-005L 9.97498,1.22334 Z " Visibility="Collapsed"/>
+						</Border>
+						<TextBlock Margin="5,0,0,0"  VerticalAlignment="Center" Foreground="{TemplateBinding Foreground}" Text="{TemplateBinding Content}"></TextBlock>
+					</StackPanel>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsMouseOver" Value="True">
+							<Setter Property="Background" Value="{StaticResource colorButtonOver}" />
+						</Trigger>
+						<Trigger Property="IsPressed" Value="True">
+							<Setter Property="Background" Value="Transparent" />
+						</Trigger>
+						<Trigger Property="IsEnabled" Value="False">
+							<Setter Property="Background" Value="Transparent" />
+							<Setter Property="Foreground" Value="{StaticResource colorPlainText1}" />
+							<Setter Property="BorderBrush" Value="Transparent"/>
+							<Setter TargetName="eliCheck" Property="Opacity" Value="0.5" />
+						</Trigger>
+						<Trigger Property="IsChecked" Value="True">
+							<Setter TargetName="eliCheck" Property="Visibility" Value="Visible"></Setter>
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 
 </ResourceDictionary>
