@@ -85,7 +85,7 @@ namespace TheManager_GUI.VueClassement
             }
             else if(c as NationalTeam != null)
             {
-                CountryWindow cw = new CountryWindow(c as NationalTeam);
+                CountryView cw = new CountryView(c as NationalTeam);
                 cw.Show();
             }
         }

@@ -150,6 +150,12 @@ namespace TheManager_GUI
             view.Show();
         }
 
+        private void ShowCalendar()
+        {
+            CalendarWindow view = new CalendarWindow();
+            view.Show();
+        }
+
         private void Play()
         {
             List<Match> matchs = _game.NextDay();
@@ -325,6 +331,11 @@ namespace TheManager_GUI
             ShowSearchPlayers();
         }
 
+        private void buttonCalendar_Click(object sender, RoutedEventArgs e)
+        {
+            ShowCalendar();
+        }
+
         private void buttonLongSimulation_Click(object sender, RoutedEventArgs e)
         {
             bool oldNoScreenRefreshValue = _noScreenRefresh;
@@ -468,5 +479,6 @@ namespace TheManager_GUI
                 _modifiers.SetAdministrativeRetrogradationsFr();
             }
         }
+
     }
 }

@@ -193,5 +193,7 @@
 	<system:String x:Key="str_new_game_player_club">5. Select player club</system:String>
 	<system:String x:Key="str_no_entry">No saved entry</system:String>
 	<system:String x:Key="str_total">Total</system:String>
+	<system:String x:Key="str_host">Host</system:String>
+	<system:String x:Key="str_performance">Performance</system:String>
 
 </ResourceDictionary>

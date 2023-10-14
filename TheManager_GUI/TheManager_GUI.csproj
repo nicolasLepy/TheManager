@@ -115,6 +115,9 @@
     <Compile Include="ClubView.xaml.cs">
       <DependentUpon>ClubView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="controls\ControlCountryTournament.xaml.cs">
+      <DependentUpon>ControlCountryTournament.xaml</DependentUpon>
+    </Compile>
     <Compile Include="controls\ControlInternationalRanking.xaml.cs">
       <DependentUpon>ControlInternationalRanking.xaml</DependentUpon>
     </Compile>
@@ -127,7 +130,13 @@
     <Compile Include="controls\ControlStatItem.xaml.cs">
       <DependentUpon>ControlStatItem.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CountryWindow.xaml.cs">
+    <Compile Include="controls\ControlStickerTournament.xaml.cs">
+      <DependentUpon>ControlStickerTournament.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CountryView.xaml.cs">
+      <DependentUpon>CountryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\CountryWindow.xaml.cs">
       <DependentUpon>CountryWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="old\DialogDatabase.xaml.cs">
@@ -238,6 +247,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="controls\ControlCountryTournament.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="controls\ControlInternationalRanking.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -251,6 +264,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="controls\ControlStatItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlStickerTournament.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CountryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -286,7 +307,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CountryWindow.xaml">
+    <Page Include="old\CountryWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -485,6 +506,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons\contract.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\calendar.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

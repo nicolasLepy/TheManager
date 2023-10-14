@@ -212,6 +212,24 @@ namespace TheManager
         }
 
         /// <summary>
+        /// Get hosts countries of the tournament
+        /// </summary>
+        /// <returns>List of hosts countries</returns>
+        public List<Country> Hosts()
+        {
+            List<Country> hosts = new List<Country>();
+            foreach(Stadium stadium in _hostStadiums)
+            {
+                Country country = stadium.city.Country();
+                if(!hosts.Contains(country))
+                {
+                    hosts.Add(country);
+                }
+            }
+            return hosts;
+        }
+
+        /// <summary>
         /// Initialize retained country and stadiums for the tournament
         /// </summary>
         public void InitializeHost()
@@ -1287,6 +1305,7 @@ namespace TheManager
             }
             copy.statistics = statistics;
             copy.currentRound = copy.rounds.Count - 1;
+            copy.hostStadiums.AddRange(hostStadiums);
 
             return copy;
         }

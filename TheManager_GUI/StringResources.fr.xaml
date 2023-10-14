@@ -193,5 +193,7 @@
 	<system:String x:Key="str_new_game_player_club">5. Sélectionner le club du joueur</system:String>
 	<system:String x:Key="str_no_entry">Aucune entrée enregistrée</system:String>
 	<system:String x:Key="str_total">Total</system:String>
+	<system:String x:Key="str_host">Hôte</system:String>
+	<system:String x:Key="str_performance">Parcours</system:String>
 
 </ResourceDictionary>
