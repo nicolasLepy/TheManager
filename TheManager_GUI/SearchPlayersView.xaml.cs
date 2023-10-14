@@ -37,7 +37,7 @@ namespace TheManager_GUI
             if(playersPanel != null)
             {
                 List<Player> players = FilterPlayers(_currentPlayersBase);
-                PlayersView view = new PlayersView(players, 11, true, true, true, true, true, true, true, false, true, true, false, false, false, false, false, true, true);
+                PlayersView view = new PlayersView(players, 11, true, true, true, true, true, true, true, true, false, true, true, false, false, false, false, false, true, true);
                 view.Full(playersPanel);
                 textPlayersCount.Text = players.Count > 1000 ? FindResource("str_tooManyPlayers").ToString() : String.Format("{0} {1}", players.Count, FindResource("str_players"));
             }

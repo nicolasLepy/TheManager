@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using TheManager;
 
-namespace TheManager_GUI.VueClassement
+namespace TheManager_GUI.Views
 {
     public class FactoryViewRanking
     {

@@ -17,8 +17,8 @@
 			<RowDefinition Height="0.25*"/>
 			<RowDefinition Height="0.25*"/>
 		</Grid.RowDefinitions>
-		<TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource textSecondary}" Text="{StaticResource str_titleholder}" Margin="10, 0, 0, 0"/>
-		<TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource textPlain}" Text="{Binding TitleHolder}" Margin="10, 0, 0, 0"/>
+		<TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource textPlain}" FontWeight="Bold" Text="{StaticResource str_titleholder}" Margin="10, 0, 0, 0"/>
+		<TextBlock Grid.Row="1" Grid.Column="1" Style="{StaticResource textPlain}" Text="{Binding TitleHolder}" TextWrapping="Wrap" Margin="10, 0, 0, 0"/>
 		<TextBlock Grid.Row="3" Grid.Column="0" Style="{StaticResource textPlain}" Text="{Binding TournamentName}" TextWrapping="Wrap" TextAlignment="Center"/>
 		<Image Grid.Row="0" Grid.RowSpan="3" Grid.Column="0" Style="{StaticResource image}" Source="{Binding ImagePath}" Height="75"/>
 	</Grid>

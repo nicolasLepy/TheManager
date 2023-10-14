@@ -21,7 +21,7 @@ using TheManager_GUI.controls;
 using TheManager_GUI.Styles;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.views;
-using TheManager_GUI.VueClassement;
+using TheManager_GUI.Views;
 
 namespace TheManager_GUI
 {
@@ -152,7 +152,7 @@ namespace TheManager_GUI
 
         private void ShowCalendar()
         {
-            CalendarWindow view = new CalendarWindow();
+            CalendarView view = new CalendarView();
             view.Show();
         }
 

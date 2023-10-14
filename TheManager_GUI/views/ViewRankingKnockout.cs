@@ -8,7 +8,7 @@ using System.Windows.Media.Imaging;
 using TheManager_GUI.Styles;
 using System.Linq;
 
-namespace TheManager_GUI.VueClassement
+namespace TheManager_GUI.Views
 {
     public class ViewRankingKnockout : View
     {

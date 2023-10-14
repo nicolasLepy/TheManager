@@ -1,0 +1,146 @@
+﻿<Window x:Class="TheManager_GUI.CalendarView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="CalendarView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.2*"/>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0" Margin="15">
+						<!--Menu Buttons-->
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
+					</StackPanel>
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+					<Grid Grid.Row="2" Margin="30">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="0.1*"/>
+							<RowDefinition Height="0.9*"/>
+						</Grid.RowDefinitions>
+						<!-- Calendar Controller -->
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0.3*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.2*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.3*"/>
+							</Grid.ColumnDefinitions>
+							<Button Grid.Column="1" x:Name="buttonMonthLeft" Style="{StaticResource buttonIcon}" tm:TMButtonProperties.Image="icons/left.png" Height="30" Click="buttonMonthLeft_Click"/>
+							<TextBlock Grid.Column="2" x:Name="textMonth" Style="{StaticResource textTitle}" TextAlignment="Center" Text="Mai 2024"/>
+							<Button Grid.Column="3" x:Name="buttonMonthRight" Style="{StaticResource buttonIcon}" tm:TMButtonProperties.Image="icons/left.png" Height="30" Click="buttonMonthRight_Click"/>
+						</Grid>
+						<!-- Calendar Panel -->
+						<Grid Grid.Row="1" x:Name="gridCalendar">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0.05*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.1*"/>
+								<ColumnDefinition Width="0.05*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.1*"/>
+							</Grid.RowDefinitions>
+						</Grid>
+					</Grid>
+
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

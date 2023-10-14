@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="TheManager_GUI.controls.ControlCalendarItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TheManager_GUI.controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="150">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="0.2*"/>
+			<RowDefinition Height="0.8*"/>
+		</Grid.RowDefinitions>
+		<Border Grid.Row="0" Background="{StaticResource colorBorderLight}" CornerRadius="5">
+			<TextBlock x:Name="tbDate" Text="Mercredi 25" Style="{StaticResource textPlainCenter}"/>
+		</Border>
+		<Border Grid.Row="1" Background="{Binding ColorBackground}" CornerRadius="10">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="0.3*"/>
+					<RowDefinition Height="0.7*"/>
+				</Grid.RowDefinitions>
+				<Grid Grid.Row="0">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.1*"/>
+						<ColumnDefinition Width="0.2*"/>
+						<ColumnDefinition Width="0.2*"/>
+						<ColumnDefinition Width="0.2*"/>
+						<ColumnDefinition Width="0.1*"/>
+					</Grid.ColumnDefinitions>
+					<Border Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+						<Image x:Name="imageMatchHome" Source="..." Style="{StaticResource image}" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Border}}"/>
+					</Border>
+					<Border Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+						<Image x:Name="imageMatchAway" Source="..." Style="{StaticResource image}" Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Border}}"/>
+					</Border>
+					<TextBlock x:Name="tbMatchInfo" Grid.Column="2" Text="..." TextWrapping="Wrap" Style="{StaticResource textPlainCenter}"/>
+				</Grid>
+				<Grid Grid.Row="1" x:Name="gridTournaments">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="0.3*"/>
+						<ColumnDefinition Width="0.7*"/>
+					</Grid.ColumnDefinitions>
+				</Grid>
+			</Grid>
+		</Border>   
+    </Grid>
+</UserControl>

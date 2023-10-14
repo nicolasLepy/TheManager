@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using TheManager;
 using TheManager.Comparators;
 using TheManager_GUI.ViewMisc;
-using TheManager_GUI.VueClassement;
+using TheManager_GUI.Views;
 
 namespace TheManager_GUI
 {

@@ -109,11 +109,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CalendarWindow.xaml.cs">
+    <Compile Include="CalendarView.xaml.cs">
+      <DependentUpon>CalendarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\CalendarWindow.xaml.cs">
       <DependentUpon>CalendarWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ClubView.xaml.cs">
       <DependentUpon>ClubView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlCalendarItem.xaml.cs">
+      <DependentUpon>ControlCalendarItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="controls\ControlCountryTournament.xaml.cs">
       <DependentUpon>ControlCountryTournament.xaml</DependentUpon>
@@ -180,21 +186,21 @@
     <Compile Include="SearchPlayersView.xaml.cs">
       <DependentUpon>SearchPlayersView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Styles\Controls.cs" />
-    <Compile Include="Styles\Langue.cs" />
-    <Compile Include="Styles\StyleDefinition.cs" />
-    <Compile Include="Styles\Theme.cs" />
-    <Compile Include="ViewMisc\ViewMatches.cs" />
-    <Compile Include="ViewMisc\ViewPlayers.cs" />
-    <Compile Include="ViewRanking\DataGridTournamentColumnConverter.cs" />
-    <Compile Include="ViewRanking\FactoryViewRanking.cs" />
-    <Compile Include="ViewRanking\View.cs" />
-    <Compile Include="ViewRanking\ViewRanking.cs" />
-    <Compile Include="ViewRanking\ViewRankingInactive.cs" />
-    <Compile Include="ViewRanking\ViewUtils.cs" />
-    <Compile Include="ViewRanking\ViewRankingChampionship.cs" />
-    <Compile Include="ViewRanking\ViewRankingKnockout.cs" />
-    <Compile Include="ViewRanking\ViewRankingGroups.cs" />
+    <Compile Include="styles\Controls.cs" />
+    <Compile Include="styles\Langue.cs" />
+    <Compile Include="styles\StyleDefinition.cs" />
+    <Compile Include="styles\Theme.cs" />
+    <Compile Include="old\ViewMatches.cs" />
+    <Compile Include="old\ViewPlayers.cs" />
+    <Compile Include="views\DataGridTournamentColumnConverter.cs" />
+    <Compile Include="views\FactoryViewRanking.cs" />
+    <Compile Include="views\View.cs" />
+    <Compile Include="views\ViewRanking.cs" />
+    <Compile Include="views\ViewRankingInactive.cs" />
+    <Compile Include="views\ViewUtils.cs" />
+    <Compile Include="views\ViewRankingChampionship.cs" />
+    <Compile Include="views\ViewRankingKnockout.cs" />
+    <Compile Include="views\ViewRankingGroups.cs" />
     <Compile Include="PregameWindow.xaml.cs">
       <DependentUpon>PregameWindow.xaml</DependentUpon>
     </Compile>
@@ -239,11 +245,19 @@
     <Compile Include="views\PlayersView.cs" />
     <Compile Include="views\TournamentsTreeView.cs" />
     <Compile Include="views\ViewScores.cs" />
-    <Page Include="CalendarWindow.xaml">
+    <Page Include="CalendarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\CalendarWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ClubView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlCalendarItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -303,7 +317,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\colors.xaml">
+    <Page Include="styles\colors.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -399,7 +413,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\controls.xaml">
+    <Page Include="styles\controls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -439,9 +453,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Stats\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\TheManager\TheManager.csproj">
       <Project>{c87d1486-6d8a-4041-afc6-f7f0f5bc6b4b}</Project>

@@ -10,7 +10,7 @@ using System.Windows.Media;
 using TheManager;
 using TheManager_GUI.Styles;
 
-namespace TheManager_GUI.VueClassement
+namespace TheManager_GUI.Views
 {
     public abstract class ViewRanking : View
     {
@@ -232,12 +232,10 @@ namespace TheManager_GUI.VueClassement
             }
 
             SolidColorBrush lineColor = Application.Current.TryFindResource(color) as SolidColorBrush;
-            Console.WriteLine("_continentalClubs " + _continentalClubs.Count);
             int counter = 0;
             foreach (KeyValuePair<Club, Qualification> kvp in _continentalClubs)
             {
                 counter++;
-                Console.WriteLine("_continentalClubs " + kvp.Key.name);
                 if (club == kvp.Key && counter > qualificationsToTournamentNextRounds)
                 {
                     color = InternationalQualificationColor(kvp.Value);

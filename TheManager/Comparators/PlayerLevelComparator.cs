@@ -13,6 +13,7 @@ namespace TheManager.Comparators
         POSITION,
         AGE,
         LEVEL,
+        CLUB,
         POTENTIAL,
         CONDITION,
         VALUE,

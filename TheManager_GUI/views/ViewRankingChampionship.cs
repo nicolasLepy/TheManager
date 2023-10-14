@@ -12,7 +12,7 @@ using TheManager_GUI.Styles;
 using System.Windows.Shapes;
 using Newtonsoft.Json.Linq;
 
-namespace TheManager_GUI.VueClassement
+namespace TheManager_GUI.Views
 {
     public class ViewRankingChampionship : ViewRanking
     {

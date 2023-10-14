@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TheManager;
 
-namespace TheManager_GUI.VueClassement
+namespace TheManager_GUI.Views
 {
 
     public enum GridColumn
@@ -36,7 +36,8 @@ namespace TheManager_GUI.VueClassement
         PLAYER_INTERNATIONAL_SELECTIONS,
         PLAYER_INTERNATIONAL_GOALS,
         PLAYER_CONTRACT_BEGIN,
-        PLAYER_CONTRACT_END
+        PLAYER_CONTRACT_END,
+        PLAYER_CLUB
     }
 
     public class GridColumnComparator : IComparer<GridColumnDefinition>

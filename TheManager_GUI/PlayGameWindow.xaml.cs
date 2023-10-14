@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using TheManager;
 using TheManager_GUI.ViewMisc;
-using TheManager_GUI.VueClassement;
+using TheManager_GUI.Views;
 
 namespace TheManager_GUI
 {

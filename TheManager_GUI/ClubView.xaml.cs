@@ -315,7 +315,7 @@ namespace TheManager_GUI
             imageClub.Source = new BitmapImage(new Uri(Utils.Logo(club)));
             imageLogo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
 
-            PlayersView pv = new PlayersView(club.Players(), 0.9f, true, true, true, true, true, true, true, true, true, true, false, false, false, false, false, false, true);
+            PlayersView pv = new PlayersView(club.Players(), 0.9f, true, true, true, false, true, true, true, true, true, true, true, false, false, false, false, false, false, true);
             pv.Full(panelClubTeam);
 
             List<Match> matchs = club.Games;

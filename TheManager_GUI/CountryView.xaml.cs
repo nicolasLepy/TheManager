@@ -77,7 +77,7 @@ namespace TheManager_GUI
             imageLogo.Source = new BitmapImage(new Uri(Utils.Flag(nationalTeam.country)));
 
             List<Player> nationalPlayers = nationalTeam.Players();
-            PlayersView vp = new PlayersView(nationalPlayers, 1, true, true, false, true, true, false, false, true, false, false, false, false, false, true, true, false, false);
+            PlayersView vp = new PlayersView(nationalPlayers, 1, true, true, false, true, true, true, false, false, true, false, false, false, false, false, true, true, false, false);
             vp.Full(panelPlayers);
 
             List<Match> nationalMatchs = nationalTeam.Games;

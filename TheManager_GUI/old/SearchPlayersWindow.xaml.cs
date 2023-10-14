@@ -74,8 +74,7 @@ namespace TheManager_GUI
         private void FillPlayersList()
         {
             List<Player> players = FilterPlayers(_currentPlayersBase);
-            PlayersView view = new PlayersView(players, 11, true, true, true, true, true, true, true, false, true, true, false, false, false, false, false, true, true);
-            //ViewPlayers view = new ViewPlayers(players, 11, true, true, true, true, true, true, true, false, true, true, false, false, false, false, false, true, true);
+            PlayersView view = new PlayersView(players, 11, true, true, true, true, true, true, true, true, false, true, true, false, false, false, false, false, true, true);
             view.Full(spPlayers);
             
 

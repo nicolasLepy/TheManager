@@ -386,7 +386,7 @@ namespace TheManager_GUI
             selectedClub = club;
             List<Player> players = new List<Player>(club.Players());
             players.Sort(new PlayerComparator(true, PlayerAttribute.POSITION));
-            PlayersView view = new PlayersView(players, 1, true, true, true, true, true, false, false, false, true, false, false, false, false, false, false, false, false, true);
+            PlayersView view = new PlayersView(players, 1, true, true, true, false, true, true, false, false, false, true, false, false, false, false, false, false, false, false, true);
             view.Full(spClubPlayers);
 
             DateTime beginDate = Session.Instance.Game.GetBeginDate(club.Country());

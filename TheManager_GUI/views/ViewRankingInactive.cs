@@ -9,7 +9,7 @@ using System.Windows.Media;
 using TheManager;
 using TheManager_GUI.Styles;
 
-namespace TheManager_GUI.VueClassement
+namespace TheManager_GUI.Views
 {
     public class ViewRankingInactive : ViewRanking
     {

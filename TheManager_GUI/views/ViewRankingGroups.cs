@@ -11,7 +11,7 @@ using TheManager;
 using TheManager.Comparators;
 using TheManager_GUI.Styles;
 
-namespace TheManager_GUI.VueClassement
+namespace TheManager_GUI.Views
 {
     public class ViewRankingGroups : ViewRanking
     {

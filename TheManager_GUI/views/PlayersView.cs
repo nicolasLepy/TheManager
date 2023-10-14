@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using TheManager.Comparators;
 using TheManager;
-using TheManager_GUI.VueClassement;
+using TheManager_GUI.Views;
 using System.Text.RegularExpressions;
 using TheManager_GUI.Styles;
 using System.Windows;
 using System.Numerics;
+using System.Windows.Media;
 
 namespace TheManager_GUI.views
 {
@@ -29,7 +30,7 @@ namespace TheManager_GUI.views
 
         private bool sortOrder;
 
-        public PlayersView(List<Player> players, float sizeMultiplier, bool age, bool position, bool nationality, bool level, bool potential, bool games, bool goals, bool condition, bool value, bool wage, bool isInjuried, bool isSuspended, bool isInternational, bool internationalSelections, bool internationalGoals, bool contractBegin, bool contractEnd, bool levelsInNumbers = false)
+        public PlayersView(List<Player> players, float sizeMultiplier, bool age, bool position, bool nationality, bool club, bool level, bool potential, bool games, bool goals, bool condition, bool value, bool wage, bool isInjuried, bool isSuspended, bool isInternational, bool internationalSelections, bool internationalGoals, bool contractBegin, bool contractEnd, bool levelsInNumbers = false)
         {
 
             Players = players;
@@ -46,6 +47,10 @@ namespace TheManager_GUI.views
             if (nationality)
             {
                 columns.Add(new GridColumnDefinition(GridColumn.PLAYER_NATIONALITY, 50, 6));
+            }
+            if (club)
+            {
+                columns.Add(new GridColumnDefinition(GridColumn.PLAYER_CLUB, 50, 6));
             }
             if (level)
             {
@@ -242,6 +247,21 @@ namespace TheManager_GUI.views
             AddElementToGrid(grid, tbContractEnd, row, col);
         }
 
+        private void FillPlayerClub(Grid grid, Player player, int row, int col)
+        {
+            Club club = player.Club;
+            if(club != null)
+            {
+                Image imageClub = ViewUtils.CreateLogo(club, logoSize * 0.75, logoSize * 0.75);
+                Border border = new Border();
+                border.Background = Brushes.Transparent;
+                border.Child = ViewUtils.CreateTextBlock(club.name, StyleDefinition.styleTextPlainCenter);
+                ToolTipService.SetInitialShowDelay(imageClub, 0);
+                imageClub.ToolTip = border;
+                AddElementToGrid(grid, imageClub, row, col);
+            }
+        }
+
         public override void Full(StackPanel spRanking)
         {
             this.spRanking = spRanking;
@@ -319,6 +339,9 @@ namespace TheManager_GUI.views
                     case GridColumn.PLAYER_CONTRACT_END:
                         AddElementToGrid(grid, ViewUtils.CreateTextBlockOpenWindow(PlayerAttribute.CONTRACT_END, sortPlayers, "End", StyleDefinition.styleTextPlainCenter, fontSize, -1), 0, columns.IndexOf(gcd));
                         break;
+                    case GridColumn.PLAYER_CLUB:
+                        AddElementToGrid(grid, ViewUtils.CreateTextBlockOpenWindow(PlayerAttribute.CLUB, sortPlayers, "Club", StyleDefinition.styleTextPlainCenter, fontSize, -1), 0, columns.IndexOf(gcd));
+                        break;
                 }
             }
 
@@ -383,6 +406,9 @@ namespace TheManager_GUI.views
                             break;
                         case GridColumn.PLAYER_CONTRACT_END:
                             FillPlayerContractEnd(grid, player, row, columns.IndexOf(gcd));
+                            break;
+                        case GridColumn.PLAYER_CLUB:
+                            FillPlayerClub(grid, player, row, columns.IndexOf(gcd));
                             break;
                     }
                 }
