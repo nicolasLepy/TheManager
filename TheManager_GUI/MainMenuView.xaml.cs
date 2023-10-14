@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -139,14 +140,14 @@ namespace TheManager_GUI
 
         private void ShowOptions()
         {
-            Windows_Options wo = new Windows_Options();
-            wo.Show();
+            OptionsView view = new OptionsView();
+            view.Show();
         }
 
         private void ShowSearchPlayers()
         {
-            SearchPlayersWindow spw = new SearchPlayersWindow();
-            spw.Show();
+            SearchPlayersView view = new SearchPlayersView();
+            view.Show();
         }
 
         private void Play()
@@ -165,7 +166,8 @@ namespace TheManager_GUI
         {
             if(!_noScreenRefresh)
             {
-                tbGameDate.Text = _game.date.ToString("dddd dd MMMM yyyy");
+                tbGameDate.Text = _game.date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern);
+                //tbGameDate.Text = _game.date.ToString("dddd dd MMMM yyyy");
                 Match nextGame = _game.club.NextGame;
                 FillNextGamePanel(nextGame);
                 FillNews();
@@ -200,7 +202,7 @@ namespace TheManager_GUI
             _comboBoxDayController.tournament = tournament;
             foreach(KeyValuePair<Round, int> registeredRound in _comboBoxDayController.GetRoundsRegistered())
             {
-                string name = registeredRound.Key.IsKnockOutRound() ? (registeredRound.Key.MatchesDayNumber() == 1 ? "" : (registeredRound.Value == 1 ? "Matchs aller" : "Matchs retour")) : String.Format("{0}{1} journée", (registeredRound.Value), (registeredRound.Value) == 1 ? "ère" : "ème");
+                string name = registeredRound.Key.IsKnockOutRound() ? (registeredRound.Key.MatchesDayNumber() == 1 ? "" : (registeredRound.Value == 1 ? FindResource("str_first_leg").ToString() : FindResource("str_second_leg").ToString())) : String.Format(FindResource("str_matchweek").ToString(), (registeredRound.Value), (registeredRound.Value) == 1 ? FindResource("str_matchweek_numeral_first").ToString() : FindResource("str_matchweek_numeral_more").ToString());
                 bool isChampionship = registeredRound.Key as ChampionshipRound != null || (tournament.rounds.Count > 0 && tournament.rounds[0] == registeredRound.Key && tournament.isChampionship);
                 if(!isChampionship)
                 {
@@ -230,7 +232,7 @@ namespace TheManager_GUI
         {
             tbNextGameHomeTeam.Text = "";
             tbNextGameAwayTeam.Text = "";
-            tbNextGameDate.Text = "Pas de match à venir";
+            tbNextGameDate.Text = FindResource("str_noupcomingmatches").ToString();
             tbNextGameHour.Text = "";
             tbNextGameStadiumName.Text = "";
             tbNextGameTournamentName.Text = "";
@@ -371,13 +373,10 @@ namespace TheManager_GUI
             Play();
         }
 
-        private void buttonWorldCoefficients_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void buttonWorldRankings_Click(object sender, RoutedEventArgs e)
         {
+            InternationalRankingView irv = new InternationalRankingView();
+            irv.ShowDialog();
 
         }
 
@@ -441,7 +440,7 @@ namespace TheManager_GUI
         private void buttonSwitchScoresMode_Click(object sender, RoutedEventArgs e)
         {
             _comboBoxDayController.showDays = !_comboBoxDayController.showDays;
-            buttonSwitchScoresMode.Content = _comboBoxDayController.showDays ? "Voir compétition" : "Voir tous les matchs";
+            buttonSwitchScoresMode.Content = _comboBoxDayController.showDays ? FindResource("str_seeTournament").ToString() : FindResource("str_allGames").ToString();
             if(_comboBoxDayController.showDays)
             {
                 ComboBoxUpdateDay();
@@ -466,7 +465,6 @@ namespace TheManager_GUI
             }
             if (e.Key == Key.R)
             {
-                Console.WriteLine("Relegations");
                 _modifiers.SetAdministrativeRetrogradationsFr();
             }
         }

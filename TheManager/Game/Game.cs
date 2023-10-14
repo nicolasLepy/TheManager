@@ -232,7 +232,7 @@ namespace TheManager
 
         public void Exports(Tournament t)
         {
-            if (Utils.CompareDatesWithoutYear(t.seasonBeginning.ConvertToDateTime().AddDays(-7), _date) && options.tournamentsToExport.Contains(t))
+            if (Utils.CompareDatesWithoutYear(t.seasonBeginning.ConvertToDateTime().AddDays(-7), _date))
             {
                 Exporteur.Exporter(t);
             }
@@ -645,11 +645,11 @@ namespace TheManager
                                 }
                                 KeyValuePair<Media, Journalist> nationalEmployment = new KeyValuePair<Media, Journalist>(journalist.Media, second);
                                 second.isTaken = true;
-                                m.journalists.Add(nationalEmployment);
+                                m.medias.Add(nationalEmployment);
                             }
 
                             KeyValuePair<Media, Journalist> employment = new KeyValuePair<Media, Journalist>(journalist.Media, journalist);
-                            m.journalists.Add(employment);
+                            m.medias.Add(employment);
                         }
                     }
                 }
@@ -741,7 +741,7 @@ namespace TheManager
                     c.Reset();
                 }
 
-                if (options.ExportEnabled)
+                if (options.tournamentsToExport.Contains(c))
                 {
                     Exports(c);
                 }

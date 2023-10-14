@@ -53,12 +53,12 @@ namespace TheManager_GUI.views
 
         private List<double> values { get; set; }
 
-        private float minValue { get; }
-        private float maxValue { get; }
+        private double minValue { get; }
+        private double maxValue { get; }
         private float width { get; }
         private float height { get; }
 
-        public ChartView(ChartType chartType, string title, string axisYtitle, string axisXtitle, List<string> labels, bool representsMoney, float sizeMultiplier, List<double> values, float width, float height, float minValue = -1, float maxValue = -1)
+        public ChartView(ChartType chartType, string title, string axisYtitle, string axisXtitle, List<string> labels, bool representsMoney, float sizeMultiplier, List<double> values, float width, float height, double minValue = -1, double maxValue = -1)
         {
             this.chartType = chartType;
             this.labels = labels.ToArray();
@@ -87,7 +87,7 @@ namespace TheManager_GUI.views
             }
         }
 
-        public PieChart RenderPieChart(StackPanel host)
+        private PieChart RenderPieChart(StackPanel host)
         {
 
             var pieChartMapper = Mappers.Xy<PieChartValue>()
@@ -114,8 +114,14 @@ namespace TheManager_GUI.views
             }
 
             PieChart pc = new PieChart();
-            pc.Width = width * sizeMultiplier;
-            pc.Height = height * sizeMultiplier;
+            if(width != -1)
+            {
+                pc.Width = width * sizeMultiplier;
+            }
+            if(height != -1)
+            {
+                pc.Height = height * sizeMultiplier;
+            }
             pc.SeriesColors = new ColorsCollection();
             pc.Style = Application.Current.FindResource(StyleDefinition.styleLiveChartPieChart) as Style;
             pc.InnerRadius = height / 4;
@@ -140,7 +146,7 @@ namespace TheManager_GUI.views
             return null;
         }
 
-        public CartesianChart RenderLineChart(StackPanel host)
+        private CartesianChart RenderLineChart(StackPanel host)
         {
             double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);
             TextBlock labelTitle = ViewUtils.CreateTextBlock(title, StyleDefinition.styleTextPlainCenter, fontSize, -1);
@@ -169,8 +175,14 @@ namespace TheManager_GUI.views
             };
 
             CartesianChart cc = new CartesianChart();
-            cc.Width = width * sizeMultiplier;
-            cc.Height = height * sizeMultiplier;
+            if(width != -1)
+            {
+                cc.Width = width * sizeMultiplier;
+            }
+            if(height != -1)
+            {
+                cc.Height = height * sizeMultiplier;
+            }
             cc.Series = serieCollection;
             cc.LegendLocation = LegendLocation.None;
             cc.Style = Application.Current.FindResource(StyleDefinition.styleLiveChartCartesianChart) as Style;
@@ -179,8 +191,11 @@ namespace TheManager_GUI.views
 
             Axis axisY = new Axis();
             axisY.Title = axisYtitle;
-            axisY.MinValue = minValue;
-            axisY.MaxValue = maxValue;
+            double axisMin = minValue != -1 ? minValue : values.Min();
+            double axisMax = maxValue != -1 ? maxValue : values.Max();
+            Console.WriteLine("[Axis Min] " + axisMin + " [Axis Max] " + axisMax);
+            axisY.MinValue = axisMin;
+            axisY.MaxValue = axisMax == axisMin ? axisMax+1 : axisMax;
             axisY.Style = Application.Current.FindResource(StyleDefinition.styleLiveChartAxis) as Style;
             axisY.Sections.Add(new AxisSection() { Stroke = linesColor, StrokeThickness = 1, Value = minValue });
             axisY.Separator.IsEnabled = false; // Hide axis grid

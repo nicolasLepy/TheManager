@@ -231,7 +231,6 @@ namespace TheManager_GUI
             foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
             {
                 int nombre = 0;
-                string annees = "";
                 foreach(KeyValuePair<int,Tournament> archive in c.previousEditions)
                 {
                     if(archive.Value.isChampionship)
@@ -257,32 +256,9 @@ namespace TheManager_GUI
                     spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(c.name, "StyleLabel2", 12, 175));
                     spPalmaresEntry.Children.Add(ViewUtils.CreateLabel(nombre.ToString(), "StyleLabel2", 12, 75));
                     spPalmares.Children.Add(spPalmaresEntry);
-                
                 }
             }
         }
-
-        /*private void CreatePieChart(Dictionary<BudgetModificationReason, double> values)
-        {
-            SeriesCollection series = new SeriesCollection();
-
-            foreach(KeyValuePair<BudgetModificationReason, double> kvp in values)
-            {
-                series.Add(new PieSeries
-                {
-                    Title = kvp.Key.ToString(),
-                    Values = new ChartValues<double> { kvp.Value }
-                });
-            }
-
-            PieChart pc = new PieChart();
-            pc.Width = 250;
-            pc.Height = 250;
-
-            pc.Series = series;
-
-            spRepartitions.Children.Add(pc);
-        }*/
 
         public Windows_Club(CityClub c)
         {

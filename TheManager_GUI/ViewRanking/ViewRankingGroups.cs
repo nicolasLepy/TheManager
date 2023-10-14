@@ -335,7 +335,7 @@ namespace TheManager_GUI.VueClassement
         {
             if (c != null && c as CityClub != null)
             {
-                Windows_Club wc = new Windows_Club(c as CityClub);
+                ClubView wc = new ClubView(c as CityClub);
                 wc.Show();
             }
         }

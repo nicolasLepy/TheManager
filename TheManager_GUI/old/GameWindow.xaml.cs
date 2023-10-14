@@ -31,7 +31,7 @@ namespace TheManager_GUI
             imgLogoHome.Source = new BitmapImage(new Uri(Utils.Logo(match.home)));
             imgLogoAway.Source = new BitmapImage(new Uri(Utils.Logo(match.away)));
             lbStade.Content = match.stadium.name;
-            lbAffluence.Content = match.attendance + " " + FindResource("str_spectators").ToString();
+            lbAffluence.Content = String.Format(FindResource("str_attendance").ToString(), match.attendance);
             lbEquipe1.Content = match.home.name;
             lbEquipe2.Content = match.away.name;
             lbScore1.Content = match.score1;
@@ -204,7 +204,7 @@ namespace TheManager_GUI
             DrawTimeline(match);
 
             List<Media> presentsMedias = new List<Media>();
-            foreach (KeyValuePair<TheManager.Media, Journalist> j in match.journalists)
+            foreach (KeyValuePair<TheManager.Media, Journalist> j in match.medias)
             {
                 StackPanel spJournalists = new StackPanel();
                 spJournalists.Orientation = Orientation.Vertical;
@@ -327,7 +327,6 @@ namespace TheManager_GUI
         {
             foreach(Substitution s in match.substitutions)
             {
-
                 StackPanel spSub = new StackPanel();
                 spSub.Orientation = Orientation.Horizontal;
                 spSub.Children.Add(ViewUtils.CreateLabel(s.PlayerOut.firstName + " " + s.PlayerOut.lastName, "StyleLabel2", 11, 120, Brushes.LightSalmon));

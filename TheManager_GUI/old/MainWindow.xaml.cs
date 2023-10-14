@@ -20,6 +20,7 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using TheManager;
 using TheManager.Parsers;
+using TheManager_GUI.Styles;
 
 namespace TheManager_GUI
 {
@@ -53,6 +54,7 @@ namespace TheManager_GUI
                     Theme.themes.Add(t);
                 }
             }
+            Theme.themes[0].SetAsCurrentTheme();
 
         }
 
@@ -67,14 +69,21 @@ namespace TheManager_GUI
 
         public static void SelectCulture()
         {
+            Langue.langues.Add(new Langue("English", "en", "en-GB", "StringResources.xaml"));
+            Langue.langues.Add(new Langue("Français", "fr", "fr-FR", "StringResources.fr.xaml"));
 
+            Langue.langues[0].SetAsCurrentLangue();
+
+            /*
             //Copy all MergedDictionarys into a auxiliar list.
             var dictionaryList = Application.Current.Resources.MergedDictionaries.ToList();
 
+            Application.Current.Properties["language"] = "en";
+            CultureInfo.CurrentCulture = new CultureInfo(Application.Current.Properties["language"].ToString().CompareTo("en") == 0 ? "en-GB" : "fr-FR");
             //Search for the specified culture.
-            string requestedCulture = "StringResources.xaml";
+            string requestedCulture = Application.Current.Properties["language"].ToString().CompareTo("en") == 0 ? "StringResources.xaml" : "StringResources.fr.xaml";
             var resourceDictionary = dictionaryList.FirstOrDefault(d => d.Source.OriginalString == requestedCulture);
-
+            
 
             //If we have the requested resource, remove it from the list and place at the end.     
             //Then this language will be our string table to use.      
@@ -82,7 +91,7 @@ namespace TheManager_GUI
             {
                 Application.Current.Resources.MergedDictionaries.Remove(resourceDictionary);
                 Application.Current.Resources.MergedDictionaries.Add(resourceDictionary);
-            }
+            }*/
 
         }
 
@@ -134,6 +143,7 @@ namespace TheManager_GUI
                 pbLoading.Value = 3;
                 lbCreationPartie.Content = "Chargement des calendriers";
                 cbdd.LoadCalendars();
+                cbdd.LoadAudios();
 
                 pbLoading.Value = 4;
                 lbCreationPartie.Content = "Chargement des villes";

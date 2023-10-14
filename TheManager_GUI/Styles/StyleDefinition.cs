@@ -19,6 +19,9 @@ namespace TheManager_GUI.Styles
         public static string styleLiveChartPieSerie = "liveChartPieSerieStyle";
         public static string styleLiveChartCartesianChart = "liveChartCartesianChartStyle";
         public static string styleCheckBox = "checkBoxStyle";
+        public static string styleToolTip = "toolTipStyle";
+        public static string styleButtonMenu = "buttonMenu";
+        public static string styleButtonMenuTitle = "buttonMenuTitle";
 
         public static string fontSizeTitle = "fontSizeTitle";
         public static string fontSizeSecondary = "fontSizeSecondary";
@@ -39,5 +42,7 @@ namespace TheManager_GUI.Styles
         public static string colorViewBorder1 = "colorViewBorder1";
         public static string colorViewBorder2 = "colorViewBorder2";
         public static string colorViewBorder3 = "colorViewBorder3";
+        public static string colorPositive = "colorPositive";
+        public static string colorNegative = "colorNegative";
     }
 }

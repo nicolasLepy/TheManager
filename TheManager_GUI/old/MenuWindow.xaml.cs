@@ -183,8 +183,8 @@ namespace TheManager_GUI
 
         private void BtnOptions_Click(object sender, RoutedEventArgs e)
         {
-            Windows_Options wo = new Windows_Options();
-            wo.Show();
+            OptionsView view = new OptionsView();
+            view.Show();
         }
 
         private void CheckPlayoffTrees()

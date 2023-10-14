@@ -53,6 +53,14 @@
 		<Setter Property="FontSize" Value="{StaticResource fontSizeNavigation}"/>
 	</Style>
 
+	<Style x:Key="borderOddStyle" TargetType="Border">
+		<Setter Property="CornerRadius" Value="1"/>
+		<Setter Property="BorderThickness" Value="1"/>
+		<Setter Property="Margin" Value="2"/>
+		<Setter Property="Padding" Value="2"/>
+		<Setter Property="BorderBrush" Value="{StaticResource colorBorderLight}"/>
+	</Style>
+	
 	<Style x:Key="buttonIconMenu" TargetType="Button">
 		<Setter Property="Height" Value="50"/>
 		<Setter Property="Margin" Value="-5, 0, 0, 5"/>
@@ -110,6 +118,18 @@
 				<DataTemplate>
 					<StackPanel Orientation="Horizontal">
 						<TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Style="{StaticResource textButton}"></TextBlock>
+					</StackPanel>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="buttonMenuTitle" TargetType="Button" BasedOn="{StaticResource buttonIconMenu}">
+		<Setter Property="ContentTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Style="{StaticResource textTitle}"></TextBlock>
 					</StackPanel>
 				</DataTemplate>
 			</Setter.Value>
@@ -305,6 +325,11 @@
 		</Style.Resources>
 	</Style>
 
+	<Style x:Key="{x:Type ToolTip}" TargetType="{x:Type ToolTip}">
+		<Setter Property="BorderBrush" Value="Transparent"/>
+		<Setter Property="Background" Value="Transparent" />
+	</Style>
+
 	<Style x:Key="progressBarStyle" TargetType="{x:Type ProgressBar}">
 		<Setter Property="Template">
 			<Setter.Value>
@@ -388,6 +413,41 @@
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
+	</Style>
+
+	<Style x:Key="tabControlStyle" TargetType="{x:Type TabControl}">
+		<Setter Property="FontSize" Value="{StaticResource fontSizeTitle}"/>
+		<Setter Property="FontFamily" Value="{DynamicResource fontFamily}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorTitle1}" />
+		<Setter Property="Background" Value="Transparent" />
+		<Setter Property="BorderBrush" Value="Transparent"/>
+	</Style>
+
+	<Style x:Key="tabItemStyle" TargetType="{x:Type TabItem}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="TabItem">
+					<Grid Name="Panel">
+						<ContentPresenter x:Name="ContentSite"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        ContentSource="Header"
+                                        Margin="15"/>
+					</Grid>
+					<ControlTemplate.Triggers>
+						<Trigger Property="IsSelected" Value="True">
+							<Setter TargetName="Panel" Property="Background" Value="{StaticResource colorButtonOver}" />
+						</Trigger>
+						<Trigger Property="IsSelected" Value="False">
+							<Setter TargetName="Panel" Property="Background" Value="Transparent" />
+						</Trigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeTitle}"/>
+		<Setter Property="FontFamily" Value="{DynamicResource fontFamily}"/>
+		<Setter Property="Foreground" Value="{StaticResource colorTitle1}" />
 	</Style>
 
 </ResourceDictionary>

@@ -96,7 +96,7 @@ namespace TheManager_GUI.views
             string name = match.away.shortName;
             if (!match.Round.Tournament.isChampionship && !match.Round.Tournament.IsInternational())
             {
-                name = match.away.Championship != null ? String.Format("({0}) {1}", match.home.Championship.shortName, name) : name;
+                name = match.away.Championship != null ? String.Format("({0}) {1}", match.away.Championship.shortName, name) : name;
             }
 
             TextBlock tbClub = ViewUtils.CreateTextBlockOpenWindow<Club>(match.away, OpenClub, name, StyleDefinition.styleTextPlain, fontSize * 0.85, -1);
@@ -135,7 +135,7 @@ namespace TheManager_GUI.views
                 StackPanel spScoreBlock = new StackPanel();
                 spScoreBlock.Orientation = Orientation.Vertical;
                 spScoreBlock.VerticalAlignment = VerticalAlignment.Center;
-                TextBlock tbScore = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.ScoreToString(false), StyleDefinition.styleTextPlain, fontSize, -1, null, true);
+                TextBlock tbScore = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.ScoreToString(false, false, ""), StyleDefinition.styleTextPlainCenter, fontSize, -1, null, true);
                 string fontColor = "defaiteColor";
                 if (colorizeResult)
                 {
@@ -152,9 +152,11 @@ namespace TheManager_GUI.views
                 }
 
                 spScoreBlock.Children.Add(tbScore);
-                if(match.PenaltyShootout)
+                if(match.PenaltyShootout || match.prolongations)
                 {
-                    TextBlock tbPenalties = ViewUtils.CreateTextBlock(match.PenaltyShootoutToString(), StyleDefinition.styleTextPlainCenter, fontSize*0.5);
+                    string aet = match.prolongations ? Application.Current.FindResource("str_aet").ToString() : "";
+                    string kicks = match.PenaltyShootout ? match.PenaltyShootoutToString() : "";
+                    TextBlock tbPenalties = ViewUtils.CreateTextBlock(string.Format("{0} {1}", aet, kicks), StyleDefinition.styleTextPlainCenter, fontSize*0.5);
                     spScoreBlock.Children.Add(tbPenalties);
                 }
                 spPanelScore.Children.Add(spScoreBlock);
@@ -166,14 +168,14 @@ namespace TheManager_GUI.views
                 borderScore1.Height = fontSize * 2.25;
                 borderScore1.Width = fontSize * 2.25;
                 borderScore1.CornerRadius = new CornerRadius(3);
-                borderScore1.Child = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.score1.ToString(), "StyleLabel2Center", fontSize, -1);
+                borderScore1.Child = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.score1.ToString(), StyleDefinition.styleTextPlainCenter, fontSize, -1);
                 borderScore1.Margin = new Thickness(fontSize / 2, 0, 0, 0);
                 Border borderScore2 = new Border();
                 borderScore2.Style = Application.Current.FindResource("StyleBorderCalendar") as Style;
                 borderScore2.Height = fontSize * 2.25;
                 borderScore2.Width = fontSize * 2.25;
                 borderScore2.CornerRadius = new CornerRadius(3);
-                borderScore2.Child = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.score2.ToString(), "StyleLabel2Center", fontSize, -1);
+                borderScore2.Child = ViewUtils.CreateTextBlockOpenWindow<Match>(match, OpenMatch, match.score2.ToString(), StyleDefinition.styleTextPlainCenter, fontSize, -1);
                 borderScore2.Margin = new Thickness(0, 0, fontSize / 2, 0);
                 spPanelScore.Children.Add(borderScore1);
                 spPanelScore.Children.Add(borderScore2);
@@ -194,7 +196,8 @@ namespace TheManager_GUI.views
 
         private void FillAttendance(Grid grid, Match match, int row, int col)
         {
-            TextBlock tbAttendance = ViewUtils.CreateTextBlock(match.attendance.ToString(), StyleDefinition.styleTextPlain, fontSize * 0.8, -1);
+            string attendance = match.Played ? match.attendance.ToString() : "";
+            TextBlock tbAttendance = ViewUtils.CreateTextBlock(attendance, StyleDefinition.styleTextPlain, fontSize * 0.8, -1);
             grid.Children.Add(tbAttendance);
             Grid.SetRow(tbAttendance, row);
             Grid.SetColumn(tbAttendance, col);
@@ -247,7 +250,7 @@ namespace TheManager_GUI.views
 
         private void FillTournament(Grid grid, Match match, int row, int col)
         {
-            TextBlock tbTournament = ViewUtils.CreateTextBlock(match.Tournament.shortName, StyleDefinition.styleTextPlain, fontSize, -1, new SolidColorBrush(System.Windows.Media.Color.FromRgb(15, 15, 15)), new SolidColorBrush(System.Windows.Media.Color.FromRgb(match.Tournament.color.red, match.Tournament.color.green, match.Tournament.color.blue)));
+            TextBlock tbTournament = ViewUtils.CreateTextBlock(match.Tournament.shortName, StyleDefinition.styleTextPlain, fontSize, -1);
             grid.Children.Add(tbTournament);
             Grid.SetRow(tbTournament, row);
             Grid.SetColumn(tbTournament, col);
@@ -263,8 +266,7 @@ namespace TheManager_GUI.views
 
         private void FillDateSeparated(Grid grid, Match match, int row, int col)
         {
-            CultureInfo ci = new CultureInfo("en-EN");
-            TextBlock tbDate = ViewUtils.CreateTextBlock(match.day.Date.ToString("dddd dd MMMM yyyy", ci), StyleDefinition.styleTextPlain, fontSize, -1);
+            TextBlock tbDate = ViewUtils.CreateTextBlock(match.day.Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern), StyleDefinition.styleTextPlain, fontSize, -1);
             grid.Children.Add(tbDate);
             Grid.SetRow(tbDate, row);
             Grid.SetColumn(tbDate, col);

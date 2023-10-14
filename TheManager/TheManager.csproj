@@ -68,6 +68,7 @@
     <Compile Include="Comparators\ClubComparator.cs" />
     <Compile Include="Comparators\ClubPlayoffsComparator.cs" />
     <Compile Include="Comparators\MatchComparator.cs" />
+    <Compile Include="Game\AudioSource.cs" />
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Comparators\CountryComparator.cs" />
     <Compile Include="Comparators\JournalistOffsetComparator.cs" />

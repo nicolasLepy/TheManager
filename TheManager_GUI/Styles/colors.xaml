@@ -30,6 +30,9 @@
 
 	<SolidColorBrush x:Key="colorBackgroundStars">#07072a</SolidColorBrush>
 
+	<SolidColorBrush x:Key="colorPositive">#4de800</SolidColorBrush>
+	<SolidColorBrush x:Key="colorNegative">#e8004d</SolidColorBrush>
+
 	<Color x:Key="Color1">#20833c</Color>
 	<Color x:Key="Color2">#a4f17a</Color>
 	<Color x:Key="ColorDate">#D3D3D3</Color>

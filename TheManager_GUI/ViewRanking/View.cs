@@ -67,20 +67,20 @@ namespace TheManager_GUI.VueClassement
 
         public void OpenPlayer(Player p)
         {
-            Windows_Joueur wj = new Windows_Joueur(p);
-            wj.Show();
+            PlayerView view = new PlayerView(p);
+            view.Show();
         }
 
         public void OpenClub(Club c)
         {
             if (c as CityClub != null)
             {
-                Windows_Club wc = new Windows_Club(c as CityClub);
+                ClubView wc = new ClubView(c as CityClub);
                 wc.Show();
             }
             else if(c as ReserveClub != null)
             {
-                Windows_Club wc = new Windows_Club((c as ReserveClub).FannionClub);
+                ClubView wc = new ClubView((c as ReserveClub).FannionClub);
                 wc.Show();
             }
             else if(c as NationalTeam != null)
@@ -92,8 +92,10 @@ namespace TheManager_GUI.VueClassement
 
         public void OpenMatch(Match m)
         {
-            Windows_Match wm = new Windows_Match(m);
-            wm.Show();
+            MatchView view = new MatchView(m);
+            view.Show();
+            //Windows_Match wm = new Windows_Match(m);
+            //wm.Show();
         }
 
         protected void AddElementToGrid(Grid grid, UIElement element, int row, int col, int colspan = -1)

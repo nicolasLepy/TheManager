@@ -55,6 +55,8 @@ namespace TheManager
         [DataMember]
         private List<GenericCalendar> _genericCalendars;
         [DataMember]
+        private List<AudioSource> _audioSources;
+        [DataMember]
         private List<Media> _medias;
         [DataMember]
         private List<MatchEventCommentary> _matchCommentaries;
@@ -79,6 +81,7 @@ namespace TheManager
         public List<Media> medias { get => _medias; }
         public List<MatchEventCommentary> matchCommentaries { get => _matchCommentaries; }
         public List<Journalist> freeJournalists { get => _freeJournalists; }
+        public List<AudioSource> audioSources => _audioSources;
 
         public Kernel()
         {
@@ -95,6 +98,7 @@ namespace TheManager
             _matchCommentaries.Add(new MatchEventCommentary(GameEvent.Shot));
             _freeJournalists = new List<Journalist>();
             _genericCalendars = new List<GenericCalendar>();
+            _audioSources = new List<AudioSource>();
         }
 
         public GenericCalendar GetGenericCalendar(string name)
@@ -545,6 +549,11 @@ namespace TheManager
                     cem.commentaries.Add(commentary);
                 }
             }
+        }
+
+        public void AddAudioSource(AudioSource audioSource)
+        {
+            _audioSources.Add(audioSource);
         }
 
         public void AddGenericCalendar(GenericCalendar calendar)

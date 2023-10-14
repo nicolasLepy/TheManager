@@ -43,7 +43,7 @@
 					<Button Name="btnCompoAuto" Content="{StaticResource str_autoCompo}" Style="{StaticResource StyleButton1}" Width="175" Click="BtnCompoAuto_Click"/>
 				</StackPanel>
 				<StackPanel Orientation="Vertical" Width="350">
-					<Label Content="{StaticResource str_composition}" Style="{StaticResource StyleLabel2}"/>
+					<Label Content="{StaticResource str_lineups}" Style="{StaticResource StyleLabel2}"/>
 					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spAttaquants" >
 						<StackPanel Orientation="Vertical">
 							<Label Content="Sliti" HorizontalAlignment="Center"  Style="{StaticResource StyleLabel2}"/>

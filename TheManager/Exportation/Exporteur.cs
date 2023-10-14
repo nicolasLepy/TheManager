@@ -311,7 +311,7 @@ namespace TheManager.Exportation
             }
 
             output.Append("<p><b>Médias</b></p>");
-            foreach(KeyValuePair<Media,Journalist> j in m.journalists)
+            foreach(KeyValuePair<Media,Journalist> j in m.medias)
             {
                 output.Append("<p>").Append(j.Value.firstName).Append(" ").Append(j.Value.lastName).Append(" (").Append(j.Key.name).Append(")");
             }

@@ -1,0 +1,257 @@
+﻿<Window x:Class="TheManager_GUI.MatchView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="MatchView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.2*"/>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0" Margin="15">
+						<!--Menu Buttons-->
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
+					</StackPanel>
+
+					<StackPanel Grid.Row="1" Margin="15">
+						<!--Menu Buttons-->
+						<Image x:Name="imageTournament" Style="{StaticResource image}" Height="150"/>
+						<TextBlock x:Name="tbTournament" Style="{StaticResource textSecondary}" HorizontalAlignment="Center" Text="Ligue 1" Margin="0, 15, 0, 35"/>
+						<TextBlock x:Name="tbAttendance" Style="{StaticResource textPlain}" Text="20 500 spectateurs"/>
+						<TextBlock x:Name="tbStadium" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="Stade ..."/>
+					</StackPanel>
+
+					<!-- Medias panel -->
+					<Grid x:Name="gridMedias" Grid.Row="2" VerticalAlignment="Bottom" Margin="15">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.3*"/>
+							<ColumnDefinition Width="0.7*"/>
+						</Grid.ColumnDefinitions>
+					</Grid>
+
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+					<ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<Grid Grid.Row="2">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="0.25*"/>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.15*"/>
+								<RowDefinition Height="0.15*"/>
+								<RowDefinition Height="0.3*"/>
+								<RowDefinition Height="0.05*"/>
+							</Grid.RowDefinitions>
+
+							<!-- Game Infos -->
+							<Grid Grid.Row="0" Margin="0, 15, 0, 0" x:Name="gridMainScore">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.15*"/>
+									<ColumnDefinition Width="0.2*"/>
+									<ColumnDefinition Width="0.08*"/>
+									<ColumnDefinition Width="0.2*"/>
+									<ColumnDefinition Width="0.15*"/>
+								</Grid.ColumnDefinitions>
+								<Grid Grid.Column="1">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.2*"/>
+										<RowDefinition Height="0.8*"/>
+									</Grid.RowDefinitions>
+									<TextBlock Grid.Row="0" x:Name="tbHomeClubName" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Text="BORDEAUX"/>
+									<Image Grid.Row="1" x:Name="imageHomeClub" Height="150" Style="{StaticResource image}"/>
+								</Grid>
+								<Grid Grid.Column="2" x:Name="gridScore" >
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.3*"/>
+										<RowDefinition Height="0.1*"/>
+										<RowDefinition Height="0.1*"/>
+										<RowDefinition Height="0.3*"/>
+									</Grid.RowDefinitions>
+									<TextBlock Grid.Row="1" x:Name="tbScore" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Text="2 - 0"/>
+									<TextBlock Grid.Row="2" x:Name="tbHalfTimeScore" Style="{StaticResource textPlainCenter}" Text="(1 - 0)"/>
+								</Grid>
+								<Grid Grid.Column="3">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.2*"/>
+										<RowDefinition Height="0.8*"/>
+									</Grid.RowDefinitions>
+									<TextBlock Grid.Row="0" x:Name="tbAwayClubName" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Text="FC GIRONDINS DE BORDEAUX"/>
+									<Image Grid.Row="1" x:Name="imageAwayClub" Height="150" Style="{StaticResource image}"/>
+								</Grid>
+							</Grid>
+
+							<!-- Game Progression -->
+							<Grid Grid.Row="1" Margin="0, 15, 0, 15">
+								<Grid.RowDefinitions>
+									<RowDefinition Height="0.3*"/>
+									<RowDefinition Height="0.3*"/>
+									<RowDefinition Height="0.3*"/>
+								</Grid.RowDefinitions>
+								<Grid Grid.Row="0" x:Name="gridEventsHome">
+									
+								</Grid>
+								<ProgressBar Grid.Row="1" x:Name="progressBarLoading" Style="{StaticResource progressBarStyle}" Height="25" Value="100" Minimum="0" Maximum="100" Padding="5"/>
+								<Grid Grid.Row="2" x:Name="gridEventsAway">
+
+								</Grid>
+							</Grid>
+
+							<!-- Games events -->
+							<Grid Grid.Row="2" Name="gridEvents" Margin="0, 15, 0, 15">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.1*"/>
+									<ColumnDefinition Width="0.15*"/>
+									<ColumnDefinition Width="0.03*"/>
+									<ColumnDefinition Width="0.03*"/>
+									<ColumnDefinition Width="0.05*"/>
+									<ColumnDefinition Width="0.03*"/>
+									<ColumnDefinition Width="0.03*"/>
+									<ColumnDefinition Width="0.15*"/>
+									<ColumnDefinition Width="0.1*"/>
+								</Grid.ColumnDefinitions>
+							</Grid>
+							<!-- Stats -->
+							<Grid Grid.Row="3" Margin="0, 15, 0, 15">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.3*"/>
+									<ColumnDefinition Width="0.3*"/>
+									<ColumnDefinition Width="0.3*"/>
+								</Grid.ColumnDefinitions>
+								<StackPanel Grid.Column="1" Orientation="Vertical" x:Name="spStats">
+									<TextBlock Style="{StaticResource textSecondary}" HorizontalAlignment="Center" Text="{StaticResource str_statistics}" x:Name="tbStatistics"/>
+								</StackPanel>
+							</Grid>
+							<!-- Compositions -->
+							<StackPanel Grid.Row="4" Orientation="Vertical" Margin="0, 15, 0, 15">
+								<TextBlock Style="{StaticResource textSecondary}" HorizontalAlignment="Center" Text="{StaticResource str_lineups}" x:Name="tbLineUps"/>
+								<Grid x:Name="gridCompositions">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="0.3*"/>
+										<!-- Flag players home -->
+										<ColumnDefinition Width="0.02*"/>
+										<ColumnDefinition Width="0.05*"/>
+										<!-- Players home -->
+										<ColumnDefinition Width="0.15*"/>
+										<ColumnDefinition Width="0.05*"/>
+										<!-- Players away -->
+										<ColumnDefinition Width="0.15*"/>
+										<!-- Flag players away -->
+										<ColumnDefinition Width="0.05*"/>
+										<ColumnDefinition Width="0.02*"/>
+										<ColumnDefinition Width="0.3*"/>
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="1*"/>
+										<RowDefinition Height="1*"/>
+									</Grid.RowDefinitions>
+								</Grid>
+							</StackPanel>
+							<!-- Odds -->
+							<Grid Grid.Row="5"  Margin="0, 15, 0, 15">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.3*"/>
+									<ColumnDefinition Width="0.1*"/>
+									<ColumnDefinition Width="0.1*"/>
+									<ColumnDefinition Width="0.1*"/>
+									<ColumnDefinition Width="0.3*"/>
+								</Grid.ColumnDefinitions>
+								<Border Grid.Column="1" Style="{StaticResource borderOddStyle}" Margin="15, 0, 15, 0">
+									<TextBlock x:Name="tbOddHome" Style="{StaticResource textPlainCenter}" Text="2.10"/>
+								</Border>
+								<Border Grid.Column="2" Style="{StaticResource borderOddStyle}" Margin="15, 0, 15, 0">
+									<TextBlock x:Name="tbOddDraw" Style="{StaticResource textPlainCenter}" Text="2.50"/>
+								</Border>
+								<Border Grid.Column="3" Style="{StaticResource borderOddStyle}" Margin="15, 0, 15, 0">
+									<TextBlock x:Name="tbOddAway" Style="{StaticResource textPlainCenter}" Text="2.90"/>
+								</Border>
+							</Grid>
+
+						</Grid>
+					</ScrollViewer>
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

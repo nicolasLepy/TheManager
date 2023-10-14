@@ -72,37 +72,33 @@ namespace TheManager_GUI
                 //cbdd.ReformateCities();
 
                 cbdd.LoadLanguages();
-                RaiseUpdateEvent(2, "Chargement de l'environnement", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(2, Application.Current.FindResource("str_loading_env").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadWorld();
-                RaiseUpdateEvent(3, "Chargement des calendriers", LoadDatabaseProgressReportType.PROGRESS);
+                cbdd.LoadAudios();
                 cbdd.LoadCalendars();
-                RaiseUpdateEvent(4, "Chargement des villes", LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadCities();
-                RaiseUpdateEvent(6, "Chargement des stades", LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadStadiums();
-                RaiseUpdateEvent(10, "Chargement des clubs", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(10, Application.Current.FindResource("str_loading_clubs").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadClubs();
-                RaiseUpdateEvent(30, "Chargement des compétitions", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(30, Application.Current.FindResource("str_loading_tournaments").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadTournaments();
                 cbdd.LoadInternationalDates();
-                RaiseUpdateEvent(40, "Chargement des joueurs", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(40, Application.Current.FindResource("str_loading_players").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadPlayers();
-                RaiseUpdateEvent(50, "Chargement des entraîneurs", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(50, Application.Current.FindResource("str_loading_managers").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadManagers();
-                RaiseUpdateEvent(65, "Initialisation des équipes", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(55, Application.Current.FindResource("str_loading_init_teams").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.InitTeams();
-                RaiseUpdateEvent(80, "Initialisation des joueurs", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(75, Application.Current.FindResource("str_loading_init_players").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.InitPlayers();
-                RaiseUpdateEvent(65, "Initialisation des compétitions", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(90, Application.Current.FindResource("str_loading_init_tournaments").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.InitTournaments();
-                RaiseUpdateEvent(92, "Chargement des médias", LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadMedias();
-                RaiseUpdateEvent(92, "Chargement des commentaires de match", LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadGamesComments();
                 cbdd.LoadRules();
                 cbdd.GenerateNationalCup();
                 cbdd.CreateRegionalPathForCups();
-                RaiseUpdateEvent(98, "Chargement des archives", LoadDatabaseProgressReportType.PROGRESS);
+                RaiseUpdateEvent(98, Application.Current.FindResource("str_loading_archives").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadArchives();
                 RaiseUpdateEvent(100, "", LoadDatabaseProgressReportType.FINISH, game);
 
@@ -247,17 +243,6 @@ namespace TheManager_GUI
             SetEnabledButtonsLeagueSelection(true);
         }
 
-        protected void AddElementToGrid(Grid grid, UIElement element, int row, int col, int colspan = -1)
-        {
-            Grid.SetRow(element, row);
-            Grid.SetColumn(element, col);
-            if (colspan > -1)
-            {
-                Grid.SetColumnSpan(element, colspan);
-            }
-            grid.Children.Add(element);
-        }
-
         private void FillLeaguesGrid(Game game)
         {
             gridCountriesSelection.Children.Clear();
@@ -282,7 +267,7 @@ namespace TheManager_GUI
             if (continent.countries.Count > 0)
             {
                 TextBlock tbContinentName = ViewUtils.CreateTextBlock(continent.Name(), StyleDefinition.styleTextPlainCenter);
-                AddElementToGrid(gridCountriesSelection, tbContinentName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
+                ViewUtils.AddElementToGrid(gridCountriesSelection, tbContinentName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
                 counter++;
             }
 
@@ -292,8 +277,8 @@ namespace TheManager_GUI
                 {
                     Image imageCountry = ViewUtils.CreateFlag(country, flagSize, flagSize * 0.66);
                     TextBlock tbCountryName = ViewUtils.CreateTextBlock(country.Name(), StyleDefinition.styleTextPlain);
-                    AddElementToGrid(gridCountriesSelection, imageCountry, counter % gridCountriesRows, (counter / gridCountriesRows) * 2);
-                    AddElementToGrid(gridCountriesSelection, tbCountryName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2 + 1);
+                    ViewUtils.AddElementToGrid(gridCountriesSelection, imageCountry, counter % gridCountriesRows, (counter / gridCountriesRows) * 2);
+                    ViewUtils.AddElementToGrid(gridCountriesSelection, tbCountryName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2 + 1);
                     foreach (Tournament league in country.Tournaments())
                     {
                         if (league.isChampionship)
@@ -303,7 +288,7 @@ namespace TheManager_GUI
                             cbLeague.Content = league.name;
                             cbLeague.Style = FindResource(StyleDefinition.styleCheckBox) as Style;
                             cbLeague.Click += CheckboxLeague_Click;
-                            AddElementToGrid(gridCountriesSelection, cbLeague, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
+                            ViewUtils.AddElementToGrid(gridCountriesSelection, cbLeague, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
                             checkBoxes.Add(league, cbLeague);
                         }
                     }
@@ -383,14 +368,14 @@ namespace TheManager_GUI
                 {
                     Club club = clubs[i];
                     gridSelectClub.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(flagSize * 1.2, GridUnitType.Pixel) });
-                    AddElementToGrid(gridSelectClub, ViewUtils.CreateLogo(clubs[i], flagSize, flagSize), i, 0);
+                    ViewUtils.AddElementToGrid(gridSelectClub, ViewUtils.CreateLogo(clubs[i], flagSize, flagSize), i, 0);
                     TextBlock tbClub = ViewUtils.CreateTextBlock(clubs[i].name, StyleDefinition.styleTextNavigation, -1, -1, club as CityClub == null ? Application.Current.FindResource(StyleDefinition.solidColorBrushColorBorderLight) as SolidColorBrush : null, null, false, true);
-                    AddElementToGrid(gridSelectClub, tbClub, i, 1);
+                    ViewUtils.AddElementToGrid(gridSelectClub, tbClub, i, 1);
                     if (club as CityClub != null)
                     {
                         tbClub.MouseLeftButtonUp += (sender, e) => textBlockPlayerClub_OnClick(sender, e, club);
                     }
-                    AddElementToGrid(gridSelectClub, ViewUtils.CreateStarsView(clubs[i].Stars, (float)(flagSize/2)), i, 2);
+                    ViewUtils.AddElementToGrid(gridSelectClub, ViewUtils.CreateStarsView(clubs[i].Stars, (float)(flagSize/2)), i, 2);
                 }
             }
         }

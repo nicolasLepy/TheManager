@@ -125,7 +125,7 @@ namespace TheManager_GUI.ViewMisc
                 spLine.Children.Add(ViewUtils.CreateLogo(match.home, 20 * sizeMultiplier, 20 * sizeMultiplier));
                 if(!beautifyScore)
                 {
-                    Label labelScore = ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(true), "StyleLabel2Center", fontSize, 85 * sizeMultiplier);
+                    Label labelScore = ViewUtils.CreateLabelOpenWindow<Match>(match, OpenMatch, match.ScoreToString(true, true, Application.Current.FindResource("str_aet").ToString()), "StyleLabel2Center", fontSize, 85 * sizeMultiplier);
                     string fontColor = "defaiteColor";
                     if (colorizeResult)
                     {

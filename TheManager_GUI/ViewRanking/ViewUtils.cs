@@ -16,6 +16,7 @@ using TheManager.Comparators;
 using Application = System.Windows.Application;
 using System.Windows.Annotations;
 using TheManager_GUI.Styles;
+using System.Windows.Controls.Primitives;
 
 namespace TheManager_GUI
 {
@@ -209,6 +210,44 @@ namespace TheManager_GUI
             return tbBlock;
         }
 
+        /// <summary>
+        /// Create a WPF toogle button object
+        /// </summary>
+        /// <returns></returns>
+        public static ToggleButton CreateToggleButton(string content, string styleName, int margin = -1)
+        {
+            ToggleButton button = new ToggleButton();
+            button.Content = content;
+            Style style = Application.Current.FindResource(styleName) as Style;
+            button.Style = style;
+
+            if (margin > -1)
+            {
+                button.Margin = new Thickness(margin);
+            }
+
+            return button;
+        }
+
+        /// <summary>
+        /// Create a WPF button object
+        /// </summary>
+        /// <returns></returns>
+        public static Button CreateButton(string content, string styleName, int margin = -1)
+        {
+            Button button = new Button();
+            button.Content = content;
+            Style style = Application.Current.FindResource(styleName) as Style;
+            button.Style = style;
+
+            if(margin > -1)
+            {
+                button.Margin = new Thickness(margin);
+            }
+
+            return button;
+        }
+
         public static ProgressBar CreateProgressBar(float value, float minimum = 0, float maximum = 100, float width = 60, float height = 10)
         {
             ProgressBar progressBar = new ProgressBar();
@@ -225,8 +264,14 @@ namespace TheManager_GUI
         {
             Image sprite = new Image();
             sprite.Source = new BitmapImage(new Uri(Utils.MediaLogo(media), UriKind.RelativeOrAbsolute));
-            sprite.Width = width;
-            sprite.Height = height;
+            if(width > 0)
+            {
+                sprite.Width = width;
+            }
+            if(height > 0)
+            {
+                sprite.Height = height;
+            }
             return sprite;
         }
 
@@ -246,12 +291,25 @@ namespace TheManager_GUI
 
         }
 
+        public static Dictionary<string, BitmapImage> cacheImage = new Dictionary<string, BitmapImage>();
+
         public static Image CreateImage(Uri uri, double width, double height)
         {
+            if(!cacheImage.ContainsKey(uri.AbsolutePath))
+            {
+                BitmapImage image = new BitmapImage(uri);
+                cacheImage[uri.AbsolutePath] = image;
+            }
             Image sprite = new Image();
-            sprite.Source = new BitmapImage(uri);
-            sprite.Width = width;
-            sprite.Height = height;
+            sprite.Source = cacheImage[uri.AbsolutePath];
+            if(width > -1)
+            {
+                sprite.Width = width;
+            }
+            if(height > -1)
+            {
+                sprite.Height = height;
+            }
             sprite.Style = Application.Current.FindResource("image") as Style;
             return sprite;
         }
@@ -300,7 +358,7 @@ namespace TheManager_GUI
                 spMatch.Children.Add(CreateLogo(match.home, 26, 26));
                 if(match.Played)
                 {
-                    spMatch.Children.Add(CreateLabel(match.ScoreToString(true), "StyleLabel2", 9, -1));
+                    spMatch.Children.Add(CreateLabel(match.ScoreToString(true, true, Application.Current.FindResource("str_aet").ToString()), "StyleLabel2", 9, -1));
                 }
                 spMatch.Children.Add(CreateLogo(match.away, 26, 26));
             }
@@ -381,6 +439,23 @@ namespace TheManager_GUI
             return playerPanel;
         }
 
+        public static void AddElementToGrid(Grid grid, UIElement element, int row, int col, int colspan = -1)
+        {
+            if(row > -1)
+            {
+                Grid.SetRow(element, row);
+            }
+            if (col > -1)
+            {
+                Grid.SetColumn(element, col);
+            }
+            if (colspan > -1)
+            {
+                Grid.SetColumnSpan(element, colspan);
+            }
+            grid.Children.Add(element);
+        }
+
         public static StackPanel CreateCompositionPanel(List<Player> players, bool showEnergy, Match match, List<Player> subs)
         {
             StackPanel res = new StackPanel();
@@ -437,14 +512,14 @@ namespace TheManager_GUI
             switch (p.position)
             {
                 case Position.Goalkeeper:
-                    return "G";
+                    return Application.Current.FindResource("str_position_g").ToString();
                 case Position.Defender:
-                    return "D";
+                    return Application.Current.FindResource("str_position_d").ToString();
                 case Position.Midfielder:
-                    return "M";
+                    return Application.Current.FindResource("str_position_m").ToString();
                 case Position.Striker:
                 default:
-                    return "S";
+                    return Application.Current.FindResource("str_position_s").ToString();
             }
         }
 

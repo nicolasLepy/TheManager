@@ -198,7 +198,7 @@ namespace TheManager
         public int penaltyShootout2 { get => _penaltyShootout2; }
         public List<bool> penaltyShoots1 { get => _penaltyShoots1; }
         public List<bool> penaltyShoots2 { get => _penaltyShoots2; }
-        public List<KeyValuePair<Media, Journalist>> journalists { get => _journalists; }
+        public List<KeyValuePair<Media, Journalist>> medias { get => _journalists; }
         /// <summary>
         /// Game actions description [minutes , actions]
         /// </summary>
@@ -851,7 +851,7 @@ namespace TheManager
                 }
             }
             CheckConflicts();
-            journalists.Clear();
+            medias.Clear();
         }
 
         /// <summary>
@@ -1795,16 +1795,16 @@ namespace TheManager
             return String.Format("({0}-{1} t.)", penaltyShootout1, penaltyShootout2);
         }
 
-        public string ScoreToString(bool withTabs)
+        public string ScoreToString(bool withTabs, bool withAet, string aet)
         {
             string res = Played ? score1 + " - " + score2 : "";
-            if(prolongations)
+            if(prolongations && withAet)
             {
-                res = res + " ap";
+                res = res + " " + aet;
             }
             if(PenaltyShootout && withTabs)
             {
-                res = res + " (" + penaltyShootout1 + "-" + penaltyShootout2 + " t.)";
+                res = res + " (" + penaltyShootout1 + "-" + penaltyShootout2 + " p)";
             }
             if(forfeit)
             {

@@ -333,18 +333,18 @@ namespace TheManager_GUI.VueClassement
                 }
             }
 
-            AddElementToGrid(grid, ViewUtils.CreateTextBlock("Equipe", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 0, 3);
-            AddElementToGrid(grid, ViewUtils.CreateTextBlock("Pts", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 3);
-            AddElementToGrid(grid, ViewUtils.CreateTextBlock("J", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 4);
+            AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_team").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 0, 3);
+            AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_points").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 3);
+            AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_played").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 4);
             if (!_reduced)
             {
-                AddElementToGrid(grid, ViewUtils.CreateTextBlock("G", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 5);
-                AddElementToGrid(grid, ViewUtils.CreateTextBlock("N", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 6);
-                AddElementToGrid(grid, ViewUtils.CreateTextBlock("P", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 7);
-                AddElementToGrid(grid, ViewUtils.CreateTextBlock("p.", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 8);
-                AddElementToGrid(grid, ViewUtils.CreateTextBlock("c.", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 9);
+                AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_wins").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 5);
+                AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_draws").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 6);
+                AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_loses").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 7);
+                AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_goals_for").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 8);
+                AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_goals_against").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, 9);
             }
-            AddElementToGrid(grid, ViewUtils.CreateTextBlock("Diff", StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, _reduced ? 5 : 10);
+            AddElementToGrid(grid, ViewUtils.CreateTextBlock(Application.Current.FindResource("str_ranking_goals_diff").ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier), startRow, _reduced ? 5 : 10);
 
             foreach (Club c in ranking)
             {

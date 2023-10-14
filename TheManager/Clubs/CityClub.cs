@@ -169,7 +169,7 @@ namespace TheManager
             }
         }
 
-        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalMusic, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic, status)
+        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalSong, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium, goalSong, status)
         {
             _budget = budget;
             _city = city;

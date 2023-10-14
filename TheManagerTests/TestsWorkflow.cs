@@ -28,6 +28,7 @@ namespace TheManagerTests
 
             cbdd.LoadLanguages();
             cbdd.LoadWorld();
+            cbdd.LoadAudios();
             cbdd.LoadCalendars();
             cbdd.LoadCities();
             cbdd.LoadStadiums();

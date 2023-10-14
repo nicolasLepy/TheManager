@@ -57,13 +57,13 @@
 						</StackPanel>
 
 						<!--Menu Buttons-->
-						<Button x:Name="buttonPlay" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="Avancer" Click="buttonPlay_Click"/>
-						<Button x:Name="buttonSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="Simuler 1 an" Click="buttonSimulation_Click"/>
-						<Button x:Name="buttonLongSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="Simuler 10 ans" Click="buttonLongSimulation_Click"/>
-						<Button x:Name="buttonSearch" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/search.png" Content="Rechercher" Click="buttonSearch_Click"/>
-						<Button x:Name="buttonOptions" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/options.png" Content="Options" Click="buttonOptions_Click"/>
-						<Button x:Name="buttonSave" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/save.png" Content="Sauvegarder" Click="buttonSave_Click"/>
-						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="Quitter" Click="buttonQuit_Click"/>
+						<Button x:Name="buttonPlay" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_advance}" Click="buttonPlay_Click"/>
+						<Button x:Name="buttonSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_1y}" Click="buttonSimulation_Click"/>
+						<Button x:Name="buttonLongSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_10y}" Click="buttonLongSimulation_Click"/>
+						<Button x:Name="buttonSearch" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/search.png" Content="{StaticResource str_searchPlayers}" Click="buttonSearch_Click"/>
+						<Button x:Name="buttonOptions" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/options.png" Content="{StaticResource str_settings}" Click="buttonOptions_Click"/>
+						<Button x:Name="buttonSave" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/save.png" Content="{StaticResource str_save}" Click="buttonSave_Click"/>
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
 
 					</StackPanel>
 					<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top">
@@ -140,8 +140,7 @@
 						</Border.Background>
 						<StackPanel VerticalAlignment="Center">
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-								<Button x:Name="buttonWorldCoefficients" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/ranking.png" Content="Coefficients internationaux" Margin="25, 0, 0, 0" Click="buttonWorldCoefficients_Click"/>
-								<Button x:Name="buttonWorldRankings" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/ranking.png" Content="Classements internationaux" Margin="25, 0, 0, 0" Click="buttonWorldRankings_Click"/>
+								<Button x:Name="buttonWorldRankings" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/ranking.png" Content="{StaticResource str_fifaRanking}" Margin="25, 0, 0, 0" Click="buttonWorldRankings_Click"/>
 								<TextBlock x:Name="tbGameDate" Style="{StaticResource textSecondary}" Text="20 janvier 2023" Width="250" Margin="0, 0, 25, 0" TextAlignment="Right" />
 							</StackPanel>
 						</StackPanel>
@@ -243,7 +242,7 @@
 											<Button x:Name="buttonScoreRight" Style="{StaticResource buttonIcon}" tm:TMButtonProperties.Image="icons/right.png" Height="25" Content="Droite" Margin="25, 5, 5, 5" Click="buttonScoreRight_Click"/>
 										</StackPanel>
 										<StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-											<Button x:Name="buttonSwitchScoresMode" Style="{StaticResource buttonMenu}" Height="25" Content="Voir tous les matchs" Margin="5, 5, 25, 5" Click="buttonSwitchScoresMode_Click"/>
+											<Button x:Name="buttonSwitchScoresMode" Style="{StaticResource buttonMenu}" Height="25" Content="{StaticResource str_allGames}" Margin="5, 5, 25, 5" Click="buttonSwitchScoresMode_Click"/>
 										</StackPanel>
 
 									</Grid>

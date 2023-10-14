@@ -112,13 +112,25 @@
     <Compile Include="CalendarWindow.xaml.cs">
       <DependentUpon>CalendarWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ClubView.xaml.cs">
+      <DependentUpon>ClubView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlInternationalRanking.xaml.cs">
+      <DependentUpon>ControlInternationalRanking.xaml</DependentUpon>
+    </Compile>
     <Compile Include="controls\ControlNewsItem.xaml.cs">
       <DependentUpon>ControlNewsItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlPenaltyShootout.xaml.cs">
+      <DependentUpon>ControlPenaltyShootout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlStatItem.xaml.cs">
+      <DependentUpon>ControlStatItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="CountryWindow.xaml.cs">
       <DependentUpon>CountryWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DialogDatabase.xaml.cs">
+    <Compile Include="old\DialogDatabase.xaml.cs">
       <DependentUpon>DialogDatabase.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameModifiers.cs" />
@@ -128,8 +140,17 @@
     <Compile Include="HomepageWindow.xaml.cs">
       <DependentUpon>HomepageWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InternationalRankingView.xaml.cs">
+      <DependentUpon>InternationalRankingView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MainMenuView.xaml.cs">
       <DependentUpon>MainMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MatchView.xaml.cs">
+      <DependentUpon>MatchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Media.cs" />
     <Compile Include="MediaWindow.xaml.cs">
@@ -138,13 +159,20 @@
     <Compile Include="NewGameView.xaml.cs">
       <DependentUpon>NewGameView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RankingWindow.xaml.cs">
+    <Compile Include="old\RankingWindow.xaml.cs">
       <DependentUpon>RankingWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SearchPlayersWindow.xaml.cs">
+    <Compile Include="old\SearchPlayersWindow.xaml.cs">
       <DependentUpon>SearchPlayersWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="PlayerView.xaml.cs">
+      <DependentUpon>PlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchPlayersView.xaml.cs">
+      <DependentUpon>SearchPlayersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Styles\Controls.cs" />
+    <Compile Include="Styles\Langue.cs" />
     <Compile Include="Styles\StyleDefinition.cs" />
     <Compile Include="Styles\Theme.cs" />
     <Compile Include="ViewMisc\ViewMatches.cs" />
@@ -161,10 +189,10 @@
     <Compile Include="PregameWindow.xaml.cs">
       <DependentUpon>PregameWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClubChoiceWindow.xaml.cs">
+    <Compile Include="old\ClubChoiceWindow.xaml.cs">
       <DependentUpon>ClubChoiceWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ClubWindow.xaml.cs">
+    <Compile Include="old\ClubWindow.xaml.cs">
       <DependentUpon>ClubWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="CompetitionWindow.xaml.cs">
@@ -176,20 +204,20 @@
     <Compile Include="PlayGameWindow.xaml.cs">
       <DependentUpon>PlayGameWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="PlayerWindow.xaml.cs">
+    <Compile Include="old\PlayerWindow.xaml.cs">
       <DependentUpon>PlayerWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="JournalistWindow.xaml.cs">
       <DependentUpon>JournalistWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GameWindow.xaml.cs">
+    <Compile Include="old\GameWindow.xaml.cs">
       <DependentUpon>GameWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MenuWindow.xaml.cs">
+    <Compile Include="old\MenuWindow.xaml.cs">
       <DependentUpon>MenuWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="OptionsWindow.xaml.cs">
-      <DependentUpon>OptionsWindow.xaml</DependentUpon>
+    <Compile Include="OptionsView.xaml.cs">
+      <DependentUpon>OptionsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="TournamentClubWindow.xaml.cs">
       <DependentUpon>TournamentClubWindow.xaml</DependentUpon>
@@ -206,7 +234,27 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ClubView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlInternationalRanking.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="controls\ControlNewsItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlPenaltyShootout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlStatItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InternationalRankingView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,7 +262,23 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MatchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="NewGameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchPlayersView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -226,7 +290,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DialogDatabase.xaml">
+    <Page Include="old\DialogDatabase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -238,7 +302,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainWindow.xaml">
+    <Page Include="old\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -246,7 +310,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="old\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -254,11 +318,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RankingWindow.xaml">
+    <Page Include="old\RankingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="SearchPlayersWindow.xaml">
+    <Page Include="old\SearchPlayersWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -266,11 +330,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ClubChoiceWindow.xaml">
+    <Page Include="old\ClubChoiceWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ClubWindow.xaml">
+    <Page Include="old\ClubWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -286,7 +350,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlayerWindow.xaml">
+    <Page Include="old\PlayerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -294,15 +358,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GameWindow.xaml">
+    <Page Include="old\GameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MenuWindow.xaml">
+    <Page Include="old\MenuWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="OptionsWindow.xaml">
+    <Page Include="OptionsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -412,6 +476,15 @@
   <ItemGroup>
     <Resource Include="icons\left.png" />
     <Resource Include="icons\right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\budget.png" />
+    <Resource Include="icons\city.png" />
+    <Resource Include="icons\manager.png" />
+    <Resource Include="icons\stadium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\contract.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

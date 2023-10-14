@@ -60,7 +60,7 @@ namespace TheManager_GUI
         private void OpenClub(Club c)
         {
             CityClub cc = (c as CityClub);
-            Windows_Club wc = new Windows_Club(cc);
+            ClubView wc = new ClubView(cc);
             wc.Show();
         }
 

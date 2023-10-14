@@ -1,0 +1,123 @@
+﻿<Window x:Class="TheManager_GUI.MainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="MainView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.2*"/>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0">
+						<!--Menu Buttons-->
+						<StackPanel Orientation="Horizontal" Height="35" Margin="15, 25, 0, 40">
+							<Image Source="icone.ico" Height="30"/>
+							<TextBlock Text="The Manager" Style="{StaticResource textTitle}" Margin="10, 0, 0, 0"/>
+						</StackPanel>
+					</StackPanel>
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="0.5*"/>
+						<RowDefinition Height="0.3*"/>
+						<RowDefinition Height="0.3*"/>
+						<RowDefinition Height="0.3*"/>
+						<RowDefinition Height="0.5*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+
+					<StackPanel Grid.Row="2" HorizontalAlignment="Center" Orientation="Horizontal" Margin="15, 25, 0, 40">
+						<Image Source="icone.ico" Height="60"/>
+						<TextBlock Text="The Manager" Style="{StaticResource textTitle}" FontSize="34" Margin="10, 0, 0, 0"/>
+					</StackPanel>
+
+
+					<Button Grid.Row="3" x:Name="buttonStart" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_newGame}" Margin="400, 25, 400, 25" Height="75" Click="buttonStart_Click"/>
+					<Button Grid.Row="4" x:Name="buttonLoad" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_load}" Margin="400, 25, 400, 25" Height="75" Click="buttonLoad_Click"/>
+					<Button Grid.Row="5" x:Name="buttonExit" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_quit}" Margin="400, 25, 400, 25" Height="75" Click="buttonQuit_Click"/>
+
+
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

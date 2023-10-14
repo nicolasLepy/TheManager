@@ -139,7 +139,7 @@ namespace TheManager_GUI
         {
             lbCompetition.Content = _competition.name;
             lbNomTour.Content = _competition.rounds[_indexTour].name;
-            lbDayName.Content = FindResource("str_matchweek").ToString() + " " + _indexJournee.ToString();
+            lbDayName.Content = String.Format(FindResource("str_matchweek").ToString(), _indexJournee);
             Ranking(RankingType.General);
             Calendrier();
             if(initMap)

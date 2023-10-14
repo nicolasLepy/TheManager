@@ -46,12 +46,12 @@ namespace TheManager_GUI
                     afficherAction = true;
                     if (em.club == game.home)
                     {
-                        _media.But(game);
+                        _media.EventGoal(game);
                     }
 
                     if (cbJingleBut.IsChecked == true)
                     {
-                        _media.AjouterSon("jingle", false);
+                        _media.AddSound("jingle", false);
                     }
 
                     //Refresh en cas de but
@@ -149,7 +149,7 @@ namespace TheManager_GUI
                 _enCours.Add(true);
             }
 
-            _media.Ambiance4000();
+            _media.Background(_matchs[0]);
 
             try
             {
@@ -207,7 +207,7 @@ namespace TheManager_GUI
 
         private void BtnTerminer_Click(object sender, RoutedEventArgs e)
         {
-            _media.Detruire();
+            _media.Destroy();
             Close();
         }
 
@@ -228,7 +228,7 @@ namespace TheManager_GUI
                 //_matchs[i].Jouer();
             }
             //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, _matchs[0].MinuteSuivante())) ;
-            _media.Detruire();
+            _media.Destroy();
             _media = null;
             Close();
         }

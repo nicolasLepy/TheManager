@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using TheManager_GUI.Styles;
 
 namespace TheManager_GUI
 {
@@ -11,6 +12,8 @@ namespace TheManager_GUI
     {
         private readonly static List<Theme> _themes = new List<Theme>();
         public static List<Theme> themes => _themes;
+        public static Theme current { get; set; }
+
 
         private readonly string _name;
         private readonly string _backgroundColor;
@@ -57,6 +60,16 @@ namespace TheManager_GUI
             _relegationColor = relagationColor;
             _fontFamily = fontFamily;
             _dateColor = dateColor;
+        }
+
+        public void SetAsCurrentTheme()
+        {
+            current = this;
+        }
+
+        public override string ToString()
+        {
+            return this.name;
         }
 
 

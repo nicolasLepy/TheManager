@@ -1,0 +1,142 @@
+﻿<Window x:Class="TheManager_GUI.SearchPlayersView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="SearchPlayersView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.2*"/>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0" Margin="15">
+						<!--Menu Buttons-->
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
+					</StackPanel>
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="0.15*"/>
+						<RowDefinition Height="0.15*"/>
+						<RowDefinition Height="*"/>
+						<RowDefinition Height="0.1*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+
+					<TextBlock Text="{StaticResource str_searchPlayers}" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Grid.Row="2"/>
+
+					<Grid Grid.Row="3">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.2*"/>
+							<ColumnDefinition Width="0.2*"/>
+							<ColumnDefinition Width="0.5*"/>
+							<ColumnDefinition Width="0.1*"/>
+							<ColumnDefinition Width="0.1*"/>
+							<ColumnDefinition Width="0.1*"/>
+							<ColumnDefinition Width="0.1*"/>
+							<ColumnDefinition Width="0.1*"/>
+							<ColumnDefinition Width="0.1*"/>
+						</Grid.ColumnDefinitions>
+						<CheckBox Checked="checkboxTransferable_Checked" Unchecked="checkboxTransferable_Checked" Grid.Column="0" x:Name="checkboxTransferable" Style="{StaticResource checkBoxStyle}" Content="{StaticResource str_transferList}" Margin="15"/>
+						<CheckBox Checked="checkboxFree_Checked" Unchecked="checkboxFree_Checked" Grid.Column="1" x:Name="checkboxFree" Style="{StaticResource checkBoxStyle}" Content="{StaticResource str_freePlayers}" Margin="15"/>
+						<TextBlock Grid.Column="2" Text="{StaticResource str_age}" Style="{StaticResource textPlainCenter}" HorizontalAlignment="Right" Margin="30, 0, 0, 0"/>
+						<TextBox Grid.Column="3" KeyDown="textBoxAge_KeyDown" LostFocus="textBoxAge_LostFocus" x:Name="textBoxBottomAge" PreviewTextInput="textBoxAge_PreviewTextInput" Margin="15" Style="{StaticResource textBoxStyle}" Text="30" />
+						<TextBox Grid.Column="4" KeyDown="textBoxAge_KeyDown" LostFocus="textBoxAge_LostFocus" x:Name="textBoxUpperAge" PreviewTextInput="textBoxAge_PreviewTextInput" Margin="15" Style="{StaticResource textBoxStyle}" Text="30" />
+						<CheckBox Checked="checkbox_Checked" Unchecked="checkbox_Checked" Grid.Column="5" x:Name="checkboxG" Style="{StaticResource checkBoxStyle}" Content="{StaticResource str_g}" Margin="15" IsChecked="True"/>
+						<CheckBox Checked="checkbox_Checked" Unchecked="checkbox_Checked" Grid.Column="6" x:Name="checkboxD" Style="{StaticResource checkBoxStyle}" Content="{StaticResource str_d}" Margin="15" IsChecked="True"/>
+						<CheckBox Checked="checkbox_Checked" Unchecked="checkbox_Checked" Grid.Column="7" x:Name="checkboxM" Style="{StaticResource checkBoxStyle}" Content="{StaticResource str_m}" Margin="15" IsChecked="True"/>
+						<CheckBox Checked="checkbox_Checked" Unchecked="checkbox_Checked" Grid.Column="8" x:Name="checkboxS" Style="{StaticResource checkBoxStyle}" Content="{StaticResource str_s}" Margin="15" IsChecked="True"/>
+
+					</Grid>
+
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="4">
+						<StackPanel Orientation="Vertical" x:Name="playersPanel">
+
+						</StackPanel>
+					</ScrollViewer>
+
+					<TextBlock x:Name="textPlayersCount" Grid.Row="5" Style="{StaticResource textSecondary}"/>
+
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

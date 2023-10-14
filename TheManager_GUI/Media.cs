@@ -18,21 +18,21 @@ namespace TheManager_GUI
     {
 
         private readonly WindowsMediaPlayer _player;
-        private readonly int _duree;
-        private readonly int _decalage;
+        private readonly int _length;
+        private readonly int _offset;
 
-        public ThreadDuree(WindowsMediaPlayer player, int duree, int decalage)
+        public ThreadDuree(WindowsMediaPlayer player, int duree, int offset)
         {
             _player = player;
-            _duree = duree;
-            _decalage = decalage;
+            _length = duree;
+            _offset = offset;
         }
         
         public void ThreadProc()
         {
-            Thread.Sleep(_decalage * 1000);
+            Thread.Sleep(_offset * 1000);
             _player.controls.play();
-            Thread.Sleep(_duree * 1000);
+            Thread.Sleep(_length * 1000);
             _player.close();
         }
 
@@ -42,50 +42,50 @@ namespace TheManager_GUI
     {
 
         private readonly SoundPlayer _player;
-        private readonly int _duree;
-        private readonly int _decalage;
+        private readonly int _length;
+        private readonly int _offset;
 
-        public ThreadDureeWAV(SoundPlayer player, int duree, int decalage)
+        public ThreadDureeWAV(SoundPlayer player, int length, int offset)
         {
             _player = player;
-            _duree = duree;
-            _decalage = decalage;
+            _length = length;
+            _offset = offset;
         }
 
         public void ThreadProc()
         {
-            Thread.Sleep(_decalage * 1000);
+            Thread.Sleep(_offset * 1000);
             _player.Play();
-            Thread.Sleep(_duree * 1000);
+            Thread.Sleep(_length * 1000);
             _player.Stop();
 
         }
 
     }
 
-    public class ThreadBut
+    public class ThreadEventGoal
     {
         private readonly Thread _thread;
 
-        private string _chemin;
+        private string _path;
 
-        public string Chemin { get => _chemin; }
+        public string Path { get => _path; }
 
-        public ThreadBut(string chemin, int decalage, int duree)
+        public ThreadEventGoal(string path, int offset, int length)
         {
-            _chemin = chemin;
+            _path = path;
             _thread = new Thread(() =>
             {
                 var c = new System.Windows.Media.MediaPlayer();
-                c.Open(new Uri(Utils.PathSong(chemin)));
-                if (decalage > 0)
+                c.Open(new Uri(Utils.PathSong(path)));
+                if (offset > 0)
                 {
-                    Thread.Sleep(decalage * 1000);
+                    Thread.Sleep(offset * 1000);
                 }
                 c.Play();
-                if (duree > 0)
+                if (length > 0)
                 {
-                    Thread.Sleep(duree * 1000);
+                    Thread.Sleep(length * 1000);
                     c.Stop();
                 }
                 else
@@ -98,7 +98,7 @@ namespace TheManager_GUI
                     Thread.Sleep((int)time);
                     c.Stop();
                 }
-                _chemin = "";
+                _path = "";
             });
         }
 
@@ -116,14 +116,14 @@ namespace TheManager_GUI
 
     public class MediaWAV
     {
-        private readonly List<ThreadBut> _players;
+        private readonly List<ThreadEventGoal> _players;
 
-        public bool MusiqueDejaEnCours(string musique)
+        public bool IsPlaying(string sound)
         {
             bool res = false;
-            foreach(ThreadBut tb in _players)
+            foreach(ThreadEventGoal tb in _players)
             {
-                if (tb.Chemin == musique)
+                if (tb.Path == sound)
                 {
                     res = true;
                 }
@@ -134,101 +134,54 @@ namespace TheManager_GUI
 
         public MediaWAV()
         {
-            _players = new List<ThreadBut>();
+            _players = new List<ThreadEventGoal>();
         }
 
-        public void AjouterSon(string chemin, bool boucle, int duree = 0, int decalage = 0)
+        public void AddSound(string path, bool loop, int length = 0, int offset = 0)
         {
-            if(!MusiqueDejaEnCours(chemin))
+            if(!IsPlaying(path))
             {
-                ThreadBut tb = new ThreadBut(chemin, decalage, duree);
+                ThreadEventGoal tb = new ThreadEventGoal(path, offset, length);
                 _players.Add(tb);
                 tb.Start();
             }
-            
         }
-        
-        public void Ambiance4000()
+
+        public void Background(Match m)
         {
-            int random = Session.Instance.Random(1, 3);
-            switch (random)
+            List<AudioSource> sources = new List<AudioSource>();
+            foreach (AudioSource source in Session.Instance.Game.kernel.audioSources)
             {
-                case 1:
-                    AjouterSon("Ambiances\\Ambiance_4000", true);
-                    break;
-                case 2:
-                    AjouterSon("Ambiances\\Ambiance_4000_2", true);
-                    break;
+                if (source.Min <= m.stadium.capacity && source.Max > m.stadium.capacity && source.Type == AudioType.Background)
+                {
+                    sources.Add(source);
+                }
+            }
+            if(sources.Count > 0)
+            {
+                AudioSource picked = sources[Session.Instance.Random(0, sources.Count)];
+                AddSound(picked.getPath(), false, 15);
             }
         }
 
-        public void Ambiance12000()
+
+        public void EventGoal(Match m)
         {
-            int random = Session.Instance.Random(1, 2);
-            switch (random)
+            List<AudioSource> sources = new List<AudioSource>();
+            foreach(AudioSource source in Session.Instance.Game.kernel.audioSources)
             {
-                case 1:
-                    AjouterSon("Ambiances\\Ambiance_12000", true);
-                    break;
+                if(source.Min <= m.stadium.capacity && source.Max > m.stadium.capacity && source.Type == AudioType.Event)
+                {
+                    sources.Add(source);
+                }
             }
+            AudioSource picked = sources[Session.Instance.Random(0, sources.Count)];
+            AddSound(picked.getPath(), false, 15);
         }
 
-        public void But(Match m)
+        public void Destroy()
         {
-            if (m.attendance < 12000)
-            {
-                But4000(m.home.goalMusic);
-            }
-            else
-            {
-                But12000(m.home.goalMusic);
-            }
-        }
-
-        public void But4000(string musique)
-        {
-            int random = Session.Instance.Random(1, 4);
-            int duree = Session.Instance.Random(9, 15);
-            switch (random)
-            {
-                case 1:
-                    AjouterSon("Ambiances\\But_4000", false, 15);
-                    break;
-                case 2:
-                    AjouterSon("Ambiances\\But_4000_2", false, 15);
-                    break;
-                case 3:
-                    AjouterSon("Ambiances\\But_4000_3", false, 15);
-                    break;
-            }
-            AjouterSon(musique, false, duree, 2);
-        }
-
-        public void But12000(string musique)
-        {
-            int random = Session.Instance.Random(1, 5);
-            int duree = Session.Instance.Random(9, 15);
-            switch (random)
-            {
-                case 1:
-                    AjouterSon("Ambiances\\But_12000", false, 15);
-                    break;
-                case 2:
-                    AjouterSon("Ambiances\\But_12000_2", false, 15);
-                    break;
-                case 3:
-                    AjouterSon("Ambiances\\But_12000_3", false, 15);
-                    break;
-                case 4:
-                    AjouterSon("Ambiances\\But_12000_4", false, 15);
-                    break;
-            }
-            AjouterSon(musique, false, duree, 2);
-        }
-
-        public void Detruire()
-        {
-            foreach (ThreadBut p in _players)
+            foreach (ThreadEventGoal p in _players)
             {
                 try
                 {
@@ -238,125 +191,4 @@ namespace TheManager_GUI
             }
         }
     }
-
-    /*
-    public class Media
-    {
-
-        private List<WindowsMediaPlayer> _players;
-
-        
-        private void Player_MediaError(object pMediaObject)
-        {
-            MessageBox.Show("Ne peut pas jouer le son.");
-        }
-
-        public void AjouterSon(string chemin, bool boucle, int duree = 0, int decalage = 0)
-        {
-            WindowsMediaPlayer wplayer = new WindowsMediaPlayer();
-            wplayer.MediaError += new _WMPOCXEvents_MediaErrorEventHandler(Player_MediaError);
-            wplayer.URL = Utils.PathSong(chemin);
-            Utils.Debug(wplayer.URL);
-            if(boucle)
-            {
-                wplayer.settings.setMode("loop", true);
-            }
-            _players.Add(wplayer);
-            if(duree != 0)
-            {
-                ThreadDuree td = new ThreadDuree(wplayer, duree, decalage);
-                //Thread t = new Thread(() => ThreadDuree(wplayer, duree, decalage));
-                Thread t = new Thread(new ThreadStart(td.ThreadProc));
-                t.Start();
-            }
-            else
-            {
-                wplayer.controls.play();
-
-            }
-        }
-
-        public void Ambiance4000()
-        {
-            int random = Session.Instance.Random(1, 3);
-            switch(random)
-            {
-                case 1:
-                    AjouterSon("Ambiances\\Ambiance_4000",true);
-                    break;
-                case 2 :
-                    AjouterSon("Ambiances\\Ambiance_4000_2", true);
-                    break;
-            }
-        }
-
-        public void Ambiance12000()
-        {
-            int random = Session.Instance.Random(1, 2);
-            switch (random)
-            {
-                case 1:
-                    AjouterSon("Ambiances\\Ambiance_12000", true);
-                    break;
-            }
-        }
-
-        public void But(Match m)
-        {
-            if (m.attendance < 12000) But4000(m.home.goalMusic);
-            else But12000(m.home.goalMusic);
-        }
-
-        public void But4000(string musique)
-        {
-            int random = Session.Instance.Random(1, 4);
-            switch (random)
-            {
-                case 1:
-                    AjouterSon("Ambiances\\But_4000", false, 15);
-                    break;
-                case 2:
-                    AjouterSon("Ambiances\\But_4000_2", false, 15);
-                    break;
-                case 3:
-                    AjouterSon("Ambiances\\But_4000_3", false, 15);
-                    break;
-            }
-            AjouterSon(musique, false, 15,2);
-        }
-
-        public void But12000(string musique)
-        {
-            int random = Session.Instance.Random(1, 5);
-            switch (random)
-            {
-                case 1:
-                    AjouterSon("Ambiances\\But_12000", false, 15);
-                    break;
-                case 2:
-                    AjouterSon("Ambiances\\But_12000_2", false, 15);
-                    break;
-                case 3:
-                    AjouterSon("Ambiances\\But_12000_3", false, 15);
-                    break;
-                case 4:
-                    AjouterSon("Ambiances\\But_12000_4", false, 15);
-                    break;
-            }
-            AjouterSon(musique, false, 15,2);
-        }
-
-        public Media()
-        {
-            _players = new List<WindowsMediaPlayer>();
-        }
-
-        public void Detruire()
-        {
-            foreach(WindowsMediaPlayer wmp in _players)
-            {
-                wmp.close();
-            }
-        }
-    }*/
 }

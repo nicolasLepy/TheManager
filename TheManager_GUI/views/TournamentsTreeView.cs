@@ -131,7 +131,7 @@ namespace TheManager_GUI.views
             return treeViewItemContainer;
         }
 
-        /** EVENT HANDLER **/
+        /** EVENTS HANDLER **/
 
         //For navigation
         private void treeView_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
