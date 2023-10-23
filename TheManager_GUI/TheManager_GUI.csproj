@@ -44,6 +44,9 @@
     <Reference Include="AxInterop.MapWinGIS">
       <HintPath>..\MapWinGISAxControl\bin\Debug\AxInterop.MapWinGIS.dll</HintPath>
     </Reference>
+    <Reference Include="ColorThief.Desktop.v46, Version=1.1.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ksemenenko.ColorThief.1.1.1.4\lib\net46\ColorThief.Desktop.v46.dll</HintPath>
+    </Reference>
     <Reference Include="HarfBuzzSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\HarfBuzzSharp.2.8.2.4-preview.84\lib\net462\HarfBuzzSharp.dll</HintPath>
     </Reference>
@@ -111,6 +114,12 @@
     </ApplicationDefinition>
     <Compile Include="CalendarView.xaml.cs">
       <DependentUpon>CalendarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlComposition.xaml.cs">
+      <DependentUpon>ControlComposition.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlCompositionPlayer.xaml.cs">
+      <DependentUpon>ControlCompositionPlayer.xaml</DependentUpon>
     </Compile>
     <Compile Include="old\CalendarWindow.xaml.cs">
       <DependentUpon>CalendarWindow.xaml</DependentUpon>
@@ -180,8 +189,17 @@
     <Compile Include="old\SearchPlayersWindow.xaml.cs">
       <DependentUpon>SearchPlayersWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="pages\TournamentResultsPage.xaml.cs">
+      <DependentUpon>TournamentResultsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="pages\TournamentStatisticPage.xaml.cs">
+      <DependentUpon>TournamentStatisticPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PlayerView.xaml.cs">
       <DependentUpon>PlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PreGameView.xaml.cs">
+      <DependentUpon>PreGameView.xaml</DependentUpon>
     </Compile>
     <Compile Include="SearchPlayersView.xaml.cs">
       <DependentUpon>SearchPlayersView.xaml</DependentUpon>
@@ -192,6 +210,9 @@
     <Compile Include="styles\Theme.cs" />
     <Compile Include="old\ViewMatches.cs" />
     <Compile Include="old\ViewPlayers.cs" />
+    <Compile Include="TournamentView.xaml.cs">
+      <DependentUpon>TournamentView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\DataGridTournamentColumnConverter.cs" />
     <Compile Include="views\FactoryViewRanking.cs" />
     <Compile Include="views\View.cs" />
@@ -201,7 +222,7 @@
     <Compile Include="views\ViewRankingChampionship.cs" />
     <Compile Include="views\ViewRankingKnockout.cs" />
     <Compile Include="views\ViewRankingGroups.cs" />
-    <Compile Include="PregameWindow.xaml.cs">
+    <Compile Include="old\PregameWindow.xaml.cs">
       <DependentUpon>PregameWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="old\ClubChoiceWindow.xaml.cs">
@@ -210,10 +231,10 @@
     <Compile Include="old\ClubWindow.xaml.cs">
       <DependentUpon>ClubWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CompetitionWindow.xaml.cs">
+    <Compile Include="old\CompetitionWindow.xaml.cs">
       <DependentUpon>CompetitionWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="GameConfigurationWindow.xaml.cs">
+    <Compile Include="old\GameConfigurationWindow.xaml.cs">
       <DependentUpon>GameConfigurationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="PlayGameWindow.xaml.cs">
@@ -246,6 +267,14 @@
     <Compile Include="views\TournamentsTreeView.cs" />
     <Compile Include="views\ViewScores.cs" />
     <Page Include="CalendarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlComposition.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlCompositionPlayer.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -309,7 +338,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="pages\TournamentResultsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="pages\TournamentStatisticPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PreGameView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -361,7 +402,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PregameWindow.xaml">
+    <Page Include="old\PregameWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -373,11 +414,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="CompetitionWindow.xaml">
+    <Page Include="old\CompetitionWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GameConfigurationWindow.xaml">
+    <Page Include="old\GameConfigurationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -418,6 +459,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="TournamentClubWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TournamentView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

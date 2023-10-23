@@ -43,7 +43,7 @@ namespace TheManager_GUI
                 date = Session.Instance.Game.date;
             }
         }
-        public Round activeRound { get; set; }
+        public Round activeRound { get; set; } //TODO: Not used ? Could be used to avoid refresh ranking each time gameday is changed
         public DateTime date { get; set; }
         
         public Tournament tournament { get; set; }
@@ -161,8 +161,8 @@ namespace TheManager_GUI
             List<Match> matchs = _game.NextDay();
             if (matchs.Count > 0)
             {
-                Windows_AvantMatch wam = new Windows_AvantMatch(matchs, _game.club);
-                wam.ShowDialog();
+                PreGameView view = new PreGameView(matchs, _game.club);
+                view.Show();
             }
             _game.UpdateTournaments();
             Refresh();

@@ -191,9 +191,8 @@ namespace TheManager_GUI.views
 
             Axis axisY = new Axis();
             axisY.Title = axisYtitle;
-            double axisMin = minValue != -1 ? minValue : values.Min();
-            double axisMax = maxValue != -1 ? maxValue : values.Max();
-            Console.WriteLine("[Axis Min] " + axisMin + " [Axis Max] " + axisMax);
+            double axisMin = minValue != -1 ? minValue : values.Count > 0 ? values.Min() : 0;
+            double axisMax = maxValue != -1 ? maxValue : values.Count > 0 ? values.Max() : 1;
             axisY.MinValue = axisMin;
             axisY.MaxValue = axisMax == axisMin ? axisMax+1 : axisMax;
             axisY.Style = Application.Current.FindResource(StyleDefinition.styleLiveChartAxis) as Style;

@@ -16,6 +16,7 @@
 	<system:String x:Key="str_gameConfiguration">Game configuration</system:String>
 	<system:String x:Key="str_tournamentsSelection">Tournaments choice</system:String>
 	<system:String x:Key="str_noupcomingmatches">No upcoming games</system:String>
+	<system:String x:Key="str_noplayedgames">No games played yet</system:String>
 	<system:String x:Key="str_disableAll">Deactivate all</system:String>
 	<system:String x:Key="str_enableAll">Enable all</system:String>
 	<system:String x:Key="str_launch">Launch</system:String>
@@ -58,6 +59,7 @@
 	<system:String x:Key="str_goals">Goals</system:String>
 	<system:String x:Key="str_games">Games</system:String>
 	<system:String x:Key="str_club">Club</system:String>
+	<system:String x:Key="str_clubs">Clubs</system:String>
 	<system:String x:Key="str_team">Team</system:String>
 	<system:String x:Key="str_free">Free</system:String>
 	<system:String x:Key="str_players">Players</system:String>
@@ -92,6 +94,7 @@
 	<system:String x:Key="str_statisticsYear">Statistics by year</system:String>
 	<system:String x:Key="str_stadium">Stadium</system:String>
 	<system:String x:Key="str_stadiums">Stadiums</system:String>
+	<system:String x:Key="str_capacity">Capacity</system:String>
 	<system:String x:Key="str_sponsors">Sponsors</system:String>
 	<system:String x:Key="str_seasonsByClub">Seasons by clubs</system:String>
 	<system:String x:Key="str_currentSeason">Current season</system:String>
@@ -142,12 +145,15 @@
 	<system:String x:Key="str_clubsInternationalTournaments">Clubs in international competitions</system:String>
 	<system:String x:Key="str_internationalRankings">International rankings</system:String>
 	<system:String x:Key="str_tournaments">Tournaments</system:String>
+	<system:String x:Key="str_tournament">Tournament</system:String>
 	<system:String x:Key="str_titleholder">Titleholder</system:String>
 	<system:String x:Key="str_notranked">Not ranked</system:String>
 	<system:String x:Key="str_nodatabaseselected">No database selected</system:String>
 	<system:String x:Key="str_error">Error</system:String>
 	<system:String x:Key="str_notQualified">Not qualified</system:String>
 	<system:String x:Key="str_winner">Winner</system:String>
+	<system:String x:Key="str_runnerup">Runner-up</system:String>
+	<system:String x:Key="str_third">Third</system:String>
 	<system:String x:Key="str_status">Status</system:String>
 	<system:String x:Key="str_amateur">Amateur</system:String>
 	<system:String x:Key="str_semipro">Semi-pro</system:String>
@@ -195,5 +201,7 @@
 	<system:String x:Key="str_total">Total</system:String>
 	<system:String x:Key="str_host">Host</system:String>
 	<system:String x:Key="str_performance">Performance</system:String>
+	<system:String x:Key="str_map">Map</system:String>
+	<system:String x:Key="str_results">Results</system:String>
 
 </ResourceDictionary>

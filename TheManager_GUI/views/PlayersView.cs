@@ -12,11 +12,15 @@ using TheManager_GUI.Styles;
 using System.Windows;
 using System.Numerics;
 using System.Windows.Media;
+using System.Windows.Input;
 
 namespace TheManager_GUI.views
 {
     public class PlayersView : View
     {
+
+        public Action<object, MouseButtonEventArgs, Player> OnClickPlayer { get; set; }
+
 
         private readonly List<GridColumnDefinition> columns;
 
@@ -32,7 +36,7 @@ namespace TheManager_GUI.views
 
         public PlayersView(List<Player> players, float sizeMultiplier, bool age, bool position, bool nationality, bool club, bool level, bool potential, bool games, bool goals, bool condition, bool value, bool wage, bool isInjuried, bool isSuspended, bool isInternational, bool internationalSelections, bool internationalGoals, bool contractBegin, bool contractEnd, bool levelsInNumbers = false)
         {
-
+            OnClickPlayer = null;
             Players = players;
             columns = new List<GridColumnDefinition>();
             columns.Add(new GridColumnDefinition(GridColumn.PLAYER_NAME, 250, 0));
@@ -117,8 +121,13 @@ namespace TheManager_GUI.views
 
         private void FillPlayerName(Grid grid, Player player, int row, int col)
         {
-            TextBlock tbPlayer = ViewUtils.CreateTextBlockOpenWindow(player, OpenPlayer, player.Name, StyleDefinition.styleTextPlain, fontSize, -1);
-            AddElementToGrid(grid, tbPlayer, row, col);
+            TextBlock textPlayer = ViewUtils.CreateTextBlockOpenWindow(player, OpenPlayer, player.Name, StyleDefinition.styleTextPlain, fontSize, -1);
+            if (OnClickPlayer != null)
+            {
+                textPlayer = ViewUtils.CreateTextBlock(player.Name, StyleDefinition.styleTextPlain, fontSize, -1);
+                textPlayer.MouseLeftButtonUp += (sender, e) => OnClickPlayer(sender, e, player);
+            }
+            AddElementToGrid(grid, textPlayer, row, col);
         }
 
         private void FillPlayerAge(Grid grid, Player player, int row, int col)
@@ -208,17 +217,23 @@ namespace TheManager_GUI.views
 
         private void FillPlayerIsSuspended(Grid grid, Player player, int row, int col)
         {
-            throw new NotImplementedException();
+            TextBlock textIsSuspended = ViewUtils.CreateTextBlock("N.A.", StyleDefinition.styleTextPlainCenter, fontSize, -1);
+            AddElementToGrid(grid, textIsSuspended, row, col);
+            //throw new NotImplementedException();
         }
 
         private void FillPlayerIsInjuried(Grid grid, Player player, int row, int col)
         {
-            throw new NotImplementedException();
+            TextBlock textIsInjuried = ViewUtils.CreateTextBlock("N.A.", StyleDefinition.styleTextPlainCenter, fontSize, -1);
+            AddElementToGrid(grid, textIsInjuried, row, col);
+            //throw new NotImplementedException();
         }
 
         private void FillPlayerIsInternational(Grid grid, Player player, int row, int col)
         {
-            throw new NotImplementedException();
+            TextBlock textIsInternational = ViewUtils.CreateTextBlock("N.A.", StyleDefinition.styleTextPlainCenter, fontSize, -1);
+            AddElementToGrid(grid, textIsInternational, row, col);
+            //throw new NotImplementedException();
         }
 
         private void FillPlayerInternationalSelections(Grid grid, Player player, int row, int col)

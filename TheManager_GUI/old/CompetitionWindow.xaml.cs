@@ -354,6 +354,7 @@ namespace TheManager_GUI
             Ranking(RankingType.Away);
         }
 
+        //DONE
         private void SelectedGoalscorers(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -376,6 +377,7 @@ namespace TheManager_GUI
             }
         }
 
+        //DONE
         private void SelectedStatPossession(object sender, RoutedEventArgs e)
         {
 
@@ -420,6 +422,7 @@ namespace TheManager_GUI
 
         }
 
+        //DONE
         private void SelectedStatShot(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -463,6 +466,7 @@ namespace TheManager_GUI
             }
         }
 
+        //TODO
         private void SelectedRecords(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -505,7 +509,7 @@ namespace TheManager_GUI
                 }
                 else
                 {
-                    spRanking.Children.Add(ViewUtils.CreateLabel("Information non disponible pour une coupe", "StyleLabel2", 12, -1));
+                    spRanking.Children.Add(ViewUtils.CreateLabel(FindResource("str_noAvailableForCup").ToString(), "StyleLabel2", 12, -1));
                 }
             }
 
@@ -524,6 +528,7 @@ namespace TheManager_GUI
 
         }
 
+        //TODO
         private void SelectedPalmaresClubs(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -564,6 +569,7 @@ namespace TheManager_GUI
             }
         }
 
+        //TODO
         private void SelectedStatsYears(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -611,6 +617,7 @@ namespace TheManager_GUI
         }
 
 
+        //TODO
         private void SelectedSeasonsClubs(object sender, RoutedEventArgs e)
         {
             Dictionary<Club, int> clubs = new Dictionary<Club, int>();
@@ -666,6 +673,7 @@ namespace TheManager_GUI
         }
 
 
+        // TODO
         private void SelectedPalmaresYears(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -690,6 +698,7 @@ namespace TheManager_GUI
 
         }
 
+        //DONE
         private void SelectedBudget(object sender, RoutedEventArgs e)
         {
             
@@ -713,6 +722,7 @@ namespace TheManager_GUI
             }
         }
 
+        //DONE
         private void SelectedLevel(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -732,6 +742,7 @@ namespace TheManager_GUI
             }
         }
 
+        //DONE
         private void SelectedPotential(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -751,6 +762,7 @@ namespace TheManager_GUI
             }
         }
 
+        //DONE
         private void SelectedStadium(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();
@@ -771,6 +783,7 @@ namespace TheManager_GUI
             }
         }
 
+        //DONE
         private void SelectedAttendance(object sender, RoutedEventArgs e)
         {
 
@@ -812,6 +825,7 @@ namespace TheManager_GUI
 
         }
 
+        //DONE
         private void SelectedSponsors(object sender, RoutedEventArgs e)
         {
             spRanking.Children.Clear();

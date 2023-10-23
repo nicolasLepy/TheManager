@@ -124,6 +124,20 @@
 		</Setter>
 	</Style>
 
+	<Style x:Key="buttonMenuSmall" TargetType="Button" BasedOn="{StaticResource buttonIconMenu}">
+		<Setter Property="Height" Value="30"/>
+		<Setter Property="ContentTemplate">
+			<Setter.Value>
+				<DataTemplate>
+					<StackPanel Orientation="Horizontal">
+						<TextBlock Text="{Binding Path=Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}}" Style="{StaticResource textPlain}"></TextBlock>
+					</StackPanel>
+				</DataTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+
 	<Style x:Key="buttonMenuTitle" TargetType="Button" BasedOn="{StaticResource buttonIconMenu}">
 		<Setter Property="ContentTemplate">
 			<Setter.Value>

@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="TheManager_GUI.controls.ControlCompositionPlayer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TheManager_GUI.controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="100">
+	<Grid MinWidth="60" MaxWidth="60" MinHeight="60" MaxHeight="60">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="0.05*"/>
+			<RowDefinition Height="0.6*"/>
+			<RowDefinition Height="0.7*"/>
+		</Grid.RowDefinitions>
+		<Canvas Background="Transparent" Grid.Row="0" Grid.RowSpan="2">
+			<Ellipse Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}" Fill="{Binding JerseyColor}"  />
+		</Canvas>
+		<TextBlock Grid.Row="1" Name="textPlayer" Style="{StaticResource textPlainCenter}" Text="{Binding PlayerName}" Foreground="{Binding JerseyTextColor}" TextAlignment="Center" TextWrapping="Wrap" FontSize="{StaticResource fontSizeNavigation}"/>
+		<TextBlock Grid.Row="2" Name="textNumber" Style="{StaticResource textSecondary}" Text="{Binding PlayerNumber}" Foreground="{Binding JerseyTextColor}" TextAlignment="Center"/>
+	</Grid>
+</UserControl>

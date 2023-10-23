@@ -1667,7 +1667,13 @@ namespace TheManager
             List<Club> tournamentClubs = new List<Club>();
             foreach (Round r in rounds)
             {
-                tournamentClubs.AddRange(r.clubs);
+                foreach(Club c in r.clubs)
+                {
+                    if(!tournamentClubs.Contains(c))
+                    {
+                        tournamentClubs.Add(c);
+                    }
+                }
             }
             return tournamentClubs;
         }

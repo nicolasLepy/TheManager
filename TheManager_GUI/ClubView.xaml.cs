@@ -84,7 +84,7 @@ namespace TheManager_GUI
                     gridEntry.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                     gridEntry.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(5, GridUnitType.Star) });
                     gridEntry.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                    TextBlock textName = ViewUtils.CreateTextBlock(c.name, StyleDefinition.styleTextSecondary);
+                    TextBlock textName = ViewUtils.CreateTextBlockOpenWindow(c, OpenTournament, c.name, StyleDefinition.styleTextSecondary, -1, -1);
                     textName.HorizontalAlignment = HorizontalAlignment.Center;
                     textName.TextAlignment = TextAlignment.Center;
                     TextBlock textCount = ViewUtils.CreateTextBlock(count.ToString(), StyleDefinition.styleTextSecondary, -1, -1, null, Brushes.Gray, true);
@@ -477,8 +477,8 @@ namespace TheManager_GUI
 
         private void OpenTournament(Tournament t)
         {
-            Windows_Competition wc = new Windows_Competition(t);
-            wc.Show();
+            TournamentView view = new TournamentView(t);
+            view.Show();
         }
 
         /* EVENTS HANDLER */
