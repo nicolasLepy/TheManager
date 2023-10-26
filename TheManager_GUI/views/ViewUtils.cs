@@ -278,7 +278,7 @@ namespace TheManager_GUI
         public static Image CreateImage(string path, double width, double height)
         {
             Image sprite = new Image();
-            sprite.Source = new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute));
+            sprite.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(path, UriKind.RelativeOrAbsolute));
             if(width != -1)
             {
                 sprite.Width = width;
@@ -293,11 +293,25 @@ namespace TheManager_GUI
 
         public static Dictionary<string, BitmapImage> cacheImage = new Dictionary<string, BitmapImage>();
 
+        public static BitmapImage LoadBitmapImageWithCache(Uri uri)
+        {
+            BitmapImage image = new BitmapImage();
+            image.BeginInit();
+            image.CacheOption = BitmapCacheOption.OnLoad;
+            image.UriSource = uri;
+            image.EndInit();
+            return image;
+        }
+
         public static Image CreateImage(Uri uri, double width, double height)
         {
             if(!cacheImage.ContainsKey(uri.AbsolutePath))
             {
-                BitmapImage image = new BitmapImage(uri);
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.UriSource = uri;
+                image.EndInit();
                 cacheImage[uri.AbsolutePath] = image;
             }
             Image sprite = new Image();
@@ -439,7 +453,7 @@ namespace TheManager_GUI
             return playerPanel;
         }
 
-        public static void AddElementToGrid(Grid grid, UIElement element, int row, int col, int colspan = -1)
+        public static void AddElementToGrid(Grid grid, UIElement element, int row, int col, int colspan = -1, int rowspan = -1)
         {
             if(row > -1)
             {
@@ -452,6 +466,10 @@ namespace TheManager_GUI
             if (colspan > -1)
             {
                 Grid.SetColumnSpan(element, colspan);
+            }
+            if (rowspan > -1)
+            {
+                Grid.SetRowSpan(element, rowspan);
             }
             grid.Children.Add(element);
         }
@@ -560,36 +578,5 @@ namespace TheManager_GUI
 
             return border;
         }
-
-        /*public static StackPanel CreateStarNotation(float notation, float starsSize)
-        {
-            StackPanel res = new StackPanel();
-            res.Orientation = Orientation.Horizontal;
-
-            int entireStars = (int)Math.Floor(notation);
-            for (int i = 1; i <= entireStars; i++)
-            {
-                Image img = new Image();
-                img.Width = starsSize;
-                img.Height = starsSize;
-                img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
-                res.Children.Add(img);
-            }
-            if (notation - entireStars != 0)
-            {
-                Image img = new Image();
-                img.Width = starsSize;
-                img.Height = starsSize;
-                img.Source = new BitmapImage(new Uri(Utils.Image("demistar.png")));
-                res.Children.Add(img);
-            }
-
-            res.Width = starsSize * 6;
-
-            return res;
-        }*/
-
-
-
     }
 }

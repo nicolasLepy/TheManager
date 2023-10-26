@@ -47,7 +47,9 @@
 			<Button Grid.Row="0" Grid.Column="0" Style="{StaticResource buttonMenu}" Content="{StaticResource str_generalRanking}" x:Name="buttonGeneralRanking" Click="buttonGeneralRanking_Click"/>
 			<Button Grid.Row="0" Grid.Column="1" Style="{StaticResource buttonMenu}" Content="{StaticResource str_homeRanking}" x:Name="buttonHomeRanking" Click="buttonHomeRanking_Click"/>
 			<Button Grid.Row="0" Grid.Column="2" Style="{StaticResource buttonMenu}" Content="{StaticResource str_awayRanking}" x:Name="buttonAwayRanking" Click="buttonAwayRanking_Click"/>
-			<StackPanel Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" x:Name="panelRanking" Orientation="Vertical"></StackPanel>
+			<ScrollViewer Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
+				<StackPanel x:Name="panelRanking" Orientation="Vertical"></StackPanel>
+			</ScrollViewer>
 		</Grid>
     </Grid>
 </Page>

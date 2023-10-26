@@ -26,7 +26,7 @@ namespace TheManager_GUI.controls
         {
             InitializeComponent();
             tbTournament.Text = tournament.name;
-            imageTournament.Source = new BitmapImage(new Uri(Utils.LogoTournament(tournament), UriKind.RelativeOrAbsolute));
+            imageTournament.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.LogoTournament(tournament), UriKind.RelativeOrAbsolute));
 
             foreach(KeyValuePair<Club, Round> kvp in clubs)
             {

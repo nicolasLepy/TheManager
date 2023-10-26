@@ -51,7 +51,7 @@ namespace TheManager_GUI.views
             spNavigationItem.Margin = new Thickness(0, 2, 0, 2);
             Image logoTournament = new Image();
             logoTournament.Style = Application.Current.FindResource("image") as Style;
-            logoTournament.Source = new BitmapImage(new Uri(imagePath));
+            logoTournament.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(imagePath));
             logoTournament.Height = 14;
             logoTournament.Width = 21;
             logoTournament.Margin = new Thickness(0, 0, 10, 0);

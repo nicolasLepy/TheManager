@@ -79,7 +79,6 @@
 						<Button Style="{StaticResource buttonMenuSmall}" Content="{StaticResource str_achievementsClub}" x:Name="buttonStatAchievementsClub" Click="buttonStatAchievementsClub_Click"/>
 						<Button Style="{StaticResource buttonMenuSmall}" Content="{StaticResource str_winner}" x:Name="buttonStatYears" Click="buttonStatYears_Click"/>
 						<Button Style="{StaticResource buttonMenuSmall}" Content="{StaticResource str_statisticsYear}" x:Name="buttonStatByYears" Click="buttonStatByYears_Click"/>
-						<Button Style="{StaticResource buttonMenuSmall}" Content="{StaticResource str_seasonsByClub}" x:Name="buttonStatSeasonsByClubs" Click="buttonStatSeasonsByClubs_Click"/>
 					</StackPanel>
 				</Grid>
 			</Border>

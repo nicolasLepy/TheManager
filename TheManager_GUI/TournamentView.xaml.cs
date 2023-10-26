@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -28,6 +29,8 @@ namespace TheManager_GUI
     {
         private Tournament baseTournament;
         private Tournament activeTournament;
+
+        private MapView currentMap;
 
         public TournamentView(Tournament tournament)
         {
@@ -189,9 +192,121 @@ namespace TheManager_GUI
             UpdatePage(page);
         }
 
+        private void DisplayMap(Grid host, Tournament tournament, Round round)
+        {
+            bool nationalTeamTournament = round.clubs.Count > 0 && round.clubs[0] as NationalTeam != null;
+            MapType mapType = nationalTeamTournament ? MapType.INTERNATIONAL : MapType.CLUB;
+            Dictionary<int, int> colorMap = new Dictionary<int, int>();
+            Dictionary<int, string> colorLegend = new Dictionary<int, string>();
+            int zoomLevel;
+            List<MapClub> mapClubs = new List<MapClub>();
+
+            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            if (localisation as Country != null)
+            {
+                zoomLevel = (localisation as Country).ShapeNumber;
+            }
+            else
+            {
+                zoomLevel = MapView.ZoomEurope; //TODO
+            }
+
+            //Tournament with national teams
+            if (nationalTeamTournament)
+            {
+                Dictionary<NationalTeam, int> clubCourses = new Dictionary<NationalTeam, int>();
+                foreach (Club club in tournament.Clubs())
+                {
+                    string teamPerformance = null;
+                    for (int i = tournament.rounds.Count - 1; i >= 0 && teamPerformance == null; i--)
+                    {
+                        if (tournament.rounds[i].clubs.Contains(club) && !clubCourses.ContainsKey(club as NationalTeam))
+                        {
+                            clubCourses[club as NationalTeam] = i + 1;
+                            if (!colorMap.ContainsKey(club.Country().ShapeNumber))
+                            {
+                                colorMap.Add(club.Country().ShapeNumber, i + 1);
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i < tournament.rounds.Count; i++)
+                {
+                    colorLegend.Add(i + 1, tournament.rounds[i].name);
+                }
+            }
+            else
+            {
+                foreach (Club c in round.clubs)
+                {
+                    CityClub cc = c as CityClub;
+                    if (cc != null)
+                    {
+                        mapClubs.Add(new MapClub(cc.city.Position.Latitude, cc.city.Position.Longitude, Utils.Logo(cc)));
+                    }
+                    ReserveClub rc = c as ReserveClub;
+                    if (rc != null)
+                    {
+                        mapClubs.Add(new MapClub(rc.FannionClub.city.Position.Latitude, rc.FannionClub.city.Position.Longitude, Utils.Logo(rc)));
+                    }
+                }
+            }
+
+            MapView map = new MapView(mapType, colorMap, colorLegend, zoomLevel, mapClubs);
+            if (currentMap != null)
+            {
+                currentMap.Clear();
+            }
+            map.Show(host);
+            currentMap = map;
+
+        }
+
         private void buttonStatMap_Click(object sender, RoutedEventArgs e)
         {
+            Round round = activeTournament.rounds[0];
+            bool nationalTeamTournament = round.clubs.Count > 0 && round.clubs[0] as NationalTeam != null;
 
+            Grid mainPanel = new Grid();
+            mainPanel.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0.1, GridUnitType.Star) });
+            mainPanel.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0.8, GridUnitType.Star) });
+            mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.4, GridUnitType.Star) });
+            mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.2, GridUnitType.Star) });
+            mainPanel.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.4, GridUnitType.Star) });
+
+            Border borderRound = new Border();
+            borderRound.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(125, System.Windows.Media.Brushes.Gray.Color.R, System.Windows.Media.Brushes.Gray.Color.G, System.Windows.Media.Brushes.Gray.Color.B));
+            ComboBox comboRounds = new ComboBox();
+            comboRounds.Margin = new Thickness(15);
+            comboRounds.Style = FindResource(StyleDefinition.comboBoxFlatStyle) as Style;
+            foreach(Round tournamentRound in activeTournament.rounds)
+            {
+                comboRounds.Items.Add(tournamentRound.name);
+            }
+            if(comboRounds.Items.Count > 0)
+            {
+                comboRounds.SelectedIndex = 0;
+            }
+            Grid gridMap = new Grid();
+            gridMap.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0.2, GridUnitType.Star) });
+            gridMap.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0.8, GridUnitType.Star) });
+            gridMap.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.2, GridUnitType.Star) });
+            gridMap.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.6, GridUnitType.Star) });
+            gridMap.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.2, GridUnitType.Star) });
+
+            comboRounds.SelectionChanged += (s, ce) => ComboRounds_SelectionChanged(gridMap, activeTournament, activeTournament.rounds[comboRounds.SelectedIndex]);
+
+            ViewUtils.AddElementToGrid(mainPanel, gridMap, 0, 0, 3, 2);
+            ViewUtils.AddElementToGrid(mainPanel, borderRound, 0, 1);
+            ViewUtils.AddElementToGrid(mainPanel, comboRounds, 0, 1);
+            DisplayMap(gridMap, activeTournament, round);
+            UpdatePage(mainPanel);
+
+        }
+
+        private void ComboRounds_SelectionChanged(Grid host, Tournament tournament, Round round)
+        {
+            DisplayMap(host, tournament, round);
         }
 
         private void buttonStatBudget_Click(object sender, RoutedEventArgs e)
@@ -296,20 +411,26 @@ namespace TheManager_GUI
         private void buttonStatTotalRanking_Click(object sender, RoutedEventArgs e)
         {
             TournamentStatisticPage page = new TournamentStatisticPage(true);
-            page.InitializeTable(new List<string>() { FindResource("str_seasonsByClub").ToString() });
+            page.InitializeTable(new List<string>() { FindResource("str_seasonsByClub").ToString(), FindResource("str_ranking_points").ToString(), FindResource("str_ranking_played").ToString(), FindResource("str_ranking_wins").ToString(), FindResource("str_ranking_draws").ToString(), FindResource("str_ranking_loses").ToString(), FindResource("str_ranking_goals_for").ToString(), FindResource("str_ranking_goals_against").ToString(), FindResource("str_ranking_goals_diff").ToString() });
 
-            Dictionary<Club, int> clubs = new Dictionary<Club, int>();
+            Dictionary<Club, int> clubsSeasons = new Dictionary<Club, int>();
+            Dictionary<Club, int> clubsPoints = new Dictionary<Club, int> ();
+            Dictionary<Club, int> clubsWins = new Dictionary<Club, int> ();
+            Dictionary<Club, int> clubsDraws = new Dictionary<Club, int> ();
+            Dictionary<Club, int> clubsLoses = new Dictionary<Club, int> ();
+            Dictionary<Club, int> clubsGoalsFor = new Dictionary<Club, int> ();
+            Dictionary<Club, int> clubsGoalsAgainst = new Dictionary<Club, int> ();
             foreach (KeyValuePair<int, Tournament> t in baseTournament.previousEditions)
             {
                 if (t.Value.isChampionship)
                 {
                     foreach (Club c in t.Value.rounds[0].clubs)
                     {
-                        if (!clubs.ContainsKey(c))
+                        if (!clubsSeasons.ContainsKey(c))
                         {
-                            clubs.Add(c, 0);
+                            clubsSeasons.Add(c, 0);
                         }
-                        clubs[c]++;
+                        clubsSeasons[c]++;
                     }
                 }
                 else
@@ -327,21 +448,44 @@ namespace TheManager_GUI
                     }
                     foreach (Club c in clubsList)
                     {
-                        if (!clubs.ContainsKey(c))
+                        if (!clubsSeasons.ContainsKey(c))
                         {
-                            clubs.Add(c, 0);
+                            clubsSeasons.Add(c, 0);
                         }
-                        clubs[c]++;
+                        clubsSeasons[c]++;
+                    }
+                }
+                foreach(Round r in t.Value.rounds)
+                {
+                    foreach(Club c in r.clubs)
+                    {
+                        if(!clubsPoints.ContainsKey(c))
+                        {
+                            clubsPoints.Add(c, 0);
+                            clubsWins.Add(c, 0);
+                            clubsDraws.Add(c, 0);
+                            clubsLoses.Add(c, 0);
+                            clubsGoalsFor.Add(c, 0);
+                            clubsGoalsAgainst.Add(c, 0);
+                        }
+                        clubsPoints[c] += r.Points(c);
+                        clubsWins[c] += r.Wins(c);
+                        clubsDraws[c] += r.Draws(c);
+                        clubsLoses[c] += r.Loses(c);
+                        clubsGoalsFor[c] += r.GoalsFor(c);
+                        clubsGoalsAgainst[c] += r.GoalsAgainst(c);
                     }
                 }
             }
-            List<KeyValuePair<Club, int>> list = clubs.ToList();
-            list.Sort((pair1, pair2) => pair2.Value.CompareTo(pair1.Value));
+            List<KeyValuePair<Club, int>> list = clubsSeasons.ToList();
+            list.Sort((pair1, pair2) => pair2.Value != pair1.Value ? pair2.Value.CompareTo(pair1.Value) : clubsPoints[pair2.Key].CompareTo(clubsPoints[pair1.Key]));
 
             List<KeyValuePair<Club, List<string>>> stats = new List<KeyValuePair<Club, List<string>>>();
             foreach (KeyValuePair<Club, int> club in list)
             {
-                stats.Add(new KeyValuePair<Club, List<string>>(club.Key, new List<string>() { club.Value.ToString() }));
+                int gamesPlayed = clubsWins[club.Key] + clubsDraws[club.Key] + clubsLoses[club.Key];
+                int goalAverage = clubsGoalsFor[club.Key] - clubsGoalsAgainst[club.Key];
+                stats.Add(new KeyValuePair<Club, List<string>>(club.Key, new List<string>() { club.Value.ToString(), clubsPoints[club.Key].ToString(), gamesPlayed.ToString(), clubsWins[club.Key].ToString(), clubsDraws[club.Key].ToString(), clubsLoses[club.Key].ToString(), clubsGoalsFor[club.Key].ToString(), clubsGoalsAgainst[club.Key].ToString(), goalAverage.ToString() }));
             }
             page.Full(stats);
             UpdatePage(page);
@@ -544,11 +688,6 @@ namespace TheManager_GUI
             }
             page.Full(stats);
             UpdatePage(page);
-        }
-
-        private void buttonStatSeasonsByClubs_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         /* EVENTS HANDLER */

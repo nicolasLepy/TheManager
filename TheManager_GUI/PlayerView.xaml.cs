@@ -51,12 +51,12 @@ namespace TheManager_GUI
             if (club != null)
             {
                 tbPlayerClub.Text = club.name;
-                imagePlayerClub.Source = new BitmapImage(new Uri(Utils.Logo(club)));
+                imagePlayerClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(club)));
             }
             else
             {
                 tbPlayerClub.Text = FindResource("str_free").ToString();
-                imagePlayerClub.Source = new BitmapImage(new Uri(Utils.Logo(club)));
+                imagePlayerClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(club)));
             }
 
             tbValue.Text = Utils.FormatMoney(player.EstimateTransferValue());

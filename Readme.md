@@ -76,7 +76,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | Tournaments rules                                                     | 🟢 OK           |
 | Improve game stability                                                | 🟡 In progress  |
 | Managers and staff                                                    | 🟡 In progress  |
-| Transferts (only free players transfers)                              | 🟡 In progress  |
+| Transferts                                                            | 🟡 In progress  |
 | **Game**                                                              |                 |
 | Detailed game simulation                                              | 🔴 Not started  |
 | Games in real-time                                                    | 🟡 In progress  |
@@ -88,26 +88,16 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 | International ranking                                 				| 🟢 OK  |
 | Specials rules (lower team at home for domestic cups...)              | 🟢 OK  |
 | **Club**                                                              |                 |
-| Evolution of club training facilities                                 | 🟡 In progress  |
+| Evolution of club facilities                                          | 🟡 In progress  |
 | Financial control                                                     | 🔴 Not started  |
 | **Managing**                                                          |                 |
 | Staff management                                                      | 🔴 Not started |
 | Youth team management                                                 | 🔴 Not started |
 | Recruitment tasks                                                     | 🟡 In progress |
-| **Environment**                                                       |                 |
-| **GUI**                                                               |                 |
-| Improve GUI                                                           | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
 | Simulation serialization				                                | 🟢 OK |
 | Manage memory for long games                                          | 🔴 Not started |
 | Improve serialization to manage large objects graph                   | 🔴 Not started |
-
-## Next Features
-
-| Task                                                                  | Status           |
-| --------------------------------------------------------------------- | ---------------- |
-|  Wiki with simulation data    		                                | 🔴 Not started |
-|  3D Engine for games                                                  | 🔴 Not started |
 
 ## Authors
 Nicolas Lépy

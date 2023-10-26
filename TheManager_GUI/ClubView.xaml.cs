@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Cache;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -312,8 +313,8 @@ namespace TheManager_GUI
 
             tbStadium.Text = club.stadium.name;
             tbCapacity.Text = String.Format("{0} {1}", club.stadium.capacity, FindResource("str_seats").ToString());
-            imageClub.Source = new BitmapImage(new Uri(Utils.Logo(club)));
-            imageLogo.Source = new BitmapImage(new Uri(Utils.Logo(club)));
+            imageClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(club)));
+            imageLogo.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(club)));
 
             PlayersView pv = new PlayersView(club.Players(), 0.9f, true, true, true, false, true, true, true, true, true, true, true, false, false, false, false, false, false, true);
             pv.Full(panelClubTeam);

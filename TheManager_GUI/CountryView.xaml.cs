@@ -66,15 +66,15 @@ namespace TheManager_GUI
             tbHeadCoach.Text = nationalTeam.manager != null ? nationalTeam.manager.ToString() : "-";
 
             tbRankingWorld.Text = String.Format("{0}/{1}", (fifaRanking.IndexOf(nationalTeam) + 1), fifaRanking.Count);
-            imageRankingWorld.Source = new BitmapImage(new Uri("universe\\world.png", UriKind.RelativeOrAbsolute));
+            imageRankingWorld.Source = ViewUtils.LoadBitmapImageWithCache(new Uri("universe\\world.png", UriKind.RelativeOrAbsolute));
 
             tbRankingAssociation.Text = String.Format("{0}/{1}", continentalRank, continentalTeams);
-            imageRankingAssociation.Source = new BitmapImage(new Uri(Utils.Logo(nationalTeam.country.Continent), UriKind.RelativeOrAbsolute));
+            imageRankingAssociation.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(nationalTeam.country.Continent), UriKind.RelativeOrAbsolute));
 
             tbRankingClubAssociation.Text = String.Format("{0} ({1})", associationRankingStr, FindResource("str_club").ToString().ToLower());
-            imageRankingClubAssociation.Source = new BitmapImage(new Uri(Utils.Logo(nationalTeam.country.Continent), UriKind.RelativeOrAbsolute));
+            imageRankingClubAssociation.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(nationalTeam.country.Continent), UriKind.RelativeOrAbsolute));
 
-            imageLogo.Source = new BitmapImage(new Uri(Utils.Flag(nationalTeam.country)));
+            imageLogo.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Flag(nationalTeam.country)));
 
             List<Player> nationalPlayers = nationalTeam.Players();
             PlayersView vp = new PlayersView(nationalPlayers, 1, true, true, false, true, true, true, false, false, true, false, false, false, false, false, true, true, false, false);
@@ -231,7 +231,7 @@ namespace TheManager_GUI
 
                                 List<Country> hosts = tournament.Hosts();
                                 gridCountryHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
-                                TextBlock tbYear = ViewUtils.CreateTextBlock(previousEdition.Key.ToString(), StyleDefinition.styleTextSecondary);
+                                TextBlock tbYear = ViewUtils.CreateTextBlockOpenWindow(tournament, OpenTournament, previousEdition.Key.ToString(), StyleDefinition.styleTextSecondary, -1, -1);
                                 TextBlock tbPerformance = ViewUtils.CreateTextBlock(teamPerformance, StyleDefinition.styleTextSecondary);
                                 ViewUtils.AddElementToGrid(gridCountryHistory, tbYear, gridCountryHistory.RowDefinitions.Count - 1, 0);
                                 ViewUtils.AddElementToGrid(gridCountryHistory, tbPerformance, gridCountryHistory.RowDefinitions.Count - 1, 3);
@@ -249,6 +249,12 @@ namespace TheManager_GUI
 
                 }
             }
+        }
+
+        private void OpenTournament(Tournament t)
+        {
+            TournamentView view = new TournamentView(t);
+            view.Show();
         }
 
         /* EVENTS HANDLER */

@@ -110,7 +110,7 @@ namespace TheManager_GUI
             _noScreenRefresh = false;
             _comboBoxDayController = new ComboBoxDayController();
 
-            imageClub.Source = new BitmapImage(new Uri(Utils.Logo(_game.club)));
+            imageClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(_game.club)));
             this.KeyDown += new KeyEventHandler(KeyPress);
 
             Refresh();
@@ -257,10 +257,10 @@ namespace TheManager_GUI
                 tbNextGameAwayTeam.Text = game.away.name.ToUpper();
                 spNextGameHomeStars.Children.Add(ViewUtils.CreateStarsView(game.home.Stars, 20));
                 spNextGameAwayStars.Children.Add(ViewUtils.CreateStarsView(game.away.Stars, 20));
-                imageNextGameHomeLogo.Source = new BitmapImage(new Uri(Utils.Logo(game.home)));
-                imageNextGameAwayLogo.Source = new BitmapImage(new Uri(Utils.Logo(game.away)));
+                imageNextGameHomeLogo.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(game.home)));
+                imageNextGameAwayLogo.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(game.away)));
 
-                imageNextGameTournamentLogo.Source = new BitmapImage(new Uri(Utils.LogoTournament(game.Tournament)));
+                imageNextGameTournamentLogo.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.LogoTournament(game.Tournament)));
 
                 tbNextGameStadiumName.Text = game.stadium.name;
                 tbNextGameTournamentName.Text = game.Tournament.name.ToUpper();

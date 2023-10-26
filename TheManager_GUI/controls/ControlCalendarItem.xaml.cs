@@ -42,8 +42,8 @@ namespace TheManager_GUI.controls
             tbDate.Text = date.ToString("dddd dd/MM");
             if (match != null)
             {
-                imageMatchHome.Source = new BitmapImage(new Uri(Utils.Logo(match.home)));
-                imageMatchAway.Source = new BitmapImage(new Uri(Utils.Logo(match.away)));
+                imageMatchHome.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(match.home)));
+                imageMatchAway.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(match.away)));
                 string text = match.Played ? match.ScoreToString(true, true, Application.Current.FindResource("str_aet").ToString()) : match.Time.ToString();
                 tbMatchInfo.Text = text;
             }

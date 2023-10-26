@@ -89,7 +89,7 @@ namespace TheManager_GUI
                     int colTime = em.club == match.home ? 2 : 6;
                     int colIcon = em.club == match.home ? 3 : 5;
                     Image imageIcon = new Image();
-                    imageIcon.Source = new BitmapImage(new Uri(imageIconPath));
+                    imageIcon.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(imageIconPath));
                     imageIcon.Height = fontSize * 5 / 3;
                     TextBlock tbMinute = ViewUtils.CreateTextBlock(time, StyleDefinition.styleTextPlainCenter);
                     TextBlock tbPlayer = ViewUtils.CreateTextBlock(playerName, StyleDefinition.styleTextPlain);
@@ -237,7 +237,7 @@ namespace TheManager_GUI
                 if(em.club == club && em.type != GameEvent.Shot)
                 {
                     int offset = last == null ? em.EventMinute : em.EventMinute - last.EventMinute;
-                    grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(offset, GridUnitType.Star) });
+                    grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(offset, GridUnitType.Star) }); //TODO: Bug negative offset
 
                     string icone = "";
                     switch (em.type)
@@ -295,9 +295,9 @@ namespace TheManager_GUI
             tbTournament.Text = tournament.name;
             tbAttendance.Text = String.Format(FindResource("str_attendance").ToString(), match.attendance);
             tbStadium.Text = match.stadium.name;
-            imageTournament.Source = new BitmapImage(new Uri(Utils.LogoTournament(tournament)));
-            imageHomeClub.Source = new BitmapImage(new Uri(Utils.Logo(match.home)));
-            imageAwayClub.Source = new BitmapImage(new Uri(Utils.Logo(match.away)));
+            imageTournament.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.LogoTournament(tournament)));
+            imageHomeClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(match.home)));
+            imageAwayClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(match.away)));
             tbHomeClubName.Text = match.home.name.ToUpper();
             tbAwayClubName.Text = match.away.name.ToUpper();
             tbScore.Text = match.Played ? String.Format("{0} - {1}{2}", match.score1, match.score2, match.prolongations ? String.Format(" {0}", FindResource("str_aet").ToString()) : "") : "";
