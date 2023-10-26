@@ -323,12 +323,18 @@ namespace TheManager_GUI.views
             if (hostGrid != null)
             {
                 ViewUtils.AddElementToGrid(hostGrid, mapControl, 0, 0, hostGrid.ColumnDefinitions.Count, hostGrid.RowDefinitions.Count);
-                ViewUtils.AddElementToGrid(hostGrid, CreateLegend(), 0, 0);
+                if(mapType == MapType.INTERNATIONAL)
+                {
+                    ViewUtils.AddElementToGrid(hostGrid, CreateLegend(), 0, 0);
+                }
             }
             else
             {
                 host.Children.Add(mapControl);
-                host.Children.Add(CreateLegend());
+                if(mapType == MapType.INTERNATIONAL)
+                {
+                    host.Children.Add(CreateLegend());
+                }
             }
             Zoom(mapControl, zoomLevel);
         }
