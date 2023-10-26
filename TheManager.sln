@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheManager", "TheManager\Th
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheManager_GUI", "TheManager_GUI\TheManager_GUI.csproj", "{78924484-F096-4D2F-92FC-C53A6A397027}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TheManagerTests", "TheManagerTests\TheManagerTests.csproj", "{09047278-622A-4EBA-9B29-5080AD23054C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests", "TheManagerTests\tests.csproj", "{09047278-622A-4EBA-9B29-5080AD23054C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
