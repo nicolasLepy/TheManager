@@ -6,51 +6,28 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Screenshots
 
-### Menu
+<img src="images/tm_config.png" alt="Player screen"/> 
 
-![Main menu](images/pic1.png?raw=true "Main menu")
+<img src="images/tm_main.png" alt="Menu screen"/> 
 
-### Simulation configuration
+<img src="images/tm_game.png" alt="Game screen"/> 
 
-<img src="images/pic2.png" alt="Configuration screen" width="400"/> <img src="images/pic11.png" alt="Team selection" width="400"/> 
+<img src="images/tm_player.png" alt="Player screen"/> 
 
-### Tournaments screen
+<img src="images/tm_club.png" alt="Club screen"/>
 
-![Menu screen](images/pic3.png?raw=true "Menu screen") ![Menu screen](images/pic10.png?raw=true "Menu screen")
+<img src="images/tm_tournament2.png" alt="Tournament screen"/>
 
-### Screens
-
-<p float="left">
-	<img src="images/pic6.png" alt="Match screen" width="45%"/> 
-	<img src="images/pic6b.png" alt="Match screen" width="45%"/>
-</p>
-
-<img src="images/pic5.png" alt="Player screen"/> 
-
-<img src="images/pic4.png" alt="Club screen"/>
-
-<img src="images/pic13.png" alt="Tournament screen"/>
-
-<img src="images/pic14.png" alt="Tournament screen"/>
+<img src="images/tm_tournament.png" alt="Tournament screen"/>
 
 <p float="left">
-	<img src="images/pic15.png" alt="International ranking" width="45%"/>
-	<img src="images/pic16.png" alt="UEFA associations ranking" width="45%"/>
+	<img src="images/tm_rankings1.png" alt="International ranking" width="45%"/>
+	<img src="images/tm_rankings2.png" alt="AFC clubs ranking" width="45%"/>
 </p>
 
-<img src="images/pic17.png" alt="UEFA clubs ranking" width="45%"/>
+<img src="images/tm_search.png" alt="Search players screen"/>
 
-### Search players screen
-
-<img src="images/pic12.png" alt="Search players screen"/>
-
-### Pre-match screen
-
-![Pre-match screen](images/pic8.png?raw=true "Pre-match screen")
-
-### Live match screen
-
-![Live match](images/pic7.png?raw=true "Live match")
+![Pre-match screen](images/tm_compo.png?raw=true "Pre-match screen")
 
 ## Simulation stability
 
