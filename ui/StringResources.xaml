@@ -17,6 +17,7 @@
 	<system:String x:Key="str_tournamentsSelection">Tournaments choice</system:String>
 	<system:String x:Key="str_noupcomingmatches">No upcoming games</system:String>
 	<system:String x:Key="str_noplayedgames">No games played yet</system:String>
+	<system:String x:Key="str_playedGames">{0} played games</system:String>
 	<system:String x:Key="str_disableAll">Deactivate all</system:String>
 	<system:String x:Key="str_enableAll">Enable all</system:String>
 	<system:String x:Key="str_launch">Launch</system:String>
@@ -89,6 +90,7 @@
 	<system:String x:Key="str_achievementsClub">Achievements by clubs</system:String>
 	<system:String x:Key="str_achievementsYear">Achievements by years</system:String>
 	<system:String x:Key="str_statistics">Statistics</system:String>
+	<system:String x:Key="str_gameStatistics">Game statistics</system:String>
 	<system:String x:Key="str_lineups">Line-ups</system:String>
 	<system:String x:Key="str_substitutes">Substitute players</system:String>
 	<system:String x:Key="str_statisticsYear">Statistics by year</system:String>
@@ -99,6 +101,7 @@
 	<system:String x:Key="str_seasonsByClub">Seasons by clubs</system:String>
 	<system:String x:Key="str_currentSeason">Current season</system:String>
 	<system:String x:Key="str_season">Season</system:String>
+	<system:String x:Key="str_seasons">Seasons</system:String>
 	<system:String x:Key="str_noAvailableForCup">Not available for a cup</system:String>
 	<system:String x:Key="str_bestAttack">Best attack</system:String>
 	<system:String x:Key="str_bestDefense">Best defense</system:String>
@@ -203,5 +206,7 @@
 	<system:String x:Key="str_performance">Performance</system:String>
 	<system:String x:Key="str_map">Map</system:String>
 	<system:String x:Key="str_results">Results</system:String>
+	<system:String x:Key="str_retiredPlayers">{0} retired players</system:String>
+	<system:String x:Key="str_playersCount">{0} players</system:String>
 
 </ResourceDictionary>

@@ -38,7 +38,7 @@ namespace TheManager_GUI
             InitializeComponent();
             Initialize();
             FillStats();
-            FillMedias();
+            //FillMedias();
             FillEvents();
             FillCompositions();
             FillGameProgression(true);
@@ -215,14 +215,22 @@ namespace TheManager_GUI
             gridMedias.RowDefinitions.Clear();
             int row = 0;
             foreach (KeyValuePair<Media, Journalist> media in match.medias)
-            {                
+            {
+                Media med = media.Key;
                 gridMedias.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
                 ViewUtils.AddElementToGrid(gridMedias, ViewUtils.CreateMediaLogo(media.Key, -1, fontSize), row, 0);
                 TextBlock tbMedia = ViewUtils.CreateTextBlock(media.Value.ToString(), StyleDefinition.styleTextPlain);
+                tbMedia.MouseLeftButtonDown += (s, e) => OnClickMedia(med);
                 tbMedia.Margin = new Thickness(5, 0, 0, 0);
                 ViewUtils.AddElementToGrid(gridMedias, tbMedia, row, 1);
                 row++;
             }
+        }
+
+        private void OnClickMedia(Media media)
+        {
+            MediaView view = new MediaView(media);
+            view.Show();
         }
 
         private void FillGameProgression(bool home)

@@ -66,7 +66,7 @@ namespace TheManager_GUI
             tbHeadCoach.Text = nationalTeam.manager != null ? nationalTeam.manager.ToString() : "-";
 
             tbRankingWorld.Text = String.Format("{0}/{1}", (fifaRanking.IndexOf(nationalTeam) + 1), fifaRanking.Count);
-            imageRankingWorld.Source = ViewUtils.LoadBitmapImageWithCache(new Uri("universe\\world.png", UriKind.RelativeOrAbsolute));
+            imageRankingWorld.Source = ViewUtils.LoadBitmapImageWithCache(new Uri("images\\universe\\world.png", UriKind.RelativeOrAbsolute));
 
             tbRankingAssociation.Text = String.Format("{0}/{1}", continentalRank, continentalTeams);
             imageRankingAssociation.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(nationalTeam.country.Continent), UriKind.RelativeOrAbsolute));
@@ -173,7 +173,7 @@ namespace TheManager_GUI
             {
                 rankings[i] = -rankings[i];
             }
-            ChartView chartFifa = new ChartView(ChartType.LINE_CHART, FindResource("str_fifaRanking").ToString(), FindResource("str_ranking").ToString(), FindResource("str_years").ToString(), labelsYears.ToList(), false, 1, rankings.ToList(), -1, 250, archivalEntries > 0 ? -totalCountries[0] : -1, archivalEntries > 0 ? 0 : -1);
+            ChartView chartFifa = new ChartView(ChartType.LINE_CHART, FindResource("str_fifaRanking").ToString(), new List<string>() { FindResource("str_fifaRanking").ToString() }, FindResource("str_ranking").ToString(), FindResource("str_years").ToString(), labelsYears.ToList(), false, 1, new List<List<double>>() { rankings.ToList() }, -1, 250, archivalEntries > 0 ? -totalCountries[0] : -1, archivalEntries > 0 ? 0 : -1);
             chartFifa.RenderChart(panelHistoryWorldRanking);
 
             //Association Ranking
@@ -198,7 +198,7 @@ namespace TheManager_GUI
                 rankings[i] = -rankings[i];
             }
 
-            ChartView chartAssociations = new ChartView(ChartType.LINE_CHART, FindResource("str_assoRanking").ToString(), FindResource("str_ranking").ToString(), FindResource("str_years").ToString(), labelsYears.ToList(), false, 1, rankings.ToList(), -1, 250, assoArchivalEntries > 0 && totalCountries[0] > 0 ? -totalCountries[0] : -1, assoArchivalEntries > 0 && totalCountries[0] > 0 ? 0 : -1);
+            ChartView chartAssociations = new ChartView(ChartType.LINE_CHART, FindResource("str_assoRanking").ToString(), new List<string>() { FindResource("str_assoRanking").ToString() }, FindResource("str_ranking").ToString(), FindResource("str_years").ToString(), labelsYears.ToList(), false, 1, new List<List<double>>() { rankings.ToList() }, -1, 250, assoArchivalEntries > 0 && totalCountries[0] > 0 ? -totalCountries[0] : -1, assoArchivalEntries > 0 && totalCountries[0] > 0 ? 0 : -1);
             chartAssociations.RenderChart(panelHistoryClubRanking);
 
         }

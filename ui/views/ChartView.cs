@@ -33,7 +33,8 @@ namespace TheManager_GUI.views
     public enum ChartType
     {
         LINE_CHART = 1,
-        PIE_CHART = 2
+        PIE_CHART = 2,
+        BAR_CHART = 3
     }
 
     public class ChartView
@@ -43,7 +44,8 @@ namespace TheManager_GUI.views
 
         private string[] labels { get; set; }
 
-        private string title { get; }
+        private List<string> titles { get; }
+        private string chartTitle { get; }
         private string axisYtitle { get; }
         private string axisXtitle { get; }
 
@@ -51,18 +53,19 @@ namespace TheManager_GUI.views
 
         private float sizeMultiplier { get; }
 
-        private List<double> values { get; set; }
+        private List<List<double>> values { get; set; }
 
         private double minValue { get; }
         private double maxValue { get; }
         private float width { get; }
         private float height { get; }
 
-        public ChartView(ChartType chartType, string title, string axisYtitle, string axisXtitle, List<string> labels, bool representsMoney, float sizeMultiplier, List<double> values, float width, float height, double minValue = -1, double maxValue = -1)
+        public ChartView(ChartType chartType, string chartTitle, List<string> titles, string axisYtitle, string axisXtitle, List<string> labels, bool representsMoney, float sizeMultiplier, List<List<double>> values, float width, float height, double minValue = -1, double maxValue = -1)
         {
             this.chartType = chartType;
+            this.chartTitle = chartTitle;
             this.labels = labels.ToArray();
-            this.title = title;
+            this.titles = titles;
             this.representsMoney = representsMoney;
             this.sizeMultiplier = sizeMultiplier;
             this.values = values;
@@ -79,6 +82,7 @@ namespace TheManager_GUI.views
             switch (chartType)
             {
                 case ChartType.LINE_CHART:
+                case ChartType.BAR_CHART:
                     return RenderLineChart(host);
                     break;
                 case ChartType.PIE_CHART: default:
@@ -108,7 +112,7 @@ namespace TheManager_GUI.views
                     Stroke = Brushes.Transparent,
                     StrokeThickness = 5,
                     LabelPoint = labelFormatter, //Used when display ToolTip, but will be eventually customized
-                    Values = new ChartValues<PieChartValue> { new PieChartValue(labels[i], values[i], Utils.FormatMoney((float)values[i])) },
+                    Values = new ChartValues<PieChartValue> { new PieChartValue(labels[i], values[0][i], Utils.FormatMoney((float)values[0][i])) },
                     Style = Application.Current.FindResource(StyleDefinition.styleLiveChartPieSerie) as Style
                 });
             }
@@ -146,34 +150,58 @@ namespace TheManager_GUI.views
             return null;
         }
 
+
         private CartesianChart RenderLineChart(StackPanel host)
         {
             double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);
-            TextBlock labelTitle = ViewUtils.CreateTextBlock(title, StyleDefinition.styleTextPlainCenter, fontSize, -1);
+            TextBlock labelTitle = ViewUtils.CreateTextBlock(chartTitle, StyleDefinition.styleTextPlainCenter, fontSize, -1);
 
             host.Children.Add(labelTitle);
 
-            ChartValues<double> chartValues = new ChartValues<double>(values.ToArray());
-
-            SeriesCollection serieCollection = new SeriesCollection
+            List<string> lineStyles = new List<string>() { StyleDefinition.solidColorBrushColorButtonOver, StyleDefinition.solidColorBrushColorBorderLight, StyleDefinition.solidColorBrushColorPanel3 };
+            SeriesCollection serieCollection = new SeriesCollection();
+            for(int i = 0; i < values.Count; i++)
             {
-                new LineSeries
+                ChartValues<double> chartValues = new ChartValues<double>(values[i].ToArray());
+                string titleSerie = titles[i];
+                if(this.chartType == ChartType.LINE_CHART)
                 {
-                    Title = title,
-                    PointGeometrySize = 12,
-                    PointForeground = Brushes.Transparent,
-                    StrokeThickness = 7,
-                    Fill = Brushes.Transparent,
-                    Stroke = Application.Current.FindResource(StyleDefinition.solidColorBrushColorButtonOver) as SolidColorBrush,
-                    /*Configuration = new CartesianMapper<Point>()
-                        .X(point => point.X)
-                        .Y(point => point.Y)
-                        .Stroke(point => Brushes.Red) //Can make conditional plotting prom point value
-                        .Fill(point => Brushes.Transparent),*/
-                    Values = chartValues
+                    serieCollection.Add
+                    (
+                        new LineSeries
+                        {
+                            Title = titleSerie,
+                            PointGeometrySize = 12,
+                            PointForeground = Brushes.Transparent,
+                            StrokeThickness = 7,
+                            Fill = Brushes.Transparent,
+                            Stroke = Application.Current.FindResource(lineStyles[i % lineStyles.Count]) as SolidColorBrush,
+                            /*Configuration = new CartesianMapper<Point>()
+                                .X(point => point.X)
+                                .Y(point => point.Y)
+                                .Stroke(point => Brushes.Red) //Can make conditional plotting prom point value
+                                .Fill(point => Brushes.Transparent),*/
+                            Values = chartValues
+                        }
+                    );
                 }
-            };
+                else
+                {
+                    serieCollection.Add
+                    (
+                        new ColumnSeries
+                        {
+                            Title = titleSerie,
+                            StrokeThickness = 2,
+                            Fill = Application.Current.FindResource(lineStyles[i % lineStyles.Count]) as SolidColorBrush,
+                            Stroke = Application.Current.FindResource(StyleDefinition.solidColorBrushColorPanel1) as SolidColorBrush,
+                            Values = chartValues
+                        }
+                    );
+                }
 
+            }
+            
             CartesianChart cc = new CartesianChart();
             if(width != -1)
             {
@@ -191,8 +219,9 @@ namespace TheManager_GUI.views
 
             Axis axisY = new Axis();
             axisY.Title = axisYtitle;
-            double axisMin = minValue != -1 ? minValue : values.Count > 0 ? values.Min() : 0;
-            double axisMax = maxValue != -1 ? maxValue : values.Count > 0 ? values.Max() : 1;
+            List<double> allValues = values.SelectMany(x => x).ToList();
+            double axisMin = minValue != -1 ? minValue : allValues.Count > 0 ? allValues.Min() : 0;
+            double axisMax = maxValue != -1 ? maxValue : allValues.Count > 0 ? allValues.Max() : 1;
             axisY.MinValue = axisMin;
             axisY.MaxValue = axisMax == axisMin ? axisMax+1 : axisMax;
             axisY.Style = Application.Current.FindResource(StyleDefinition.styleLiveChartAxis) as Style;

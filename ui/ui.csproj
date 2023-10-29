@@ -187,6 +187,12 @@
     <Compile Include="controls\ControlCompositionPlayer.xaml.cs">
       <DependentUpon>ControlCompositionPlayer.xaml</DependentUpon>
     </Compile>
+    <Compile Include="GlobalView.xaml.cs">
+      <DependentUpon>GlobalView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MediaView.xaml.cs">
+      <DependentUpon>MediaView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="old\CalendarWindow.xaml.cs">
       <DependentUpon>CalendarWindow.xaml</DependentUpon>
     </Compile>
@@ -224,7 +230,7 @@
       <DependentUpon>DialogDatabase.xaml</DependentUpon>
     </Compile>
     <Compile Include="GameModifiers.cs" />
-    <Compile Include="GlobalWindow.xaml.cs">
+    <Compile Include="old\GlobalWindow.xaml.cs">
       <DependentUpon>GlobalWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="HomepageWindow.xaml.cs">
@@ -243,7 +249,7 @@
       <DependentUpon>MatchView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Media.cs" />
-    <Compile Include="MediaWindow.xaml.cs">
+    <Compile Include="old\MediaWindow.xaml.cs">
       <DependentUpon>MediaWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="NewGameView.xaml.cs">
@@ -310,7 +316,7 @@
     <Compile Include="old\PlayerWindow.xaml.cs">
       <DependentUpon>PlayerWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JournalistWindow.xaml.cs">
+    <Compile Include="old\JournalistWindow.xaml.cs">
       <DependentUpon>JournalistWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="old\GameWindow.xaml.cs">
@@ -322,7 +328,7 @@
     <Compile Include="OptionsView.xaml.cs">
       <DependentUpon>OptionsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TournamentClubWindow.xaml.cs">
+    <Compile Include="old\TournamentClubWindow.xaml.cs">
       <DependentUpon>TournamentClubWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="views\ChartTooltip.xaml.cs">
@@ -342,6 +348,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="controls\ControlCompositionPlayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GlobalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MediaView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -437,7 +451,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="GlobalWindow.xaml">
+    <Page Include="old\GlobalWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -457,7 +471,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="MediaWindow.xaml">
+    <Page Include="old\MediaWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -497,7 +511,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="JournalistWindow.xaml">
+    <Page Include="old\JournalistWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -525,7 +539,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="TournamentClubWindow.xaml">
+    <Page Include="old\TournamentClubWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -41,7 +41,7 @@ namespace TheManager_GUI.Views
             AddElementToGrid(grid, homeLogo, row, 0);
             AddElementToGrid(grid, awayLogo, row+1, 0);
 
-            if (!isInternational && !_round.Tournament.isChampionship)
+            if (!isInternational && !_round.Tournament.isChampionship && pair[0].home.Championship != null && pair[0].away.Championship != null)
             {
                 TextBlock tbChampionshipHome = ViewUtils.CreateTextBlock(pair[0].home.Championship.shortName, StyleDefinition.styleTextPlain, 10 * _sizeMultiplier, 30 * _sizeMultiplier);
                 TextBlock tbChampionshipAway = ViewUtils.CreateTextBlock(pair[0].away.Championship.shortName, StyleDefinition.styleTextPlain, 10 * _sizeMultiplier, 30 * _sizeMultiplier);

@@ -281,16 +281,19 @@ namespace TheManager_GUI
                 incomeValue.Add(kvp.Value);
             }
 
-            ChartView chartBudget = new ChartView(ChartType.LINE_CHART, FindResource("str_balanceEvolution").ToString(), FindResource("str_budget").ToString(), FindResource("str_years").ToString(), years, true, 1, budgets, -1, 300);
+            string titleBudget = FindResource("str_balanceEvolution").ToString();
+            ChartView chartBudget = new ChartView(ChartType.LINE_CHART, titleBudget, new List<string>() { titleBudget }, FindResource("str_budget").ToString(), FindResource("str_years").ToString(), years, true, 1, new List<List<double>>() { budgets }, -1, 300);
             chartBudget.RenderChart(panelBalanceEvolution);
-            ChartView chartFormation = new ChartView(ChartType.LINE_CHART, FindResource("str_formationCentre").ToString(), FindResource("str_formationCentre").ToString(), FindResource("str_years").ToString(), years, false, 1, formationCentre, -1, 300);
+            string titleFormation = FindResource("str_formationCentre").ToString();
+            ChartView chartFormation = new ChartView(ChartType.LINE_CHART, titleFormation, new List<string>() { titleFormation}, FindResource("str_formationCentre").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { formationCentre }, -1, 300);
             chartFormation.RenderChart(panelFormationCentre);
-            ChartView chartAttendance = new ChartView(ChartType.LINE_CHART, FindResource("str_averageAttendance").ToString(), FindResource("str_averageAttendance").ToString(), FindResource("str_years").ToString(), years, false, 1, attendances, -1, 300);
+            string titleAttendance = FindResource("str_averageAttendance").ToString();
+            ChartView chartAttendance = new ChartView(ChartType.LINE_CHART, titleAttendance, new List<string>() { titleAttendance }, FindResource("str_averageAttendance").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { attendances }, -1, 300);
             chartAttendance.RenderChart(borderAttendance);
 
-            ChartView chartExpenses = new ChartView(ChartType.PIE_CHART, "", "", "", expensesLabels, false, 1, expensesValue, 200, 200);
+            ChartView chartExpenses = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", expensesLabels, false, 1, new List<List<double>>() { expensesValue }, 200, 200);
             chartExpenses.RenderChart(panelChartExpenses);
-            ChartView chartIncomes = new ChartView(ChartType.PIE_CHART, "", "", "", incomeLabels, false, 1, incomeValue, 200, 200);
+            ChartView chartIncomes = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", incomeLabels, false, 1, new List<List<double>>() { incomeValue }, 200, 200);
             chartIncomes.RenderChart(panelChartIncomes);
         }
 
@@ -424,7 +427,7 @@ namespace TheManager_GUI
             }
             else
             {
-                ChartView view = new ChartView(ChartType.LINE_CHART, title, FindResource("str_total").ToString(), title, years, true, 1, amount, -1, 550, min, max);
+                ChartView view = new ChartView(ChartType.LINE_CHART, title, new List<string>() { title }, FindResource("str_total").ToString(), title, years, true, 1, new List<List<double>>() { amount }, -1, 550, min, max);
                 view.RenderChart(panelBudgetReportChart);
             }
         }

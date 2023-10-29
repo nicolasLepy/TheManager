@@ -50,7 +50,7 @@ namespace TheManager
             }
         }
 
-        public List<Match> CommentedGames
+        public List<Match> Games
         {
             get
             {
@@ -76,7 +76,7 @@ namespace TheManager
         {
             get
             {
-                return CommentedGames.Count;
+                return Games.Count;
             }
         }
 

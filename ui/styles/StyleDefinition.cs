@@ -24,6 +24,7 @@ namespace TheManager_GUI.Styles
         public static string styleButtonMenuTitle = "buttonMenuTitle";
         public static string comboBoxFlatStyle = "ComboBoxFlatStyle";
         public static string comboBoxStyle = "comboBoxStyle";
+        public static string tabItemStyle = "tabItemStyle";
 
         public static string fontSizeTitle = "fontSizeTitle";
         public static string fontSizeSecondary = "fontSizeSecondary";

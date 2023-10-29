@@ -17,6 +17,7 @@
 	<system:String x:Key="str_tournamentsSelection">Sélection des championnats</system:String>
 	<system:String x:Key="str_noupcomingmatches">Pas de match à venir</system:String>
 	<system:String x:Key="str_noplayedgames">Pas encore de match joué</system:String>
+	<system:String x:Key="str_playedGames">{0} matchs joués</system:String>
 	<system:String x:Key="str_disableAll">Tout désactiver</system:String>
 	<system:String x:Key="str_enableAll">Tout activer</system:String>
 	<system:String x:Key="str_launch">Lancer</system:String>
@@ -90,6 +91,7 @@
 	<system:String x:Key="str_achievementsClub">Palmarès par équipe</system:String>
 	<system:String x:Key="str_achievementsYear">Palmarès par année</system:String>
 	<system:String x:Key="str_statistics">Statistiques</system:String>
+	<system:String x:Key="str_gameStatistics">Statistiques sur la partie</system:String>
 	<system:String x:Key="str_lineups">Compositions</system:String>
 	<system:String x:Key="str_substitutes">Remplaçants</system:String>
 	<system:String x:Key="str_statisticsYear">Statistiques par année</system:String>
@@ -100,6 +102,7 @@
 	<system:String x:Key="str_seasonsByClub">Saisons par clubs</system:String>
 	<system:String x:Key="str_currentSeason">Saison actuelle</system:String>
 	<system:String x:Key="str_season">Saison</system:String>
+	<system:String x:Key="str_seasons">Saisons</system:String>
 	<system:String x:Key="str_noAvailableForCup">Information non disponible pour une coupe</system:String>
 	<system:String x:Key="str_bestAttack">Meilleure attaque</system:String>
 	<system:String x:Key="str_bestDefense">Meilleure défense</system:String>
@@ -203,5 +206,7 @@
 	<system:String x:Key="str_performance">Parcours</system:String>
 	<system:String x:Key="str_map">Carte</system:String>
 	<system:String x:Key="str_results">Résultats</system:String>
+	<system:String x:Key="str_retiredPlayers">{0} joueurs retraités</system:String>
+	<system:String x:Key="str_playersCount">{0} joueurs</system:String>
 
 </ResourceDictionary>

@@ -28,6 +28,10 @@ namespace TheManager
             _clubsId = new Dictionary<int, Club>();
         }
 
+        private string SlugifyName(string name)
+        {
+            return name.Replace(" ", "-").ToLower();
+        }
 
         private int GetClubId(Club club)
         {

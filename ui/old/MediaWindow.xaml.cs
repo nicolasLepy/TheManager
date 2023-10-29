@@ -50,7 +50,7 @@ namespace TheManager_GUI
                 Journalist j = _media.journalists[_indexOrders[e.shapeIndex]];
                 spJournalistInfo.Children.Add(ViewUtils.CreateLabel(j.ToString() + " (" + j.age + " ans)", "StyleLabel2", 12, -1));
                 spJournalistInfo.Children.Add(ViewUtils.CreateLabel("Basé à " + j.baseCity.Name, "StyleLabel2", 12, -1));
-                List<Match> commentedGames = j.CommentedGames;
+                List<Match> commentedGames = j.Games;
                 commentedGames.Sort(new MatchDateComparator());
                 ViewMatches view = new ViewMatches(commentedGames, true, false, false, false, false, true);
                 view.Full(spMatches);

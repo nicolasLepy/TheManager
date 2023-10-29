@@ -141,6 +141,7 @@
 						</Border.Background>
 						<StackPanel VerticalAlignment="Center">
 							<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+								<Button x:Name="buttonGlobals" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/ranking.png" Content="{StaticResource str_gameStatistics}" Margin="25, 0, 0, 0" Click="buttonGlobals_Click"/>
 								<Button x:Name="buttonWorldRankings" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/ranking.png" Content="{StaticResource str_fifaRanking}" Margin="25, 0, 0, 0" Click="buttonWorldRankings_Click"/>
 								<TextBlock x:Name="tbGameDate" Style="{StaticResource textSecondary}" Text="20 janvier 2023" Width="250" Margin="0, 0, 25, 0" TextAlignment="Right" />
 							</StackPanel>

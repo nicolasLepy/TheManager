@@ -6,14 +6,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Shapes;
 using Mapsui;
 using Mapsui.Layers;
 using Mapsui.Nts;
 using Mapsui.Nts.Providers.Shapefile;
 using Mapsui.Providers;
+using Mapsui.Rendering.Skia;
 using Mapsui.Styles;
 using Mapsui.Styles.Thematics;
+using Mapsui.UI.Wpf;
 using NetTopologySuite.Geometries;
 using TheManager_GUI.Styles;
 
@@ -51,6 +54,8 @@ namespace TheManager_GUI.views
         public const int ZoomOceania = -6;
         public const int ZoomWorld = -7;
 
+        public Action<int> OnClickMap { get; set; }
+
         private Dictionary<string, int> registryCache = new Dictionary<string, int>();
 
         private MapType mapType;
@@ -59,6 +64,7 @@ namespace TheManager_GUI.views
         private Dictionary<int, string> colorLegend = new Dictionary<int, string>();
         private List<MapClub> clubs = new List<MapClub>();
         private Mapsui.UI.Wpf.MapControl mapControl = null;
+        private ProjectingProvider countryProjected;
         private int zoomLevel = ZoomWorld;
         private Color BorderColor()
         {
@@ -123,10 +129,21 @@ namespace TheManager_GUI.views
             foreach (MapClub mapClub in clubs)
             {
                 double[] point = epsg4326epsg3857(mapClub.Lon, mapClub.Lat);
-                Console.WriteLine("Create club " + point[0] + ", " + point[1] + " - " + mapClub.ImagePath);
+                if(mapClub.ImagePath.Length == 0)
+                {
+                    point[0] += TheManager.Session.Instance.Random(-10000, 10000);
+                    point[1] += TheManager.Session.Instance.Random(-10000, 10000);
+                }
                 GeometryFeature feature = new GeometryFeature() { Geometry = new NetTopologySuite.Geometries.Point(point[0], point[1]) };
                 feature["Image"] = mapClub.ImagePath;
-                feature.Styles.Add(CreateSvgStyle(feature["Image"].ToString()));
+                if(mapClub.ImagePath.Length > 0)
+                {
+                    feature.Styles.Add(CreateSvgStyle(feature["Image"].ToString()));
+                }
+                else
+                {
+                    feature.Styles.Add(CreatePointStyle(new Color(125, 125, 125)));
+                }
                 layer.Features.Add(feature);
             }
             layer.DataHasChanged(); //If need to redraw in live the layer
@@ -273,14 +290,8 @@ namespace TheManager_GUI.views
         }
 
 
-        public MapView(MapType mapType, Dictionary<int, int> colorMap, Dictionary<int, string> colorLegend, int zoomLevel, List<MapClub> clubs)
+        public MapView()
         {
-            this.mapType = mapType;
-            this.colorMap = colorMap;
-            this.colorLegend = colorLegend;
-            this.zoomLevel = zoomLevel;
-            this.clubs = clubs;
-
             mapControl = new Mapsui.UI.Wpf.MapControl();
 
             ShapeFile countrySource = new ShapeFile("data\\gis\\countries.shp", true) { CRS = "EPSG:4326" };
@@ -290,11 +301,57 @@ namespace TheManager_GUI.views
                 countryFeatures.Add(countrySource.GetFeature(i));
             }
 
-            var countryProjected = new ProjectingProvider(countrySource)
+            countryProjected = new ProjectingProvider(countrySource)
             {
                 CRS = "EPSG:3857"
             };
 
+            mapControl.Map.CRS = "EPSG:3857"; // in meters
+            mapControl.MouseLeftButtonDown += OnClick;
+        }
+
+        private void OnClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Windows.Point mousePosition = e.GetPosition(mapControl);
+            MapInfo mapInfo = mapControl.GetMapInfo(new MPoint(mousePosition.X, mousePosition.Y), 25000);
+            MPoint cord = mapInfo.WorldPosition;
+            
+            foreach (BaseLayer layer in mapControl.Map.Layers)
+            {
+                GenericCollectionLayer<List<IFeature>> layerCollection = layer as GenericCollectionLayer<List<IFeature>>;
+                if (layerCollection != null)
+                {
+                    int i = 0;
+                    foreach (IFeature feature in layerCollection.Features)
+                    {
+                        GeometryFeature pointFeature = feature as GeometryFeature;
+                        if (pointFeature != null)
+                        {
+                            NetTopologySuite.Geometries.Point point = pointFeature.Geometry.Centroid;
+                            double distance = Math.Abs(Math.Sqrt(Math.Pow((point.X - cord.X), 2) + Math.Pow((point.Y - cord.Y), 2)));
+                            if (distance < 15000)
+                            {
+                                if(OnClickMap != null)
+                                {
+                                    OnClickMap(i);
+                                }
+                            }
+                        }
+                        i++;
+                    }
+                }
+            }
+        }
+
+        public void Refresh(MapType mapType, Dictionary<int, int> colorMap, Dictionary<int, string> colorLegend, int zoomLevel, List<MapClub> clubs)
+        {
+            this.colorMap = colorMap;
+            this.colorLegend = colorLegend;
+            this.mapType = mapType;
+            this.zoomLevel = zoomLevel;
+            this.clubs = clubs;
+
+            mapControl.Map.Layers.Clear();
             if (this.mapType == MapType.CLUB)
             {
                 mapControl.Map?.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
@@ -306,8 +363,9 @@ namespace TheManager_GUI.views
                 mapControl.Map?.Layers.Add(countryLayer);
                 mapControl.Map?.Layers.Add(CreateCountryPointLayer(countryFeatures));
             }
-            mapControl.Map.CRS = "EPSG:3857";
+
         }
+
 
         public void Clear()
         {
@@ -322,6 +380,7 @@ namespace TheManager_GUI.views
             Grid hostGrid = host as Grid;
             if (hostGrid != null)
             {
+                hostGrid.Children.Clear();
                 ViewUtils.AddElementToGrid(hostGrid, mapControl, 0, 0, hostGrid.ColumnDefinitions.Count, hostGrid.RowDefinitions.Count);
                 if(mapType == MapType.INTERNATIONAL)
                 {
@@ -358,6 +417,7 @@ namespace TheManager_GUI.views
                 rectangle.Width = 20;
                 rectangle.Height = 10;
                 TextBlock textLegend = ViewUtils.CreateTextBlock(kvp.Value, StyleDefinition.styleTextPlain);
+                textLegend.Foreground = Application.Current.FindResource(StyleDefinition.solidColorBrushColorPanel1) as System.Windows.Media.SolidColorBrush;
                 textLegend.VerticalAlignment = VerticalAlignment.Center;
                 ViewUtils.AddElementToGrid(legendGrid, textLegend, legendGrid.RowDefinitions.Count-1, 1);
                 ViewUtils.AddElementToGrid(legendGrid, rectangle, legendGrid.RowDefinitions.Count-1, 0);

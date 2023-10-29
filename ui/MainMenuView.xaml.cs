@@ -480,5 +480,10 @@ namespace TheManager_GUI
             }
         }
 
+        private void buttonGlobals_Click(object sender, RoutedEventArgs e)
+        {
+            GlobalView view = new GlobalView();
+            view.Show();
+        }
     }
 }

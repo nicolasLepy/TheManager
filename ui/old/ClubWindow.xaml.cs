@@ -210,10 +210,10 @@ namespace TheManager_GUI
                     incomeValue.Add(kvp.Value);
                 }
 
-                ChartView depensesChart = new ChartView(ChartType.PIE_CHART, "", "", "", depensesLabels, false, 1, depensesValue, 200, 200);
+                ChartView depensesChart = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", depensesLabels, false, 1, new List<List<double>>() { depensesValue }, 200, 200);
                 depensesChart.RenderChart(spRepartitions);
 
-                ChartView incomesChart = new ChartView(ChartType.PIE_CHART, "", "", "", incomeLabels, false, 1, incomeValue, 200, 200);
+                ChartView incomesChart = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", incomeLabels, false, 1, new List<List<double>>() { incomeValue }, 200, 200);
                 incomesChart.RenderChart(spRepartitions);
 
             }
@@ -408,7 +408,7 @@ namespace TheManager_GUI
                 lbBiggestLose.Content = c.records.BiggestLose.home.name + " " + c.records.BiggestLose.score1 + " - " + c.records.BiggestLose.score2 + " " + c.records.BiggestLose.away.name;
             }
 
-            ChartView formationCentreChart = new ChartView(ChartType.LINE_CHART, FindResource("str_formationCentre").ToString(), FindResource("str_level").ToString(), FindResource("str_year").ToString(), LabelsAnnees.ToList(), false, 1, centreFormation.ToList(), 450, 300, 0, 100);
+            ChartView formationCentreChart = new ChartView(ChartType.LINE_CHART, FindResource("str_formationCentre").ToString(), new List<string>() { FindResource("str_formationCentre").ToString() }, FindResource("str_level").ToString(), FindResource("str_year").ToString(), LabelsAnnees.ToList(), false, 1, new List<List<double>>() { centreFormation.ToList() }, 450, 300, 0, 100);
             formationCentreChart.RenderChart(spChartRight);
 
         }

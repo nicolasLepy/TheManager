@@ -30,7 +30,7 @@ namespace TheManager_GUI
         private Tournament baseTournament;
         private Tournament activeTournament;
 
-        private MapView currentMap;
+        private MapView map;
 
         public TournamentView(Tournament tournament)
         {
@@ -46,6 +46,7 @@ namespace TheManager_GUI
             //this.baseTournament = tournament;
             //this.activeTournament = tournament;
             InitializeComponent();
+            map = new MapView();
             Initialize();
             UpdatePage(new TournamentResultsPage(activeTournament));
         }
@@ -251,14 +252,8 @@ namespace TheManager_GUI
                     }
                 }
             }
-
-            MapView map = new MapView(mapType, colorMap, colorLegend, zoomLevel, mapClubs);
-            if (currentMap != null)
-            {
-                currentMap.Clear();
-            }
+            map.Refresh(mapType, colorMap, colorLegend, zoomLevel, mapClubs);
             map.Show(host);
-            currentMap = map;
 
         }
 
