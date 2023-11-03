@@ -141,7 +141,7 @@ namespace TheManager_GUI.Views
                     TextBlock tbGroupName = ViewUtils.CreateTextBlock(_round.GroupName(poule), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
                     AddElementToGrid(grid, tbGroupName, grid.RowDefinitions.Count-1, 0, grid.ColumnDefinitions.Count);
 
-                    FillRanking(grid, grid.RowDefinitions.Count, _round.Ranking(poule), qualifications[poule]);
+                    FillRanking(grid, grid.RowDefinitions.Count, _round.Ranking(poule), qualifications[poule], false);
                     
                     grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
 
@@ -201,6 +201,7 @@ namespace TheManager_GUI.Views
                 {
                     if (q.qualifies != 0 && _round.matches.Count > 0 && !scannedRanking.Contains(q.ranking))
                     {
+                        Console.WriteLine("[RANKING BY RANK]" + q.ranking);
                         scannedRanking.Add(q.ranking);
                         int rankingName = q.ranking > 0 ? q.ranking : _round.groups.Last().Count + q.ranking + 1;
 
@@ -221,7 +222,7 @@ namespace TheManager_GUI.Views
                             int rank = q.qualifies > 0 ? i + 1 : concernedClubs.Count - i;
                             rankQualifications.Add(new Qualification(rank, q.roundId, q.tournament, q.isNextYear, 0));
                         }
-                        FillRanking(grid, grid.RowDefinitions.Count, concernedClubs, rankQualifications);
+                        FillRanking(grid, grid.RowDefinitions.Count, concernedClubs, rankQualifications, true);
                     }
                 }
 

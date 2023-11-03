@@ -164,23 +164,23 @@ namespace TheManager_GUI.Views
             string color = "";
             if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
             {
-                color = "cl1Color";
+                color = StyleDefinition.slotQualification1a;
             }
             else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound == null)
             {
-                color = "cl2Color";
+                color = StyleDefinition.slotQualification1b;
             }
             else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
             {
-                color = "el1Color";
+                color = StyleDefinition.slotQualification2a;
             }
             else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound == null)
             {
-                color = "el2Color";
+                color = StyleDefinition.slotQualification2b;
             }
             else if (q.tournament.level == 3)
             {
-                color = "ecl1Color";
+                color = StyleDefinition.slotQualification3a;
             }
             return color;
         }
@@ -200,34 +200,34 @@ namespace TheManager_GUI.Views
             {
                 if (q.tournament.level < roundLevel || (clubNextLevel > 0 && clubNextLevel < roundLevel))
                 {
-                    color = "promotionColor";
+                    color = StyleDefinition.slotPromotion;
                 }
                 else if ((clubNextLevel - roundLevel) > 1)
                 {
-                    color = "retrogradationColor";
+                    color = StyleDefinition.slotRetrogradation;
                 }
                 else if (q.tournament.level > roundLevel)
                 {
-                    color = clubNextLevel == roundLevel ? "backgroundColor" : "relegationColor"; //Don't forget case were club is rescued
+                    color = clubNextLevel == roundLevel ? StyleDefinition.slotBackground : StyleDefinition.slotRelegation; //Don't forget case were club is rescued
                 }
                 else if (q.tournament.level == roundLevel && q.roundId > _tournament.rounds.IndexOf(Round()))
                 {
-                    color = "barrageColor";
+                    color = StyleDefinition.slotBarrage;
                 }
             }
             else if (nationalTeamTournament)
             {
                 if (q.tournament.level == roundLevel && q.tournament != _tournament)
                 {
-                    color = "cl1Color";
+                    color = StyleDefinition.slotQualification1a;
                 }
                 else if (q.tournament.level == roundLevel && q.tournament == _tournament)
                 {
-                    color = "cl2Color";
+                    color = StyleDefinition.slotQualification1b;
                 }
                 else if (q.tournament.level > roundLevel)
                 {
-                    color = q.qualifies >= 0 ? "el1Color" : "barrageRelegationColor";
+                    color = StyleDefinition.slotBarrageRelegation;
                 }
             }
 
@@ -282,7 +282,7 @@ namespace TheManager_GUI.Views
             }
         }
 
-        protected void FillRanking(Grid grid, int startRow, List<Club> ranking, List<Qualification> qualifications)
+        protected void FillRanking(Grid grid, int startRow, List<Club> ranking, List<Qualification> qualifications, bool isRankingByRank)
         {
             double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);
             double logoSize = fontSize * 5 / 3;
@@ -419,6 +419,22 @@ namespace TheManager_GUI.Views
                         int index = q.ranking > 0 ? q.ranking - 1 : ranking.Count + q.ranking;
                         SolidColorBrush color = GetQualificationColor(q, ranking, qualificationsToTournamentNextRounds);
                         borders[index].Background = color;
+                    }
+                    if(!isRankingByRank)
+                    {
+                        foreach (Qualification q in Round().qualifications)
+                        {
+                            if (q.qualifies != 0)
+                            {
+                                int index = q.ranking > 0 ? q.ranking - 1 : ranking.Count + q.ranking;
+                                string hypoteticalQualification = InternationalQualificationColor(q);
+                                if (hypoteticalQualification != "")
+                                {
+                                    SolidColorBrush color = Application.Current.TryFindResource(hypoteticalQualification) as SolidColorBrush;
+                                    borders[index].Background = color;
+                                }
+                            }
+                        }
                     }
                 }
             }

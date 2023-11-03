@@ -117,10 +117,12 @@ namespace TheManager_GUI
             FillTournamentsTreeView();
             if (_game.club.Championship != null && _game.club.Championship.rounds[0].matches.Count > 0)
             {
+                textActiveTournamentName.Text = _game.club.Championship.name;
                 RefreshGameDayComboBox(_game.club.Championship);
             }
             else
             {
+                textActiveTournamentName.Text = "";
                 buttonSwitchScoresMode_Click(null, null);
 
             }
@@ -196,6 +198,7 @@ namespace TheManager_GUI
 
         private void RefreshTournament(Tournament tournament)
         {
+            textActiveTournamentName.Text = tournament.name;
             FillRankingPanel(tournament.rounds[0]);
             RefreshGameDayComboBox(tournament);
         }
@@ -461,6 +464,16 @@ namespace TheManager_GUI
                 RefreshGameDayComboBox(_comboBoxDayController.tournament);
             }
         }
+
+        private void textActiveTournamentName_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if(_comboBoxDayController.tournament != null)
+            {
+                TournamentView view = new TournamentView(_comboBoxDayController.tournament);
+                view.Show();
+            }
+        }
+
 
         /* CONTROL GAME */
 

@@ -28,6 +28,9 @@ namespace TheManager_GUI
     /// </summary>
     public partial class GlobalView : Window
     {
+
+        private readonly int chartHeight = 475;
+
         public GlobalView()
         {
             InitializeComponent();
@@ -71,24 +74,24 @@ namespace TheManager_GUI
             textPastPlayers.Text = String.Format(FindResource("str_retiredPlayers").ToString(), Session.Instance.Game.kernel.retiredPlayersCount);
             textPlayedGames.Text = String.Format(FindResource("str_playedGames").ToString(), totalGames);
 
-            //Centre de formation
+            //Formation centre
             string titleAverageLevel = "Average Club Level In Game";
             string titleAverageClubLevel = "Average Club Level In Game";
             string titleAveragePlayerLevel = "Average Player Level In Game";
             string titleAverageFormationCentre = "Average Formation Level In Game";
-            ChartView chartAverageLevel = new ChartView(ChartType.LINE_CHART, titleAverageLevel, new List<string>() { titleAverageClubLevel, titleAveragePlayerLevel, titleAverageFormationCentre}, FindResource("str_level").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.AverageClubLevelInGame.ConvertAll(x => (double)x), Session.Instance.Game.gameUniverse.AveragePlayerLevelInGame.ConvertAll(x => (double)x), Session.Instance.Game.gameUniverse.AverageFormationInGame.ConvertAll(x => (double)x) }, -1, 225, 0, 100);
+            ChartView chartAverageLevel = new ChartView(ChartType.LINE_CHART, titleAverageLevel, new List<string>() { titleAverageClubLevel, titleAveragePlayerLevel, titleAverageFormationCentre}, FindResource("str_level").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.AverageClubLevelInGame.ConvertAll(x => (double)x), Session.Instance.Game.gameUniverse.AveragePlayerLevelInGame.ConvertAll(x => (double)x), Session.Instance.Game.gameUniverse.AverageFormationInGame.ConvertAll(x => (double)x) }, -1, chartHeight, 0, 100);
             chartAverageLevel.RenderChart(panelChartAverageLevel);
 
-            ChartView chartAverageGoals = new ChartView(ChartType.LINE_CHART, "Average goals by game", new List<string>() { "Average goals by game" }, FindResource("str_goals").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.AverageGoals.ConvertAll(x => (double)x) }, -1, 225, 0, -1);
+            ChartView chartAverageGoals = new ChartView(ChartType.LINE_CHART, "Average goals by game", new List<string>() { "Average goals by game" }, FindResource("str_goals").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.AverageGoals.ConvertAll(x => (double)x) }, -1, chartHeight, 0, -1);
             chartAverageGoals.RenderChart(panelChartGoals);
 
-            ChartView chartPlayersCount = new ChartView(ChartType.LINE_CHART, "Players in game", new List<string>() { "Players in game" }, FindResource("str_total").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.PlayersInGame.ConvertAll(x => (double)x) }, -1, 225, 0, -1);
+            ChartView chartPlayersCount = new ChartView(ChartType.LINE_CHART, "Players in game", new List<string>() { "Players in game" }, FindResource("str_total").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.PlayersInGame.ConvertAll(x => (double)x) }, -1, chartHeight, 0, -1);
             chartPlayersCount.RenderChart(panelChartPlayers);
 
-            ChartView chartDebts = new ChartView(ChartType.LINE_CHART, "Rate of indebtes clubs", new List<string>() { "Rate of indebtes clubs" }, "Taux", FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.RateIndebtesClubs.ConvertAll(x => (double)x) }, -1, 225, 0, 1);
+            ChartView chartDebts = new ChartView(ChartType.LINE_CHART, "Rate of indebtes clubs", new List<string>() { "Rate of indebtes clubs" }, "Taux", FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.RateIndebtesClubs.ConvertAll(x => (double)x) }, -1, chartHeight, 0, 1);
             chartDebts.RenderChart(panelChartDebts);
 
-            ChartView chartTotalBudget = new ChartView(ChartType.LINE_CHART, "Total money in game", new List<string>() { "Total money in game" }, "Taux", FindResource("str_budget").ToString(), years, true, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.TotalBudgetInGame.ConvertAll(x => (double)x) }, -1, 225);
+            ChartView chartTotalBudget = new ChartView(ChartType.LINE_CHART, "Total money in game", new List<string>() { "Total money in game" }, "Taux", FindResource("str_budget").ToString(), years, true, 1, new List<List<double>>() { Session.Instance.Game.gameUniverse.TotalBudgetInGame.ConvertAll(x => (double)x) }, -1, chartHeight);
             chartTotalBudget.RenderChart(panelChartBudgets);
 
             for(int i = 0; i < years.Count()-1; i++)
@@ -140,7 +143,7 @@ namespace TheManager_GUI
                 bin = bin < 0 ? 0 : bin;
                 bins[bin]++;
             }
-            ChartView chartHistogram = new ChartView(ChartType.BAR_CHART, "???", new List<string>() { "???" }, "Count", "Money", labels, false, 0.75f, new List<List<double>>() { bins.ToList().ConvertAll(x => (double)x) }, -1, 225, 0, -1);
+            ChartView chartHistogram = new ChartView(ChartType.BAR_CHART, FindResource("str_club_budgets").ToString(), new List<string>() { FindResource("str_budget").ToString() }, "Count", "Money", labels, false, 0.75f, new List<List<double>>() { bins.ToList().ConvertAll(x => (double)x) }, -1, chartHeight, 0, -1);
             return chartHistogram;
 
         }

@@ -63,6 +63,7 @@ namespace TheManager_GUI
 
         public void Initialize()
         {
+            textTournamentName.Text = baseTournament.name;
             FillComboBoxYear();
         }
 

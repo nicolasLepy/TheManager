@@ -26,6 +26,7 @@
 	<system:String x:Key="str_second_leg">Second leg</system:String>
 	<system:String x:Key="str_aet">a.e.t.</system:String>
 	<system:String x:Key="str_budget">Budget</system:String>
+	<system:String x:Key="str_club_budgets">Budgets of clubs</system:String>
 	<system:String x:Key="str_budget_report">Budget report</system:String>
 	<system:String x:Key="str_seats">seats</system:String>
 	<system:String x:Key="str_advance">Advance</system:String>

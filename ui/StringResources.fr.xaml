@@ -26,6 +26,7 @@
 	<system:String x:Key="str_second_leg">Matchs retour</system:String>
 	<system:String x:Key="str_aet">a.p.</system:String>
 	<system:String x:Key="str_budget">Budget</system:String>
+	<system:String x:Key="str_club_budgets">Budgets des clubs</system:String>
 	<system:String x:Key="str_budget_report">Rapport budgétaire</system:String>
 	<system:String x:Key="str_seats">places</system:String>
 	<system:String x:Key="str_advance">Avancer</system:String>

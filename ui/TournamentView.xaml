@@ -115,8 +115,7 @@
 							</LinearGradientBrush>
 						</Border.Background>
 						<StackPanel VerticalAlignment="Center">
-							<Grid>
-							</Grid>
+							<TextBlock x:Name="textTournamentName" Style="{StaticResource textSecondary}" TextAlignment="Center" Text="PLACEHOLDER"/>
 						</StackPanel>
 					</Border>
 

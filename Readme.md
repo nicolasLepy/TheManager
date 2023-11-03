@@ -33,7 +33,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 The simulation has gained in stability : money in game stabilizes after few years and remains stable after. Players and clubs average level tends to incrase over time.
 
-Some realism issues : Small clubs at beginning can't stabilize in professionnals divisions
+Some realism issues : Small clubs at beginning can't stabilize at professionnal level.
 
 <p float="left">
   <img src="images/graph_budget.png" width="40%" />
@@ -80,6 +80,7 @@ Some realism issues : Small clubs at beginning can't stabilize in professionnals
 Nicolas Lépy
 
 ## Tools used
+
 *   .NET Framework 4.8 and WPF
 *   Visual Studio
 *   Mapsui
@@ -89,7 +90,6 @@ Nicolas Lépy
 
 *   [Live Charts for WPF](https://www.google.com)
 *   MathNet.Numerics
-*   [pngtree.com](https://pngtree.com)
 *   Data about cities were obtained from [SimpleMaps](https://simplemaps.com/data/world-cities)
 *   Data about players and clubs were obtained from [Kaggle](https://www.kaggle.com/stefanoleone992/fifa-22-complete-player-dataset?select=players_22.csv)
 *   [flaticon.com (iconnut, Freepik, kerismaker and Futuer)](https://www.flaticon.com)

@@ -1026,27 +1026,39 @@ namespace TheManager
             return false;
         }
 
+        private List<Match> GetGames(int group)
+        {
+            List<Club> clubs = this.groups[group];
+            List<Match> res = new List<Match>();
+            foreach(Match m in _matches)
+            {
+                if(clubs.Contains(m.home))
+                {
+                    res.Add(m);
+                }
+            }
+            return res;
+        }
+
         public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
             if(_matches.Count > 0)
             {
-                int matchesPerGroups = GroupMatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
-                if (twoLegs)
+                for (int i = 0; i < groupsCount; i++)
                 {
-                    matchesPerGroups *= 2;
-                }
-                for (int i = 0; i < _groupsNumber; i++)
-                {
-                    int baseIndex = (matchesPerGroups * i) + (GroupMatchesPerGamesDay() * (journey - 1));
-                    for (int j = 0; j < GroupMatchesPerGamesDay(); j++)
+                    int matchPerGames = groups[i].Count / 2;
+                    List<Match> games = GetGames(i);
+                    int indexGameDay = journey - 1;
+                    for (int j = matchPerGames * indexGameDay; j < matchPerGames * (indexGameDay + 1); j++)
                     {
-                        res.Add(_matches[j + baseIndex]);
+                        if(j < games.Count)
+                        {
+                            res.Add(games[j]);
+                        }
                     }
-
                 }
             }
-
             return res;
         }
 

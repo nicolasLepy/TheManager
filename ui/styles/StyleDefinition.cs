@@ -47,5 +47,32 @@ namespace TheManager_GUI.Styles
         public static string colorViewBorder3 = "colorViewBorder3";
         public static string colorPositive = "colorPositive";
         public static string colorNegative = "colorNegative";
+
+        public static string slotPromotion = "promotionColor";
+        public static string slotRetrogradation = "retrogradationColor";
+        public static string slotBarrageRelegation = "barrageRelegationColor";
+        public static string slotBackground = "backgroundColor";
+        public static string slotRelegation = "relegationColor";
+        public static string slotBarrage = "barrageColor";
+        public static string slotQualification1a = "cl1Color";
+        public static string slotQualification1b = "cl2Color";
+        public static string slotQualification2a = "el1Color";
+        public static string slotQualification2b = "el2Color";
+        public static string slotQualification3a = "ecl1Color";
+
+        public static Dictionary<string, string> slotLightShade = new Dictionary<string, string>()
+        {
+            {slotPromotion, slotQualification1b },
+            {slotRetrogradation, slotRetrogradation },
+            {slotBarrageRelegation, slotBarrageRelegation },
+            {slotBackground, slotBackground },
+            {slotRelegation, slotBarrageRelegation },
+            {slotBarrage, slotBarrage },
+            {slotQualification1a, slotQualification1b },
+            {slotQualification1b, slotQualification2a }, // Other shade ?
+            {slotQualification2a, slotQualification2b },
+            {slotQualification2b, slotQualification3a }, // Other shade ?
+            {slotQualification3a, slotQualification3a }, // Other shade ?
+        };
     }
 }

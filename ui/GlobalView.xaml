@@ -94,49 +94,51 @@
 					</Border>
 
 					<!-- Main Window : Main Panel -->
-					<Grid Grid.Row="2" Margin="15">
-						<Grid.RowDefinitions>
-							<RowDefinition Height="0.085*"/>
-							<RowDefinition Height="0.4*"/>
-							<RowDefinition Height="0.4*"/>
-							<RowDefinition Height="0.4*"/>
-						</Grid.RowDefinitions>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="0.5*"/>
-							<ColumnDefinition Width="0.5*"/>
-						</Grid.ColumnDefinitions>
-						<Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource borderOddStyle}" Margin="5">
-							<Grid>
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="0.2*"/>
-									<ColumnDefinition Width="0.2*"/>
-									<ColumnDefinition Width="0.2*"/>
-									<ColumnDefinition Width="0.2*"/>
-									<ColumnDefinition Width="0.2*"/>
-								</Grid.ColumnDefinitions>
-								<Grid.RowDefinitions>
-									<RowDefinition Height="0.5*"/>
-									<RowDefinition Height="0.5*"/>
-								</Grid.RowDefinitions>
-								<TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:Name="textDate" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
-								<TextBlock Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="textSeasonsCount" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
-								<TextBlock Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" x:Name="textClubsCount" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
-								<TextBlock Grid.Row="0" Grid.Column="3" x:Name="textPlayers" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
-								<TextBlock Grid.Row="1" Grid.Column="3" x:Name="textPastPlayers" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
-								<TextBlock Grid.Row="0" Grid.Column="4" Grid.RowSpan="2" x:Name="textPlayedGames" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
+					<ScrollViewer Grid.Row="2" Margin="15" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<Grid>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="75"/>
+								<RowDefinition Height="500"/>
+								<RowDefinition Height="500"/>
+								<RowDefinition Height="500"/>
+							</Grid.RowDefinitions>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="0.5*"/>
+								<ColumnDefinition Width="0.5*"/>
+							</Grid.ColumnDefinitions>
+							<Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Style="{StaticResource borderOddStyle}" Margin="5">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.5*"/>
+										<RowDefinition Height="0.5*"/>
+									</Grid.RowDefinitions>
+									<TextBlock Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" x:Name="textDate" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
+									<TextBlock Grid.Row="0" Grid.Column="1" Grid.RowSpan="2" x:Name="textSeasonsCount" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
+									<TextBlock Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" x:Name="textClubsCount" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
+									<TextBlock Grid.Row="0" Grid.Column="3" x:Name="textPlayers" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
+									<TextBlock Grid.Row="1" Grid.Column="3" x:Name="textPastPlayers" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
+									<TextBlock Grid.Row="0" Grid.Column="4" Grid.RowSpan="2" x:Name="textPlayedGames" Text="PLACEHOLDER" Style="{StaticResource textPlainCenter}"/>
+								</Grid>
+							</Border>
+							<StackPanel Grid.Row="1" Grid.Column="0" x:Name="panelChartAverageLevel" Margin="5"></StackPanel>
+							<StackPanel Grid.Row="1" Grid.Column="1" x:Name="panelChartPlayers" Margin="5"></StackPanel>
+							<StackPanel Grid.Row="2" Grid.Column="0" x:Name="panelChartGoals" Margin="5"></StackPanel>
+							<StackPanel Grid.Row="2" Grid.Column="1" x:Name="panelChartBudgets" Margin="5"></StackPanel>
+							<StackPanel Grid.Row="3" Grid.Column="0" x:Name="panelChartDebts" Margin="5"></StackPanel>
+							<Grid Grid.Row="3" Grid.Column="1" x:Name="panelChartBudgetsClub" Margin="5">
+								<TabControl x:Name="tabControlBudgets" Style="{StaticResource tabControlStyle}">
+
+								</TabControl>
 							</Grid>
-						</Border>
-						<StackPanel Grid.Row="1" Grid.Column="0" x:Name="panelChartAverageLevel" Margin="5"></StackPanel>
-						<StackPanel Grid.Row="1" Grid.Column="1" x:Name="panelChartPlayers" Margin="5"></StackPanel>
-						<StackPanel Grid.Row="2" Grid.Column="0" x:Name="panelChartGoals" Margin="5"></StackPanel>
-						<StackPanel Grid.Row="2" Grid.Column="1" x:Name="panelChartBudgets" Margin="5"></StackPanel>
-						<StackPanel Grid.Row="3" Grid.Column="0" x:Name="panelChartDebts" Margin="5"></StackPanel>
-						<Grid Grid.Row="3" Grid.Column="1" x:Name="panelChartBudgetsClub" Margin="5">
-							<TabControl x:Name="tabControlBudgets" Style="{StaticResource tabControlStyle}">
-								
-							</TabControl>
 						</Grid>
-					</Grid>
+					</ScrollViewer>
 					
 				</Grid>
 			</Border>

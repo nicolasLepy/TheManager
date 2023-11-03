@@ -48,7 +48,7 @@ namespace TheManager_GUI.Views
             List<Border> borders = new List<Border>();
             Grid gridTable = new Grid();
             InitColumns(gridTable);
-            FillRanking(gridTable, 0, clubs, qualificationsRound);
+            FillRanking(gridTable, 0, clubs, qualificationsRound, false);
 
             /*// Get international qualifications
             // Search if the round is an archived round to get qualified teams on the right year

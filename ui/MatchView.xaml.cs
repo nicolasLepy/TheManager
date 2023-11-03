@@ -38,7 +38,7 @@ namespace TheManager_GUI
             InitializeComponent();
             Initialize();
             FillStats();
-            //FillMedias();
+            FillMedias();
             FillEvents();
             FillCompositions();
             FillGameProgression(true);

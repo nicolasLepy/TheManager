@@ -43,7 +43,8 @@
 				<Grid>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="0.6*"/>
-						<RowDefinition Height="0.4*"/>
+						<RowDefinition Height="0.05*"/>
+						<RowDefinition Height="0.35*"/>
 					</Grid.RowDefinitions>
 
 					<StackPanel Grid.Row="0">
@@ -67,7 +68,8 @@
 						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
 
 					</StackPanel>
-					<ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top">
+					<TextBlock Grid.Row="1" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_tournaments}" Margin="5" VerticalAlignment="Bottom"/>
+					<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top">
 						<TreeView Style="{StaticResource tournamentsTreeViewStyle}" x:Name="tvTournaments" ScrollViewer.HorizontalScrollBarVisibility="Disabled" >
 							<TreeViewItem Margin="0, 2, 0, 2">
 									<TreeViewItem.Header>
@@ -152,7 +154,7 @@
 					<Grid Grid.Row="2">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*"/>
-							<ColumnDefinition Width="200"/>
+							<ColumnDefinition Width="175"/>
 						</Grid.ColumnDefinitions>
 
 						<!-- Main Panel : Game Panel-->
@@ -218,11 +220,20 @@
 								</Grid.ColumnDefinitions>
 
 								<!-- Ranking Panel -->
-								<ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
-									<StackPanel x:Name="spRanking">
+								<Grid Grid.Column="0">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.075*"/>
+										<RowDefinition Height="0.925*"/>
+									</Grid.RowDefinitions>
+									<Grid Grid.Row="0" Background="{StaticResource colorPanel3}">
+										<TextBlock x:Name="textActiveTournamentName" Style="{StaticResource textSecondary}" TextAlignment="Center" Text="PLACEHOLDER" MouseLeftButtonDown="textActiveTournamentName_MouseLeftButtonDown"/>
+									</Grid>
+									<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+										<StackPanel x:Name="spRanking">
 
-									</StackPanel>
-								</ScrollViewer>
+										</StackPanel>
+									</ScrollViewer>
+								</Grid>
 
 								<!-- Results Grid -->
 								<Grid Grid.Column="1" x:Name="gridResults">
