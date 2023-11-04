@@ -245,7 +245,11 @@ namespace TheManager_GUI
                 if(em.club == club && em.type != GameEvent.Shot)
                 {
                     int offset = last == null ? em.EventMinute : em.EventMinute - last.EventMinute;
-                    grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(offset, GridUnitType.Star) }); //TODO: Bug negative offset
+                    if(offset < 0) // If a goal was scored at the 46° when the last was at 45+2° for exemple
+                    {
+                        offset = 1;
+                    }
+                    grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(offset, GridUnitType.Star) });
 
                     string icone = "";
                     switch (em.type)

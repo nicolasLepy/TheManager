@@ -249,12 +249,6 @@ namespace TheManager
         [DataMember]
         protected List<Match> _matches;
         /// <summary>
-        /// If the round takes place in round-trip matches
-        /// </summary>
-        [DataMember]
-        protected bool _twoLegs;
-
-        /// <summary>
         /// Legs count during round
         /// </summary>
         [DataMember]
@@ -270,7 +264,7 @@ namespace TheManager
         protected List<Qualification> _qualifications;
 
         /// <summary>
-        /// List of teams get from other tournament still in progress
+        /// List of teams got from other tournament still in progress
         /// </summary>
         [DataMember]
         protected List<RecoverTeams> _recuperedTeams;
@@ -319,7 +313,6 @@ namespace TheManager
         public string name { get => _name; }
         public List<Club> clubs { get => _clubs; }
         public List<Match> matches { get => _matches; }
-        public bool twoLegs { get => _twoLegs; }
         public int phases { get => _phases; }
         public int keepRankingFromPreviousRound { get => _keepRankingFromPreviousRound; }
         public RoundProgrammation programmation { get => _programmation; }
@@ -368,13 +361,12 @@ namespace TheManager
             }
         }
 
-        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
+        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
         {
             _name = name;
             _clubs = new List<Club>();
             _matches = new List<Match>();
             _programmation = new RoundProgrammation(hour, dates, tvOffsets, initialisation, end, lastDaysSameDay, gamesPriority);
-            _twoLegs = twoLegs;
             _qualifications = new List<Qualification>();
             _recuperedTeams = new List<RecoverTeams>();
             _baseRecuperedTeams = new List<RecoverTeams>();

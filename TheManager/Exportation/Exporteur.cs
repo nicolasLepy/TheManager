@@ -211,11 +211,7 @@ namespace TheManager.Exportation
 
                         output.Append("</table>");
                     }
-                    int nbJournees = nbEquipesParPoules-1;
-                    if (t.twoLegs)
-                    {
-                        nbJournees *= 2;
-                    }
+                    int nbJournees = (nbEquipesParPoules-1) * t.phases;
                     int matchsJournee = t.matches.Count / nbJournees;
                     int k = 0;
                     for (int i = 0; i < nbJournees; i++)

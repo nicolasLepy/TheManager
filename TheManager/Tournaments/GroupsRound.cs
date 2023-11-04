@@ -118,7 +118,7 @@ namespace TheManager
         {
             _storedGroupQualifications = new List<Qualification>[_groups.Length];
         }
-        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0, keepRankingFromPreviousRound, gamesPriority)
+        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(name, hour, dates, offsets, initialisation,end, phases, 0, keepRankingFromPreviousRound, gamesPriority)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -156,7 +156,7 @@ namespace TheManager
 
         public override Round Copy()
         {
-            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
+            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -282,13 +282,13 @@ namespace TheManager
 
             if(_fusionGroupAndNoGroupGames)
             {
-                _matches.AddRange(Calendar.GenerateCalendar(clubs, this, twoLegs));
+                _matches.AddRange(Calendar.GenerateCalendar(clubs, this));
             }
             else
             {
                 for (int i = 0; i < _groupsNumber; i++)
                 {
-                    _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this, twoLegs));
+                    _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this));
                 }
                 if (this.nonGroupGamesByTeams > 0)
                 {

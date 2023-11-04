@@ -105,7 +105,7 @@ namespace TheManager_GUI.Views
             }
 
             List<Match>[] pairs;
-            if (_round.twoLegs)
+            if (_round.phases == 2)  // TODO: Manage knockout rounds phases > 2
             {
                 pairs = new List<Match>[matchs.Count / 2];
                 for (int i = 0; i < matchs.Count / 2; i++)
