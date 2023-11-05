@@ -23,6 +23,7 @@ using TheManager_GUI.controls;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.views;
 using TheManager_GUI.Styles;
+using TheManager_GUI.utils;
 
 namespace TheManager_GUI
 {
@@ -231,7 +232,7 @@ namespace TheManager_GUI
 
                                 List<Country> hosts = tournament.Hosts();
                                 gridCountryHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
-                                TextBlock tbYear = ViewUtils.CreateTextBlockOpenWindow(tournament, OpenTournament, previousEdition.Key.ToString(), StyleDefinition.styleTextSecondary, -1, -1);
+                                TextBlock tbYear = ViewUtils.CreateTextBlockOpenWindow(tournament, Handlers.OpenTournament, previousEdition.Key.ToString(), StyleDefinition.styleTextSecondary, -1, -1);
                                 TextBlock tbPerformance = ViewUtils.CreateTextBlock(teamPerformance, StyleDefinition.styleTextSecondary);
                                 ViewUtils.AddElementToGrid(gridCountryHistory, tbYear, gridCountryHistory.RowDefinitions.Count - 1, 0);
                                 ViewUtils.AddElementToGrid(gridCountryHistory, tbPerformance, gridCountryHistory.RowDefinitions.Count - 1, 3);
@@ -249,12 +250,6 @@ namespace TheManager_GUI
 
                 }
             }
-        }
-
-        private void OpenTournament(Tournament t)
-        {
-            TournamentView view = new TournamentView(t);
-            view.Show();
         }
 
         /* EVENTS HANDLER */

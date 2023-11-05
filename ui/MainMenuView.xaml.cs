@@ -15,6 +15,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 using TheManager;
 using TheManager.Comparators;
 using TheManager_GUI.controls;
@@ -124,7 +125,6 @@ namespace TheManager_GUI
             {
                 textActiveTournamentName.Text = "";
                 buttonSwitchScoresMode_Click(null, null);
-
             }
             /*FillRankingPanel(_game.club.Championship.rounds[0]);
             FillScoresPanel(_game.club.Championship.rounds[0].matches);*/
@@ -491,7 +491,43 @@ namespace TheManager_GUI
             {
                 _modifiers.SetAdministrativeRetrogradationsFr();
             }
+            if(e.Key == Key.T)
+            {
+                DateTime date = new DateTime(2021, 1, 1);
+                Tournament tournament = Session.Instance.Game.kernel.String2Tournament("Airtricity League");
+                for(int i = 0; i< 350; i++)
+                {
+                    date = date.AddDays(1);
+                    IsCurrentlyPlaying(tournament, date);
+                }
+                date = new DateTime(2022, 1, 1);
+                tournament = Session.Instance.Game.kernel.String2Tournament("South America World Cup Qualifiers");
+                for (int i = 0; i < 1300; i++)
+                {
+                    date = date.AddDays(1);
+                    IsCurrentlyPlaying(tournament, date);
+                }
+                date = new DateTime(2022, 1, 1);
+                tournament = Session.Instance.Game.kernel.String2Tournament("Africa WC Qualifiers");
+                for (int i = 0; i < 1300; i++)
+                {
+                    date = date.AddDays(1);
+                    IsCurrentlyPlaying(tournament, date);
+                }
+            }
         }
+
+        public bool IsCurrentlyPlaying(Tournament tournament, DateTime date)
+        {
+            int offsetYear = tournament.remainingYears % tournament.periodicity;
+            DateTime startDate = tournament.rounds[0].DateInitialisationRound().AddYears(offsetYear);
+            DateTime endDate = tournament.rounds.Last().DateEndRound().AddYears(offsetYear + tournament.rounds.Last().programmation.end.YearOffset);
+            bool isCurrentlyPlaying = Utils.IsBefore(startDate, date) && Utils.IsBefore(date, endDate);
+            Console.WriteLine(date.ToShortDateString() + " [IsCurrentlyPlaying][" + tournament.name + "][" + tournament.remainingYears + "]" + startDate.ToShortDateString() + " to " + endDate.ToShortDateString() + " : " + isCurrentlyPlaying);
+            return isCurrentlyPlaying;
+        }
+
+
 
         private void buttonGlobals_Click(object sender, RoutedEventArgs e)
         {

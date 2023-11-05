@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using TheManager;
+using TheManager_GUI.utils;
 
 namespace TheManager_GUI.Views
 {
@@ -68,35 +69,17 @@ namespace TheManager_GUI.Views
 
         public void OpenPlayer(Player p)
         {
-            PlayerView view = new PlayerView(p);
-            view.Show();
+            Handlers.OpenPlayer(p);
         }
 
         public void OpenClub(Club c)
         {
-            if (c as CityClub != null)
-            {
-                ClubView wc = new ClubView(c as CityClub);
-                wc.Show();
-            }
-            else if(c as ReserveClub != null)
-            {
-                ClubView wc = new ClubView((c as ReserveClub).FannionClub);
-                wc.Show();
-            }
-            else if(c as NationalTeam != null)
-            {
-                CountryView cw = new CountryView(c as NationalTeam);
-                cw.Show();
-            }
+            Handlers.OpenClub(c);
         }
 
         public void OpenMatch(Match m)
         {
-            MatchView view = new MatchView(m);
-            view.Show();
-            //Windows_Match wm = new Windows_Match(m);
-            //wm.Show();
+            Handlers.OpenMatch(m);
         }
 
         protected void AddElementToGrid(Grid grid, UIElement element, int row, int col, int colspan = -1)

@@ -506,7 +506,7 @@ namespace TheManager_GUI
                     }
                     else
                     {
-                        t = comp.rounds[comp.currentRound];
+                        t = comp.rounds[0];
                         tbActu.Text += comp.name + ", " + t.name + " : ";
                         foreach(Match m in t.matches)
                         {

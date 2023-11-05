@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TheManager;
 using TheManager_GUI.Styles;
+using TheManager_GUI.utils;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.views;
 
@@ -85,7 +86,7 @@ namespace TheManager_GUI
                     gridEntry.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                     gridEntry.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(5, GridUnitType.Star) });
                     gridEntry.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                    TextBlock textName = ViewUtils.CreateTextBlockOpenWindow(c, OpenTournament, c.name, StyleDefinition.styleTextSecondary, -1, -1);
+                    TextBlock textName = ViewUtils.CreateTextBlockOpenWindow(c, Handlers.OpenTournament, c.name, StyleDefinition.styleTextSecondary, -1, -1);
                     textName.HorizontalAlignment = HorizontalAlignment.Center;
                     textName.TextAlignment = TextAlignment.Center;
                     TextBlock textCount = ViewUtils.CreateTextBlock(count.ToString(), StyleDefinition.styleTextSecondary, -1, -1, null, Brushes.Gray, true);
@@ -148,7 +149,7 @@ namespace TheManager_GUI
                 string brushColor = next != null && next.level > archive.Value.level ? StyleDefinition.colorNegative : next != null && next.level < archive.Value.level ? StyleDefinition.colorPositive : "";
 
                 gridChampionshipHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
-                TextBlock textLeague = ViewUtils.CreateTextBlockOpenWindow<Tournament>(archive.Value, OpenTournament, archive.Value.name, StyleDefinition.styleTextPlainCenter, -1, -1);
+                TextBlock textLeague = ViewUtils.CreateTextBlockOpenWindow<Tournament>(archive.Value, Handlers.OpenTournament, archive.Value.name, StyleDefinition.styleTextPlainCenter, -1, -1);
                 Border borderLeague = new Border();
                 if (brushColor.Length > 0)
                 {
@@ -158,7 +159,7 @@ namespace TheManager_GUI
                     borderLeague.Background = scb;
                 }
                 borderLeague.Child = textLeague;
-                TextBlock textYear = ViewUtils.CreateTextBlockOpenWindow<Tournament>(archive.Value, OpenTournament, archive.Key.ToString(), StyleDefinition.styleTextPlainCenter, -1, -1);
+                TextBlock textYear = ViewUtils.CreateTextBlockOpenWindow<Tournament>(archive.Value, Handlers.OpenTournament, archive.Key.ToString(), StyleDefinition.styleTextPlainCenter, -1, -1);
                 TextBlock textRanking = ViewUtils.CreateTextBlock(ranking > 0 ? ranking.ToString() : "", StyleDefinition.styleTextPlainCenter, -1, -1, null, null, true);
                 TextBlock textPoints = ViewUtils.CreateTextBlock(points.ToString(), StyleDefinition.styleTextPlainCenter);
                 TextBlock textWins = ViewUtils.CreateTextBlock(wins.ToString(), StyleDefinition.styleTextPlainCenter);
@@ -477,12 +478,6 @@ namespace TheManager_GUI
             panelBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_income_tax").ToString(), incomeTax, BudgetReportEntry.OtherIncome));
             panelBudgetReport.Children.Add(CreateBudgetReportEntry(FindResource("str_net_results").ToString().ToUpper(), netResult, BudgetReportEntry.OtherIncome));
 
-        }
-
-        private void OpenTournament(Tournament t)
-        {
-            TournamentView view = new TournamentView(t);
-            view.Show();
         }
 
         /* EVENTS HANDLER */

@@ -248,7 +248,8 @@
     <Compile Include="MatchView.xaml.cs">
       <DependentUpon>MatchView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Media.cs" />
+    <Compile Include="utils\Handlers.cs" />
+    <Compile Include="utils\Media.cs" />
     <Compile Include="old\MediaWindow.xaml.cs">
       <DependentUpon>MediaWindow.xaml</DependentUpon>
     </Compile>

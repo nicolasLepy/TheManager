@@ -761,12 +761,21 @@ namespace TheManager
             }
         }
 
+        public void Setup()
+        {
+            Initialise();
+            if (rules.Contains(Rule.HostedByOneCountry))
+            {
+                AffectHostStadiumsToGames();
+            }
+        }
+
         /// <summary>
         /// Init the round (random draw, schedule)
         /// </summary>
         public abstract void Initialise();
         /// <summary>
-        /// Quality clubs for next rounds
+        /// Qualify clubs for next rounds
         /// <paramref name="forNextYear">Qualify clubs to tournaments competing next year</paramref>
         /// </summary>
         public abstract void QualifyClubs(bool forNextYear);

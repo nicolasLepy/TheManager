@@ -128,9 +128,6 @@ namespace TheManager
         public string logo { get => _logo; }
         public ClubStatus status => _status;
 
-        [DataMember]
-        public int currentRound { get; set; }
-
         public List<Club>[] nextYearQualified => _nextYearQualified;
 
         public List<Stadium> hostStadiums => _hostStadiums;
@@ -182,7 +179,6 @@ namespace TheManager
             _name = name;
             _logo = logo;
             _seasonBeginning = seasonBeginning;
-            currentRound = -1;
             _shortName = shortName;
             _isChampionship = isChampionship;
             _level = level;
@@ -764,7 +760,6 @@ namespace TheManager
                 {
                     //Copie du tournoi est créée
                     Tournament regionalTournament = CopyForArchive(false);
-                    regionalTournament.currentRound = -1;
                     regionalTournament._name = string.Format("{0} - {1}", regionalTournament, kvp.Key.name);
                     regionalTournament._level = 1000; //Un niveau exagérément élevé est mis pour éviter d'aller chercher les vainqueurs de ces compétitions pour les places européennes par exemple
                     regionalTournament._parent = new KeyValuePair<AdministrativeDivision, Tournament>(kvp.Key, this); //Cette compétition dépend du tournoi principal
@@ -1304,7 +1299,6 @@ namespace TheManager
                 copy.rounds.Add(roundCopy);
             }
             copy.statistics = statistics;
-            copy.currentRound = copy.rounds.Count - 1;
             copy.hostStadiums.AddRange(hostStadiums);
 
             return copy;
@@ -1390,7 +1384,6 @@ namespace TheManager
                 }
                 _extraRounds = 0;
                 InitializeQualificationsNextYearsLists();
-                currentRound = -1;
                 if(isHostedByOneCountry)
                 {
                     InitializeHost();
@@ -1743,37 +1736,24 @@ namespace TheManager
             return res;
         }
 
-        public void NextRound()
+        public DateTime BeginDate()
         {
-            if (currentRound > -1 && currentRound < _rounds.Count)
-            {
-                _rounds[currentRound].DistributeGrants();
-            }
-            if (_rounds.Count > currentRound + 1)
-            {
-                currentRound++;
-                _rounds[currentRound].Initialise();
-                if(_rounds[currentRound].rules.Contains(Rule.HostedByOneCountry))
-                {
-                    _rounds[currentRound].AffectHostStadiumsToGames();
-                }
-            }
+            int offsetYear = _remainingYears % _periodicity;
+            return rounds[0].DateInitialisationRound().AddYears(offsetYear);
+        }
 
-            //Tour 0, championnat -> génère match amicaux
-            if (currentRound == 0)
-            {
-                if (isChampionship)
-                {
-                    foreach (Club c in rounds[0].clubs)
-                    {
-                        CityClub cv = c as CityClub;
-                        if (cv != null)
-                        {
-                            cv.GenerateFriendlyGamesCalendar();
-                        }
-                    }
-                }
-            }
+        public DateTime EndDate()
+        {
+            int offsetYear = _remainingYears % _periodicity;
+            return rounds.Last().DateEndRound().AddYears(offsetYear + rounds.Last().programmation.end.YearOffset);
+        }
+
+        public bool IsCurrentlyPlaying()
+        {
+            DateTime startDate = BeginDate();
+            DateTime endDate = EndDate();
+            bool isCurrentlyPlaying = Utils.IsBefore(startDate, Session.Instance.Game.date) && Utils.IsBefore(Session.Instance.Game.date, endDate);
+            return isCurrentlyPlaying;
         }
 
         /// <summary>

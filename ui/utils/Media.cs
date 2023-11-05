@@ -11,7 +11,7 @@ using System.Windows.Media;
 using TheManager;
 using WMPLib;
 
-namespace TheManager_GUI
+namespace TheManager_GUI.utils
 {
 
     public class ThreadDuree

@@ -19,6 +19,7 @@ using System.Text;
 using System.Xml;
 using System.Runtime.InteropServices;
 using System.Linq;
+using MathNet.Numerics;
 
 namespace TheManager
 {
@@ -209,7 +210,7 @@ namespace TheManager
                 }
                 if(t.name == Utils.friendlyTournamentName)
                 {
-                    t.NextRound();
+                    t.rounds[0].Setup();
                 }
             }
 
@@ -495,6 +496,7 @@ namespace TheManager
                     cv.GetSponsor();
                     cv.UpdateFormationFacilities();
                     cv.GenerateJuniors();
+                    cv.GenerateFriendlyGamesCalendar();
                     //Put undesirable players on transfers list
                     //cv.UpdateTransfertList();
 
@@ -698,10 +700,11 @@ namespace TheManager
                     }
 
                     //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
-                    if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
+                    if (c. remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
                     {
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
+                            t.DistributeGrants();
                             t.QualifyClubs(false);
                             t.QualifyClubs(true);
                             if (!c.isChampionship)
@@ -716,22 +719,23 @@ namespace TheManager
                     }
                     if (c.remainingYears == (c.periodicity - t.programmation.initialisation.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.initialisation.YearOffset)
                     {
-                        if (Utils.CompareDates(t.DateInitialisationRound(), _date) && c.currentRound + 1 == i)
+                        if (Utils.CompareDates(t.DateInitialisationRound(), _date) && c.name != Utils.friendlyTournamentName)
                         {
-                            c.NextRound();
+                            t.Setup();
                         }
                     }
                     i++;
                 }
 
                 //Case of leagues playing on more than 1 year ?
-                if(c.isChampionship && Utils.CompareDates(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
+                //Not managed for now
+                /*if(c.isChampionship && Utils.CompareDates(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
                 {
                     if(c.currentRound > -1)
                     {
                         //c.QualifyClubsNextYear();
                     }
-                }
+                }*/
 
                 //if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-2), _date))
                 if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
@@ -789,48 +793,44 @@ namespace TheManager
             foreach (Tournament c in _kernel.Competitions)
             {
                 Dictionary<Round, List<Match>> games = new Dictionary<Round, List<Match>>();
-                if(c.currentRound > -1)
+                foreach (Round r in c.rounds)
                 {
-                    foreach(Round r in c.rounds)
+                    foreach (Match m in r.matches)
                     {
-                        foreach(Match m in r.matches)
+                        if (Utils.CompareDates(m.day, _date))
                         {
-                            if (Utils.CompareDates(m.day, _date))
+                            if (!games.ContainsKey(r))
                             {
-                                if(!games.ContainsKey(r))
+                                games.Add(r, new List<Match>());
+                            }
+                            games[r].Add(m);
+                            m.SetCompo();
+                            if ((m.home == club || m.away == club) && !options.simulateGames)
+                            {
+                                clubMatchs.Add(m);
+                            }
+                            else
+                            {
+                                if (c.isChampionship && (date.Month == 1 || date.Month == 12) &&
+                                    Session.Instance.Random(1, 26) == 2)
                                 {
-                                    games.Add(r, new List<Match>());
-                                }
-                                games[r].Add(m);
-                                m.SetCompo();
-                                if ((m.home == club || m.away == club) && !options.simulateGames)
-                                {
-                                    clubMatchs.Add(m);
+                                    m.Reprogram(3);
                                 }
                                 else
                                 {
-                                    if (c.isChampionship && (date.Month == 1 || date.Month == 12) &&
-                                        Session.Instance.Random(1, 26) == 2)
-                                    {
-                                        m.Reprogram(3);
-                                    }
-                                    else
-                                    {
-                                        toPlay.Add(m);
-                                    }
+                                    toPlay.Add(m);
                                 }
                             }
                         }
                     }
-                    Round currentRound = c.rounds[c.currentRound];
-
-                    foreach(KeyValuePair<Round, List<Match>> gamesByRound in games)
-                    {
-                        SetUpMediasForTournaments(gamesByRound.Value, c, gamesByRound.Key);
-                    }
                 }
 
-                foreach(Round round in c.rounds)
+                foreach (KeyValuePair<Round, List<Match>> gamesByRound in games)
+                {
+                    SetUpMediasForTournaments(gamesByRound.Value, c, gamesByRound.Key);
+                }
+
+                foreach (Round round in c.rounds)
                 {
                     GroupsRound gRound = round as GroupsRound;
                     if (gRound != null)
@@ -917,7 +917,7 @@ namespace TheManager
                             //Call players if a game of the team is scheduled and not for a specific tournament (specific tournament has priority)
                             if (!specialTournamentDate.Contains(nt) && nextGame != null && Utils.IsBefore(nextGame.day, intDate.end.ConvertToDateTime(intDate.EndYear(weekNumber))))
                             {
-                                Console.WriteLine(_date.ToShortDateString() + " [Appel] " + nt.name + (intDate.tournament != null ? " pour " + intDate.tournament.name + ", " + intDate.tournament.currentRound + " sur " + intDate.tournament.rounds.Count : ""));
+                                Console.WriteLine(_date.ToShortDateString() + " [Appel] " + nt.name + (intDate.tournament != null ? " pour " + intDate.tournament.name + ", " + intDate.tournament.BeginDate().ToShortDateString() + "-" + intDate.tournament.EndDate().ToShortDateString() : ""));
                                 nt.CallPlayers(kernel.GetPlayersByCountry(nt.country));
                                 kernel.world.internationalDates[i] = new InternationalDates(intDate.start, intDate.end, intDate.tournament, true);
                             }

@@ -1014,7 +1014,7 @@ namespace TheManager
             }
             if(!Utils.CompareDates(baseDay, day))
             {
-                Utils.Debug("[" + Tournament.shortName + "] " + home.name + "-" + away.name + " reprogrammé le " + day.ToShortDateString());
+                //Utils.Debug("[" + Tournament.shortName + "] " + home.name + "-" + away.name + " reprogrammé le " + day.ToShortDateString());
             }
         }
 
