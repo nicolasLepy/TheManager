@@ -27,7 +27,7 @@ namespace TheManager
         public RandomDrawingMethod randomDrawingMethod => _randomDrawingMethod;
 
 
-        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, bool twoLegs, int phases, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing, int gamesPriority) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0, -1, gamesPriority)
+        public KnockoutRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int phases, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing, int gamesPriority) : base(name, hour, dates, offsets, initialisation,end, phases, 0, -1, gamesPriority)
         {
             _randomDrawingMethod = method;
             _noRandomDrawing = noRandomDrawing;
@@ -35,7 +35,7 @@ namespace TheManager
 
         public override Round Copy()
         {
-            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, phases, programmation.initialisation, programmation.end, _randomDrawingMethod, _noRandomDrawing, programmation.gamesPriority);
+            Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), phases, programmation.initialisation, programmation.end, _randomDrawingMethod, _noRandomDrawing, programmation.gamesPriority);
             
             foreach (Club c in this.clubs)
             {
@@ -63,7 +63,7 @@ namespace TheManager
         {
             List<Match> res = new List<Match>(this.matches);
 
-            if (twoLegs)
+            if (phases == 2)
             {
                 bool firstLegMatchesAreAllPlayed = true;
                 for(int i = 0;i<res.Count/2; i++)
@@ -96,7 +96,7 @@ namespace TheManager
         public override void DistributeGrants()
         {
             List<Match> matches;
-            if(twoLegs)
+            if(phases == 2)
             {
                 matches = new List<Match>(_matches);
             }
@@ -194,7 +194,7 @@ namespace TheManager
         public override void QualifyClubs(bool forNextYear)
         {
             List<Match> matches = new List<Match>();
-            if (!twoLegs)
+            if (phases == 1)
             {
                 matches = new List<Match>(_matches);
             }
@@ -271,13 +271,18 @@ namespace TheManager
 
         public override int MatchesDayNumber()
         {
-            return _twoLegs ? 2 : 1;
+            return _phases;
+        }
+
+        public override bool IsKnockOutRound()
+        {
+            return true;
         }
 
         public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
-            int gamesByDay = _twoLegs ? _matches.Count / 2 : _matches.Count;
+            int gamesByDay = _matches.Count / _phases;
             for(int i = (journey-1)* gamesByDay; i < journey*gamesByDay; i++)
             {
                 res.Add(_matches[i]);

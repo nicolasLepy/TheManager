@@ -1,0 +1,125 @@
+﻿<Window x:Class="TheManager_GUI.InternationalRankingView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="InternationalRankingView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.2*"/>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0" Margin="15">
+						<!--Menu Buttons-->
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
+					</StackPanel>
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="0.15*"/>
+						<RowDefinition Height="0.15*"/>
+						<RowDefinition Height="0.15*"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+
+					<TextBlock Text="{StaticResource str_internationalRankings}" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Grid.Row="2"/>
+
+					<StackPanel Orientation="Horizontal" Grid.Row="3">
+						<Button x:Name="buttonFifa" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_fifaRanking}" Margin="15" Click="buttonFifa_Click"/>
+						<Button x:Name="buttonAssociations" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_assoRanking}" Margin="15" Click="buttonAssociations_Click"/>
+						<Button x:Name="buttonClubs" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_clubsRanking}" Margin="15" Click="buttonClubs_Click"/>
+					</StackPanel>
+
+					<StackPanel x:Name="associationsPanel" Orientation="Horizontal" Grid.Row="4">
+					</StackPanel>
+
+					<ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Grid.Row="5">
+						<Border x:Name="rankingPanel">
+
+						</Border>
+					</ScrollViewer>
+
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

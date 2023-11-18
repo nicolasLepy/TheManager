@@ -1,0 +1,666 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{78924484-F096-4D2F-92FC-C53A6A397027}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>TheManager_GUI</RootNamespace>
+    <AssemblyName>TheManager_GUI</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>icone.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="AxInterop.MapWinGIS">
+      <HintPath>..\MapWinGISAxControl\bin\Debug\AxInterop.MapWinGIS.dll</HintPath>
+    </Reference>
+    <Reference Include="BruTile, Version=5.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BruTile.5.0.5\lib\netstandard2.0\BruTile.dll</HintPath>
+    </Reference>
+    <Reference Include="ColorThief.Desktop.v46, Version=1.1.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ksemenenko.ColorThief.1.1.1.4\lib\net46\ColorThief.Desktop.v46.dll</HintPath>
+    </Reference>
+    <Reference Include="ExCSS, Version=4.1.4.0, Culture=neutral, PublicKeyToken=bdbe16be9b936b9a, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExCSS.4.1.4\lib\net452\ExCSS.dll</HintPath>
+    </Reference>
+    <Reference Include="Fizzler, Version=1.2.1.0, Culture=neutral, PublicKeyToken=4ebff4844e382110, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fizzler.1.2.1\lib\netstandard2.0\Fizzler.dll</HintPath>
+    </Reference>
+    <Reference Include="HarfBuzzSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\HarfBuzzSharp.7.3.0\lib\net462\HarfBuzzSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.0.9.7\lib\net45\LiveCharts.dll</HintPath>
+    </Reference>
+    <Reference Include="LiveCharts.Wpf, Version=0.9.7.0, Culture=neutral, PublicKeyToken=0bc1f845d1ebb8df, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiveCharts.Wpf.0.9.7\lib\net45\LiveCharts.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Mapsui, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mapsui.4.1.0\lib\netstandard2.0\Mapsui.dll</HintPath>
+    </Reference>
+    <Reference Include="Mapsui.Nts, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mapsui.Nts.4.1.0\lib\netstandard2.0\Mapsui.Nts.dll</HintPath>
+    </Reference>
+    <Reference Include="Mapsui.Rendering.Skia, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mapsui.Rendering.Skia.4.1.0\lib\netstandard2.0\Mapsui.Rendering.Skia.dll</HintPath>
+    </Reference>
+    <Reference Include="Mapsui.Tiling, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mapsui.Tiling.4.1.0\lib\netstandard2.0\Mapsui.Tiling.dll</HintPath>
+    </Reference>
+    <Reference Include="Mapsui.UI.Wpf, Version=4.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mapsui.Wpf.4.1.0\lib\net48\Mapsui.UI.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="NetTopologySuite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=f580a05016ebada1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.2.5.0\lib\netstandard2.0\NetTopologySuite.dll</HintPath>
+    </Reference>
+    <Reference Include="NetTopologySuite.Features, Version=2.0.0.0, Culture=neutral, PublicKeyToken=f580a05016ebada1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.Features.2.1.0\lib\netstandard2.0\NetTopologySuite.Features.dll</HintPath>
+    </Reference>
+    <Reference Include="NetTopologySuite.IO.GeoJSON4STJ, Version=4.0.0.0, Culture=neutral, PublicKeyToken=f580a05016ebada1, processorArchitecture=MSIL">
+      <HintPath>..\packages\NetTopologySuite.IO.GeoJSON4STJ.4.0.0\lib\netstandard2.0\NetTopologySuite.IO.GeoJSON4STJ.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="ShimSkiaSharp, Version=1.0.0.2, Culture=neutral, PublicKeyToken=dafe96fe6c845a74, processorArchitecture=MSIL">
+      <HintPath>..\packages\ShimSkiaSharp.1.0.0.2\lib\netstandard2.0\ShimSkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp, Version=2.88.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.2.88.6\lib\net462\SkiaSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.HarfBuzz, Version=2.88.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.HarfBuzz.2.88.6\lib\net462\SkiaSharp.HarfBuzz.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.Desktop.Common, Version=2.88.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.Views.Desktop.Common.2.88.6\lib\net462\SkiaSharp.Views.Desktop.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SkiaSharp.Views.WPF, Version=2.88.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkiaSharp.Views.WPF.2.88.6\lib\net462\SkiaSharp.Views.WPF.dll</HintPath>
+    </Reference>
+    <Reference Include="Svg.Custom, Version=1.0.0.2, Culture=neutral, PublicKeyToken=dafe96fe6c845a74, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.Custom.1.0.0.2\lib\netstandard2.0\Svg.Custom.dll</HintPath>
+    </Reference>
+    <Reference Include="Svg.Model, Version=1.0.0.2, Culture=neutral, PublicKeyToken=dafe96fe6c845a74, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.Model.1.0.0.2\lib\netstandard2.0\Svg.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Svg.Skia, Version=1.0.0.2, Culture=neutral, PublicKeyToken=dafe96fe6c845a74, processorArchitecture=MSIL">
+      <HintPath>..\packages\Svg.Skia.1.0.0.2\lib\netstandard2.0\Svg.Skia.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Common, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Drawing.Common.7.0.0\lib\net462\System.Drawing.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encoding.CodePages, Version=7.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.7.0.0\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Encodings.Web, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encodings.Web.6.0.0\lib\net461\System.Text.Encodings.Web.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Text.Json, Version=6.0.0.3, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Json.6.0.3\lib\net461\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Topten.RichTextKit, Version=0.4.166.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Topten.RichTextKit.0.4.166\lib\net462\Topten.RichTextKit.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="CalendarView.xaml.cs">
+      <DependentUpon>CalendarView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlComposition.xaml.cs">
+      <DependentUpon>ControlComposition.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlCompositionPlayer.xaml.cs">
+      <DependentUpon>ControlCompositionPlayer.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GlobalView.xaml.cs">
+      <DependentUpon>GlobalView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MediaView.xaml.cs">
+      <DependentUpon>MediaView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\CalendarWindow.xaml.cs">
+      <DependentUpon>CalendarWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ClubView.xaml.cs">
+      <DependentUpon>ClubView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlCalendarItem.xaml.cs">
+      <DependentUpon>ControlCalendarItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlCountryTournament.xaml.cs">
+      <DependentUpon>ControlCountryTournament.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlInternationalRanking.xaml.cs">
+      <DependentUpon>ControlInternationalRanking.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlNewsItem.xaml.cs">
+      <DependentUpon>ControlNewsItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlPenaltyShootout.xaml.cs">
+      <DependentUpon>ControlPenaltyShootout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlStatItem.xaml.cs">
+      <DependentUpon>ControlStatItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="controls\ControlStickerTournament.xaml.cs">
+      <DependentUpon>ControlStickerTournament.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="CountryView.xaml.cs">
+      <DependentUpon>CountryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\CountryWindow.xaml.cs">
+      <DependentUpon>CountryWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\DialogDatabase.xaml.cs">
+      <DependentUpon>DialogDatabase.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="GameModifiers.cs" />
+    <Compile Include="old\GlobalWindow.xaml.cs">
+      <DependentUpon>GlobalWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="HomepageWindow.xaml.cs">
+      <DependentUpon>HomepageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="InternationalRankingView.xaml.cs">
+      <DependentUpon>InternationalRankingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainMenuView.xaml.cs">
+      <DependentUpon>MainMenuView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MatchView.xaml.cs">
+      <DependentUpon>MatchView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="utils\Handlers.cs" />
+    <Compile Include="utils\Media.cs" />
+    <Compile Include="old\MediaWindow.xaml.cs">
+      <DependentUpon>MediaWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="NewGameView.xaml.cs">
+      <DependentUpon>NewGameView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\RankingWindow.xaml.cs">
+      <DependentUpon>RankingWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\SearchPlayersWindow.xaml.cs">
+      <DependentUpon>SearchPlayersWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="pages\TournamentResultsPage.xaml.cs">
+      <DependentUpon>TournamentResultsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="pages\TournamentStatisticPage.xaml.cs">
+      <DependentUpon>TournamentStatisticPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlayerView.xaml.cs">
+      <DependentUpon>PlayerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PreGameView.xaml.cs">
+      <DependentUpon>PreGameView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SearchPlayersView.xaml.cs">
+      <DependentUpon>SearchPlayersView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="styles\Controls.cs" />
+    <Compile Include="styles\Langue.cs" />
+    <Compile Include="styles\StyleDefinition.cs" />
+    <Compile Include="styles\Theme.cs" />
+    <Compile Include="old\ViewMatches.cs" />
+    <Compile Include="old\ViewPlayers.cs" />
+    <Compile Include="TournamentView.xaml.cs">
+      <DependentUpon>TournamentView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\DataGridTournamentColumnConverter.cs" />
+    <Compile Include="views\FactoryViewRanking.cs" />
+    <Compile Include="views\MapView.cs" />
+    <Compile Include="views\View.cs" />
+    <Compile Include="views\ViewRanking.cs" />
+    <Compile Include="views\ViewRankingInactive.cs" />
+    <Compile Include="views\ViewUtils.cs" />
+    <Compile Include="views\ViewRankingChampionship.cs" />
+    <Compile Include="views\ViewRankingKnockout.cs" />
+    <Compile Include="views\ViewRankingGroups.cs" />
+    <Compile Include="old\PregameWindow.xaml.cs">
+      <DependentUpon>PregameWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\ClubChoiceWindow.xaml.cs">
+      <DependentUpon>ClubChoiceWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\ClubWindow.xaml.cs">
+      <DependentUpon>ClubWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\CompetitionWindow.xaml.cs">
+      <DependentUpon>CompetitionWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\GameConfigurationWindow.xaml.cs">
+      <DependentUpon>GameConfigurationWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="PlayGameWindow.xaml.cs">
+      <DependentUpon>PlayGameWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\PlayerWindow.xaml.cs">
+      <DependentUpon>PlayerWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\JournalistWindow.xaml.cs">
+      <DependentUpon>JournalistWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\GameWindow.xaml.cs">
+      <DependentUpon>GameWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\MenuWindow.xaml.cs">
+      <DependentUpon>MenuWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="OptionsView.xaml.cs">
+      <DependentUpon>OptionsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="old\TournamentClubWindow.xaml.cs">
+      <DependentUpon>TournamentClubWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\ChartTooltip.xaml.cs">
+      <DependentUpon>ChartTooltip.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\ChartView.cs" />
+    <Compile Include="views\MoneyValueForegroundConverted.cs" />
+    <Compile Include="views\PlayersView.cs" />
+    <Compile Include="views\TournamentsTreeView.cs" />
+    <Compile Include="views\ViewScores.cs" />
+    <Page Include="CalendarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlComposition.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlCompositionPlayer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GlobalView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MediaView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\CalendarWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ClubView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlCalendarItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlCountryTournament.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlInternationalRanking.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlNewsItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlPenaltyShootout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlStatItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="controls\ControlStickerTournament.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="CountryView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InternationalRankingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainMenuView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MatchView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="NewGameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="pages\TournamentResultsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="pages\TournamentStatisticPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlayerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PreGameView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SearchPlayersView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="styles\colors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\CountryWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\DialogDatabase.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\GlobalWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="HomepageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="old\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="old\MediaWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\RankingWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\SearchPlayersWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\PregameWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\ClubChoiceWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\ClubWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\CompetitionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\GameConfigurationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="PlayGameWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\PlayerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\JournalistWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\GameWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\MenuWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="OptionsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StringResources.fr.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="StringResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="styles\controls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="old\TournamentClubWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="TournamentView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\ChartTooltip.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\TheManager\TheManager.csproj">
+      <Project>{c87d1486-6d8a-4041-afc6-f7f0f5bc6b4b}</Project>
+      <Name>TheManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icone.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="stdole">
+      <Guid>{00020430-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="WMPLib">
+      <Guid>{6BF52A50-394A-11D3-B153-00C04F79FAA6}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\play.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\options.png" />
+    <Resource Include="icons\ranking.png" />
+    <Resource Include="icons\search.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\quit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\left.png" />
+    <Resource Include="icons\right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\budget.png" />
+    <Resource Include="icons\city.png" />
+    <Resource Include="icons\manager.png" />
+    <Resource Include="icons\stadium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\contract.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="icons\calendar.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"D:\Logiciels\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\bin\Hostx64\x64\editbin.exe" /stack:68097152 "$(TargetPath)"</PostBuildEvent>
+  </PropertyGroup>
+  <Import Project="..\packages\HarfBuzzSharp.NativeAssets.macOS.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.macOS.targets" Condition="Exists('..\packages\HarfBuzzSharp.NativeAssets.macOS.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.macOS.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>Ce projet fait référence à des packages NuGet qui sont manquants sur cet ordinateur. Utilisez l'option de restauration des packages NuGet pour les télécharger. Pour plus d'informations, consultez http://go.microsoft.com/fwlink/?LinkID=322105. Le fichier manquant est : {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\HarfBuzzSharp.NativeAssets.macOS.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.macOS.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\HarfBuzzSharp.NativeAssets.macOS.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.macOS.targets'))" />
+    <Error Condition="!Exists('..\packages\HarfBuzzSharp.NativeAssets.Win32.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\HarfBuzzSharp.NativeAssets.Win32.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.Win32.targets'))" />
+    <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.macOS.2.88.6\build\net462\SkiaSharp.NativeAssets.macOS.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.macOS.2.88.6\build\net462\SkiaSharp.NativeAssets.macOS.targets'))" />
+    <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.Win32.2.88.6\build\net462\SkiaSharp.NativeAssets.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.Win32.2.88.6\build\net462\SkiaSharp.NativeAssets.Win32.targets'))" />
+    <Error Condition="!Exists('..\packages\HarfBuzzSharp.NativeAssets.Linux.2.8.2.3\build\net462\HarfBuzzSharp.NativeAssets.Linux.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\HarfBuzzSharp.NativeAssets.Linux.2.8.2.3\build\net462\HarfBuzzSharp.NativeAssets.Linux.targets'))" />
+    <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.Linux.2.88.6\build\net462\SkiaSharp.NativeAssets.Linux.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.Linux.2.88.6\build\net462\SkiaSharp.NativeAssets.Linux.targets'))" />
+    <Error Condition="!Exists('..\packages\System.Text.Json.6.0.3\build\System.Text.Json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Text.Json.6.0.3\build\System.Text.Json.targets'))" />
+  </Target>
+  <Import Project="..\packages\HarfBuzzSharp.NativeAssets.Win32.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.Win32.targets" Condition="Exists('..\packages\HarfBuzzSharp.NativeAssets.Win32.7.3.0\build\net462\HarfBuzzSharp.NativeAssets.Win32.targets')" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.macOS.2.88.6\build\net462\SkiaSharp.NativeAssets.macOS.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.macOS.2.88.6\build\net462\SkiaSharp.NativeAssets.macOS.targets')" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.Win32.2.88.6\build\net462\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.Win32.2.88.6\build\net462\SkiaSharp.NativeAssets.Win32.targets')" />
+  <Import Project="..\packages\HarfBuzzSharp.NativeAssets.Linux.2.8.2.3\build\net462\HarfBuzzSharp.NativeAssets.Linux.targets" Condition="Exists('..\packages\HarfBuzzSharp.NativeAssets.Linux.2.8.2.3\build\net462\HarfBuzzSharp.NativeAssets.Linux.targets')" />
+  <Import Project="..\packages\SkiaSharp.NativeAssets.Linux.2.88.6\build\net462\SkiaSharp.NativeAssets.Linux.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.Linux.2.88.6\build\net462\SkiaSharp.NativeAssets.Linux.targets')" />
+  <Import Project="..\packages\System.Text.Json.6.0.3\build\System.Text.Json.targets" Condition="Exists('..\packages\System.Text.Json.6.0.3\build\System.Text.Json.targets')" />
+</Project>

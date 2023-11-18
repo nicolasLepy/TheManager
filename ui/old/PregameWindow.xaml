@@ -1,0 +1,77 @@
+﻿<Window x:Class="TheManager_GUI.Windows_AvantMatch"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+        Title="Windows_AvantMatch" Height="550" Width="950" Style="{StaticResource StyleWindows}">
+	<Grid>
+		<StackPanel Orientation="Vertical">
+			<Label Content="Avant-match" Style="{StaticResource StyleLabel1}"/>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<Image Name="imgEquipe1" Width="100" Height="100" Source="generic.png"></Image>
+				<Label Name="lbMatch" Content="Dijon - Lyon" Style="{StaticResource StyleLabel1}" VerticalAlignment="Center"/>
+				<Image Name="imgEquipe2" Width="100" Height="100" Source="generic.png"></Image>
+			</StackPanel>
+			<Grid>
+				<Label Name="lbStade" Content="Stade GG" Style="{StaticResource StyleLabel2}"/>
+				<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+					<Label Name="lbCote1" Content="2.50" Width="50" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbCoteN" Content="2.60" Width="50" Style="{StaticResource StyleLabel2}"/>
+					<Label Name="lbCote2" Content="4.10" Width="50" Style="{StaticResource StyleLabel2}"/>
+				</StackPanel>
+			</Grid>
+			<StackPanel Orientation="Horizontal">
+				<StackPanel Orientation="Vertical" Width="275">
+					<Label Content="{StaticResource str_availablePlayers}" Style="{StaticResource StyleLabel2}"/>
+					<DataGrid IsReadOnly="True" HorizontalAlignment="Center" Height="275" Name="dgJoueursDispo" MouseDoubleClick="DgJoueursDispo_MouseDoubleClick" Style="{StaticResource StyleDataGrid}" CellStyle="{StaticResource StyleDataCellGrid}" ColumnHeaderStyle="{StaticResource StyleDataHeaderGrid}">
+						<DataGrid.Columns>
+							<DataGridTextColumn Header="{StaticResource str_position}" Binding="{Binding Poste}"/>
+							<DataGridTextColumn Header="{StaticResource str_name}" Binding="{Binding Nom}"/>
+							<DataGridTextColumn Header="{StaticResource str_age}" Binding="{Binding Age}"/>
+							<DataGridTextColumn Header="{StaticResource str_level}" Binding="{Binding Niveau}"/>
+							<DataGridTemplateColumn Header="{StaticResource str_energy}" Width="75">
+								<DataGridTemplateColumn.CellTemplate>
+									<DataTemplate>
+										<ProgressBar Value="{Binding Energie}" Minimum="0" Maximum="100"/>
+									</DataTemplate>
+								</DataGridTemplateColumn.CellTemplate>
+							</DataGridTemplateColumn>
+						</DataGrid.Columns>
+					</DataGrid>
+					<Button Name="btnCompoAuto" Content="{StaticResource str_autoCompo}" Style="{StaticResource StyleButton1}" Width="175" Click="BtnCompoAuto_Click"/>
+				</StackPanel>
+				<StackPanel Orientation="Vertical" Width="350">
+					<Label Content="{StaticResource str_lineups}" Style="{StaticResource StyleLabel2}"/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spAttaquants" >
+						<StackPanel Orientation="Vertical">
+							<Label Content="Sliti" HorizontalAlignment="Center"  Style="{StaticResource StyleLabel2}"/>
+							<ProgressBar Value="10" Maximum="40" Height="5" Width="40"/>
+							<Label Content="68" HorizontalAlignment="Center" FontSize="10"  Style="{StaticResource StyleLabel2}"/>
+						</StackPanel>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spMilieux" >
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spDefenseurs" >
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Name="spGardiens" >
+					</StackPanel>
+					<Button Name="btnRAZ" Content="{StaticResource str_reset}" Style="{StaticResource StyleButton1}" Width="150" Click="BtnRAZ_Click"/>
+				</StackPanel>
+				<StackPanel Orientation="Vertical" Width="320">
+					<Label Style="{StaticResource StyleLabel2}" Content="{StaticResource str_todayProgram}"/>
+					<Border Style="{StaticResource StyleBorderStackPanel}" Margin="5" Height="300">
+						<StackPanel Orientation="Vertical" Name="spGames">
+							
+						</StackPanel>
+					</Border>
+				</StackPanel>
+			</StackPanel>
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+				<Button Name="btnJouer" Content="{StaticResource str_play}" Style="{StaticResource StyleButton1}" Width="100" Click="Button_Click"/>
+				<Button Name="btnSimuler" Content="{StaticResource str_instantResult}" Style="{StaticResource StyleButton1}" Width="150" Click="BtnSimuler_Click"/>
+			</StackPanel>
+		</StackPanel>
+    </Grid>
+</Window>

@@ -169,7 +169,7 @@ namespace TheManager
             }
         }
 
-        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalMusic, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium,goalMusic, status)
+        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalSong, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium, goalSong, status)
         {
             _budget = budget;
             _city = city;
@@ -565,15 +565,22 @@ namespace TheManager
         /// </summary>
         public void GenerateFriendlyGamesCalendar()
         {
-            Tournament championship = Championship;
+            Tournament championship = Championship; //TODO: Now friendly are generated before the beginning of the season. So maybe check for the "future" championship
             List<Club> possibleOpponents = new List<Club>();
-            
-            if(championship != null && championship.rounds[0] as ChampionshipRound != null)
+
+            if (championship != null && championship.rounds[0] as ChampionshipRound != null)
             {
+                Console.WriteLine("[GenerateFriendlyGamesCalendar] " + name);
+                DateTime championshipMatchsBegin = championship.rounds[0].programmation.gamesDays[0].ConvertToDateTime();
+                if(Utils.IsBefore(championshipMatchsBegin, Session.Instance.Game.date))
+                {
+                    championshipMatchsBegin = championshipMatchsBegin.AddYears(1);
+                }
+
                 foreach (Club c in Session.Instance.Game.kernel.Clubs)
                 {
                     CityClub cv = c as CityClub;
-                    if (cv != null && cv.Championship != null && Utils.Distance(cv.city, city) < 300/cv.Championship.level)
+                    if (cv != null && cv.Championship != null && Utils.Distance(cv.city, city) < 500/cv.Championship.level)
                     {
                         possibleOpponents.Add(cv);
                     }
@@ -588,13 +595,12 @@ namespace TheManager
                 {
                     Club adv = possibleOpponents[Session.Instance.Random(0, possibleOpponents.Count)];
                     possibleOpponents.Remove(adv);
-                    DateTime begin = new DateTime(championship.rounds[0].matches[0].day.Year, championship.rounds[0].matches[0].day.Month, championship.rounds[0].matches[0].day.Day);
-                    begin = begin.AddDays(Session.Instance.Random(-30, -10));
-                    begin = begin.AddHours(Session.Instance.Random(12, 22));
-                    Match game = new Match(this, adv, begin, false);
+                    DateTime gameDate = new DateTime(championshipMatchsBegin.Year, championshipMatchsBegin.Month, championshipMatchsBegin.Day).AddDays(Session.Instance.Random(-30, -7));
+                    Match game = new Match(this, adv, gameDate, false);
+                    Calendar.Hour(game);
                     Session.Instance.Game.kernel.AddFriendlyGame(game);
-                    game.Reprogram(0);
-                    if (!(Utils.CompareDates(game.day, begin) && game.day.CompareTo(Session.Instance.Game.date.AddDays(1)) > 0 && adv != this))
+                    game.CheckConflicts();
+                    if(!Utils.CompareDates(game.day, gameDate) || adv == this || Utils.IsBefore(game.day, Session.Instance.Game.date.AddDays(1)))
                     {
                         Session.Instance.Game.kernel.CancelFriendlyGame(game);
                     }

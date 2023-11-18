@@ -28,6 +28,10 @@ namespace TheManager
             _clubsId = new Dictionary<int, Club>();
         }
 
+        private string SlugifyName(string name)
+        {
+            return name.Replace(" ", "-").ToLower();
+        }
 
         private int GetClubId(Club club)
         {
@@ -265,6 +269,26 @@ namespace TheManager
                     _kernel.AddGenericCalendar(new GenericCalendar(name, dates));
                 }
             }
+        }
+
+        public void LoadAudios()
+        {
+            XDocument doc = XDocument.Load(Utils.dataFolderName + "/audio.xml");
+            foreach (XElement e in doc.Descendants("Audio"))
+            {
+                foreach (XElement e2 in e.Descendants("Sound"))
+                {
+                    string source = e2.Attribute("source").Value;
+                    int min = int.Parse(e2.Attribute("capacity_min").Value);
+                    int max = int.Parse(e2.Attribute("capacity_max").Value);
+                    string type = e2.Attribute("type").Value;
+
+                    AudioSource audioSource = new AudioSource(source, min, max, String2AudioType(type));
+
+                    _kernel.AddAudioSource(audioSource);
+                }
+            }
+
         }
 
         public void LoadMedias()
@@ -787,21 +811,21 @@ namespace TheManager
                             logo = "generic";
                         }
 
-                        string musiqueBut = "";
-                        if (e2.Attribute("musiqueBut") != null)
+                        string goalSong = "";
+                        if (e2.Attribute("goalSong") != null)
                         {
-                            musiqueBut = e2.Attribute("musiqueBut").Value;
+                            goalSong = e2.Attribute("goalSong").Value;
                         }
                         else
                         {
-                            musiqueBut = "null";
+                            goalSong = "null";
                         }
 
                         //Simplification
                         reputation = centreFormation;
                         
                         bool equipePremiere = true;
-                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, musiqueBut, equipePremiere, administrativeDivision, status);
+                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, goalSong, equipePremiere, administrativeDivision, status);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -828,14 +852,14 @@ namespace TheManager
                         int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
                         string logo = country.Flag;
 
-                        string goalMusic = "";
-                        if (e2.Attribute("musiqueBut") != null)
+                        string goalSong = "";
+                        if (e2.Attribute("goalSong") != null)
                         {
-                            goalMusic = e2.Attribute("musiqueBut").Value;
+                            goalSong = e2.Attribute("goalSong").Value;
                         }
                         else
                         {
-                            goalMusic = "null";
+                            goalSong = "null";
                         }
                         float points = 0;
                         if (e2.Attribute("points") != null)
@@ -846,7 +870,7 @@ namespace TheManager
                         points = formationFacilities;
                         Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
-                        Club c = new NationalTeam(name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalMusic, points);
+                        Club c = new NationalTeam(name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalSong, points);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -974,8 +998,7 @@ namespace TheManager
                             Round round = null;
                             string type = e3.Attribute("type").Value;
                             string nomTour = e3.Attribute("nom").Value;
-                            bool twoLegged = e3.Attribute("allerRetour") != null ? e3.Attribute("allerRetour").Value == "oui" : false;
-                            int phases = e3.Attribute("phases") != null ? int.Parse(e3.Attribute("phases").Value) : (twoLegged ? 2 : 1);
+                            int phases = int.Parse(e3.Attribute("phases").Value);
                             string hourByDefault = e3.Attribute("heureParDefaut").Value;
                             int keepRankingFromPreviousRound = e3.Attribute("keep_ranking_from_previous_round") != null ? int.Parse(e3.Attribute("keep_ranking_from_previous_round").Value) : -1;
                             GameDay initialisationDate = String2GameDay(e3.Attribute("initialisation").Value);
@@ -1005,7 +1028,7 @@ namespace TheManager
                             if (type == "championnat")
                             {
                                 int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
-                                round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, twoLegged, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
+                                round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
                             }
                             else if (type == "elimination")
                             {
@@ -1019,7 +1042,7 @@ namespace TheManager
                                 {
                                     noRandomDrawing = e3.Attribute("noRandomDrawing").Value == "true";
                                 }
-                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), twoLegged, phases, initialisationDate, endDate, method, noRandomDrawing, gamesPriority);
+                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), phases, initialisationDate, endDate, method, noRandomDrawing, gamesPriority);
                             }
                             else if (type == "poules")
                             {
@@ -1033,7 +1056,7 @@ namespace TheManager
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, twoLegged, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
+                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1660,7 +1683,7 @@ namespace TheManager
                 GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
                 GameDay beginDate = new GameDay( (availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
                 GameDay endDate = new GameDay( (availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
-                Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
+                Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
                 {
@@ -1709,7 +1732,7 @@ namespace TheManager
                 GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
                 GameDay beginDate = new GameDay((availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
                 GameDay endDate = new GameDay((availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
-                Round round = new KnockoutRound(name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), false, 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
+                Round round = new KnockoutRound(name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
                 {
@@ -1751,6 +1774,22 @@ namespace TheManager
             h.Hours = int.Parse(split[0]);
             h.Minutes = int.Parse(split[1]);
             return h;
+        }
+
+        private AudioType String2AudioType(string value)
+        {
+            AudioType type;
+            switch (value)
+            {
+                case "background":
+                    type = AudioType.Background;
+                    break;
+                case "goal":
+                default:
+                    type = AudioType.Event;
+                    break;
+            }
+            return type;
         }
 
         private ClubStatus String2ClubStatus(string status)

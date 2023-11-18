@@ -128,9 +128,6 @@ namespace TheManager
         public string logo { get => _logo; }
         public ClubStatus status => _status;
 
-        [DataMember]
-        public int currentRound { get; set; }
-
         public List<Club>[] nextYearQualified => _nextYearQualified;
 
         public List<Stadium> hostStadiums => _hostStadiums;
@@ -182,7 +179,6 @@ namespace TheManager
             _name = name;
             _logo = logo;
             _seasonBeginning = seasonBeginning;
-            currentRound = -1;
             _shortName = shortName;
             _isChampionship = isChampionship;
             _level = level;
@@ -209,6 +205,24 @@ namespace TheManager
             {
                 _nextYearQualified[i] = new List<Club>();
             }
+        }
+
+        /// <summary>
+        /// Get hosts countries of the tournament
+        /// </summary>
+        /// <returns>List of hosts countries</returns>
+        public List<Country> Hosts()
+        {
+            List<Country> hosts = new List<Country>();
+            foreach(Stadium stadium in _hostStadiums)
+            {
+                Country country = stadium.city.Country();
+                if(!hosts.Contains(country))
+                {
+                    hosts.Add(country);
+                }
+            }
+            return hosts;
         }
 
         /// <summary>
@@ -661,7 +675,7 @@ namespace TheManager
                     {
                         newRoundTimes.Add(new GameDay(availableDates[dateIndex].WeekNumber, dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
                     }
-                    newRounds.Add(new KnockoutRound("Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.twoLegs, firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
+                    newRounds.Add(new KnockoutRound("Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
                     newRounds[newRounds.Count - 1].recuperedTeams.AddRange(worstTeams);
                     newRounds[newRounds.Count - 1].rules.AddRange(firstRound.rules);
                     newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, this, false, -1));
@@ -746,7 +760,6 @@ namespace TheManager
                 {
                     //Copie du tournoi est créée
                     Tournament regionalTournament = CopyForArchive(false);
-                    regionalTournament.currentRound = -1;
                     regionalTournament._name = string.Format("{0} - {1}", regionalTournament, kvp.Key.name);
                     regionalTournament._level = 1000; //Un niveau exagérément élevé est mis pour éviter d'aller chercher les vainqueurs de ces compétitions pour les places européennes par exemple
                     regionalTournament._parent = new KeyValuePair<AdministrativeDivision, Tournament>(kvp.Key, this); //Cette compétition dépend du tournoi principal
@@ -1286,7 +1299,7 @@ namespace TheManager
                 copy.rounds.Add(roundCopy);
             }
             copy.statistics = statistics;
-            copy.currentRound = copy.rounds.Count - 1;
+            copy.hostStadiums.AddRange(hostStadiums);
 
             return copy;
         }
@@ -1371,7 +1384,6 @@ namespace TheManager
                 }
                 _extraRounds = 0;
                 InitializeQualificationsNextYearsLists();
-                currentRound = -1;
                 if(isHostedByOneCountry)
                 {
                     InitializeHost();
@@ -1648,7 +1660,13 @@ namespace TheManager
             List<Club> tournamentClubs = new List<Club>();
             foreach (Round r in rounds)
             {
-                tournamentClubs.AddRange(r.clubs);
+                foreach(Club c in r.clubs)
+                {
+                    if(!tournamentClubs.Contains(c))
+                    {
+                        tournamentClubs.Add(c);
+                    }
+                }
             }
             return tournamentClubs;
         }
@@ -1718,37 +1736,24 @@ namespace TheManager
             return res;
         }
 
-        public void NextRound()
+        public DateTime BeginDate()
         {
-            if (currentRound > -1 && currentRound < _rounds.Count)
-            {
-                _rounds[currentRound].DistributeGrants();
-            }
-            if (_rounds.Count > currentRound + 1)
-            {
-                currentRound++;
-                _rounds[currentRound].Initialise();
-                if(_rounds[currentRound].rules.Contains(Rule.HostedByOneCountry))
-                {
-                    _rounds[currentRound].AffectHostStadiumsToGames();
-                }
-            }
+            int offsetYear = _remainingYears % _periodicity;
+            return rounds[0].DateInitialisationRound().AddYears(offsetYear);
+        }
 
-            //Tour 0, championnat -> génère match amicaux
-            if (currentRound == 0)
-            {
-                if (isChampionship)
-                {
-                    foreach (Club c in rounds[0].clubs)
-                    {
-                        CityClub cv = c as CityClub;
-                        if (cv != null)
-                        {
-                            cv.GenerateFriendlyGamesCalendar();
-                        }
-                    }
-                }
-            }
+        public DateTime EndDate()
+        {
+            int offsetYear = _remainingYears % _periodicity;
+            return rounds.Last().DateEndRound().AddYears(offsetYear + rounds.Last().programmation.end.YearOffset);
+        }
+
+        public bool IsCurrentlyPlaying()
+        {
+            DateTime startDate = BeginDate();
+            DateTime endDate = EndDate();
+            bool isCurrentlyPlaying = Utils.IsBefore(startDate, Session.Instance.Game.date) && Utils.IsBefore(Session.Instance.Game.date, endDate);
+            return isCurrentlyPlaying;
         }
 
         /// <summary>
@@ -2214,6 +2219,27 @@ namespace TheManager
                     Utils.Debug(m.ToString());
                 }
             }
+        }
+
+        /// <summary>
+        /// Check if tournament schedule is valid (especially useful for cups with variable rounds count)
+        /// </summary>
+        public bool CheckTournamentScheduleIsValid()
+        {
+            bool isValid = true;
+            for(int i = 0; i < rounds.Count-1; i++)
+            {
+                Round round = rounds[i];
+                Round nextRound = rounds[i + 1];
+                isValid = isValid && Utils.DaysNumberBetweenTwoDates(round.DateInitialisationRound(), round.DateEndRound()) > 0;
+                bool nextRoundNotTooClose = Utils.DaysNumberBetweenTwoDates(round.DateEndRound(), nextRound.DateInitialisationRound()) > 4;
+                if(nextRoundNotTooClose)
+                {
+                    Utils.Debug(String.Format("[{0}] {1} is too close to {2} ({3}-{4})", name, round.name, nextRound.name, round.DateInitialisationRound().ToShortDateString(), nextRound.DateInitialisationRound().ToShortDateString()));
+                }
+                isValid = isValid && nextRoundNotTooClose;
+            }
+            return isValid;
         }
     }
 }

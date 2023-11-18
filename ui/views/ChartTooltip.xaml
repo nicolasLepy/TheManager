@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="TheManager_GUI.views.ChartTooltip"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:wpf="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+             xmlns:local="clr-namespace:TheManager_GUI.views"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300"
+             d:DataContext="{d:DesignInstance local:ChartTooltip}"
+             Background="{StaticResource colorPanel1}" Padding="20 10" BorderThickness="2" BorderBrush="Transparent">
+	<ItemsControl ItemsSource="{Binding Data.Points}" Grid.IsSharedSizeScope="True">
+		<ItemsControl.ItemTemplate>
+			<DataTemplate DataType="{x:Type wpf:DataPointViewModel}">
+				<Grid Margin="2">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+					<WrapPanel Grid.Column="1" >
+						<TextBlock Text="Valeur : " Margin="5 0 0 0"/>
+						<TextBlock Text="{Binding ChartPoint.Participation}" 
+                                Margin="5 0 0 0" VerticalAlignment="Center"/>
+					</WrapPanel>
+				</Grid>
+			</DataTemplate>
+		</ItemsControl.ItemTemplate>
+	</ItemsControl>
+</UserControl>

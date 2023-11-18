@@ -1,0 +1,313 @@
+﻿<Window x:Class="TheManager_GUI.ClubView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="ClubView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.2*"/>
+						<RowDefinition Height="0.6*"/>
+						<RowDefinition Height="0.4*"/>
+						<RowDefinition Height="0.4*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0" Margin="15">
+						<!--Menu Buttons-->
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
+					</StackPanel>
+
+					<StackPanel Grid.Row="1" Margin="15">
+						<!-- Club main infos -->
+						<Image x:Name="imageClub" Style="{StaticResource image}" Height="150"/>
+						<TextBlock x:Name="tbClubName" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Text="LOSC LILLE" Margin="0, 15, 0, 35" TextAlignment="Center" TextWrapping="Wrap"/>
+
+					</StackPanel>
+
+					<!-- Club details -->
+					<Grid x:Name="gridMedias" Grid.Row="2" Margin="15">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.2*"/>
+							<ColumnDefinition Width="0.8*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+						</Grid.RowDefinitions>
+						<Image Grid.Row="0" Grid.Column="0" Style="{StaticResource image}" Source="icons/manager.png" Height="75"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" x:Name="tbManager" Style="{StaticResource textSecondary}" Text="First Last" Margin="10, 0, 0, 0"/>
+						<Image Grid.Row="1" Grid.Column="0" Style="{StaticResource image}" Source="icons/budget.png" Height="75"/>
+						<TextBlock Grid.Row="1" Grid.Column="1" x:Name="tbBudget" Style="{StaticResource textSecondary}" Text="145M" Margin="10, 0, 0, 0"/>
+						<Image Grid.Row="2" Grid.Column="0" Style="{StaticResource image}" Source="icons/city.png" Height="75"/>
+						<TextBlock Grid.Row="2" Grid.Column="1" x:Name="tbCity" Style="{StaticResource textSecondary}" Text="Stade ..." Margin="10, 0, 0, 0"/>
+						<Image Grid.Row="3" Grid.Column="0" Style="{StaticResource image}" Source="icons/stadium.png" Height="75"/>
+						<StackPanel Grid.Row="3" Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center">
+							<TextBlock x:Name="tbStadium" Style="{StaticResource textSecondary}" Text="Stade ..." Margin="10, 0, 0, 0"/>
+							<TextBlock x:Name="tbCapacity" Style="{StaticResource textPlain}" Text="20000 places" Margin="10, 0, 0, 0"/>
+						</StackPanel>
+					</Grid>
+
+					<Grid x:Name="gridTournaments" Grid.Row="3" VerticalAlignment="Bottom" Margin="15">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.2*"/>
+							<ColumnDefinition Width="0.2*"/>
+							<ColumnDefinition Width="0.6*"/>
+						</Grid.ColumnDefinitions>
+					</Grid>
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<Border Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top">
+						<Image x:Name="imageLogo" RenderOptions.BitmapScalingMode="HighQuality" OpacityMask="{StaticResource HeaderBackgroundOpacityMask}" Source="icons/save.png" Height="500" Width="500" RenderTransformOrigin="-0,1.3">
+							<Image.RenderTransform>
+								<RotateTransform Angle="-20" />
+							</Image.RenderTransform>
+						</Image>
+					</Border>
+					
+					<!-- Main Window : Main Panel -->
+					<ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<TabControl Style="{StaticResource tabControlStyle}">
+							<TabItem Header="{StaticResource str_club}" Style="{StaticResource tabItemStyle}">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="0.3*"/>
+										<ColumnDefinition Width="0.2*"/>
+									</Grid.ColumnDefinitions>
+									<Grid Grid.Column="0" Margin="15">
+										<StackPanel Orientation="Vertical">
+											<TextBlock Text="{StaticResource str_team}" Style="{StaticResource textSecondary}" HorizontalAlignment="Center"/>
+											<StackPanel x:Name="panelClubTeam" Orientation="Vertical"></StackPanel>
+										</StackPanel>
+									</Grid>
+									<Grid Grid.Column="1" Margin="15">
+										<StackPanel Orientation="Vertical">
+											<TextBlock Text="{StaticResource str_games}" Style="{StaticResource textSecondary}" HorizontalAlignment="Center"/>
+											<StackPanel x:Name="panelClubLastGames" Orientation="Vertical"></StackPanel>
+										</StackPanel>
+									</Grid>
+								</Grid>
+							</TabItem>
+							<TabItem Header="{StaticResource str_finances}" Style="{StaticResource tabItemStyle}">
+								<Grid x:Name="gridFinances">
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.5*"/>
+										<RowDefinition Height="0.5*"/>
+									</Grid.RowDefinitions>
+									<Grid Grid.Row="0">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.3*"/>
+											<ColumnDefinition Width="0.3*"/>
+											<ColumnDefinition Width="0.3*"/>
+										</Grid.ColumnDefinitions>
+										<StackPanel Orientation="Vertical" Grid.Column="0" Margin="15">
+											<TextBlock Text="{StaticResource str_expenses}" Style="{StaticResource textPlainCenter}"/>
+											<StackPanel x:Name="panelChartExpenses" Margin="15"/>
+										</StackPanel>
+										<StackPanel Orientation="Vertical" Grid.Column="1" Margin="15">
+											<TextBlock Text="{StaticResource str_income}" Style="{StaticResource textPlainCenter}"/>
+											<StackPanel x:Name="panelChartIncomes" Margin="15"/>
+										</StackPanel>
+										<ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Height="400" Margin="15">
+											<StackPanel Orientation="Vertical">
+												<TextBlock Text="{StaticResource str_operations}" Style="{StaticResource textPlainCenter}"/>
+												<StackPanel x:Name="panelBudgetOperations" Margin="15"></StackPanel>
+											</StackPanel>
+										</ScrollViewer>
+									</Grid>
+									<Grid Grid.Row="1">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.5*"/>
+											<ColumnDefinition Width="0.5*"/>
+										</Grid.ColumnDefinitions>
+										<StackPanel Grid.Column="0" x:Name="panelFormationCentre" Margin="25"/>
+										<StackPanel Grid.Column="1" x:Name="panelBalanceEvolution" Margin="25"/>
+									</Grid>
+								</Grid>
+							</TabItem>
+							<TabItem Header="{StaticResource str_budget_report}" Style="{StaticResource tabItemStyle}">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.2*"/>
+										<RowDefinition Height="0.8*"/>
+									</Grid.RowDefinitions>
+									<StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+										<TextBlock Text="{StaticResource str_season}" Margin="0, 0, 25, 0"/>
+										<ComboBox x:Name="comboBoxBudgetSelection" Style="{StaticResource ComboBoxFlatStyle}"/>
+									</StackPanel>
+									<Grid Grid.Row="1">
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.5*"/>
+											<ColumnDefinition Width="0.5*"/>
+										</Grid.ColumnDefinitions>
+										<StackPanel x:Name="panelBudgetReport" Grid.Column="0" Orientation="Vertical" Margin="15"></StackPanel>
+										<StackPanel x:Name="panelBudgetReportChart" Grid.Column="1" Orientation="Vertical" Margin="15"></StackPanel>
+									</Grid>
+								</Grid>
+							</TabItem>
+							<TabItem Header="{StaticResource str_history}" Style="{StaticResource tabItemStyle}">
+								<Grid>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="0.2*"/>
+										<RowDefinition Height="0.8*"/>
+									</Grid.RowDefinitions>
+									<ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+										<StackPanel Orientation="Horizontal" x:Name="panelPalmares"/>
+									</ScrollViewer>
+									<Grid Grid.Row="1">
+										<Grid.RowDefinitions>
+											<RowDefinition Height="0.6*"/>
+											<RowDefinition Height="0.4*"/>
+										</Grid.RowDefinitions>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.6*"/>
+											<ColumnDefinition Width="0.3*"/>
+										</Grid.ColumnDefinitions>
+										<StackPanel Orientation="Vertical">
+											<TextBlock Text="{StaticResource str_history}" Style="{StaticResource textSecondary}" HorizontalAlignment="Center"/>
+											<ScrollViewer Grid.Row="0" Grid.Column="0" Height="350" Margin="25">
+												<Grid x:Name="gridChampionshipHistory">
+													<Grid.ColumnDefinitions>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.4*"/>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.1*"/>
+														<ColumnDefinition Width="0.1*"/>
+													</Grid.ColumnDefinitions>
+													<Grid.RowDefinitions>
+														<RowDefinition Height="50"/>
+													</Grid.RowDefinitions>
+													<TextBlock Grid.Row="0" Grid.Column="0" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_year}"/>
+													<TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_tournaments}"/>
+													<TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking}"/>
+													<TextBlock Grid.Row="0" Grid.Column="3" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking_points}"/>
+													<TextBlock Grid.Row="0" Grid.Column="4" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking_wins}"/>
+													<TextBlock Grid.Row="0" Grid.Column="5" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking_draws}"/>
+													<TextBlock Grid.Row="0" Grid.Column="6" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking_loses}"/>
+													<TextBlock Grid.Row="0" Grid.Column="7" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking_goals_for}"/>
+													<TextBlock Grid.Row="0" Grid.Column="8" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking_goals_against}"/>
+													<TextBlock Grid.Row="0" Grid.Column="9" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_ranking_goals_diff}"/>
+												</Grid>
+											</ScrollViewer>
+										</StackPanel>
+										<ScrollViewer Grid.Row="0" Grid.Column="1" Height="350">
+											<StackPanel Orientation="Vertical" x:Name="panelCupHistory"></StackPanel>
+										</ScrollViewer>
+										<StackPanel Grid.Row="1" Grid.Column="0" x:Name="borderAttendance" Margin="15"></StackPanel>
+										<Grid Grid.Row="1" Grid.Column="1">
+											<Grid.RowDefinitions>
+												<RowDefinition Height="0.2*"/>
+												<RowDefinition Height="0.2*"/>
+												<RowDefinition Height="0.2*"/>
+												<RowDefinition Height="0.2*"/>
+											</Grid.RowDefinitions>
+											<TextBlock Grid.Row="0" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{StaticResource str_biggestWin}"/>
+											<StackPanel x:Name="panelRecordBiggestWin" Orientation="Vertical" Grid.Row="1" Margin="15"></StackPanel>
+											<TextBlock Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{StaticResource str_biggestLoss}"/>
+											<StackPanel x:Name="panelRecordBiggestLose" Orientation="Vertical" Grid.Row="3" Margin="15"></StackPanel>
+										</Grid>
+									</Grid>
+								</Grid>
+							</TabItem>
+						</TabControl>
+						<!--<Grid Grid.Row="2">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="0.25*"/>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.15*"/>
+								<RowDefinition Height="0.15*"/>
+								<RowDefinition Height="0.3*"/>
+								<RowDefinition Height="0.05*"/>
+							</Grid.RowDefinitions>
+						</Grid>-->
+					</ScrollViewer>
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

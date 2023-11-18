@@ -244,7 +244,7 @@ namespace TheManager
         /// <param name="programmation">TV / Federation schedule for games</param>
         /// <param name="twoLegged">One or two games</param>
         /// <returns></returns>
-        public static List<Match> GenerateCalendar(List<Club> clubsBase, Round tournamentRound, bool twoLegged)
+        public static List<Match> GenerateCalendar(List<Club> clubsBase, Round tournamentRound)
         {
             RoundProgrammation programmation = tournamentRound.programmation;
             List<Match> res = new List<Match>();
@@ -370,7 +370,7 @@ namespace TheManager
                 }
                 TVSchedule(matchs, programmation.tvScheduling, i+1);
             }
-            if(twoLegged)
+            if(tournamentRound.phases > 1)
             {
                 int nbGamesByLeg = res.Count / gamesPerRound;
                 for (uint leg = 2; leg <= tournamentRound.phases; leg++)
@@ -558,7 +558,7 @@ namespace TheManager
                 day = day.AddHours(programmation.defaultHour.Hours);
                 day = day.AddMinutes(programmation.defaultHour.Minutes);
 
-                Match secondRound = new Match(m.away, m.home, day, !round.twoLegs, m);
+                Match secondRound = new Match(m.away, m.home, day, !(round.phases == 2), m);
                 games.Add(secondRound);
                 gamesList.Add(secondRound);
             }
@@ -584,11 +584,11 @@ namespace TheManager
             {
                 Club clubA = teams[i];
                 Club clubB = teams[teams.Count - i - 1];
-                res.Add(new Match(!round.twoLegs ? clubA : clubB,!round.twoLegs ? clubB : clubA, day, !round.twoLegs));
+                res.Add(new Match(round.phases % 2 == 1 ? clubA : clubB, round.phases % 2 == 1 ? clubB : clubA, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
-            if (round.twoLegs)
+            for(int i = 1; i < round.phases; i++)
             {
                 CreateSecondLegKnockOutRound(res, round, programmation);
             }
@@ -622,11 +622,11 @@ namespace TheManager
                     home = switchedTeams[0];
                     away = switchedTeams[1];
                 }
-                res.Add(new Match(home, away, day, !round.twoLegs));
+                res.Add(new Match(home, away, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
-            if (round.twoLegs)
+            for (int i = 1; i < round.phases; i++)
             {
                 CreateSecondLegKnockOutRound(res, round, programmation);
             }
@@ -666,11 +666,11 @@ namespace TheManager
                     home = switchedTeams[0];
                     away = switchedTeams[1];
                 }
-                res.Add(new Match(home, away, day, !round.twoLegs));
+                res.Add(new Match(home, away, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
-            if (round.twoLegs)
+            for (int i = 1; i < round.phases; i++)
             {
                 CreateSecondLegKnockOutRound(res, round, programmation);
             }
@@ -709,11 +709,11 @@ namespace TheManager
             {
                 Club clubA = clubs[i];
                 Club clubB = clubs[clubs.Count - 1 - i];
-                res.Add(new Match(!round.twoLegs ? clubA : clubB, !round.twoLegs ? clubB : clubA, day, !round.twoLegs));
+                res.Add(new Match(round.phases % 2 == 1 ? clubA : clubB, round.phases % 2 == 1 ? clubB : clubA, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
-            if (round.twoLegs)
+            for (int i = 1; i < round.phases; i++)
             {
                 CreateSecondLegKnockOutRound(res, round, programmation);
             }
@@ -925,11 +925,11 @@ namespace TheManager
                     home = away;
                     away = temp;
                 }
-                res.Add(new Match(home, away, day, !round.twoLegs));
+                res.Add(new Match(home, away, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
-            if(round.twoLegs)
+            for (int i = 1; i < round.phases; i++)
             {
                 CreateSecondLegKnockOutRound(res, round, programmation);
             }

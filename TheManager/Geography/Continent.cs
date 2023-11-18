@@ -33,7 +33,7 @@ namespace TheManager
 
         public bool IsValid()
         {
-            return tournament == null || ((tournament.currentRound > -1) && (tournament.currentRound < tournament.rounds.Count - 1));
+            return tournament == null || tournament.IsCurrentlyPlaying(); // ((tournament.currentRound > -1) && (tournament.currentRound < tournament.rounds.Count - 1));
         }
 
         public bool IsEquals(InternationalDates obj)
@@ -437,7 +437,7 @@ namespace TheManager
                 }
                 //If the cup is finished
                 //cup.PrintCupResume();
-                if (cup.currentRound == (cup.rounds.Count - 1) && cup.rounds.Last().matches[0].Played)
+                if (cup.rounds.Last().matches.Count == 1 && cup.rounds.Last().matches[0].Played)
                 {
                     cupWinners.Add(cup.Winner());
                 }

@@ -20,7 +20,9 @@ namespace TheManager
         CONTINENTAL_COEFFICIENT,
         ELO,
         PAST_RANKING,
-        CURRENT_RANKING
+        CURRENT_RANKING,
+        NAME,
+        CITY_NAME
     }
 
     public class ClubComparator : IComparer<Club>
@@ -102,6 +104,16 @@ namespace TheManager
             int res;
             switch (_attribute)
             {
+                case ClubAttribute.NAME:
+                    res = y.name.CompareTo(x.name);
+                    break;
+                case ClubAttribute.CITY_NAME:
+                    CityClub xCity = x as CityClub;
+                    CityClub yCity = y as CityClub;
+                    string xName = xCity != null ? xCity.city.Name : x.name;
+                    string yName = yCity != null ? yCity.city.Name : y.name;
+                    res = xName.CompareTo(yName);
+                    break;
                 case ClubAttribute.STADIUM:
                     res = y.stadium.capacity - x.stadium.capacity;
                     break;

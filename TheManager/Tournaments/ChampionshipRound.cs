@@ -13,13 +13,13 @@ namespace TheManager
     public class ChampionshipRound : Round
     {
 
-        public ChampionshipRound(string name, Hour hour, List<GameDay> days, bool twoLegs, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, int lastDaySameDay, int gamesPriority) : base(name, hour, days, offsets, initialisation,end, twoLegs, phases, lastDaySameDay, keepRankingFromPreviousRound, gamesPriority)
+        public ChampionshipRound(string name, Hour hour, List<GameDay> days, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, int lastDaySameDay, int gamesPriority) : base(name, hour, days, offsets, initialisation,end, phases, lastDaySameDay, keepRankingFromPreviousRound, gamesPriority)
         {
         }
 
         public override Round Copy()
         {
-            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), twoLegs, phases, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, keepRankingFromPreviousRound, programmation.lastMatchDaysSameDayNumber, programmation.gamesPriority);
+            Round t = new ChampionshipRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), phases, new List<TvOffset>(programmation.tvScheduling), programmation.initialisation, programmation.end, keepRankingFromPreviousRound, programmation.lastMatchDaysSameDayNumber, programmation.gamesPriority);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -78,7 +78,7 @@ namespace TheManager
                     r.AddTeamsToRecover();
                 }
             }
-            _matches = Calendar.GenerateCalendar(this.clubs, this, twoLegs);
+            _matches = Calendar.GenerateCalendar(this.clubs, this);
             CheckConflicts();
         }
 
@@ -193,20 +193,34 @@ namespace TheManager
 
         public override int MatchesDayNumber()
         {
+            if(clubs.Count == 0)
+            {
+                return 0;
+            }
             int nbTeams = clubs.Count;
             int nbMatches = matches.Count;
             if (nbTeams % 2 == 1)
             {
                 nbTeams++;
             }
+            return (nbTeams - 1) * phases; // TODO: Not tested but should work and more simpler
             int nbMatchesDays = nbMatches / nbTeams;
-            if (twoLegs)
+            nbMatchesDays *= phases;
+            if (phases == 2)
             {
                 nbMatchesDays *= 2;
             }
-            return nbMatchesDays ;
+            if(phases > 2)
+            {
+                nbMatchesDays = nbMatchesDays + ((phases - 2) * (nbMatches / nbTeams));
+            }
+            return nbMatchesDays;
         }
-        
+        public override bool IsKnockOutRound()
+        {
+            return false;
+        }
+
         public override List<Match> NextMatchesDay()
         {
             List<Match> res;

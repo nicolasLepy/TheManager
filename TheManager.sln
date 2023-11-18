@@ -5,11 +5,9 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheManager", "TheManager\TheManager.csproj", "{C87D1486-6D8A-4041-AFC6-F7F0F5BC6B4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheManager_GUI", "TheManager_GUI\TheManager_GUI.csproj", "{78924484-F096-4D2F-92FC-C53A6A397027}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ui", "ui\ui.csproj", "{78924484-F096-4D2F-92FC-C53A6A397027}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapWinGISAxControl", "MapWinGISAxControl\MapWinGISAxControl.csproj", "{B96F1F34-B1CF-459F-86DA-6C8FD773A03D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheManagerTests", "TheManagerTests\TheManagerTests.csproj", "{09047278-622A-4EBA-9B29-5080AD23054C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests", "tests\tests.csproj", "{09047278-622A-4EBA-9B29-5080AD23054C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +23,6 @@ Global
 		{78924484-F096-4D2F-92FC-C53A6A397027}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78924484-F096-4D2F-92FC-C53A6A397027}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78924484-F096-4D2F-92FC-C53A6A397027}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B96F1F34-B1CF-459F-86DA-6C8FD773A03D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B96F1F34-B1CF-459F-86DA-6C8FD773A03D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B96F1F34-B1CF-459F-86DA-6C8FD773A03D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B96F1F34-B1CF-459F-86DA-6C8FD773A03D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09047278-622A-4EBA-9B29-5080AD23054C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{09047278-622A-4EBA-9B29-5080AD23054C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09047278-622A-4EBA-9B29-5080AD23054C}.Release|Any CPU.ActiveCfg = Release|Any CPU

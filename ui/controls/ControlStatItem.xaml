@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="TheManager_GUI.controls.ControlStatItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TheManager_GUI.controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.1*"/>
+			<ColumnDefinition Width="0.1*"/>
+			<ColumnDefinition Width="0.1*"/>
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="1*"/>
+			<RowDefinition Height="1*"/>
+		</Grid.RowDefinitions>
+		<TextBlock Grid.Row="0" Grid.Column="1" Style="{StaticResource textPlain}" HorizontalAlignment="Center" Text="{Binding StatName}" Margin="5"/>
+		<TextBlock Grid.Row="0" Grid.Column="0" x:Name="tbStatHome" Style="{StaticResource textPlain}" HorizontalAlignment="Left" Text="{Binding StatHomeString}" Margin="5"/>
+		<TextBlock Grid.Row="0" Grid.Column="2" x:Name="tbStatAway" Style="{StaticResource textPlain}" HorizontalAlignment="Right" Text="{Binding StatAwayString}" Margin="5"/>
+		<ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" x:Name="progressBarStat" Style="{StaticResource progressBarStyle}" Height="20" Value="{Binding StatHome}" Minimum="0" Maximum="{Binding StatTotal}" Padding="5"/>
+	</Grid>
+</UserControl>

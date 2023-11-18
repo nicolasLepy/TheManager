@@ -47,6 +47,8 @@ namespace TheManager
         [DataMember]
         private List<Player> _freePlayers;
         [DataMember]
+        private int _retiredPlayersCount;
+        [DataMember]
         private List<Manager> _freeManagers;
         [DataMember]
         private Continent _world;
@@ -54,6 +56,8 @@ namespace TheManager
         private List<Language> _languages;
         [DataMember]
         private List<GenericCalendar> _genericCalendars;
+        [DataMember]
+        private List<AudioSource> _audioSources;
         [DataMember]
         private List<Media> _medias;
         [DataMember]
@@ -79,9 +83,12 @@ namespace TheManager
         public List<Media> medias { get => _medias; }
         public List<MatchEventCommentary> matchCommentaries { get => _matchCommentaries; }
         public List<Journalist> freeJournalists { get => _freeJournalists; }
+        public List<AudioSource> audioSources => _audioSources;
+        public int retiredPlayersCount => _retiredPlayersCount;
 
         public Kernel()
         {
+            _retiredPlayersCount = 0;
             _clubs = new List<Club>();
             _freePlayers = new List<Player>();
             _languages = new List<Language>();
@@ -95,6 +102,7 @@ namespace TheManager
             _matchCommentaries.Add(new MatchEventCommentary(GameEvent.Shot));
             _freeJournalists = new List<Journalist>();
             _genericCalendars = new List<GenericCalendar>();
+            _audioSources = new List<AudioSource>();
         }
 
         public GenericCalendar GetGenericCalendar(string name)
@@ -326,6 +334,19 @@ namespace TheManager
             return _world.String2Continent(name);
         }
 
+        public int PlayersCount()
+        {
+            int res = _freePlayers.Count;
+            foreach (Club c in _clubs)
+            {
+                if (c as CityClub != null)
+                {
+                    res += c.Players().Count;
+                }
+            }
+            return res;
+        }
+
         public int NumberPlayersOfCountry(Country p)
         {
             int res = 0;
@@ -395,6 +416,7 @@ namespace TheManager
                 }
             }
 
+            _retiredPlayersCount += retiredPlayers.Count;
             foreach (Player j in retiredPlayers)
             {
                 _freePlayers.Remove(j);
@@ -545,6 +567,11 @@ namespace TheManager
                     cem.commentaries.Add(commentary);
                 }
             }
+        }
+
+        public void AddAudioSource(AudioSource audioSource)
+        {
+            _audioSources.Add(audioSource);
         }
 
         public void AddGenericCalendar(GenericCalendar calendar)

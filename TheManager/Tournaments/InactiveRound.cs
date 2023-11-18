@@ -17,7 +17,7 @@ namespace TheManager
         private List<Club> _ranking;
         private int _associationLevel;
 
-        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end, int associationLevel) : base(name, hour, new List<GameDay>(), new List<TvOffset>(), initialisation, end, false, 1, 0, -1, 0)
+        public InactiveRound(string name, Hour hour, GameDay initialisation, GameDay end, int associationLevel) : base(name, hour, new List<GameDay>(), new List<TvOffset>(), initialisation, end, 1, 0, -1, 0)
         {
             _ranking = null;
             _associationLevel = associationLevel;
@@ -328,6 +328,11 @@ namespace TheManager
         public override int MatchesDayNumber()
         {
             return 0;
+        }
+
+        public override bool IsKnockOutRound()
+        {
+            return false;
         }
 
         public override List<Match> GamesDay(int journey)

@@ -106,7 +106,7 @@ namespace TheManager
         
 
         [DataMember]
-        private string _goalMusic;
+        private string _goalSong;
 
         public string name { get => _name; }
         public Manager manager { get => _manager; set => _manager = value; }
@@ -117,7 +117,7 @@ namespace TheManager
         public string logo { get => _logo; }
         public string shortName { get => _shortName; }
         public int ticketPrice { get => _ticketPrice; }
-        public string goalMusic { get => _goalMusic; }
+        public string goalSong { get => _goalSong; }
         public ClubRecords records { get => _records; }
         public ClubStatus status => _status;
 
@@ -413,7 +413,7 @@ namespace TheManager
             }
         }
 
-        protected Club(string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalMusic, ClubStatus status)
+        protected Club(string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalSong, ClubStatus status)
         {
             _name = name;
             _manager = manager;
@@ -425,7 +425,7 @@ namespace TheManager
             _formationFacilities = formationFacilities;
             _logo = logo;
             _stadium = stadium;
-            _goalMusic = goalMusic;
+            _goalSong = goalSong;
             _status = status;
         }
 

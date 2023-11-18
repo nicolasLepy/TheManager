@@ -1,0 +1,209 @@
+﻿<Window x:Class="TheManager_GUI.CountryView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="CountryView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="0.15*"/>
+						<RowDefinition Height="0.15*"/>
+						<RowDefinition Height="0.2*"/>
+						<RowDefinition Height="0.1*"/>
+						<RowDefinition Height="0.5*"/>
+					</Grid.RowDefinitions>
+
+					<StackPanel Grid.Row="0" Margin="15">
+						<!--Menu Buttons-->
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
+					</StackPanel>
+
+					<TextBlock Grid.Row="1" x:Name="tbCountryName" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Text="LOSC LILLE" Margin="0, 15, 0, 35" TextAlignment="Center" TextWrapping="Wrap"/>
+
+					<!-- National selection rankings -->
+					<Grid Grid.Row="2" Margin="15">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="0.3*"/>
+							<RowDefinition Height="0.3*"/>
+							<RowDefinition Height="0.3*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.4*"/>
+							<ColumnDefinition Width="0.5*"/>
+						</Grid.ColumnDefinitions>
+						<Image Grid.Row="0" Grid.Column="0" x:Name="imageRankingWorld" Style="{StaticResource image}" Source="icons/manager.png" Height="40"/>
+						<Image Grid.Row="1" Grid.Column="0" x:Name="imageRankingAssociation" Style="{StaticResource image}" Source="icons/manager.png" Height="40"/>
+						<Image Grid.Row="2" Grid.Column="0" x:Name="imageRankingClubAssociation" Style="{StaticResource image}" Source="icons/manager.png" Height="40"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" x:Name="tbRankingWorld" Style="{StaticResource textPlainCenter}" Text="1 / 50"/>
+						<TextBlock Grid.Row="1" Grid.Column="1" x:Name="tbRankingAssociation" Style="{StaticResource textPlainCenter}" Text="1 / 50"/>
+						<TextBlock Grid.Row="2" Grid.Column="1" x:Name="tbRankingClubAssociation" Style="{StaticResource textPlainCenter}" Text="1 / 50 (clubs)" TextWrapping="Wrap"/>
+					</Grid>
+					
+					<!-- National selection details -->
+					<Grid Grid.Row="3" Margin="15">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.2*"/>
+							<ColumnDefinition Width="0.8*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="0.2*"/>
+						</Grid.RowDefinitions>
+						<Image Grid.Row="0" Grid.Column="0" Style="{StaticResource image}" Source="icons/manager.png" Height="75"/>
+						<TextBlock Grid.Row="0" Grid.Column="1" x:Name="tbHeadCoach" Style="{StaticResource textSecondary}" Text="First Last" TextWrapping="Wrap" Margin="10, 0, 0, 0"/>
+					</Grid>
+
+					<Grid x:Name="gridTournaments" Grid.Row="4" VerticalAlignment="Top" Margin="15">
+					</Grid>
+				</Grid>
+
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<Border Grid.Row="2" HorizontalAlignment="Left" VerticalAlignment="Top">
+						<Image x:Name="imageLogo" RenderOptions.BitmapScalingMode="HighQuality" OpacityMask="{StaticResource HeaderBackgroundOpacityMask}" Source="icons/save.png" Height="500" Width="500" RenderTransformOrigin="-0,1.3">
+							<Image.RenderTransform>
+								<RotateTransform Angle="-20" />
+							</Image.RenderTransform>
+						</Image>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+					<Grid Grid.Row="2">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.75*"/>
+							<ColumnDefinition Width="0.25*"/>
+						</Grid.ColumnDefinitions>
+						<ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="15">
+							<TabControl Style="{StaticResource tabControlStyle}">
+								<TabItem Header="{StaticResource str_games}" Style="{StaticResource tabItemStyle}">
+									<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+										<StackPanel x:Name="panelGames" Orientation="Vertical">
+
+										</StackPanel>
+									</ScrollViewer>
+								</TabItem>
+								<TabItem Header="{StaticResource str_teams}" Style="{StaticResource tabItemStyle}">
+									<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+										<StackPanel x:Name="panelPlayers" Orientation="Vertical">
+
+										</StackPanel>
+									</ScrollViewer>
+								</TabItem>
+								<TabItem Header="{StaticResource str_history}" Style="{StaticResource tabItemStyle}">
+									<Grid>
+										<Grid.RowDefinitions>
+											<RowDefinition Height="0.1*"/>
+											<RowDefinition Height="0.4*"/>
+											<RowDefinition Height="0.5*"/>
+										</Grid.RowDefinitions>
+										<Grid.ColumnDefinitions>
+											<ColumnDefinition Width="0.55*"/>
+											<ColumnDefinition Width="0.45*"/>
+										</Grid.ColumnDefinitions>
+										<TextBlock Text="{StaticResource str_history}" Style="{StaticResource textSecondary}" Grid.Row="0" Grid.Column="0" TextAlignment="Center"/>
+										<ScrollViewer Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Margin="15">
+											<Grid x:Name="gridCountryHistory" Margin="15">
+												<Grid.ColumnDefinitions>
+													<ColumnDefinition Width="0.2*"/>
+													<ColumnDefinition Width="0.1*"/>
+													<ColumnDefinition Width="0.3*"/>
+													<ColumnDefinition Width="0.3*"/>
+												</Grid.ColumnDefinitions>
+												<Grid.RowDefinitions>
+													<RowDefinition Height="50"/>
+												</Grid.RowDefinitions>
+												<TextBlock Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource textSecondary}" TextAlignment="Center" Text="{StaticResource str_host}"/>
+												<TextBlock Grid.Row="0" Grid.Column="3" Style="{StaticResource textSecondary}" TextAlignment="Center" Text="{StaticResource str_performance}"/>
+											</Grid>
+										</ScrollViewer>
+										<StackPanel x:Name="panelHistoryWorldRanking" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Orientation="Vertical" Margin="15"></StackPanel>
+										<StackPanel x:Name="panelHistoryClubRanking" Grid.Row="2" Grid.Column="1" Orientation="Vertical" Margin="15"></StackPanel>
+									</Grid>
+								</TabItem>
+							</TabControl>
+						</ScrollViewer>
+						<StackPanel Grid.Column="1" x:Name="panelClubTournaments" Orientation="Vertical" Margin="15">
+							<TextBlock Text="{StaticResource str_clubsInternationalTournaments}" Style="{StaticResource textSecondary}" TextAlignment="Center"/>
+						</StackPanel>
+					</Grid>
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

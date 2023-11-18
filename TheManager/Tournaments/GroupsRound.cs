@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -116,7 +118,7 @@ namespace TheManager
         {
             _storedGroupQualifications = new List<Qualification>[_groups.Length];
         }
-        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool twoLegs, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(name, hour, dates, offsets, initialisation,end, twoLegs, phases, 0, keepRankingFromPreviousRound, gamesPriority)
+        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(name, hour, dates, offsets, initialisation,end, phases, 0, keepRankingFromPreviousRound, gamesPriority)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -154,7 +156,7 @@ namespace TheManager
 
         public override Round Copy()
         {
-            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, twoLegs, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
+            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -280,13 +282,13 @@ namespace TheManager
 
             if(_fusionGroupAndNoGroupGames)
             {
-                _matches.AddRange(Calendar.GenerateCalendar(clubs, this, twoLegs));
+                _matches.AddRange(Calendar.GenerateCalendar(clubs, this));
             }
             else
             {
                 for (int i = 0; i < _groupsNumber; i++)
                 {
-                    _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this, twoLegs));
+                    _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this));
                 }
                 if (this.nonGroupGamesByTeams > 0)
                 {
@@ -1019,33 +1021,51 @@ namespace TheManager
 
         }
 
+        public override bool IsKnockOutRound()
+        {
+            return false;
+        }
+
+        private List<Match> GetGames(int group)
+        {
+            List<Club> clubs = this.groups[group];
+            List<Match> res = new List<Match>();
+            foreach(Match m in _matches)
+            {
+                if(clubs.Contains(m.home))
+                {
+                    res.Add(m);
+                }
+            }
+            return res;
+        }
+
         public override List<Match> GamesDay(int journey)
         {
             List<Match> res = new List<Match>();
             if(_matches.Count > 0)
             {
-                int matchesPerGroups = GroupMatchesPerGamesDay() * ((_clubs.Count / _groupsNumber) - 1);
-                if (twoLegs)
+                for (int i = 0; i < groupsCount; i++)
                 {
-                    matchesPerGroups *= 2;
-                }
-                for (int i = 0; i < _groupsNumber; i++)
-                {
-                    int baseIndex = (matchesPerGroups * i) + (GroupMatchesPerGamesDay() * (journey - 1));
-                    for (int j = 0; j < GroupMatchesPerGamesDay(); j++)
+                    int matchPerGames = groups[i].Count / 2;
+                    List<Match> games = GetGames(i);
+                    int indexGameDay = journey - 1;
+                    for (int j = matchPerGames * indexGameDay; j < matchPerGames * (indexGameDay + 1); j++)
                     {
-                        res.Add(_matches[j + baseIndex]);
+                        if(j < games.Count)
+                        {
+                            res.Add(games[j]);
+                        }
                     }
-
                 }
             }
-
             return res;
         }
 
         public override int MatchesDayNumber()
         {
-            return _matches.Count / _groupsNumber / GroupMatchesPerGamesDay();
+            int groupMatchsPerGamesDay = GroupMatchesPerGamesDay();
+            return groupMatchsPerGamesDay == 0 || _groupsNumber == 0 ? 0 : _matches.Count / _groupsNumber / groupMatchsPerGamesDay;
         }
 
         public int GroupMatchesPerGamesDay()

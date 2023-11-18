@@ -1,0 +1,173 @@
+﻿<Window x:Class="TheManager_GUI.OptionsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		Background="Transparent"
+		WindowStartupLocation="CenterScreen"
+		AllowsTransparency="True"
+		WindowStyle="None"
+        Title="OptionsView" Height="900" Width="1700">
+
+	<Border CornerRadius="5" BorderThickness="1">
+
+		<Border.BorderBrush>
+			<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+				<GradientStop Color="{StaticResource colorViewBorder1}" Offset="0"/>
+				<GradientStop Color="{StaticResource colorViewBorder2}" Offset="0.5"/>
+				<GradientStop Color="{StaticResource colorViewBorder3}" Offset="1"/>
+			</LinearGradientBrush>
+		</Border.BorderBrush>
+		<Grid>
+
+			<Grid.ColumnDefinitions>
+				<!--Navigation menu-->
+				<ColumnDefinition Width="215"/>
+				<!--Content section-->
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+
+			<!-- Navigation menu -->
+			<Border CornerRadius="10,0,0,10"
+                    Grid.Column="0">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0,0" EndPoint="1,0.7">
+						<GradientStop Color="{StaticResource colorSecondary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorSecondary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+			</Border>
+
+			<!-- Main Section -->
+			<Border CornerRadius="0, 5, 5, 0"
+					Grid.Column="1">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="1,1" EndPoint="0,0">
+						<GradientStop Color="{StaticResource colorPrimary1}" Offset="0"/>
+						<GradientStop Color="{StaticResource colorPrimary2}" Offset="1"/>
+					</LinearGradientBrush>
+				</Border.Background>
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="15"/>
+						<RowDefinition Height="50"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+
+					<!-- Main Window : Drag/Drop Zone -->
+					<StackPanel x:Name="spControlBar" Grid.Row="0" Orientation="Horizontal" FlowDirection="RightToLeft" Background="Transparent"
+								MouseLeftButtonDown="spControlBar_MouseLeftButtonDown"
+								MouseEnter="spControlBar_MouseEnter">
+
+					</StackPanel>
+
+					<!-- Main Window : Progress Bar Zone -->
+					<Border Grid.Row="1" Padding="10">
+						<Border.Background>
+							<LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+								<GradientStop Color="{StaticResource colorHighlight1}" Offset="0"/>
+								<GradientStop Color="{StaticResource colorHighlight2}" Offset="1"/>
+							</LinearGradientBrush>
+						</Border.Background>
+						<StackPanel VerticalAlignment="Center">
+							<Grid>
+							</Grid>
+						</StackPanel>
+					</Border>
+
+					<!-- Main Window : Main Panel -->
+
+
+					<ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+						<Grid Grid.Row="2">
+							<Grid.RowDefinitions>
+								<RowDefinition Height="0.1*"/>
+								<RowDefinition Height="0.2*"/>
+								<RowDefinition Height="0.3*"/>
+								<RowDefinition Height="0.3*"/>
+								<RowDefinition Height="0.1*"/>
+							</Grid.RowDefinitions>
+
+							<TextBlock Grid.Row="0" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Text="OPTIONS"/>
+
+							<StackPanel Grid.Row="1" Orientation="Vertical">
+								<TextBlock Margin="10" Text="Options générales" Style="{StaticResource textSecondary}"/>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Margin="10" Width="150" Text="Langue" Style="{StaticResource textPlain}"/>
+									<ComboBox x:Name="comboBoxLangue" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" Width="300" HorizontalContentAlignment="Center"/>
+								</StackPanel>
+								<StackPanel Orientation="Horizontal">
+									<TextBlock Margin="10" Width="150" Text="Thème" Style="{StaticResource textPlain}"/>
+									<ComboBox x:Name="comboBoxThemes" Style="{StaticResource ComboBoxFlatStyle}" Margin="5" Width="300" HorizontalContentAlignment="Center"/>
+								</StackPanel>
+							</StackPanel>
+
+							<StackPanel Grid.Row="2" Orientation="Vertical">
+								<TextBlock Margin="10" Text="Optimisations" Style="{StaticResource textSecondary}"/>
+								<StackPanel Orientation="Horizontal">
+									<CheckBox Width="50" Name="cbReduceSave" Style="{StaticResource checkBoxStyle}"/>
+									<TextBlock Margin="10" Text="Alléger la sauvegarde" Style="{StaticResource textPlain}"/>
+								</StackPanel>
+								<TextBlock Margin="0, 0, 0, 10" Text="Supprimer la composition des équipes des matchs des années précédantes" Style="{StaticResource textPlain}"/>
+
+								<StackPanel Orientation="Horizontal">
+									<CheckBox Width="50" Name="cbSimuler" Style="{StaticResource checkBoxStyle}"/>
+									<TextBlock Margin="10" Text="Simuler les matchs" Style="{StaticResource textPlain}"/>
+								</StackPanel>
+								<TextBlock Margin="0, 0, 0, 10" Text="Résultats automatique" Style="{StaticResource textPlain}"/>
+
+								<StackPanel Orientation="Horizontal">
+									<CheckBox Width="50" Name="cbTransferts" Style="{StaticResource checkBoxStyle}"/>
+									<TextBlock Margin="10" Text="Activer les transferts" Style="{StaticResource textPlain}"/>
+								</StackPanel>
+								<TextBlock Margin="0, 0, 0, 10" Text="Les équipes peuvent acheter et vendre des joueurs durant la période des transferts" Style="{StaticResource textPlain}"/>
+
+							</StackPanel>
+
+							<StackPanel Grid.Row="3" Orientation="Vertical">
+								<TextBlock Margin="10" Text="Compétitions à exporter" Style="{StaticResource textSecondary}"/>
+								<TextBlock Margin="10" Text="Exporter les compétitions au format HTML à la fin de la saison" Style="{StaticResource textPlain}"/>
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+										<ColumnDefinition Width="0.2*"/>
+									</Grid.ColumnDefinitions>
+									<StackPanel Orientation="Vertical" Grid.Column="0" Name="spOptions1">
+									</StackPanel>
+									<StackPanel Orientation="Vertical" Grid.Column="1" Name="spOptions2">
+									</StackPanel>
+									<StackPanel Orientation="Vertical" Grid.Column="2" Name="spOptions3">
+									</StackPanel>
+									<StackPanel Orientation="Vertical" Grid.Column="3" Name="spOptions4">
+									</StackPanel>
+									<StackPanel Orientation="Vertical" Grid.Column="4" Name="spOptions5">
+									</StackPanel>
+								</Grid>
+							</StackPanel>
+
+							<Grid Grid.Row="4">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="0.3*"/>
+									<ColumnDefinition Width="0.3*"/>
+									<ColumnDefinition Width="0.3*"/>
+								</Grid.ColumnDefinitions>
+								<Button Grid.Column="1" x:Name="btnValider" Style="{StaticResource buttonMenu}" Content="{StaticResource str_confirm}" Click="BtnValider_Click"/>
+							</Grid>
+
+						</Grid>
+					</ScrollViewer>
+				</Grid>
+			</Border>
+
+		</Grid>
+
+	</Border>
+
+
+</Window>

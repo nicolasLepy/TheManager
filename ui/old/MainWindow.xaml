@@ -1,0 +1,21 @@
+﻿<Window x:Class="TheManager_GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TheManager_GUI"
+        mc:Ignorable="d"
+		xmlns:tm="clr-namespace:TheManager_GUI.Styles"
+        Title="The Manager" Height="450" Width="800" Name="mainWindow" >
+	<Grid>
+		<StackPanel Margin="100">
+			<Label Content="" Style="{StaticResource StyleLabel1}"/>
+			<Button Style="{StaticResource buttonMenu}" Content="{StaticResource str_newGame}" Name="btnNouvellePartie" Click="BtnNouvellePartie_Click"/>
+			<Button Style="{StaticResource buttonMenu}" Content="{StaticResource str_load}" Name="btnChargerPartie" Click="BtnChargerPartie_Click"/>
+			<Button Style="{StaticResource buttonMenu}" Content="{StaticResource str_quit}" Name="btnQuitter" Click="BtnQuitter_Click"/>
+			<ProgressBar Visibility="Hidden" Name="pbLoading" Height="10" Margin="10" Foreground="Green" Maximum="100" Minimum="0" Value="20" Background="Black"/>
+			<Label Visibility="Hidden" Name="lbCreationPartie" Content="Creation de la partie" HorizontalAlignment="Center" Style="{StaticResource StyleLabel2}"/>
+
+		</StackPanel>
+	</Grid>
+</Window>

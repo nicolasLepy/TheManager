@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -248,12 +249,6 @@ namespace TheManager
         [DataMember]
         protected List<Match> _matches;
         /// <summary>
-        /// If the round takes place in round-trip matches
-        /// </summary>
-        [DataMember]
-        protected bool _twoLegs;
-
-        /// <summary>
         /// Legs count during round
         /// </summary>
         [DataMember]
@@ -269,7 +264,7 @@ namespace TheManager
         protected List<Qualification> _qualifications;
 
         /// <summary>
-        /// List of teams get from other tournament still in progress
+        /// List of teams got from other tournament still in progress
         /// </summary>
         [DataMember]
         protected List<RecoverTeams> _recuperedTeams;
@@ -318,7 +313,6 @@ namespace TheManager
         public string name { get => _name; }
         public List<Club> clubs { get => _clubs; }
         public List<Match> matches { get => _matches; }
-        public bool twoLegs { get => _twoLegs; }
         public int phases { get => _phases; }
         public int keepRankingFromPreviousRound { get => _keepRankingFromPreviousRound; }
         public RoundProgrammation programmation { get => _programmation; }
@@ -367,13 +361,12 @@ namespace TheManager
             }
         }
 
-        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, bool twoLegs, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
+        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
         {
             _name = name;
             _clubs = new List<Club>();
             _matches = new List<Match>();
             _programmation = new RoundProgrammation(hour, dates, tvOffsets, initialisation, end, lastDaysSameDay, gamesPriority);
-            _twoLegs = twoLegs;
             _qualifications = new List<Qualification>();
             _recuperedTeams = new List<RecoverTeams>();
             _baseRecuperedTeams = new List<RecoverTeams>();
@@ -579,6 +572,35 @@ namespace TheManager
         }
 
         /// <summary>
+        /// WARNING : Performance
+        /// </summary>
+        /// <returns></returns>
+        public int NextMatchesGameDay()
+        {
+            int res = -1;
+            List<Match> nextMatches = NextMatches();
+            if (nextMatches.Count > 0)
+            {
+                res = -1;
+                int i = 1;
+                int matchDayNumber = MatchesDayNumber();
+                while (res == -1 && i <= matchDayNumber)
+                {
+                    if (GamesDay(i).Contains(nextMatches[0]))
+                    {
+                        res = i;
+                    }
+                    i++;
+                }
+            }
+            else if (matches.Count > 0)
+            {
+                res = MatchesDayNumber();
+            }
+            return res;
+        }
+
+        /// <summary>
         /// Return list to next matches to be played according to the date
         /// </summary>
         /// <returns></returns>
@@ -739,12 +761,21 @@ namespace TheManager
             }
         }
 
+        public void Setup()
+        {
+            Initialise();
+            if (rules.Contains(Rule.HostedByOneCountry))
+            {
+                AffectHostStadiumsToGames();
+            }
+        }
+
         /// <summary>
         /// Init the round (random draw, schedule)
         /// </summary>
         public abstract void Initialise();
         /// <summary>
-        /// Quality clubs for next rounds
+        /// Qualify clubs for next rounds
         /// <paramref name="forNextYear">Qualify clubs to tournaments competing next year</paramref>
         /// </summary>
         public abstract void QualifyClubs(bool forNextYear);
@@ -764,6 +795,8 @@ namespace TheManager
         public abstract List<Match> NextMatchesDay();
 
         public abstract int MatchesDayNumber();
+
+        public abstract bool IsKnockOutRound();
 
         /// <summary>
         /// List the matches of the games day

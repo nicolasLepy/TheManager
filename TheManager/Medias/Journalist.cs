@@ -50,14 +50,14 @@ namespace TheManager
             }
         }
 
-        public List<Match> CommentedGames
+        public List<Match> Games
         {
             get
             {
                 List<Match> res = new List<Match>();
                 foreach (Match m in Session.Instance.Game.kernel.Matchs)
                 {
-                    foreach (KeyValuePair<Media, Journalist> j in m.journalists)
+                    foreach (KeyValuePair<Media, Journalist> j in m.medias)
                     {
                         if (j.Value == this)
                         {
@@ -76,7 +76,7 @@ namespace TheManager
         {
             get
             {
-                return CommentedGames.Count;
+                return Games.Count;
             }
         }
 

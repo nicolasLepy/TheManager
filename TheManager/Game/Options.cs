@@ -14,8 +14,6 @@ namespace TheManager
         [DataMember]
         private List<Tournament> _tournamentsToExport;
 
-        [DataMember]
-        public bool ExportEnabled { get; set; }
         public List<Tournament> tournamentsToExport { get => _tournamentsToExport; }
 
         [DataMember]
@@ -34,7 +32,6 @@ namespace TheManager
 
         public Options()
         {
-            ExportEnabled = false;
             _tournamentsToExport = new List<Tournament>();
             _transfersEnabled = false;
             _simulateGames = false;
