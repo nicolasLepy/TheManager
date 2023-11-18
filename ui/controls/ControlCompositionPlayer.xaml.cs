@@ -28,7 +28,7 @@ namespace TheManager_GUI.controls
         public SolidColorBrush JerseyColor { get; set; }
         public SolidColorBrush JerseyTextColor { get; set; }
 
-        public ControlCompositionPlayer(Player player, SolidColorBrush backgroundColor, SolidColorBrush frontColor)
+        public ControlCompositionPlayer(Player player, SolidColorBrush backgroundColor, SolidColorBrush frontColor, float sizeMultiplier)
         {
             InitializeComponent();
             this.PlayerName = player.ShortName;
@@ -42,6 +42,14 @@ namespace TheManager_GUI.controls
             {
                 this.JerseyTextColor = FindResource(StyleDefinition.solidColorBrushColorLight) as SolidColorBrush;
             }
+
+            textPlayer.FontSize *= sizeMultiplier;
+            textNumber.FontSize *= sizeMultiplier;
+            grid.MinHeight *= sizeMultiplier;
+            grid.MaxHeight *= sizeMultiplier;
+            grid.MinWidth *= sizeMultiplier;
+            grid.MaxWidth *= sizeMultiplier;
+
             DataContext = this;
         }
     }

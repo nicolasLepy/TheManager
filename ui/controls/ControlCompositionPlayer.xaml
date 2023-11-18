@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TheManager_GUI.controls"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="100">
-	<Grid MinWidth="60" MaxWidth="60" MinHeight="60" MaxHeight="60">
+	<Grid x:Name="grid" MinWidth="60" MaxWidth="60" MinHeight="60" MaxHeight="60">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="0.05*"/>
 			<RowDefinition Height="0.6*"/>

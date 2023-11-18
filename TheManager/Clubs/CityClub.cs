@@ -600,10 +600,8 @@ namespace TheManager
                     Calendar.Hour(game);
                     Session.Instance.Game.kernel.AddFriendlyGame(game);
                     game.CheckConflicts();
-                    Console.WriteLine(game.ToString() + " : " + (!Utils.CompareDates(game.day, gameDate)));
                     if(!Utils.CompareDates(game.day, gameDate) || adv == this || Utils.IsBefore(game.day, Session.Instance.Game.date.AddDays(1)))
                     {
-                        Console.WriteLine("Cancelled...");
                         Session.Instance.Game.kernel.CancelFriendlyGame(game);
                     }
                 }

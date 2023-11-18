@@ -2220,5 +2220,26 @@ namespace TheManager
                 }
             }
         }
+
+        /// <summary>
+        /// Check if tournament schedule is valid (especially useful for cups with variable rounds count)
+        /// </summary>
+        public bool CheckTournamentScheduleIsValid()
+        {
+            bool isValid = true;
+            for(int i = 0; i < rounds.Count-1; i++)
+            {
+                Round round = rounds[i];
+                Round nextRound = rounds[i + 1];
+                isValid = isValid && Utils.DaysNumberBetweenTwoDates(round.DateInitialisationRound(), round.DateEndRound()) > 0;
+                bool nextRoundNotTooClose = Utils.DaysNumberBetweenTwoDates(round.DateEndRound(), nextRound.DateInitialisationRound()) > 4;
+                if(nextRoundNotTooClose)
+                {
+                    Utils.Debug(String.Format("[{0}] {1} is too close to {2} ({3}-{4})", name, round.name, nextRound.name, round.DateInitialisationRound().ToShortDateString(), nextRound.DateInitialisationRound().ToShortDateString()));
+                }
+                isValid = isValid && nextRoundNotTooClose;
+            }
+            return isValid;
+        }
     }
 }

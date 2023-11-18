@@ -216,6 +216,7 @@ namespace TheManager_GUI
             //Tournament with national teams
             if (nationalTeamTournament)
             {
+                Club winner = tournament.Winner();
                 Dictionary<NationalTeam, int> clubCourses = new Dictionary<NationalTeam, int>();
                 foreach (Club club in tournament.Clubs())
                 {
@@ -224,10 +225,10 @@ namespace TheManager_GUI
                     {
                         if (tournament.rounds[i].clubs.Contains(club) && !clubCourses.ContainsKey(club as NationalTeam))
                         {
-                            clubCourses[club as NationalTeam] = i + 1;
+                            clubCourses[club as NationalTeam] = i + 1 + (club == winner ? 1 : 0);
                             if (!colorMap.ContainsKey(club.Country().ShapeNumber))
                             {
-                                colorMap.Add(club.Country().ShapeNumber, i + 1);
+                                colorMap.Add(club.Country().ShapeNumber, i + 1 + (club == winner ? 1 : 0));
                             }
                         }
                     }
@@ -235,6 +236,10 @@ namespace TheManager_GUI
                 for (int i = 0; i < tournament.rounds.Count; i++)
                 {
                     colorLegend.Add(i + 1, tournament.rounds[i].name);
+                }
+                if(winner != null)
+                {
+                    colorLegend.Add(tournament.rounds.Count+1, FindResource("str_winner").ToString());
                 }
             }
             else
@@ -254,6 +259,7 @@ namespace TheManager_GUI
                 }
             }
             map.Refresh(mapType, colorMap, colorLegend, zoomLevel, mapClubs);
+            host.Children.Clear();
             map.Show(host);
 
         }
@@ -284,7 +290,7 @@ namespace TheManager_GUI
                 comboRounds.SelectedIndex = 0;
             }
             Grid gridMap = new Grid();
-            gridMap.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0.2, GridUnitType.Star) });
+            gridMap.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0.15, GridUnitType.Star) });
             gridMap.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0.8, GridUnitType.Star) });
             gridMap.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.2, GridUnitType.Star) });
             gridMap.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.6, GridUnitType.Star) });

@@ -100,9 +100,9 @@
 					<TextBlock Text="{StaticResource str_internationalRankings}" Style="{StaticResource textTitle}" HorizontalAlignment="Center" Grid.Row="2"/>
 
 					<StackPanel Orientation="Horizontal" Grid.Row="3">
-						<Button x:Name="buttonFifa" Style="{StaticResource buttonMenuTitle}" Content="Classement FIFA" Margin="15" Click="buttonFifa_Click"/>
-						<Button x:Name="buttonAssociations" Style="{StaticResource buttonMenuTitle}" Content="Classement des associations" Margin="15" Click="buttonAssociations_Click"/>
-						<Button x:Name="buttonClubs" Style="{StaticResource buttonMenuTitle}" Content="Classement des clubs" Margin="15" Click="buttonClubs_Click"/>
+						<Button x:Name="buttonFifa" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_fifaRanking}" Margin="15" Click="buttonFifa_Click"/>
+						<Button x:Name="buttonAssociations" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_assoRanking}" Margin="15" Click="buttonAssociations_Click"/>
+						<Button x:Name="buttonClubs" Style="{StaticResource buttonMenuTitle}" Content="{StaticResource str_clubsRanking}" Margin="15" Click="buttonClubs_Click"/>
 					</StackPanel>
 
 					<StackPanel x:Name="associationsPanel" Orientation="Horizontal" Grid.Row="4">

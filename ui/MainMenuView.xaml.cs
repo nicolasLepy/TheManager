@@ -515,6 +515,13 @@ namespace TheManager_GUI
                     IsCurrentlyPlaying(tournament, date);
                 }
             }
+            if(e.Key == Key.C)
+            {
+                foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
+                {
+                    Console.WriteLine(String.Format("[{0}] {1}", t.name, t.CheckTournamentScheduleIsValid()));
+                }
+            }
         }
 
         public bool IsCurrentlyPlaying(Tournament tournament, DateTime date)

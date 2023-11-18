@@ -114,6 +114,7 @@
 	<system:String x:Key="str_RCByGame">RC/Game</system:String>
 	<system:String x:Key="str_fifaRanking">FIFA Ranking</system:String>
 	<system:String x:Key="str_assoRanking">Association ranking</system:String>
+	<system:String x:Key="str_clubsRanking">Clubs ranking</system:String>
 	<system:String x:Key="str_ranking">Ranking</system:String>
 	<system:String x:Key="str_searchPlayers">Search players</system:String>
 	<system:String x:Key="str_settings">Settings</system:String>

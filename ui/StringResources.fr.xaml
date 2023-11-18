@@ -115,6 +115,7 @@
 	<system:String x:Key="str_RCByGame">CR/Match</system:String>
 	<system:String x:Key="str_fifaRanking">Classement FIFA</system:String>
 	<system:String x:Key="str_assoRanking">Classement des associations</system:String>
+	<system:String x:Key="str_clubsRanking">Classement des clubs</system:String>
 	<system:String x:Key="str_ranking">Classement</system:String>
 	<system:String x:Key="str_searchPlayers">Recherche de joueurs</system:String>
 	<system:String x:Key="str_settings">Options</system:String>

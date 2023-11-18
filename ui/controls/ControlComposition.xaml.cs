@@ -50,8 +50,10 @@ namespace TheManager_GUI.controls
             if(this.Type == ControlCompositionType.Subs)
             {
                 RowDefinition first = grid.RowDefinitions[0];
+                RowDefinition second = grid.RowDefinitions[1];
                 grid.RowDefinitions.Clear();
                 grid.RowDefinitions.Add(first);
+                grid.RowDefinitions.Add(second);
             }
         }
 
@@ -94,7 +96,15 @@ namespace TheManager_GUI.controls
 
         public void FillSubs(List<Player> players)
         {
-            FillCompositionLine(0, players);
+            if (players.Count < 7)
+            {
+                FillCompositionLine(0, players);
+            }
+            else
+            {
+                FillCompositionLine(0, players.GetRange(0, 6));
+                FillCompositionLine(1, players.GetRange(6, players.Count-6));
+            }
         }
 
         public void Fill(List<Player> players)
@@ -113,10 +123,14 @@ namespace TheManager_GUI.controls
         private void FillCompositionLine(int row, List<Player> players)
         {
             Grid gridRow = new Grid();
-            for(int i = 0; i < players.Count; i++)
+            int cols = Type == ControlCompositionType.Subs ? 6 : players.Count;
+            for(int i = 0; i < cols; i++)
             {
                 gridRow.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                ControlCompositionPlayer control = new ControlCompositionPlayer(players[i], jersayBrushes[0], jersayBrushes[1]);
+            }
+            for (int i = 0; i < players.Count; i++)
+            {
+                ControlCompositionPlayer control = new ControlCompositionPlayer(players[i], jersayBrushes[0], jersayBrushes[1], Type == ControlCompositionType.Composition ? 1 : 0.63f);
                 control.Margin = new Thickness(10);
 
                 if (OnClickPlayer != null)

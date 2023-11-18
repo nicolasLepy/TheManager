@@ -58,14 +58,14 @@
 						</StackPanel>
 
 						<!--Menu Buttons-->
-						<Button x:Name="buttonPlay" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_advance}" Click="buttonPlay_Click"/>
-						<Button x:Name="buttonSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_1y}" Click="buttonSimulation_Click"/>
-						<Button x:Name="buttonLongSimulation" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_10y}" Click="buttonLongSimulation_Click"/>
-						<Button x:Name="buttonSearch" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/search.png" Content="{StaticResource str_searchPlayers}" Click="buttonSearch_Click"/>
-						<Button x:Name="buttonCalendar" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/calendar.png" Content="{StaticResource str_tournamentsSchedule}" Click="buttonCalendar_Click"/>
-						<Button x:Name="buttonOptions" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/options.png" Content="{StaticResource str_settings}" Click="buttonOptions_Click"/>
-						<Button x:Name="buttonSave" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/save.png" Content="{StaticResource str_save}" Click="buttonSave_Click"/>
-						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenu}" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
+						<Button x:Name="buttonPlay" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_advance}" Click="buttonPlay_Click"/>
+						<Button x:Name="buttonSimulation" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_1y}" Click="buttonSimulation_Click"/>
+						<Button x:Name="buttonLongSimulation" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/play.png" Content="{StaticResource str_10y}" Click="buttonLongSimulation_Click"/>
+						<Button x:Name="buttonSearch" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/search.png" Content="{StaticResource str_searchPlayers}" Click="buttonSearch_Click"/>
+						<Button x:Name="buttonCalendar" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/calendar.png" Content="{StaticResource str_tournamentsSchedule}" Click="buttonCalendar_Click"/>
+						<Button x:Name="buttonOptions" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/options.png" Content="{StaticResource str_settings}" Click="buttonOptions_Click"/>
+						<Button x:Name="buttonSave" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/save.png" Content="{StaticResource str_save}" Click="buttonSave_Click"/>
+						<Button x:Name="buttonQuit" Style="{StaticResource buttonIconMenuLeft}" Margin="0" tm:TMButtonProperties.Image="icons/quit.png" Content="{StaticResource str_quit}" Click="buttonQuit_Click"/>
 
 					</StackPanel>
 					<TextBlock Grid.Row="1" Style="{StaticResource textPlainCenter}" Text="{StaticResource str_tournaments}" Margin="5" VerticalAlignment="Bottom"/>
