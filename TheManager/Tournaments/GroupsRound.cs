@@ -17,15 +17,15 @@ using TheManager.Tournaments;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
-    public class GroupsRound : Round
+    public abstract class GroupsRound : Round
     {
         [DataMember]
-        private int _groupsNumber;
+        protected int _groupsNumber;
         [DataMember]
-        private List<Club>[] _groups;
+        protected List<Club>[] _groups;
 
         [DataMember]
-        private RandomDrawingMethod _randomDrawingMethod;
+        protected RandomDrawingMethod _randomDrawingMethod;
         /// <summary>
         /// Administrative level of the round.
         /// 0 : National round
@@ -33,38 +33,38 @@ namespace TheManager
         /// 2 : Departemental/District round
         /// </summary>
         [DataMember]
-        private int _administrativeLevel;
+        protected int _administrativeLevel;
         [DataMember]
-        private List<GeographicPosition> _groupsLocalisation;
+        protected List<GeographicPosition> _groupsLocalisation;
         [DataMember]
-        private List<string> _groupsNames;
+        protected List<string> _groupsNames;
         [DataMember]
-        private int _referenceClubsByGroup;
+        protected int _referenceClubsByGroup;
         [DataMember]
-        private int _nonGroupGamesByTeams;
+        protected int _nonGroupGamesByTeams;
         [DataMember]
-        private int _nonGroupGamesByGameday;
+        protected int _nonGroupGamesByGameday;
         [DataMember]
-        private bool _fusionGroupAndNoGroupGames;
+        protected bool _fusionGroupAndNoGroupGames;
 
         [DataMember]
-        private Dictionary<AdministrativeDivision, int> _relegationsByAdministrativeDivisions;
+        protected Dictionary<AdministrativeDivision, int> _relegationsByAdministrativeDivisions;
         /// <summary>
         /// For computation time optimization, save computed group qualifications
         /// </summary>
         [DataMember]
-        private List<Qualification>[] _storedGroupQualifications = null;
+        protected List<Qualification>[] _storedGroupQualifications = null;
 
         /// <summary>
         /// Contains ranking cache
         /// Currently cleared every day. Should be cleared when a game is finished
         /// </summary>
-        private List<Club>[] _cacheRanking;
+        protected List<Club>[] _cacheRanking;
 
         /// <summary>
         /// Used to share information between qualifications computation phases
         /// </summary>
-        private int __computationRelegationPlaces;
+        protected int __computationRelegationPlaces;
 
         public int referenceClubsByGroup => _referenceClubsByGroup;
 
@@ -154,9 +154,11 @@ namespace TheManager
             }
         }
 
+        protected abstract GroupsRound Clone();
+
         public override Round Copy()
         {
-            GroupsRound t = new GroupsRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
+            GroupsRound t = Clone();
             foreach (Match m in this.matches)
             {
                 t.matches.Add(m);
@@ -233,7 +235,7 @@ namespace TheManager
             return candidates;
         }
 
-
+        protected abstract List<Club> RankClubs(List<Club> clubs, List<Tiebreaker> tiebreakers, Dictionary<Club, List<PointDeduction>> pointsDeduction);
 
         /// <summary>
         /// 
@@ -257,7 +259,8 @@ namespace TheManager
                     }
                 }
             }
-            ranking.Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
+            ranking = RankClubs(ranking, _tiebreakers, pointsDeduction);
+            //ranking.Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
             return ranking;
         }
         
@@ -277,25 +280,9 @@ namespace TheManager
                 }
             }
 
-
             SetGroups();
 
-            if(_fusionGroupAndNoGroupGames)
-            {
-                _matches.AddRange(Calendar.GenerateCalendar(clubs, this));
-            }
-            else
-            {
-                for (int i = 0; i < _groupsNumber; i++)
-                {
-                    _matches.AddRange(Calendar.GenerateCalendar(_groups[i], this));
-                }
-                if (this.nonGroupGamesByTeams > 0)
-                {
-                    _matches.AddRange(Calendar.GenerateNonConferenceGames(this));
-
-                }
-            }
+            SpecialInitialize();
             CheckConflicts();
         }
 
@@ -550,7 +537,8 @@ namespace TheManager
                             rankingI.Add(Ranking(i)[ranking]);
                         }
 
-                        rankingI.Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
+                        rankingI = RankClubs(rankingI, _tiebreakers, pointsDeduction);
+                        //rankingI.Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
                         if (rankingI.IndexOf(groupConcerned) >= extraPromotions)
                         {
                             Utils.UpdateQualificationTournament(adjustedQualifications, ranking, tournament);
@@ -945,8 +933,10 @@ namespace TheManager
 
             for (int i = 0; i < maxClubsInGroup; i++)
             {
-                clubsByRanking[i].Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
-                clubsByRankingDescending[i].Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
+                clubsByRanking[i] = RankClubs(clubsByRanking[i], _tiebreakers, pointsDeduction);
+                clubsByRankingDescending[i] = RankClubs(clubsByRankingDescending[i], _tiebreakers, pointsDeduction);
+                //clubsByRanking[i].Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
+                //clubsByRankingDescending[i].Sort(new ClubRankingComparator(_matches, _tiebreakers, pointsDeduction));
             }
 
             for (int i = 0; i < _groupsNumber; i++)
@@ -1073,34 +1063,9 @@ namespace TheManager
             return (_clubs.Count / _groupsNumber) / 2;
         }
 
-        public List<Club> Ranking(int group, bool inverse=false)
-        {
-            List<Club> res = new List<Club>();
-            if(_cacheRanking == null || _cacheRanking.Length != _groups.Length) //TODO: Normally, _cacheRanking can't be null. To remove.
-            {
-                ClearCache();
-            }
-            if (_cacheRanking.Length > group && _cacheRanking[group].Count > 0)
-            {
-                res = new List<Club>(_cacheRanking[group]);
-                if(inverse)
-                {
-                    res.Reverse();
-                }
-            }
-            else
-            {
-                int gamesPlayed = matches.Count(p => p.Played);
-                res = new List<Club>(_groups[group]);
-                if (gamesPlayed > 0)
-                {
-                    ClubRankingComparator comparator = new ClubRankingComparator(matches, tiebreakers, pointsDeduction, RankingType.General, inverse);
-                    res.Sort(comparator);
-                }
-                _cacheRanking[group] = inverse ? Enumerable.Reverse(res).ToList() : res;
-            }
-            return res;
-        }
+        protected abstract void SpecialInitialize();
+
+        public abstract List<Club> Ranking(int group, bool inverse = false);
 
         public List<Club> RankingWithoutReserves(int ranking)
         {
