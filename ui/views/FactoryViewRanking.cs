@@ -18,16 +18,10 @@ namespace TheManager_GUI.Views
             {
                 res = new ViewRankingKnockout(round as KnockoutRound, sizeMultiplier+0.2);
             }
-            if (round as GroupsRound != null)
+            if (round as GroupsRound != null) //KEEP
             {
                 res = new ViewRankingGroups(round as GroupsRound, sizeMultiplier, focusOnTeam, team);
             }
-            if (round as InactiveRound != null)
-            {
-                res = new ViewRankingInactive(round as InactiveRound, sizeMultiplier, focusOnTeam, team);
-            }
-            //TODO: For inactive rounds
-
             return res;
         }
 

@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using TheManager;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 using TheManager_GUI.controls;
 using TheManager_GUI.Styles;
 using TheManager_GUI.ViewMisc;
@@ -87,6 +88,11 @@ namespace TheManager_GUI
                 for (int i = 0; i < round.MatchesDayNumber(); i++)
                 {
                     roundsShortcuts.Add(new KeyValuePair<Round, int>(round, i + 1));
+                }
+                //Let one item for inactive round to access rankings
+                if(round as GroupInactiveRound != null)
+                {
+                    roundsShortcuts.Add(new KeyValuePair<Round, int>(round, 0));
                 }
             }
         }
@@ -491,7 +497,7 @@ namespace TheManager_GUI
             {
                 _modifiers.SetAdministrativeRetrogradationsFr();
             }
-            if(e.Key == Key.T)
+            if (e.Key == Key.T)
             {
                 DateTime date = new DateTime(2021, 1, 1);
                 Tournament tournament = Session.Instance.Game.kernel.String2Tournament("Airtricity League");

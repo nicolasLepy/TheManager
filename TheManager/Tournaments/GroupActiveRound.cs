@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using TheManager.Comparators;
 
 namespace TheManager.Tournaments
 {
+    [DataContract(IsReference = true)]
     public class GroupActiveRound : GroupsRound
     {
         protected override void SpecialInitialize()

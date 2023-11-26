@@ -17,6 +17,11 @@ using TheManager.Tournaments;
 namespace TheManager
 {
     [DataContract(IsReference =true)]
+    [KnownType(typeof(GroupActiveRound))]
+    [System.Xml.Serialization.XmlInclude(typeof(GroupActiveRound))]
+    [KnownType(typeof(GroupInactiveRound))]
+    [System.Xml.Serialization.XmlInclude(typeof(GroupInactiveRound))]
+
     public abstract class GroupsRound : Round
     {
         [DataMember]
@@ -751,23 +756,12 @@ namespace TheManager
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
             //Check if bottom round is a group round or an inactive round (could be factorized)
             bool ok = false;
-            GroupsRound bottomGroupRound = country.League(tournament.level + 1)?.rounds[0] as GroupsRound;
+            GroupsRound bottomGroupRound = country.League(tournament.level + 1)?.rounds[0] as GroupsRound; //KEEP
             if (bottomGroupRound != null)
             {
                 for (int i = 0; i < bottomGroupRound.groupsCount; i++)
                 {
                     if (administrativeDivision.ContainsAdministrativeDivision(bottomGroupRound.GetGroupAdministrativeDivision(i)))
-                    {
-                        ok = true;
-                    }
-                }
-            }
-            InactiveRound bottomGroupInactive = country.League(tournament.level + 1)?.rounds[0] as InactiveRound;
-            if (bottomGroupInactive != null)
-            {
-                foreach(Club c in bottomGroupInactive.clubs)
-                {
-                    if(administrativeDivision.ContainsAdministrativeDivision(c.AdministrativeDivision()))
                     {
                         ok = true;
                     }

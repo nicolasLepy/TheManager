@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager.Exportation
 {
@@ -176,9 +177,9 @@ namespace TheManager.Exportation
                         k++;
                     }
                 }
-                if (t as InactiveRound != null)
+                if (t as GroupInactiveRound != null)
                 {
-                    InactiveRound ti = t as InactiveRound;
+                    GroupInactiveRound ti = t as GroupInactiveRound;
                     output.Append("<p><b>Clubs participants</b></p>");
                     List<Club> clubs = new List<Club>(ti.clubs);                    
                     foreach(Club club in clubs)

@@ -393,11 +393,11 @@ namespace TheManager
                 {
                     leagueClubs.AddRange((championshipRound as ChampionshipRound).Ranking());
                 }
-                if (championshipRound as InactiveRound != null)
+                if (championshipRound as GroupInactiveRound != null)
                 {
-                    leagueClubs.AddRange((championshipRound as InactiveRound).Ranking());
+                    leagueClubs.AddRange((championshipRound as GroupInactiveRound).FullRanking());
                 }
-                if (championshipRound as GroupsRound != null) //Only to store clubs from lower division (uncommon to have a league playing as groups without final phase)
+                if (championshipRound as GroupActiveRound != null) //Only to store clubs from lower division (uncommon to have a league playing as groups without final phase)
                 {
                     List<Club> roundClubs = new List<Club>(championshipRound.clubs);
                     if (leagueLevel == 1 || roundClubs.Count < 60)
@@ -441,9 +441,9 @@ namespace TheManager
                 {
                     cupWinners.Add(cup.Winner());
                 }
-                else
+                else if(cup.parent.Key == null) //This cup is not the regional path of a bigger cup
                 {
-                    cupWinners.Add(null);
+                    cupWinners.Add(null); //Placeholder to tell this cup expect a winner but is not finished
                 }
             }
 
@@ -483,10 +483,11 @@ namespace TheManager
                             indexQ = (indexQ == -1 && cupQualifications[q].roundId == cdq.Value && cupQualifications[q].tournament == cdq.Key) ? q : indexQ;
                         }
                         //Resort cup winners to match added qualification
-                        if(cupWinners.IndexOf(club) > -1 && cupWinners.IndexOf(club) < indexQ)
+                        if (cupWinners.IndexOf(club) > -1 && cupWinners.IndexOf(club) < indexQ)
                         {
                             indexQ--;
                         }
+                        
                         cupWinners.Remove(club);
                         cupWinners.Insert(indexQ, club);
                     }

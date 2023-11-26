@@ -1,14 +1,18 @@
-﻿using System;
+﻿using MathNet.Numerics.RootFinding;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using TheManager.Comparators;
 
 namespace TheManager.Tournaments
 {
+    [DataContract(IsReference =true)]
     public class GroupInactiveRound : GroupsRound
     {
+        [DataMember]
         private List<Club> _ranking;
 
         public void SetRanking(List<Club> ranking)
@@ -23,7 +27,9 @@ namespace TheManager.Tournaments
 
         protected override GroupsRound Clone()
         {
-            return new GroupInactiveRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
+            GroupInactiveRound clone = new GroupInactiveRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
+            clone._ranking = Ranking();
+            return clone;
         }
 
         protected override List<Club> RankClubs(List<Club> clubs, List<Tiebreaker> tiebreakers, Dictionary<Club, List<PointDeduction>> pointsDeduction)
@@ -33,7 +39,22 @@ namespace TheManager.Tournaments
             return copy;
         }
 
-        public override List<Club> Ranking(int group, bool inverse = false)
+        public void AddClub(Club club)
+        {
+            if(_ranking == null)
+            {
+                _ranking = new List<Club>();
+            }
+            _clubs.Add(club);
+            _ranking.Add(club);
+        }
+
+        public List<Club> FullRanking()
+        {
+            return new List<Club>(Ranking());
+        }
+
+        private List<Club> Ranking()
         {
             if (_ranking == null)
             {
@@ -47,8 +68,14 @@ namespace TheManager.Tournaments
                     Utils.Debug("Le classement aléatoire n'a pu être généré");
                 }
             }
+            return _ranking;
+        }
+
+        public override List<Club> Ranking(int group, bool inverse = false)
+        {
+            List<Club> fullRanking = Ranking();
             List<Club> ranking = new List<Club>(_groups[group]);
-            ranking.Sort((club1, club2) => _ranking.IndexOf(club1).CompareTo(_ranking.IndexOf(club2)));
+            ranking.Sort((club1, club2) => fullRanking.IndexOf(club1).CompareTo(fullRanking.IndexOf(club2)));
             if (inverse)
             {
                 ranking.Reverse();

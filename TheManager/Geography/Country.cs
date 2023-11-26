@@ -809,7 +809,7 @@ namespace TheManager
                             clubsCantBeSaved.Add((firstRound as ChampionshipRound).Ranking().Last());
                         }
                     }
-                    else if(firstRound as GroupsRound != null)
+                    else if(firstRound as GroupsRound != null) //KEEP
                     {
                         GroupsRound gFirstRound = firstRound as GroupsRound;
                         administrativeLevel = gFirstRound.administrativeLevel;
@@ -825,10 +825,6 @@ namespace TheManager
                                 }
                             }
                         }
-                    }
-                    else if(firstRound as InactiveRound != null)
-                    {
-                        administrativeLevel = administrativeLevels.Count > 0 ? administrativeLevels.Last() : 0;
                     }
                 }
                 administrativeLevels.Add(administrativeLevel);
