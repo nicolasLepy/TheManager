@@ -512,7 +512,7 @@ namespace TheManager
             }
         }
 
-        private static Club[] SwitchTeams(Club home, Club away)
+        private static Club[] SwitchTeamsTwoLevelsGap(Club home, Club away)
         {
             Tournament champH = home.Championship;
             Tournament champA = away.Championship;
@@ -599,6 +599,7 @@ namespace TheManager
         /// <summary>
         /// Get list of fixtures when the precedent round is a group round and no random drawing is performed
         /// TODO: Currently only work when there is two qualified teams by group
+        /// TODO: Maybe DrawNoRandomDrawing for GroupsRound can be merged with DrawNoRandomDrawing of ChampionshipRound
         /// </summary>
         /// <param name="round">The round to draw</param>
         /// <param name="previousRound">The previous round</param>
@@ -609,26 +610,38 @@ namespace TheManager
             List<Match> res = new List<Match>();
 
             RoundProgrammation programmation = round.programmation;
-            for (int i = 0; i < round.clubs.Count / 2; i++)
+            //Hacky way to manage round with only 2 clubs
+            if(round.clubs.Count == 2)
             {
-                Club home = i < round.clubs.Count / 4 ? round.clubs[i * 4] : round.clubs[((i- (round.clubs.Count / 4)) * 4) + 2];
-                Club away = i < round.clubs.Count / 4 ? round.clubs[(i * 4) + 3] : round.clubs[((i - (round.clubs.Count / 4)) * 4) + 1];
-
+                Club home = round.clubs[0];
+                Club away = round.clubs[1];
                 DateTime day = GetRoundProgrammationDate(round, programmation);
-
-                if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
-                {
-                    Club[] switchedTeams = SwitchTeams(home, away);
-                    home = switchedTeams[0];
-                    away = switchedTeams[1];
-                }
                 res.Add(new Match(home, away, day, round.phases == 1));
+            }
+            else
+            {
+                for (int i = 0; i < round.clubs.Count / 2; i++)
+                {
+                    Club home = i < round.clubs.Count / 4 ? round.clubs[i * 4] : round.clubs[((i - (round.clubs.Count / 4)) * 4) + 2];
+                    Club away = i < round.clubs.Count / 4 ? round.clubs[(i * 4) + 3] : round.clubs[((i - (round.clubs.Count / 4)) * 4) + 1];
+                    DateTime day = GetRoundProgrammationDate(round, programmation);
+                    res.Add(new Match(home, away, day, round.phases == 1));
+                }
+            }
+            if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
+            {
+                foreach (Match m in res)
+                {
+                    Club[] switchedTeams = SwitchTeamsTwoLevelsGap(m.home, m.away);
+                    m.home = switchedTeams[0];
+                    m.away = switchedTeams[1];
+                }
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
             for (int i = 1; i < round.phases; i++)
             {
-                CreateSecondLegKnockOutRound(res, round, programmation);
+                CreateSecondLegKnockOutRound(res, round, programmation); //TODO: So the best team must receive for the second leg
             }
 
             return res;
@@ -662,7 +675,7 @@ namespace TheManager
 
                 if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
-                    Club[] switchedTeams = SwitchTeams(home, away);
+                    Club[] switchedTeams = SwitchTeamsTwoLevelsGap(home, away);
                     home = switchedTeams[0];
                     away = switchedTeams[1];
                 }
@@ -915,7 +928,7 @@ namespace TheManager
 
                 if(round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
                 {
-                    Club[] switchedTeams = SwitchTeams(home, away);
+                    Club[] switchedTeams = SwitchTeamsTwoLevelsGap(home, away);
                     home = switchedTeams[0];
                     away = switchedTeams[1];
                 }

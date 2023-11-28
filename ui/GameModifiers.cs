@@ -67,12 +67,6 @@ namespace TheManager_GUI
             r.AddPointsDeduction(Session.Instance.Game.kernel.String2Club("Paris Saint-Germain B"), SanctionType.Forfeit, Session.Instance.Game.date, 30);
         }
 
-        public void SetFrenchCupFinalScore()
-        {
-            Country fr = Session.Instance.Game.kernel.String2Country("France");
-            fr.Cups()[0].rounds.Last().matches[0].score2 = 5;
-        }
-
         public void SetAdministrativeRetrogradationsFr()
         {
             Country fr = Session.Instance.Game.kernel.String2Country("France");

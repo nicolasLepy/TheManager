@@ -573,7 +573,6 @@ namespace TheManager
         {
             List<Tournament> leagues = Leagues();
             int i = GetLastNationalLeague().level;
-            Console.WriteLine("[MaxLeagueLevelWithAdministrativeDivision] Last National League Level " + i);
             bool leagueWithoutTeams = false;
             int associationLevel = 0;
             while(!leagueWithoutTeams && i < leagues.Count)
@@ -590,7 +589,6 @@ namespace TheManager
                 //Division level can be null. Ex : Corse have only 1 association level unlike other associations
                 if(divisionLevel != null)
                 {
-                    Console.WriteLine(division.name + " at level " + associationLevel + " : " + divisionLevel.name);
                     foreach (Club c in round.clubs)
                     {
                         if (divisionLevel.ContainsAdministrativeDivision(c.AdministrativeDivision()))
@@ -603,7 +601,6 @@ namespace TheManager
                 {
                     i++;
                 }
-                Console.WriteLine("[MaxLeagueLevelWithAdministrativeDivision] " + i + " -> " + leagueWithoutTeams);
             }
             return i;
         }
@@ -611,40 +608,33 @@ namespace TheManager
         /// <summary>
         /// Preprocess administrative retrogradation by appliying changes to reserves due to retrogradation of fannion teams
         /// </summary>
-        public Dictionary<Club, Tournament> PreprocessAdministrativeRetrogradation(KeyValuePair<Club, Tournament> retrogradation, List<Tournament> leagues, List<Club>[] clubsByLeagues, List<int> administrativeLevels)
+        public Dictionary<Club, Tournament> PreprocessAdministrativeRetrogradation(Club club, Tournament retrogradationTournament, List<Tournament> leagues, List<Club>[] clubsByLeagues, List<int> administrativeLevels, bool bankruptcy)
         {
+            KeyValuePair<Club, Tournament> retrogradation = new KeyValuePair<Club, Tournament>(club, retrogradationTournament);
+            Tournament target = retrogradationTournament;
             Dictionary<Club, Tournament> newRetrogradations = new Dictionary<Club, Tournament>();
-            newRetrogradations.Add(retrogradation.Key, retrogradation.Value);
+            if(retrogradationTournament != null)
+            {
+                newRetrogradations.Add(retrogradation.Key, retrogradation.Value);
+            }
+            else
+            {
+                target = leagues[GetClubLevelInLeaguesHierarchy(club, clubsByLeagues)];
+            }
 
-            Club club = retrogradation.Key;
-            Console.WriteLine("[Preprocess] " + club.name);
-            Tournament target = retrogradation.Value;
             int clubLevel = -1;
             int targetIndex = target.level - 1;
             int maxLeagueLevelForThisAssociation = MaxLeagueLevelWithAdministrativeDivision(club.AdministrativeDivision());
-            Console.WriteLine("- max_league_level : " + maxLeagueLevelForThisAssociation);
             int targetIndexForReserves = Math.Min(targetIndex + 1, maxLeagueLevelForThisAssociation - 1);
             for (int i = 0; i < clubsByLeagues.Length && clubLevel == -1; i++)
             {
                 clubLevel = clubsByLeagues[i].Contains(club) ? i : clubLevel;
             }
 
-            //TODO: Add an other info to specify it's bankruptcy (to switch reserve team to fannion team)
-
             //Case bankruptcy : Fannion team is "deleted". B teams become A team (by retrogradation), C teams become B team (by retrogradation) ...
             //Last reserve is sent to bottom division available to the administrative division of the club
             //
             //Case not bankruptcy : Just throw the fannion team at the defined league position. Check to retrograde reserves to avoid having reserves higher than fanion team on the league structure
-            bool bankruptcy = false;
-
-            foreach(Club c in clubsByLeagues[targetIndex])
-            {
-                ReserveClub rc = c as ReserveClub;
-                if(rc != null && rc.FannionClub == club && rc.FannionClub.reserves[0] == rc)
-                {
-                    bankruptcy = true;
-                }
-            }
 
             CityClub cClub = club as CityClub;
             if(bankruptcy && cClub != null && cClub.reserves.Count > 0)
@@ -702,6 +692,7 @@ namespace TheManager
                 _administrativeRetrogradations.Remove(club);
             }
             _administrativeRetrogradations.Add(club, target);
+            ClearAdministrativeRetrogradationsCache();
             _cacheAdministrativeRetrogradationsChanges = null;
         }
 
@@ -830,10 +821,25 @@ namespace TheManager
                 administrativeLevels.Add(administrativeLevel);
             }
 
-            //For each retrogradation, check if this leads to other relegations (reserves). Iterate through these relegations
-            foreach (KeyValuePair<Club, Tournament> mainRetrogradation in _administrativeRetrogradations)
+            List<Club> allClubs = new List<Club>();
+            foreach(List<Club> allClubsLevel in clubsByLeagues)
             {
-                Dictionary<Club, Tournament> clubRetrogradations = PreprocessAdministrativeRetrogradation(mainRetrogradation, leagues, clubsByLeagues, administrativeLevels);
+                foreach(Club allClubLevel in allClubsLevel)
+                {
+                    if((allClubLevel as CityClub) != null)
+                    {
+                        allClubs.Add(allClubLevel);
+                    }
+                }
+            }
+
+            //For each retrogradation, check if this leads to other relegations (reserves). Iterate through these relegations
+            foreach(Club currentClub in allClubs)
+            //foreach (KeyValuePair<Club, Tournament> mainRetrogradation in _administrativeRetrogradations)
+            {
+                bool isBankruptcy = false;
+                Tournament tournamentRetrogradation = _administrativeRetrogradations.ContainsKey(currentClub) ? _administrativeRetrogradations[currentClub] : null;
+                Dictionary<Club, Tournament> clubRetrogradations = PreprocessAdministrativeRetrogradation(currentClub, tournamentRetrogradation, leagues, clubsByLeagues, administrativeLevels, isBankruptcy);
 
                 foreach (KeyValuePair<Club, Tournament> retrogradation in clubRetrogradations)
                 {
@@ -851,7 +857,7 @@ namespace TheManager
                     int targetLeagueIndex = leagues.IndexOf(retrogradation.Value);
                     clubsByLeagues[targetLeagueIndex].Add(club);
                     clubsByLeagues[clubLevel].Remove(club);
-                    Console.WriteLine("\n[Administrative Retrogradation] " + club.name + " (" + leagues[clubLevel].name + " -> " + leagues[targetLeagueIndex].name + ")");
+                    Console.WriteLine("[Administrative Retrogradation] " + club.name + " (" + leagues[clubLevel].name + " -> " + leagues[targetLeagueIndex].name + ")");
 
                     //On remonte un club qui respecte les règles de chaque division
                     for (int i = targetLeagueIndex; i > clubLevel; i--)
@@ -928,6 +934,16 @@ namespace TheManager
                 }
             }
             return clubsAssociation;
+        }
+
+        public int GetClubLevelInLeaguesHierarchy(Club club, List<Club>[] leagues)
+        {
+            int res = -1;
+            for(int i = 0; i < leagues.Length && res == -1; i++)
+            {
+                res = leagues[i].Contains(club) ? i : res;
+            }
+            return res;
         }
 
         /// <summary>

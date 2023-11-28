@@ -203,7 +203,7 @@ namespace TheManager_GUI.Views
                 {
                     color = StyleDefinition.slotPromotion;
                 }
-                else if ((clubNextLevel - roundLevel) > 1)
+                else if ( ((clubNextLevel - roundLevel) > 1) || (q.tournament.level == roundLevel && clubNextLevel > roundLevel) )
                 {
                     color = StyleDefinition.slotRetrogradation;
                 }

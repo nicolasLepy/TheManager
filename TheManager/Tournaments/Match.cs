@@ -183,8 +183,8 @@ namespace TheManager
         public Club home { get; set; }
         [DataMember]
         public Club away { get; set; }
-        public int score1 { get => _score1; set => _score1 = value; }
-        public int score2 { get => _score2; set => _score2 = value; }
+        public int score1 { get => _score1;}
+        public int score2 { get => _score2;}
         public List<MatchEvent> events { get => _events; }
         public List<Substitution> substitutions => _substitutions;
         public List<Player> compo1 { get => _compo1; }

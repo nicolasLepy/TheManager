@@ -700,7 +700,7 @@ namespace TheManager
                     }
 
                     //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
-                    if (c. remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
+                    if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
                     {
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
@@ -741,7 +741,7 @@ namespace TheManager
                 if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
                 {
                     Country ctry = kernel.LocalisationTournament(c) as Country;
-                    if(ctry != null && c.remainingYears == 1 && ctry.CountAdministrativeRetrogradations() > 0)
+                    if(ctry != null && c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
                     {
                         ctry.ApplyAdministrativeRetrogradations();
                     }
