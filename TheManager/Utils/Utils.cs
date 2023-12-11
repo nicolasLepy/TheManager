@@ -538,7 +538,7 @@ namespace TheManager
                         List<Qualification> upperQualifications = null;
                         List<Club> upperRanking = null;
                         ChampionshipRound cr = r as ChampionshipRound;
-                        GroupsRound gr = r as GroupsRound; //KEEP
+                        GroupsRound gr = r as GroupsRound;
                         if(cr != null)
                         {
                             upperQualifications = cr.GetQualifications();
@@ -596,7 +596,7 @@ namespace TheManager
         public static List<Club> GetFullRankingInversed(Round round, AdministrativeDivision association)
         {
             ChampionshipRound cRound = round as ChampionshipRound;
-            GroupsRound gRound = round as GroupsRound; //KEEP
+            GroupsRound gRound = round as GroupsRound;
             List<Club> ranking = new List<Club>();
             if(cRound != null)
             {

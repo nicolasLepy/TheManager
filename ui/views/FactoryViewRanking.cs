@@ -18,7 +18,7 @@ namespace TheManager_GUI.Views
             {
                 res = new ViewRankingKnockout(round as KnockoutRound, sizeMultiplier+0.2);
             }
-            if (round as GroupsRound != null) //KEEP
+            if (round as GroupsRound != null)
             {
                 res = new ViewRankingGroups(round as GroupsRound, sizeMultiplier, focusOnTeam, team);
             }

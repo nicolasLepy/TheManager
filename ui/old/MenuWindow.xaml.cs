@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -110,16 +111,18 @@ namespace TheManager_GUI
             this.Close();
         }
 
-        private void Avancer()
+        private bool Avancer()
         {
+            bool ok = true;
             List<Match> matchs = _partie.NextDay();
             if (matchs.Count > 0)
             {
                 Windows_AvantMatch wam = new Windows_AvantMatch(matchs, _partie.club);
                 wam.ShowDialog();
             }
-            _partie.UpdateTournaments();
+            ok = _partie.UpdateTournaments();
             Refresh();
+            return ok;
         }
 
         private void BtnAvancer_Click(object sender, RoutedEventArgs e)
@@ -357,69 +360,34 @@ namespace TheManager_GUI
 
             Country fr = Session.Instance.Game.kernel.String2Country("France");
 
-            Avancer();
-            while (!(_partie.date.Month == 5 && _partie.date.Day == 21))
+
+            bool ok = Avancer();
+            while (!(_partie.date.Month == 5 && _partie.date.Day == 21) && ok)
             {
-                Avancer();
+                ok = Avancer();
             }
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
             Utils.Debug("Total execution " + elapsedMs + "ms");
-            /*Console.WriteLine(fr.Name());
-            foreach(KeyValuePair<Club, Tournament> ra in fr.administrativeRetrogradations)
-            {
-                Console.WriteLine(ra.Key.name + " -> " + ra.Value.name);
-            }*/
-
-            /*
-            foreach(Club c in Session.Instance.Game.kernel.Clubs)
-            {
-                if(c.Country() == fr)
-                {
-                    Console.WriteLine("PRINT GAMES FOR " + c.name);
-                    List<Match> games = c.Games;
-                    games.Sort(new MatchDateComparator());
-                    DateTime currentDate = new DateTime(2000, 1, 1);
-                    foreach (Match m in games)
-                    {
-                        int daysDiff = Utils.DaysNumberBetweenTwoDates(currentDate, m.day);
-                        string alert = "";
-                        switch (daysDiff)
-                        {
-                            case 0:
-                                alert = "||| ";
-                                break;
-                            case 1:
-                                alert = "|| ";
-                                break;
-                            case 2:
-                                alert = "| ";
-                                break;
-                            default:
-                                alert = "";
-                                break;
-                        }
-                        Console.WriteLine(alert + m.day.ToShortDateString() + " [" + m.Tournament + "]" + m.home.name + " - " + m.away.name);
-                        currentDate = m.day;
-                    }
-                }
-            }*/
-
         }
 
         private void BtnSimuler2_Click(object sender, RoutedEventArgs e)
         {
-            for(int i = 0; i<10;i++)
+            bool ok = true;
+            for(int i = 0; i<10 && ok;i++)
             {
-                Avancer();
-                while (!(_partie.date.Month == 6 && _partie.date.Day == 13))
+                ok = Avancer();
+                while (!(_partie.date.Month == 6 && _partie.date.Day == 13) && ok)
                 {
-                    Avancer();
+                    ok = Avancer();
+                    if(!ok)
+                    {
+                        return;
+                    }
                 }
                 Refresh();
             }
             Refresh();
-
         }
 
         private void ListerCompetitions(ILocalisation localisation)

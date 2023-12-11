@@ -59,7 +59,7 @@ namespace TheManager
             if(!_rankings.ContainsKey(round))
             {
                 ChampionshipRound cr = round as ChampionshipRound;
-                GroupsRound gr = round as GroupsRound; //KEEP
+                GroupsRound gr = round as GroupsRound;
                 List<Club> roundRanking;
                 //TODO: Need a Ranking() method for each round type
                 if(cr != null)

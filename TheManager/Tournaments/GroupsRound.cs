@@ -756,7 +756,7 @@ namespace TheManager
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
             //Check if bottom round is a group round or an inactive round (could be factorized)
             bool ok = false;
-            GroupsRound bottomGroupRound = country.League(tournament.level + 1)?.rounds[0] as GroupsRound; //KEEP
+            GroupsRound bottomGroupRound = country.League(tournament.level + 1)?.rounds[0] as GroupsRound;
             if (bottomGroupRound != null)
             {
                 for (int i = 0; i < bottomGroupRound.groupsCount; i++)
