@@ -73,8 +73,8 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 | Recruitment tasks                                                     | 🟡 In progress |
 | **Miscellaneous**                                                     |				  |
 | Simulation serialization				                                | 🟢 OK |
-| Manage memory for long games                                          | 🔴 Not started |
-| Improve serialization to manage large objects graph                   | 🔴 Not started |
+| Manage memory for long games                                          | 🟡 In progress |
+| Improve serialization to manage large objects graph                   | 🟡 In progress |
 
 ## Authors
 Nicolas Lépy
