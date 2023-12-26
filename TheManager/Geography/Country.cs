@@ -732,6 +732,39 @@ namespace TheManager
             ClearAdministrativeRetrogradationsCache();
         }
 
+        /// <summary>
+        /// Rescrue the best possible club from a league to the upper league.
+        /// </summary>
+        /// <param name="leagueSystem">League system</param>
+        /// <param name="candidates">List of club candidates to be rescrued</param>
+        /// <param name="indexLevelRepechage">League index where a club is rescrued</param>
+        /// <param name="round">Source round where club is rescrued</param>
+        /// <param name="clubsCantBeSaved">List of club who can't be rescrued</param>
+        private void RescrueTeam(List<Club>[] leagueSystem, List<Club> candidates, int indexLevelRepechage, Round round, List<Club> clubsCantBeSaved)
+        {
+            bool found = false;
+            int j = 0;
+            Console.WriteLine(candidates.Count + " candidates");
+            while (!found && j < candidates.Count)
+            {
+                Club candidate = candidates[j];
+                ReserveClub candidateAsReserve = candidate as ReserveClub;
+                //TODO: Rules check (doublon ?)
+                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
+                {
+                    found = true;
+                    leagueSystem[indexLevelRepechage].Remove(candidate);
+                    leagueSystem[indexLevelRepechage - 1].Add(candidate);
+                    Console.WriteLine("[Repêchage] " + candidate.name + " (" + Leagues()[indexLevelRepechage].name + " -> " + Leagues()[indexLevelRepechage - 1].name + ")");
+                }
+                else
+                {
+                    Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + Leagues()[indexLevelRepechage].name + ")");
+                }
+                j++;
+            }
+        }
+
         public List<Club>[] GetAdministrativeRetrogradations()
         {
             if (_cacheAdministrativeRetrogradationsChanges != null)
@@ -863,14 +896,16 @@ namespace TheManager
                         Console.WriteLine("_____________________________");
                         Round round = leagues[i].rounds[0];
                         int administrativeLevel = administrativeLevels[i];
-                        int j = 0;
-                        bool found = false;
                         //Repechage candidates : filtering by association if necessary
                         List<Club> candidates = administrativeLevel == 0 ? clubsByLeagues[i] : FilterAssociation(clubsByLeagues[i], GetAdministrativeDivisionLevel(club.AdministrativeDivision(), administrativeLevel));
                         if (administrativeLevel > 0)
                         {
                             Console.WriteLine("[Remonte un tour régional] " + GetAdministrativeDivisionLevel(club.AdministrativeDivision(), administrativeLevel).name);
                         }
+                        RescrueTeam(clubsByLeagues, candidates, i, round, clubsCantBeSaved);
+                        /*
+                        int j = 0;
+                        bool found = false;
                         while (!found && j < candidates.Count)
                         {
                             Club candidate = candidates[j];
@@ -888,7 +923,7 @@ namespace TheManager
                                 Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + leagues[i].name + ")");
                             }
                             j++;
-                        }
+                        }*/
                     }
                 }
             }
@@ -920,11 +955,12 @@ namespace TheManager
                                 for (int t = 0; t < missingTeam; t++)
                                 {
                                     //Big duplicate
-                                    bool found = false;
-                                    int j = 0;
                                     int indexLevelRepechage = i + 1;
-                                    List<Club> candidates = round.administrativeLevel == 0 ? clubsByLeagues[indexLevelRepechage] : FilterAssociation(clubsByLeagues[indexLevelRepechage], association);
+                                    List <Club> candidates = round.administrativeLevel == 0 ? clubsByLeagues[indexLevelRepechage] : FilterAssociation(clubsByLeagues[indexLevelRepechage], association);
+                                    RescrueTeam(clubsByLeagues, candidates, indexLevelRepechage, leagues[indexLevelRepechage].rounds[0], clubsCantBeSaved);
                                     Console.WriteLine(candidates.Count + " candidates");
+                                    /*bool found = false;
+                                    int j = 0;
                                     while (!found && j < candidates.Count)
                                     {
                                         Club candidate = candidates[j];
@@ -942,7 +978,7 @@ namespace TheManager
                                             Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + leagues[indexLevelRepechage].name + ")");
                                         }
                                         j++;
-                                    }
+                                    }*/
                                 }
                             }
                         }
