@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Xml.Linq;
 using TheManager;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 using TheManager_GUI.controls;
 using TheManager_GUI.Styles;
 using TheManager_GUI.ViewMisc;
@@ -87,6 +88,11 @@ namespace TheManager_GUI
                 for (int i = 0; i < round.MatchesDayNumber(); i++)
                 {
                     roundsShortcuts.Add(new KeyValuePair<Round, int>(round, i + 1));
+                }
+                //Let one item for inactive round to access rankings
+                if(round as GroupInactiveRound != null)
+                {
+                    roundsShortcuts.Add(new KeyValuePair<Round, int>(round, 0));
                 }
             }
         }
@@ -158,16 +164,25 @@ namespace TheManager_GUI
             view.Show();
         }
 
-        private void Play()
+        private bool Play(bool withAutosave)
         {
+            bool ok = true;
+
+            bool autosaveYear = _game.date.Year <= 2028;// || _game.date.Year % 4 == 0;
+            if (withAutosave && autosaveYear && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[5].rounds[0].DateEndRound().AddDays(-1)))
+            {
+                _game.AutoSave();
+            }
+
             List<Match> matchs = _game.NextDay();
             if (matchs.Count > 0)
             {
                 PreGameView view = new PreGameView(matchs, _game.club);
                 view.Show();
             }
-            _game.UpdateTournaments();
+            ok = _game.UpdateTournaments();
             Refresh();
+            return ok;
         }
 
         private void Refresh()
@@ -345,12 +360,13 @@ namespace TheManager_GUI
             bool oldSimulateGamesValue = _game.options.simulateGames;
             _noScreenRefresh = true;
             _game.options.simulateGames = true;
-            for (int i = 0; i < 10; i++)
+            bool ok = true;
+            for (int i = 0; i < 10 && ok; i++)
             {
-                Play();
-                while (!(_game.date.Month == 6 && _game.date.Day == 13))
+                ok = Play(true);
+                while (!(_game.date.Month == 6 && _game.date.Day == 13) && ok)
                 {
-                    Play();
+                    ok = Play(true);
                 }
             }
             _noScreenRefresh = oldNoScreenRefreshValue;
@@ -365,10 +381,10 @@ namespace TheManager_GUI
             _game.options.simulateGames = true;
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            Play();
-            while (!(_game.date.Month == 5 && _game.date.Day == 21))
+            bool ok = Play(true);
+            while (!(_game.date.Month == 5 && _game.date.Day == 21) && ok)
             {
-                Play();
+                ok = Play(true);
             }
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
@@ -384,7 +400,7 @@ namespace TheManager_GUI
         private void buttonPlay_Click(object sender, RoutedEventArgs e)
         {
             _modifiers.CheckDuplicates();
-            Play();
+            Play(false);
         }
 
         private void buttonWorldRankings_Click(object sender, RoutedEventArgs e)
@@ -491,7 +507,7 @@ namespace TheManager_GUI
             {
                 _modifiers.SetAdministrativeRetrogradationsFr();
             }
-            if(e.Key == Key.T)
+            if (e.Key == Key.T)
             {
                 DateTime date = new DateTime(2021, 1, 1);
                 Tournament tournament = Session.Instance.Game.kernel.String2Tournament("Airtricity League");

@@ -665,8 +665,14 @@ namespace TheManager
             }
         }
 
-        public void UpdateTournaments()
+        public void AutoSave()
         {
+            this.Save(String.Format("save_{0}.csave", this.date.Year));
+        }
+
+        public bool UpdateTournaments()
+        {
+            bool valid = true;
             foreach (Tournament c in _kernel.Competitions)
             {
                 int i = 0;
@@ -700,7 +706,7 @@ namespace TheManager
                     }
 
                     //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
-                    if (c. remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
+                    if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
                     {
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
@@ -737,11 +743,37 @@ namespace TheManager
                     }
                 }*/
 
+                if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
+                {
+                    Country ctry = kernel.LocalisationTournament(c) as Country;
+                    if (ctry != null && c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
+                    {
+                        List<Tournament> leagues = ctry.Leagues();
+                        List<Club>[] clubsByLeagues = new List<Club>[leagues.Count]; //Each leagues teams
+                        for (int ii = 0; ii < leagues.Count; ii++)
+                        {
+                            clubsByLeagues[ii] = new List<Club>(leagues[ii].nextYearQualified[0]);
+                        }
+                        bool isConformCurrent = ctry.CheckLeagueConformity(clubsByLeagues);
+                        bool isConformWithRetrogradations = ctry.CheckLeagueConformity(ctry.GetAdministrativeRetrogradations());
+                        if(!isConformCurrent)
+                        {
+                            Console.WriteLine("-- Leagues are not conform --");
+                            valid = false;
+                        }
+                        if(!isConformWithRetrogradations)
+                        {
+                            Console.WriteLine("-- Leagues are not conform after retrogradations --");
+                            valid = false;
+                        }
+                    }
+                }
+
                 //if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-2), _date))
                 if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
                 {
                     Country ctry = kernel.LocalisationTournament(c) as Country;
-                    if(ctry != null && c.remainingYears == 1 && ctry.CountAdministrativeRetrogradations() > 0)
+                    if(ctry != null && c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
                     {
                         ctry.ApplyAdministrativeRetrogradations();
                     }
@@ -757,6 +789,7 @@ namespace TheManager
                     Exports(c);
                 }
             }
+            return valid;
         }
 
         public List<Match> NextDay()

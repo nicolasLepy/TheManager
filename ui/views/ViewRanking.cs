@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using TheManager;
+using TheManager.Tournaments;
 using TheManager_GUI.Styles;
 
 namespace TheManager_GUI.Views
@@ -84,7 +85,7 @@ namespace TheManager_GUI.Views
             ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
             Country country = localisation as Country;
             Dictionary<Club, Qualification> continentalClubs = new Dictionary<Club, Qualification>();
-            if (country != null)
+            if (country != null && country.Continent.GetContinentalClubTournaments().Count > 0)
             {
                 int weekStartContinental = country.Continent.GetContinentalClubTournaments().First().rounds.First().programmation.initialisation.WeekNumber;
                 int weekEndContinental = country.Continent.GetContinentalClubTournaments().First().rounds.Last().programmation.end.WeekNumber;
@@ -162,19 +163,19 @@ namespace TheManager_GUI.Views
         private string InternationalQualificationColor(Qualification q)
         {
             string color = "";
-            if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound != null)
+            if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupActiveRound != null)
             {
                 color = StyleDefinition.slotQualification1a;
             }
-            else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupsRound == null)
+            else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupActiveRound == null)
             {
                 color = StyleDefinition.slotQualification1b;
             }
-            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound != null)
+            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupActiveRound != null)
             {
                 color = StyleDefinition.slotQualification2a;
             }
-            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupsRound == null)
+            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupActiveRound == null)
             {
                 color = StyleDefinition.slotQualification2b;
             }
@@ -202,7 +203,7 @@ namespace TheManager_GUI.Views
                 {
                     color = StyleDefinition.slotPromotion;
                 }
-                else if ((clubNextLevel - roundLevel) > 1)
+                else if ( ((clubNextLevel - roundLevel) > 1) || (q.tournament.level == roundLevel && clubNextLevel > roundLevel) )
                 {
                     color = StyleDefinition.slotRetrogradation;
                 }

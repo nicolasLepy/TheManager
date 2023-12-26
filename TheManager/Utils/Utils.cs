@@ -539,7 +539,6 @@ namespace TheManager
                         List<Club> upperRanking = null;
                         ChampionshipRound cr = r as ChampionshipRound;
                         GroupsRound gr = r as GroupsRound;
-                        InactiveRound ir = r as InactiveRound;
                         if(cr != null)
                         {
                             upperQualifications = cr.GetQualifications();
@@ -557,11 +556,6 @@ namespace TheManager
                             }
                             upperQualifications = gr.GetGroupQualifications(group);
                             upperRanking = gr.Ranking(group);
-                        }
-                        if (ir != null)
-                        {
-                            upperQualifications = ir.GetQualifications();
-                            upperRanking = ir.Ranking();
                         }
                         Qualification reserveQualification = upperQualifications[upperRanking.IndexOf(upperReserve)];
                         /*bool upperReserveCanBePromoted = QualificationCanLeadToNewLeague(reserveQualification, baseLevel-1, true);
@@ -603,7 +597,6 @@ namespace TheManager
         {
             ChampionshipRound cRound = round as ChampionshipRound;
             GroupsRound gRound = round as GroupsRound;
-            InactiveRound iRound = round as InactiveRound;
             List<Club> ranking = new List<Club>();
             if(cRound != null)
             {
@@ -612,10 +605,6 @@ namespace TheManager
             else if(gRound != null)
             {
                 ranking = GetFullRankingInversed(gRound, association);
-            }
-            else if(iRound != null)
-            {
-                ranking = GetFullRankingInversed(iRound, association);
             }
             return ranking;
         }
@@ -639,12 +628,6 @@ namespace TheManager
             return ranking;
         }
 
-        public static List<Club> GetFullRankingInversed(InactiveRound round, AdministrativeDivision association)
-        {
-            List<Club> ranking = round.Ranking();
-            ranking.Reverse();
-            return ranking;
-        }
 
         /// <summary>
         /// Clear all relegation places and replace them by qualifications to current tournament. Qualifications to play-offs are not affected

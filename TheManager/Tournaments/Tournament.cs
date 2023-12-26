@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Data;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 /*
  * TODO: Factorisations possibles :
@@ -1285,7 +1286,8 @@ namespace TheManager
                 if(makeRoundsInactive)
                 {
                     int associationLevel = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).administrativeLevel : 0;
-                    roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end, associationLevel);
+                    //roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end, associationLevel);
+                    roundCopy = new GroupInactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 }
                 for (int i = 0; i < roundCopy.qualifications.Count; i++)
                 {
@@ -1637,7 +1639,7 @@ namespace TheManager
         public Round GetLastChampionshipRound()
         {
             Round res = null;
-            if ((rounds[0] as InactiveRound) != null || (rounds[0] as GroupsRound) != null)
+            if ((rounds[0] as GroupsRound) != null)
             {
                 res = rounds[0]; 
             }
@@ -1856,22 +1858,155 @@ namespace TheManager
             }
         }
 
-        /// <summary>
-        /// Make the tournament inactive (when used decide to disable tournament)
-        /// </summary>
         public void DisableTournament()
         {
             List<Round> newRounds = new List<Round>();
             int i = 0;
             foreach(Round t in _rounds)
             {
+                if((t as KnockoutRound) == null)
+                {
+                    int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
+                    int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
+                    GroupInactiveRound newRound = new GroupInactiveRound(t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    newRound.rules.AddRange(t.rules);
+                    newRounds.Add(newRound);
+
+                    List<Qualification> qualificationsToAdd = new List<Qualification>(t.qualifications);
+
+                    ChampionshipRound cRound = t as ChampionshipRound;
+                    if (cRound != null)
+                    {
+                        qualificationsToAdd = cRound.GetQualifications();
+                    }
+
+                    foreach (Qualification q in qualificationsToAdd)
+                    {
+                        if (t as ChampionshipRound != null)
+                        {
+                            newRound.qualifications.Add(q);
+                        }
+                        else if (t as KnockoutRound != null)
+                        {
+                            int clubCount = t.clubs.Count;
+                            foreach (Tournament otherTournaments in Session.Instance.Game.kernel.Competitions)
+                            {
+                                foreach (Round otherRound in otherTournaments.rounds)
+                                {
+                                    foreach (Qualification otherQualifications in otherRound.qualifications)
+                                    {
+                                        if (otherQualifications.tournament == this && !otherQualifications.isNextYear && otherQualifications.roundId == i)
+                                        {
+                                            clubCount++;
+                                        }
+                                    }
+                                }
+                            }
+                            int numberOfGames = clubCount / 2;
+                            for (int j = numberOfGames * (q.ranking - 1); j < numberOfGames * q.ranking; j++)
+                            {
+                                newRound.qualifications.Add(new Qualification(j + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies));
+                            }
+                        }
+                        else if(t as GroupsRound != null)
+                        {
+                            newRound.qualifications.Add(q);
+                        }
+
+                    }
+                    foreach (RecoverTeams re in t.recuperedTeams)
+                    {
+                        newRound.recuperedTeams.Add(re);
+                    }
+
+                    foreach (Club c in t.clubs)
+                    {
+                        newRound.clubs.Add(c);
+                    }
+
+                    foreach (Prize d in t.prizes)
+                    {
+                        newRound.prizes.Add(d);
+                    }
+
+                    foreach (Rule r in t.rules)
+                    {
+                        newRound.rules.Add(r);
+                    }
+
+                    //UpdateRecoverTeamsRound(t, newRound);
+
+                    i++;
+                }
+                else
+                {
+                    newRounds.Add(t);
+                }
+            }
+
+            foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
+            {
+                if (c != this)
+                {
+                    foreach (Round t in c.rounds)
+                    {
+                        //Duplicated code
+                        for (int j = 0; j < t.recuperedTeams.Count; j++)
+                        {
+                            RecoverTeams re = t.recuperedTeams[j];
+                            if (_rounds.Contains(re.Source))
+                            {
+                                Round oldSource = re.Source as Round;
+                                int index = _rounds.IndexOf(re.Source as Round);
+                                re.Source = newRounds[index];
+                            }
+                            t.recuperedTeams[j] = re;
+                        }
+                        for (int j = 0; j < t.baseRecuperedTeams.Count; j++)
+                        {
+                            RecoverTeams re = t.baseRecuperedTeams[j];
+                            if (_rounds.Contains(re.Source))
+                            {
+                                Round oldSource = re.Source as Round;
+                                int index = _rounds.IndexOf(re.Source as Round);
+                                re.Source = newRounds[index];
+                                if (c.name.Contains("Coupe de France"))
+                                {
+                                    Console.WriteLine("[" + c.name + "][" + t.name + "] Base Replace " + oldSource.name + "(" + oldSource.GetType() + ") to " + (re.Source as Round).name + " (" + re.Source.GetType() + ")");
+                                }
+                            }
+                            t.baseRecuperedTeams[j] = re;
+                        }
+                    }
+                }
+            }
+
+            _rounds.Clear();
+            foreach (Round t in newRounds)
+            {
+                _rounds.Add(t);
+            }
+
+        }
+
+        /// <summary>
+        /// Make the tournament inactive
+        /// </summary>
+        public void DisableTournamentOld()
+        {
+            List<Round> newRounds = new List<Round>();
+            int i = 0;
+            foreach(Round t in _rounds)
+            {
                 int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
-                InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end, associationLevel);
+                // InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end, associationLevel);
+                int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
+                GroupInactiveRound newRound = new GroupInactiveRound(t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 newRound.rules.AddRange(t.rules);
                 newRounds.Add(newRound);
 
                 GroupsRound tGroup = t as GroupsRound;
-                if(tGroup != null)
+                /*if(tGroup != null)
                 {
                     if(tGroup.RandomDrawingMethod != RandomDrawingMethod.Administrative)
                     {
@@ -1897,81 +2032,81 @@ namespace TheManager
                     }
                     else
                     {
-                        /*
-                        Country c = Session.Instance.Game.kernel.LocalisationTournament(this) as Country;
-                        GroupsRound lowerNonDeactivatedDivisionGroups = null;
-                        for(int level = _level - 1; level > 0 && lowerNonDeactivatedDivisionGroups == null; level--)
-                        {
-                            lowerNonDeactivatedDivisionGroups = c.League(level).rounds[0] as GroupsRound;
-                        }
+                       // 
+                       // Country c = Session.Instance.Game.kernel.LocalisationTournament(this) as Country;
+                       // GroupsRound lowerNonDeactivatedDivisionGroups = null;
+                       // for(int level = _level - 1; level > 0 && lowerNonDeactivatedDivisionGroups == null; level--)
+                       // {
+                       //     lowerNonDeactivatedDivisionGroups = c.League(level).rounds[0] as GroupsRound;
+                       // }
                         
-                        //List administrative divisions of clubs in the round
-                        List<AdministrativeDivision> roundAdministrativeDivisions = new List<AdministrativeDivision>();
-                        List<AdministrativeDivision> roundAdministrativeDivisionsLowerDivisionLevel = new List<AdministrativeDivision>();
-                        foreach (Club tClub in t.clubs)
-                        {
-                            AdministrativeDivision adClub = tClub.Country().GetAdministrativeDivisionLevel(tClub.AdministrativeDivision(), tGroup.administrativeLevel);
-                            AdministrativeDivision adClubCompLevel = lowerNonDeactivatedDivisionGroups != null ? tClub.Country().GetAdministrativeDivisionLevel(tClub.AdministrativeDivision(), lowerNonDeactivatedDivisionGroups.administrativeLevel) : null;
-                            if (!roundAdministrativeDivisions.Contains(adClub))
-                            {
-                                roundAdministrativeDivisions.Add(adClub);
-                            }
-                            if (adClubCompLevel != null && !roundAdministrativeDivisionsLowerDivisionLevel.Contains(adClubCompLevel))
-                            {
-                                roundAdministrativeDivisionsLowerDivisionLevel.Add(adClubCompLevel);
-                            }
-                        }
+                       // //List administrative divisions of clubs in the round
+                       // List<AdministrativeDivision> roundAdministrativeDivisions = new List<AdministrativeDivision>();
+                       // List<AdministrativeDivision> roundAdministrativeDivisionsLowerDivisionLevel = new List<AdministrativeDivision>();
+                       // foreach (Club tClub in t.clubs)
+                       // {
+                       //     AdministrativeDivision adClub = tClub.Country().GetAdministrativeDivisionLevel(tClub.AdministrativeDivision(), tGroup.administrativeLevel);
+                       //     AdministrativeDivision adClubCompLevel = lowerNonDeactivatedDivisionGroups != null ? tClub.Country().GetAdministrativeDivisionLevel(tClub.AdministrativeDivision(), lowerNonDeactivatedDivisionGroups.administrativeLevel) : null;
+                       //     if (!roundAdministrativeDivisions.Contains(adClub))
+                       //     {
+                       //         roundAdministrativeDivisions.Add(adClub);
+                       //     }
+                       //     if (adClubCompLevel != null && !roundAdministrativeDivisionsLowerDivisionLevel.Contains(adClubCompLevel))
+                       //     {
+                       //         roundAdministrativeDivisionsLowerDivisionLevel.Add(adClubCompLevel);
+                       //     }
+                       // }
 
-                        int relegationsCount = 0;
-                        int promotionsCount = 0;
-                        Tournament upperTournament = null;
-                        Tournament lowerTournament = null;
-                        int baseRelegations = 0;
-                        int basePromotions = 0;
-                        foreach (Qualification q in t.qualifications)
-                        {
-                            if (q.isNextYear && q.roundId == 0 && q.tournament.level > level)
-                            {
-                                baseRelegations++;
-                                lowerTournament = q.tournament;
-                            }
-                            if (q.isNextYear && q.roundId == 0 && q.tournament.level < level)
-                            {
-                                basePromotions++;
-                                upperTournament = q.tournament;
-                            }
-                        }
+                       // int relegationsCount = 0;
+                       // int promotionsCount = 0;
+                       // Tournament upperTournament = null;
+                       // Tournament lowerTournament = null;
+                       // int baseRelegations = 0;
+                       // int basePromotions = 0;
+                       // foreach (Qualification q in t.qualifications)
+                       // {
+                       //     if (q.isNextYear && q.roundId == 0 && q.tournament.level > level)
+                       //     {
+                       //         baseRelegations++;
+                       //         lowerTournament = q.tournament;
+                       //     }
+                       //     if (q.isNextYear && q.roundId == 0 && q.tournament.level < level)
+                       //     {
+                       //         basePromotions++;
+                       //         upperTournament = q.tournament;
+                       //     }
+                       // }
 
-                        if(true || (lowerNonDeactivatedDivisionGroups != null && lowerNonDeactivatedDivisionGroups.RandomDrawingMethod != RandomDrawingMethod.Administrative))
-                        {
-                            relegationsCount = roundAdministrativeDivisions.Count * baseRelegations;
-                            promotionsCount = roundAdministrativeDivisions.Count * basePromotions;
+                       // if(true || (lowerNonDeactivatedDivisionGroups != null && lowerNonDeactivatedDivisionGroups.RandomDrawingMethod != RandomDrawingMethod.Administrative))
+                       // {
+                       //     relegationsCount = roundAdministrativeDivisions.Count * baseRelegations;
+                       //     promotionsCount = roundAdministrativeDivisions.Count * basePromotions;
 
-                        }
-                        else
-                        {
-                            //relegationsCount = int((roundAdministrativeDivisionsLowerDivisionLevel.Count / roundAdministrativeDivisionsLowerDivisionLevel.Count)) * baseRelegations;
-                            promotionsCount = 0;
-                                //si group_level.adm > lowerNonDeactivatedDivision.adm_level:
-			                    //    relegation = int ((nb adm group_level / nb adm lowerNonDeactivatedDivision.adm_level) * relegation)
-			                    //    promotions = int ((nb adm group_level / nb adm lowerNonDeactivatedDivision.adm_level) * relegation) //Assurer algo cohérent
-                        }
-                        //Apply relegations and promotions
-                        for (int p = 0; p < promotionsCount; p++)
-                        {
-                            newRound.qualifications.Add(new Qualification(p + 1, 0, upperTournament, true, 0));
-                        }
-                        for (int r = t.clubs.Count; r > t.clubs.Count - relegationsCount; r--)
-                        {
-                            newRound.qualifications.Add(new Qualification(r, 0, lowerTournament, true, 0));
-                        }
-                        */
+                       // }
+                       // else
+                       // {
+                       //     //relegationsCount = int((roundAdministrativeDivisionsLowerDivisionLevel.Count / roundAdministrativeDivisionsLowerDivisionLevel.Count)) * baseRelegations;
+                       //     promotionsCount = 0;
+                       //         //si group_level.adm > lowerNonDeactivatedDivision.adm_level:
+			                    ////    relegation = int ((nb adm group_level / nb adm lowerNonDeactivatedDivision.adm_level) * relegation)
+			                    ////    promotions = int ((nb adm group_level / nb adm lowerNonDeactivatedDivision.adm_level) * relegation) //Assurer algo cohérent
+                       // }
+                       // //Apply relegations and promotions
+                       // for (int p = 0; p < promotionsCount; p++)
+                       // {
+                       //     newRound.qualifications.Add(new Qualification(p + 1, 0, upperTournament, true, 0));
+                       // }
+                       // for (int r = t.clubs.Count; r > t.clubs.Count - relegationsCount; r--)
+                       // {
+                       //     newRound.qualifications.Add(new Qualification(r, 0, lowerTournament, true, 0));
+                       // }
+                       // 
                     }
 
-                }
+                }*/
                 
                 List<Qualification> qualificationsToAdd = new List<Qualification>(t.qualifications);
-                
+
                 ChampionshipRound cRound = t as ChampionshipRound;
                 if (cRound != null)
                 {
@@ -1980,7 +2115,7 @@ namespace TheManager
 
                 InactiveRound iRound = t as InactiveRound;
                 //If this round has less promotions than upper inactive round, then
-                if(iRound != null && _level > 1)
+                /*if(iRound != null && _level > 1)
                 {
                     InactiveRound upperIRound = (Session.Instance.Game.kernel.LocalisationTournament(this) as Country).League(_level - 1).rounds[0] as InactiveRound;
                     if(upperIRound != null)
@@ -2041,25 +2176,25 @@ namespace TheManager
                             }
                         }
                     }
-                }
+                }*/
 
                 foreach (Qualification q in qualificationsToAdd)
                 {
                     //TODO: Non optimal architecture
-                    /*if(t as GroupsRound != null)
-                    {
-                        List<Qualification>[] qualifications = new List<Qualification>[tGroup.groupsCount];
-                        for(int j = 0; j<tGroup.groupsCount; j++)
-                        {
-                            qualifications[i] = tGroup.GetGroupQualifications(j);
-                        }
-                        int clubsCount = tGroup.clubs.Count;
-                        Console.WriteLine("Deactivate " + t.name + " from " + this.name);
-                        for(int j = tGroup.groupsCount*(q.ranking-1); j< tGroup.groupsCount * q.ranking; j++)
-                        {
-                            newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear, q.qualifies));
-                        }
-                    }*/
+                    //if(t as GroupsRound != null)
+                    //{
+                    //    List<Qualification>[] qualifications = new List<Qualification>[tGroup.groupsCount];
+                    //    for(int j = 0; j<tGroup.groupsCount; j++)
+                    //    {
+                    //        qualifications[i] = tGroup.GetGroupQualifications(j);
+                    //    }
+                    //    int clubsCount = tGroup.clubs.Count;
+                    //    Console.WriteLine("Deactivate " + t.name + " from " + this.name);
+                    //    for(int j = tGroup.groupsCount*(q.ranking-1); j< tGroup.groupsCount * q.ranking; j++)
+                    //    {
+                    //        newRound.qualifications.Add(new Qualification(j+1, q.roundId, q.tournament, q.isNextYear, q.qualifies));
+                    //    }
+                    //}
                     if(t as ChampionshipRound != null)
                     {
                         newRound.qualifications.Add(q);

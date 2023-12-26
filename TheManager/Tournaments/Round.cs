@@ -227,8 +227,6 @@ namespace TheManager
     [System.Xml.Serialization.XmlInclude(typeof(ChampionshipRound))]
     [KnownType(typeof(KnockoutRound))]
     [System.Xml.Serialization.XmlInclude(typeof(KnockoutRound))]
-    [KnownType(typeof(InactiveRound))]
-    [System.Xml.Serialization.XmlInclude(typeof(InactiveRound))]
     [KnownType(typeof(GroupsRound))]
     [System.Xml.Serialization.XmlInclude(typeof(GroupsRound))]
     public abstract class Round : IRecoverableTeams

@@ -16,6 +16,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using TheManager;
+using TheManager.Tournaments;
 using TheManager_GUI.pages;
 using TheManager_GUI.Styles;
 using TheManager_GUI.views;
@@ -630,7 +631,7 @@ namespace TheManager_GUI
             {
                 Round t = arc.Value.rounds[arc.Value.rounds.Count - 1];
                 //If the final round was not inactive, we can make the palmares
-                if ((t as InactiveRound) == null)
+                if ((t as GroupInactiveRound) == null)
                 {
                     List<Club> finalPhaseClubs = baseTournament.isChampionship ? arc.Value.GetFinalPhasesClubs() : new List<Club>();
                     ChampionshipRound lastChampionshipRound = arc.Value.GetLastChampionshipRound() as ChampionshipRound;

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TheManager.Comparators;
+using TheManager.Tournaments;
 
 namespace TheManager
 {
@@ -57,17 +58,11 @@ namespace TheManager
         {
             if(!_rankings.ContainsKey(round))
             {
-                InactiveRound ir = round as InactiveRound;
                 ChampionshipRound cr = round as ChampionshipRound;
                 GroupsRound gr = round as GroupsRound;
                 List<Club> roundRanking;
                 //TODO: Need a Ranking() method for each round type
-                if (ir != null)
-                {
-                    roundRanking = ir.Ranking();
-                    _rankings.Add(round, new List<Club>[]{ roundRanking});
-                }
-                else if(cr != null)
+                if(cr != null)
                 {
                     roundRanking = new List<Club>(round.clubs);
                     roundRanking.Sort(new ClubRankingComparator(round.matches, round.tiebreakers, round.pointsDeduction));

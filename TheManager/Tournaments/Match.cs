@@ -183,8 +183,8 @@ namespace TheManager
         public Club home { get; set; }
         [DataMember]
         public Club away { get; set; }
-        public int score1 { get => _score1; }
-        public int score2 { get => _score2; }
+        public int score1 { get => _score1;}
+        public int score2 { get => _score2;}
         public List<MatchEvent> events { get => _events; }
         public List<Substitution> substitutions => _substitutions;
         public List<Player> compo1 { get => _compo1; }
@@ -531,7 +531,7 @@ namespace TheManager
                 _score1 = 0;
                 _score2 = 3;
                 int pointsSanctions = home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
-                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupActiveRound) != null || ((Round as ChampionshipRound) != null)))
                 {
                     Round.AddPointsDeduction(home, SanctionType.Forfeit, day, pointsSanctions);
                 }
@@ -541,12 +541,12 @@ namespace TheManager
                 _score1 = 3;
                 _score2 = 0;
                 int pointsSanctions = away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
-                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupActiveRound) != null || ((Round as ChampionshipRound) != null)))
                 {
                     Round.AddPointsDeduction(away, SanctionType.Forfeit, day, pointsSanctions);
                 }
             }
-            if (forfeitTeam == null && Tournament.isChampionship && ((Round as GroupsRound) != null || ((Round as ChampionshipRound) != null)))
+            if (forfeitTeam == null && Tournament.isChampionship && ((Round as GroupActiveRound) != null || ((Round as ChampionshipRound) != null)))
             {
                 int homePointsSanctions = home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
                 int awayPointsSanctions = away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;

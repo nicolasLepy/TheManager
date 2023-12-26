@@ -42,6 +42,11 @@ namespace TheManager.Tournaments
                     ? defaultMaxTeamsByGroup + 1
                     : defaultMaxTeamsByGroup;
                 defaultMaxTeamsByGroup += 2;
+                //If the round is inactive, keep all clubs of a same association into one group
+                if((_round as GroupInactiveRound) != null)
+                {
+                    defaultMaxTeamsByGroup = _round.clubs.Count;
+                }
                 Console.WriteLine("[MaxTeamsByGroup] " + defaultMaxTeamsByGroup);
                 foreach (AdministrativeDivision ad in hostCountry.GetAdministrativeDivisionsLevel(_round.administrativeLevel))
                 {

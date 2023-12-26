@@ -907,10 +907,9 @@ namespace TheManager
                                 int clubId = int.Parse(e3.Attribute("id").Value);
                                 Club c = _clubsId[clubId];
                                 ranking.Add(c);
-                                (archive.rounds[roundId] as InactiveRound).clubs.Add(c);
-                                (archive.rounds[roundId] as InactiveRound).Ranking().Add(c);
+                                (archive.rounds[roundId] as GroupInactiveRound).AddClub(c);
                             }
-                            (archive.rounds[roundId] as InactiveRound).SetRanking(ranking);
+                            (archive.rounds[roundId] as GroupInactiveRound).SetRanking(ranking);
                         }
                         t.previousEditions.Add(season, archive);
                     }
@@ -1056,7 +1055,7 @@ namespace TheManager
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupsRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
+                                round = new GroupActiveRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1088,7 +1087,8 @@ namespace TheManager
                                 {
                                     administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
                                 }
-                                round = new InactiveRound(nomTour, String2Hour(hourByDefault), initialisationDate, endDate, administrativeLevel);
+                                int groupsCount = 1;
+                                round = new GroupInactiveRound(nomTour, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
                             }
                             foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
                             {
@@ -1579,7 +1579,7 @@ namespace TheManager
                     {
                         foreach (AdministrativeDivision ad in c.administrativeDivisions)
                         {
-                            GenerateRegionalCup(c, ad, 1, false);
+                            //GenerateRegionalCup(c, ad, 1, false);
                         }
                     }
                 }
