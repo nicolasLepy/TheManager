@@ -20,7 +20,7 @@ namespace TheManager
         /// </summary>
         public int level { get => _level; }
 
-        public Manager(string firstName, string lastName, int level, DateTime birthDay, Country nationality) : base(firstName,lastName,birthDay, nationality)
+        public Manager(int id, string firstName, string lastName, int level, DateTime birthDay, Country nationality) : base(id, firstName,lastName,birthDay, nationality)
         {
             _level = level;
 

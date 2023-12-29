@@ -21,7 +21,8 @@ namespace TheManager
     [DataContract(IsReference =true)]
     public class MatchEvent
     {
-
+        [DataMember]
+        private int _id;
         [DataMember]
         private GameEvent _type;
         [DataMember]
@@ -33,6 +34,7 @@ namespace TheManager
         [DataMember]
         private Club _club;
 
+        public int id => _id;
         public GameEvent type => _type;
         public int minute => _minute;
         public int EventMinute

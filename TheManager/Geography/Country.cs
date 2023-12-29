@@ -57,6 +57,8 @@ namespace TheManager
     public class Country : ILocalisation
     {
         [DataMember]
+        private int _id;
+        [DataMember]
         private List<City> _cities;
         [DataMember]
         private List<Stadium> _stadiums;
@@ -203,8 +205,9 @@ namespace TheManager
             }
         }
 
-        public Country(string dbName, string name, Language language, int shapeNumber, int resetWeek, List<AdministrativeSanction> administrativeSanctionsDefinitions)
+        public Country(int id, string dbName, string name, Language language, int shapeNumber, int resetWeek, List<AdministrativeSanction> administrativeSanctionsDefinitions)
         {
+            _id = id;
             _dbName = dbName;
             _name = name;
             _language = language;
@@ -382,7 +385,8 @@ namespace TheManager
             foreach (Tournament t in Tournaments())
             {
                 GroupsRound gr = t.rounds[0] as GroupsRound;
-                if (gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative && t.level > res)
+                ChampionshipRound cr = t.rounds[0] as ChampionshipRound;
+                if (((gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative) || cr != null) && t.level > res)
                 {
                     res = t.level;
                 }

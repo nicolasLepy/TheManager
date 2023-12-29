@@ -81,6 +81,8 @@ namespace TheManager
     {
 
         [DataMember]
+        private int _id;
+        [DataMember]
         private string _name;
         [DataMember]
         private List<Round> _rounds;
@@ -123,6 +125,7 @@ namespace TheManager
         [DataMember]
         private KeyValuePair<AdministrativeDivision, Tournament> _parent;
 
+        public int id => _id;
         public string name { get => _name; }
         public Color color => _color;
         public List<Round> rounds { get => _rounds; }
@@ -174,8 +177,9 @@ namespace TheManager
 
         public KeyValuePair<AdministrativeDivision, Tournament> parent => _parent;
 
-        public Tournament(string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, KeyValuePair<AdministrativeDivision, Tournament> parent)
+        public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, KeyValuePair<AdministrativeDivision, Tournament> parent)
         {
+            _id = id;
             _rounds = new List<Round>();
             _name = name;
             _logo = logo;
@@ -676,7 +680,7 @@ namespace TheManager
                     {
                         newRoundTimes.Add(new GameDay(availableDates[dateIndex].WeekNumber, dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
                     }
-                    newRounds.Add(new KnockoutRound("Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
+                    newRounds.Add(new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), "Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
                     newRounds[newRounds.Count - 1].recuperedTeams.AddRange(worstTeams);
                     newRounds[newRounds.Count - 1].rules.AddRange(firstRound.rules);
                     newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, this, false, -1));
@@ -1277,7 +1281,7 @@ namespace TheManager
 
         public Tournament CopyForArchive(bool makeRoundsInactive)
         {
-            Tournament copy = new Tournament(_name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent);
+            Tournament copy = new Tournament(Session.Instance.Game.kernel.NextIdTournament(), _name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent);
             foreach (Round r in rounds)
             {
                 Round roundCopy = r.Copy();
@@ -1287,7 +1291,7 @@ namespace TheManager
                 {
                     int associationLevel = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).administrativeLevel : 0;
                     //roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end, associationLevel);
-                    roundCopy = new GroupInactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    roundCopy = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), roundCopy.name, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 }
                 for (int i = 0; i < roundCopy.qualifications.Count; i++)
                 {
@@ -1868,7 +1872,7 @@ namespace TheManager
                 {
                     int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
                     int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
-                    GroupInactiveRound newRound = new GroupInactiveRound(t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                     newRound.rules.AddRange(t.rules);
                     newRounds.Add(newRound);
 
@@ -1992,6 +1996,7 @@ namespace TheManager
         /// <summary>
         /// Make the tournament inactive
         /// </summary>
+        [Obsolete("Please use DisableTournament")]
         public void DisableTournamentOld()
         {
             List<Round> newRounds = new List<Round>();
@@ -2001,7 +2006,7 @@ namespace TheManager
                 int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
                 // InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end, associationLevel);
                 int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
-                GroupInactiveRound newRound = new GroupInactiveRound(t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 newRound.rules.AddRange(t.rules);
                 newRounds.Add(newRound);
 

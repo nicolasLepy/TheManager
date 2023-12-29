@@ -415,7 +415,7 @@ namespace TheManager_GUI
 
                 Session.Instance.Game.club = selectedClub as CityClub;
                 Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(selectedClub.Country()));
-                Manager manager = new Manager(firstName, lastName, 70, birthday, selectedCountry);
+                Manager manager = new Manager(Session.Instance.Game.kernel.NextIdPerson(), firstName, lastName, 70, birthday, selectedCountry);
                 Session.Instance.Game.club.ChangeManager(manager);
                 MainMenuView view = new MainMenuView();
                 view.Show();

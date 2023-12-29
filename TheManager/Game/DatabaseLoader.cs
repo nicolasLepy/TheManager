@@ -300,7 +300,7 @@ namespace TheManager
                 {
                     string name = e2.Attribute("nom").Value;
                     Country country = _kernel.String2Country(e2.Attribute("pays").Value);
-                    Media m = new Media(name, country);
+                    Media m = new Media(_kernel.NextIdMedia(), name, country);
                     _kernel.medias.Add(m);
 
                     foreach (XElement e3 in e2.Descendants("Journaliste"))
@@ -327,7 +327,7 @@ namespace TheManager
                         {
                             Utils.Debug(e3.Attribute("ville").Value + " n'est pas une ville.");
                         }
-                        Journalist j = new Journalist(firstName, lastName, age, city, offset, isNational);
+                        Journalist j = new Journalist(_kernel.NextIdPerson(), firstName, lastName, age, city, offset, isNational);
                         m.journalists.Add(j);
                     }
 
@@ -392,7 +392,7 @@ namespace TheManager
                             break;
                     }
                     Country playerCountry = _kernel.String2Country(e2.Attribute("pays").Value);
-                    Player j = new Player(firstName, lastName, playerBirth, level, potential, playerCountry == null ? _kernel.String2Country("France") : playerCountry, position);
+                    Player j = new Player(_kernel.NextIdPerson(), firstName, lastName, playerBirth, level, potential, playerCountry == null ? _kernel.String2Country("France") : playerCountry, position);
                     if (club != null)
                     {
                         club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear, Utils.beginningYear + 5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
@@ -419,7 +419,7 @@ namespace TheManager
                     CityClub club = _kernel.String2Club(clubName) as CityClub;
                     string countryName = e2.Attribute("nationalite").Value;
                     Country country = _kernel.String2Country(countryName);
-                    Manager manager = new Manager(firstName, lastName, level, new DateTime(1970, 1, 1), country);
+                    Manager manager = new Manager(_kernel.NextIdPerson(), firstName, lastName, level, new DateTime(1970, 1, 1), country);
                     club.manager = manager;
                 }
             }
@@ -448,7 +448,7 @@ namespace TheManager
                         float lat = float.Parse(e2.Attribute("Latitude").Value, CultureInfo.InvariantCulture);
                         float lon = float.Parse(e2.Attribute("Longitude").Value, CultureInfo.InvariantCulture);
                         string country = e2.Attribute("Country").Value;
-                        _kernel.DbCountryName2Country(country).cities.Add(new City(name, population, lat, lon));
+                        _kernel.DbCountryName2Country(country).cities.Add(new City(_kernel.NextIdCity(), name, population, lat, lon));
                     }
                 }
 
@@ -541,14 +541,14 @@ namespace TheManager
                 string worldName = e.Attribute("name").Value;
                 string worldLogo = e.Attribute("logo").Value;
                 int worldResetWeek = int.Parse(e.Attribute("reset_week").Value);
-                Continent world = new Continent(worldName, worldLogo, worldResetWeek);
+                Continent world = new Continent(_kernel.NextIdContinent(), worldName, worldLogo, worldResetWeek);
                 _kernel.world = world;
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
                     string continentLogo = e2.Attribute("logo").Value;
                     int continentResetWeek = int.Parse(e2.Attribute("reset_week").Value);
-                    Continent c = new Continent(continentName, continentLogo, continentResetWeek);
+                    Continent c = new Continent(_kernel.NextIdContinent(), continentName, continentLogo, continentResetWeek);
                     
                     foreach (XElement e3 in e2.Descendants("Country"))
                     {
@@ -591,7 +591,7 @@ namespace TheManager
                             }
                         }
 
-                        Country p = new Country(countrydBName, countryName, l, countryShape, countryResetWeek, sanctions);
+                        Country p = new Country(_kernel.NextIdCountry(), countrydBName, countryName, l, countryShape, countryResetWeek, sanctions);
                         foreach (XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -599,7 +599,7 @@ namespace TheManager
                             float lat = float.Parse(e4.Attribute("Latitute").Value);
                             float lon = float.Parse(e4.Attribute("Longitude").Value);
 
-                            City v = new City(cityName, population, lat, lon);
+                            City v = new City(_kernel.NextIdCity(), cityName, population, lat, lon);
                             p.cities.Add(v);
                         }
 
@@ -703,7 +703,7 @@ namespace TheManager
                     int capacity = int.Parse(e2.Attribute("capacite").Value);
                     string cityName = e2.Attribute("ville").Value;
                     City v = _kernel.String2City(cityName);
-                    Stadium s = new Stadium(name, capacity, v);
+                    Stadium s = new Stadium(_kernel.NextIdStadium(), name, capacity, v);
                     v.Country().stadiums.Add(s);
                 }
             }
@@ -783,7 +783,7 @@ namespace TheManager
                             {
                                 capacite = supporters > 0 ? (int)(supporters * 1.5) : city.Population / 10;
                             }
-                            stadium = new Stadium(stadiumName, capacite, city);
+                            stadium = new Stadium(_kernel.NextIdStadium(), stadiumName, capacite, city);
                             if(city != null)
                             {
                                 AddStadium(stadium);
@@ -825,7 +825,7 @@ namespace TheManager
                         reputation = centreFormation;
                         
                         bool equipePremiere = true;
-                        Club c = new CityClub(name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, goalSong, equipePremiere, administrativeDivision, status);
+                        Club c = new CityClub(id, name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, goalSong, equipePremiere, administrativeDivision, status);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -847,7 +847,7 @@ namespace TheManager
 
                         if (stadium == null)
                         {
-                            stadium = new Stadium("Stade de " + shortName, 75000, null);
+                            stadium = new Stadium(_kernel.NextIdStadium(), "Stade de " + shortName, 75000, null);
                         }
                         int formationFacilities = int.Parse(e2.Attribute("centreFormation").Value);
                         string logo = country.Flag;
@@ -868,9 +868,9 @@ namespace TheManager
                         }
 
                         points = formationFacilities;
-                        Manager entraineur = new Manager(country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
+                        Manager entraineur = new Manager(_kernel.NextIdPerson(), country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
-                        Club c = new NationalTeam(name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalSong, points);
+                        Club c = new NationalTeam(id, name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalSong, points);
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -956,7 +956,7 @@ namespace TheManager
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Console.WriteLine(name);
-                        Tournament tournament = new Tournament(name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, new KeyValuePair<AdministrativeDivision, Tournament>());
+                        Tournament tournament = new Tournament(_kernel.NextIdTournament(), name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, new KeyValuePair<AdministrativeDivision, Tournament>());
                         if (tournamentRuleStr != null)
                         {
                             TournamentRule tRule;
@@ -996,7 +996,7 @@ namespace TheManager
                         {
                             Round round = null;
                             string type = e3.Attribute("type").Value;
-                            string nomTour = e3.Attribute("nom").Value;
+                            string roundName = e3.Attribute("nom").Value;
                             int phases = int.Parse(e3.Attribute("phases").Value);
                             string hourByDefault = e3.Attribute("heureParDefaut").Value;
                             int keepRankingFromPreviousRound = e3.Attribute("keep_ranking_from_previous_round") != null ? int.Parse(e3.Attribute("keep_ranking_from_previous_round").Value) : -1;
@@ -1027,7 +1027,7 @@ namespace TheManager
                             if (type == "championnat")
                             {
                                 int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
-                                round = new ChampionshipRound(nomTour, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
+                                round = new ChampionshipRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
                             }
                             else if (type == "elimination")
                             {
@@ -1041,7 +1041,7 @@ namespace TheManager
                                 {
                                     noRandomDrawing = e3.Attribute("noRandomDrawing").Value == "true";
                                 }
-                                round = new KnockoutRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), phases, initialisationDate, endDate, method, noRandomDrawing, gamesPriority);
+                                round = new KnockoutRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), dates, new List<TvOffset>(), phases, initialisationDate, endDate, method, noRandomDrawing, gamesPriority);
                             }
                             else if (type == "poules")
                             {
@@ -1055,7 +1055,7 @@ namespace TheManager
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupActiveRound(nomTour, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1088,7 +1088,7 @@ namespace TheManager
                                     administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
                                 }
                                 int groupsCount = 1;
-                                round = new GroupInactiveRound(nomTour, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
+                                round = new GroupInactiveRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
                             }
                             foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
                             {
@@ -1124,7 +1124,7 @@ namespace TheManager
                                     {
                                         nameAddon = " E"; divider = 4.5f;
                                     }
-                                    club = new ReserveClub(firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
+                                    club = new ReserveClub(clubId, firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
                                     int newId = NextClubId();
                                     _clubsId[newId] = club;
                                     _kernel.Clubs.Add(club);
@@ -1439,7 +1439,7 @@ namespace TheManager
                         Country country = cityClub.Championship != null ? Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country : _kernel.world.continents[1].countries[0];
                         if (country.cities.Count == 0)
                         {
-                            country.cities.Add(new City(country.Name(), 0, 0, 0));
+                            country.cities.Add(new City(_kernel.NextIdCity(), country.Name(), 0, 0, 0));
                         }
                         cityClub.city = country.cities[0];
                         cityClub.stadium.city = country.cities[0];
@@ -1455,7 +1455,7 @@ namespace TheManager
                     cityClub.DispatchPlayersInReserveTeams();
                     cityClub.GetSponsor();
 
-                    Manager manager = new Manager(cityClub.city.Country().language.GetFirstName(), cityClub.city.Country().language.GetLastName(), cityClub.formationFacilities, new DateTime(1970, 1, 1), cityClub.city.Country());
+                    Manager manager = new Manager(_kernel.NextIdPerson(), cityClub.city.Country().language.GetFirstName(), cityClub.city.Country().language.GetLastName(), cityClub.formationFacilities, new DateTime(1970, 1, 1), cityClub.city.Country());
                     cityClub.ChangeManager(manager);
 
                 }
@@ -1497,7 +1497,7 @@ namespace TheManager
                             {
                                 level = 99;
                             }
-                            Player j = new Player(firstName, lastName, birthday, level, level + 2, nationalTeam.country, p);
+                            Player j = new Player(_kernel.NextIdPerson(), firstName, lastName, birthday, level, level + 2, nationalTeam.country, p);
                             _kernel.freePlayers.Add(j);
                         }
                     }
@@ -1659,7 +1659,7 @@ namespace TheManager
             }
             string cupName = "Coupe " + acr + tournamentName;
             int cupLevel = administrativeDivision != null ? 3 : 1; //c.Cups().Count + 1;
-            Tournament nationalCup = new Tournament(cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new KeyValuePair<AdministrativeDivision, Tournament>(administrativeDivision, null));
+            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new KeyValuePair<AdministrativeDivision, Tournament>(administrativeDivision, null));
 
             int roundCount = 0;
             int j = 1;
@@ -1683,7 +1683,7 @@ namespace TheManager
                 GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
                 GameDay beginDate = new GameDay( (availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
                 GameDay endDate = new GameDay( (availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
-                Round round = new KnockoutRound("Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
+                Round round = new KnockoutRound(_kernel.NextIdRound(), "Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
                 {
@@ -1732,7 +1732,7 @@ namespace TheManager
                 GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
                 GameDay beginDate = new GameDay((availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
                 GameDay endDate = new GameDay((availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
-                Round round = new KnockoutRound(name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
+                Round round = new KnockoutRound(_kernel.NextIdRound(), name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
                 {

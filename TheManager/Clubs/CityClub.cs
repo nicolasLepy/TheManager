@@ -169,7 +169,7 @@ namespace TheManager
             }
         }
 
-        public CityClub(string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalSong, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(name,manager,shortName,reputation,supporters,formationCenter,logo,stadium, goalSong, status)
+        public CityClub(int id, string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalSong, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(id, name,manager,shortName,reputation,supporters,formationCenter,logo,stadium, goalSong, status)
         {
             _budget = budget;
             _city = city;
@@ -304,7 +304,7 @@ namespace TheManager
             if(niveau < 1) niveau = 1;
              */
             
-            Player j = new Player(firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Country(), p);
+            Player j = new Player(Session.Instance.Game.kernel.NextIdPerson(), firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Country(), p);
             int year = Session.Instance.Random(Session.Instance.Game.date.Year + 1, Session.Instance.Game.date.Year + 5);
             contracts.Add(new Contract(j, j.EstimateWage(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
         }
@@ -625,7 +625,7 @@ namespace TheManager
                     string res = ArticleGenerator.Instance.GenerateArticle(oc, this);
                     if (res != "")
                     {
-                        Article article = new Article(res, "", new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day), 2);
+                        Article article = new Article(Session.Instance.Game.kernel.NextIdArticle(), res, "", new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day), 2);
                         Session.Instance.Game.articles.Add(article);
                     }
                 }

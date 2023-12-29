@@ -15,6 +15,8 @@ namespace TheManager
     public class Person
     {
         [DataMember]
+        private int _id;
+        [DataMember]
         private string _lastName;
         [DataMember]
         private string _firstName;
@@ -23,7 +25,7 @@ namespace TheManager
         [DataMember]
         private Country _nationality;
 
-
+        public int Id => _id;
         public string Name => String.Format("{0} {1}", _firstName, _lastName);
         public string ShortName => String.Format("{0}{1}", _firstName.Length > 0 ? _firstName[0].ToString() + ". " : "", _lastName);
         public string lastName { get => _lastName; }
@@ -49,8 +51,9 @@ namespace TheManager
             }
         }
 
-        public Person(string firstName, string lastName, DateTime birthDay, Country nationality)
+        public Person(int id, string firstName, string lastName, DateTime birthDay, Country nationality)
         {
+            _id = id;
             _firstName = firstName;
             _lastName = lastName;
             _birthDay = birthDay;

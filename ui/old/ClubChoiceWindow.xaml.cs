@@ -155,7 +155,7 @@ namespace TheManager_GUI
             {
                 Session.Instance.Game.club = club as CityClub;
                 Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Country()));
-                Manager manager = new Manager(prenom, nom, 70, birthday, nationality);
+                Manager manager = new Manager(Session.Instance.Game.kernel.NextIdPerson(), prenom, nom, 70, birthday, nationality);
                 Session.Instance.Game.club.ChangeManager(manager);
                 MainMenuView view = new MainMenuView();
                 //Windows_Menu wm = new Windows_Menu();

@@ -12,6 +12,9 @@ namespace TheManager
     {
 
         [DataMember]
+        private int _id;
+
+        [DataMember]
         private string _title;
         [DataMember]
         private string _content;
@@ -20,13 +23,15 @@ namespace TheManager
         [DataMember]
         private int _importance;
 
+        public int id => _id;
         public string title { get => _title; }
         public string content { get => _content; }
         public DateTime publication { get => _publication; }
         public int importance { get => _importance; }
 
-        public Article(string title, string content, DateTime publication, int importance)
+        public Article(int id, string title, string content, DateTime publication, int importance)
         {
+            _id = id;
             _title = title;
             _content = content;
             _publication = publication;

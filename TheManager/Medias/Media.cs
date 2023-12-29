@@ -43,6 +43,8 @@ namespace TheManager
     public class Media
     {
         [DataMember]
+        private int _id;
+        [DataMember]
         private string _name;
         [DataMember]
         private List<Journalist> _journalists;
@@ -51,13 +53,15 @@ namespace TheManager
         [DataMember]
         private Country _country;
 
+        public int id => _id;
         public string name { get => _name; }
         public List<Journalist> journalists { get => _journalists; }
         public List<TournamentCoverage> coverages { get => _coverages; }
         public Country country { get => _country; }
 
-        public Media(string name, Country country)
+        public Media(int id, string name, Country country)
         {
+            _id = id;
             _name = name;
             _journalists = new List<Journalist>();
             _coverages = new List<TournamentCoverage>();
@@ -149,7 +153,7 @@ namespace TheManager
             if (journalist == null)
             {
                 //TODO: Search in unemployed journalists
-                Journalist newJournalist = new Journalist(country.language.GetFirstName(), country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100, false);
+                Journalist newJournalist = new Journalist(Session.Instance.Game.kernel.NextIdPerson(), country.language.GetFirstName(), country.language.GetLastName(), Session.Instance.Random(28, 60), city, 100, false);
                 journalists.Add(newJournalist);
                 journalist = newJournalist;
             }

@@ -11,6 +11,8 @@ namespace TheManager
     public class City
     {
         [DataMember]
+        public int Id { get; set; }
+        [DataMember]
         public string Name { get; set; }
         [DataMember]
         public int Population { get; set; }
@@ -19,8 +21,9 @@ namespace TheManager
 
         private Country _country;
 
-        public City(string name, int population, float latitude, float longitude)
+        public City(int id, string name, int population, float latitude, float longitude)
         {
+            Id = id;
             _country = null;
             Name = name;
             Population = population;

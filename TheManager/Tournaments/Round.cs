@@ -232,6 +232,11 @@ namespace TheManager
     public abstract class Round : IRecoverableTeams
     {
         /// <summary>
+        /// Round ID
+        /// </summary>
+        [DataMember]
+        protected int _id;
+        /// <summary>
         /// Nom du tour
         /// </summary>
         [DataMember]
@@ -308,6 +313,7 @@ namespace TheManager
         [DataMember]
         protected Dictionary<Club, List<PointDeduction>> _pointsDeduction;
 
+        public int id => _id;
         public string name { get => _name; }
         public List<Club> clubs { get => _clubs; }
         public List<Match> matches { get => _matches; }
@@ -359,8 +365,9 @@ namespace TheManager
             }
         }
 
-        protected Round(string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
+        protected Round(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
         {
+            _id = id;
             _name = name;
             _clubs = new List<Club>();
             _matches = new List<Match>();

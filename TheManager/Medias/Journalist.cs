@@ -12,6 +12,8 @@ namespace TheManager
     {
 
         [DataMember]
+        private int _id;
+        [DataMember]
         private string _firstName;
         [DataMember]
         private string _lastName;
@@ -20,6 +22,7 @@ namespace TheManager
         [DataMember]
         private int _offset;
 
+        public int id => _id;
         public string firstName { get => _firstName; }
         public string lastName { get => _lastName; }
         [DataMember]
@@ -89,8 +92,9 @@ namespace TheManager
         /// <param name="baseCity">His assigned city</param>
         /// <param name="offset">His "offset" : he is more a replacement journalist</param>
         /// <param name="nationalReporter">Can intervene everywhere for prime time matches</param>
-        public Journalist(string firstName, string lastName, int age, City baseCity, int offset, bool nationalReporter)
+        public Journalist(int id, string firstName, string lastName, int age, City baseCity, int offset, bool nationalReporter)
         {
+            _id = id;
             isTaken = false;
             _firstName = firstName;
             _lastName = lastName;

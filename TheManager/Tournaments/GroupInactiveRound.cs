@@ -27,7 +27,7 @@ namespace TheManager.Tournaments
 
         protected override GroupsRound Clone()
         {
-            GroupInactiveRound clone = new GroupInactiveRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
+            GroupInactiveRound clone = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
             clone._ranking = Ranking();
             return clone;
         }
@@ -83,7 +83,7 @@ namespace TheManager.Tournaments
             return ranking;
         }
 
-        public GroupInactiveRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(name, hour, dates, offsets, groupsCount, phases, initialisation, end, keepRankingFromPreviousRound, randomDrawingMethod, administrativeLevel, fusionGroupAndNoGroupGames, nonGroupGamesByTeams, nonGroupGamesByGameday, gamesPriority)
+        public GroupInactiveRound(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(id, name, hour, dates, offsets, groupsCount, phases, initialisation, end, keepRankingFromPreviousRound, randomDrawingMethod, administrativeLevel, fusionGroupAndNoGroupGames, nonGroupGamesByTeams, nonGroupGamesByGameday, gamesPriority)
         {
 
         }

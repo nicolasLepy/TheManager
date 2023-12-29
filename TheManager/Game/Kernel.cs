@@ -65,7 +65,36 @@ namespace TheManager
         [DataMember]
         private List<Journalist> _freeJournalists;
 
-        
+        [DataMember]
+        private int _nextIdStadium = 0;
+        [DataMember]
+        private int _nextIdPerson = 0;
+        [DataMember]
+        private int _nextIdTournament = 0;
+        [DataMember]
+        private int _nextIdRound = 0;
+        [DataMember]
+        private int _nextIdArticle = 0;
+        [DataMember]
+        private int _nextIdMedia = 0;
+        [DataMember]
+        private int _nextIdCity = 0;
+        [DataMember]
+        private int _nextIdCountry = 0;
+        [DataMember]
+        private int _nextIdContinent = 0;
+
+        public int NextIdStadium() => ++_nextIdStadium;
+        public int NextIdPerson() => ++_nextIdPerson;
+        public int NextIdTournament() => ++_nextIdTournament;
+        public int NextIdRound() => ++_nextIdRound;
+        public int NextIdArticle() => ++_nextIdArticle;
+        public int NextIdMedia() => ++_nextIdMedia;
+        public int NextIdCity() => ++_nextIdCity;
+        public int NextIdCountry() => ++_nextIdCountry;
+        public int NextIdContinent() => ++_nextIdContinent;
+
+
 
         public List<Club> Clubs { get => _clubs; }
 

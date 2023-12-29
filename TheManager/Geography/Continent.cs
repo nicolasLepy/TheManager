@@ -80,6 +80,8 @@ namespace TheManager
         [DataMember]
         private List<Tournament> _tournaments;
         [DataMember]
+        private int _id;
+        [DataMember]
         private string _name;
         [DataMember]
         private string _logo;
@@ -126,6 +128,8 @@ namespace TheManager
         {
             return _tournaments;
         }
+
+        public int Id => _id;
 
         public string Name()
         {
@@ -192,8 +196,9 @@ namespace TheManager
             return res;
         }
 
-        public Continent(string name, string logo, int resetWeek)
+        public Continent(int id, string name, string logo, int resetWeek)
         {
+            _id = id;
             _name = name;
             _logo = logo;
             _countries = new List<Country>();

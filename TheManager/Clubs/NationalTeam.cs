@@ -24,7 +24,7 @@ namespace TheManager
         public double officialFifaPoints { get => _archivalFifaPoints[_archivalFifaPoints.Count-1]; }
         public List<double> archivalFifaPoints { get => _archivalFifaPoints; }
 
-        public NationalTeam(string name, Manager manager, string shortName,int reputation, int supporters, int formationFacilities, string logo, Stadium stadium, Country country, string goalSong, double fifaPoints) : base(name,manager, shortName,reputation,supporters,formationFacilities,logo,stadium, goalSong, ClubStatus.Professional)
+        public NationalTeam(int id, string name, Manager manager, string shortName,int reputation, int supporters, int formationFacilities, string logo, Stadium stadium, Country country, string goalSong, double fifaPoints) : base(id, name,manager, shortName,reputation,supporters,formationFacilities,logo,stadium, goalSong, ClubStatus.Professional)
         {
             _selected = new List<Player>();
             _country = country;

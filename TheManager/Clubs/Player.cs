@@ -186,7 +186,7 @@ namespace TheManager
             }
         }
 
-        public Player(string firstName, string lastName, DateTime birthday, int level, int potential, Country nationality, Position position) : base(firstName,lastName,birthday,nationality)
+        public Player(int id, string firstName, string lastName, DateTime birthday, int level, int potential, Country nationality, Position position) : base(id, firstName,lastName,birthday,nationality)
         {
             
             _level = level;

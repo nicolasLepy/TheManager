@@ -80,6 +80,8 @@ namespace TheManager
     public abstract class Club
     {
         [DataMember]
+        private int _id;
+        [DataMember]
         private string _name;
         [DataMember]
         private string _shortName;
@@ -108,6 +110,7 @@ namespace TheManager
         [DataMember]
         private string _goalSong;
 
+        public int id => _id;
         public string name { get => _name; }
         public Manager manager { get => _manager; set => _manager = value; }
         public float elo { get => _elo; }
@@ -413,8 +416,9 @@ namespace TheManager
             }
         }
 
-        protected Club(string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalSong, ClubStatus status)
+        protected Club(int id, string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalSong, ClubStatus status)
         {
+            _id = id;
             _name = name;
             _manager = manager;
             _shortName = shortName;

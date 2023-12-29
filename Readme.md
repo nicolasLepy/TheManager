@@ -51,20 +51,20 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 | --------------------------------------------------------------------- | ---------------- |
 | **World**                                                             |                  |
 | Tournaments rules                                                     | 🟢 OK           |
-| Improve game stability                                                | 🟡 In progress  |
-| Managers and staff                                                    | 🟡 In progress  |
+| Game stability                                                        | 🟡 In progress  |
 | Transferts                                                            | 🟡 In progress  |
 | **Game**                                                              |                 |
 | Detailed game simulation                                              | 🔴 Not started  |
 | Games in real-time                                                    | 🟡 In progress  |
-| Players evolution                                                     | 🟡 In progress  |
+| Players progression                                                   | 🟡 In progress  |
 | **Tournaments**                                                       |                 |
 | Hierarchical Competitions (promotion, relegation ...)                 | 🟢 OK  |
 | Automatically created domestic cup (qualifications and scheduling)    | 🟢 OK  |
 | International tournaments                                 			| 🟢 OK  |
 | International ranking                                 				| 🟢 OK  |
-| Specials rules (lower team at home for domestic cups...)              | 🟢 OK  |
+| Specials rules                                                        | 🟢 OK  |
 | **Club**                                                              |                 |
+| Managers and staff                                                    | 🟡 In progress  |
 | Evolution of club facilities                                          | 🟡 In progress  |
 | Financial control                                                     | 🔴 Not started  |
 | **Managing**                                                          |                 |

@@ -123,7 +123,7 @@ namespace TheManager
         {
             _storedGroupQualifications = new List<Qualification>[_groups.Length];
         }
-        public GroupsRound(string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(name, hour, dates, offsets, initialisation,end, phases, 0, keepRankingFromPreviousRound, gamesPriority)
+        public GroupsRound(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(id, name, hour, dates, offsets, initialisation,end, phases, 0, keepRankingFromPreviousRound, gamesPriority)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];

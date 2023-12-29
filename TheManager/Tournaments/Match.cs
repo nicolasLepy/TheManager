@@ -108,6 +108,8 @@ namespace TheManager
     public class Match
     {
         [DataMember]
+        private int _id;
+        [DataMember]
         private int _minute;
         [DataMember]
         private int _period;
@@ -176,6 +178,7 @@ namespace TheManager
         [DataMember]
         private bool _forfeit;
 
+        public int id => _id;
         public int attendance { get => _attendance; }
         [DataMember]
         public DateTime day { get; set; }
@@ -1406,7 +1409,7 @@ namespace TheManager
                 if (home == Session.Instance.Game.club || away == Session.Instance.Game.club)
                 {
                     string res = ArticleGenerator.Instance.GenerateArticle(this);
-                    Article article = new Article(res, "", new DateTime(day.Year, day.Month, day.Day), 2);
+                    Article article = new Article(Session.Instance.Game.kernel.NextIdArticle(), res, "", new DateTime(day.Year, day.Month, day.Day), 2);
                     Session.Instance.Game.articles.Add(article);
                 }
                 EndOfGame();

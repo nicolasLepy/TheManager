@@ -169,7 +169,8 @@ namespace TheManager_GUI
             bool ok = true;
 
             bool autosaveYear = _game.date.Year <= 2028;// || _game.date.Year % 4 == 0;
-            if (withAutosave && autosaveYear && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[5].rounds[0].DateEndRound().AddDays(-1)))
+            bool checkDate = (_game.kernel.String2Country("France").Leagues().Count > 5 && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[5].rounds[0].DateEndRound().AddDays(-1))) || (_game.kernel.String2Country("France").Leagues().Count < 5 && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[0].rounds[0].DateEndRound().AddDays(-1)));
+            if (withAutosave && autosaveYear && checkDate)
             {
                 _game.AutoSave();
             }
