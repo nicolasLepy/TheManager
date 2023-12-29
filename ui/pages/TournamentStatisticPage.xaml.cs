@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TheManager;
+using tm;
 using TheManager_GUI.Styles;
 
 namespace TheManager_GUI.pages

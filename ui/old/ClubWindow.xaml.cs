@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TheManager;
+using tm;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.views;
 

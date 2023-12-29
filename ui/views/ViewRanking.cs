@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TheManager;
-using TheManager.Tournaments;
+using tm;
+using tm.Tournaments;
 using TheManager_GUI.Styles;
 
 namespace TheManager_GUI.Views

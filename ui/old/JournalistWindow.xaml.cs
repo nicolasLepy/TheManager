@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using TheManager;
-using TheManager.Comparators;
+using tm;
+using tm.Comparators;
 
 namespace TheManager_GUI
 {
@@ -19,7 +19,7 @@ namespace TheManager_GUI
             List<Match> matchs = new List<Match>();
             foreach (Match m in Session.Instance.Game.kernel.Matchs)
             {
-                foreach(KeyValuePair<TheManager.Media, Journalist> j in m.medias)
+                foreach(KeyValuePair<tm.Media, Journalist> j in m.medias)
                 {
                     if (j.Value == journaliste)
                     {

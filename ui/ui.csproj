@@ -580,11 +580,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\TheManager\TheManager.csproj">
+    <ProjectReference Include="..\tm\tm.csproj">
       <Project>{c87d1486-6d8a-4041-afc6-f7f0f5bc6b4b}</Project>
-      <Name>TheManager</Name>
+      <Name>tm</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

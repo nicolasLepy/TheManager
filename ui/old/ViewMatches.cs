@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TheManager;
+using tm;
 using TheManager_GUI.Views;
 
 namespace TheManager_GUI.ViewMisc

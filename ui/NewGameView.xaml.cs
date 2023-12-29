@@ -18,8 +18,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using TheManager;
-using TheManager.Comparators;
+using tm;
+using tm.Comparators;
 using TheManager_GUI.Styles;
 using TheManager_GUI.views;
 

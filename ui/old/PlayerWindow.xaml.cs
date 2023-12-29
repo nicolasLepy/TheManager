@@ -6,8 +6,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using TheManager;
-using TheManager.Comparators;
+using tm;
+using tm.Comparators;
 using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI

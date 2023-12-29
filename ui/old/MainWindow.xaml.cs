@@ -18,8 +18,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-using TheManager;
-using TheManager.Parsers;
+using tm;
+using tm.Parsers;
 using TheManager_GUI.Styles;
 
 namespace TheManager_GUI

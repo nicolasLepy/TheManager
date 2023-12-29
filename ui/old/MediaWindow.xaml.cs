@@ -11,8 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using TheManager;
-using TheManager.Comparators;
+using tm;
+using tm.Comparators;
 using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI

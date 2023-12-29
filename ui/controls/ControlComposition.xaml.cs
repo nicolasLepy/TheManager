@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using TheManager;
+using tm;
 using TheManager_GUI.Styles;
 
 namespace TheManager_GUI.controls
