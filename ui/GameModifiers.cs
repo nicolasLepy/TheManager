@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TheManager;
-using TheManager.Comparators;
+using tm;
+using tm.Comparators;
 
 namespace TheManager_GUI
 {

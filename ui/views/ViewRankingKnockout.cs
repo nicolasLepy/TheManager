@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using TheManager;
-using TheManager.Comparators;
+using tm;
+using tm.Comparators;
 using System.Windows.Media.Imaging;
 using TheManager_GUI.Styles;
 using System.Linq;

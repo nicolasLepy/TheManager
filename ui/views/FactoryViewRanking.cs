@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using TheManager;
+using tm;
 
 namespace TheManager_GUI.Views
 {

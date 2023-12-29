@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using TheManager;
+using tm;
 using TheManager_GUI.utils;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.Views;

@@ -11,8 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using TheManager;
-using TheManager.Tournaments;
+using tm;
+using tm.Tournaments;
 
 namespace TheManager_GUI
 {

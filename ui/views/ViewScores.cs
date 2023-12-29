@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TheManager;
+using tm;
 using TheManager_GUI.Styles;
 using TheManager_GUI.Views;
 

@@ -131,8 +131,8 @@ namespace TheManager_GUI.views
                 double[] point = epsg4326epsg3857(mapClub.Lon, mapClub.Lat);
                 if(mapClub.ImagePath.Length == 0)
                 {
-                    point[0] += TheManager.Session.Instance.Random(-10000, 10000);
-                    point[1] += TheManager.Session.Instance.Random(-10000, 10000);
+                    point[0] += tm.Session.Instance.Random(-10000, 10000);
+                    point[1] += tm.Session.Instance.Random(-10000, 10000);
                 }
                 GeometryFeature feature = new GeometryFeature() { Geometry = new NetTopologySuite.Geometries.Point(point[0], point[1]) };
                 feature["Image"] = mapClub.ImagePath;

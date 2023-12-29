@@ -14,8 +14,8 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using TheManager;
-using TheManager.Tournaments;
+using tm;
+using tm.Tournaments;
 using TheManager_GUI.controls;
 
 namespace TheManager_GUI

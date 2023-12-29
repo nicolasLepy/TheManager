@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
-using TheManager;
+using tm;
 
 namespace TheManager_GUI
 {
@@ -17,7 +17,7 @@ namespace TheManager_GUI
             if(value != null)
             {
                 Tournament tournament = value as Tournament;
-                TheManager.Color color = tournament.color;
+                tm.Color color = tournament.color;
                 return color.ToHexa();
             }
             else

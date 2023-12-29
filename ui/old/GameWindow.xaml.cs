@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TheManager;
+using tm;
 
 namespace TheManager_GUI
 {
@@ -204,7 +204,7 @@ namespace TheManager_GUI
             DrawTimeline(match);
 
             List<Media> presentsMedias = new List<Media>();
-            foreach (KeyValuePair<TheManager.Media, Journalist> j in match.medias)
+            foreach (KeyValuePair<tm.Media, Journalist> j in match.medias)
             {
                 StackPanel spJournalists = new StackPanel();
                 spJournalists.Orientation = Orientation.Vertical;

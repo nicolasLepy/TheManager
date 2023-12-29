@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TheManager;
+using tm;
 
 namespace TheManager_GUI.utils
 {

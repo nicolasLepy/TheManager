@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using TheManager;
+using tm;
 
 namespace TheManager_GUI
 {

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TheManager.Tournaments;
-using TheManager;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using tm;
 
 namespace TheManagerTests
 {

@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using TheManager;
+using tm;
 using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Windows;
-using TheManager;
+using tm;
 using static SkiaSharp.HarfBuzz.SKShaper;
 using System.Windows.Input;
 using System.Runtime.InteropServices;
