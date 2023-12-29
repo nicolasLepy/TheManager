@@ -5,13 +5,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using tm.Algorithms;
 using tm.Comparators;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace tm
 {

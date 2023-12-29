@@ -9,7 +9,6 @@ using tm.Tournaments;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
-using LiveCharts;
 using System.Runtime.Serialization.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Collections;

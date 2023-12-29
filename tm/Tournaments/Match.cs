@@ -12,7 +12,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Input;
 using System.Xml.Linq;
-using LiveCharts.Wpf;
 using tm.Comparators;
 using tm.Tournaments;
 
