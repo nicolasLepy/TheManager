@@ -123,6 +123,15 @@ namespace tm
         {
             _storedGroupQualifications = new List<Qualification>[_groups.Length];
         }
+
+        public GroupsRound() : base()
+        {
+            _groups = new List<Club>[0];
+            _groupsLocalisation = new List<GeographicPosition>();
+            _relegationsByAdministrativeDivisions = new Dictionary<AdministrativeDivision, int>();
+            _cacheRanking = new List<Club>[0];
+        }
+
         public GroupsRound(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(id, name, hour, dates, offsets, initialisation,end, phases, 0, keepRankingFromPreviousRound, gamesPriority)
         {
             _groupsNumber = groupsCount;

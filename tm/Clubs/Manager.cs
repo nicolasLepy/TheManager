@@ -20,6 +20,11 @@ namespace tm
         /// </summary>
         public int level { get => _level; }
 
+        public Manager() : base()
+        {
+
+        }
+
         public Manager(int id, string firstName, string lastName, int level, DateTime birthDay, Country nationality) : base(id, firstName,lastName,birthDay, nationality)
         {
             _level = level;

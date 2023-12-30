@@ -191,6 +191,20 @@ namespace tm
             }
         }
 
+        public List<Player> Players
+        {
+            get
+            {
+                List<Player> res = new List<Player>(freePlayers);
+                foreach(Club club in this.Clubs)
+                {
+                    res.AddRange(club.Players());
+                }
+                return res.Distinct().ToList();
+            }
+        }
+
+
         public List<Match> MatchsOfDate(DateTime date)
         {
             List<Match> res = new List<Match>();

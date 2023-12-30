@@ -177,6 +177,14 @@ namespace tm
 
         public KeyValuePair<AdministrativeDivision, Tournament> parent => _parent;
 
+        public Tournament()
+        {
+            _rounds = new List<Round>();
+            _previousEditions = new Dictionary<int, Tournament>();
+            _hostStadiums = new List<Stadium>();
+            _rules = new List<TournamentRule>();
+        }
+
         public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, KeyValuePair<AdministrativeDivision, Tournament> parent)
         {
             _id = id;

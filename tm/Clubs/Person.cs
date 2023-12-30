@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -15,6 +16,7 @@ namespace tm
     public class Person
     {
         [DataMember]
+        [Key]
         private int _id;
         [DataMember]
         private string _lastName;
@@ -51,6 +53,10 @@ namespace tm
             }
         }
 
+        public Person()
+        {
+
+        }
         public Person(int id, string firstName, string lastName, DateTime birthDay, Country nationality)
         {
             _id = id;

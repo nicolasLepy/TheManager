@@ -24,6 +24,11 @@ namespace tm
         public string name { get => _name; }
         public City city { get => _city; set => _city = value; }
 
+        public Stadium()
+        {
+
+        }
+
         public Stadium(int id, string name, int stadiumCapacity, City city)
         {
             _name = name;

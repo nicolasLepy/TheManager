@@ -13,6 +13,10 @@ namespace tm
     public class ChampionshipRound : Round
     {
 
+        public ChampionshipRound() : base()
+        {
+
+        }
         public ChampionshipRound(int id, string name, Hour hour, List<GameDay> days, int phases, List<TvOffset> offsets, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, int lastDaySameDay, int gamesPriority) : base(id, name, hour, days, offsets, initialisation,end, phases, lastDaySameDay, keepRankingFromPreviousRound, gamesPriority)
         {
         }

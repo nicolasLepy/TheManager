@@ -169,6 +169,15 @@ namespace tm
             }
         }
 
+        public CityClub() : base()
+        {
+            _players = new List<Contract>();
+            _historic = new ClubHistory();
+            _clubTransfersManagement = new ClubTransfersManagement();
+            _reserves = new List<ReserveClub>();
+            _budgetHistory = new List<BudgetEntry>();
+        }
+
         public CityClub(int id, string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalSong, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(id, name,manager,shortName,reputation,supporters,formationCenter,logo,stadium, goalSong, status)
         {
             _budget = budget;
