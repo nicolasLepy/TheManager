@@ -26,6 +26,11 @@ namespace tm
         public Player player { get => _player; }
         public DateTime beginning { get => _beginning; }
 
+        public Contract()
+        {
+            isTransferable = false;
+        }
+
         public Contract(Player player, int wage, DateTime end, DateTime begin)
         {
             _player = player;

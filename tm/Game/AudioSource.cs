@@ -32,6 +32,12 @@ namespace tm
         public int Max => max;
         public AudioType Type => type;
 
+
+        public AudioSource()
+        {
+
+        }
+
         public AudioSource(string source, int min, int max, AudioType type)
         {
             this.source = source;

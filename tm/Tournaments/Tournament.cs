@@ -15,6 +15,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 /*
  * TODO: Factorisations possibles :
@@ -81,7 +82,8 @@ namespace tm
     {
 
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
         [DataMember]
         private string _name;
         [DataMember]
@@ -125,7 +127,6 @@ namespace tm
         [DataMember]
         private KeyValuePair<AdministrativeDivision, Tournament> _parent;
 
-        public int id => _id;
         public string name { get => _name; }
         public Color color => _color;
         public List<Round> rounds { get => _rounds; }
@@ -187,7 +188,7 @@ namespace tm
 
         public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, KeyValuePair<AdministrativeDivision, Tournament> parent)
         {
-            _id = id;
+            Id = id;
             _rounds = new List<Round>();
             _name = name;
             _logo = logo;

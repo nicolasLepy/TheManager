@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -107,7 +108,8 @@ namespace tm
     public class Match
     {
         [DataMember]
-        private int _id;
+        [Key]
+        public int id { get; set; }
         [DataMember]
         private int _minute;
         [DataMember]
@@ -177,7 +179,6 @@ namespace tm
         [DataMember]
         private bool _forfeit;
 
-        public int id => _id;
         public int attendance { get => _attendance; }
         [DataMember]
         public DateTime day { get; set; }

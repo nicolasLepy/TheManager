@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -22,7 +23,8 @@ namespace tm
     public class MatchEvent
     {
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
         [DataMember]
         private GameEvent _type;
         [DataMember]
@@ -34,7 +36,6 @@ namespace tm
         [DataMember]
         private Club _club;
 
-        public int id => _id;
         public GameEvent type => _type;
         public int minute => _minute;
         public int EventMinute

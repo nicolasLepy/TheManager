@@ -20,6 +20,11 @@ namespace tm.Tournaments
         [DataMember]
         private int _dayOffset;
 
+        public GameDay()
+        {
+
+        }
+
         public GameDay(int weekNumber, bool midWeekGame, int yearOffset, int dayOffset)
         {
             _weekNumber = weekNumber;

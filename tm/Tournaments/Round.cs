@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
@@ -240,7 +241,8 @@ namespace tm
         /// Round ID
         /// </summary>
         [DataMember]
-        protected int _id;
+        [Key]
+        public int Id { get; set; }
         /// <summary>
         /// Nom du tour
         /// </summary>
@@ -318,7 +320,6 @@ namespace tm
         [DataMember]
         protected Dictionary<Club, List<PointDeduction>> _pointsDeduction;
 
-        public int id => _id;
         public string name { get => _name; }
         public List<Club> clubs { get => _clubs; }
         public List<Match> matches { get => _matches; }
@@ -386,7 +387,7 @@ namespace tm
 
         protected Round(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
         {
-            _id = id;
+            Id = id;
             _name = name;
             _clubs = new List<Club>();
             _matches = new List<Match>();

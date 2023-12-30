@@ -32,6 +32,11 @@ namespace tm
             get => _latitude;
         }
 
+        public GeographicPosition()
+        {
+
+        }
+
         public GeographicPosition(float latitude, float longitude)
         {
             _longitude = longitude;

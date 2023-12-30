@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
 using System.IO;
@@ -80,7 +81,8 @@ namespace tm
         [DataMember]
         private List<Tournament> _tournaments;
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
         [DataMember]
         private string _name;
         [DataMember]
@@ -128,8 +130,6 @@ namespace tm
         {
             return _tournaments;
         }
-
-        public int Id => _id;
 
         public string Name()
         {
@@ -196,9 +196,20 @@ namespace tm
             return res;
         }
 
+        public Continent()
+        {
+            _countries = new List<Country>();
+            _tournaments = new List<Tournament>();
+            _continentalQualifications = new List<Qualification>();
+            _associationRanking = new List<Country>();
+            _archivalAssociationRanking = new List<List<Country>>();
+            _continents = new List<Continent>();
+            _internationalDates = new List<InternationalDates>();
+        }
+
         public Continent(int id, string name, string logo, int resetWeek)
         {
-            _id = id;
+            Id = id;
             _name = name;
             _logo = logo;
             _countries = new List<Country>();

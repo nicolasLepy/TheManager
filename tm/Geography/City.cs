@@ -21,6 +21,10 @@ namespace tm
 
         private Country _country;
 
+        public City()
+        {
+
+        }
         public City(int id, string name, int population, float latitude, float longitude)
         {
             Id = id;
