@@ -102,6 +102,11 @@ namespace tm
         public int lastMatchDaysSameDayNumber { get => _lastMatchDaysSameDayNumber; }
         public int gamesPriority => _gamesPriority;
 
+        public RoundProgrammation()
+        {
+            _gamesDays = new List<GameDay>();
+        }
+
         public RoundProgrammation(Hour hour, List<GameDay> days, List<TvOffset> tvSchedule, GameDay initialisation, GameDay end, int lastDaySameDay, int gamesPriority)
         {
             _defaultHour = hour;
@@ -363,6 +368,20 @@ namespace tm
 
                 return tournament;
             }
+        }
+
+        protected Round()
+        {
+            _clubs = new List<Club>();
+            _matches = new List<Match>();
+            _qualifications = new List<Qualification>();
+            _recuperedTeams = new List<RecoverTeams>();
+            _baseRecuperedTeams = new List<RecoverTeams>();
+            _rules = new List<Rule>();
+            _tiebreakers = new List<Tiebreaker>();
+            _prizes = new List<Prize>();
+            _teamsByAdministrativeDivision = new Dictionary<AdministrativeDivision, int>();
+            _pointsDeduction = new Dictionary<Club, List<PointDeduction>>();
         }
 
         protected Round(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)

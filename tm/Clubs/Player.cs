@@ -186,6 +186,14 @@ namespace tm
             }
         }
 
+        public Player()
+        {
+            _history = new List<PlayerHistory>();
+            _goalsScored = new Dictionary<Club, int>();
+            _playedGames = new Dictionary<Club, int>();
+            _offers = new List<ContractOffer>();
+        }
+
         public Player(int id, string firstName, string lastName, DateTime birthday, int level, int potential, Country nationality, Position position) : base(id, firstName,lastName,birthday,nationality)
         {
             

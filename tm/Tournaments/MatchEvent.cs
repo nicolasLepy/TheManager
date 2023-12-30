@@ -91,6 +91,11 @@ namespace tm
         public Player player { get => _player; }
         public Club club { get => _club; }
 
+        public MatchEvent()
+        {
+
+        }
+
         public MatchEvent(GameEvent type, Club club, Player player, int minute, int period)
         {
             _type = type;

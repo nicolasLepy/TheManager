@@ -795,6 +795,24 @@ namespace tm
             _oddD = (odd1 + odd2) / 2;
         }
 
+        public Match()
+        {
+            _events = new List<MatchEvent>();
+            _compo1 = new List<Player>();
+            _compo2 = new List<Player>();
+            _compo1Terrain = new List<Player>();
+            _compo2Terrain = new List<Player>();
+            _journalists = new List<KeyValuePair<Media, Journalist>>();
+            _actions = new List<KeyValuePair<string, string>>();
+            _subs1 = new List<Player>();
+            _subs2 = new List<Player>();
+            _subs1OnBench = new List<Player>();
+            _subs2OnBench = new List<Player>();
+            _substitutions = new List<Substitution>();
+            _penaltyShoots1 = new List<bool>();
+            _penaltyShoots2 = new List<bool>();
+        }
+
         public Match(Club homeTeam, Club awayTeam, DateTime matchDay, bool prolongationsIfDraw, Match firstLeg = null)
         {
             _stadium = null;

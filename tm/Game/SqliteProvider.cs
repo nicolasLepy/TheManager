@@ -12,6 +12,8 @@ namespace tm
     {
         public DbSet<Club> Clubs { get; set; }
         public DbSet<Person> Person { get; set; }
+        public DbSet<Match> Games { get; set; }
+        public DbSet<MatchEvent> GameEvents { get; set; }
 
         private string filename;
 
@@ -46,7 +48,7 @@ namespace tm
             {
                 db.Database.EnsureDeleted();
                 db.Database.EnsureCreated();
-                db.Person.AddRange(game.kernel.freePlayers);
+                db.Person.AddRange(game.kernel.Players);
                 db.Clubs.AddRange(game.kernel.Clubs);
                 db.SaveChanges();
             }

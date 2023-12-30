@@ -8,6 +8,8 @@ using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace tm
 {
@@ -80,7 +82,8 @@ namespace tm
     public abstract class Club
     {
         [DataMember]
-        private int _id;
+        [Key]
+        public int id { get; set; }
         [DataMember]
         private string _name;
         [DataMember]
@@ -110,7 +113,6 @@ namespace tm
         [DataMember]
         private string _goalSong;
 
-        public int id => _id;
         public string name { get => _name; }
         public Manager manager { get => _manager; set => _manager = value; }
         public float elo { get => _elo; }
@@ -274,6 +276,7 @@ namespace tm
         /// <summary>
         /// List of games played by the club
         /// </summary>
+        [NotMapped]
         public List<Match> Games
         {
             get
@@ -416,9 +419,14 @@ namespace tm
             }
         }
 
+        protected Club()
+        {
+            _elo = 1500;
+        }
+
         protected Club(int id, string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalSong, ClubStatus status)
         {
-            _id = id;
+            this.id = id;
             _name = name;
             _manager = manager;
             _shortName = shortName;

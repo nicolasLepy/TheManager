@@ -247,6 +247,8 @@ namespace tm
         {
             DataContractProvider provider = new DataContractProvider(path);
             provider.Save(this);
+            SqliteProvider sqlProvider = new SqliteProvider("test");
+            sqlProvider.Save(this);
         }
 
         public void Load(string path)

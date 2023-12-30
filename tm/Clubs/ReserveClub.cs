@@ -18,6 +18,11 @@ namespace tm
         public List<Contract> Contracts { get => _players; }
         public CityClub FannionClub { get => _fannionClub; }
 
+        public ReserveClub() : base()
+        {
+            _players = new List<Contract>();
+        }
+
         public ReserveClub(int id, CityClub fannionClub, string name, string shortName, Manager manager) : base(id, name,manager,shortName,fannionClub.elo/2.0f,fannionClub.supporters/30,0,fannionClub.logo,fannionClub.stadium,fannionClub.goalSong, fannionClub.status)
         {
             _fannionClub = fannionClub;
