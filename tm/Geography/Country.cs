@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -57,7 +58,8 @@ namespace tm
     public class Country : ILocalisation
     {
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
         [DataMember]
         private List<City> _cities;
         [DataMember]
@@ -205,9 +207,20 @@ namespace tm
             }
         }
 
+        public Country()
+        {
+            _cities = new List<City>();
+            _stadiums = new List<Stadium>();
+            _tournaments = new List<Tournament>();
+            _administrativeDivisions = new List<AdministrativeDivision>();
+            _administrativeRetrogradations = new Dictionary<Club, Tournament>();
+            _gamesTimesWeekend = new List<float[]>();
+            _gamesTimesWeekdays = new List<float[]>();
+        }
+
         public Country(int id, string dbName, string name, Language language, int shapeNumber, int resetWeek, List<AdministrativeSanction> administrativeSanctionsDefinitions)
         {
-            _id = id;
+            Id = id;
             _dbName = dbName;
             _name = name;
             _language = language;
@@ -243,7 +256,7 @@ namespace tm
             AdministrativeDivision res = null;
             foreach (AdministrativeDivision ad in _administrativeDivisions)
             {
-                if (ad.id == id)
+                if (ad.Id == id)
                 {
                     res = ad;
                 }

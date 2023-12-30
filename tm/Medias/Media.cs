@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -42,7 +43,8 @@ namespace tm
     public class Media
     {
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
         [DataMember]
         private string _name;
         [DataMember]
@@ -52,15 +54,20 @@ namespace tm
         [DataMember]
         private Country _country;
 
-        public int id => _id;
         public string name { get => _name; }
         public List<Journalist> journalists { get => _journalists; }
         public List<TournamentCoverage> coverages { get => _coverages; }
         public Country country { get => _country; }
 
+        public Media()
+        {
+            _journalists = new List<Journalist>();
+            _coverages = new List<TournamentCoverage>();
+        }
+
         public Media(int id, string name, Country country)
         {
-            _id = id;
+            Id = id;
             _name = name;
             _journalists = new List<Journalist>();
             _coverages = new List<TournamentCoverage>();

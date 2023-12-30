@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -12,7 +13,8 @@ namespace tm
     {
 
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
         [DataMember]
         private string _firstName;
         [DataMember]
@@ -22,7 +24,6 @@ namespace tm
         [DataMember]
         private int _offset;
 
-        public int id => _id;
         public string firstName { get => _firstName; }
         public string lastName { get => _lastName; }
         [DataMember]
@@ -83,6 +84,11 @@ namespace tm
             }
         }
 
+        public Journalist()
+        {
+
+        }
+
         /// <summary>
         /// Create a journalist
         /// </summary>
@@ -94,7 +100,7 @@ namespace tm
         /// <param name="nationalReporter">Can intervene everywhere for prime time matches</param>
         public Journalist(int id, string firstName, string lastName, int age, City baseCity, int offset, bool nationalReporter)
         {
-            _id = id;
+            Id = id;
             isTaken = false;
             _firstName = firstName;
             _lastName = lastName;

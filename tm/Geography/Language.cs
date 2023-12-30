@@ -19,9 +19,15 @@ namespace tm
 
         public string name { get => _name; }
 
-        public Language(string nom)
+        public Language()
         {
-            _name = nom;
+            _firstNames = new List<string>();
+            _lastNames = new List<string>();
+        }
+
+        public Language(string name)
+        {
+            _name = name;
             _firstNames = new List<string>();
             _lastNames = new List<string>();
         }

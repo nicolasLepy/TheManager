@@ -27,6 +27,11 @@ namespace tm
         public RandomDrawingMethod randomDrawingMethod => _randomDrawingMethod;
 
 
+        public KnockoutRound() : base()
+        {
+
+        }
+
         public KnockoutRound(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int phases, GameDay initialisation, GameDay end, RandomDrawingMethod method, bool noRandomDrawing, int gamesPriority) : base(id, name, hour, dates, offsets, initialisation,end, phases, 0, -1, gamesPriority)
         {
             _randomDrawingMethod = method;

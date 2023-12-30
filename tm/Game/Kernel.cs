@@ -21,6 +21,11 @@ namespace tm
         public List<string> commentaries { get => _commentaries; }
         public GameEvent gameEvent { get => _event; }
 
+        public MatchEventCommentary()
+        {
+            _commentaries = new List<string>();
+        }
+
         public MatchEventCommentary(GameEvent gameEvent)
         {
             _event = gameEvent;
@@ -38,7 +43,6 @@ namespace tm
 
 
     [DataContract(IsReference =true)]
-    //[KnownType(typeof(Continent))]
     public class Kernel
     {
 

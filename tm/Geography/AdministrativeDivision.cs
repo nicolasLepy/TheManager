@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 
 namespace tm
@@ -11,15 +12,20 @@ namespace tm
         [DataMember]
         private string _name;
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
         
         public List<AdministrativeDivision> divisions => _divisions;
         public string name => _name;
-        public int id => _id;
         
+        public AdministrativeDivision()
+        {
+            _divisions = new List<AdministrativeDivision>();
+        }
+
         public AdministrativeDivision(int id, string name)
         {
-            _id = id;
+            Id = id;
             _name = name;
             _divisions = new List<AdministrativeDivision>();
         }
@@ -86,7 +92,7 @@ namespace tm
 
             foreach (AdministrativeDivision ad in divisions)
             {
-                if (ad.id == id)
+                if (ad.Id == id)
                 {
                     res = ad;
                 }

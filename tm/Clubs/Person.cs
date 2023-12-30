@@ -17,7 +17,7 @@ namespace tm
     {
         [DataMember]
         [Key]
-        private int _id;
+        public int Id { get; set; }
         [DataMember]
         private string _lastName;
         [DataMember]
@@ -27,7 +27,6 @@ namespace tm
         [DataMember]
         private Country _nationality;
 
-        public int Id => _id;
         public string Name => String.Format("{0} {1}", _firstName, _lastName);
         public string ShortName => String.Format("{0}{1}", _firstName.Length > 0 ? _firstName[0].ToString() + ". " : "", _lastName);
         public string lastName { get => _lastName; }
@@ -59,7 +58,7 @@ namespace tm
         }
         public Person(int id, string firstName, string lastName, DateTime birthDay, Country nationality)
         {
-            _id = id;
+            Id = id;
             _firstName = firstName;
             _lastName = lastName;
             _birthDay = birthDay;

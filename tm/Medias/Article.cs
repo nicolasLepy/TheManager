@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -12,7 +13,8 @@ namespace tm
     {
 
         [DataMember]
-        private int _id;
+        [Key]
+        public int Id { get; set; }
 
         [DataMember]
         private string _title;
@@ -23,15 +25,19 @@ namespace tm
         [DataMember]
         private int _importance;
 
-        public int id => _id;
         public string title { get => _title; }
         public string content { get => _content; }
         public DateTime publication { get => _publication; }
         public int importance { get => _importance; }
 
+        public Article()
+        {
+
+        }
+
         public Article(int id, string title, string content, DateTime publication, int importance)
         {
-            _id = id;
+            Id = id;
             _title = title;
             _content = content;
             _publication = publication;

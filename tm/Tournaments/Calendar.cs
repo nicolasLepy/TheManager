@@ -31,6 +31,11 @@ namespace tm
 
         public string Name => _name;
 
+        public GenericCalendar()
+        {
+
+        }
+
         public GenericCalendar(string name, List<GameDay> gameDays)
         {
             _name = name;
