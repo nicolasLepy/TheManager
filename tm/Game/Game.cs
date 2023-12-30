@@ -245,94 +245,14 @@ namespace tm
 
         public void Save(string path)
         {
-            SerializationMethod serializationMethod = SerializationMethod.DataContractSerializer;
-
-            path = path.Replace(".csave", ".save");
-            if (serializationMethod == SerializationMethod.DataContractSerializer)
-            {
-                using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
-                {
-                    DataContractSerializerSettings dcss = new DataContractSerializerSettings() { MaxItemsInObjectGraph = int.MaxValue, PreserveObjectReferences=true };
-                    DataContractSerializer ser = new DataContractSerializer(typeof(Game), dcss);
-                    ser.WriteObject(writer, this);
-                }
-            }
-            if (serializationMethod == SerializationMethod.NewtonsoftJsonSerializer)
-            {
-                JsonSerializer jsonSerializer = new JsonSerializer();
-                string output = JsonConvert.SerializeObject(this, Newtonsoft.Json.Formatting.None, new JsonSerializerSettings() 
-                { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
-                using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
-                {
-                    var sr = new StreamWriter(writer);
-                    sr.Write(output);
-                }
-            }
-
-            //ObjectGraphValidator ogv = new ObjectGraphValidator();
-            //ogv.ValidateObjectGraph(this);
-
-            /*FileStream fs = new FileStream(path.Replace(".csave", ".bin"), FileMode.Create);
-
-            // Construct a BinaryFormatter and use it to serialize the data to the stream.
-            BinaryFormatter formatter = new BinaryFormatter();
-            try
-            {
-                formatter.Serialize(fs, this);
-            }
-            catch (SerializationException e)
-            {
-                Console.WriteLine("Failed to serialize. Reason: " + e.Message);
-                throw;
-            }
-            finally
-            {
-                fs.Close();
-            }*/
-
-
-            if (File.Exists(path.Split('.')[0] + ".csave"))
-            {
-                File.Delete(path.Split('.')[0] + ".csave");
-            }
-
-            using (ZipArchive zip = ZipFile.Open(path.Split('.')[0] + ".csave", ZipArchiveMode.Create))
-            {
-                zip.CreateEntryFromFile(path, "save.save");
-                File.Delete(path);
-                zip.Dispose();
-            }
-
+            DataContractProvider provider = new DataContractProvider(path);
+            provider.Save(this);
         }
 
         public void Load(string path)
         {
-
-            SerializationMethod serializationMethod = SerializationMethod.DataContractSerializer;
-
-            Game loadObj = null;
-            if (serializationMethod == SerializationMethod.DataContractSerializer)
-            {
-                using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
-                {
-                    ZipArchiveEntry cFile = zip.GetEntry("save.save");
-                    DataContractSerializer ser = new DataContractSerializer(typeof(Game));
-                    loadObj = (Game)ser.ReadObject(cFile.Open());
-                    zip.Dispose();
-                }
-            }
-            if(serializationMethod == SerializationMethod.NewtonsoftJsonSerializer)
-            {
-                using (ZipArchive zip = ZipFile.Open(path, ZipArchiveMode.Read))
-                {
-                    ZipArchiveEntry cFile = zip.GetEntry("save.save");
-                    StreamReader osr = new StreamReader(cFile.Open(), Encoding.Default);
-                    string content = osr.ReadToEnd();
-                    loadObj = JsonConvert.DeserializeObject<Game>(content, new JsonSerializerSettings()
-                    { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
-                    zip.Dispose();
-                }
-            }
+            DataContractProvider provider = new DataContractProvider(path);
+            Game loadObj = provider.Load();
             this._options = loadObj.options;
             this._kernel = loadObj.kernel;
             this._date = loadObj.date;
