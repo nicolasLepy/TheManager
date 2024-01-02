@@ -55,6 +55,9 @@ namespace tm
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite(String.Format("Filename=./{0}.db", filename));
+
+            //If when deserializing private properties remains null/0
+            //modelBuilder.Entity<Foo>().Property(x => x.Version).UsePropertyAccessMode(PropertyAccessMode.FieldDuringConstruction);
         }
     }
 

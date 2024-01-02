@@ -35,7 +35,7 @@ namespace tm
     }
 
     [DataContract]
-    public struct TournamentStatistics : IEquatable<TournamentStatistics>
+    public class TournamentStatistics : IEquatable<TournamentStatistics>
     {
         [DataMember]
         public Match BiggerScore { get; set; }
@@ -56,9 +56,7 @@ namespace tm
         [DataMember]
         public KeyValuePair<int, Club> LowestPoints { get; set; }
 
-
-
-        public TournamentStatistics(int i)
+        public TournamentStatistics()
         {
             BiggerScore = null;
             LargerScore = null;
@@ -196,7 +194,7 @@ namespace tm
             _shortName = shortName;
             _isChampionship = isChampionship;
             _level = level;
-            _statistics = new TournamentStatistics(0);
+            _statistics = new TournamentStatistics();
             _previousEditions = new Dictionary<int, Tournament>();
             _periodicity = periodicity;
             _remainingYears = remainingYears;

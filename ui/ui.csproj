@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <OutputType>Exe</OutputType>
-    <RootNamespace>TheManager_GUI</RootNamespace>
-    <AssemblyName>TheManager_GUI</AssemblyName>
+    <RootNamespace>ui</RootNamespace>
+    <AssemblyName>ui</AssemblyName>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <UseWPF>true</UseWPF>
