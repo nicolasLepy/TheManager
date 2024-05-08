@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -125,6 +126,7 @@ namespace tm
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
+        [NotMapped]
         public List<NationalTeam> nationalTeams
         {
             get

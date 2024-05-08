@@ -8,24 +8,45 @@ using System.Text;
 
 namespace tm
 {
-    [DataContract]
-    public struct PlayerHistory : IEquatable<PlayerHistory>
+
+    [DataContract(IsReference = true)]
+    public class PlayerClubStatistic
+    {
+
+        
+        [DataMember]
+        private int _idClub;
+
+        [DataMember]
+        public int Statistic { get; set; }
+
+        public Club Club => Session.Instance.Game.kernel.GetClubById(_idClub);
+
+        public PlayerClubStatistic(int idClub, int statistic)
+        {
+            _idClub = idClub;
+            Statistic = statistic;
+        }
+    }
+
+    [DataContract(IsReference = true)]
+    public class PlayerHistory : IEquatable<PlayerHistory>
     {
         [DataMember]
-        private Dictionary<Club, int> _goals;
+        private List<PlayerClubStatistic> _goals;
         [DataMember]
-        private Dictionary<Club, int> _gamesPlayed;
+        private List<PlayerClubStatistic> _gamesPlayed;
 
 
         [DataMember]
         public int Level { get; set; }
         [DataMember]
         public int Year { get; set; }
-        public Dictionary<Club, int> Goals => _goals;
-        public Dictionary<Club, int> GamesPlayed => _gamesPlayed;
+        public List<PlayerClubStatistic> Goals => _goals;
+        public List<PlayerClubStatistic> GamesPlayed => _gamesPlayed;
         [DataMember]
         public CityClub Club { get; set; }
-        public PlayerHistory(int level, int year, Dictionary<Club, int> goals, Dictionary<Club, int> playedGames, CityClub club)
+        public PlayerHistory(int level, int year, List<PlayerClubStatistic> goals, List<PlayerClubStatistic> playedGames, CityClub club)
         {
             Level = level;
             Year = year;
@@ -34,11 +55,19 @@ namespace tm
             Club = club;
         }
         
+        public PlayerHistory()
+        {
+            _goals = new List<PlayerClubStatistic>();
+            _gamesPlayed = new List<PlayerClubStatistic>();
+        }
+
         public bool Equals(PlayerHistory other)
         {
             return (Year > other.Year);
         }
     }
+
+
 
     [DataContract(IsReference =true)]
     public class Player : Person
@@ -60,11 +89,13 @@ namespace tm
         [DataMember]
         private bool _foundANewClubThisSeason;
         [DataMember]
-        private Dictionary<Club, int> _playedGames;
+        private List<PlayerClubStatistic> _playedGames;
         [DataMember]
-        private Dictionary<Club, int> _goalsScored;
+        private List<PlayerClubStatistic> _goalsScored;
         [DataMember]
         private bool _inSelection;
+        [DataMember]
+        private CityClub _currentClub;
 
         public int level { get => _level; set => _level = value; }
         public int potential { get => _potential; }
@@ -85,11 +116,11 @@ namespace tm
         /// <summary>
         /// Played games during the current season
         /// </summary>
-        public Dictionary<Club, int> playedGames => _playedGames;
+        public List<PlayerClubStatistic> playedGames => _playedGames;
         /// <summary>
         /// Goals scored during the current season
         /// </summary>
-        public Dictionary<Club, int> goalsScored => _goalsScored;
+        public List<PlayerClubStatistic> goalsScored => _goalsScored;
 
         /// <summary>
         /// Level of the player taking into consideration his energy
@@ -126,11 +157,16 @@ namespace tm
         public float Stars => Utils.GetStars(_level);
         public float StarsPotential => Utils.GetStars(_potential);
 
+        public void UpdateClub(CityClub club)
+        {
+            _currentClub = club;
+        }
+
         /// <summary>
         /// Current club of the player
         /// </summary>
-        public CityClub Club
-        {
+        public CityClub Club => _currentClub;
+        /*{
             get
             {
                 CityClub res = null;
@@ -150,7 +186,7 @@ namespace tm
                 }
                 return res;
             }
-        }
+        }*/
 
         public int InternationalCaps
         {
@@ -159,10 +195,10 @@ namespace tm
                 int res = 0;
                 foreach(PlayerHistory he in this.history)
                 {
-                    foreach(KeyValuePair<Club, int> kvp in he.GamesPlayed)
+                    foreach(PlayerClubStatistic pcs in he.GamesPlayed)
                     {
-                        NationalTeam nt = kvp.Key as NationalTeam;
-                        res = nt != null ? res+kvp.Value : res;
+                        NationalTeam nt = pcs.Club as NationalTeam;
+                        res = nt != null ? res+ pcs.Statistic : res;
                     }
                 }
                 return res;
@@ -176,10 +212,10 @@ namespace tm
                 int res = 0;
                 foreach (PlayerHistory he in this.history)
                 {
-                    foreach (KeyValuePair<Club, int> kvp in he.Goals)
+                    foreach (PlayerClubStatistic pcs in he.Goals)
                     {
-                        NationalTeam nt = kvp.Key as NationalTeam;
-                        res = nt != null ? res + kvp.Value : res;
+                        NationalTeam nt = pcs.Club as NationalTeam;
+                        res = nt != null ? res + pcs.Statistic: res;
                     }
                 }
                 return res;
@@ -189,8 +225,8 @@ namespace tm
         public Player()
         {
             _history = new List<PlayerHistory>();
-            _goalsScored = new Dictionary<Club, int>();
-            _playedGames = new Dictionary<Club, int>();
+            _goalsScored = new List<PlayerClubStatistic>();
+            _playedGames = new List<PlayerClubStatistic>();
             _offers = new List<ContractOffer>();
         }
 
@@ -203,8 +239,8 @@ namespace tm
             suspended = false;
             _energy = 100;
             _history = new List<PlayerHistory>();
-            _goalsScored = new Dictionary<Club, int>();
-            _playedGames = new Dictionary<Club, int>();
+            _goalsScored = new List<PlayerClubStatistic>();
+            _playedGames = new List<PlayerClubStatistic>();
             _offers = new List<ContractOffer>();
             _foundANewClubThisSeason = false;
             _inSelection = false;
@@ -291,8 +327,8 @@ namespace tm
                 _level -= Session.Instance.Random(1, 5);
             }
             _history.Add(new PlayerHistory(_level, Session.Instance.Game.date.Year + 1,goalsScored, playedGames, Club));
-            _goalsScored = new Dictionary<Club, int>();
-            _playedGames = new Dictionary<Club, int>();
+            _goalsScored = new List<PlayerClubStatistic>();
+            _playedGames = new List<PlayerClubStatistic>();
 
             _foundANewClubThisSeason = false;
         }
@@ -328,7 +364,8 @@ namespace tm
                             Club.ModifyBudget(oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
                             sender.ModifyBudget(-oc.TransferIndemnity, BudgetModificationReason.TransferIndemnity);
                             Club.RemovePlayer(this);
-                            sender.AddPlayer(new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                            sender.AddPlayer(new Contract(Session.Instance.Game.kernel.NextIdContract(), this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                            UpdateClub(sender);
                             res = ContractOfferResult.Successful;
                             _foundANewClubThisSeason = true;
                         }
@@ -341,8 +378,9 @@ namespace tm
                     if ((oc.Wage + 0.0f) / EstimateWage() > (Session.Instance.Random(70, 100) / 100.0f))
                     {
                         Session.Instance.Game.kernel.freePlayers.Remove(this);
-                        Contract ct = new Contract(this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day));
+                        Contract ct = new Contract(Session.Instance.Game.kernel.NextIdContract(), this, oc.Wage, new DateTime(Session.Instance.Game.date.Year + oc.ContractDuration, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day));
                         sender.AddPlayer(ct);
+                        UpdateClub(sender);
                         res = ContractOfferResult.Successful;
                         _foundANewClubThisSeason = true;
                     }

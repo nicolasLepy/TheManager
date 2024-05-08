@@ -1,13 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Schema;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using tm;
+using tm.persistance;
 
-namespace TheManagerTests
+namespace tests
 {
+
     [TestClass]
     public class TestsWorkflow
     {
@@ -80,7 +87,7 @@ namespace TheManagerTests
         [TestMethod]
         public void TestSeasonsLight() //About 15 minutes / season
         {
-            InitGame("database_france_light", false);
+            InitGame("database_france_light", true);
 
             int years = 2;
             for(int i = 0; i < 365*years; i++)
@@ -88,6 +95,8 @@ namespace TheManagerTests
                 Session.Instance.Game.NextDay();
                 Session.Instance.Game.UpdateTournaments();
             }
+
+            Session.Instance.Game.Save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_big.csave");
 
             //TODO: Check everything are correct : league structure doesn't changed, cup with right teams count
         }

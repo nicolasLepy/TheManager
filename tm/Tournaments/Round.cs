@@ -249,6 +249,12 @@ namespace tm
         [DataMember]
         protected string _name;
         /// <summary>
+        /// Compétition à laquelle ce tour appartient
+        /// </summary>
+        [DataMember]
+        protected Tournament _tournament;
+
+        /// <summary>
         /// Liste des clubs participant à ce tour
         /// </summary>
         [DataMember]
@@ -335,8 +341,8 @@ namespace tm
         public Dictionary<AdministrativeDivision, int> teamsByAdministrativeDivision => _teamsByAdministrativeDivision;
         public Dictionary<Club, List<PointDeduction>> pointsDeduction => _pointsDeduction;
 
-        public Tournament Tournament
-        {
+        public Tournament Tournament { get => _tournament; set => _tournament = value; }
+        /*{
             get
             {
                 Tournament tournament = null;
@@ -369,7 +375,7 @@ namespace tm
 
                 return tournament;
             }
-        }
+        }*/
 
         protected Round()
         {
@@ -385,10 +391,11 @@ namespace tm
             _pointsDeduction = new Dictionary<Club, List<PointDeduction>>();
         }
 
-        protected Round(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
+        protected Round(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> tvOffsets, GameDay initialisation, GameDay end, int phases, int lastDaysSameDay, int keepRankingFromPreviousRound, int gamesPriority)
         {
             Id = id;
             _name = name;
+            _tournament = tournament;
             _clubs = new List<Club>();
             _matches = new List<Match>();
             _programmation = new RoundProgrammation(hour, dates, tvOffsets, initialisation, end, lastDaysSameDay, gamesPriority);
@@ -766,7 +773,7 @@ namespace tm
                 {
                     teamsToGrab = re.Source.CountWithoutReserves();
                 }
-                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Tournament.parent.Key))
+                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Tournament.parent.Association))
                 {
                     _clubs.Add(c);
                 }

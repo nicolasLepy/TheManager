@@ -42,7 +42,7 @@ namespace tm.Tournaments
 
         protected override GroupsRound Clone()
         {
-            return new GroupActiveRound(Session.Instance.Game.kernel.NextIdRound(), name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
+            return new GroupActiveRound(Session.Instance.Game.kernel.NextIdRound(), name, Tournament, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority);
         }
 
         public override List<Club> Ranking(int group, bool inverse = false)
@@ -78,7 +78,7 @@ namespace tm.Tournaments
         {
 
         }
-        public GroupActiveRound(int id, string name, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(id, name, hour, dates, offsets, groupsCount, phases, initialisation, end, keepRankingFromPreviousRound, randomDrawingMethod, administrativeLevel, fusionGroupAndNoGroupGames, nonGroupGamesByTeams, nonGroupGamesByGameday, gamesPriority)
+        public GroupActiveRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(id, name, tournament, hour, dates, offsets, groupsCount, phases, initialisation, end, keepRankingFromPreviousRound, randomDrawingMethod, administrativeLevel, fusionGroupAndNoGroupGames, nonGroupGamesByTeams, nonGroupGamesByGameday, gamesPriority)
         {
 
         }

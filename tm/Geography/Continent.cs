@@ -13,8 +13,8 @@ using tm.Tournaments;
 namespace tm
 {
 
-    [DataContract]
-    public struct InternationalDates : IEquatable<InternationalDates>
+    [DataContract(IsReference = true)]
+    public class InternationalDates : IEquatable<InternationalDates>
     {
         [DataMember]
         private GameDay _start;
@@ -457,7 +457,7 @@ namespace tm
                 {
                     cupWinners.Add(cup.Winner());
                 }
-                else if(cup.parent.Key == null) //This cup is not the regional path of a bigger cup
+                else if(cup.parent.Association == null) //This cup is not the regional path of a bigger cup
                 {
                     cupWinners.Add(null); //Placeholder to tell this cup expect a winner but is not finished
                 }

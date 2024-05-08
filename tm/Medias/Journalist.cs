@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -54,6 +55,7 @@ namespace tm
             }
         }
 
+        [NotMapped]
         public List<Match> Games
         {
             get

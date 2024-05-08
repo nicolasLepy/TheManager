@@ -14,14 +14,19 @@ using System.ComponentModel.DataAnnotations;
 namespace tm
 {
 
-    [DataContract]
-    public struct ClubRecords : IEquatable<ClubRecords>
+    [DataContract(IsReference =true)]
+    public class ClubRecords : IEquatable<ClubRecords>
     {
 
         [DataMember]
         public Match BiggestWin { get; set; }
         [DataMember]
         public Match BiggestLose { get; set; }
+
+        public ClubRecords()
+        {
+
+        }
 
         public bool Equals(ClubRecords other)
         {
@@ -46,6 +51,7 @@ namespace tm
         TransferIndemnity
     }
 
+    [DataContract]
     public struct BudgetEntry : IEquatable<BudgetEntry>
     {
         public BudgetModificationReason Reason { get; set; }
@@ -105,7 +111,7 @@ namespace tm
         [DataMember]
         private int _ticketPrice;
         [DataMember]
-        private ClubRecords _records = new ClubRecords();
+        private ClubRecords _records;//= new ClubRecords();
         [DataMember]
         protected ClubStatus _status;
         
@@ -422,6 +428,7 @@ namespace tm
         protected Club()
         {
             _elo = 1500;
+            _records = new ClubRecords();
         }
 
         protected Club(int id, string name, Manager manager, string shortName, float elo, int supporters, int formationFacilities, string logo, Stadium stadium, string goalSong, ClubStatus status)
@@ -439,6 +446,7 @@ namespace tm
             _stadium = stadium;
             _goalSong = goalSong;
             _status = status;
+            _records = new ClubRecords();
         }
 
         public List<Player> ListPlayersByPosition(Position position)

@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace tm
+namespace tm.persistance.datacontract
 {
     public class DataContractProvider : IPersistanceProvider
     {
@@ -43,7 +43,7 @@ namespace tm
                     StreamReader osr = new StreamReader(cFile.Open(), Encoding.Default);
                     string content = osr.ReadToEnd();
                     loadObj = JsonConvert.DeserializeObject<Game>(content, new JsonSerializerSettings()
-                    { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
+                    { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
                     zip.Dispose();
                 }
             }
@@ -67,8 +67,8 @@ namespace tm
             if (serializationMethod == SerializationMethod.NewtonsoftJsonSerializer)
             {
                 JsonSerializer jsonSerializer = new JsonSerializer();
-                string output = JsonConvert.SerializeObject(game, Newtonsoft.Json.Formatting.None, new JsonSerializerSettings()
-                { ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
+                string output = JsonConvert.SerializeObject(game, Formatting.None, new JsonSerializerSettings()
+                { ReferenceLoopHandling = ReferenceLoopHandling.Ignore, TypeNameHandling = TypeNameHandling.Auto });
                 using (FileStream writer = new FileStream(path, FileMode.Create, FileAccess.Write))
                 {
                     var sr = new StreamWriter(writer);

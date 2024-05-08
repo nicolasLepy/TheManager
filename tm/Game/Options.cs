@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Text;
 namespace tm
 {
     [DataContract(IsReference =true)]
+    //[Owned]
     public class Options
     {
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -11,6 +12,7 @@ namespace tm
     public class Language
     {
         [DataMember]
+        [Key]
         private string _name;
         [DataMember]
         private List<string> _firstNames;

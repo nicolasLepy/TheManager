@@ -34,8 +34,8 @@ namespace tm
         NoAgreementWithClub
     }
 
-    [DataContract]
-    public struct ContractOffer : IEquatable<ContractOffer>
+    [DataContract(IsReference =true)]
+    public class ContractOffer : IEquatable<ContractOffer>
     {
         [DataMember]
         public int Wage { get; set; }
@@ -49,6 +49,11 @@ namespace tm
         public ContractOfferResult Result { get; set; }
         [DataMember]
         public CityClub Origin { get; set; }
+
+        public ContractOffer()
+        {
+
+        }
 
         public ContractOffer(Player player, int wage, int contractDuration, int transferIndemnity, CityClub origin)
         {
@@ -315,7 +320,8 @@ namespace tm
             
             Player j = new Player(Session.Instance.Game.kernel.NextIdPerson(), firstName, lastName, new DateTime(birthYear, Session.Instance.Random(1,13), Session.Instance.Random(1,29)), level, potential, this.city.Country(), p);
             int year = Session.Instance.Random(Session.Instance.Game.date.Year + 1, Session.Instance.Game.date.Year + 5);
-            contracts.Add(new Contract(j, j.EstimateWage(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+            contracts.Add(new Contract(Session.Instance.Game.kernel.NextIdContract(), j, j.EstimateWage(), new DateTime(year, 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+            j.UpdateClub(this);
         }
 
         public Contract FindContract(Player p)
@@ -605,9 +611,7 @@ namespace tm
                     Club adv = possibleOpponents[Session.Instance.Random(0, possibleOpponents.Count)];
                     possibleOpponents.Remove(adv);
                     DateTime gameDate = new DateTime(championshipMatchsBegin.Year, championshipMatchsBegin.Month, championshipMatchsBegin.Day).AddDays(Session.Instance.Random(-30, -7));
-                    Match game = new Match(this, adv, gameDate, false);
-                    Calendar.Hour(game);
-                    Session.Instance.Game.kernel.AddFriendlyGame(game);
+                    Match game = Session.Instance.Game.kernel.AddFriendlyGame(this, adv, gameDate);
                     game.CheckConflicts();
                     if(!Utils.CompareDates(game.day, gameDate) || adv == this || Utils.IsBefore(game.day, Session.Instance.Game.date.AddDays(1)))
                     {

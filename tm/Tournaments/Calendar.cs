@@ -235,7 +235,7 @@ namespace tm
                 jour = jour.AddHours(tournamentRound.programmation.defaultHour.Hours - jour.Hour);
                 jour = jour.AddMinutes(tournamentRound.programmation.defaultHour.Minutes - jour.Minute);
 
-                Match game = new Match(club1, club2, jour, false);
+                Match game = new Match(tournamentRound, club1, club2, jour, false);
                 res.Add(game);
 
             }
@@ -368,7 +368,7 @@ namespace tm
                         jour = jour.AddHours(programmation.defaultHour.Hours);
                         jour = jour.AddMinutes(programmation.defaultHour.Minutes);
 
-                        Match m = new Match(e1, e2, jour, false);
+                        Match m = new Match(tournamentRound, e1, e2, jour, false);
                         res.Add(m);
                         matchs.Add(m);
                     }
@@ -403,7 +403,7 @@ namespace tm
                             jour = jour.AddHours(programmation.defaultHour.Hours);
                             jour = jour.AddMinutes(programmation.defaultHour.Minutes);
 
-                            Match retour = new Match(clubs[rounds[i, j, 1]-1], clubs[rounds[i, j, 0]-1], jour, false);
+                            Match retour = new Match(tournamentRound, clubs[rounds[i, j, 1]-1], clubs[rounds[i, j, 0]-1], jour, false);
                             games.Add(retour);
                             res.Add(retour);
                         }
@@ -427,7 +427,7 @@ namespace tm
                             }
                             jour = jour.AddHours(programmation.defaultHour.Hours);
                             jour = jour.AddMinutes(programmation.defaultHour.Minutes);
-                            Match retour = new Match(clubs[rounds[0, i, 1] - 1], clubs[rounds[0, i, 0] - 1], jour, false);
+                            Match retour = new Match(tournamentRound, clubs[rounds[0, i, 1] - 1], clubs[rounds[0, i, 0] - 1], jour, false);
                             games.Add(retour);
                             res.Add(retour);
                         }
@@ -563,7 +563,7 @@ namespace tm
                 day = day.AddHours(programmation.defaultHour.Hours);
                 day = day.AddMinutes(programmation.defaultHour.Minutes);
 
-                Match secondRound = new Match(m.away, m.home, day, !(round.phases == 2), m);
+                Match secondRound = new Match(round, m.away, m.home, day, !(round.phases == 2), m);
                 games.Add(secondRound);
                 gamesList.Add(secondRound);
             }
@@ -589,7 +589,7 @@ namespace tm
             {
                 Club clubA = teams[i];
                 Club clubB = teams[teams.Count - i - 1];
-                res.Add(new Match(round.phases % 2 == 1 ? clubA : clubB, round.phases % 2 == 1 ? clubB : clubA, day, round.phases == 1));
+                res.Add(new Match(round, round.phases % 2 == 1 ? clubA : clubB, round.phases % 2 == 1 ? clubB : clubA, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
@@ -621,7 +621,7 @@ namespace tm
                 Club home = round.clubs[0];
                 Club away = round.clubs[1];
                 DateTime day = GetRoundProgrammationDate(round, programmation);
-                res.Add(new Match(home, away, day, round.phases == 1));
+                res.Add(new Match(round, home, away, day, round.phases == 1));
             }
             else
             {
@@ -630,7 +630,7 @@ namespace tm
                     Club home = i < round.clubs.Count / 4 ? round.clubs[i * 4] : round.clubs[((i - (round.clubs.Count / 4)) * 4) + 2];
                     Club away = i < round.clubs.Count / 4 ? round.clubs[(i * 4) + 3] : round.clubs[((i - (round.clubs.Count / 4)) * 4) + 1];
                     DateTime day = GetRoundProgrammationDate(round, programmation);
-                    res.Add(new Match(home, away, day, round.phases == 1));
+                    res.Add(new Match(round, home, away, day, round.phases == 1));
                 }
             }
             if (round.rules.Contains(Rule.AtHomeIfTwoLevelDifference))
@@ -684,7 +684,7 @@ namespace tm
                     home = switchedTeams[0];
                     away = switchedTeams[1];
                 }
-                res.Add(new Match(home, away, day, round.phases == 1));
+                res.Add(new Match(round, home, away, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
@@ -727,7 +727,7 @@ namespace tm
             {
                 Club clubA = clubs[i];
                 Club clubB = clubs[clubs.Count - 1 - i];
-                res.Add(new Match(round.phases % 2 == 1 ? clubA : clubB, round.phases % 2 == 1 ? clubB : clubA, day, round.phases == 1));
+                res.Add(new Match(round, round.phases % 2 == 1 ? clubA : clubB, round.phases % 2 == 1 ? clubB : clubA, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);
@@ -943,7 +943,7 @@ namespace tm
                     home = away;
                     away = temp;
                 }
-                res.Add(new Match(home, away, day, round.phases == 1));
+                res.Add(new Match(round, home, away, day, round.phases == 1));
             }
 
             TVSchedule(res, round.programmation.tvScheduling, 0);

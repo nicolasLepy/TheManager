@@ -382,10 +382,10 @@ namespace TheManager_GUI
             _game.options.simulateGames = true;
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            bool ok = Play(true);
+            bool ok = Play(false);
             while (!(_game.date.Month == 5 && _game.date.Day == 21) && ok)
             {
-                ok = Play(true);
+                ok = Play(false);
             }
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

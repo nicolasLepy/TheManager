@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using tm;
 using tm.Tournaments;
 
-namespace TheManagerTests
+namespace tests
 {
     [TestClass]
     public class TestsUtils

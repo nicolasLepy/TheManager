@@ -18,7 +18,7 @@ namespace tm
         private List<Club> _ranking;
         private int _associationLevel;
 
-        public InactiveRound(int id, string name, Hour hour, GameDay initialisation, GameDay end, int associationLevel) : base(id, name, hour, new List<GameDay>(), new List<TvOffset>(), initialisation, end, 1, 0, -1, 0)
+        public InactiveRound(int id, string name, Tournament tournament, Hour hour, GameDay initialisation, GameDay end, int associationLevel) : base(id, name, tournament, hour, new List<GameDay>(), new List<TvOffset>(), initialisation, end, 1, 0, -1, 0)
         {
             _ranking = null;
             _associationLevel = associationLevel;
@@ -26,7 +26,7 @@ namespace tm
 
         public override Round Copy()
         {
-            Round t = new InactiveRound(Session.Instance.Game.kernel.NextIdRound(), name, this.programmation.defaultHour, programmation.initialisation, programmation.end, _associationLevel);
+            Round t = new InactiveRound(Session.Instance.Game.kernel.NextIdRound(), name, Tournament, this.programmation.defaultHour, programmation.initialisation, programmation.end, _associationLevel);
             //Round t = new KnockoutRound(name, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), twoLegs, phases, programmation.initialisation, programmation.end, RandomDrawingMethod.Random, false);
             foreach (Match m in this.matches)
             {

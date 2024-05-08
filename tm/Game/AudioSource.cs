@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -18,6 +19,7 @@ namespace tm
     [DataContract(IsReference = true)]
     public class AudioSource
     {
+
         [DataMember]
         private string source;
         [DataMember]
@@ -27,6 +29,9 @@ namespace tm
         [DataMember]
         private AudioType type;
 
+        [DataMember]
+        [Key]
+        public int Id { get; set; }
         public string Source => source;
         public int Min => min;
         public int Max => max;
@@ -38,8 +43,9 @@ namespace tm
 
         }
 
-        public AudioSource(string source, int min, int max, AudioType type)
+        public AudioSource(int id, string source, int min, int max, AudioType type)
         {
+            this.Id = id;
             this.source = source;
             this.min = min;
             this.max = max;

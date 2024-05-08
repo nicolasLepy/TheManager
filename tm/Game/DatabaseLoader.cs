@@ -283,7 +283,7 @@ namespace tm
                     int max = int.Parse(e2.Attribute("capacity_max").Value);
                     string type = e2.Attribute("type").Value;
 
-                    AudioSource audioSource = new AudioSource(source, min, max, String2AudioType(type));
+                    AudioSource audioSource = new AudioSource(_kernel.NextIdAudio(), source, min, max, String2AudioType(type));
 
                     _kernel.AddAudioSource(audioSource);
                 }
@@ -395,7 +395,8 @@ namespace tm
                     Player j = new Player(_kernel.NextIdPerson(), firstName, lastName, playerBirth, level, potential, playerCountry == null ? _kernel.String2Country("France") : playerCountry, position);
                     if (club != null)
                     {
-                        club.AddPlayer(new Contract(j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear, Utils.beginningYear + 5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                        club.AddPlayer(new Contract(_kernel.NextIdContract(), j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear, Utils.beginningYear + 5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                        j.UpdateClub(club);
                     }
                     else
                     {
@@ -826,6 +827,10 @@ namespace tm
                         
                         bool equipePremiere = true;
                         Club c = new CityClub(id, name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, goalSong, equipePremiere, administrativeDivision, status);
+                        if(_clubsId.ContainsKey(id))
+                        {
+                            Console.WriteLine("[Club conflict]" + id + " : " + _clubsId[id].name + " vs " + c.name);
+                        }
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -871,6 +876,10 @@ namespace tm
                         Manager entraineur = new Manager(_kernel.NextIdPerson(), country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
                         Club c = new NationalTeam(id, name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalSong, points);
+                        if (_clubsId.ContainsKey(id))
+                        {
+                            Console.WriteLine("[Club conflict]" + id + " : " + _clubsId[id].name + " vs " + c.name);
+                        }
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
                     }
@@ -917,8 +926,19 @@ namespace tm
             }
         }
 
+        public void SetStartClubId()
+        {
+            int maxId = 0;
+            foreach(Club club in _kernel.Clubs)
+            {
+                maxId = club.id > maxId ? club.id : maxId;
+            }
+            _kernel.SetClubIdIterator(maxId);
+        }
+
         public void LoadTournaments()
         {
+            SetStartClubId();
             foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/comp/"))
             {
                 XDocument doc = XDocument.Load(xmlFile);
@@ -956,7 +976,7 @@ namespace tm
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Console.WriteLine(name);
-                        Tournament tournament = new Tournament(_kernel.NextIdTournament(), name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, new KeyValuePair<AdministrativeDivision, Tournament>());
+                        Tournament tournament = new Tournament(_kernel.NextIdTournament(), name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, new ParentTournament());
                         if (tournamentRuleStr != null)
                         {
                             TournamentRule tRule;
@@ -1027,7 +1047,7 @@ namespace tm
                             if (type == "championnat")
                             {
                                 int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
-                                round = new ChampionshipRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
+                                round = new ChampionshipRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
                             }
                             else if (type == "elimination")
                             {
@@ -1041,7 +1061,7 @@ namespace tm
                                 {
                                     noRandomDrawing = e3.Attribute("noRandomDrawing").Value == "true";
                                 }
-                                round = new KnockoutRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), dates, new List<TvOffset>(), phases, initialisationDate, endDate, method, noRandomDrawing, gamesPriority);
+                                round = new KnockoutRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), phases, initialisationDate, endDate, method, noRandomDrawing, gamesPriority);
                             }
                             else if (type == "poules")
                             {
@@ -1055,7 +1075,7 @@ namespace tm
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1088,7 +1108,7 @@ namespace tm
                                     administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
                                 }
                                 int groupsCount = 1;
-                                round = new GroupInactiveRound(_kernel.NextIdRound(), roundName, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
+                                round = new GroupInactiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
                             }
                             foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
                             {
@@ -1124,7 +1144,15 @@ namespace tm
                                     {
                                         nameAddon = " E"; divider = 4.5f;
                                     }
-                                    club = new ReserveClub(clubId, firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
+                                    if (firstTeam.reserves.Count == 4)
+                                    {
+                                        nameAddon = " F"; divider = 5f;
+                                    }
+                                    if (firstTeam.reserves.Count == 5)
+                                    {
+                                        nameAddon = " G"; divider = 5.5f;
+                                    }
+                                    club = new ReserveClub(_kernel.NextIdClub(), firstTeam, firstTeam.name + nameAddon, firstTeam.shortName + nameAddon, null);
                                     int newId = NextClubId();
                                     _clubsId[newId] = club;
                                     _kernel.Clubs.Add(club);
@@ -1659,7 +1687,7 @@ namespace tm
             }
             string cupName = "Coupe " + acr + tournamentName;
             int cupLevel = administrativeDivision != null ? 3 : 1; //c.Cups().Count + 1;
-            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new KeyValuePair<AdministrativeDivision, Tournament>(administrativeDivision, null));
+            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new ParentTournament(administrativeDivision, null));
 
             int roundCount = 0;
             int j = 1;
@@ -1683,7 +1711,7 @@ namespace tm
                 GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
                 GameDay beginDate = new GameDay( (availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
                 GameDay endDate = new GameDay( (availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
-                Round round = new KnockoutRound(_kernel.NextIdRound(), "Tour préliminaire", hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
+                Round round = new KnockoutRound(_kernel.NextIdRound(), "Tour préliminaire", nationalCup, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
                 {
@@ -1732,7 +1760,7 @@ namespace tm
                 GameDay gameDate = new GameDay(availableWeeks[weekIndex].WeekNumber, true, 0, 0);
                 GameDay beginDate = new GameDay((availableWeeks[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
                 GameDay endDate = new GameDay((availableWeeks[weekIndex].WeekNumber + 1) % 52, false, 0, 0);
-                Round round = new KnockoutRound(_kernel.NextIdRound(), name, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
+                Round round = new KnockoutRound(_kernel.NextIdRound(), name, nationalCup, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, j <= 32 ? RandomDrawingMethod.Random : RandomDrawingMethod.Geographic, false, 2);
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
                 if(!reservesAllowed)
                 {

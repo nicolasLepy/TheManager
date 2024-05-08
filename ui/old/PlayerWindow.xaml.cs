@@ -50,8 +50,8 @@ namespace TheManager_GUI
             foreach (PlayerHistory hj in joueur.history)
             {
                 niveaux.Add(hj.Level);
-                buts.Add(hj.Goals.Sum(k => k.Value));
-                joues.Add(hj.GamesPlayed.Sum(k => k.Value));
+                buts.Add(hj.Goals.Sum(k => k.Statistic));
+                joues.Add(hj.GamesPlayed.Sum(k => k.Statistic));
             }
 
             NiveauCollection = new SeriesCollection
@@ -143,9 +143,9 @@ namespace TheManager_GUI
                 int arrival = _player.history[0].Year;
                 for (int i = 0; i < _player.history.Count+1; i++)
                 {
-                    PlayerHistory hj = i < _player.history.Count ? _player.history[i] : new PlayerHistory(0, -1, new Dictionary<Club, int>(), new Dictionary<Club, int>(), null);
-                    totalGoals += hj.Goals.Sum(k => k.Value);
-                    totalMatchsPlayed += hj.GamesPlayed.Sum(k => k.Value);
+                    PlayerHistory hj = i < _player.history.Count ? _player.history[i] : new PlayerHistory(0, -1, new List<PlayerClubStatistic>(), new List<PlayerClubStatistic>(), null);
+                    totalGoals += hj.Goals.Sum(k => k.Statistic);
+                    totalMatchsPlayed += hj.GamesPlayed.Sum(k => k.Statistic);
 
                     if (i == _player.history.Count || last != hj.Club)
                     {
@@ -166,38 +166,38 @@ namespace TheManager_GUI
                     }
                     if(i < _player.history.Count)
                     {
-                        foreach (KeyValuePair<Club, int> kvp in hj.Goals)
+                        foreach (PlayerClubStatistic kvp in hj.Goals)
                         {
-                            NationalTeam nt = kvp.Key as NationalTeam;
+                            NationalTeam nt = kvp.Club as NationalTeam;
                             if (nt != null)
                             {
                                 if (!nationalTeamHistory.ContainsKey(nt))
                                 {
                                     nationalTeamHistory.Add(nt, new int[4]);
                                 }
-                                nationalTeamHistory[nt][3] += kvp.Value;
+                                nationalTeamHistory[nt][3] += kvp.Statistic;
                             }
                             else
                             {
-                                cumulativeGoals += kvp.Value;
+                                cumulativeGoals += kvp.Statistic;
                             }
                         }
-                        foreach (KeyValuePair<Club, int> kvp in hj.GamesPlayed)
+                        foreach (PlayerClubStatistic kvp in hj.GamesPlayed)
                         {
-                            NationalTeam nt = kvp.Key as NationalTeam;
+                            NationalTeam nt = kvp.Club as NationalTeam;
                             if (nt != null)
                             {
                                 if (!nationalTeamHistory.ContainsKey(nt))
                                 {
                                     nationalTeamHistory.Add(nt, new [] { -1, -1, 0, 0 });
                                 }
-                                nationalTeamHistory[nt][2] += kvp.Value;
+                                nationalTeamHistory[nt][2] += kvp.Statistic;
                                 nationalTeamHistory[nt][1] = nationalTeamHistory[nt][1] == -1 || hj.Year > nationalTeamHistory[nt][1] ? hj.Year : nationalTeamHistory[nt][1];
                                 nationalTeamHistory[nt][0] = nationalTeamHistory[nt][0] == -1 || hj.Year < nationalTeamHistory[nt][0] ? hj.Year : nationalTeamHistory[nt][0];
                             }
                             else
                             {
-                                cumulativeMatchesPlayed += kvp.Value;
+                                cumulativeMatchesPlayed += kvp.Statistic;
                             }
                         }
 

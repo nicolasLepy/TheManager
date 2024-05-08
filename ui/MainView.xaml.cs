@@ -81,6 +81,7 @@ namespace TheManager_GUI
             if (openFileDialog.ShowDialog() == true)
             {
                 Game p = new Game();
+                Console.WriteLine("[Load] " + openFileDialog.FileName);
                 p.Load(openFileDialog.FileName);
                 Session.Instance.Game = p;
 

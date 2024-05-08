@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -19,6 +20,10 @@ namespace tm
         [DataMember]
         private Player _player;
 
+        [DataMember]
+        [Key]
+        public int Id { get; set; }
+
         public int wage => _wage;
         public DateTime end => _end;
         [DataMember]
@@ -31,8 +36,9 @@ namespace tm
             isTransferable = false;
         }
 
-        public Contract(Player player, int wage, DateTime end, DateTime begin)
+        public Contract(int id, Player player, int wage, DateTime end, DateTime begin)
         {
+            Id = id;
             _player = player;
             _wage = wage;
             _end = end;

@@ -177,9 +177,9 @@ namespace TheManager_GUI.views
         private void FillPlayerGamesNumber(Grid grid, Player player, int row, int col)
         {
             int playedGames = 0;
-            foreach(KeyValuePair<Club, int> games in player.playedGames)
+            foreach(PlayerClubStatistic games in player.playedGames)
             {
-                playedGames += games.Value;
+                playedGames += games.Statistic;
             }
             TextBlock tbPlayedGames = ViewUtils.CreateTextBlock(playedGames.ToString(), StyleDefinition.styleTextPlainCenter, fontSize, -1);
             AddElementToGrid(grid, tbPlayedGames, row, col);
@@ -188,9 +188,9 @@ namespace TheManager_GUI.views
         private void FillPlayerGoalsNumber(Grid grid, Player player, int row, int col)
         {
             int goalsScored = 0;
-            foreach (KeyValuePair<Club, int> club in player.goalsScored)
+            foreach (PlayerClubStatistic club in player.goalsScored)
             {
-                goalsScored += club.Value;
+                goalsScored += club.Statistic;
             }
             TextBlock tbGoalsScored = ViewUtils.CreateTextBlock(goalsScored.ToString(), StyleDefinition.styleTextPlainCenter, fontSize, -1);
             AddElementToGrid(grid, tbGoalsScored, row, col);

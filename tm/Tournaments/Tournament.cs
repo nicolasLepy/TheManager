@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 /*
  * TODO: Factorisations possibles :
@@ -34,7 +35,28 @@ namespace tm
         OnWinnerQualifiedAdaptAssociationQualifications
     }
 
-    [DataContract]
+    [DataContract(IsReference =true)]
+    public class RecordEntry<T>
+    {
+        [DataMember]
+        public int Statistic { get; set; }
+        [DataMember]
+        public T Entity { get; set; }
+
+        public RecordEntry()
+        {
+
+        }
+
+        public RecordEntry(int statistic, T entity)
+        {
+            this.Statistic = statistic;
+            this.Entity = entity;
+        }
+    }
+
+    [DataContract(IsReference = true)]
+    //[Owned]
     public class TournamentStatistics : IEquatable<TournamentStatistics>
     {
         [DataMember]
@@ -42,36 +64,58 @@ namespace tm
         [DataMember]
         public Match LargerScore { get; set; }
         [DataMember]
-        public KeyValuePair<int, Player> TopGoalscorerOnOneSeason { get; set; }
+        public RecordEntry<Player> TopGoalscorerOnOneSeason { get; set; }
         [DataMember]
-        public KeyValuePair<int, Club> BiggestAttack { get; set; }
+        public RecordEntry<Club> BiggestAttack { get; set; }
         [DataMember]
-        public KeyValuePair<int, Club> WeakestAttack { get; set; }
+        public RecordEntry<Club> WeakestAttack { get; set; }
         [DataMember]
-        public KeyValuePair<int, Club> BiggestDefense { get; set; }
+        public RecordEntry<Club> BiggestDefense { get; set; }
         [DataMember]
-        public KeyValuePair<int, Club> WeakestDefense { get; set; }
+        public RecordEntry<Club> WeakestDefense { get; set; }
         [DataMember]
-        public KeyValuePair<int, Club> MostPoints { get; set; }
+        public RecordEntry<Club> MostPoints { get; set; }
         [DataMember]
-        public KeyValuePair<int, Club> LowestPoints { get; set; }
+        public RecordEntry<Club> LowestPoints { get; set; }
 
         public TournamentStatistics()
         {
             BiggerScore = null;
             LargerScore = null;
-            TopGoalscorerOnOneSeason = new KeyValuePair<int, Player>(0, null);
-            BiggestAttack = new KeyValuePair<int, Club>(0, null);
-            WeakestAttack = new KeyValuePair<int, Club>(0, null);
-            BiggestDefense = new KeyValuePair<int, Club>(0, null);
-            WeakestDefense = new KeyValuePair<int, Club>(0, null);
-            LowestPoints = new KeyValuePair<int, Club>(0, null);
-            MostPoints = new KeyValuePair<int, Club>(0, null);
+            TopGoalscorerOnOneSeason = new RecordEntry<Player>(0, null);
+            BiggestAttack = new RecordEntry<Club>(0, null);
+            WeakestAttack = new RecordEntry<Club>(0, null);
+            BiggestDefense = new RecordEntry<Club>(0, null);
+            WeakestDefense = new RecordEntry<Club>(0, null);
+            LowestPoints = new RecordEntry<Club>(0, null);
+            MostPoints = new RecordEntry<Club>(0, null);
         }
 
         public bool Equals(TournamentStatistics other)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    [DataContract(IsReference =true)]
+    //[Owned]
+    public class ParentTournament
+    {
+        [DataMember]
+        public AdministrativeDivision Association { get; set; }
+        [DataMember]
+        public Tournament Tournament { get; set; }
+
+        public ParentTournament()
+        {
+            Association = null;
+            Tournament = null;
+        }
+
+        public ParentTournament(AdministrativeDivision association, Tournament tournament)
+        {
+            Association = association;
+            Tournament = tournament;
         }
     }
 
@@ -123,7 +167,7 @@ namespace tm
         /// Case of regional cup tournament (French cup)
         /// </summary>
         [DataMember]
-        private KeyValuePair<AdministrativeDivision, Tournament> _parent;
+        private ParentTournament _parent;
 
         public string name { get => _name; }
         public Color color => _color;
@@ -174,7 +218,7 @@ namespace tm
         /// </summary>
         public List<TournamentRule> rules => _rules;
 
-        public KeyValuePair<AdministrativeDivision, Tournament> parent => _parent;
+        public ParentTournament parent => _parent;
 
         public Tournament()
         {
@@ -184,7 +228,7 @@ namespace tm
             _rules = new List<TournamentRule>();
         }
 
-        public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, KeyValuePair<AdministrativeDivision, Tournament> parent)
+        public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, ParentTournament parent)
         {
             Id = id;
             _rounds = new List<Round>();
@@ -277,7 +321,7 @@ namespace tm
             List<Tournament> childTournaments = new List<Tournament>();
             foreach(Tournament t in Session.Instance.Game.kernel.LocalisationTournament(this).Tournaments())
             {
-                if(t.parent.Value == this)
+                if(t.parent.Tournament == this)
                 {
                     childTournaments.Add(t);
                 }
@@ -505,7 +549,7 @@ namespace tm
             }
             else if (rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || rt.Method == RecuperationMethod.StatusPro)
             {
-                res = rt.Source.RetrieveTeams(-1, rt.Method, false, parent.Key).Count;
+                res = rt.Source.RetrieveTeams(-1, rt.Method, false, parent.Association).Count;
             }
             return res;
         }
@@ -524,7 +568,7 @@ namespace tm
 
             List<int> leagueLevelsRepresented = new List<int>();
 
-            if (parent.Key != null && (localisation as Country) != null)
+            if (parent.Association != null && (localisation as Country) != null)
             {
                 int levelsCount = (localisation as Country).Leagues().Count;
                 int[] teamsByLevel = new int[levelsCount];
@@ -538,7 +582,7 @@ namespace tm
                     for(int j = round.recuperedTeams.Count-1; j >= 0; j--)
                     {
                         RecoverTeams rt = round.recuperedTeams[j];
-                        int newTeamsCount = rt.Method == RecuperationMethod.Best ? rt.Source.RetrieveTeams(-1, rt.Method, true, parent.Key).Count : 0;
+                        int newTeamsCount = rt.Method == RecuperationMethod.Best ? rt.Source.RetrieveTeams(-1, rt.Method, true, parent.Association).Count : 0;
                         if(newTeamsCount > 0)
                         {
                             round.recuperedTeams[j] = new RecoverTeams(rt.Source, newTeamsCount, rt.Method);
@@ -587,7 +631,7 @@ namespace tm
             //Replace old RecoverTeams with new RecoverTeams with actual count of clubs (non continental or continental)
             
             //Case national League Cup
-            if(parent.Key == null)
+            if(parent.Association == null)
             {
                 foreach (List<RecoverTeams> lrt in newRecoverTeams)
                 {
@@ -645,7 +689,7 @@ namespace tm
             {
                 int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
                 Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
-                List<GameDay> availableDatesAll = (localisation as Country).GetAvailableCalendarDates(this.parent.Key == null, 2, leagueLevelsRepresented, true, false);
+                List<GameDay> availableDatesAll = (localisation as Country).GetAvailableCalendarDates(this.parent.Association == null, 2, leagueLevelsRepresented, true, false);
                 List<GameDay> availableDates = new List<GameDay>();
                 int beginningCompetition = this._seasonBeginning.WeekNumber;
                 int beginningRounds = rounds.First().programmation.initialisation.WeekNumber;
@@ -687,7 +731,7 @@ namespace tm
                     {
                         newRoundTimes.Add(new GameDay(availableDates[dateIndex].WeekNumber, dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
                     }
-                    newRounds.Add(new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), "Tour préliminaire", firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber-1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber+1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority));
+                    newRounds.Add(new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), "Tour préliminaire", this, firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber - 1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber + 1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority)); ;
                     newRounds[newRounds.Count - 1].recuperedTeams.AddRange(worstTeams);
                     newRounds[newRounds.Count - 1].rules.AddRange(firstRound.rules);
                     newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, this, false, -1));
@@ -774,7 +818,7 @@ namespace tm
                     Tournament regionalTournament = CopyForArchive(false);
                     regionalTournament._name = string.Format("{0} - {1}", regionalTournament, kvp.Key.name);
                     regionalTournament._level = 1000; //Un niveau exagérément élevé est mis pour éviter d'aller chercher les vainqueurs de ces compétitions pour les places européennes par exemple
-                    regionalTournament._parent = new KeyValuePair<AdministrativeDivision, Tournament>(kvp.Key, this); //Cette compétition dépend du tournoi principal
+                    regionalTournament._parent = new ParentTournament(kvp.Key, this); //Cette compétition dépend du tournoi principal
                     regionalTournament.InitializeQualificationsNextYearsLists();
                     for (int id = rounds.Count-1; id >= idRoundPivot; id--)
                     {
@@ -805,7 +849,7 @@ namespace tm
         /// </summary>
         public void UpdateCupQualifications()
         {
-            Utils.Debug(Session.Instance.Game.date.ToShortDateString() + " [UpdateCupQualifications " + name + "] (" + parent.Key + ")");
+            Utils.Debug(Session.Instance.Game.date.ToShortDateString() + " [UpdateCupQualifications " + name + "] (" + parent.Association + ")");
             //Sauvegarde en mémoire les qualifications en coupe par défaut, elles pourraient être amenées à changer en cas de modification de la structure de la ligue
             if(!AlreadyStoredRecuperedTeams())
             {
@@ -831,13 +875,13 @@ namespace tm
                 List<Tournament> childTournaments = GetChildTournaments();
                 foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
                 {
-                    if (!t.IsInternational() && t != this && t.parent.Value != this)
+                    if (!t.IsInternational() && t != this && t.parent.Tournament != this)
                     {
                         foreach (Round r in t.rounds)
                         {
                             for (int i = 0; i < r.qualifications.Count; i++)
                             {
-                                if (r.qualifications[i].tournament.parent.Value == this || (r.qualifications[i].tournament == this && r.qualifications[i].roundId < idRoundPivot))
+                                if (r.qualifications[i].tournament.parent.Tournament == this || (r.qualifications[i].tournament == this && r.qualifications[i].roundId < idRoundPivot))
                                 {
                                     Tournament hostTournament = childTournaments[Session.Instance.Random(0, childTournaments.Count)];
                                     Utils.Debug(string.Format("[Host Cup] {0} send winner of {1} to {2}", t.name, r.name, hostTournament.name));
@@ -861,7 +905,7 @@ namespace tm
                 }
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
-            if (leagueCupLike || (this.parent.Value == null && this.parent.Key != null)) //Regional cup are updated following league cup algorithm
+            if (leagueCupLike || (this.parent.Tournament == null && this.parent.Association != null)) //Regional cup are updated following league cup algorithm
             {
                 UpdateLeagueCupQualifications();
             }
@@ -877,7 +921,7 @@ namespace tm
                 //On ne considère pas ici les chemins régionaux (t.parent.Value != null) car seront comptés après à l'aide des attributs Round.teamsByAdministrativeDivision pour chaque tour
                 foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
                 {
-                    if (!t.IsInternational() && t != this && t.parent.Value != this)
+                    if (!t.IsInternational() && t != this && t.parent.Tournament != this)
                     {
                         foreach (Round r in t.rounds)
                         {
@@ -904,10 +948,10 @@ namespace tm
                 //Obtient le nombre d'équipes une fois toutes les ligues entrées dans la compétition (64 en Coupe de France)
                 //Dans le cas d'une phase qualificative régionale avant la phase nationale, 
                 int teamsAtTheLastRound = 2;
-                if(parent.Value != null)
+                if(parent.Tournament != null)
                 {
-                    AdministrativeDivision concernedRegion = parent.Key;
-                    foreach(Round r in parent.Value.rounds)
+                    AdministrativeDivision concernedRegion = parent.Association;
+                    foreach(Round r in parent.Tournament.rounds)
                     {
                         if(r.teamsByAdministrativeDivision.ContainsKey(concernedRegion))
                         {
@@ -937,7 +981,7 @@ namespace tm
                         Round rtRound = rt.Source as Round;
                         if (rtRound != null)
                         {
-                            int roundsClubCount = _parent.Key == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(_parent.Key);
+                            int roundsClubCount = _parent.Association == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(_parent.Association);
                             int clubsCount = roundsClubCount;
                             RecoverTeams otherRecoverTeams = GetOtherRecoverTeamsOfRound(rt);
                             if (otherRecoverTeams.Source != null)
@@ -1265,7 +1309,7 @@ namespace tm
                 Console.WriteLine("Cloturé le " + rounds[i].programmation.end.WeekNumber + " " + rounds[i].programmation.end.MidWeekGame);
                 foreach (RecoverTeams rt in recoverTeams)
                 {
-                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), parent.Key).Count;
+                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), parent.Association).Count;
                     Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + totalAdmTeamsCount + " - " + rt.Method);
                 }
                 Console.WriteLine(cupTeams + " équipes pour " + (cupTeams / 2) + " matchs");
@@ -1292,13 +1336,13 @@ namespace tm
             foreach (Round r in rounds)
             {
                 Round roundCopy = r.Copy();
-
+                roundCopy.Tournament = copy;
                 roundCopy.recuperedTeams.AddRange(AlreadyStoredRecuperedTeams() ? r.baseRecuperedTeams : r.recuperedTeams);
                 if(makeRoundsInactive)
                 {
                     int associationLevel = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).administrativeLevel : 0;
                     //roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end, associationLevel);
-                    roundCopy = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), roundCopy.name, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    roundCopy = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), roundCopy.name, this, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 }
                 for (int i = 0; i < roundCopy.qualifications.Count; i++)
                 {
@@ -1454,34 +1498,34 @@ namespace tm
                     int goalsFor = championship.GoalsFor(c);
                     int goalsAgainst = championship.GoalsAgainst(c);
                     int points = championship.Points(c);
-                    if(_statistics.MostPoints.Value == null || _statistics.MostPoints.Key < points)
+                    if(_statistics.MostPoints.Entity == null || _statistics.MostPoints.Statistic < points)
                     {
-                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(points, c);
+                        RecordEntry<Club> newRecord = new RecordEntry<Club>(points, c);
                         _statistics.MostPoints = newRecord;
                     }
-                    if (_statistics.LowestPoints.Value == null || _statistics.LowestPoints.Key > points)
+                    if (_statistics.LowestPoints.Entity == null || _statistics.LowestPoints.Statistic > points)
                     {
-                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(points, c);
+                        RecordEntry<Club> newRecord = new RecordEntry<Club>(points, c);
                         _statistics.LowestPoints = newRecord;
                     }
-                    if (_statistics.BiggestAttack.Value == null || _statistics.BiggestAttack.Key < goalsFor)
+                    if (_statistics.BiggestAttack.Entity == null || _statistics.BiggestAttack.Statistic < goalsFor)
                     {
-                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsFor, c);
+                        RecordEntry<Club> newRecord = new RecordEntry<Club>(goalsFor, c);
                         _statistics.BiggestAttack = newRecord;
                     }
-                    if (_statistics.WeakestAttack.Value == null || _statistics.WeakestAttack.Key > goalsFor)
+                    if (_statistics.WeakestAttack.Entity == null || _statistics.WeakestAttack.Statistic > goalsFor)
                     {
-                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsFor, c);
+                        RecordEntry<Club> newRecord = new RecordEntry<Club>(goalsFor, c);
                         _statistics.WeakestAttack = newRecord;
                     }
-                    if (_statistics.BiggestDefense.Value == null || _statistics.BiggestDefense.Key > goalsAgainst)
+                    if (_statistics.BiggestDefense.Entity == null || _statistics.BiggestDefense.Statistic > goalsAgainst)
                     {
-                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsAgainst, c);
+                        RecordEntry<Club> newRecord = new RecordEntry<Club>(goalsAgainst, c);
                         _statistics.BiggestDefense = newRecord;
                     }
-                    if (_statistics.WeakestDefense.Value == null || _statistics.WeakestDefense.Key < goalsAgainst)
+                    if (_statistics.WeakestDefense.Entity == null || _statistics.WeakestDefense.Statistic < goalsAgainst)
                     {
-                        KeyValuePair<int, Club> newRecord = new KeyValuePair<int, Club>(goalsAgainst, c);
+                        RecordEntry<Club> newRecord = new RecordEntry<Club>(goalsAgainst, c);
                         _statistics.WeakestDefense = newRecord;
                     }
                 }
@@ -1879,7 +1923,7 @@ namespace tm
                 {
                     int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
                     int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
-                    GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, this, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                     newRound.rules.AddRange(t.rules);
                     newRounds.Add(newRound);
 
@@ -2013,7 +2057,7 @@ namespace tm
                 int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
                 // InactiveRound newRound = new InactiveRound(t.name, t.programmation.defaultHour, t.programmation.initialisation, t.programmation.end, associationLevel);
                 int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
-                GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, this, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 newRound.rules.AddRange(t.rules);
                 newRounds.Add(newRound);
 

@@ -111,6 +111,8 @@ namespace tm
         [Key]
         public int id { get; set; }
         [DataMember]
+        private Round _round;
+        [DataMember]
         private int _minute;
         [DataMember]
         private int _period;
@@ -179,6 +181,7 @@ namespace tm
         [DataMember]
         private bool _forfeit;
 
+        
         public int attendance { get => _attendance; }
         [DataMember]
         public DateTime day { get; set; }
@@ -207,6 +210,9 @@ namespace tm
         /// </summary>
         public List<KeyValuePair<string,string>> actions { get => _actions; }
         public Statistics statistics { get => _statistics; }
+
+        public Round Round { get => _round; set => _round = value; }
+        public Tournament Tournament => _round.Tournament;
         public float odd1
         {
             get
@@ -255,8 +261,7 @@ namespace tm
         [DataMember]
         public bool primeTimeGame { get; set; }
 
-
-        public Tournament Tournament
+        /*public Tournament Tournament
         {
             get
             {
@@ -293,9 +298,9 @@ namespace tm
                 }
                 return res;
             }
-        }
+        }*/
 
-        public Round Round
+        /*public Round Round
         {
             get
             {
@@ -335,7 +340,7 @@ namespace tm
                 }
                 return res;
             }
-        }
+        }*/
 
         /// <summary>
         /// If the game was played or not
@@ -814,8 +819,9 @@ namespace tm
             _penaltyShoots2 = new List<bool>();
         }
 
-        public Match(Club homeTeam, Club awayTeam, DateTime matchDay, bool prolongationsIfDraw, Match firstLeg = null)
+        public Match(Round round, Club homeTeam, Club awayTeam, DateTime matchDay, bool prolongationsIfDraw, Match firstLeg = null)
         {
+            _round = round;
             _stadium = null;
             home = homeTeam;
             away = awayTeam;
@@ -1157,11 +1163,12 @@ namespace tm
         {
             foreach(Player p in compo)
             {
-                if(!p.playedGames.ContainsKey(club))
+
+                if(!p.playedGames.Any(x => x.Club == club))
                 {
-                    p.playedGames.Add(club, 0);
+                    p.playedGames.Add(new PlayerClubStatistic(club.id, 0));
                 }
-                p.playedGames[club]++;
+                p.playedGames.Find(x => x.Club == club).Statistic++;
             }
         }
 
@@ -1732,11 +1739,11 @@ namespace tm
                 MatchEvent em = new MatchEvent(GameEvent.Goal, c, p, _minute, _period);
                 if (p != null)
                 {
-                    if (!p.goalsScored.ContainsKey(c))
+                    if (!p.goalsScored.Any(x => x.Club == c))
                     {
-                        p.goalsScored.Add(c, 0);
+                        p.goalsScored.Add(new PlayerClubStatistic(c.id, 0));
                     }
-                    p.goalsScored[c]++;
+                    p.goalsScored.Find(x => x.Club == c).Statistic++;
                 }
                 _events.Add(em);
                 AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace tm
+namespace tm.persistance
 {
     public interface IPersistanceProvider
     {

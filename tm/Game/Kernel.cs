@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,6 +90,12 @@ namespace tm
         private int _nextIdCountry = 0;
         [DataMember]
         private int _nextIdContinent = 0;
+        [DataMember]
+        private int _nextIdContract = 0;
+        [DataMember]
+        private int _nextIdAudio = 0;
+        [DataMember]
+        private int _nextIdClub = 0;
 
         public int NextIdStadium() => ++_nextIdStadium;
         public int NextIdPerson() => ++_nextIdPerson;
@@ -97,11 +106,19 @@ namespace tm
         public int NextIdCity() => ++_nextIdCity;
         public int NextIdCountry() => ++_nextIdCountry;
         public int NextIdContinent() => ++_nextIdContinent;
+        public int NextIdContract() => ++_nextIdContract;
+        public int NextIdAudio() => ++_nextIdAudio;
+        public int NextIdClub() => ++_nextIdClub;
 
+        public void SetClubIdIterator(int id)
+        {
+            _nextIdClub = id;
+        }
 
 
         public List<Club> Clubs { get => _clubs; }
 
+        [NotMapped]
         public List<Tournament> Competitions
         {
             get
@@ -175,6 +192,7 @@ namespace tm
         /// <summary>
         /// Get the list of all games from all current tournaments
         /// </summary>
+        [NotMapped]
         public List<Match> Matchs
         {
             get
@@ -195,6 +213,7 @@ namespace tm
             }
         }
 
+        [NotMapped]
         public List<Player> Players
         {
             get
@@ -342,6 +361,19 @@ namespace tm
                 if (tournament.name == name)
                 {
                     res = tournament;
+                }
+            }
+            return res;
+        }
+
+        public Club GetClubById(int id)
+        {
+            Club res = null;
+            foreach(Club club in _clubs)
+            {
+                if(club.id == id)
+                {
+                    res = club;
                 }
             }
             return res;
@@ -592,10 +624,13 @@ namespace tm
         }
 
 
-        public void AddFriendlyGame(Match m)
+        public Match AddFriendlyGame(Club home, Club away, DateTime gameDate)
         {
             Tournament amc = String2Tournament("Matchs amicaux");
-            amc.rounds[0].matches.Add(m);
+            Match game = new Match(amc.rounds[0], home, away, gameDate, false);
+            Calendar.Hour(game);
+            amc.rounds[0].matches.Add(game);
+            return game;
         }
 
         public void CancelFriendlyGame(Match m)
@@ -655,6 +690,20 @@ namespace tm
             nationalsTeams.Sort(new NationsFifaRankingComparator());
 
             return nationalsTeams;
+        }
+
+        public void Resume()
+        {
+            int historyEntries = 0;
+            foreach(Player player in Players)
+            {
+                historyEntries += player.history.Count;
+            }
+            Console.WriteLine(String.Format("[Players] {0} ({1} entrées historiques)", Players.Count, historyEntries));
+            Console.WriteLine(String.Format("[Free Players] {0}", freePlayers.Count));
+            Console.WriteLine(String.Format("[Clubs] {0}", Clubs.Count));
+            Console.WriteLine(String.Format("[retired players] {0}", retiredPlayersCount));
+
         }
 
     }

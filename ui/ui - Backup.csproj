@@ -85,6 +85,6 @@
   </ItemGroup>
   <PropertyGroup />
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="&quot;D:\Logiciels\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\bin\Hostx64\x64\editbin.exe&quot; /stack:336194304 &quot;$(TargetPath)&quot;" />
+    <Exec Command="&quot;D:\Logiciels\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\bin\Hostx64\x64\editbin.exe&quot; /stack:68097152 &quot;$(TargetPath)&quot;" />
   </Target>
 </Project>

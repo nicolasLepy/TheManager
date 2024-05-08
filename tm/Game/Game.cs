@@ -19,6 +19,10 @@ using System.Xml;
 using System.Runtime.InteropServices;
 using System.Linq;
 using MathNet.Numerics;
+using tm.persistance.datacontract;
+using tm.persistance.sqlite;
+using tm.persistance.nhibernate;
+using tm.persistance;
 
 namespace tm
 {
@@ -110,6 +114,7 @@ namespace tm
     }
 
     [DataContract(IsReference =true)]
+    [KnownType(typeof(Continent))]
     public class Game
     {
         /// <summary>
@@ -159,6 +164,11 @@ namespace tm
             _options = new Options();
             _club = null;
             _gameUniverse = new GameWorld();
+        }
+
+        public void AttachKernel(Kernel kernel)
+        {
+            _kernel = kernel;
         }
 
         public DateTime GetBeginDate(Country c)
@@ -245,14 +255,21 @@ namespace tm
 
         public void Save(string path)
         {
+
+            //ObjectGraphValidator ogv = new ObjectGraphValidator();
+            //ogv.ValidateObjectGraph(this);
+
+            var timeDataContract = System.Diagnostics.Stopwatch.StartNew();
             DataContractProvider provider = new DataContractProvider(path);
             provider.Save(this);
-            SqliteProvider sqlProvider = new SqliteProvider("test");
-            sqlProvider.Save(this);
+            timeDataContract.Stop();
+            Console.WriteLine(String.Format("[Save] DataContract : {0} ms", timeDataContract.ElapsedMilliseconds));
+
         }
 
         public void Load(string path)
         {
+            var timeDataContract = System.Diagnostics.Stopwatch.StartNew();
             DataContractProvider provider = new DataContractProvider(path);
             Game loadObj = provider.Load();
             this._options = loadObj.options;
@@ -261,6 +278,7 @@ namespace tm
             this._club = loadObj.club;
             this._gameUniverse = loadObj.gameUniverse;
             this._articles = loadObj.articles;
+            Console.WriteLine(String.Format("[Load] DataContract : {0} ms", timeDataContract.ElapsedMilliseconds));
 
         }
 
