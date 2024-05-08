@@ -26,6 +26,7 @@ namespace tests
 
         private void InitGame(string dataset, bool keepOnlyFrance)
         {
+            Console.WriteLine("[current directory] " + Directory.GetCurrentDirectory());
             Game partie = new Game();
             Session.Instance.Game = partie;
             Kernel g = partie.kernel;
@@ -85,9 +86,9 @@ namespace tests
         }
 
         [TestMethod]
-        public void TestSeasonsLight() //About 15 minutes / season
+        public void TestSeasonsLight() //About 3 minutes / season
         {
-            InitGame("database_france_light", true);
+            InitGame("database_france_light", false);
 
             int years = 2;
             for(int i = 0; i < 365*years; i++)

@@ -63,9 +63,9 @@ namespace tm.Comparators
                 case PlayerAttribute.WAGE:
                     return y.EstimateWage() - x.EstimateWage();
                 case PlayerAttribute.GOALS:
-                    return y.goalsScored.Sum(k => k.Statistic) - x.goalsScored.Sum(k => k.Statistic);
+                    return y.Statistics.Goals.Sum(k => k.Statistic) - x.Statistics.Goals.Sum(k => k.Statistic);
                 case PlayerAttribute.GAMES:
-                    return y.playedGames.Sum(k => k.Statistic) - x.playedGames.Sum(k => k.Statistic);
+                    return y.Statistics.GamesPlayed.Sum(k => k.Statistic) - x.Statistics.GamesPlayed.Sum(k => k.Statistic);
                 case PlayerAttribute.NATIONALITY:
                     return y.nationality.Name().CompareTo(x.nationality.Name());
                 case PlayerAttribute.IS_SUSPENDED:

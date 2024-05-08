@@ -384,6 +384,7 @@ namespace tm
                 if(j.nationality == country)
                 {
                     j.UpdateLevel();
+                    j.UpdateStatistics();
                 }
             }
 
@@ -415,6 +416,7 @@ namespace tm
                     foreach (Contract ct in cv.allContracts)
                     {
                         ct.player.UpdateLevel();
+                        ct.player.UpdateStatistics();
                         if (ct.end.Year == date.Year)
                         {
                             if (!cv.Prolong(ct))

@@ -177,7 +177,7 @@ namespace TheManager_GUI.views
         private void FillPlayerGamesNumber(Grid grid, Player player, int row, int col)
         {
             int playedGames = 0;
-            foreach(PlayerClubStatistic games in player.playedGames)
+            foreach(PlayerClubStatistic games in player.Statistics.GamesPlayed)
             {
                 playedGames += games.Statistic;
             }
@@ -188,7 +188,7 @@ namespace TheManager_GUI.views
         private void FillPlayerGoalsNumber(Grid grid, Player player, int row, int col)
         {
             int goalsScored = 0;
-            foreach (PlayerClubStatistic club in player.goalsScored)
+            foreach (PlayerClubStatistic club in player.Statistics.Goals)
             {
                 goalsScored += club.Statistic;
             }

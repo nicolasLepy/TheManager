@@ -46,25 +46,25 @@ namespace tests
         [TestMethod]
         public void TestSave()
         {
-            save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\tb.csave");
+            save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2024.csave");
         }
 
         [TestMethod]
         public void TestLoad()
         {
-            load("D:\\Projets\\TheManager\\ui\\bin\\Debug\\tb.csave");
+            load("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2024.csave");
         }
 
         [TestMethod]
         public void TestSaveLight()
         {
-            save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_light.csave");
+            save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2022.csave");
         }
 
         [TestMethod]
         public void TestLoadLight()
         {
-            load("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_light.csave");
+            load("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2022.csave");
         }
     }
 }

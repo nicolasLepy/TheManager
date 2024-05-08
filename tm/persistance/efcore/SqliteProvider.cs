@@ -120,11 +120,6 @@ namespace tm.persistance.sqlite
             modelBuilder.Entity<Journalist>().Ignore(e => e.Games);  //TODO: To remove
             RegisterIgnoredProperty(typeof(Journalist), "Games");
 
-            modelBuilder.Entity<Player>().Ignore(e => e.playedGames);  //TODO: To remove
-            RegisterIgnoredProperty(typeof(Player), "playedGames");
-            modelBuilder.Entity<Player>().Ignore(e => e.goalsScored);  //TODO: To remove
-            RegisterIgnoredProperty(typeof(Player), "goalsScored");
-
             modelBuilder.Entity<Player>().Ignore(e => e.Club);  //TODO: To remove
             RegisterIgnoredProperty(typeof(Player), "Club");
 
@@ -178,6 +173,7 @@ namespace tm.persistance.sqlite
             modelBuilder.Entity<Match>().Ignore(e => e.Tournament);  //TODO: To remove
             RegisterIgnoredProperty(typeof(Match), "Tournament");
             modelBuilder.Entity<Continent>().Ignore(e => e.archivalAssociationRanking); // TODO: To remove
+            modelBuilder.Entity<Continent>().Ignore(e => e.internationalDates);  //TODO: To remove
             RegisterIgnoredProperty(typeof(Continent), "archivalAssociationRanking");
 
             modelBuilder.Entity<Kernel>().Ignore(e => e.Players); // TODO: To remove

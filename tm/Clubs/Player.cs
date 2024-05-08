@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Windows.Navigation;
 
 namespace tm
 {
@@ -42,7 +43,13 @@ namespace tm
         public int Level { get; set; }
         [DataMember]
         public int Year { get; set; }
+        /// <summary>
+        /// Goals scored during the current season
+        /// </summary>
         public List<PlayerClubStatistic> Goals => _goals;
+        /// <summary>
+        /// Played games during the current season
+        /// </summary>
         public List<PlayerClubStatistic> GamesPlayed => _gamesPlayed;
         [DataMember]
         public CityClub Club { get; set; }
@@ -89,10 +96,6 @@ namespace tm
         [DataMember]
         private bool _foundANewClubThisSeason;
         [DataMember]
-        private List<PlayerClubStatistic> _playedGames;
-        [DataMember]
-        private List<PlayerClubStatistic> _goalsScored;
-        [DataMember]
         private bool _inSelection;
         [DataMember]
         private CityClub _currentClub;
@@ -107,20 +110,20 @@ namespace tm
         {
             get
             {
-                List<PlayerHistory> res = new List<PlayerHistory>(_history);
-                //Add a fake history entry resuming the current season
-                res.Add(new PlayerHistory(this.level, Session.Instance.Game.CurrentSeason, this.goalsScored, this.playedGames, this.Club));
-                return res;
+                return new List<PlayerHistory>(_history);
             }
         }
-        /// <summary>
-        /// Played games during the current season
-        /// </summary>
-        public List<PlayerClubStatistic> playedGames => _playedGames;
-        /// <summary>
-        /// Goals scored during the current season
-        /// </summary>
-        public List<PlayerClubStatistic> goalsScored => _goalsScored;
+
+        public PlayerHistory Statistics
+        {
+            get
+            {
+                return _history.Last();
+            }
+        }
+
+        /*public List<PlayerClubStatistic> playedGames => _playedGames;
+        public List<PlayerClubStatistic> goalsScored => _goalsScored;*/
 
         /// <summary>
         /// Level of the player taking into consideration his energy
@@ -160,6 +163,7 @@ namespace tm
         public void UpdateClub(CityClub club)
         {
             _currentClub = club;
+            Statistics.Club = club;
         }
 
         /// <summary>
@@ -225,8 +229,6 @@ namespace tm
         public Player()
         {
             _history = new List<PlayerHistory>();
-            _goalsScored = new List<PlayerClubStatistic>();
-            _playedGames = new List<PlayerClubStatistic>();
             _offers = new List<ContractOffer>();
         }
 
@@ -239,13 +241,11 @@ namespace tm
             suspended = false;
             _energy = 100;
             _history = new List<PlayerHistory>();
-            _goalsScored = new List<PlayerClubStatistic>();
-            _playedGames = new List<PlayerClubStatistic>();
+            _history.Add(new PlayerHistory(_level, Session.Instance.Game.date.Year + 1, new List<PlayerClubStatistic>(), new List<PlayerClubStatistic>(), null));
             _offers = new List<ContractOffer>();
             _foundANewClubThisSeason = false;
             _inSelection = false;
         }
-
         
 
         // Properties
@@ -326,11 +326,13 @@ namespace tm
             {
                 _level -= Session.Instance.Random(1, 5);
             }
-            _history.Add(new PlayerHistory(_level, Session.Instance.Game.date.Year + 1,goalsScored, playedGames, Club));
-            _goalsScored = new List<PlayerClubStatistic>();
-            _playedGames = new List<PlayerClubStatistic>();
-
             _foundANewClubThisSeason = false;
+        }
+
+        public void UpdateStatistics()
+        {
+            _history.Last().Level = _level;
+            _history.Add(new PlayerHistory(_level, Session.Instance.Game.date.Year + 1, new List<PlayerClubStatistic>(), new List<PlayerClubStatistic>(), Club));
         }
 
 

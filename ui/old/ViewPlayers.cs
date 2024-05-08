@@ -217,11 +217,11 @@ namespace TheManager_GUI.ViewMisc
                 }
                 if (Games)
                 {
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.playedGames.ToString(), "StyleLabel2", FontSize, 50));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.Statistics.GamesPlayed.ToString(), "StyleLabel2", FontSize, 50));
                 }
                 if (Goals)
                 {
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.goalsScored.ToString(), "StyleLabel2", FontSize, 50));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.Statistics.Goals.ToString(), "StyleLabel2", FontSize, 50));
                 }
                 if (IsSuspended)
                 {

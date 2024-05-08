@@ -1164,11 +1164,11 @@ namespace tm
             foreach(Player p in compo)
             {
 
-                if(!p.playedGames.Any(x => x.Club == club))
+                if(!p.Statistics.GamesPlayed.Any(x => x.Club == club))
                 {
-                    p.playedGames.Add(new PlayerClubStatistic(club.id, 0));
+                    p.Statistics.GamesPlayed.Add(new PlayerClubStatistic(club.id, 0));
                 }
-                p.playedGames.Find(x => x.Club == club).Statistic++;
+                p.Statistics.GamesPlayed.Find(x => x.Club == club).Statistic++;
             }
         }
 
@@ -1739,11 +1739,11 @@ namespace tm
                 MatchEvent em = new MatchEvent(GameEvent.Goal, c, p, _minute, _period);
                 if (p != null)
                 {
-                    if (!p.goalsScored.Any(x => x.Club == c))
+                    if (!p.Statistics.Goals.Any(x => x.Club == c))
                     {
-                        p.goalsScored.Add(new PlayerClubStatistic(c.id, 0));
+                        p.Statistics.Goals.Add(new PlayerClubStatistic(c.id, 0));
                     }
-                    p.goalsScored.Find(x => x.Club == c).Statistic++;
+                    p.Statistics.Goals.Find(x => x.Club == c).Statistic++;
                 }
                 _events.Add(em);
                 AddAction(em.MinuteToString, Session.Instance.Game.kernel.Commentary(em));

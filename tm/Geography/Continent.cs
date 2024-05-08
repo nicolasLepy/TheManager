@@ -59,6 +59,11 @@ namespace tm
             throw new NotImplementedException();
         }
 
+        public InternationalDates()
+        {
+
+        }
+
         public InternationalDates(GameDay start, GameDay end, Tournament tournament, bool currentlyCalled)
         {
             _start = start;
