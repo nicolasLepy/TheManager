@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using TheManager.Comparators;
-using TheManager;
+using tm.Comparators;
+using tm;
 using TheManager_GUI.Views;
 using System.Text.RegularExpressions;
 using TheManager_GUI.Styles;
@@ -177,9 +177,9 @@ namespace TheManager_GUI.views
         private void FillPlayerGamesNumber(Grid grid, Player player, int row, int col)
         {
             int playedGames = 0;
-            foreach(KeyValuePair<Club, int> games in player.playedGames)
+            foreach(PlayerClubStatistic games in player.Statistics.GamesPlayed)
             {
-                playedGames += games.Value;
+                playedGames += games.Statistic;
             }
             TextBlock tbPlayedGames = ViewUtils.CreateTextBlock(playedGames.ToString(), StyleDefinition.styleTextPlainCenter, fontSize, -1);
             AddElementToGrid(grid, tbPlayedGames, row, col);
@@ -188,9 +188,9 @@ namespace TheManager_GUI.views
         private void FillPlayerGoalsNumber(Grid grid, Player player, int row, int col)
         {
             int goalsScored = 0;
-            foreach (KeyValuePair<Club, int> club in player.goalsScored)
+            foreach (PlayerClubStatistic club in player.Statistics.Goals)
             {
-                goalsScored += club.Value;
+                goalsScored += club.Statistic;
             }
             TextBlock tbGoalsScored = ViewUtils.CreateTextBlock(goalsScored.ToString(), StyleDefinition.styleTextPlainCenter, fontSize, -1);
             AddElementToGrid(grid, tbGoalsScored, row, col);

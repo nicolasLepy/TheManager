@@ -3,8 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TheManager;
-using TheManager.Tournaments;
+using tm;
+using tm.Tournaments;
 using TheManager_GUI.ViewMisc;
 
 namespace TheManager_GUI
@@ -155,7 +155,7 @@ namespace TheManager_GUI
             {
                 Session.Instance.Game.club = club as CityClub;
                 Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Country()));
-                Manager manager = new Manager(prenom, nom, 70, birthday, nationality);
+                Manager manager = new Manager(Session.Instance.Game.kernel.NextIdPerson(), prenom, nom, 70, birthday, nationality);
                 Session.Instance.Game.club.ChangeManager(manager);
                 MainMenuView view = new MainMenuView();
                 //Windows_Menu wm = new Windows_Menu();

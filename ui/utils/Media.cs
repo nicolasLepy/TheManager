@@ -8,7 +8,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using TheManager;
+using tm;
 using WMPLib;
 
 namespace TheManager_GUI.utils

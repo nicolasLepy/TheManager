@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TheManager", "TheManager\TheManager.csproj", "{C87D1486-6D8A-4041-AFC6-F7F0F5BC6B4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tm", "tm\tm.csproj", "{C87D1486-6D8A-4041-AFC6-F7F0F5BC6B4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ui", "ui\ui.csproj", "{78924484-F096-4D2F-92FC-C53A6A397027}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ui", "ui\ui.csproj", "{78924484-F096-4D2F-92FC-C53A6A397027}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "tests", "tests\tests.csproj", "{09047278-622A-4EBA-9B29-5080AD23054C}"
 EndProject

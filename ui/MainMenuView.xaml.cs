@@ -16,9 +16,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-using TheManager;
-using TheManager.Comparators;
-using TheManager.Tournaments;
+using tm;
+using tm.Comparators;
+using tm.Tournaments;
 using TheManager_GUI.controls;
 using TheManager_GUI.Styles;
 using TheManager_GUI.ViewMisc;
@@ -169,7 +169,9 @@ namespace TheManager_GUI
             bool ok = true;
 
             bool autosaveYear = _game.date.Year <= 2028;// || _game.date.Year % 4 == 0;
-            if (withAutosave && autosaveYear && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[5].rounds[0].DateEndRound().AddDays(-1)))
+            bool checkDate = (_game.kernel.String2Country("France").Leagues().Count > 5 && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[5].rounds[0].DateEndRound().AddDays(-1))) || (_game.kernel.String2Country("France").Leagues().Count < 5 && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[0].rounds[0].DateEndRound().AddDays(-1)));
+            withAutosave = false;
+            if (withAutosave && autosaveYear && checkDate)
             {
                 _game.AutoSave();
             }
@@ -381,10 +383,10 @@ namespace TheManager_GUI
             _game.options.simulateGames = true;
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
-            bool ok = Play(true);
+            bool ok = Play(false);
             while (!(_game.date.Month == 5 && _game.date.Day == 21) && ok)
             {
-                ok = Play(true);
+                ok = Play(false);
             }
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

@@ -1,7 +1,4 @@
-﻿using AxMapWinGIS;
-using LiveCharts;
-using LiveCharts.Wpf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -9,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using TheManager;
+using tm;
 using TheManager_GUI.Styles;
 
 namespace TheManager_GUI

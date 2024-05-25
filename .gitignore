@@ -21,7 +21,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
-TheManager/Exportation/Exporteurs2.cs
+tm/Exportation/Exporteurs2.cs
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -272,3 +272,5 @@ coveragereport
 
 ui/icons/old
 ui/icons/projects
+
+MigrationBackup/

@@ -1,14 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using TheManager.Tournaments;
-using TheManager;
+using System.Xml.Schema;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using tm;
+using tm.persistance;
 
-namespace TheManagerTests
+namespace tests
 {
+
     [TestClass]
     public class TestsWorkflow
     {
@@ -20,6 +26,7 @@ namespace TheManagerTests
 
         private void InitGame(string dataset, bool keepOnlyFrance)
         {
+            Console.WriteLine("[current directory] " + Directory.GetCurrentDirectory());
             Game partie = new Game();
             Session.Instance.Game = partie;
             Kernel g = partie.kernel;
@@ -60,7 +67,7 @@ namespace TheManagerTests
             Club club = Session.Instance.Game.kernel.Clubs[70];
             Session.Instance.Game.club = club as CityClub;
             Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Country()));
-            Manager manager = new Manager("Name", "Name", 70, new DateTime(1980, 1, 1), fr);
+            Manager manager = new Manager(Session.Instance.Game.kernel.NextIdPerson(), "Name", "Name", 70, new DateTime(1980, 1, 1), fr);
             Session.Instance.Game.club.ChangeManager(manager);
             Session.Instance.Game.options.simulateGames = true;
         }
@@ -79,7 +86,7 @@ namespace TheManagerTests
         }
 
         [TestMethod]
-        public void TestSeasonsLight() //About 15 minutes / season
+        public void TestSeasonsLight() //About 3 minutes / season
         {
             InitGame("database_france_light", false);
 
@@ -89,6 +96,8 @@ namespace TheManagerTests
                 Session.Instance.Game.NextDay();
                 Session.Instance.Game.UpdateTournaments();
             }
+
+            Session.Instance.Game.Save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_big.csave");
 
             //TODO: Check everything are correct : league structure doesn't changed, cup with right teams count
         }

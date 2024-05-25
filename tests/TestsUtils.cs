@@ -1,8 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using TheManager;
-using TheManager.Tournaments;
+using tm;
+using tm.Tournaments;
 
-namespace TheManagerTests
+namespace tests
 {
     [TestClass]
     public class TestsUtils

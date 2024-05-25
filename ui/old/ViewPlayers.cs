@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
-using TheManager;
-using TheManager.Comparators;
+using tm;
+using tm.Comparators;
 using TheManager_GUI.Views;
 
 namespace TheManager_GUI.ViewMisc
@@ -217,11 +217,11 @@ namespace TheManager_GUI.ViewMisc
                 }
                 if (Games)
                 {
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.playedGames.ToString(), "StyleLabel2", FontSize, 50));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.Statistics.GamesPlayed.ToString(), "StyleLabel2", FontSize, 50));
                 }
                 if (Goals)
                 {
-                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.goalsScored.ToString(), "StyleLabel2", FontSize, 50));
+                    spPlayer.Children.Add(ViewUtils.CreateLabel(player.Statistics.Goals.ToString(), "StyleLabel2", FontSize, 50));
                 }
                 if (IsSuspended)
                 {

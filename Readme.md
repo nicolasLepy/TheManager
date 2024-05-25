@@ -31,7 +31,7 @@ The Manager is a soccer simulator aiming to simulate tournaments, matchs, and cl
 
 ## Simulation stability
 
-The simulation has gained in stability : money in game stabilizes after few years and remains stable after. Players and clubs average level tends to incrase over time.
+The simulation has gained in stability : money in simulation stabilizes after few years and remains stable after. Players and clubs average level tends to incrase over time.
 
 Some realism issues : Small clubs at beginning can't stabilize at professionnal level.
 
@@ -49,51 +49,44 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 
 | Task                                                                  | Status           |
 | --------------------------------------------------------------------- | ---------------- |
-| **World**                                                             |                  |
-| Tournaments rules                                                     | 🟢 OK           |
-| Improve game stability                                                | 🟡 In progress  |
-| Managers and staff                                                    | 🟡 In progress  |
-| Transferts                                                            | 🟡 In progress  |
-| **Game**                                                              |                 |
-| Detailed game simulation                                              | 🔴 Not started  |
-| Games in real-time                                                    | 🟡 In progress  |
-| Players evolution                                                     | 🟡 In progress  |
 | **Tournaments**                                                       |                 |
 | Hierarchical Competitions (promotion, relegation ...)                 | 🟢 OK  |
 | Automatically created domestic cup (qualifications and scheduling)    | 🟢 OK  |
 | International tournaments                                 			| 🟢 OK  |
 | International ranking                                 				| 🟢 OK  |
-| Specials rules (lower team at home for domestic cups...)              | 🟢 OK  |
+| Special rules                                                         | 🟢 OK  |
 | **Club**                                                              |                 |
-| Evolution of club facilities                                          | 🟡 In progress  |
-| Financial control                                                     | 🔴 Not started  |
+| Transferts                                                            | 🟡 In progress  |
+| Players progression                                                   | 🟡 In progress  |
+| Managers and staff                                                    | 🟡 In progress |
+| Evolution of club facilities                                          | 🟡 In progress |
+| Financial control                                                     | 🔴 Not started |
 | **Managing**                                                          |                 |
 | Staff management                                                      | 🔴 Not started |
 | Youth team management                                                 | 🔴 Not started |
 | Recruitment tasks                                                     | 🟡 In progress |
+| **Games**                                                              |                 |
+| Detailed game engine                                                  | 🔴 Not started  |
+| Games in real-time                                                    | 🟡 In progress  |
 | **Miscellaneous**                                                     |				  |
-| Simulation serialization				                                | 🟢 OK |
-| Manage memory for long games                                          | 🔴 Not started |
-| Improve serialization to manage large objects graph                   | 🔴 Not started |
+| SQL                   				                                | 🟡 In progress |
 
-## Authors
-Nicolas Lépy
+## Tools and extensions
 
-## Tools used
-
-*   .NET Framework 4.8 and WPF
 *   Visual Studio
+*   .NET 6.0
+*	Microsoft.Extensions.Logging.Debug
+*   WPF
+*   [Live Charts for WPF](https://v0.lvcharts.com/)
 *   Mapsui
 *   Windows Media Player library
-
-## Credits
-
-*   [Live Charts for WPF](https://www.google.com)
 *   MathNet.Numerics
-*   Data about cities were obtained from [SimpleMaps](https://simplemaps.com/data/world-cities)
-*   Data about players and clubs were obtained from [Kaggle](https://www.kaggle.com/stefanoleone992/fifa-22-complete-player-dataset?select=players_22.csv)
-*   [flaticon.com (iconnut, Freepik, kerismaker and Futuer)](https://www.flaticon.com)
 
+## Data
+
+*   Cities : [SimpleMaps](https://simplemaps.com/data/world-cities)
+*   Players and clubs : [Kaggle](https://www.kaggle.com/stefanoleone992/fifa-22-complete-player-dataset?select=players_22.csv)
+*   [flaticon.com (iconnut, Freepik, kerismaker and Futuer)](https://www.flaticon.com)
 
 ## License
 

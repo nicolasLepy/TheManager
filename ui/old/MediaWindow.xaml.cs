@@ -1,19 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using TheManager;
-using TheManager.Comparators;
-using TheManager_GUI.ViewMisc;
+using tm;
 
 namespace TheManager_GUI
 {
@@ -39,30 +28,6 @@ namespace TheManager_GUI
         private void Map()
         {
             
-        }
-
-        private void Map_ShapeIdentified(object sender, AxMapWinGIS._DMapEvents_ShapeIdentifiedEvent e)
-        {
-            if(e.shapeIndex > -1)
-            {
-                spJournalistInfo.Children.Clear();
-
-                Journalist j = _media.journalists[_indexOrders[e.shapeIndex]];
-                spJournalistInfo.Children.Add(ViewUtils.CreateLabel(j.ToString() + " (" + j.age + " ans)", "StyleLabel2", 12, -1));
-                spJournalistInfo.Children.Add(ViewUtils.CreateLabel("Basé à " + j.baseCity.Name, "StyleLabel2", 12, -1));
-                List<Match> commentedGames = j.Games;
-                commentedGames.Sort(new MatchDateComparator());
-                ViewMatches view = new ViewMatches(commentedGames, true, false, false, false, false, true);
-                view.Full(spMatches);
-            }
-        }
-
-        private void Map_ShapeHighlighted(object sender, AxMapWinGIS._DMapEvents_ShapeHighlightedEvent e)
-        {
-        }
-
-        private void Map_MouseDownEvent(object sender, AxMapWinGIS._DMapEvents_MouseDownEvent e)
-        {
         }
 
         private void btnQuitter_Click(object sender, RoutedEventArgs e)

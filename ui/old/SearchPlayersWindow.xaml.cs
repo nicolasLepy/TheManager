@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Text.RegularExpressions;
-using TheManager;
+using tm;
 using System.Windows.Documents;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.views;

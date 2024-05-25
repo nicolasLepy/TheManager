@@ -15,7 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml.Linq;
-using TheManager;
+using tm;
 using TheManager_GUI.Styles;
 
 namespace TheManager_GUI
@@ -81,6 +81,7 @@ namespace TheManager_GUI
             if (openFileDialog.ShowDialog() == true)
             {
                 Game p = new Game();
+                Console.WriteLine("[Load] " + openFileDialog.FileName);
                 p.Load(openFileDialog.FileName);
                 Session.Instance.Game = p;
 

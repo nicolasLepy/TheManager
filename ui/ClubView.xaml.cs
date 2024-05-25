@@ -15,7 +15,7 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using TheManager;
+using tm;
 using TheManager_GUI.Styles;
 using TheManager_GUI.utils;
 using TheManager_GUI.ViewMisc;
@@ -283,18 +283,18 @@ namespace TheManager_GUI
             }
 
             string titleBudget = FindResource("str_balanceEvolution").ToString();
-            ChartView chartBudget = new ChartView(ChartType.LINE_CHART, titleBudget, new List<string>() { titleBudget }, FindResource("str_budget").ToString(), FindResource("str_years").ToString(), years, true, 1, new List<List<double>>() { budgets }, -1, 300);
+            ChartView chartBudget = new ChartView(ChartType.LINE_CHART, titleBudget, new List<string>() { titleBudget }, FindResource("str_budget").ToString(), FindResource("str_years").ToString(), years, true, false, 1, new List<List<double>>() { budgets }, -1, 300);
             chartBudget.RenderChart(panelBalanceEvolution);
             string titleFormation = FindResource("str_formationCentre").ToString();
-            ChartView chartFormation = new ChartView(ChartType.LINE_CHART, titleFormation, new List<string>() { titleFormation}, FindResource("str_formationCentre").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { formationCentre }, -1, 300);
+            ChartView chartFormation = new ChartView(ChartType.LINE_CHART, titleFormation, new List<string>() { titleFormation}, FindResource("str_formationCentre").ToString(), FindResource("str_years").ToString(), years, false, false, 1, new List<List<double>>() { formationCentre }, -1, 300);
             chartFormation.RenderChart(panelFormationCentre);
             string titleAttendance = FindResource("str_averageAttendance").ToString();
-            ChartView chartAttendance = new ChartView(ChartType.LINE_CHART, titleAttendance, new List<string>() { titleAttendance }, FindResource("str_averageAttendance").ToString(), FindResource("str_years").ToString(), years, false, 1, new List<List<double>>() { attendances }, -1, 300);
+            ChartView chartAttendance = new ChartView(ChartType.LINE_CHART, titleAttendance, new List<string>() { titleAttendance }, FindResource("str_averageAttendance").ToString(), FindResource("str_years").ToString(), years, false, false, 1, new List<List<double>>() { attendances }, -1, 300);
             chartAttendance.RenderChart(borderAttendance);
 
-            ChartView chartExpenses = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", expensesLabels, false, 1, new List<List<double>>() { expensesValue }, 200, 200);
+            ChartView chartExpenses = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", expensesLabels, false, false, 1, new List<List<double>>() { expensesValue }, 200, 200);
             chartExpenses.RenderChart(panelChartExpenses);
-            ChartView chartIncomes = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", incomeLabels, false, 1, new List<List<double>>() { incomeValue }, 200, 200);
+            ChartView chartIncomes = new ChartView(ChartType.PIE_CHART, "", new List<string>() { "" }, "", "", incomeLabels, false, false, 1, new List<List<double>>() { incomeValue }, 200, 200);
             chartIncomes.RenderChart(panelChartIncomes);
         }
 
@@ -428,7 +428,7 @@ namespace TheManager_GUI
             }
             else
             {
-                ChartView view = new ChartView(ChartType.LINE_CHART, title, new List<string>() { title }, FindResource("str_total").ToString(), title, years, true, 1, new List<List<double>>() { amount }, -1, 550, min, max);
+                ChartView view = new ChartView(ChartType.LINE_CHART, title, new List<string>() { title }, FindResource("str_total").ToString(), title, years, true, false, 1, new List<List<double>>() { amount }, -1, 550, min, max);
                 view.RenderChart(panelBudgetReportChart);
             }
         }

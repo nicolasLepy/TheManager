@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using TheManager;
+using tm;
 using TheManager_GUI.utils;
 
 namespace TheManager_GUI.Views
