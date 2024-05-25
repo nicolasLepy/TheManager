@@ -49,11 +49,6 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 
 | Task                                                                  | Status           |
 | --------------------------------------------------------------------- | ---------------- |
-| **Simulation**                                                             |                  |
-| Tournaments rules                                                     | 🟢 OK           |
-| Game stability                                                        | 🟡 In progress  |
-| Transferts                                                            | 🟡 In progress  |
-| Detailed game engine                                                  | 🔴 Not started  |
 | **Tournaments**                                                       |                 |
 | Hierarchical Competitions (promotion, relegation ...)                 | 🟢 OK  |
 | Automatically created domestic cup (qualifications and scheduling)    | 🟢 OK  |
@@ -61,6 +56,7 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 | International ranking                                 				| 🟢 OK  |
 | Special rules                                                         | 🟢 OK  |
 | **Club**                                                              |                 |
+| Transferts                                                            | 🟡 In progress  |
 | Players progression                                                   | 🟡 In progress  |
 | Managers and staff                                                    | 🟡 In progress |
 | Evolution of club facilities                                          | 🟡 In progress |
@@ -69,11 +65,11 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 | Staff management                                                      | 🔴 Not started |
 | Youth team management                                                 | 🔴 Not started |
 | Recruitment tasks                                                     | 🟡 In progress |
-| **UI**                                                              |                 |
+| **Games**                                                              |                 |
+| Detailed game engine                                                  | 🔴 Not started  |
 | Games in real-time                                                    | 🟡 In progress  |
 | **Miscellaneous**                                                     |				  |
 | SQL                   				                                | 🟡 In progress |
-| Manage memory for long simulations                                    | 🟡 In progress |
 
 ## Tools and extensions
 

@@ -49,7 +49,7 @@ namespace TheManager_GUI
         /// <param name="Yformatter">How to format Y axis values</param>
         /// <param name="sizeMultiplier">Size multiplier of the chart</param>
         /// <returns></returns>
-        public static CartesianChart CreateYearChart(StackPanel host, string[] years, string title, IChartValues values, bool isMoney, string axisYtitle, double minValue, double maxValue, string axisXtitle, Func<double, string> Yformatter, double sizeMultiplier = 1.0)
+        public static CartesianChart CreateYearChart(StackPanel host, string[] years, string title, IChartValues values, bool isMoney, bool isPercent, string axisYtitle, double minValue, double maxValue, string axisXtitle, Func<double, string> Yformatter, double sizeMultiplier = 1.0)
         {
 
             Label labelTitle = ViewUtils.CreateLabel(title, "StyleLabel2Center", 18, -1);
@@ -76,7 +76,7 @@ namespace TheManager_GUI
             axisY.MinValue = minValue;
             axisY.MaxValue = maxValue;
 
-            if (isMoney)
+            if (isMoney || isPercent)
             {
                 axisY.LabelFormatter = Yformatter;
             }

@@ -96,11 +96,11 @@ namespace TheManager_GUI
                 played.Add(hj.GamesPlayed.Sum(k => k.Statistic));
                 goals.Add(hj.Goals.Sum(k => k.Statistic));
             }
-            ChartView chartProgression = new ChartView(ChartType.LINE_CHART, FindResource("str_progression").ToString(), new List<string>() { FindResource("str_progression").ToString() }, FindResource("str_level").ToString(), FindResource("str_years").ToString(), labels, false, 1, new List<List<double>>() { levels }, -1, 250, 0, 100);
+            ChartView chartProgression = new ChartView(ChartType.LINE_CHART, FindResource("str_progression").ToString(), new List<string>() { FindResource("str_progression").ToString() }, FindResource("str_level").ToString(), FindResource("str_years").ToString(), labels, false, false, 1, new List<List<double>>() { levels }, -1, 250, 0, 100);
             chartProgression.RenderChart(panelProgression);
-            ChartView chartGames = new ChartView(ChartType.LINE_CHART, FindResource("str_matchPlayed").ToString(), new List<string>() { FindResource("str_matchPlayed").ToString() }, FindResource("str_games").ToString(), FindResource("str_years").ToString(), labels, false, 1, new List<List<double>>() { played }, -1, 200, 0);
+            ChartView chartGames = new ChartView(ChartType.LINE_CHART, FindResource("str_matchPlayed").ToString(), new List<string>() { FindResource("str_matchPlayed").ToString() }, FindResource("str_games").ToString(), FindResource("str_years").ToString(), labels, false, false, 1, new List<List<double>>() { played }, -1, 200, 0);
             chartGames.RenderChart(panelHistoryGames);
-            ChartView chartGoals = new ChartView(ChartType.LINE_CHART, FindResource("str_goalsScored").ToString(), new List<string>() { FindResource("str_goalsScored").ToString() }, FindResource("str_goals").ToString(), FindResource("str_years").ToString(), labels, false, 1, new List<List<double>>() { goals }, -1, 200, 0);
+            ChartView chartGoals = new ChartView(ChartType.LINE_CHART, FindResource("str_goalsScored").ToString(), new List<string>() { FindResource("str_goalsScored").ToString() }, FindResource("str_goals").ToString(), FindResource("str_years").ToString(), labels, false, false, 1, new List<List<double>>() { goals }, -1, 200, 0);
             chartGoals.RenderChart(panelHistoryGoals);
         }
 

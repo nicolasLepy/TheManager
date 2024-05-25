@@ -50,6 +50,7 @@ namespace TheManager_GUI.views
         private string axisXtitle { get; }
 
         private bool representsMoney { get; }
+        private bool representsPercents { get; }
 
         private float sizeMultiplier { get; }
 
@@ -60,13 +61,14 @@ namespace TheManager_GUI.views
         private float width { get; }
         private float height { get; }
 
-        public ChartView(ChartType chartType, string chartTitle, List<string> titles, string axisYtitle, string axisXtitle, List<string> labels, bool representsMoney, float sizeMultiplier, List<List<double>> values, float width, float height, double minValue = -1, double maxValue = -1)
+        public ChartView(ChartType chartType, string chartTitle, List<string> titles, string axisYtitle, string axisXtitle, List<string> labels, bool representsMoney, bool representsPercents, float sizeMultiplier, List<List<double>> values, float width, float height, double minValue = -1, double maxValue = -1)
         {
             this.chartType = chartType;
             this.chartTitle = chartTitle;
             this.labels = labels.ToArray();
             this.titles = titles;
             this.representsMoney = representsMoney;
+            this.representsPercents = representsPercents;
             this.sizeMultiplier = sizeMultiplier;
             this.values = values;
             this.axisYtitle = axisYtitle;
@@ -231,6 +233,11 @@ namespace TheManager_GUI.views
             if (representsMoney)
             {
                 Func<double, string> YFormatter = value => value.ToString("C");
+                axisY.LabelFormatter = YFormatter;
+            }
+            if (representsPercents)
+            {
+                Func<double, string> YFormatter = value => value.ToString("P2");
                 axisY.LabelFormatter = YFormatter;
             }
 
