@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NHibernate.SqlCommand;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlTypes;
@@ -132,7 +133,7 @@ namespace tm
             _cacheRanking = new List<Club>[0];
         }
 
-        public GroupsRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority) : base(id, name, tournament, hour, dates, offsets, initialisation,end, phases, 0, keepRankingFromPreviousRound, gamesPriority)
+        public GroupsRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority, int lastDaysSameDay) : base(id, name, tournament, hour, dates, offsets, initialisation,end, phases, lastDaysSameDay, keepRankingFromPreviousRound, gamesPriority)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -1070,6 +1071,32 @@ namespace tm
 
         public abstract List<Club> Ranking(int group, bool inverse = false);
 
+        /// <summary>
+        /// Get ranking in range [0, n[ for a club on its group
+        /// </summary>
+        /// <param name="club"></param>
+        /// <returns></returns>
+        public int Ranking(Club club)
+        {
+            int group = GroupOfClub(club);
+            return Ranking(group, false).IndexOf(club);
+        }
+
+        public int GroupOfClub(Club club)
+        {
+            int res = 0;
+            int i = 0;
+            foreach(List<Club> group in this.groups)
+            {
+                if(group.Contains(club))
+                {
+                    res = i;
+                }
+                i++;
+            }
+            return res;
+        }
+
         public List<Club> RankingWithoutReserves(int ranking)
         {
             List<Club> res = new List<Club>();
@@ -1132,7 +1159,14 @@ namespace tm
         /// <returns></returns>
         public override Club Winner()
         {
-            return null;
+            if(this.groupsCount == 1 && this.groups[0].Count > 0)
+            {
+                return Ranking(0)[0];
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

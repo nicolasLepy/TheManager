@@ -400,8 +400,7 @@ namespace tm
             foreach (Tournament t in Tournaments())
             {
                 GroupsRound gr = t.rounds[0] as GroupsRound;
-                ChampionshipRound cr = t.rounds[0] as ChampionshipRound;
-                if (((gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative) || cr != null) && t.level > res)
+                if (((gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative)) && t.level > res)
                 {
                     res = t.level;
                 }
@@ -843,15 +842,7 @@ namespace tm
                 if (leagues[i].rounds.Count > 0)
                 {
                     Round firstRound = leagues[i].rounds[0];
-                    if (firstRound as ChampionshipRound != null)
-                    {
-                        administrativeLevel = 0;
-                        if (firstRound.rules.Contains(Rule.BottomTeamNotEligibleForRepechage))
-                        {
-                            clubsCantBeSaved.Add((firstRound as ChampionshipRound).Ranking().Last());
-                        }
-                    }
-                    else if (firstRound as GroupsRound != null)
+                    if (firstRound as GroupsRound != null)
                     {
                         GroupsRound gFirstRound = firstRound as GroupsRound;
                         administrativeLevel = gFirstRound.administrativeLevel;

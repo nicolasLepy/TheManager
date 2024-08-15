@@ -407,7 +407,10 @@ namespace tm
                             games.Add(retour);
                             res.Add(retour);
                         }
-
+                        if(tournamentRound.Tournament.name == "Ligue 1")
+                        {
+                            Console.WriteLine("[nbGamesByLeg] " + nbGamesByLeg + " check " + (nbGamesByLeg - i) + ">=" + programmation.lastMatchDaysSameDayNumber);
+                        }
                         if (nbGamesByLeg - i >= programmation.lastMatchDaysSameDayNumber)
                         {
                             TVSchedule(games, programmation.tvScheduling, nbGamesByLeg + i);
@@ -575,9 +578,8 @@ namespace tm
         /// The best team receive the worst, the second best the second worst ...
         /// </summary>
         /// <param name="round"></param>
-        /// <param name="previousRound"></param>
         /// <returns></returns>
-        public static List<Match> DrawNoRandomDrawing(KnockoutRound round, ChampionshipRound previousRound)
+        public static List<Match> DrawNoRandomDrawing(KnockoutRound round)
         {
             RoundProgrammation programmation = round.programmation;
             DateTime day = GetRoundProgrammationDate(round, programmation);

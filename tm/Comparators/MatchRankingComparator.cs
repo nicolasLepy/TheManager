@@ -9,18 +9,21 @@ namespace tm.Comparators
     public class MatchRankingComparator : IComparer<Match>
     {
 
-        private readonly ChampionshipRound _round;
+        private readonly GroupsRound _round;
 
-        public MatchRankingComparator(ChampionshipRound round )
+        public MatchRankingComparator(GroupsRound round )
         {
             _round = round;
         }
 
         public int Compare(Match x, Match y)
         {
-            List<Club> ranking = _round.Ranking();
-            int nivMatchX = ranking.IndexOf(x.home) + ranking.IndexOf(x.away);
-            int nivMatchY = ranking.IndexOf(y.home) + ranking.IndexOf(y.away);
+            int xrh = _round.Ranking(x.home);
+            int xra = _round.Ranking(x.away);
+            int yrh = _round.Ranking(y.home);
+            int yra = _round.Ranking(y.away);
+            int nivMatchX = xrh + xra;
+            int nivMatchY = yrh + yra;
 
             return nivMatchX - nivMatchY;
         }

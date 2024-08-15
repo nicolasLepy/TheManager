@@ -156,6 +156,26 @@ namespace TheManager_GUI
             }
         }
 
+        public void PrintQualifications()
+        {
+            Console.WriteLine("[Qualifications]");
+            Country fr = Session.Instance.Game.kernel.String2Country("France");
+            Tournament league2 = fr.League(2);
+            GroupsRound baseRound = league2.rounds[0] as GroupsRound;
+            foreach(Qualification q in baseRound.GetGroupQualifications(0))
+            {
+                Console.WriteLine(q.ranking + " => " + q.tournament.name + ", " + q.roundId);
+            }
+            foreach(Club c in baseRound.Ranking(0))
+            {
+                Console.WriteLine(c.name + " --- " + baseRound.Points(c) + ", " + Utils.Difference(baseRound.matches, c));
+            }
+            foreach(Round r in league2.rounds)
+            {
+                Console.WriteLine(r.name + " -> " + r.DateInitialisationRound().ToShortDateString());
+            }
+        }
+
         public void PrintAdministrativeRetrogradations()
         {
             /*Country fr = Session.Instance.Game.kernel.String2Country("France");

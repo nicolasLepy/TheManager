@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
 using tm.Comparators;
+using tm.Tournaments;
 
 namespace tm
 {
@@ -583,7 +584,7 @@ namespace tm
             Tournament championship = Championship; //TODO: Now friendly are generated before the beginning of the season. So maybe check for the "future" championship
             List<Club> possibleOpponents = new List<Club>();
 
-            if (championship != null && championship.rounds[0] as ChampionshipRound != null)
+            if (championship != null && championship.rounds[0] as GroupActiveRound != null)
             {
                 Console.WriteLine("[GenerateFriendlyGamesCalendar] " + name);
                 DateTime championshipMatchsBegin = championship.rounds[0].programmation.gamesDays[0].ConvertToDateTime();

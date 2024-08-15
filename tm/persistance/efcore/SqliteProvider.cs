@@ -85,7 +85,6 @@ namespace tm.persistance.sqlite
             modelBuilder.Entity<ReserveClub>();
             modelBuilder.Entity<GroupsRound>();
             modelBuilder.Entity<GroupInactiveRound>();
-            modelBuilder.Entity<ChampionshipRound>();
             modelBuilder.Entity<KnockoutRound>();
 
             modelBuilder.Entity<Kernel>().Ignore(e => e.Clubs);  //TODO: To remove
@@ -212,7 +211,6 @@ namespace tm.persistance.sqlite
             modelBuilder.Entity<GroupActiveRound>();
             modelBuilder.Entity<GroupInactiveRound>();
             modelBuilder.Entity<KnockoutRound>();
-            modelBuilder.Entity<ChampionshipRound>();
 
             modelBuilder.Entity<Round>().HasMany(e => e.clubs);
             modelBuilder.Entity<Round>().HasMany(e => e.matches);

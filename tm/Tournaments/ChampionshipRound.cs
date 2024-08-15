@@ -9,6 +9,7 @@ using tm.Tournaments;
 
 namespace tm
 {
+    [Obsolete("Please use GroupsRound instead")]
     [DataContract(IsReference =true)]
     public class ChampionshipRound : Round
     {

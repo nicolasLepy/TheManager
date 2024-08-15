@@ -539,7 +539,7 @@ namespace tm
                 _score1 = 0;
                 _score2 = 3;
                 int pointsSanctions = home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
-                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupActiveRound) != null || ((Round as ChampionshipRound) != null)))
+                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupActiveRound) != null))
                 {
                     Round.AddPointsDeduction(home, SanctionType.Forfeit, day, pointsSanctions);
                 }
@@ -549,12 +549,12 @@ namespace tm
                 _score1 = 3;
                 _score2 = 0;
                 int pointsSanctions = away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
-                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupActiveRound) != null || ((Round as ChampionshipRound) != null)))
+                if (pointsSanctions > 0 && Tournament.isChampionship && ((Round as GroupActiveRound) != null))
                 {
                     Round.AddPointsDeduction(away, SanctionType.Forfeit, day, pointsSanctions);
                 }
             }
-            if (forfeitTeam == null && Tournament.isChampionship && ((Round as GroupActiveRound) != null || ((Round as ChampionshipRound) != null)))
+            if (forfeitTeam == null && Tournament.isChampionship && ((Round as GroupActiveRound) != null))
             {
                 int homePointsSanctions = home.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;
                 int awayPointsSanctions = away.Country().GetSanction(SanctionType.Forfeit).maxPointsDeduction;

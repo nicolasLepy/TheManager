@@ -1046,8 +1046,9 @@ namespace tm
                             }
                             if (type == "championnat")
                             {
-                                int dernieresJourneesMemeJour = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
-                                round = new ChampionshipRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, dernieresJourneesMemeJour, gamesPriority);
+                                int lastDaysSameDay = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
+                                //round = new ChampionshipRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, lastDaysSameDay, gamesPriority);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), 1, phases, initialisationDate, endDate, keepRankingFromPreviousRound, RandomDrawingMethod.Level, 0, false, 0, 0, gamesPriority, lastDaysSameDay);
                             }
                             else if (type == "elimination")
                             {
@@ -1075,7 +1076,7 @@ namespace tm
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority, 0);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {

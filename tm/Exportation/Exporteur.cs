@@ -75,59 +75,6 @@ namespace tm.Exportation
                     }
                 }
                 output.Append("</p>");
-                if(t as ChampionshipRound != null)
-                {
-                    ChampionshipRound tc = t as ChampionshipRound;
-                    output.Append("<table>");
-                    
-                    foreach (Club club in tc.Ranking())
-                    {
-                        output.Append("<tr><td>").Append(club.name).Append("</td><td>").Append(tc.Points(club))
-                            .Append("</td><td>").Append(tc.Played(club)).Append("</td><td>").Append(tc.Wins(club))
-                            .Append("</td><td>").Append(tc.Draws(club)).Append("</td><td>").Append(tc.Loses(club))
-                            .Append("</td><td>").Append(tc.GoalsFor(club)).Append("</td><td>")
-                            .Append(tc.GoalsAgainst(club)).Append("</td><td>").Append(tc.Difference(club))
-                            .Append("</td></tr>");
-                    }
-
-                    output.Append("</table>");
-                    int matchsJournee = (tc.clubs.Count % 2 == 1) ? tc.clubs.Count/2+1 : tc.clubs.Count/2;
-                    int nbJournees = (tc.matches.Count / tc.clubs.Count) * 2;
-                    int k = 0;
-                    Exporteurs2.ExporterClassementL(tc, "Output\\" + c.shortName + Session.Instance.Game.date.Year + "\\" + t.name + "\\Matchs\\");
-                    for (int i = 0; i<nbJournees; i++)
-                    {
-                        List<Match> journee = new List<Match>();
-                        for(int j = 0; j<matchsJournee; j++)
-                        {
-                            journee.Add(tc.matches[i * matchsJournee + j]);
-                        }
-                        journee.Sort(new MatchDateComparator());
-
-
-                        Exporteurs2.ExporterL(journee, "Output\\" + c.shortName + Session.Instance.Game.date.Year + "\\" + t.name, i + 1);
-
-                        output.Append("<p>Journée ").Append((i + 1)).Append("</p><table>");
-                        DateTime last = new DateTime(2000, 1, 1);
-                        foreach (Match m in journee)
-                        {
-                            if (m.day.Date != last.Date)
-                            {
-                                output.Append("<tr><td colspan=\"3\">").Append(m.day.Date.ToShortDateString())
-                                    .Append("</td></tr>");
-                            }
-                            last = m.day;
-                            output.Append("<tr><td>").Append(m.day.ToShortTimeString()).Append("</td><td>")
-                                .Append(m.home.name).Append("</td><td><a href=\"").Append(tc.name).Append("\\")
-                                .Append(k).Append(".html\">").Append(m.score1).Append("-").Append(m.score2)
-                                .Append("</a></td><td>").Append(m.away.name).Append("</td></tr>");
-                            EcrireMatch(m, dir + "\\" + tc.name + "\\" + k + ".html");
-                            k++;
-                        }
-
-                        output.Append("</table>");
-                    }
-                }
                 if(t as KnockoutRound != null)
                 {
                     KnockoutRound te = t as KnockoutRound;

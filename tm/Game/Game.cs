@@ -539,19 +539,19 @@ namespace tm
 
                         if (nbJournees-j == 1)
                         {
-                            games.Sort(new MatchRankingComparator(r as ChampionshipRound));
+                            games.Sort(new MatchRankingComparator(r as GroupsRound));
                         }
                         else if (nbJournees - j == 0)
                         {
-                            games.Sort(new MatchRankingComparator(r as ChampionshipRound));
+                            games.Sort(new MatchRankingComparator(r as GroupsRound));
                         }
                         else if(j<3)
                         {
                             games.Sort(new MatchLevelComparator());
                         }
-                        else if(r as ChampionshipRound != null) 
+                        else if(r as GroupsRound != null) 
                         {
-                            games.Sort(new MatchRankingComparator(r as ChampionshipRound));
+                            games.Sort(new MatchRankingComparator(r as GroupsRound));
                         }
                         else
                         {

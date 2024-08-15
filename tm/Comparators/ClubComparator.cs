@@ -58,17 +58,10 @@ namespace tm
         {
             if(!_rankings.ContainsKey(round))
             {
-                ChampionshipRound cr = round as ChampionshipRound;
                 GroupsRound gr = round as GroupsRound;
                 List<Club> roundRanking;
                 //TODO: Need a Ranking() method for each round type
-                if(cr != null)
-                {
-                    roundRanking = new List<Club>(round.clubs);
-                    roundRanking.Sort(new ClubRankingComparator(round.matches, round.tiebreakers, round.pointsDeduction));
-                    _rankings.Add(round, new List<Club>[] { roundRanking });
-                }
-                else if(gr != null)
+                if(gr != null)
                 {
                     List<Club>[] rankings = new List<Club>[gr.groups.Length];
                     for(int i = 0; i< gr.groups.Length; i++)

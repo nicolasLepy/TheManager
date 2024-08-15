@@ -184,6 +184,7 @@ namespace TheManager_GUI
             }
             ok = _game.UpdateTournaments();
             Refresh();
+            //_modifiers.PrintQualifications();
             return ok;
         }
 

@@ -182,11 +182,6 @@ namespace tm
                     GroupsRound previousRoundG = previousRound as GroupsRound;
                     _matches = Calendar.DrawNoRandomDrawing(this, previousRoundG);
                 }
-                else if (previousRound as ChampionshipRound != null)
-                {
-                    ChampionshipRound previousRoundC = previousRound as ChampionshipRound;
-                    _matches = Calendar.DrawNoRandomDrawing(this, previousRoundC);
-                }
             }
             else
             {

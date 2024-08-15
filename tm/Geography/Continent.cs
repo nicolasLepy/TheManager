@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.Tracing;
+using System.Drawing.Printing;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -409,19 +410,16 @@ namespace tm
                     leagueDivisionChampionship = leagueDivisionChampionship.previousEditions[maxValueKey];
                 }
 
-                Round championshipRound = leagueDivisionChampionship.GetLastChampionshipRound();
-                if (championshipRound as ChampionshipRound != null)
-                {
-                    leagueClubs.AddRange((championshipRound as ChampionshipRound).Ranking());
-                }
+                Round championshipRound = leagueDivisionChampionship.GetLastChampionshipRound(); //TODO: Bottom league is not registered here (czech)
+
                 if (championshipRound as GroupInactiveRound != null)
                 {
                     leagueClubs.AddRange((championshipRound as GroupInactiveRound).FullRanking());
                 }
-                if (championshipRound as GroupActiveRound != null) //Only to store clubs from lower division (uncommon to have a league playing as groups without final phase)
+                if (championshipRound as GroupActiveRound != null)
                 {
                     List<Club> roundClubs = new List<Club>(championshipRound.clubs);
-                    if (leagueLevel == 1 || roundClubs.Count < 60)
+                    if (leagueLevel == 1 || roundClubs.Count < 60) //TODO: Other way to check if it's a very lower league. //TODO: USE_RANKING_METHOD
                     {
                         roundClubs.Sort(new ClubRankingComparator(championshipRound.matches, championshipRound.tiebreakers, championshipRound.pointsDeduction));
                     }
@@ -429,7 +427,7 @@ namespace tm
                 }
 
                 //Get final phase clubs tree from first league in case of
-                if(leagueLevel == 1)
+                if (leagueLevel == 1)
                 {
                     List<Club> finalPhasesClubs = leagueDivisionChampionship.GetFinalPhasesClubs();
                     if (finalPhasesClubs.Count > 0)
@@ -438,6 +436,19 @@ namespace tm
                         {
                             leagueClubs.Remove(finalPhasesClubs[j]);
                             leagueClubs.Insert(0, finalPhasesClubs[j]);
+                        }
+                    }
+                }
+
+                //Cas spécial championnat coupé en deux : les équipes qui sont envoyée dans le championnat du bas de tableau sont oubliées.
+                //TODO: On perds le classement des équipes du bas de tableau ici (pas grave sauf exception)
+                if (championshipRound != leagueDivisionChampionship.rounds[0])
+                {
+                    foreach(Club club in leagueDivisionChampionship.rounds[0].clubs)
+                    {
+                        if(!championshipRound.clubs.Contains(club))
+                        {
+                            leagueClubs.Add(club);
                         }
                     }
                 }
@@ -477,6 +488,7 @@ namespace tm
                 for(int i = leagueClubs.Count-1; i >=0; i--)
                 {
                     Club club = leagueClubs[i];
+                    Console.WriteLine("... " + club.name);
                     KeyValuePair<Tournament, int> cdq = new KeyValuePair<Tournament, int>(null, 0);
                     foreach (Tournament t in continentalTournaments)
                     {
@@ -484,6 +496,7 @@ namespace tm
                         List<Qualification> tQualifications = t.rounds.Last().qualifications;
                         if (tWinner == club && tQualifications.Count > 0 && tQualifications[0].isNextYear && tQualifications[0].ranking == 1)
                         {
+                            Console.WriteLine("Winner registered");
                             cdq = new KeyValuePair<Tournament, int>(tQualifications[0].tournament, tQualifications[0].roundId);
                         }
                     }
@@ -494,6 +507,7 @@ namespace tm
                         //Add a new qualification corresponding to the place reserved to the international cup winner
                         Qualification qualificationCupWinner = new Qualification(rank, cdq.Value, cdq.Key, true, 1);
                         associationQualifications.Add(qualificationCupWinner);
+                        Console.WriteLine("[nouvelle place accordée] " + c.Name() + " winner is " + cdq.Key.name);
                         //Sort to put the new qualification at the right place
                         associationQualifications.Sort((x, y) => x.tournament.level != y.tournament.level ? x.tournament.level - y.tournament.level : y.roundId - x.roundId);
                         int indexQ = -1;
@@ -508,7 +522,7 @@ namespace tm
                         {
                             indexQ--;
                         }
-                        
+
                         cupWinners.Remove(club);
                         cupWinners.Insert(indexQ, club);
                     }
@@ -560,6 +574,10 @@ namespace tm
             for(int i = 0; i< countriesRanking.Count; i++)
             {
                 Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i], false);
+                foreach(KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
+                {
+                    Utils.Debug("[preprocess][international qualfication][" + kvp.Value.tournament.shortName + "][" + kvp.Value.roundId + "][" + kvp.Key.Country().Name() + "] " + kvp.Key.name);
+                }
                 bool ruleR1 = GetContinentalClubTournament(1) != null ? GetContinentalClubTournament(1).rules.Contains(TournamentRule.OnWinnerQualifiedAdaptClubsQualifications) : false;
                 if(ruleR1)
                 {
@@ -579,7 +597,7 @@ namespace tm
                 }
                 foreach (KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
                 {
-                    Utils.Debug("Qualifie " + kvp.Key.name + " pour la " + kvp.Value.tournament.name + " (tour " + kvp.Value.roundId + ")");
+                    Utils.Debug("[international qualfication][" + kvp.Value.tournament.shortName + "][" + kvp.Value.roundId + "]["+kvp.Key.Country().Name()+"] " + kvp.Key.name);
                     kvp.Value.tournament.AddClubForNextYear(kvp.Key, kvp.Value.roundId);
                 }
             }

@@ -107,16 +107,19 @@ namespace TheManager_GUI.views
             SeriesCollection series = new SeriesCollection();
             for (int i = 0; i < values.Count; i++)
             {
-                series.Add(new PieSeries
+                if (values[0].Count > 0)
                 {
-                    Title = labels[i],
-                    DataLabels = true,
-                    Stroke = Brushes.Transparent,
-                    StrokeThickness = 5,
-                    LabelPoint = labelFormatter, //Used when display ToolTip, but will be eventually customized
-                    Values = new ChartValues<PieChartValue> { new PieChartValue(labels[i], values[0][i], Utils.FormatMoney((float)values[0][i])) },
-                    Style = Application.Current.FindResource(StyleDefinition.styleLiveChartPieSerie) as Style
-                });
+                    series.Add(new PieSeries
+                    {
+                        Title = labels[i],
+                        DataLabels = true,
+                        Stroke = Brushes.Transparent,
+                        StrokeThickness = 5,
+                        LabelPoint = labelFormatter, //Used when display ToolTip, but will be eventually customized
+                        Values = new ChartValues<PieChartValue> { new PieChartValue(labels[i], values[0][i], Utils.FormatMoney((float)values[0][i])) },
+                        Style = Application.Current.FindResource(StyleDefinition.styleLiveChartPieSerie) as Style
+                    });
+                }
             }
 
             PieChart pc = new PieChart();
