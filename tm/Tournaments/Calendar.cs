@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using tm.Algorithms;
 using tm.Comparators;
 using tm.Tournaments;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace tm
 {
@@ -249,7 +250,7 @@ namespace tm
         /// <param name="programmation">TV / Federation schedule for games</param>
         /// <param name="twoLegged">One or two games</param>
         /// <returns></returns>
-        public static List<Match> GenerateCalendar(List<Club> clubsBase, Round tournamentRound)
+        public static List<Match> GenerateCalendar(List<Club> clubsBase, GroupsRound tournamentRound)
         {
             RoundProgrammation programmation = tournamentRound.programmation;
             List<Match> res = new List<Match>();
@@ -407,10 +408,6 @@ namespace tm
                             games.Add(retour);
                             res.Add(retour);
                         }
-                        if(tournamentRound.Tournament.name == "Ligue 1")
-                        {
-                            Console.WriteLine("[nbGamesByLeg] " + nbGamesByLeg + " check " + (nbGamesByLeg - i) + ">=" + programmation.lastMatchDaysSameDayNumber);
-                        }
                         if (nbGamesByLeg - i >= programmation.lastMatchDaysSameDayNumber)
                         {
                             TVSchedule(games, programmation.tvScheduling, nbGamesByLeg + i);
@@ -451,6 +448,7 @@ namespace tm
         {
             return new int[] { match[0], match[1] };
         }
+
 
         /// <summary>
         /// Compute TVSchedule for games

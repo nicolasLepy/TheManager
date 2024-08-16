@@ -83,7 +83,7 @@ namespace tm
                     r.AddTeamsToRecover();
                 }
             }
-            _matches = Calendar.GenerateCalendar(this.clubs, this);
+            //_matches = Calendar.GenerateCalendar(this.clubs, this);
             CheckConflicts();
         }
 

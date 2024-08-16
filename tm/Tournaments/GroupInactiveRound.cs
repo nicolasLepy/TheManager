@@ -91,5 +91,11 @@ namespace tm.Tournaments
         {
 
         }
+
+        public void ForceRanking(List<Club> clubs)
+        {
+            this._ranking = clubs;
+        }
+
     }
 }
