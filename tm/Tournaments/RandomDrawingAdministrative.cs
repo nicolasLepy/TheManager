@@ -48,10 +48,10 @@ namespace tm.Tournaments
                     defaultMaxTeamsByGroup = _round.clubs.Count;
                 }
                 Console.WriteLine("[MaxTeamsByGroup] " + defaultMaxTeamsByGroup);
-                foreach (AdministrativeDivision ad in hostCountry.GetAdministrativeDivisionsLevel(_round.administrativeLevel))
+                foreach (Association ad in hostCountry.GetAssociationsLevel(_round.administrativeLevel))
                 {
                     int admCounter = 0;
-                    List<Club> clubsAdm = _round.GetClubsAdministrativeDivision(ad);
+                    List<Club> clubsAdm = _round.GetClubsAssociation(ad);
                     Console.WriteLine("[" + ad.name + "], équipes = " + clubsAdm.Count);
                     if (clubsAdm.Count > 0)
                     {

@@ -610,14 +610,14 @@ namespace tm
                             int administrationId = int.Parse(e4.Attribute("id").Value);
                             int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
                             maxAdmId = administrationId > maxAdmId ? administrationId : maxAdmId;
-                            AdministrativeDivision ad = new AdministrativeDivision(administrationId, administrationName);
+                            Association ad = new Association(administrationId, administrationName);
                             if (administrationParent > 0)
                             {
-                                p.GetAdministrativeDivision(administrationParent).divisions.Add(ad);
+                                p.GetAssociation(administrationParent).divisions.Add(ad);
                             }
                             else
                             {
-                                p.administrativeDivisions.Add(ad);
+                                p.associations.Add(ad);
                             }
                         }
 
@@ -687,8 +687,8 @@ namespace tm
             {
                 foreach (Country cc in c.countries)
                 {
-                    AdministrativeDivision adCountry = new AdministrativeDivision(maxAdmId++, cc.Name());
-                    cc.administrativeDivisions.Add(adCountry);
+                    Association adCountry = new Association(maxAdmId++, cc.Name());
+                    cc.associations.Add(adCountry);
                 }
             }
         }
@@ -791,17 +791,17 @@ namespace tm
                             }
                         }
                         
-                        int idAdministrativeDivision = 0;
-                        AdministrativeDivision administrativeDivision = null;
+                        int idAssociation = 0;
+                        Association association = null;
                         if (e2.Attribute("administrativeDivision") != null)
                         {
-                            idAdministrativeDivision = int.Parse(e2.Attribute("administrativeDivision").Value);
-                            administrativeDivision = _kernel.GetAdministrativeDivision(idAdministrativeDivision); //city?.Country().GetAdministrativeDivision(idAdministrativeDivision);
+                            idAssociation = int.Parse(e2.Attribute("administrativeDivision").Value);
+                            association = _kernel.GetAssociation(idAssociation); //city?.Country().GetAssociation(idAdministrativeDivision);
                         }
 
-                        if (administrativeDivision == null)
+                        if (association == null)
                         {
-                            administrativeDivision = city?.Country().GetCountryAdministrativeDivision();
+                            association = city?.Country().GetCountryAssociation();
                         }
 
                         int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
@@ -826,7 +826,7 @@ namespace tm
                         reputation = centreFormation;
                         
                         bool equipePremiere = true;
-                        Club c = new CityClub(id, name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, goalSong, equipePremiere, administrativeDivision, status);
+                        Club c = new CityClub(id, name, null, shortName, reputation, budget, supporters, centreFormation, city, logo, stadium, goalSong, equipePremiere, association, status);
                         if(_clubsId.ContainsKey(id))
                         {
                             Console.WriteLine("[Club conflict]" + id + " : " + _clubsId[id].name + " vs " + c.name);
@@ -1114,9 +1114,9 @@ namespace tm
                             foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
                             {
                                 int administrativeId = int.Parse(e4.Attribute("id").Value);
-                                AdministrativeDivision ad = _kernel.GetAdministrativeDivision(administrativeId);
+                                Association ad = _kernel.GetAssociation(administrativeId);
                                 int teamsCount = int.Parse(e4.Attribute("teams").Value);
-                                round.teamsByAdministrativeDivision.Add(ad, teamsCount);
+                                round.teamsByAssociation.Add(ad, teamsCount);
                             }
 
                             c.rounds.Add(round);
@@ -1287,11 +1287,11 @@ namespace tm
                             {
                                 int administrativeId = int.Parse(e4.Attribute("administrative_id").Value);
                                 int relegations = int.Parse(e4.Attribute("relegations").Value);
-                                AdministrativeDivision ad = _kernel.GetAdministrativeDivision(administrativeId);
+                                Association ad = _kernel.GetAssociation(administrativeId);
                                 GroupsRound gr = round as GroupsRound;
                                 if(gr != null && ad != null)
                                 {
-                                    gr.relegationsByAdministrativeDivisions.Add(ad, relegations);
+                                    gr.relegationsByAssociations.Add(ad, relegations);
                                 }
                             }
 
@@ -1553,9 +1553,9 @@ namespace tm
 
         }
 
-        public void GenerateRegionalCup(Country c, AdministrativeDivision administrativeDivision, int level, bool reservesAllowed)
+        public void GenerateRegionalCup(Country c, Association association, int level, bool reservesAllowed)
         {
-            Utils.Debug(string.Format("[{0}] New regional Cup", administrativeDivision.name));
+            Utils.Debug(string.Format("[{0}] New regional Cup", association.name));
             int admTeams = 0;
             bool regionalLeagueExists = false;
             bool regionalCupExist = false; //TODO
@@ -1567,15 +1567,15 @@ namespace tm
                     regionalLeagueExists = true;
                     foreach(Club cl in groupRound.clubs)
                     {
-                        admTeams = administrativeDivision.ContainsAdministrativeDivision(cl.AdministrativeDivision()) ? admTeams + 1 : admTeams;
+                        admTeams = association.ContainsAssociation(cl.Association()) ? admTeams + 1 : admTeams;
                     }
                 }
             }
             if(regionalLeagueExists && admTeams > 1 && !regionalCupExist)
             {
-                CreateNationalCup(c, administrativeDivision, false, false, reservesAllowed);
+                CreateNationalCup(c, association, false, false, reservesAllowed);
             }
-            foreach (AdministrativeDivision ad in administrativeDivision.divisions)
+            foreach (Association ad in association.divisions)
             {
                 GenerateRegionalCup(c, ad, level + 1, reservesAllowed);
             }
@@ -1606,7 +1606,7 @@ namespace tm
                     }
                     if(c.Tournaments().Count > 0 && totalTeams > 1)
                     {
-                        foreach (AdministrativeDivision ad in c.administrativeDivisions)
+                        foreach (Association ad in c.associations)
                         {
                             //GenerateRegionalCup(c, ad, 1, false);
                         }
@@ -1619,15 +1619,15 @@ namespace tm
         /// Count teams of a round excluding reserves
         /// </summary>
         /// <param name="r">Count teams of this round</param>
-        /// <param name="administrativeDivision">Filter with a particular association</param>
-        private int CountTeamsWithoutReserves(Round r, AdministrativeDivision administrativeDivision)
+        /// <param name="association">Filter with a particular association</param>
+        private int CountTeamsWithoutReserves(Round r, Association association)
         {
             int total = 0;
             foreach (Club c in r.clubs)
             {
                 if (c as ReserveClub == null)
                 {
-                    if(administrativeDivision == null || administrativeDivision.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                    if(association == null || association.ContainsAssociation(c.Association()))
                     {
                         total++;
                     }
@@ -1640,16 +1640,16 @@ namespace tm
         /// Create a national/regional cup
         /// </summary>
         /// <param name="country">Create cup for this country</param>
-        /// <param name="administrativeDivision">Only teams of this association are allowed to enter</param>
+        /// <param name="association">Only teams of this association are allowed to enter</param>
         /// <param name="allowTeamsOfSubAdministrativesDivision">Teams playing on a child association can enter</param>
         /// <param name="midweekGames">TODO: Not used yet. Games are played wednesday</param>
         /// <param name="reservesAllowed">Reserves allowed to enter</param>
-        public void CreateNationalCup(Country c, AdministrativeDivision administrativeDivision, bool allowTeamsOfSubAdministrativesDivision, bool midweekGames, bool reservesAllowed)
+        public void CreateNationalCup(Country c, Association association, bool allowTeamsOfSubAdministrativesDivision, bool midweekGames, bool reservesAllowed)
         {
             Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
             List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
             int totalTeams = 0;
-            int administrativeDivisionLevel = c.GetLevelOfAdministrativeDivision(administrativeDivision);
+            int associationLevel = c.GetLevelOfAssociation(association);
             int currentAdministrativeLevel = 0;
             foreach (Tournament t in c.Tournaments())
             {
@@ -1658,37 +1658,37 @@ namespace tm
                 {
                     currentAdministrativeLevel = roundChampionship.administrativeLevel;
                 }
-                bool administrativeDivisionGoodLevel = administrativeDivision == null || (administrativeDivisionLevel == currentAdministrativeLevel || (allowTeamsOfSubAdministrativesDivision && administrativeDivisionLevel < currentAdministrativeLevel));
+                bool associationGoodLevel = association == null || (associationLevel == currentAdministrativeLevel || (allowTeamsOfSubAdministrativesDivision && associationLevel < currentAdministrativeLevel));
 
 
-                if (t.isChampionship && administrativeDivisionGoodLevel)
+                if (t.isChampionship && associationGoodLevel)
                 {
                     if(!teamsByLevel.ContainsKey(t.level))
                     {
                         teamsByLevel.Add(t.level, 0);
                     }
-                    teamsByLevel[t.level] += CountTeamsWithoutReserves(t.rounds[0], administrativeDivision);
-                    teamsByTournaments.Add(new KeyValuePair<Tournament, int>(t, CountTeamsWithoutReserves(t.rounds[0], administrativeDivision)));
+                    teamsByLevel[t.level] += CountTeamsWithoutReserves(t.rounds[0], association);
+                    teamsByTournaments.Add(new KeyValuePair<Tournament, int>(t, CountTeamsWithoutReserves(t.rounds[0], association)));
 
-                    totalTeams += CountTeamsWithoutReserves(t.rounds[0], administrativeDivision);
+                    totalTeams += CountTeamsWithoutReserves(t.rounds[0], association);
                 }
             }
 
-            List<GameDay> availableWeeks = c.GetAvailableCalendarDates(administrativeDivision == null, 2, teamsByLevel.Keys.ToList(), true, false);
-            for(int week=25; week<(administrativeDivision == null ? 40 : 48); week++) //52
+            List<GameDay> availableWeeks = c.GetAvailableCalendarDates(association == null, 2, teamsByLevel.Keys.ToList(), true, false);
+            for(int week=25; week<(association == null ? 40 : 48); week++) //52
             {
                 availableWeeks.RemoveAll(s => s.WeekNumber == week);
             }
 
-            string tournamentName = administrativeDivision == null ? c.Name() : administrativeDivision.name;
+            string tournamentName = association == null ? c.Name() : association.name;
             string acr = "de ";
             if(tournamentName[0] == 'E' || tournamentName[0] == 'A' || tournamentName[0] == 'I' || tournamentName[0] == 'O' || tournamentName[0] == 'U')
             {
                 acr = "d'";
             }
             string cupName = "Coupe " + acr + tournamentName;
-            int cupLevel = administrativeDivision != null ? 3 : 1; //c.Cups().Count + 1;
-            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new ParentTournament(administrativeDivision, null));
+            int cupLevel = association != null ? 3 : 1; //c.Cups().Count + 1;
+            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new ParentTournament(association, null));
 
             int roundCount = 0;
             int j = 1;

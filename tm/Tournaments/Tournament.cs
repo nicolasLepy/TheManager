@@ -102,7 +102,7 @@ namespace tm
     public class ParentTournament
     {
         [DataMember]
-        public AdministrativeDivision Association { get; set; }
+        public Association Association { get; set; }
         [DataMember]
         public Tournament Tournament { get; set; }
 
@@ -112,7 +112,7 @@ namespace tm
             Tournament = null;
         }
 
-        public ParentTournament(AdministrativeDivision association, Tournament tournament)
+        public ParentTournament(Association association, Tournament tournament)
         {
             Association = association;
             Tournament = tournament;
@@ -794,7 +794,7 @@ namespace tm
             for (int i = 0; i < rounds.Count && idRoundPivot == -1; i++)
             {
                 Round r = rounds[i];
-                if (r.teamsByAdministrativeDivision.Count > 0)
+                if (r.teamsByAssociation.Count > 0)
                 {
                     idRoundPivot = i;
                 }
@@ -812,7 +812,7 @@ namespace tm
             if(idRoundPivot > -1)
             {
                 Round pivotRound = rounds[idRoundPivot];
-                foreach (KeyValuePair<AdministrativeDivision, int> kvp in pivotRound.teamsByAdministrativeDivision)
+                foreach (KeyValuePair<Association, int> kvp in pivotRound.teamsByAssociation)
                 {
                     //Copie du tournoi est créée
                     Tournament regionalTournament = CopyForArchive(false);
@@ -918,7 +918,7 @@ namespace tm
                 }
 
                 //Garde en mémoire les équipes qui participent à la compétition sans participer aux ligues (cas des équipes outre-mer en coupe de France) afin de garder leurs places.
-                //On ne considère pas ici les chemins régionaux (t.parent.Value != null) car seront comptés après à l'aide des attributs Round.teamsByAdministrativeDivision pour chaque tour
+                //On ne considère pas ici les chemins régionaux (t.parent.Value != null) car seront comptés après à l'aide des attributs Round.teamsByAssociation pour chaque tour
                 foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
                 {
                     if (!t.IsInternational() && t != this && t.parent.Tournament != this)
@@ -937,7 +937,7 @@ namespace tm
                 }
                 foreach(Round r in this.rounds)
                 {
-                    foreach (KeyValuePair<AdministrativeDivision, int> regionalPath in r.teamsByAdministrativeDivision)
+                    foreach (KeyValuePair<Association, int> regionalPath in r.teamsByAssociation)
                     {
                         teamsFromOutsideLeagueSystem[rounds.IndexOf(r)] += regionalPath.Value;
                     }
@@ -950,12 +950,12 @@ namespace tm
                 int teamsAtTheLastRound = 2;
                 if(parent.Tournament != null)
                 {
-                    AdministrativeDivision concernedRegion = parent.Association;
+                    Association concernedRegion = parent.Association;
                     foreach(Round r in parent.Tournament.rounds)
                     {
-                        if(r.teamsByAdministrativeDivision.ContainsKey(concernedRegion))
+                        if(r.teamsByAssociation.ContainsKey(concernedRegion))
                         {
-                            teamsAtTheLastRound = r.teamsByAdministrativeDivision[concernedRegion] * 2;
+                            teamsAtTheLastRound = r.teamsByAssociation[concernedRegion] * 2;
                         }
                     }
                 }

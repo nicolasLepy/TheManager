@@ -76,7 +76,7 @@ namespace tm
         [DataMember]
         private int _shapeNumber;
         [DataMember]
-        private List<AdministrativeDivision> _administrativeDivisions;
+        private List<Association> _associations;
         [DataMember]
         private Dictionary<Club, Tournament> _administrativeRetrogradations;
         [DataMember]
@@ -94,7 +94,7 @@ namespace tm
         public List<Stadium> stadiums { get { return _stadiums; } }
         public Language language { get => _language; }
 
-        public List<AdministrativeDivision> administrativeDivisions => _administrativeDivisions;
+        public List<Association> associations => _associations;
 
         public List<float[]> gamesTimesWeekend => _gamesTimesWeekend;
         public List<float[]> gamesTimesWeekdays => _gamesTimesWeekdays;
@@ -214,7 +214,7 @@ namespace tm
             _cities = new List<City>();
             _stadiums = new List<Stadium>();
             _tournaments = new List<Tournament>();
-            _administrativeDivisions = new List<AdministrativeDivision>();
+            _associations = new List<Association>();
             _administrativeRetrogradations = new Dictionary<Club, Tournament>();
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
@@ -230,7 +230,7 @@ namespace tm
             _stadiums = new List<Stadium>();
             _tournaments = new List<Tournament>();
             _shapeNumber = shapeNumber;
-            _administrativeDivisions = new List<AdministrativeDivision>();
+            _associations = new List<Association>();
             _administrativeRetrogradations = new Dictionary<Club, Tournament>();
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
@@ -239,10 +239,10 @@ namespace tm
             _cacheAdministrativeRetrogradationsChanges = null;
         }
 
-        public AdministrativeDivision GetCountryAdministrativeDivision()
+        public Association GetCountryAssociation()
         {
-            AdministrativeDivision res = null;
-            foreach (AdministrativeDivision ad in _administrativeDivisions)
+            Association res = null;
+            foreach (Association ad in _associations)
             {
                 if (ad.name == this._name)
                 {
@@ -253,17 +253,17 @@ namespace tm
             return res;
         }
 
-        public AdministrativeDivision GetAdministrativeDivision(int id)
+        public Association GetAssociation(int id)
         {
-            AdministrativeDivision res = null;
-            foreach (AdministrativeDivision ad in _administrativeDivisions)
+            Association res = null;
+            foreach (Association ad in _associations)
             {
                 if (ad.Id == id)
                 {
                     res = ad;
                 }
 
-                AdministrativeDivision resChild = ad.GetAdministrativeDivision(id);
+                Association resChild = ad.GetAssociation(id);
                 if (resChild != null)
                 {
                     res = resChild;
@@ -277,42 +277,42 @@ namespace tm
         /// </summary>
         /// <param name="level">Administrative division level</param>
         /// <returns></returns>
-        public List<AdministrativeDivision> GetAdministrativeDivisionsLevel(int level)
+        public List<Association> GetAssociationsLevel(int level)
         {
-            List<AdministrativeDivision> res = new List<AdministrativeDivision>();
+            List<Association> res = new List<Association>();
             if (level == 1)
             {
-                res = _administrativeDivisions;
+                res = _associations;
             }
             else
             {
-                foreach (AdministrativeDivision ad in _administrativeDivisions)
+                foreach (Association ad in _associations)
                 {
-                    res.AddRange(ad.GetAdministrativeDivisionsLevel(level - 1));
+                    res.AddRange(ad.GetAssociationsLevel(level - 1));
                 }
             }
             return res;
         }
 
-        public int GetLevelOfAdministrativeDivision(AdministrativeDivision administrativeDivision)
+        public int GetLevelOfAssociation(Association association)
         {
             int level = 0;
-            AdministrativeDivision admAtLevel = null;
-            while (admAtLevel != administrativeDivision)
+            Association admAtLevel = null;
+            while (admAtLevel != association)
             {
-                admAtLevel = GetAdministrativeDivisionLevel(administrativeDivision, ++level);
+                admAtLevel = GetAssociationLevel(association, ++level);
             }
             return level;
         }
 
-        public AdministrativeDivision GetAdministrativeDivisionLevel(AdministrativeDivision administrativeDivision, int level)
+        public Association GetAssociationLevel(Association association, int level)
         {
-            AdministrativeDivision res = null;
-            List<AdministrativeDivision> levelAdm = GetAdministrativeDivisionsLevel(level);
+            Association res = null;
+            List<Association> levelAdm = GetAssociationsLevel(level);
 
-            foreach (AdministrativeDivision adm in levelAdm)
+            foreach (Association adm in levelAdm)
             {
-                if (adm == administrativeDivision || adm.ContainsAdministrativeDivision(administrativeDivision))
+                if (adm == association || adm.ContainsAssociation(association))
                 {
                     res = adm;
                 }
@@ -587,7 +587,7 @@ namespace tm
         /// </summary>
         /// <param name="division"></param>
         /// <returns>League level (not an index !, start at 1) </returns>
-        public int MaxLeagueLevelWithAdministrativeDivision(AdministrativeDivision division)
+        public int MaxLeagueLevelWithAssociation(Association division)
         {
             List<Tournament> leagues = Leagues();
             int i = GetLastNationalLeague().level;
@@ -601,7 +601,7 @@ namespace tm
                 {
                     associationLevel = groupRound.administrativeLevel;
                 }
-                AdministrativeDivision divisionLevel = GetAdministrativeDivisionLevel(division, associationLevel);
+                Association divisionLevel = GetAssociationLevel(division, associationLevel);
 
                 leagueWithoutTeams = true;
                 //Division level can be null. Ex : Corse have only 1 association level unlike other associations
@@ -609,7 +609,7 @@ namespace tm
                 {
                     foreach (Club c in round.clubs)
                     {
-                        if (divisionLevel.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                        if (divisionLevel.ContainsAssociation(c.Association()))
                         {
                             leagueWithoutTeams = false;
                         }
@@ -642,7 +642,7 @@ namespace tm
 
             int clubLevel = -1;
             int targetIndex = target.level - 1;
-            int maxLeagueLevelForThisAssociation = MaxLeagueLevelWithAdministrativeDivision(club.AdministrativeDivision());
+            int maxLeagueLevelForThisAssociation = MaxLeagueLevelWithAssociation(club.Association());
             int targetIndexForReserves = Math.Min(targetIndex + 1, maxLeagueLevelForThisAssociation - 1);
             for (int i = 0; i < clubsByLeagues.Length && clubLevel == -1; i++)
             {
@@ -835,7 +835,7 @@ namespace tm
                 foreach (Club c in clubsByLeagues[i])
                 {
                     Round clubC = (from Tournament t in Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
-                    string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + GetAdministrativeDivisionLevel(c.AdministrativeDivision(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
+                    string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + GetAssociationLevel(c.Association(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
                     Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
                 }
                 int administrativeLevel = 0;
@@ -907,10 +907,10 @@ namespace tm
                         Round round = leagues[i].rounds[0];
                         int administrativeLevel = administrativeLevels[i];
                         //Repechage candidates : filtering by association if necessary
-                        List<Club> candidates = administrativeLevel == 0 ? clubsByLeagues[i] : FilterAssociation(clubsByLeagues[i], GetAdministrativeDivisionLevel(club.AdministrativeDivision(), administrativeLevel));
+                        List<Club> candidates = administrativeLevel == 0 ? clubsByLeagues[i] : FilterAssociation(clubsByLeagues[i], GetAssociationLevel(club.Association(), administrativeLevel));
                         if (administrativeLevel > 0)
                         {
-                            Console.WriteLine("[Remonte un tour régional] " + GetAdministrativeDivisionLevel(club.AdministrativeDivision(), administrativeLevel).name);
+                            Console.WriteLine("[Remonte un tour régional] " + GetAssociationLevel(club.Association(), administrativeLevel).name);
                         }
                         RescrueTeam(clubsByLeagues, candidates, i, round, clubsCantBeSaved);
                         /*
@@ -954,9 +954,9 @@ namespace tm
                     GroupsRound round = leagues[i].rounds[0] as GroupsRound;
                     if(round != null)
                     {
-                        foreach (AdministrativeDivision association in GetAdministrativeDivisionsLevel(round.administrativeLevel))
+                        foreach (Association association in GetAssociationsLevel(round.administrativeLevel))
                         {
-                            int maxPossibleIndex = MaxLeagueLevelWithAdministrativeDivision(association) - 1;
+                            int maxPossibleIndex = MaxLeagueLevelWithAssociation(association) - 1;
                             //Check only the penultimate league
                             if(maxPossibleIndex - i == 1)
                             {
@@ -1023,14 +1023,14 @@ namespace tm
         /// Returns clubs of a particuliar association from a list of clubs
         /// </summary>
         /// <param name="clubs"></param>
-        /// <param name="administrativeDivision"></param>
+        /// <param name="association"></param>
         /// <returns></returns>
-        public List<Club> FilterAssociation(List<Club> clubs, AdministrativeDivision administrativeDivision)
+        public List<Club> FilterAssociation(List<Club> clubs, Association association)
         {
             List<Club> clubsAssociation = new List<Club>();
             foreach(Club c in clubs)
             {
-                if(administrativeDivision.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                if(association.ContainsAssociation(c.Association()))
                 {
                     clubsAssociation.Add(c);
                 }
@@ -1102,9 +1102,9 @@ namespace tm
                 int administrativeLevel = leagueGroupRound != null ? leagueGroupRound.administrativeLevel : 0;
                 if (administrativeLevel > 0)
                 {
-		            foreach(AdministrativeDivision association in GetAdministrativeDivisionsLevel(administrativeLevel))
+		            foreach(Association association in GetAssociationsLevel(administrativeLevel))
                     {
-                        int maxLevelPossible = MaxLeagueLevelWithAdministrativeDivision(association) - 1;
+                        int maxLevelPossible = MaxLeagueLevelWithAssociation(association) - 1;
                         List<Club> thisYearAssociation = FilterAssociation(thisYear, association);
                         List<Club> nextYearAssociation = FilterAssociation(nextYear, association);
                         if(thisYearAssociation.Count != nextYearAssociation.Count && i != maxLevelPossible)

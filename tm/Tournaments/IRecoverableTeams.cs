@@ -16,7 +16,7 @@ namespace tm
         /// <param name="onlyFirstTeams">Remove reserves teams from selection</param>
         /// <param name="associationFilter">Only select teams from a defined region/district if not null</param>
         /// <returns></returns>
-        List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, AdministrativeDivision associationFilter);
+        List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, Association associationFilter);
         int CountWithoutReserves();
     }
 }

@@ -1840,5 +1840,17 @@ namespace tm
             }
             return res;
         }
+
+        /// <summary>
+        /// Used for tests.
+        /// Force game score
+        /// </summary>
+        /// <param name="score1"></param>
+        /// <param name="score2"></param>
+        public void Force(int score1, int score2)
+        {
+            _score1 = score1;
+            _score2 = score2;
+        }
     }
 }

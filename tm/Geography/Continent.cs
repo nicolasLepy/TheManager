@@ -235,7 +235,7 @@ namespace tm
         /// <param name="methode"></param>
         /// <param name="onlyFirstTeams"></param>
         /// <returns></returns>
-        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, AdministrativeDivision associationFilter)
+        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, Association associationFilter)
         {
             List<NationalTeam> nationalsTeams = new List<NationalTeam>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
@@ -488,7 +488,6 @@ namespace tm
                 for(int i = leagueClubs.Count-1; i >=0; i--)
                 {
                     Club club = leagueClubs[i];
-                    Console.WriteLine("... " + club.name);
                     KeyValuePair<Tournament, int> cdq = new KeyValuePair<Tournament, int>(null, 0);
                     foreach (Tournament t in continentalTournaments)
                     {
@@ -496,7 +495,6 @@ namespace tm
                         List<Qualification> tQualifications = t.rounds.Last().qualifications;
                         if (tWinner == club && tQualifications.Count > 0 && tQualifications[0].isNextYear && tQualifications[0].ranking == 1)
                         {
-                            Console.WriteLine("Winner registered");
                             cdq = new KeyValuePair<Tournament, int>(tQualifications[0].tournament, tQualifications[0].roundId);
                         }
                     }
@@ -507,7 +505,6 @@ namespace tm
                         //Add a new qualification corresponding to the place reserved to the international cup winner
                         Qualification qualificationCupWinner = new Qualification(rank, cdq.Value, cdq.Key, true, 1);
                         associationQualifications.Add(qualificationCupWinner);
-                        Console.WriteLine("[nouvelle place accordée] " + c.Name() + " winner is " + cdq.Key.name);
                         //Sort to put the new qualification at the right place
                         associationQualifications.Sort((x, y) => x.tournament.level != y.tournament.level ? x.tournament.level - y.tournament.level : y.roundId - x.roundId);
                         int indexQ = -1;

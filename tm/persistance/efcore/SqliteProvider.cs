@@ -45,7 +45,7 @@ namespace tm.persistance.sqlite
         public DbSet<Stadium> Stadium { get; set; }
         public DbSet<AudioSource> AudioSources { get; set; }
         public DbSet<Options> Options { get; set; }
-        public DbSet<AdministrativeDivision> Associations { get; set; }
+        public DbSet<Association> Associations { get; set; }
         public DbSet<Continent> Continents { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<City> Cities { get; set; }

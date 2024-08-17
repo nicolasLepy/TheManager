@@ -526,16 +526,16 @@ namespace tm
             return res;
         }
 
-        public AdministrativeDivision GetAdministrativeDivision(int idAdministrativeDivision)
+        public Association GetAssociation(int idAssociation)
         {
-            AdministrativeDivision res = null;
+            Association res = null;
             foreach (Continent c in _world.continents)
             {
                 foreach (Country p in c.countries)
                 {
                     if (res == null)
                     {
-                        res = p.GetAdministrativeDivision(idAdministrativeDivision);
+                        res = p.GetAssociation(idAssociation);
                     }
                 }
             }

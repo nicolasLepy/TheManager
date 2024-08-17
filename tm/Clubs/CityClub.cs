@@ -128,7 +128,7 @@ namespace tm
         [DataMember]
         private float _baseCityAttendanceMultiplier;
         [DataMember]
-        private AdministrativeDivision _administrativeDivision;
+        private Association _association;
 
         public int budget { get => _budget; }
         public City city { get => _city; set => _city = value; }
@@ -136,7 +136,7 @@ namespace tm
         public bool isForbiddenToRecruit { get => _isForbiddenToRecruit; set => _isForbiddenToRecruit = value; }
         public float baseCityAttendanceMultiplier { get => _baseCityAttendanceMultiplier; set => _baseCityAttendanceMultiplier = value; }
         public List<Contract> contracts { get => _players; }
-        public AdministrativeDivision administrativeDivision => _administrativeDivision;
+        public Association association => _association;
 
         /// <summary>
         /// Get the list of contracts of the club, including contracts in reserves teams
@@ -184,7 +184,7 @@ namespace tm
             _budgetHistory = new List<BudgetEntry>();
         }
 
-        public CityClub(int id, string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalSong, bool isFannion, AdministrativeDivision administrativeDivision, ClubStatus status) : base(id, name,manager,shortName,reputation,supporters,formationCenter,logo,stadium, goalSong, status)
+        public CityClub(int id, string name, Manager manager, string shortName, int reputation, int budget, int supporters, int formationCenter, City city, string logo, Stadium stadium, string goalSong, bool isFannion, Association association, ClubStatus status) : base(id, name,manager,shortName,reputation,supporters,formationCenter,logo,stadium, goalSong, status)
         {
             _budget = budget;
             _city = city;
@@ -197,7 +197,7 @@ namespace tm
             _budgetHistory = new List<BudgetEntry>();
             _isForbiddenToRecruit = false;
             _baseCityAttendanceMultiplier = 0;
-            _administrativeDivision = administrativeDivision;
+            _association = association;
         }
 
         public override Country Country()
@@ -210,9 +210,9 @@ namespace tm
             return _city.Position;
         }
 
-        public override AdministrativeDivision AdministrativeDivision()
+        public override Association Association()
         {
-            return administrativeDivision;
+            return association;
         }
 
         public void AddPlayer(Contract c)

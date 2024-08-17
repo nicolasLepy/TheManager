@@ -574,13 +574,13 @@ namespace tm
             return ((resRule1 && resRule2) ? RuleStatus.RuleRespected : RuleStatus.RuleNotRespected) | (resRule3 ? RuleStatus.RuleRelegation : 0);
         }
 
-        public static int ReservesAutomaticallyRelegatedCount(List<Club> ranking, AdministrativeDivision association, Tournament from, bool reservesCantBePromoted)
+        public static int ReservesAutomaticallyRelegatedCount(List<Club> ranking, Association association, Tournament from, bool reservesCantBePromoted)
         {
             int count = 0;
             Qualification qMock = new Qualification(1, 0, from, true, 0);
             foreach(Club concernedClub in ranking)
             {
-                if (RuleIsRespected(concernedClub, qMock, from.level, reservesCantBePromoted).HasFlag(RuleStatus.RuleRelegation) && (association == null || association.ContainsAdministrativeDivision(concernedClub.AdministrativeDivision())))
+                if (RuleIsRespected(concernedClub, qMock, from.level, reservesCantBePromoted).HasFlag(RuleStatus.RuleRelegation) && (association == null || association.ContainsAssociation(concernedClub.Association())))
                 {
                     count++;
                 }
@@ -588,7 +588,7 @@ namespace tm
             return count;
         }
 
-        public static List<Club> GetFullRankingInversed(Round round, AdministrativeDivision association)
+        public static List<Club> GetFullRankingInversed(Round round, Association association)
         {
             ChampionshipRound cRound = round as ChampionshipRound;
             GroupsRound gRound = round as GroupsRound;
@@ -604,7 +604,7 @@ namespace tm
             return ranking;
         }
 
-        public static List<Club> GetFullRankingInversed(GroupsRound round, AdministrativeDivision association)
+        public static List<Club> GetFullRankingInversed(GroupsRound round, Association association)
         {
             List<Club> ranking = new List<Club>();
             for (int i = -1; i > -round.maxClubsInGroup - 1; i--)
@@ -616,7 +616,7 @@ namespace tm
             return ranking;
         }
 
-        public static List<Club> GetFullRankingInversed(ChampionshipRound round, AdministrativeDivision association)
+        public static List<Club> GetFullRankingInversed(ChampionshipRound round, Association association)
         {
             List<Club> ranking = round.Ranking();
             ranking.Reverse();
@@ -687,18 +687,18 @@ namespace tm
             return res;
         }
 
-        public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, AdministrativeDivision association, Tournament from, Round round, bool reservesCantBePromoted, int totalRelegations, int groupsCount)
+        public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, Association association, Tournament from, Round round, bool reservesCantBePromoted, int totalRelegations, int groupsCount)
         {
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
             List<int> fixedRelegations = new List<int>(); // Contains ranking of teams that can't be saved
 
             // Get new relegation zone taking account of retrograded reserves
             Console.WriteLine("[AdjustQualificationsToNotPromoteReserves] " + from.name + ", " + totalRelegations + " relegations for " + groupsCount + " groups. Association : " + association);
-            List<Club> roundClubs = association == null ? round.clubs : round.GetClubsAdministrativeDivision(association);
+            List<Club> roundClubs = association == null ? round.clubs : round.GetClubsAssociation(association);
             int automaticallyRelegatedReserves = ReservesAutomaticallyRelegatedCount(roundClubs, association, from, reservesCantBePromoted);
             List<Club> fullInverseRanking = GetFullRankingInversed(round, association);
             GroupsRound gRound = round as GroupsRound;
-            //int groupsCount = (gRound != null) ? (association != null ? gRound.GetGroupsFromAdministrativeDivision(association).Count : gRound.groups.Length) : 1;
+            //int groupsCount = (gRound != null) ? (association != null ? gRound.GetGroupsFromAssociation(association).Count : gRound.groups.Length) : 1;
             int regularRelegationPlaces = totalRelegations - automaticallyRelegatedReserves;
             bool limitReached = false;
             Console.WriteLine("automaticallyRelegatedReserves : " + automaticallyRelegatedReserves);

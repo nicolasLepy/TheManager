@@ -94,6 +94,8 @@ namespace tm.Tournaments
 
         public void ForceRanking(List<Club> clubs)
         {
+            _clubs.Clear();
+            _clubs.AddRange(clubs);
             this._ranking = clubs;
         }
 

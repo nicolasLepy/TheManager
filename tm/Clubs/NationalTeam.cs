@@ -50,7 +50,7 @@ namespace tm
             return null;
         }
 
-        public override AdministrativeDivision AdministrativeDivision()
+        public override Association Association()
         {
             return null;
         }

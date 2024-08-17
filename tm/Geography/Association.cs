@@ -5,32 +5,32 @@ using System.Runtime.Serialization;
 namespace tm
 {
     [DataContract(IsReference =true)]
-    public class AdministrativeDivision
+    public class Association
     {
         [DataMember]
-        private List<AdministrativeDivision> _divisions;
+        private List<Association> _divisions;
         [DataMember]
         private string _name;
         [DataMember]
         [Key]
         public int Id { get; set; }
         
-        public List<AdministrativeDivision> divisions => _divisions;
+        public List<Association> divisions => _divisions;
         public string name => _name;
         
-        public AdministrativeDivision()
+        public Association()
         {
-            _divisions = new List<AdministrativeDivision>();
+            _divisions = new List<Association>();
         }
 
-        public AdministrativeDivision(int id, string name)
+        public Association(int id, string name)
         {
             Id = id;
             _name = name;
-            _divisions = new List<AdministrativeDivision>();
+            _divisions = new List<Association>();
         }
 
-        public int GetLevelOfAdministrativeDivision(AdministrativeDivision association, int currentLevel)
+        public int GetLevelOfAssociation(Association association, int currentLevel)
         {
             if(association == this)
             {
@@ -39,9 +39,9 @@ namespace tm
             else
             {
                 int newLevel = -1;
-                foreach(AdministrativeDivision ad in _divisions)
+                foreach(Association ad in _divisions)
                 {
-                    int adLevel = ad.GetLevelOfAdministrativeDivision(association, currentLevel + 1);
+                    int adLevel = ad.GetLevelOfAssociation(association, currentLevel + 1);
                     if(adLevel != -1)
                     {
                         newLevel = adLevel;
@@ -51,32 +51,32 @@ namespace tm
             }
         }
 
-        public List<AdministrativeDivision> GetAdministrativeDivisionsLevel(int level)
+        public List<Association> GetAssociationsLevel(int level)
         {
-            List<AdministrativeDivision> res = new List<AdministrativeDivision>();
+            List<Association> res = new List<Association>();
             if (level == 1)
             {
                 res = _divisions;
             }
             else
             {
-                foreach (AdministrativeDivision ad in _divisions)
+                foreach (Association ad in _divisions)
                 {
-                    res.AddRange(ad.GetAdministrativeDivisionsLevel(level - 1));
+                    res.AddRange(ad.GetAssociationsLevel(level - 1));
                 }
             }
             return res;
         }
 
-        public bool ContainsAdministrativeDivision(AdministrativeDivision administrativeDivision)
+        public bool ContainsAssociation(Association association)
         {
-            bool res = this == administrativeDivision;
+            bool res = this == association;
 
             if(!res)
             {
-                foreach (AdministrativeDivision adm in _divisions)
+                foreach (Association adm in _divisions)
                 {
-                    if (adm.ContainsAdministrativeDivision(administrativeDivision))
+                    if (adm.ContainsAssociation(association))
                     {
                         res = true;
                     }
@@ -86,11 +86,11 @@ namespace tm
             return res;
         }
         
-        public AdministrativeDivision GetAdministrativeDivision(int id)
+        public Association GetAssociation(int id)
         {
-            AdministrativeDivision res = null;
+            Association res = null;
 
-            foreach (AdministrativeDivision ad in divisions)
+            foreach (Association ad in divisions)
             {
                 if (ad.Id == id)
                 {

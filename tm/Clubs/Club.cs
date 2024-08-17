@@ -267,7 +267,7 @@ namespace tm
                     }
                 }
             }
-            string adm = this.AdministrativeDivision() != null ? " (" + this.AdministrativeDivision().name + ")" : "";
+            string adm = this.Association() != null ? " (" + this.Association().name + ")" : "";
             adm = "";
             return res + adm;
         }
@@ -276,7 +276,7 @@ namespace tm
 
         public abstract GeographicPosition Localisation();
 
-        public abstract AdministrativeDivision AdministrativeDivision();
+        public abstract Association Association();
 
 
         /// <summary>

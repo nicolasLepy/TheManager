@@ -324,9 +324,9 @@ namespace TheManager_GUI.Views
             Console.WriteLine("Nombre d'équipes : (" + _round.Tournament.name + ") : " + _round.clubs.Count);
             if(_round.clubs.Count > 0 && !_round.Tournament.IsInternational())
             {
-                foreach (AdministrativeDivision adm in _round.clubs[0].Country().GetAdministrativeDivisionsLevel(1))
+                foreach (Association adm in _round.clubs[0].Country().GetAssociationsLevel(1))
                 {
-                    Console.WriteLine(adm.name + " - " + _round.GetClubsAdministrativeDivision(adm).Count);
+                    Console.WriteLine(adm.name + " - " + _round.GetClubsAssociation(adm).Count);
                 }
             }
         }

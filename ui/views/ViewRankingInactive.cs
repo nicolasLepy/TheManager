@@ -32,28 +32,28 @@ namespace TheManager_GUI.Views
 
             double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);
 
-            Dictionary<AdministrativeDivision, List<Club>> clubsByAdministrativeDivision = new Dictionary<AdministrativeDivision, List<Club>>();
+            Dictionary<Association, List<Club>> clubsByAssociation = new Dictionary<Association, List<Club>>();
             List<Club> clubsWithoutAssociation = new List<Club>();
 
             foreach (Club c in _round.clubs)
             {
-                AdministrativeDivision ad = c.Country().GetAdministrativeDivisionLevel(c.AdministrativeDivision(), 1);
+                Association ad = c.Country().GetAssociationLevel(c.Association(), 1);
                 if(ad == null)
                 {
                     clubsWithoutAssociation.Add(c);
                 }
                 else
                 {
-                    if (!clubsByAdministrativeDivision.ContainsKey(ad))
+                    if (!clubsByAssociation.ContainsKey(ad))
                     {
-                        clubsByAdministrativeDivision.Add(ad, new List<Club>());
+                        clubsByAssociation.Add(ad, new List<Club>());
                     }
-                    clubsByAdministrativeDivision[ad].Add(c);
+                    clubsByAssociation[ad].Add(c);
                 }
             }
 
-            int rowsNumber = clubsByAdministrativeDivision.Count + clubsWithoutAssociation.Count + 1;
-            foreach (KeyValuePair<AdministrativeDivision, List<Club>> adm in clubsByAdministrativeDivision)
+            int rowsNumber = clubsByAssociation.Count + clubsWithoutAssociation.Count + 1;
+            foreach (KeyValuePair<Association, List<Club>> adm in clubsByAssociation)
             {
                 rowsNumber += adm.Value.Count;
             }
@@ -64,7 +64,7 @@ namespace TheManager_GUI.Views
             }
 
             int i = 0;
-            foreach (KeyValuePair<AdministrativeDivision, List<Club>> adm in clubsByAdministrativeDivision)
+            foreach (KeyValuePair<Association, List<Club>> adm in clubsByAssociation)
             {
                 TextBlock tbAdm = ViewUtils.CreateTextBlock(adm.Key.name, StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier);
                 AddElementToGrid(grid, tbAdm, i++, 0);

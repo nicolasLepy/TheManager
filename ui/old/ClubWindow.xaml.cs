@@ -285,7 +285,7 @@ namespace TheManager_GUI
             lbCurrentBudget.Content = Utils.FormatMoney(c.budget);
 
             lbAdministrativeDivision.Content =
-                c.AdministrativeDivision() != null ? c.AdministrativeDivision().name : "-";
+                c.Association() != null ? c.Association().name : "-";
 
             try
             {

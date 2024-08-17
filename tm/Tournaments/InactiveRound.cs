@@ -111,7 +111,7 @@ namespace tm
             return new List<Club>(_ranking);
         }
 
-        public List<Qualification> AdjustQualificationAccordingToAdministrativeDivisions(List<Qualification> baseQualifications, GroupsRound upperGroupRound, List<Club> ranking)
+        public List<Qualification> AdjustQualificationAccordingToAssociations(List<Qualification> baseQualifications, GroupsRound upperGroupRound, List<Club> ranking)
         {
             Country c = _clubs[0].Country();
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
@@ -150,9 +150,9 @@ namespace tm
                 }
             }
             
-            foreach (AdministrativeDivision ad in c.GetAdministrativeDivisionsLevel(upperGroupRound.administrativeLevel))
-            {    
-                List<int> admGroups = upperGroupRound.GetGroupsFromAdministrativeDivision(ad);
+            foreach (Association ad in c.GetAssociationsLevel(upperGroupRound.administrativeLevel))
+            {
+                List<int> admGroups = new List<int>(); // upperGroupRound.GetGroupsFromAssociation(ad);
                 int upperRelegations = 0;
 
                 foreach (int admGroup in admGroups)
@@ -176,7 +176,7 @@ namespace tm
                 for (int i = 0; i < ranking.Count && promotions > 0; i++)
                 {
                     Club club = ranking[i];
-                    if (ad.ContainsAdministrativeDivision(club.AdministrativeDivision()))
+                    if (ad.ContainsAssociation(club.Association()))
                     {
                         for (int j = 0; j < adjustedQualifications.Count; j++)
                         {
@@ -195,7 +195,7 @@ namespace tm
                 int lowerRoundTeamsCount = 0;
                 if (lowerTournament != null)
                 {
-                    lowerRoundTeamsCount = lowerTournament.rounds[0].GetClubsAdministrativeDivision(ad).Count;
+                    lowerRoundTeamsCount = lowerTournament.rounds[0].GetClubsAssociation(ad).Count;
                     Console.WriteLine("[" + lowerTournament.name + "][Ad " + ad.name + "] " + lowerRoundTeamsCount + " équipes de l'ADM, " + relegations +  " relegations.");
                 }
                 if (lowerRoundTeamsCount > 0)
@@ -203,7 +203,7 @@ namespace tm
                     for (int i = ranking.Count - 1; i >= 0 && relegations > 0; i--)
                     {
                         Club club = ranking[i];
-                        if (ad.ContainsAdministrativeDivision(club.AdministrativeDivision()))
+                        if (ad.ContainsAssociation(club.Association()))
                         {
                             for (int j = 0; j < adjustedQualifications.Count; j++)
                             {
@@ -266,7 +266,7 @@ namespace tm
                 }
                 if (upperGroupRound != null)
                 {
-                    adjustedQualifications = AdjustQualificationAccordingToAdministrativeDivisions(adjustedQualifications, upperGroupRound, ranking);
+                    adjustedQualifications = AdjustQualificationAccordingToAssociations(adjustedQualifications, upperGroupRound, ranking);
                 }
             }
             return adjustedQualifications;
@@ -301,7 +301,7 @@ namespace tm
                 Club c = ranking[q.ranking - 1];
                 if (Tournament.level >= 8)
                 {
-                    Console.WriteLine("[" + q.ranking + "] " + c.name + " (" + c.AdministrativeDivision().name + ") -> " +
+                    Console.WriteLine("[" + q.ranking + "] " + c.name + " (" + c.Association().name + ") -> " +
                                       q.tournament.level);
                 }
                 if (!q.isNextYear && !forNextYear)

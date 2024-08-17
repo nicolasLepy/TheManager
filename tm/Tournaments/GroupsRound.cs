@@ -54,7 +54,7 @@ namespace tm
         protected bool _fusionGroupAndNoGroupGames;
 
         [DataMember]
-        protected Dictionary<AdministrativeDivision, int> _relegationsByAdministrativeDivisions;
+        protected Dictionary<Association, int> _relegationsByAssociations;
         /// <summary>
         /// For computation time optimization, save computed group qualifications
         /// </summary>
@@ -94,7 +94,7 @@ namespace tm
 
         public RandomDrawingMethod RandomDrawingMethod => _randomDrawingMethod;
         
-        public Dictionary<AdministrativeDivision, int> relegationsByAdministrativeDivisions => _relegationsByAdministrativeDivisions;
+        public Dictionary<Association, int> relegationsByAssociations => _relegationsByAssociations;
 
         public string GroupName(int groupId)
         {
@@ -129,7 +129,7 @@ namespace tm
         {
             _groups = new List<Club>[0];
             _groupsLocalisation = new List<GeographicPosition>();
-            _relegationsByAdministrativeDivisions = new Dictionary<AdministrativeDivision, int>();
+            _relegationsByAssociations = new Dictionary<Association, int>();
             _cacheRanking = new List<Club>[0];
         }
 
@@ -146,7 +146,7 @@ namespace tm
             _groupsLocalisation = new List<GeographicPosition>();
             _referenceClubsByGroup = 0;
             _administrativeLevel = administrativeLevel;
-            _relegationsByAdministrativeDivisions = new Dictionary<AdministrativeDivision, int>();
+            _relegationsByAssociations = new Dictionary<Association, int>();
             _nonGroupGamesByTeams = nonGroupGamesByTeams;
             _nonGroupGamesByGameday = nonGroupGamesByGameday;
             _fusionGroupAndNoGroupGames = fusionGroupAndNoGroupGames;
@@ -188,9 +188,9 @@ namespace tm
                 t._groups[i] = new List<Club>(c);
                 i++;
             }
-            foreach(KeyValuePair<AdministrativeDivision, int> kvp in relegationsByAdministrativeDivisions)
+            foreach(KeyValuePair<Association, int> kvp in relegationsByAssociations)
             {
-                t.relegationsByAdministrativeDivisions.Add(kvp.Key, kvp.Value);
+                t.relegationsByAssociations.Add(kvp.Key, kvp.Value);
             }
             foreach (KeyValuePair<Club, List<PointDeduction>> sanctions in this.pointsDeduction)
             {
@@ -213,24 +213,24 @@ namespace tm
             }
         }
 
-        private AdministrativeDivision GetGroupAdministrativeDivision(int group, int admLevel = -1)
+        private Association GetGroupAssociation(int group, int admLevel = -1)
         {
-            AdministrativeDivision res = null;
+            Association res = null;
             if (_groups[group].Count > 0)
             {
-                res = _groups[group][0].AdministrativeDivision();
+                res = _groups[group][0].Association();
                 if (admLevel != -1)
                 {
-                    res = _groups[group][0].Country().GetAdministrativeDivisionLevel(res, admLevel);
+                    res = _groups[group][0].Country().GetAssociationLevel(res, admLevel);
                 }
             }
             return res;
         }
 
-        public List<Club> GetAdministrativeDivisionRelegablesCandidates(AdministrativeDivision administrativeDivision)
+        public List<Club> GetAssociationRelegablesCandidates(Association association)
         {
             List<Club> candidates = new List<Club>();
-            List<int> admGroups = GetGroupsFromAdministrativeDivision(administrativeDivision);
+            List<int> admGroups = GetGroupsFromAssociation(association);
             int maxTeamByGroup = 0;
             foreach (int group in admGroups)
             {
@@ -239,7 +239,7 @@ namespace tm
 
             for (int i = -1; i > -maxTeamByGroup-1; i--)
             {
-                List<Club> rankingI = RankingByRank(i, administrativeDivision);
+                List<Club> rankingI = RankingByRank(i, association);
                 rankingI.Reverse();
                 foreach(Club c in rankingI)
                 {
@@ -256,15 +256,15 @@ namespace tm
         /// 
         /// </summary>
         /// <param name="rank">Rank can be negative</param>
-        /// <param name="administrativeDivision">If administrativeDivision is None, get Ranking for teams from all groups, else get only teams for the specified administrative division</param>
+        /// <param name="association">If association is None, get Ranking for teams from all groups, else get only teams for the specified administrative division</param>
         /// <returns></returns>
-        public List<Club> RankingByRank(int rank, AdministrativeDivision administrativeDivision)
+        public List<Club> RankingByRank(int rank, Association association)
         {
             List<Club> ranking = new List<Club>();
             for (int i = 0; i < _groupsNumber; i++)
             {
-                AdministrativeDivision adm = GetGroupAdministrativeDivision(i);
-                if ((administrativeDivision != null && administrativeDivision.ContainsAdministrativeDivision(adm)) || administrativeDivision == null)
+                Association adm = GetGroupAssociation(i);
+                if ((association != null && association.ContainsAssociation(adm)) || association == null)
                 {
                     List<Club> rankingGroup = Ranking(i);
                     int realRanking = rank > 0 ? rank - 1 : rankingGroup.Count + rank;
@@ -314,7 +314,7 @@ namespace tm
             return res;
         }
 
-        public int GetTeamsCountSentToHigherRegionalLevel(AdministrativeDivision administrativeDivision, Country c)
+        public int GetTeamsCountSentToHigherRegionalLevel(Association association, Country c)
         {
             int res = 0;
             if(this.RandomDrawingMethod == RandomDrawingMethod.Administrative)
@@ -323,7 +323,7 @@ namespace tm
                 GroupsRound gr = higherRegionalTournament.rounds[0] as GroupsRound;
                 if(gr != null)
                 {
-                    List<int> groups = gr.GetGroupsFromAdministrativeDivision(administrativeDivision);
+                    List<int> groups = gr.GetGroupsFromAssociation(association);
                     foreach(int group in groups)
                     {
                         List<Qualification> qualifications = gr.GetGroupQualifications(group);
@@ -340,15 +340,15 @@ namespace tm
             return res;
         }
 
-        public List<int> GetGroupsFromAdministrativeDivision(AdministrativeDivision administrativeDivision)
+        public List<int> GetGroupsFromAssociation(Association association)
         {
             List<int> res = new List<int>();
             for (int i = 0; i < _groupsNumber; i++)
             {
                 if (_groups[i].Count > 0)
                 {
-                    AdministrativeDivision admAtLeagueLevel = _groups[i][0].Country().GetAdministrativeDivisionLevel(_groups[i][0].AdministrativeDivision(), _administrativeLevel);
-                    if (admAtLeagueLevel == administrativeDivision)
+                    Association admAtLeagueLevel = _groups[i][0].Country().GetAssociationLevel(_groups[i][0].Association(), _administrativeLevel);
+                    if (admAtLeagueLevel == association)
                     {
                         res.Add(i);
                     }
@@ -366,7 +366,7 @@ namespace tm
         /// <param name="line">Limit between top and bottom teams</param>
         /// <param name="association">If limit rankings to one association</param>
         /// <returns>True if the concerned team of the group is over the line, else otherwise</returns>
-        public bool TeamIsTopRBottom(List<Club> ranking, int rank, int topBottomSeparation, AdministrativeDivision association)
+        public bool TeamIsTopRBottom(List<Club> ranking, int rank, int topBottomSeparation, Association association)
         {
             List<Club> rankingNth = RankingByRank(rank, association);
             int indexRank = rank > 0 ? rank - 1 : ranking.Count + rank;
@@ -420,22 +420,22 @@ namespace tm
         /// <param name="baseQualifications">List of initial qualifications</param>
         /// <param name="group">Concerned group</param>
         /// <returns>New list of qualifications</returns>
-        public List<Qualification> AdjustQualificationAdministrativeDivision(List<Qualification> baseQualifications, int group)
+        public List<Qualification> AdjustQualificationAssociation(List<Qualification> baseQualifications, int group)
         {
             Tournament tournament = Tournament;
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
             adjustedQualifications.Sort(new QualificationComparator());
             Country country = _groups[group][0].Country();
             //Get the district of the group (at the good regional level)
-            AdministrativeDivision administrativeDivision = country.GetAdministrativeDivisionLevel(_groups[group][0].AdministrativeDivision(), _administrativeLevel);
-            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "]");
+            Association association = country.GetAssociationLevel(_groups[group][0].Association(), _administrativeLevel);
+            Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "]");
             bool isHigherRegionalLevel = country.GetHigherRegionalTournament(administrativeLevel) == tournament;
-            //int teamsSentToHigherRegionalLevel = !isHigherRegionalLevel ? GetTeamsCountSentToHigherRegionalLevel(administrativeDivision, country) : 0;
+            //int teamsSentToHigherRegionalLevel = !isHigherRegionalLevel ? GetTeamsCountSentToHigherRegionalLevel(association, country) : 0;
             int teamsSentToHigherRegionalLevel = 0;
-            int admGroupCount = GetGroupsFromAdministrativeDivision(administrativeDivision).Count;
+            int admGroupCount = GetGroupsFromAssociation(association).Count;
             int extraPromotions = 0;
 
-            List<Club> admRelegationsCandidates = GetAdministrativeDivisionRelegablesCandidates(administrativeDivision);
+            List<Club> admRelegationsCandidates = GetAssociationRelegablesCandidates(association);
             List<Club> groupRanking = Ranking(group);
             //Get tournament target of relegation places
             Tournament bottomTournament = null;
@@ -460,11 +460,11 @@ namespace tm
             int promotionSlots = 0;
             if (upperGroupRound != null && upperGroupRound.administrativeLevel > 0 && _administrativeLevel > upperGroupRound._administrativeLevel)
             {
-                AdministrativeDivision upperAdministrativeDivision = country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound.administrativeLevel);
+                Association upperAssociation = country.GetAssociationLevel(association, upperGroupRound.administrativeLevel);
                 int admGroupUpper = 0;
                 for (int i = 0; i < _groupsNumber; i++)
                 {
-                    if (groups[i][0].Country().GetAdministrativeDivisionLevel(groups[i][0].AdministrativeDivision(), upperGroupRound._administrativeLevel) == upperAdministrativeDivision)
+                    if (groups[i][0].Country().GetAssociationLevel(groups[i][0].Association(), upperGroupRound._administrativeLevel) == upperAssociation)
                     {
                         admGroupUpper++;
                     }
@@ -477,10 +477,10 @@ namespace tm
                     }
                 }
                 //Si le nombre de relegations de la division du haut est défini par région, alors on sélectionne automatiquement ce nombre de relegués
-                if(upperGroupRound.relegationsByAdministrativeDivisions.ContainsKey(upperAdministrativeDivision))
+                if(upperGroupRound.relegationsByAssociations.ContainsKey(upperAssociation))
                 {
-                    promotionSlots = upperGroupRound.relegationsByAdministrativeDivisions[upperAdministrativeDivision];
-                    Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Promotions slots calculés automatiquement : " + (promotionSlots+1));
+                    promotionSlots = upperGroupRound.relegationsByAssociations[upperAssociation];
+                    Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Promotions slots calculés automatiquement : " + (promotionSlots+1));
                 }
 
                 promotionSlots = promotionSlots + 1; // 1; //TODO : +1 or +offset national/regional
@@ -489,7 +489,7 @@ namespace tm
                 int promotionForAdm = promotionSlots / admGroupUpper;
                 teamsSentToHigherRegionalLevel = promotionForAdm;
                 extraPromotions = promotionSlots % admGroupUpper;
-                Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] " + admGroupUpper + " groupes administratifs : " + promotionForAdm + " promotions (avec " + extraPromotions + " extra slot)");
+                Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] " + admGroupUpper + " groupes administratifs : " + promotionForAdm + " promotions (avec " + extraPromotions + " extra slot)");
                 for (int i = 1; i <= promotionForAdm; i++)
                 {
                     Utils.UpdateQualificationTournament(adjustedQualifications, i, upperGroupRound.Tournament);
@@ -497,7 +497,7 @@ namespace tm
 
                 if (extraPromotions > 0)
                 {
-                    List<Club> rankingRank = RankingByRank(promotionForAdm + 1, upperAdministrativeDivision);
+                    List<Club> rankingRank = RankingByRank(promotionForAdm + 1, upperAssociation);
                     Club concerned = groupRanking[promotionForAdm];
                     if (rankingRank.IndexOf(concerned) < extraPromotions)
                     {
@@ -529,8 +529,8 @@ namespace tm
                         relegationPlaces = adjustedQualifications.Count - q.ranking + 1;
                     }
                 }
-                Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Etape 0 : " + relegationPlaces + " places de rélégations");
-                Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Etape 0 : " + promotionPlaces + " places de promotions");
+                Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Etape 0 : " + relegationPlaces + " places de rélégations");
+                Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Etape 0 : " + promotionPlaces + " places de promotions");
                 if (promotionPlaces > 0)
                 {
                     int promotionByGroup = promotionPlaces / admGroupCount;
@@ -544,7 +544,7 @@ namespace tm
                     if (extraPromotions != 0)
                     {
                         int ranking = promotionPlaces - promotionOffset;
-                        List<int> groupsAdm = GetGroupsFromAdministrativeDivision(administrativeDivision);
+                        List<int> groupsAdm = GetGroupsFromAssociation(association);
                         Club groupConcerned = groupRanking[ranking];
                         List<Club> rankingI = new List<Club>();
                         foreach(int i in groupsAdm)
@@ -562,11 +562,11 @@ namespace tm
                 }
 
                 //Ignore qualifications relegations but take predefined relegations number of administrative division
-                if (relegationsByAdministrativeDivisions.ContainsKey(administrativeDivision))
+                if (relegationsByAssociations.ContainsKey(association))
                 {
-                    relegationPlaces = relegationsByAdministrativeDivisions[administrativeDivision];
+                    relegationPlaces = relegationsByAssociations[association];
                 }
-                Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Promotions : " + promotionPlaces + ", relegations : " + relegationPlaces);
+                Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Promotions : " + promotionPlaces + ", relegations : " + relegationPlaces);
                 if (relegationPlaces > -1)
                 {
                     int relegationsByGroup = relegationPlaces / admGroupCount;
@@ -584,7 +584,7 @@ namespace tm
                         //int ranking = _groups[group].Count - relegationPlaces + relegationOffset + 1;// - (relegationOffset == 0 ? 1 : 0);
                         //int relativeRanking = _groups[group].Count - ranking - 1;
                         Club groupConcerned = groupRanking[ranking];
-                        List<Club> rankingI = RankingByRank(relativeRanking, administrativeDivision);
+                        List<Club> rankingI = RankingByRank(relativeRanking, association);
                         int cOff = rankingI.IndexOf(groupConcerned);
                         Console.WriteLine(rankingI.IndexOf(groupConcerned) + " < " + (rankingI.Count-extraRelegations));
                         if (rankingI.IndexOf(groupConcerned) < rankingI.Count-extraRelegations)
@@ -605,13 +605,13 @@ namespace tm
                     }
                 }
                 //Ignore qualifications relegations but take predefined relegations number of administrative division if defined
-                if (relegationsByAdministrativeDivisions.ContainsKey(administrativeDivision))
+                if (relegationsByAssociations.ContainsKey(association))
                 {
                     for (int i = adjustedQualifications.Count; i > adjustedQualifications.Count-relegationPlaces; i--)
                     {
                         Utils.UpdateQualificationTournament(adjustedQualifications, i, tournament);
                     }
-                    int fixedRelegations = relegationsByAdministrativeDivisions[administrativeDivision];
+                    int fixedRelegations = relegationsByAssociations[association];
                     for (int i = adjustedQualifications.Count; i > adjustedQualifications.Count-fixedRelegations; i--)
                     {
                         Utils.UpdateQualificationTournament(adjustedQualifications, i, bottomTournament);
@@ -643,7 +643,7 @@ namespace tm
             {
                 relegationPlaces -= (teamsSentToHigherRegionalLevel - 1);
             }
-            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Etape 1 : " + relegationPlaces + " rel. places (higher level ? "+ isHigherRegionalLevel + " : teams sent to higher regional level : " + teamsSentToHigherRegionalLevel + ")");
+            Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Etape 1 : " + relegationPlaces + " rel. places (higher level ? "+ isHigherRegionalLevel + " : teams sent to higher regional level : " + teamsSentToHigherRegionalLevel + ")");
 
             int admRelegables = 0;
 
@@ -658,10 +658,10 @@ namespace tm
                 //Case 1
                 if (upperGroupRound.administrativeLevel < administrativeLevel)
                 {
-                    Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Case 1");
+                    Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Case 1");
                     //It's probably to create a function in GroupsRound that return relegables teams
                     //Et dangereux de faire comme ça car compatibilité entre relegations au milieu de classement (réserve qui tombe, rétrogradation adm) sont pas forcément compatible avec le classement des meilleurs nième
-                    AdministrativeDivision admAtLevel = upperGroupRound.administrativeLevel > 0 ? country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound._administrativeLevel) : null;
+                    Association admAtLevel = upperGroupRound.administrativeLevel > 0 ? country.GetAssociationLevel(association, upperGroupRound._administrativeLevel) : null;
                     for (int i = 0; i < upperGroupRound._groupsNumber; i++)
                     {
                         List<Qualification> groupQualifications = upperGroupRound.GetGroupQualifications(i);
@@ -670,7 +670,7 @@ namespace tm
                         foreach (Qualification q in groupQualifications)
                         {
                             Club concernedClub = upperGroupRanking[q.ranking - 1];
-                            if(country.GetAdministrativeDivisionLevel(concernedClub.AdministrativeDivision(), _administrativeLevel) == administrativeDivision)
+                            if(country.GetAssociationLevel(concernedClub.Association(), _administrativeLevel) == association)
                             {
                                 if (q.roundId == 0 && q.isNextYear && q.tournament == tournament && q.qualifies == 0)
                                 {
@@ -692,14 +692,14 @@ namespace tm
                 //Case 2
                 else
                 {
-                    Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Case 2");
+                    Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Case 2");
                     List<Qualification> regularQualifications = upperGroupRound.qualifications;
                     int regularQualificationsCount = 0;
-                    AdministrativeDivision upperAdministrativeDivision = country.GetAdministrativeDivisionLevel(administrativeDivision, upperGroupRound.administrativeLevel);
+                    Association upperAssociation = country.GetAssociationLevel(association, upperGroupRound.administrativeLevel);
                     //Ignore qualifications relegations but take predefined relegations number of administrative divsiion
-                    if (upperGroupRound.relegationsByAdministrativeDivisions.ContainsKey(upperAdministrativeDivision))
+                    if (upperGroupRound.relegationsByAssociations.ContainsKey(upperAssociation))
                     {
-                        regularQualificationsCount = upperGroupRound.relegationsByAdministrativeDivisions[upperAdministrativeDivision];
+                        regularQualificationsCount = upperGroupRound.relegationsByAssociations[upperAssociation];
                     }
                     else
                     {
@@ -715,8 +715,8 @@ namespace tm
                     int totalRelegations = 0;
                     for (int i = 0; i < upperGroupRound._groupsNumber; i++)
                     {
-                        if (upperGroupRound.GetGroupAdministrativeDivision(i, _administrativeLevel) ==
-                            administrativeDivision)
+                        if (upperGroupRound.GetGroupAssociation(i, _administrativeLevel) ==
+                            association)
                         {
                             List<Qualification> groupQualifications = upperGroupRound.GetGroupQualifications(i);
                             foreach (Qualification q in groupQualifications)
@@ -733,7 +733,7 @@ namespace tm
                 }
             }
 
-            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Relegations places " + relegationPlaces);
+            Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Relegations places " + relegationPlaces);
             relegationPlaces += admRelegables;
             __computationRelegationPlaces = relegationPlaces;
             //Dans le cas par exemple avec deux groupes et trois montées, un groupe aura une montée additionelle. On enlève alors une relégation à ce groupe pour maintenir le même nombre d'équipes dans le groupe
@@ -761,7 +761,7 @@ namespace tm
                     relegationOnGroup++;
                 }
             }
-            Console.WriteLine("[" + tournament.name + "][" + administrativeDivision.name + "][Groupe " + group + "] Promotions : " + promotionsCount + "; AdmRelegables : " + admRelegables + " -> total : " + relegationPlaces + "rélégations, " + relegationOnGroup + " pour ce groupe");
+            Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Promotions : " + promotionsCount + "; AdmRelegables : " + admRelegables + " -> total : " + relegationPlaces + "rélégations, " + relegationOnGroup + " pour ce groupe");
 
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
             //Check if bottom round is a group round or an inactive round (could be factorized)
@@ -771,7 +771,7 @@ namespace tm
             {
                 for (int i = 0; i < bottomGroupRound.groupsCount; i++)
                 {
-                    if (administrativeDivision.ContainsAdministrativeDivision(bottomGroupRound.GetGroupAdministrativeDivision(i)))
+                    if (association.ContainsAssociation(bottomGroupRound.GetGroupAssociation(i)))
                     {
                         ok = true;
                     }
@@ -799,7 +799,7 @@ namespace tm
         /// </summary>
         /// <param name="association"></param>
         /// <returns></returns>
-        private int GetRelegations(AdministrativeDivision association)
+        private int GetRelegations(Association association)
         {
             Tournament tournament = Tournament;
             int res = 0;
@@ -883,7 +883,7 @@ namespace tm
                 allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
                 if (_randomDrawingMethod == RandomDrawingMethod.Administrative && _groups[group].Count > 0)
                 {
-                    allQualifications = AdjustQualificationAdministrativeDivision(allQualifications, group);
+                    allQualifications = AdjustQualificationAssociation(allQualifications, group);
                 }
                 else if (_groups[group].Count > 0)
                 {
@@ -893,8 +893,8 @@ namespace tm
                 if (groups[group].Count > 0)
                 {
                     Country country = _groups[group][0].Country();
-                    AdministrativeDivision association = _randomDrawingMethod == RandomDrawingMethod.Administrative ? country.GetAdministrativeDivisionLevel(_groups[group][0].AdministrativeDivision(), _administrativeLevel) : null;
-                    int groupsCount = association != null ? GetGroupsFromAdministrativeDivision(association).Count : groups.Length;
+                    Association association = _randomDrawingMethod == RandomDrawingMethod.Administrative ? country.GetAssociationLevel(_groups[group][0].Association(), _administrativeLevel) : null;
+                    int groupsCount = association != null ? GetGroupsFromAssociation(association).Count : groups.Length;
                     int totalRelegations = GetRelegations(association);
                     allQualifications = Utils.AdjustQualificationsToNotPromoteReserves(allQualifications, Ranking(group), association, tournament, this, _rules.Contains(Rule.ReservesAreNotPromoted), totalRelegations, groupsCount);
                 }

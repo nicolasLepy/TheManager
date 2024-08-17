@@ -318,7 +318,7 @@ namespace tm
         /// Used for tournaments like French Cup where every regions sent a defined number of teams at the seventh round.
         /// </summary>
         [DataMember]
-        protected Dictionary<AdministrativeDivision, int> _teamsByAdministrativeDivision;
+        protected Dictionary<Association, int> _teamsByAssociation;
 
         /// <summary>
         /// Store every points deductions for clubs
@@ -338,7 +338,7 @@ namespace tm
         public List<Rule> rules { get => _rules; }
         public List<Tiebreaker> tiebreakers { get => _tiebreakers; }
         public List<Prize> prizes { get => _prizes; }
-        public Dictionary<AdministrativeDivision, int> teamsByAdministrativeDivision => _teamsByAdministrativeDivision;
+        public Dictionary<Association, int> teamsByAssociation => _teamsByAssociation;
         public Dictionary<Club, List<PointDeduction>> pointsDeduction => _pointsDeduction;
 
         public Tournament Tournament { get => _tournament; set => _tournament = value; }
@@ -387,7 +387,7 @@ namespace tm
             _rules = new List<Rule>();
             _tiebreakers = new List<Tiebreaker>();
             _prizes = new List<Prize>();
-            _teamsByAdministrativeDivision = new Dictionary<AdministrativeDivision, int>();
+            _teamsByAssociation = new Dictionary<Association, int>();
             _pointsDeduction = new Dictionary<Club, List<PointDeduction>>();
         }
 
@@ -407,7 +407,7 @@ namespace tm
             _prizes = new List<Prize>();
             _phases = phases;
             _keepRankingFromPreviousRound = keepRankingFromPreviousRound;
-            _teamsByAdministrativeDivision = new Dictionary<AdministrativeDivision, int>();
+            _teamsByAssociation = new Dictionary<Association, int>();
             _pointsDeduction = new Dictionary<Club, List<PointDeduction>>();
         }
 
@@ -489,12 +489,12 @@ namespace tm
         /// Give the number of first team in the round of a specific association
         /// </summary>
         /// <returns></returns>
-        public int CountWithoutReserves(AdministrativeDivision administrativeDivision)
+        public int CountWithoutReserves(Association association)
         {
             int total = 0;
             foreach (Club c in _clubs)
             {
-                if (c as ReserveClub == null && administrativeDivision.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                if (c as ReserveClub == null && association.ContainsAssociation(c.Association()))
                 {
                     total++;
                 }
@@ -502,12 +502,12 @@ namespace tm
             return total;
         }
 
-        public List<Club> GetClubsAdministrativeDivision(AdministrativeDivision adm)
+        public List<Club> GetClubsAssociation(Association adm)
         {
             List<Club> res = new List<Club>();
             foreach(Club c in clubs)
             {
-                if (c.AdministrativeDivision() == adm || adm.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                if (c.Association() == adm || adm.ContainsAssociation(c.Association()))
                 {
                     res.Add(c);
                 }
@@ -837,7 +837,7 @@ namespace tm
         /// <returns>Matches of game day j</returns>
         public abstract List<Match> GamesDay(int journey);
 
-        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, AdministrativeDivision associationFilter)
+        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, Association associationFilter)
         {
             List<Club> roundClubs = new List<Club>(_clubs);
 
@@ -864,7 +864,7 @@ namespace tm
                 List<Club> toDelete = new List<Club>();
                 foreach (Club c in roundClubs)
                 {
-                    if (!associationFilter.ContainsAdministrativeDivision(c.AdministrativeDivision()))
+                    if (!associationFilter.ContainsAssociation(c.Association()))
                     {
                         toDelete.Add(c);
                     }
