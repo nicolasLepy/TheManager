@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Runtime.Serialization;
 using tm.Comparators;
@@ -20,6 +21,8 @@ namespace tm
         [DataMember]
         private string _name;
         [DataMember]
+        private string _logo;
+        [DataMember]
         private ILocalisation _localisation;
         [DataMember]
         private Association _parent;
@@ -38,6 +41,7 @@ namespace tm
 
         public List<Association> divisions => _divisions;
         public string name => _name;
+        public string logo => _logo;
         public ILocalisation localisation => _localisation;
         public Association parent { get => _parent; set => _parent = value; }
         public int resetWeek => _resetWeek;
@@ -84,10 +88,11 @@ namespace tm
             _internationalDates = new List<InternationalDates>();
         }
 
-        public Association(int id, string name, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions)
+        public Association(int id, string name, string logo, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions)
         {
             Id = id;
             _name = name;
+            _logo = logo;
             _divisions = new List<Association>();
             _tournaments = new List<Tournament>();
             _continentalQualifications = new List<Qualification>();
@@ -98,6 +103,23 @@ namespace tm
             _parent = parent;
             _resetWeek = resetWeek;
             _enableInternationalClubsCompetitions = enableInternationalClubsCompetitions;
+        }
+
+        public Association String2Association(string name)
+        {
+            Association res = null;
+            if (name == Name())
+            {
+                res = this;
+            }
+            else
+            {
+                foreach (Association a in divisions)
+                {
+                    res = res == null ? a.String2Association(name) : res;
+                }
+            }
+            return res;
         }
 
         ///

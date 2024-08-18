@@ -613,7 +613,7 @@ namespace tm
                             int administrationId = int.Parse(e4.Attribute("id").Value);
                             int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
                             maxAdmId = administrationId > maxAdmId ? administrationId : maxAdmId;
-                            Association ad = new Association(administrationId, administrationName, ct, null, ct.resetWeek, false);
+                            Association ad = new Association(administrationId, administrationName, "", ct, null, ct.resetWeek, false);
                             if (administrationParent > 0)
                             {
                                 ct.GetAssociation(administrationParent).divisions.Add(ad);
@@ -687,13 +687,13 @@ namespace tm
             }
 
             maxAdmId++;
-            Association fifa = new Association(maxAdmId++, _kernel.world.Name(), _kernel.world, null, _kernel.world.resetWeek, false);
+            Association fifa = new Association(maxAdmId++, _kernel.world.Name(), _kernel.world.Logo(), _kernel.world, null, _kernel.world.resetWeek, false);
             foreach (Continent c in _kernel.world.continents)
             {
-                Association ca = new Association(maxAdmId++, c.Name(), c, fifa, c.resetWeek, true);
+                Association ca = new Association(maxAdmId++, c.Name(), c.Logo(), c, fifa, c.resetWeek, true);
                 foreach (Country cc in c.countries)
                 {
-                    Association adCountry = new Association(maxAdmId++, cc.Name(), cc, ca, cc.resetWeek, false);
+                    Association adCountry = new Association(maxAdmId++, cc.Name(), cc.Flag, cc, ca, cc.resetWeek, false);
                     cc.associations.Add(adCountry);
                     ca.divisions.Add(adCountry);
                     foreach (Association a in cc.associations)
@@ -1391,17 +1391,10 @@ namespace tm
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/rules.xml");
             foreach (XElement e in doc.Descendants("Rules"))
             {
-                foreach (XElement e2 in e.Descendants("Continent"))
+                foreach (XElement e2 in e.Descendants("Association"))
                 {
-                    Continent continent = Session.Instance.Game.kernel.String2Continent(e2.Attribute("name").Value);
-                    Association association = null;
-                    foreach(Association a in _kernel.GetAllAssociations())
-                    {
-                        if(a.localisation == continent)
-                        {
-                            association = a;
-                        }
-                    }
+                    Association association = Session.Instance.Game.kernel.String2Association(e2.Attribute("name").Value);
+
                     foreach(XElement e3 in e2.Descendants("Qualifications"))
                     {
                         int rank = int.Parse(e3.Attribute("rank").Value);
@@ -1416,7 +1409,6 @@ namespace tm
                         }
                         //Here qualification structure is used to store continental qualifications but meaning of field can differ than "classic" qualification (rank is nation coefficient rank instead of league rank and isNextYear is used for isCupWinner)
                         Qualification q = new Qualification(rank, roundId, targetTournament, isCupWinner, count);
-                        continent.continentalQualifications.Add(q);
                         association.continentalQualifications.Add(q);
                     }
                 }

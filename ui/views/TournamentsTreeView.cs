@@ -117,7 +117,7 @@ namespace TheManager_GUI.views
             TreeViewItem treeViewItemContainer = new TreeViewItem();
             treeViewItemContainer.Margin = new Thickness(0, 2, 0, 2);
 
-            StackPanel spTreeViewItemHeader = CreateTreeViewItemComponent(association.name, Utils.Logo(rootNode));
+            StackPanel spTreeViewItemHeader = CreateTreeViewItemComponent(association.name, Utils.Logo(association));
             treeViewItemContainer.Header = spTreeViewItemHeader;
 
             foreach (Tournament t in association.Tournaments())

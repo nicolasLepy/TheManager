@@ -369,6 +369,16 @@ namespace tm
             return flag;
         }
 
+        public static string Logo(Association a)
+        {
+            string flag = Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\" + universeLogoFolderName + "\\" + a.logo + ".png";
+            if (!File.Exists(flag))
+            {
+                flag = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+            }
+            return flag;
+        }
+
         public static string Logo(Club c)
         {
             string res = "";

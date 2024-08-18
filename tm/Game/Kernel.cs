@@ -429,6 +429,11 @@ namespace tm
             return _world.String2Continent(name);
         }
 
+        public Association String2Association(string name)
+        {
+            return _worldAssociation.String2Association(name);
+        }
+
         public int PlayersCount()
         {
             int res = _freePlayers.Count;
