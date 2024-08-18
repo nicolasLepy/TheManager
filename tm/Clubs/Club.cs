@@ -143,10 +143,11 @@ namespace tm
             float res = 0;
 
             Continent continent = Country().Continent;
-            int tournamentsCount = continent.ContinentalTournamentsCount;
+            Association continentalAssociation = Session.Instance.Game.kernel.GetAssociation(continent);
+            int tournamentsCount = continentalAssociation.ContinentalTournamentsCount;
             for (int i = 1; i <= tournamentsCount; i++)
             {
-                Tournament continentalTournament = continent.GetContinentalClubTournament(i);
+                Tournament continentalTournament = continentalAssociation.GetContinentalClubTournament(i);
                 int j = continentalTournament.previousEditions.Count - (-nSeason);
 
                 if (j >= 0)

@@ -2043,7 +2043,8 @@ namespace tm
 
         public bool IsInternational()
         {
-            return Session.Instance.Game.kernel.LocalisationTournament(this) as Continent != null;
+            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            return localisation as Continent != null || localisation as Association != null;
         }
 
         public bool IsInvolved(Club c)

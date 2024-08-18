@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using tm;
 
 namespace tests.tm
 {
@@ -12,6 +13,7 @@ namespace tests.tm
         [TestMethod]
         public void TestRetrogradation()
         {
+            InitGame("database_france_nat", new List<Country>());
         }
     }
 }

@@ -60,12 +60,12 @@ namespace TheManager_GUI
 
             associationsPanel.Children.Clear();
             navButtons = new List<Button>();
-            foreach (Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
+            foreach (Association a in Session.Instance.Game.kernel.worldAssociation.divisions)
             {
-                if(c.countries.Count > 0)
+                if(a.divisions.Count > 0)
                 {
-                    Button continentClick = ViewUtils.CreateButton(c.Name(), StyleDefinition.styleButtonMenuTitle, 15);
-                    continentClick.Click += (object cs, RoutedEventArgs ce) => CreateContinentalCountryRanking(continentClick, c);
+                    Button continentClick = ViewUtils.CreateButton(a.name, StyleDefinition.styleButtonMenuTitle, 15);
+                    continentClick.Click += (object cs, RoutedEventArgs ce) => CreateContinentalCountryRanking(continentClick, a);
                     associationsPanel.Children.Add(continentClick);
                     navButtons.Add(continentClick);
                 }
@@ -80,12 +80,12 @@ namespace TheManager_GUI
 
             associationsPanel.Children.Clear();
             navButtons = new List<Button>();
-            foreach (Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
+            foreach (Association a in Session.Instance.Game.kernel.GetAllAssociations())
             {
-                if(c.GetContinentalClubTournament(1) != null)
+                if(a.GetContinentalClubTournament(1) != null)
                 {
-                    Button continentClick = ViewUtils.CreateButton(c.Name(), StyleDefinition.styleButtonMenuTitle, 15);
-                    continentClick.Click += (object cs, RoutedEventArgs ce) => CreateContinentalClubRanking(continentClick, c);
+                    Button continentClick = ViewUtils.CreateButton(a.name, StyleDefinition.styleButtonMenuTitle, 15);
+                    continentClick.Click += (object cs, RoutedEventArgs ce) => CreateContinentalClubRanking(continentClick, a);
                     associationsPanel.Children.Add(continentClick);
                     navButtons.Add(continentClick);
                 }
@@ -107,12 +107,13 @@ namespace TheManager_GUI
             }
         }
 
-        private void CreateContinentalClubRanking(Button sender, Continent continent)
+        private void CreateContinentalClubRanking(Button sender, Association association)
         {
             HighlightButton(sender);
             List<Club> clubs = new List<Club>();
-            foreach (Country ctr in continent.countries)
+            foreach (Association a in association.divisions)
             {
+                Country ctr = a.localisation as Country;
                 foreach (Tournament championship in ctr.Tournaments())
                 {
                     if (championship.isChampionship)
@@ -161,32 +162,33 @@ namespace TheManager_GUI
             rankingPanel.Child = view;
         }
 
-        private void CreateContinentalCountryRanking(Button sender, Continent continent)
+        private void CreateContinentalCountryRanking(Button sender, Association association)
         {
             HighlightButton(sender);
             List<string> continentalTournamentsNames = new List<string>();
-            for (int j = 0; j < continent.ContinentalTournamentsCount; j++)
+            for (int j = 0; j < association.ContinentalTournamentsCount; j++)
             {
-                continentalTournamentsNames.Add(continent.GetContinentalClubTournament(j + 1).shortName);
+                continentalTournamentsNames.Add(association.GetContinentalClubTournament(j + 1).shortName);
             }
 
             List<ControlInternationalRankingItem> items = new List<ControlInternationalRankingItem>();
             int rank = 0;
-            List<Country> countries = continent.associationRanking;
-            foreach (Country ctr in countries)
+            List<Association> countries = association.associationRanking;
+            foreach (Association a in countries)
             {
+                Country ctr = a.localisation as Country;
                 rank++;
-                int[] slots = new int[continent.ContinentalTournamentsCount];
+                int[] slots = new int[association.ContinentalTournamentsCount];
                 Dictionary<int, int> qualifications = new Dictionary<int, int>();
-                foreach (Qualification q in continent.continentalQualifications)
+                foreach (Qualification q in association.continentalQualifications)
                 {
                     if (q.ranking == rank)
                     {
                         slots[q.tournament.level-1] += q.qualifies;
                     }
                 }
-                List<double> oldCoeffs = new List<double>() { ctr.YearAssociationCoefficient(-5), ctr.YearAssociationCoefficient(-4), ctr.YearAssociationCoefficient(-3), ctr.YearAssociationCoefficient(-2), ctr.YearAssociationCoefficient(-1) };
-                items.Add(new ControlInternationalRankingItem(ctr.Name(), ViewUtils.CreateFlag(ctr, 27, 20), rank, 0, oldCoeffs, ctr.AssociationCoefficient, slots.ToList()));
+                List<double> oldCoeffs = new List<double>() { a.YearAssociationCoefficient(-5), a.YearAssociationCoefficient(-4), a.YearAssociationCoefficient(-3), a.YearAssociationCoefficient(-2), a.YearAssociationCoefficient(-1) };
+                items.Add(new ControlInternationalRankingItem(ctr.Name(), ViewUtils.CreateFlag(ctr, 27, 20), rank, 0, oldCoeffs, a.AssociationCoefficient, slots.ToList()));
             }
 
             ControlInternationalRanking view = new ControlInternationalRanking(items, new List<string>() { "-5", "-4", "-3", "-2", "-1"}, continentalTournamentsNames);

@@ -1,9 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NHibernate.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using tm;
@@ -22,9 +24,16 @@ namespace tests.tm
             bool keepGoin = true;
             Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
             Country france = Session.Instance.Game.kernel.String2Country("France");
-            Tournament championsLeague = europe.GetContinentalClubTournament(1);
-            Tournament europaLeague = europe.GetContinentalClubTournament(2);
-            Tournament europaConferenceLeague = europe.GetContinentalClubTournament(3);
+            Association uefa = (from a in Session.Instance.Game.kernel.worldAssociation.divisions where a.localisation == europe select a).First();
+            Tournament championsLeague = uefa.GetContinentalClubTournament(1);
+            Tournament europaLeague = uefa.GetContinentalClubTournament(2);
+            Tournament europaConferenceLeague = uefa.GetContinentalClubTournament(3);
+
+            //SWITCH FROM ASSOCIATION TO CONTINENT HOLDING :
+            // => uefa.getcont... -> europe.getcont
+            // => from q in uefa.continentalQualifications -> from q in europe.continentalQualifications
+            // => datasetloader.cs => if(false && localisation as Continent != null)
+            // => game.cs => foreach(Association a in kernel.GetAllAssociations())
 
             while (keepGoin)
             {
@@ -72,17 +81,17 @@ namespace tests.tm
                     elcFinal.matches[0].home = clubWinner;
                     elcFinal.matches[0].Force(1, 0);
                 }
-                if (europe.resetWeek == weekNumber && Session.Instance.Game.date.DayOfWeek == DayOfWeek.Wednesday)
+                if (uefa.resetWeek == weekNumber && Session.Instance.Game.date.DayOfWeek == DayOfWeek.Wednesday)
                 {
                     keepGoin = false;
                 }
             }
             int rank = 1;
-            List<Country> associations = europe.associationRanking;
+            List<Country> associations = (from a in uefa.associationRanking select a.localisation as Country).ToList();
             int checksCount = 0;
             foreach (Country association in associations)
             {
-                List<Qualification> associationQualifications = (from q in europe.continentalQualifications where q.ranking == rank select q).ToList();
+                List<Qualification> associationQualifications = (from q in uefa.continentalQualifications where q.ranking == rank select q).ToList();
                 Console.WriteLine(associationQualifications.Count);
                 List<Club> cupWinners = (from c in association.Cups() select c.Winner()).ToList();
                 List<Club> bestTeams = association.League(1).rounds[0].clubs.GetRange(0, 8);

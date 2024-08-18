@@ -425,7 +425,7 @@ namespace TheManager_GUI
 
         private void FillSelectLeague()
         {
-            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvSelectLeague, Session.Instance.Game.kernel.world);
+            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvSelectLeague, Session.Instance.Game.kernel.world, Session.Instance.Game.kernel.worldAssociation);
             controller.TournamentValidator = TreeViewSelectClubTournamentIsValid;
             controller.OnClickTournament = stackPanelNavigation_OnClick;
             controller.ContentStyle = StyleDefinition.styleTextPlain;

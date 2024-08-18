@@ -10,6 +10,9 @@ using System.Xml;
 using tm.Tournaments;
 using System.Data;
 using static System.Collections.Specialized.BitVector32;
+using static System.Net.WebRequestMethods;
+using File = System.IO.File;
+using System.Data.Entity.ModelConfiguration.Conventions;
 
 namespace tm
 {
@@ -592,7 +595,7 @@ namespace tm
                             }
                         }
 
-                        Country p = new Country(_kernel.NextIdCountry(), countrydBName, countryName, l, countryShape, countryResetWeek, sanctions);
+                        Country ct = new Country(_kernel.NextIdCountry(), countrydBName, countryName, l, countryShape, countryResetWeek, sanctions);
                         foreach (XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -600,8 +603,8 @@ namespace tm
                             float lat = float.Parse(e4.Attribute("Latitute").Value);
                             float lon = float.Parse(e4.Attribute("Longitude").Value);
 
-                            City v = new City(_kernel.NextIdCity(), cityName, population, lat, lon);
-                            p.cities.Add(v);
+                            City cty = new City(_kernel.NextIdCity(), cityName, population, lat, lon);
+                            ct.cities.Add(cty);
                         }
 
                         foreach (XElement e4 in e3.Descendants("AdministrativeDivision"))
@@ -610,14 +613,15 @@ namespace tm
                             int administrationId = int.Parse(e4.Attribute("id").Value);
                             int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
                             maxAdmId = administrationId > maxAdmId ? administrationId : maxAdmId;
-                            Association ad = new Association(administrationId, administrationName);
+                            Association ad = new Association(administrationId, administrationName, ct, null, ct.resetWeek, false);
                             if (administrationParent > 0)
                             {
-                                p.GetAssociation(administrationParent).divisions.Add(ad);
+                                ct.GetAssociation(administrationParent).divisions.Add(ad);
+                                ad.parent = ct.GetAssociation(administrationParent);
                             }
                             else
                             {
-                                p.associations.Add(ad);
+                                ct.associations.Add(ad);
                             }
                         }
 
@@ -634,7 +638,7 @@ namespace tm
                                     {
                                         for (int i = previousLevel; i < level; i++)
                                         {
-                                            float[] last = weekdaysDates ? p.gamesTimesWeekdays.Last() : p.gamesTimesWeekend.Last();
+                                            float[] last = weekdaysDates ? ct.gamesTimesWeekdays.Last() : ct.gamesTimesWeekend.Last();
                                             float[] newArray = new float[Utils.gamesTimesHoursCount * Utils.gamesTimesDaysCount];
                                             for (int d1 = 0; d1 < last.Length; d1++)
                                             {
@@ -642,11 +646,11 @@ namespace tm
                                             }
                                             if (weekdaysDates)
                                             {
-                                                p.gamesTimesWeekdays.Add(newArray);
+                                                ct.gamesTimesWeekdays.Add(newArray);
                                             }
                                             else
                                             {
-                                                p.gamesTimesWeekend.Add(newArray);
+                                                ct.gamesTimesWeekend.Add(newArray);
                                             }
                                         }
                                     }
@@ -666,31 +670,44 @@ namespace tm
                                     }
                                     if (weekdaysDates)
                                     {
-                                        p.gamesTimesWeekdays.Add(gamesTimes);
+                                        ct.gamesTimesWeekdays.Add(gamesTimes);
                                     }
                                     else
                                     {
-                                        p.gamesTimesWeekend.Add(gamesTimes);
+                                        ct.gamesTimesWeekend.Add(gamesTimes);
                                     }
                                 }
                             }
                         }
 
-                        c.countries.Add(p);
+                        c.countries.Add(ct);
                     }
                     _kernel.world.continents.Add(c);
                 }
             }
 
             maxAdmId++;
+            Association fifa = new Association(maxAdmId++, _kernel.world.Name(), _kernel.world, null, _kernel.world.resetWeek, false);
             foreach (Continent c in _kernel.world.continents)
             {
+                Association ca = new Association(maxAdmId++, c.Name(), c, fifa, c.resetWeek, true);
                 foreach (Country cc in c.countries)
                 {
-                    Association adCountry = new Association(maxAdmId++, cc.Name());
+                    Association adCountry = new Association(maxAdmId++, cc.Name(), cc, ca, cc.resetWeek, false);
                     cc.associations.Add(adCountry);
+                    ca.divisions.Add(adCountry);
+                    foreach (Association a in cc.associations)
+                    {
+                        if(a.parent == null)
+                        {
+                            a.parent = adCountry;
+                        }
+                    }
+
                 }
+                fifa.divisions.Add(ca);
             }
+            _kernel.worldAssociation = fifa;
         }
 
         public void LoadStadiums()
@@ -994,7 +1011,23 @@ namespace tm
                         }
 
                         tournament.InitializeQualificationsNextYearsLists(e2.Descendants("Tour").Count());
-                        localisation.Tournaments().Add(tournament);
+
+
+                        //Continental tournaments are stored by their association
+                        if(localisation as Continent != null)
+                        {
+                            foreach(Association a in _kernel.GetAllAssociations())
+                            {
+                                if (a.localisation == localisation)
+                                {
+                                    a.tournaments.Add(tournament);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            localisation.Tournaments().Add(tournament);
+                        }
                     }
                 }
 
@@ -1346,8 +1379,6 @@ namespace tm
 
             }
 
-
-
             /*
             foreach (Tournament c in _kernel.Competitions)
             {
@@ -1363,6 +1394,14 @@ namespace tm
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     Continent continent = Session.Instance.Game.kernel.String2Continent(e2.Attribute("name").Value);
+                    Association association = null;
+                    foreach(Association a in _kernel.GetAllAssociations())
+                    {
+                        if(a.localisation == continent)
+                        {
+                            association = a;
+                        }
+                    }
                     foreach(XElement e3 in e2.Descendants("Qualifications"))
                     {
                         int rank = int.Parse(e3.Attribute("rank").Value);
@@ -1378,6 +1417,7 @@ namespace tm
                         //Here qualification structure is used to store continental qualifications but meaning of field can differ than "classic" qualification (rank is nation coefficient rank instead of league rank and isNextYear is used for isCupWinner)
                         Qualification q = new Qualification(rank, roundId, targetTournament, isCupWinner, count);
                         continent.continentalQualifications.Add(q);
+                        association.continentalQualifications.Add(q);
                     }
                 }
             }

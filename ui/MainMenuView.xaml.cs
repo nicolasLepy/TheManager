@@ -304,7 +304,7 @@ namespace TheManager_GUI
 
         private void FillTournamentsTreeView()
         {
-            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvTournaments, _game.kernel.world);
+            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvTournaments, _game.kernel.world, _game.kernel.worldAssociation);
             controller.TournamentValidator = (t) => true;
             controller.OnClickTournament = stackPanelNavigation_OnClick;
             controller.Fill();

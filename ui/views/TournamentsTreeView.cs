@@ -19,16 +19,18 @@ namespace TheManager_GUI.views
 
         private TreeView treeView;
         private Continent rootNode;
+        private Association rootAssociation;
 
         public Func<Tournament, bool> TournamentValidator { get; set; }
         public Action<object, MouseButtonEventArgs, Tournament> OnClickTournament { get; set; }
 
         public string ContentStyle { get; set; }
 
-        public TournamentsTreeViewController(TreeView host, Continent rootNode)
+        public TournamentsTreeViewController(TreeView host, Continent rootNode, Association rootAssociation)
         {
             this.treeView = host;
             this.rootNode = rootNode;
+            this.rootAssociation = rootAssociation;
             ContentStyle = StyleDefinition.styleTextNavigation;
             treeView.PreviewMouseWheel += treeView_PreviewMouseWheel;
         }
@@ -42,6 +44,7 @@ namespace TheManager_GUI.views
         {
             treeView.Items.Clear();
             treeView.Items.Add(CreateNavigationContinent(rootNode));
+            treeView.Items.Add(CreateNavigationAssociation(rootAssociation));
         }
 
         private StackPanel CreateTreeViewItemComponent(string itemName, string imagePath)
@@ -107,9 +110,34 @@ namespace TheManager_GUI.views
             }
 
             return treeViewItemContainer;
-
         }
 
+        private TreeViewItem CreateNavigationAssociation(Association association)
+        {
+            TreeViewItem treeViewItemContainer = new TreeViewItem();
+            treeViewItemContainer.Margin = new Thickness(0, 2, 0, 2);
+
+            StackPanel spTreeViewItemHeader = CreateTreeViewItemComponent(association.name, Utils.Logo(rootNode));
+            treeViewItemContainer.Header = spTreeViewItemHeader;
+
+            foreach (Tournament t in association.Tournaments())
+            {
+                if (TournamentValidator == null || TournamentValidator(t))
+                {
+                    treeViewItemContainer.Items.Add(CreateNavigationTournament(t));
+                }
+            }
+
+            foreach (Association childAssociation in association.divisions)
+            {
+                if(childAssociation.GetAllTournaments().Count > 0)
+                {
+                    treeViewItemContainer.Items.Add(CreateNavigationAssociation(childAssociation));
+                }
+            }
+
+            return treeViewItemContainer;
+        }
 
 
         private TreeViewItem CreateNavigationCountry(Country country)

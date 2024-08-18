@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 using tm.Comparators;
@@ -59,6 +60,8 @@ namespace tm
         private List<Manager> _freeManagers;
         [DataMember]
         private Continent _world;
+        [DataMember]
+        private Association _worldAssociation;
         [DataMember]
         private List<Language> _languages;
         [DataMember]
@@ -118,17 +121,30 @@ namespace tm
 
         public List<Club> Clubs { get => _clubs; }
 
+
+        public List<Association> GetAllAssociations()
+        {
+            List<Association> res = new List<Association>();
+            res.Add(_worldAssociation);
+            res.AddRange(_worldAssociation.GetAllChilds());
+            return res;
+        }
+
+
         [NotMapped]
         public List<Tournament> Competitions
         {
             get
             {
-                return _world.GetAllTournaments();
+                List<Tournament> tournaments = new List<Tournament>(_world.GetAllTournaments());
+                tournaments.AddRange(_worldAssociation.GetAllTournaments());
+                return tournaments;
             }
         }
         public List<Player> freePlayers { get => _freePlayers; }
         public List<Manager> freeManagers { get => _freeManagers; }
         public Continent world { get => _world; set => _world = value; }
+        public Association worldAssociation { get => _worldAssociation; set => _worldAssociation = value; }
         public List<Language> languages { get => _languages; }
         public List<Media> medias { get => _medias; }
         public List<MatchEventCommentary> matchCommentaries { get => _matchCommentaries; }
@@ -543,6 +559,20 @@ namespace tm
             return res;
         }
 
+        public Association GetAssociation(ILocalisation localisation)
+        {
+            Association res = null;
+            foreach(Association a in GetAllAssociations())
+            {
+                if(a.localisation == localisation)
+                {
+                    res = a;
+                    break;
+                }
+            }
+            return res;
+        }
+
         public Continent ContinentTournament(Tournament tournament)
         {
             Continent res = null;
@@ -589,9 +619,26 @@ namespace tm
                     }
                 }
             }
-            if(res == null)
+            foreach (Association association in GetAllAssociations())
             {
-                foreach (Continent c in _world.continents)
+                if (association.tournaments.Contains(tournament))
+                {
+                    res = association;
+                }
+            }
+            if (res == null)
+            {
+                foreach(Tournament t in Competitions)
+                {
+                    foreach (KeyValuePair<int, Tournament> tt in t.previousEditions)
+                    {
+                        if (tt.Value == tournament)
+                        {
+                            res = LocalisationTournament(t);
+                        }
+                    }
+                }
+                /*foreach (Continent c in _world.continents)
                 {
                     foreach(Tournament t in c.Tournaments())
                     {
@@ -618,7 +665,7 @@ namespace tm
                         }
 
                     }
-                }
+                }*/
             }
             return res;
         }

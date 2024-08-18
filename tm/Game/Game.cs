@@ -209,7 +209,7 @@ namespace tm
             Utils.Debug("[Kernel start date] " + _date.ToShortDateString());
             Utils.Debug("[Game start date] " + begin.ToShortDateString());
 
-            foreach (Tournament t in _kernel.world.GetAllTournaments())
+            foreach (Tournament t in _kernel.Competitions)
             {
                 DateTime tBegin = t.seasonBeginning.ConvertToDateTime(Utils.beginningYear);
                 if(Utils.IsBefore(_date, tBegin) && Utils.IsBefore(tBegin, defaultStart))
@@ -933,15 +933,32 @@ namespace tm
                 UpdateGameUniverseData();
             }
 
-            foreach (Continent c in kernel.world.continents)
+            /*foreach (Continent c in kernel.world.continents)
             {
                 if(weekNumber == c.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday) //In DB tournaments are reset at 25. Game starts this day
                 {
+                    Console.WriteLine("[IC] " + date.ToShortDateString() + " " + c.Name() + " " + "QualifiesClubForContinentalCompetitionNextYear");
                     c.QualifiesClubForContinentalCompetitionNextYear();
                 }
                 if(weekNumber == (c.resetWeek + 2)%52 && date.DayOfWeek == DayOfWeek.Wednesday)
                 {
+                    Console.WriteLine("[IC] " + date.ToShortDateString() + " " +  c.Name() + " " + "UpdateStoredAssociationRanking");
                     c.UpdateStoredAssociationRanking();
+                }
+            }*/
+
+            foreach(Association a in kernel.GetAllAssociations())
+            {
+                if(a.enabledInternationalClubsCompetitions)
+                {
+                    if (weekNumber == a.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
+                    {
+                        a.QualifiesClubForContinentalCompetitionNextYear();
+                    }
+                    if (weekNumber == (a.resetWeek + 2) % 52 && date.DayOfWeek == DayOfWeek.Wednesday)
+                    {
+                        a.UpdateStoredAssociationRanking();
+                    }
                 }
             }
 

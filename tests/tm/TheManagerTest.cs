@@ -17,6 +17,8 @@ namespace tests.tm
 
         protected void InitGame(string dataset, List<Country> activeLeagues)
         {
+            string dir = Path.Join((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.Parent.ToString(), "ui", "bin", "Debug", "net6.0-windows");
+            Directory.SetCurrentDirectory(dir);
             Console.WriteLine("[current directory] " + Directory.GetCurrentDirectory());
             Game partie = new Game();
             Session.Instance.Game = partie;
