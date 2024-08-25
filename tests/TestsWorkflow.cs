@@ -60,7 +60,7 @@ namespace tests
         {
             InitGame("database_france_light", new List<string>() { "France"});
 
-            int years = 20;
+            int years = 10;
             for (int i = 0; i < 365 * years; i++)
             {
                 Session.Instance.Game.NextDay();

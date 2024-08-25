@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -29,6 +30,8 @@ namespace tm
 
         [DataMember]
         private List<Tournament> _tournaments;
+        [DataMember]
+        private List<NationalTeam> _nationalTeams;
 
         [DataMember]
         private int _resetWeek;
@@ -46,6 +49,8 @@ namespace tm
         public Association parent { get => _parent; set => _parent = value; }
         public int resetWeek => _resetWeek;
         public bool enabledInternationalClubsCompetitions => _enableInternationalClubsCompetitions;
+
+        public List<NationalTeam> nationalTeams => new List<NationalTeam>(_nationalTeams);
 
         /**
          * Represent qualification in continental clubs competitions in function of the country place in the coefficient ranking
@@ -86,6 +91,7 @@ namespace tm
             _associationRanking = new List<Association>();
             _archivalAssociationRanking = new List<List<Association>>();
             _internationalDates = new List<InternationalDates>();
+            _nationalTeams = new List<NationalTeam>();
         }
 
         public Association(int id, string name, string logo, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions)
@@ -99,10 +105,16 @@ namespace tm
             _associationRanking = new List<Association>();
             _archivalAssociationRanking = new List<List<Association>>();
             _internationalDates = new List<InternationalDates>();
+            _nationalTeams = new List<NationalTeam>();
             _localisation = localisation;
             _parent = parent;
             _resetWeek = resetWeek;
             _enableInternationalClubsCompetitions = enableInternationalClubsCompetitions;
+        }
+
+        public void RegisterNationalTeam(NationalTeam nt)
+        {
+            this._nationalTeams.Add(nt);
         }
 
         public Association String2Association(string name)
@@ -237,7 +249,6 @@ namespace tm
         ///
         /// International tournaments related methods
         ///
-
 
         public float YearAssociationCoefficient(int nSeason)
         {

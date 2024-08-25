@@ -46,13 +46,13 @@ namespace tm
 
         public override GeographicPosition Localisation()
         {
-            //TOOD
+            //TODO
             return null;
         }
 
         public override Association Association()
         {
-            return null;
+            return country.GetCountryAssociation();
         }
 
         public int Ranking()

@@ -850,7 +850,7 @@ namespace tm
 
             }
 
-            List<NationalTeam> nationalTeams = kernel.world.GetAllCountries().SelectMany(s => s.nationalTeams).ToList();
+            List<NationalTeam> nationalTeams = GetAllNationalTeams();
             //Check every international window
             for (int i = 0; i < kernel.worldAssociation.internationalDates.Count; i++)
             {
@@ -1038,6 +1038,11 @@ namespace tm
             // PrintClubElo();
             
             return clubMatchs;
+        }
+
+        private List<NationalTeam> GetAllNationalTeams()
+        {
+            return kernel.GetAllAssociations().SelectMany(s => s.nationalTeams).ToList();
         }
 
         private void PrintClubElo()

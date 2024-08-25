@@ -126,7 +126,7 @@ namespace tm
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
-        [NotMapped]
+        /*[NotMapped]
         public List<NationalTeam> nationalTeams
         {
             get
@@ -142,7 +142,7 @@ namespace tm
                 }
                 return res;
             }
-        }
+        }*/
 
         public AdministrativeSanction GetSanction(SanctionType sanctionType)
         {

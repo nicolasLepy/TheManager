@@ -24,7 +24,7 @@ namespace tests.tm
             bool keepGoin = true;
             Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
             Country france = Session.Instance.Game.kernel.String2Country("France");
-            Association uefa = (from a in Session.Instance.Game.kernel.worldAssociation.divisions where a.localisation == europe select a).First();
+            Association uefa = (from a in Session.Instance.Game.kernel.worldAssociation.associations where a.localisation == europe select a).First();
             Tournament championsLeague = uefa.GetContinentalClubTournament(1);
             Tournament europaLeague = uefa.GetContinentalClubTournament(2);
             Tournament europaConferenceLeague = uefa.GetContinentalClubTournament(3);

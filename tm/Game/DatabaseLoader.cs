@@ -898,13 +898,14 @@ namespace tm
                         points = formationFacilities;
                         Manager entraineur = new Manager(_kernel.NextIdPerson(), country.language.GetFirstName(), country.language.GetLastName(), formationFacilities, new DateTime(1970, 1, 1), country);
 
-                        Club c = new NationalTeam(id, name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalSong, points);
+                        NationalTeam c = new NationalTeam(id, name, entraineur, shortName, reputation, supporters, formationFacilities, logo, stadium, country, goalSong, points);
                         if (_clubsId.ContainsKey(id))
                         {
                             Console.WriteLine("[Club conflict]" + id + " : " + _clubsId[id].name + " vs " + c.name);
                         }
                         _clubsId[id] = c;
                         _kernel.Clubs.Add(c);
+                        country.GetCountryAssociation().RegisterNationalTeam(c);
                     }
                 }
             }
