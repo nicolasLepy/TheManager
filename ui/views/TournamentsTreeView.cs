@@ -128,7 +128,7 @@ namespace TheManager_GUI.views
                 }
             }
 
-            foreach (Association childAssociation in association.divisions)
+            foreach (Association childAssociation in association.associations)
             {
                 if(childAssociation.GetAllTournaments().Count > 0)
                 {

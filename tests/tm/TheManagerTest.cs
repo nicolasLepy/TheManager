@@ -15,7 +15,7 @@ namespace tests.tm
     public class TheManagerTest
     {
 
-        protected void InitGame(string dataset, List<Country> activeLeagues)
+        protected void InitGame(string dataset, List<string> activeLeagues)
         {
             string dir = Path.Join((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.Parent.ToString(), "ui", "bin", "Debug", "net6.0-windows");
             Directory.SetCurrentDirectory(dir);
@@ -50,9 +50,14 @@ namespace tests.tm
 
             if(activeLeagues != null)
             {
+                List<Country> activeCountries = new List<Country>();
+                foreach(string str in activeLeagues)
+                {
+                    activeCountries.Add(Session.Instance.Game.kernel.String2Country(str));
+                }
                 foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
-                    if (c.isChampionship && !activeLeagues.Contains(Session.Instance.Game.kernel.LocalisationTournament(c)))
+                    if (c.isChampionship && !activeCountries.Contains(Session.Instance.Game.kernel.LocalisationTournament(c)))
                     {
                         c.DisableTournament();
                     }

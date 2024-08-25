@@ -903,12 +903,12 @@ namespace tm
                     }
                     break;
                 case RecuperationMethod.QualifiedForInternationalCompetition:
-                    roundClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinent().GetContinentalClubs(roundClubs);
+                    roundClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
                     roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
                     break;
                 case RecuperationMethod.NotQualifiedForInternationalCompetitionBest:
                 case RecuperationMethod.NotQualifiedForInternationalCompetitionWorst:
-                    List<Club> internationalClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinent().GetContinentalClubs(roundClubs);
+                    List<Club> internationalClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
                     foreach (Club c in internationalClubs)
                     {
                         roundClubs.Remove(c);

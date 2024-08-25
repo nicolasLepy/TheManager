@@ -29,8 +29,7 @@ namespace tests
         [TestMethod]
         public void TestSeasonsNational()
         {
-            Country fr = Session.Instance.Game.kernel.String2Country("France");
-            InitGame("database_france_nat", new List<Country>() { fr});
+            InitGame("database_france_nat", new List<string>() { "France"});
             int years = 2;
             for (int i = 0; i < 365*years; i++)
             {
@@ -52,6 +51,21 @@ namespace tests
             }
 
             Session.Instance.Game.Save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_big.csave");
+
+            //TODO: Check everything are correct : league structure doesn't changed, cup with right teams count
+        }
+
+        [TestMethod]
+        public void TestSeasonsLightFast()
+        {
+            InitGame("database_france_light", new List<string>() { "France"});
+
+            int years = 20;
+            for (int i = 0; i < 365 * years; i++)
+            {
+                Session.Instance.Game.NextDay();
+                Session.Instance.Game.UpdateTournaments();
+            }
 
             //TODO: Check everything are correct : league structure doesn't changed, cup with right teams count
         }

@@ -291,7 +291,7 @@ namespace TheManager_GUI
                     continentalRank = continentalTeams;
                 }
             }
-            gridHeader.Children.Add(CreateGridStackPanel(String.Format("{0}/{1}", (fifaRanking.IndexOf(nationalTeam) + 1), fifaRanking.Count), ViewUtils.CreateImage("universe\\world.png", 40, 40), 4, 0));
+            gridHeader.Children.Add(CreateGridStackPanel(String.Format("{0}/{1}", (fifaRanking.IndexOf(nationalTeam) + 1), fifaRanking.Count), ViewUtils.CreateImage("world\\world.png", 40, 40), 4, 0));
             gridHeader.Children.Add(CreateGridStackPanel(String.Format("{0}/{1}", continentalRank, continentalTeams), ViewUtils.CreateContinentLogo(nationalTeam.country.Continent, 40, 40), 4, 1));
             int associationIndex = nationalTeam.country.Continent.associationRanking.IndexOf(nationalTeam.country);
             string associationRankingStr = associationIndex > -1 ? String.Format("{0}/{1} (clubs)", associationIndex + 1, nationalTeam.country.Continent.associationRanking.Count) : String.Format("{0} (clubs)", FindResource("str_notranked").ToString());

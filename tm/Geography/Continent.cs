@@ -628,9 +628,9 @@ namespace tm
             return _name;
         }
 
-        public Continent GetContinent()
+        public Association GetContinentalAssociation()
         {
-            return this;
+            return null;
         }
     }
 }

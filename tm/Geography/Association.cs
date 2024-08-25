@@ -11,13 +11,13 @@ using AssociationAttribute = tm.Comparators.AssociationAttribute;
 namespace tm
 {
     [DataContract(IsReference =true)]
-    public class Association : ILocalisation
+    public class Association : ILocalisation, IRecoverableTeams
     {
         [DataMember]
         [Key]
         public int Id { get; set; }
         [DataMember]
-        private List<Association> _divisions;
+        private List<Association> _associations;
         [DataMember]
         private string _name;
         [DataMember]
@@ -39,7 +39,7 @@ namespace tm
         public List<Tournament> tournaments => _tournaments;
 
 
-        public List<Association> divisions => _divisions;
+        public List<Association> associations => _associations;
         public string name => _name;
         public string logo => _logo;
         public ILocalisation localisation => _localisation;
@@ -80,7 +80,7 @@ namespace tm
 
         public Association()
         {
-            _divisions = new List<Association>();
+            _associations = new List<Association>();
             _tournaments = new List<Tournament>();
             _continentalQualifications = new List<Qualification>();
             _associationRanking = new List<Association>();
@@ -93,7 +93,7 @@ namespace tm
             Id = id;
             _name = name;
             _logo = logo;
-            _divisions = new List<Association>();
+            _associations = new List<Association>();
             _tournaments = new List<Tournament>();
             _continentalQualifications = new List<Qualification>();
             _associationRanking = new List<Association>();
@@ -114,7 +114,7 @@ namespace tm
             }
             else
             {
-                foreach (Association a in divisions)
+                foreach (Association a in associations)
                 {
                     res = res == null ? a.String2Association(name) : res;
                 }
@@ -141,7 +141,7 @@ namespace tm
             else
             {
                 int newLevel = -1;
-                foreach(Association ad in _divisions)
+                foreach(Association ad in _associations)
                 {
                     int adLevel = ad.GetLevelOfAssociation(association, currentLevel + 1);
                     if(adLevel != -1)
@@ -163,11 +163,11 @@ namespace tm
             List<Association> res = new List<Association>();
             if (level == 1)
             {
-                res = _divisions;
+                res = _associations;
             }
             else
             {
-                foreach (Association ad in _divisions)
+                foreach (Association ad in _associations)
                 {
                     res.AddRange(ad.GetAssociationsLevel(level - 1));
                 }
@@ -186,7 +186,7 @@ namespace tm
 
             if(!res)
             {
-                foreach (Association adm in _divisions)
+                foreach (Association adm in _associations)
                 {
                     if (adm.ContainsAssociation(association))
                     {
@@ -207,7 +207,7 @@ namespace tm
         {
             Association res = null;
 
-            foreach (Association ad in divisions)
+            foreach (Association ad in associations)
             {
                 if (ad.Id == id)
                 {
@@ -225,8 +225,8 @@ namespace tm
         public List<Association> GetAllChilds()
         {
             List<Association> res = new List<Association>();
-            res.AddRange(divisions);
-            foreach(Association a in divisions)
+            res.AddRange(associations);
+            foreach(Association a in associations)
             {
                 res.AddRange(a.GetAllChilds());
             }
@@ -301,7 +301,7 @@ namespace tm
         {
             List<Tournament> res = new List<Tournament>();
             res.AddRange(tournaments);
-            foreach(Association a in divisions)
+            foreach(Association a in associations)
             {
                 res.AddRange(a.GetAllTournaments());
             }
@@ -317,7 +317,7 @@ namespace tm
                 _archivalAssociationRanking.Add(new List<Association>(_associationRanking));
             }
             _associationRanking = new List<Association>();
-            foreach (Association a in divisions)
+            foreach (Association a in associations)
             {
                 //a.localisation.Tournaments().Count > 0 : Because countries still hold domestics tournaments
                 if (a.tournaments.Count > 0 || a.localisation.Tournaments().Count > 0)
@@ -672,9 +672,64 @@ namespace tm
             return _name;
         }
 
-        public Continent GetContinent()
+        public Association GetContinentalAssociation()
         {
-            throw new NotImplementedException();
+            return this;
+        }
+
+        private List<NationalTeam> GetNationalTeams()
+        {
+            List<ILocalisation> countries = new List<ILocalisation>();
+            foreach(Association a in associations)
+            {
+                countries.Add(a.localisation);
+            }
+            List<NationalTeam> res = new List<NationalTeam>();
+            foreach(Club club in Session.Instance.Game.kernel.Clubs)
+            {
+                NationalTeam nt = club as NationalTeam;
+                if(nt != null && countries.Contains(nt.country))
+                {
+                    res.Add(nt);
+                }
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// The parameter "onlyFirstTeams" is ignored because national teams are always first teams
+        /// </summary>
+        /// <param name="nombre"></param>
+        /// <param name="methode"></param>
+        /// <param name="onlyFirstTeams"></param>
+        /// <returns></returns>
+        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, Association associationFilter)
+        {
+            List<NationalTeam> nationalsTeams = GetNationalTeams();
+            List<Club> res = new List<Club>();
+            if (method == RecuperationMethod.Best)
+            {
+                nationalsTeams.Sort(new NationsFifaRankingComparator());
+            }
+            else if (method == RecuperationMethod.Worst)
+            {
+                nationalsTeams.Sort(new NationsFifaRankingComparator(true));
+            }
+            else if (method == RecuperationMethod.Randomly)
+            {
+                nationalsTeams = Utils.ShuffleList<NationalTeam>(nationalsTeams);
+            }
+
+            for (int i = 0; i < number; i++)
+            {
+                res.Add(nationalsTeams[i]);
+            }
+            return res;
+        }
+
+        public int CountWithoutReserves()
+        {
+            return GetNationalTeams().Count;
         }
 
         ///

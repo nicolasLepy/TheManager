@@ -136,8 +136,8 @@ namespace tm
         {
             get
             {
-                List<Tournament> tournaments = new List<Tournament>(_world.GetAllTournaments());
-                tournaments.AddRange(_worldAssociation.GetAllTournaments());
+                List<Tournament> tournaments = new List<Tournament>(_worldAssociation.GetAllTournaments());
+                tournaments.AddRange(_world.GetAllTournaments());
                 return tournaments;
             }
         }
@@ -578,7 +578,7 @@ namespace tm
             return res;
         }
 
-        public Continent ContinentTournament(Tournament tournament)
+        /*public Continent ContinentTournament(Tournament tournament)
         {
             Continent res = null;
 
@@ -604,7 +604,7 @@ namespace tm
             }
 
             return res;
-        }
+        }*/
 
         public ILocalisation LocalisationTournament(Tournament tournament)
         {

@@ -19,7 +19,7 @@ namespace tm
         public readonly static string tournamentLogoFolderName = "tournaments";
         public readonly static string clubLogoFolderName = "clubs";
         public readonly static string nationalFlagsFolderName = "flags";
-        public readonly static string universeLogoFolderName = "universe";
+        public readonly static string universeLogoFolderName = "world";
         public readonly static string mediaLogoFolderName = "medias";
         public readonly static string namesSubfolderName = "names";
         private static string _dataFolderName = "data";

@@ -25,10 +25,14 @@ namespace tm
         private readonly Dictionary<int, Club> _clubsId;
 
         private readonly Kernel _kernel;
+
+        private readonly Dictionary<Continent, string> _associationsLogo;
+
         public DatabaseLoader(Kernel kernel)
         {
             _kernel = kernel;
             _clubsId = new Dictionary<int, Club>();
+            _associationsLogo = new Dictionary<Continent, string>();
         }
 
         private string SlugifyName(string name)
@@ -546,6 +550,7 @@ namespace tm
                 string worldLogo = e.Attribute("logo").Value;
                 int worldResetWeek = int.Parse(e.Attribute("reset_week").Value);
                 Continent world = new Continent(_kernel.NextIdContinent(), worldName, worldLogo, worldResetWeek);
+                _associationsLogo[world] = e.Attribute("association_logo").Value;
                 _kernel.world = world;
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
@@ -553,7 +558,8 @@ namespace tm
                     string continentLogo = e2.Attribute("logo").Value;
                     int continentResetWeek = int.Parse(e2.Attribute("reset_week").Value);
                     Continent c = new Continent(_kernel.NextIdContinent(), continentName, continentLogo, continentResetWeek);
-                    
+                    _associationsLogo[c] = e2.Attribute("association_logo").Value;
+
                     foreach (XElement e3 in e2.Descendants("Country"))
                     {
                         string countryName = e3.Attribute("name").Value;
@@ -616,7 +622,7 @@ namespace tm
                             Association ad = new Association(administrationId, administrationName, "", ct, null, ct.resetWeek, false);
                             if (administrationParent > 0)
                             {
-                                ct.GetAssociation(administrationParent).divisions.Add(ad);
+                                ct.GetAssociation(administrationParent).associations.Add(ad);
                                 ad.parent = ct.GetAssociation(administrationParent);
                             }
                             else
@@ -687,15 +693,15 @@ namespace tm
             }
 
             maxAdmId++;
-            Association fifa = new Association(maxAdmId++, _kernel.world.Name(), _kernel.world.Logo(), _kernel.world, null, _kernel.world.resetWeek, false);
+            Association fifa = new Association(maxAdmId++, _kernel.world.Name(), _associationsLogo[_kernel.world], _kernel.world, null, _kernel.world.resetWeek, false);
             foreach (Continent c in _kernel.world.continents)
             {
-                Association ca = new Association(maxAdmId++, c.Name(), c.Logo(), c, fifa, c.resetWeek, true);
+                Association ca = new Association(maxAdmId++, c.Name(), _associationsLogo[c], c, fifa, c.resetWeek, true);
                 foreach (Country cc in c.countries)
                 {
                     Association adCountry = new Association(maxAdmId++, cc.Name(), cc.Flag, cc, ca, cc.resetWeek, false);
                     cc.associations.Add(adCountry);
-                    ca.divisions.Add(adCountry);
+                    ca.associations.Add(adCountry);
                     foreach (Association a in cc.associations)
                     {
                         if(a.parent == null)
@@ -705,7 +711,7 @@ namespace tm
                     }
 
                 }
-                fifa.divisions.Add(ca);
+                fifa.associations.Add(ca);
             }
             _kernel.worldAssociation = fifa;
         }
@@ -1211,7 +1217,7 @@ namespace tm
                                 XAttribute continent = e4.Attribute("continent");
                                 if (continent != null)
                                 {
-                                    source = _kernel.String2Continent(continent.Value);
+                                    source = _kernel.String2Association(continent.Value);
                                 }
                                 else
                                 {
@@ -1607,7 +1613,7 @@ namespace tm
             {
                 CreateNationalCup(c, association, false, false, reservesAllowed);
             }
-            foreach (Association ad in association.divisions)
+            foreach (Association ad in association.associations)
             {
                 GenerateRegionalCup(c, ad, level + 1, reservesAllowed);
             }

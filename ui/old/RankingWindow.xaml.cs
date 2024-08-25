@@ -26,18 +26,17 @@ namespace TheManager_GUI
             InitializeComponent();
             imgBtnQuitter.Source = new BitmapImage(new Uri(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\return.png"));
             FillFifaRanking();
-            foreach(Continent c in Session.Instance.Game.kernel.world.continents)
+            foreach(Association c in Session.Instance.Game.kernel.worldAssociation.associations)
             {
                 //At least one continental club tournament
                 if(c.GetContinentalClubTournament(1) != null)
                 {
                     AddContinentalCountryRanking(c);
-                    //AddContinentalClubRanking(c);
                 }
             }
         }
 
-        private void AddContinentalCountryRanking(Continent c)
+        private void AddContinentalCountryRanking(Association c)
         {
             TabItem tab = new TabItem();
             tab.Header = FindResource("str_ranking").ToString() + " " + c.Name() + " (associations)";
@@ -66,8 +65,8 @@ namespace TheManager_GUI
             spRanking.Children.Add(spHead);
 
             int rank = 0;
-            List<Country> countries = c.associationRanking;
-            foreach (Country ctr in countries)
+            List<Association> countries = c.associationRanking;
+            foreach (Association ctr in countries)
             {
                 rank++;
                 Dictionary<int, int> qualifications = new Dictionary<int, int>();
@@ -85,7 +84,7 @@ namespace TheManager_GUI
                 StackPanel spLine = new StackPanel();
                 spLine.Orientation = Orientation.Horizontal;
                 spLine.Children.Add(ViewUtils.CreateLabel(rank.ToString(), "StyleLabel2", -1, 30, null, null, true));
-                spLine.Children.Add(ViewUtils.CreateFlag(ctr, 20, 13));
+                spLine.Children.Add(ViewUtils.CreateFlag(ctr.localisation as Country, 20, 13));
                 spLine.Children.Add(ViewUtils.CreateLabel(ctr.Name(), "StyleLabel2", -1, 220, null, null, true));
                 spLine.Children.Add(ViewUtils.CreateLabel(ctr.YearAssociationCoefficient(-5).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
                 spLine.Children.Add(ViewUtils.CreateLabel(ctr.YearAssociationCoefficient(-4).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));

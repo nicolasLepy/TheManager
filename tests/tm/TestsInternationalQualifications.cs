@@ -20,7 +20,7 @@ namespace tests.tm
         [TestMethod]
         public void TestInternationalQualifications()
         {
-            InitGame("database_france_light", new List<Country>());
+            InitGame("database_france_light", new List<string>());
             bool keepGoin = true;
             Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
             Country france = Session.Instance.Game.kernel.String2Country("France");

@@ -61,13 +61,14 @@ namespace TheManager_GUI
                 }
             }
 
-            int associationIndex = nationalTeam.country.Continent.associationRanking.IndexOf(nationalTeam.country);
-            string associationRankingStr = associationIndex > -1 ? String.Format("{0}/{1}", associationIndex + 1, nationalTeam.country.Continent.associationRanking.Count) : String.Format("{0}", FindResource("str_notranked").ToString());
+            Association parentAssociation = nationalTeam.country.GetCountryAssociation().parent;
+            int associationIndex = parentAssociation.associationRanking.IndexOf(nationalTeam.country.GetCountryAssociation());
+            string associationRankingStr = associationIndex > -1 ? String.Format("{0}/{1}", associationIndex + 1, parentAssociation.associationRanking.Count) : String.Format("{0}", FindResource("str_notranked").ToString());
 
             tbHeadCoach.Text = nationalTeam.manager != null ? nationalTeam.manager.ToString() : "-";
 
             tbRankingWorld.Text = String.Format("{0}/{1}", (fifaRanking.IndexOf(nationalTeam) + 1), fifaRanking.Count);
-            imageRankingWorld.Source = ViewUtils.LoadBitmapImageWithCache(new Uri("images\\universe\\world.png", UriKind.RelativeOrAbsolute));
+            imageRankingWorld.Source = ViewUtils.LoadBitmapImageWithCache(new Uri("images\\world\\world.png", UriKind.RelativeOrAbsolute));
 
             tbRankingAssociation.Text = String.Format("{0}/{1}", continentalRank, continentalTeams);
             imageRankingAssociation.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(nationalTeam.country.Continent), UriKind.RelativeOrAbsolute));
@@ -114,7 +115,7 @@ namespace TheManager_GUI
 
         private void InitializeContinentalTeams()
         {
-            Continent continent = nationalTeam.country.Continent;
+            Association continent = nationalTeam.country.GetCountryAssociation().parent;
             int tournamentLevel = 1;
             Tournament tournament = continent.GetContinentalClubTournament(tournamentLevel);
             List<Club> clubs = new List<Club>();
@@ -178,7 +179,7 @@ namespace TheManager_GUI
             chartFifa.RenderChart(panelHistoryWorldRanking);
 
             //Association Ranking
-            Continent continent = nationalTeam.country.Continent;
+            Association continent = nationalTeam.country.GetCountryAssociation().parent;
             int assoArchivalEntries = continent.archivalAssociationRanking.Count;
             totalCountries = new double[assoArchivalEntries];
             rankings = new double[assoArchivalEntries];
@@ -189,7 +190,7 @@ namespace TheManager_GUI
                 totalCountries[i] = 0;
                 rankings[i] = 0;
                 labelsYearsAsso[assoArchivalEntries - i - 1] = String.Format("{0}", Utils.beginningYear + i);
-                rankings[i] = continent.archivalAssociationRanking[i].IndexOf(nationalTeam.country) + 1;
+                rankings[i] = continent.archivalAssociationRanking[i].IndexOf(nationalTeam.country.GetCountryAssociation()) + 1;
                 totalCountries[i] = continent.archivalAssociationRanking[i].Count;
             }
 
@@ -206,48 +207,53 @@ namespace TheManager_GUI
 
         public void InitializeHistory()
         {
-            foreach (Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
+            List<Association> associations = new List<Association>() { Session.Instance.Game.kernel.worldAssociation };
+            foreach (Association ca in Session.Instance.Game.kernel.worldAssociation.associations)
             {
-                if (c.countries.Count == 0 || nationalTeam.country.Continent == c)
+                if (nationalTeam.country.GetCountryAssociation().parent == ca)
                 {
-                    foreach (Tournament t in c.Tournaments())
+                    associations.Add(ca);
+                }
+
+            }
+            foreach (Association ca in associations)
+            {
+                foreach (Tournament t in ca.Tournaments())
+                {
+                    if (t.rounds.Last().qualifications.Count == 0 && t.previousEditions.Count > 0 && (t.previousEditions.Values.Last().rounds.Last().clubs.Count > 0) && (t.previousEditions.Values.Last().rounds.Last().clubs[0] as NationalTeam) != null)
                     {
-                        if (t.rounds.Last().qualifications.Count == 0 && t.previousEditions.Count > 0 && (t.previousEditions.Values.Last().rounds.Last().clubs.Count > 0) && (t.previousEditions.Values.Last().rounds.Last().clubs[0] as NationalTeam) != null)
+                        gridCountryHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
+                        ViewUtils.AddElementToGrid(gridCountryHistory, ViewUtils.CreateTextBlock(t.name, StyleDefinition.styleTextSecondary), gridCountryHistory.RowDefinitions.Count - 1, 0, 4);
+
+                        foreach (KeyValuePair<int, Tournament> previousEdition in t.previousEditions)
                         {
-                            gridCountryHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
-                            ViewUtils.AddElementToGrid(gridCountryHistory, ViewUtils.CreateTextBlock(t.name, StyleDefinition.styleTextSecondary), gridCountryHistory.RowDefinitions.Count - 1, 0, 4);
-
-                            foreach (KeyValuePair<int, Tournament> previousEdition in t.previousEditions)
+                            Tournament tournament = previousEdition.Value;
+                            string teamPerformance = null;
+                            for (int i = tournament.rounds.Count - 1; i >= 0 && teamPerformance == null; i--)
                             {
-                                Tournament tournament = previousEdition.Value;
-                                string teamPerformance = null;
-                                for (int i = tournament.rounds.Count - 1; i >= 0 && teamPerformance == null; i--)
+                                if (tournament.rounds[i].clubs.Contains(nationalTeam))
                                 {
-                                    if (tournament.rounds[i].clubs.Contains(nationalTeam))
-                                    {
-                                        teamPerformance = (i == tournament.rounds.Count - 1 && tournament.Winner() == nationalTeam) ? FindResource("str_winner").ToString() : tournament.rounds[i].name;
-                                    }
+                                    teamPerformance = (i == tournament.rounds.Count - 1 && tournament.Winner() == nationalTeam) ? FindResource("str_winner").ToString() : tournament.rounds[i].name;
                                 }
-                                teamPerformance = teamPerformance == null ? FindResource("str_notQualified").ToString() : teamPerformance;
+                            }
+                            teamPerformance = teamPerformance == null ? FindResource("str_notQualified").ToString() : teamPerformance;
 
-                                List<Country> hosts = tournament.Hosts();
-                                gridCountryHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
-                                TextBlock tbYear = ViewUtils.CreateTextBlockOpenWindow(tournament, Handlers.OpenTournament, previousEdition.Key.ToString(), StyleDefinition.styleTextSecondary, -1, -1);
-                                TextBlock tbPerformance = ViewUtils.CreateTextBlock(teamPerformance, StyleDefinition.styleTextSecondary);
-                                ViewUtils.AddElementToGrid(gridCountryHistory, tbYear, gridCountryHistory.RowDefinitions.Count - 1, 0);
-                                ViewUtils.AddElementToGrid(gridCountryHistory, tbPerformance, gridCountryHistory.RowDefinitions.Count - 1, 3);
-                                if(hosts.Count > 0)
-                                {
-                                    TextBlock tbHost = ViewUtils.CreateTextBlock(hosts[0].Name(), StyleDefinition.styleTextSecondary);
-                                    double logoSize = (double)FindResource(StyleDefinition.fontSizeSecondary) * 5 / 3.0;
-                                    Image imageFlag = ViewUtils.CreateFlag(hosts[0], logoSize, logoSize * 0.66);
-                                    ViewUtils.AddElementToGrid(gridCountryHistory, imageFlag, gridCountryHistory.RowDefinitions.Count - 1, 1);
-                                    ViewUtils.AddElementToGrid(gridCountryHistory, tbHost, gridCountryHistory.RowDefinitions.Count - 1, 2);
-                                }
+                            List<Country> hosts = tournament.Hosts();
+                            gridCountryHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
+                            TextBlock tbYear = ViewUtils.CreateTextBlockOpenWindow(tournament, Handlers.OpenTournament, previousEdition.Key.ToString(), StyleDefinition.styleTextSecondary, -1, -1);
+                            TextBlock tbPerformance = ViewUtils.CreateTextBlock(teamPerformance, StyleDefinition.styleTextSecondary);
+                            ViewUtils.AddElementToGrid(gridCountryHistory, tbYear, gridCountryHistory.RowDefinitions.Count - 1, 0);
+                            ViewUtils.AddElementToGrid(gridCountryHistory, tbPerformance, gridCountryHistory.RowDefinitions.Count - 1, 3);
+                            if(hosts.Count > 0)
+                            {
+                                TextBlock tbHost = ViewUtils.CreateTextBlock(hosts[0].Name(), StyleDefinition.styleTextSecondary);
+                                double logoSize = (double)FindResource(StyleDefinition.fontSizeSecondary) * 5 / 3.0;
+                                Image imageFlag = ViewUtils.CreateFlag(hosts[0], logoSize, logoSize * 0.66);
+                                ViewUtils.AddElementToGrid(gridCountryHistory, imageFlag, gridCountryHistory.RowDefinitions.Count - 1, 1);
+                                ViewUtils.AddElementToGrid(gridCountryHistory, tbHost, gridCountryHistory.RowDefinitions.Count - 1, 2);
                             }
                         }
                     }
-
                 }
             }
         }

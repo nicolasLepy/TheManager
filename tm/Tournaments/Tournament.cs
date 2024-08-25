@@ -905,6 +905,7 @@ namespace tm
                 }
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
+
             if (leagueCupLike || (this.parent.Tournament == null && this.parent.Association != null)) //Regional cup are updated following league cup algorithm
             {
                 UpdateLeagueCupQualifications();
@@ -1381,7 +1382,6 @@ namespace tm
             if (_remainingYears == 0)
             {
                 _remainingYears = _periodicity;
-            
                 UpdateRecords();
                 Tournament copyForArchives = CopyForArchive(false);
 

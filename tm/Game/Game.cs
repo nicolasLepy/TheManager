@@ -852,9 +852,9 @@ namespace tm
 
             List<NationalTeam> nationalTeams = kernel.world.GetAllCountries().SelectMany(s => s.nationalTeams).ToList();
             //Check every international window
-            for (int i = 0; i < kernel.world.internationalDates.Count; i++)
+            for (int i = 0; i < kernel.worldAssociation.internationalDates.Count; i++)
             {
-                InternationalDates intDate = kernel.world.internationalDates[i];
+                InternationalDates intDate = kernel.worldAssociation.internationalDates[i];
                 //Valid if no tournament is associated to the window or if it's a year with the tournament playing
                 if (intDate.IsValid())
                 {
@@ -864,7 +864,7 @@ namespace tm
                     //Get teams engaged with an international tournament playing at the same time of this window
                     if (intDate.tournament == null)
                     {
-                        foreach (InternationalDates iDate in kernel.world.internationalDates)
+                        foreach (InternationalDates iDate in kernel.worldAssociation.internationalDates)
                         {
                             if (!iDate.IsEquals(intDate) && iDate.tournament != null && iDate.IsValid())
                             {
@@ -893,7 +893,7 @@ namespace tm
                             {
                                 Console.WriteLine(_date.ToShortDateString() + " [Appel] " + nt.name + (intDate.tournament != null ? " pour " + intDate.tournament.name + ", " + intDate.tournament.BeginDate().ToShortDateString() + "-" + intDate.tournament.EndDate().ToShortDateString() : ""));
                                 nt.CallPlayers(kernel.GetPlayersByCountry(nt.country));
-                                kernel.world.internationalDates[i] = new InternationalDates(intDate.start, intDate.end, intDate.tournament, true);
+                                kernel.worldAssociation.internationalDates[i] = new InternationalDates(intDate.start, intDate.end, intDate.tournament, true);
                             }
                         }
                     }
@@ -921,14 +921,14 @@ namespace tm
                         if (intDate.tournament == null || tournamentClubs.Contains(nt))
                         {
                             nt.ReleasePlayers();
-                            kernel.world.internationalDates[i] = new InternationalDates(intDate.start, intDate.end, intDate.tournament, false);
+                            kernel.worldAssociation.internationalDates[i] = new InternationalDates(intDate.start, intDate.end, intDate.tournament, false);
                         }
                     }
                 }
             }
 
             //Yearly update of clubs (sponsors, formation facilities, contracts)
-            if (weekNumber == kernel.world.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
+            if (weekNumber == kernel.worldAssociation.resetWeek && date.DayOfWeek == DayOfWeek.Wednesday)
             {
                 UpdateGameUniverseData();
             }

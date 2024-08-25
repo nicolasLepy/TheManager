@@ -181,16 +181,16 @@ namespace TheManager_GUI
             }
 
             List<Tournament> cups = new List<Tournament>(club.Country().Cups());
-            foreach (Continent c in Session.Instance.Game.kernel.world.GetAllContinents())
+            foreach(Association a in Session.Instance.Game.kernel.GetAllAssociations())
             {
-                if (c.countries.Count == 0 || club.Country().Continent == c)
+                if(club.Country().GetCountryAssociation().parent == a || a.parent == null)
                 {
                     int j = 0;
-                    Tournament continentalT = c.GetContinentalClubTournament(++j);
+                    Tournament continentalT = a.GetContinentalClubTournament(++j);
                     while (continentalT != null)
                     {
                         cups.Add(continentalT);
-                        continentalT = c.GetContinentalClubTournament(++j);
+                        continentalT = a.GetContinentalClubTournament(++j);
                     }
                 }
             }

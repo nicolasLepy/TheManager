@@ -13,7 +13,7 @@ namespace tests.tm
         [TestMethod]
         public void TestReserves()
         {
-            InitGame("database_france_nat", new List<Country>());
+            InitGame("database_france_nat", new List<string>());
             for (int i = 0; i < 100; i++)
             {
                 Session.Instance.Game.NextDay();

@@ -163,7 +163,7 @@ namespace tm
             float total = 0;
             for (int i = 1; i < 4; i++)
             {
-                Tournament continentalTournament = Continent.GetContinentalClubTournament(i);
+                Tournament continentalTournament = GetCountryAssociation().parent.GetContinentalClubTournament(i);
                 if (continentalTournament != null)
                 {
                     int j = continentalTournament.previousEditions.Count - (-nSeason);
@@ -514,9 +514,9 @@ namespace tm
             }
         }
 
-        public Continent GetContinent()
+        public Association GetContinentalAssociation()
         {
-            return Continent;
+            return GetCountryAssociation().parent;
         }
 
         /// <summary>
@@ -528,7 +528,8 @@ namespace tm
         public List<GameDay> GetAvailableCalendarDates(bool withContinentalDates, int maxCupLevel, List<int> leaguesLevel, bool weekdays, bool weekend)
         {
             List<GameDay> availableDates = new List<GameDay>();
-            Continent ct = GetContinent();
+            //Continent ct = GetContinent();
+            Association continentalAssociation = GetCountryAssociation().parent;
             Tournament firstDivision = League(1);
             int startWeek = Utils.Modulo(resetWeek + 2, 52);
             int endWeek = firstDivision != null ? (firstDivision.rounds.Last().programmation.end.WeekNumber + 1) : Utils.Modulo(resetWeek - 15, 52);
@@ -546,7 +547,7 @@ namespace tm
             List<Tournament> tournaments = new List<Tournament>();
             if (withContinentalDates)
             {
-                foreach (Tournament t in ct.Tournaments())
+                foreach (Tournament t in continentalAssociation.Tournaments())
                 {
                     if (!t.isChampionship && t.periodicity == 1)
                     {

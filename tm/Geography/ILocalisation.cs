@@ -13,6 +13,6 @@ namespace tm
         List<Tournament> Tournaments();
         string Name();
 
-        Continent GetContinent();
+        Association GetContinentalAssociation();
     }
 }

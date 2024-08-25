@@ -60,9 +60,9 @@ namespace TheManager_GUI
 
             associationsPanel.Children.Clear();
             navButtons = new List<Button>();
-            foreach (Association a in Session.Instance.Game.kernel.worldAssociation.divisions)
+            foreach (Association a in Session.Instance.Game.kernel.worldAssociation.associations)
             {
-                if(a.divisions.Count > 0)
+                if(a.associations.Count > 0)
                 {
                     Button continentClick = ViewUtils.CreateButton(a.name, StyleDefinition.styleButtonMenuTitle, 15);
                     continentClick.Click += (object cs, RoutedEventArgs ce) => CreateContinentalCountryRanking(continentClick, a);
@@ -111,7 +111,7 @@ namespace TheManager_GUI
         {
             HighlightButton(sender);
             List<Club> clubs = new List<Club>();
-            foreach (Association a in association.divisions)
+            foreach (Association a in association.associations)
             {
                 Country ctr = a.localisation as Country;
                 foreach (Tournament championship in ctr.Tournaments())
