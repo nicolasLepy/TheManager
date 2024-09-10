@@ -16,45 +16,6 @@ using tm.Tournaments;
 namespace tm
 {
 
-    public enum SanctionType
-    {
-        EnteringAdministration,
-        Forfeit,
-        IneligiblePlayer,
-        FinancialIrregularities
-    }
-
-    [DataContract]
-    public struct AdministrativeSanction
-    {
-        [DataMember]
-        private SanctionType _type;
-        [DataMember]
-        private int _minPointsDeduction;
-        [DataMember]
-        private int _maxPointsDeduction;
-        [DataMember]
-        private int _minRetrogradation;
-        [DataMember]
-        private int _maxRetrogradation;
-
-        public SanctionType type => _type;
-        public int minPointsDeduction => _minPointsDeduction;
-        public int maxPointsDeduction => _maxPointsDeduction;
-        public int minRetrogradation => _minRetrogradation;
-        public int maxRetrogradation => _maxRetrogradation;
-
-        public AdministrativeSanction(SanctionType type, int minPointsDeduction, int maxPointsDeduction, int minRetrogradation, int maxRetrogradation)
-        {
-            _type = type;
-            _minPointsDeduction = minPointsDeduction;
-            _maxPointsDeduction = maxPointsDeduction;
-            _minRetrogradation = minRetrogradation;
-            _maxRetrogradation = maxRetrogradation;
-        }
-
-    }
-
     [DataContract(IsReference = true)]
     public class Country : ILocalisation
     {
@@ -90,9 +51,9 @@ namespace tm
 
         private List<Club>[] _cacheAdministrativeRetrogradationsChanges;
 
-        public List<City> cities { get { return _cities; } }
-        public List<Stadium> stadiums { get { return _stadiums; } }
-        public Language language { get => _language; }
+        public List<City> cities => _cities;
+        public List<Stadium> stadiums => _stadiums;
+        public Language language => _language;
 
         public List<Association> associations => _associations;
 
@@ -126,24 +87,6 @@ namespace tm
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
-        /*[NotMapped]
-        public List<NationalTeam> nationalTeams
-        {
-            get
-            {
-                List<NationalTeam> res = new List<NationalTeam>();
-                foreach (Club c in Session.Instance.Game.kernel.Clubs)
-                {
-                    NationalTeam nt = c as NationalTeam;
-                    if (nt != null && c.Country() == this)
-                    {
-                        res.Add(nt);
-                    }
-                }
-                return res;
-            }
-        }*/
-
         public AdministrativeSanction GetSanction(SanctionType sanctionType)
         {
             AdministrativeSanction res = default;
@@ -155,58 +98,6 @@ namespace tm
                 }
             }
             return res;
-        }
-
-        public float YearAssociationCoefficient(int nSeason)
-        {
-            List<Club> clubs = new List<Club>();
-            float total = 0;
-            for (int i = 1; i < 4; i++)
-            {
-                Tournament continentalTournament = GetCountryAssociation().parent.GetContinentalClubTournament(i);
-                if (continentalTournament != null)
-                {
-                    int j = continentalTournament.previousEditions.Count - (-nSeason);
-
-                    if (j >= 0)
-                    {
-                        Tournament yearContinentalTournament = continentalTournament.previousEditions.ToList()[j].Value;
-                        foreach (Tournament championship in _tournaments)
-                        {
-                            if (championship.isChampionship)
-                            {
-                                foreach (Club c in championship.rounds[0].clubs)
-                                {
-                                    if (yearContinentalTournament.IsInvolved(c))
-                                    {
-                                        clubs.Add(c);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            foreach (Club c in clubs)
-            {
-                float clubCoefficient = c.ClubYearCoefficient(nSeason, true);
-                total += clubCoefficient;
-            }
-
-            return clubs.Count > 0 ? total / clubs.Count : 0;
-        }
-
-        public float AssociationCoefficient
-        {
-            get
-            {
-                float res = 0;
-                for (int i = -5; i < 0; i++)
-                {
-                    res += YearAssociationCoefficient(i);
-                }
-                return res;
-            }
         }
 
         public Country()
@@ -282,11 +173,11 @@ namespace tm
             List<Association> res = new List<Association>();
             if (level == 1)
             {
-                res = _associations;
+                res = GetCountryAssociation().associations;
             }
             else
             {
-                foreach (Association ad in _associations)
+                foreach (Association ad in GetCountryAssociation().associations)
                 {
                     res.AddRange(ad.GetAssociationsLevel(level - 1));
                 }

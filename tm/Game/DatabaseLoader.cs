@@ -704,12 +704,18 @@ namespace tm
                     ca.associations.Add(adCountry);
                     foreach (Association a in cc.associations)
                     {
+                        if(a != adCountry)
+                        {
+                            adCountry.associations.Add(a);
+                        }
                         if(a.parent == null)
                         {
                             a.parent = adCountry;
+
                         }
                     }
-
+                    cc.associations.Clear();
+                    cc.associations.Add(adCountry);
                 }
                 fifa.associations.Add(ca);
             }
@@ -819,7 +825,8 @@ namespace tm
                         if (e2.Attribute("administrativeDivision") != null)
                         {
                             idAssociation = int.Parse(e2.Attribute("administrativeDivision").Value);
-                            association = _kernel.GetAssociation(idAssociation); //city?.Country().GetAssociation(idAdministrativeDivision);
+                            //association = _kernel.GetAssociation(idAssociation); //city?.Country().GetAssociation(idAdministrativeDivision);
+                            association = _kernel.worldAssociation.GetAssociation(idAssociation);
                         }
 
                         if (association == null)

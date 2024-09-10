@@ -82,8 +82,6 @@ namespace TheManager_GUI
                         }
                         spT.Children.Add(ViewUtils.CreateLabel(from, "StyleLabel2", 8, 55));
                         Label labelClub = ViewUtils.CreateLabel(cc.shortName, "StyleLabel2", 8, 55);
-                        labelClub.MouseLeftButtonUp += (object sender, System.Windows.Input.MouseButtonEventArgs e) =>
-                        { Windows_Club wc = new Windows_Club(cc); wc.Show(); };
                         spT.Children.Add(labelClub);
                         spT.Children.Add(ViewUtils.CreateLabel(co.TransferIndemnity + "€", "StyleLabel2", 8, 60));
 
