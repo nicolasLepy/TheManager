@@ -1313,8 +1313,8 @@ namespace tm
                 }
             }
 
-            UpdateElo(home, k, Round.rules.Contains(Rule.HostedByOneCountry));
-            UpdateElo(away, k, Round.rules.Contains(Rule.HostedByOneCountry));
+            UpdateElo(home, k, Round.rules.Contains(Rule.HostedByOneAssociation));
+            UpdateElo(away, k, Round.rules.Contains(Rule.HostedByOneAssociation));
 
         }
 

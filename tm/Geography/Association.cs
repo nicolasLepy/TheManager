@@ -188,6 +188,34 @@ namespace tm
         public List<Qualification> continentalQualifications => _continentalQualifications;
         public List<InternationalDates> internationalDates => _internationalDates;
 
+        /// <summary>
+        /// The country associated to this association
+        /// TODO: Change country to a generic geographic unit
+        /// </summary>
+        public Country country
+        {
+            get
+            {
+                Country r = null;
+                foreach(Country c in Session.Instance.Game.kernel.world.GetAllCountries())
+                {
+                    if(c.GetCountryAssociation() == this)
+                    {
+                        r = c;
+                    }
+                }
+                return r;
+            }
+        }
+
+        public List<Stadium> stadiums
+        {
+            get
+            {
+                return country.stadiums;
+            }
+        }
+
 
         public Association()
         {

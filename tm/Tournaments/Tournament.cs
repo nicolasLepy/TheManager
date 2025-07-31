@@ -178,19 +178,19 @@ namespace tm
         public List<Club>[] nextYearQualified => _nextYearQualified;
 
         public List<Stadium> hostStadiums => _hostStadiums;
-        public bool isHostedByOneCountry
+        public bool isHostedByOneAssociation
         {
             get
             {
-                bool isHostedByOneCountry = false;
+                bool isHostedByOneAssociation = false;
                 foreach (Round r in _rounds)
                 {
-                    if (r.rules.Contains(Rule.HostedByOneCountry))
+                    if (r.rules.Contains(Rule.HostedByOneAssociation))
                     {
-                        isHostedByOneCountry = true;
+                        isHostedByOneAssociation = true;
                     }
                 }
-                return isHostedByOneCountry;
+                return isHostedByOneAssociation;
             }
         }
 
@@ -286,21 +286,21 @@ namespace tm
         /// </summary>
         public void InitializeHost()
         {
-            List<Country> candidates = new List<Country>();
+            List<Association> candidates = new List<Association>();
             //Find country
             foreach (Round r in _rounds)
             {
                 foreach (Club c in r.clubs)
                 {
-                    Country candidate = c.Country();
+                    Association candidate = c.Association();
                     if (candidate.stadiums.Count > 7)
                     {
-                        candidates.Add(c.Country());
+                        candidates.Add(candidate);
                     }
                 }
             }
 
-            Country host = candidates.Count > 0 ? candidates[Session.Instance.Random(0, candidates.Count)] : null;
+            Association host = candidates.Count > 0 ? candidates[Session.Instance.Random(0, candidates.Count)] : null;
             //Find stadiums
             if (host != null)
             {
@@ -1441,7 +1441,7 @@ namespace tm
                 }
                 _extraRounds = 0;
                 InitializeQualificationsNextYearsLists();
-                if(isHostedByOneCountry)
+                if(isHostedByOneAssociation)
                 {
                     InitializeHost();
                 }

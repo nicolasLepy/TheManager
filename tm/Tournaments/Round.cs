@@ -20,7 +20,7 @@ namespace tm
         ReservesAreNotPromoted,
         OneClubByCountryInGroup,
         OneTeamByContinentInGroup,
-        HostedByOneCountry,
+        HostedByOneAssociation,
         UltramarineTeamsPlayHomeOrAway,
         UltramarineTeamsPlayAway,
         UltramarineTeamsCantCompeteAgainst,
@@ -796,7 +796,7 @@ namespace tm
         public void Setup()
         {
             Initialise();
-            if (rules.Contains(Rule.HostedByOneCountry))
+            if (rules.Contains(Rule.HostedByOneAssociation))
             {
                 AffectHostStadiumsToGames();
             }

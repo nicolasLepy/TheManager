@@ -1456,7 +1456,7 @@ namespace tm
             foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
             {
                 //TODO: remove this in the reset fonction (reset function to adapt to the first initialization)
-                if (t.isHostedByOneCountry)
+                if (t.isHostedByOneAssociation)
                 {
                     t.InitializeHost();
                 }
@@ -1989,7 +1989,7 @@ namespace tm
                     rule = Rule.OneTeamByContinentInGroup;
                     break;
                 case "HOSTED_BY_ONE_COUNTRY":
-                    rule = Rule.HostedByOneCountry;
+                    rule = Rule.HostedByOneAssociation;
                     break;
                 case "ULTRAMARINE_TEAMS_CAN_PLAY_HOME_OR_AWAY":
                     rule = Rule.UltramarineTeamsPlayHomeOrAway;
