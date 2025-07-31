@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using tm.Algorithms;
 using tm.Comparators;
 
@@ -12,6 +13,8 @@ namespace tm
 {
     public static class Utils
     {
+
+        private static bool providerRegistered = false;
 
         public readonly static int beginningYear = 2021;
         public readonly static int defaultStartWeek = 25;
@@ -30,6 +33,26 @@ namespace tm
 
         public readonly static int gamesTimesHoursCount = 24;
         public readonly static int gamesTimesDaysCount = 4;
+
+        /// <summary>
+        /// Transform a name to a complient logo file name
+        /// Removes accents, space and hyphens
+        /// </summary>
+        /// <param name="value">Name</param>
+        public static string NormalizeFilename(string value)
+        {
+            if(!providerRegistered)
+            {
+                System.Text.EncodingProvider provider = System.Text.CodePagesEncodingProvider.Instance;
+                Encoding.RegisterProvider(provider);
+                providerRegistered = true;
+            }
+
+            string flag = value.ToLower().Replace(" ", "").Replace("-", "");
+            byte[] bytes = System.Text.Encoding.GetEncoding("ISO-8859-8").GetBytes(flag);
+            return System.Text.Encoding.UTF8.GetString(bytes);
+
+        }
 
         public static int DaysNumberBetweenTwoDates(DateTime a, DateTime b)
         {

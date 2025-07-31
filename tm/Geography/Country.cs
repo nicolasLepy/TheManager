@@ -66,21 +66,7 @@ namespace tm
         {
             get
             {
-                string flag = _name;
-                flag = flag.ToLower();
-                flag = flag.Replace(" ", "");
-                flag = flag.Replace("î", "i");
-                flag = flag.Replace("é", "e");
-                flag = flag.Replace("è", "e");
-                flag = flag.Replace("ê", "e");
-                flag = flag.Replace("ô", "o");
-                flag = flag.Replace("ö", "o");
-                flag = flag.Replace("ï", "i");
-                flag = flag.Replace("ë", "e");
-                flag = flag.Replace("à", "a");
-                flag = flag.Replace("ä", "a");
-                flag = flag.Replace("-", "");
-                return flag;
+                return Utils.NormalizeFilename(_name);
             }
         }
 
@@ -216,6 +202,7 @@ namespace tm
             return _tournaments;
         }
 
+        // OK
         private Tournament GetTournamentByLevel(int rank, bool isChampionship)
         {
             Tournament res = null;
@@ -232,6 +219,7 @@ namespace tm
 
         }
 
+        //OK
         public List<Tournament> Leagues()
         {
             List<Tournament> res = new List<Tournament>();
@@ -246,11 +234,13 @@ namespace tm
             return res;
         }
 
+        //OK
         public Tournament League(int leagueRank)
         {
             return GetTournamentByLevel(leagueRank, true);
         }
 
+        //OK
         public List<Tournament> Cups()
         {
             List<Tournament> res = new List<Tournament>();
@@ -277,6 +267,7 @@ namespace tm
         /**
          * cupRank : for exemple : Coupe de France is level 1 and Coupe de la Ligue is level 2
          */
+        //OK
         public Tournament Cup(int cupRank)
         {
             return GetTournamentByLevel(cupRank, false);

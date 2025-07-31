@@ -1140,14 +1140,18 @@ namespace tm
 
         public override void DistributeGrants()
         {
-            foreach(Prize d in _prizes)
+            for(int i = 0; i < groupsCount; i++)
             {
-                for(int i = 0;i<groupsCount; i++)
+                List<Club> ranking = Ranking(i);
+                foreach(Prize d in _prizes)
                 {
-                    CityClub cv = Ranking(i)[d.Ranking - 1] as CityClub;
-                    if (cv != null)
+                    if(ranking.Count > d.Ranking - 1)
                     {
-                        cv.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
+                        CityClub cv = Ranking(i)[d.Ranking - 1] as CityClub;
+                        if (cv != null)
+                        {
+                            cv.ModifyBudget(d.Amount, BudgetModificationReason.TournamentGrant);
+                        }
                     }
                 }
             }

@@ -611,6 +611,35 @@ namespace tm
             this.Save(String.Format("save_{0}.csave", this.date.Year));
         }
 
+        public void DeclareFinancialSanctions(Tournament c, Round t)
+        {
+            //First game day of the season
+            if (c.isChampionship && c.rounds.IndexOf(t) == 0 && t.programmation.gamesDays.Count > 0 && Utils.CompareDates(t.programmation.gamesDays[0].ConvertToDateTime(), _date))
+            {
+                foreach (Club cl in t.clubs)
+                {
+                    CityClub cc = cl as CityClub;
+                    if (cc != null)
+                    {
+                        if (cc.budget < 0)
+                        {
+                            //Ratio perte gains
+                            float totalIncome = cc.GetTotalIncomeOnYear(_date) + cc.GetTransfersResultOnYear(_date);
+                            float totalExpenses = cc.GetTotalExpensesOnYear(_date);
+                            float ratio = -totalExpenses / (totalIncome + 0.0f);
+                            ratio = ratio < 1 ? 1 : ratio;
+                            ratio = ratio > 2 ? 2 : ratio;
+                            ratio--;
+                            int maxPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).maxPointsDeduction;
+                            int minPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).minPointsDeduction;
+                            int pointsDeduction = (int)Math.Floor((maxPoints - minPoints) * ratio) + minPoints;
+                            t.AddPointsDeduction(cl, SanctionType.FinancialIrregularities, _date, pointsDeduction);
+                        }
+                    }
+                }
+            }
+        }
+
         public bool UpdateTournaments()
         {
             bool valid = true;
@@ -620,31 +649,7 @@ namespace tm
                 Country tc = (_kernel.LocalisationTournament(c) as Country);
                 foreach (Round t in c.rounds)
                 {
-                    //First game day of the season
-                    if (c.isChampionship && c.rounds.IndexOf(t) == 0 && t.programmation.gamesDays.Count > 0 && Utils.CompareDates(t.programmation.gamesDays[0].ConvertToDateTime(), _date))
-                    {
-                        foreach(Club cl in t.clubs)
-                        {
-                            CityClub cc = cl as CityClub;
-                            if(cc != null)
-                            {
-                                if (cc.budget < 0)
-                                {
-                                    //Ratio perte gains
-                                    float totalIncome = cc.GetTotalIncomeOnYear(_date) + cc.GetTransfersResultOnYear(_date);
-                                    float totalExpenses = cc.GetTotalExpensesOnYear(_date);
-                                    float ratio = -totalExpenses / (totalIncome + 0.0f);
-                                    ratio = ratio < 1 ? 1 : ratio;
-                                    ratio = ratio > 2 ? 2 : ratio;
-                                    ratio--;
-                                    int maxPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).maxPointsDeduction;
-                                    int minPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).minPointsDeduction;
-                                    int pointsDeduction = (int)Math.Floor((maxPoints - minPoints) * ratio) + minPoints;
-                                    t.AddPointsDeduction(cl, SanctionType.FinancialIrregularities, _date, pointsDeduction);
-                                }
-                            }
-                        }
-                    }
+                    DeclareFinancialSanctions(c, t);
 
                     //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
                     if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
