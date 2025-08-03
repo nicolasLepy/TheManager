@@ -12,111 +12,6 @@ using AssociationAttribute = tm.Comparators.AssociationAttribute;
 namespace tm
 {
 
-    public enum SanctionType
-    {
-        EnteringAdministration,
-        Forfeit,
-        IneligiblePlayer,
-        FinancialIrregularities
-    }
-
-    [DataContract]
-    public struct AdministrativeSanction
-    {
-        [DataMember]
-        private SanctionType _type;
-        [DataMember]
-        private int _minPointsDeduction;
-        [DataMember]
-        private int _maxPointsDeduction;
-        [DataMember]
-        private int _minRetrogradation;
-        [DataMember]
-        private int _maxRetrogradation;
-
-        public SanctionType type => _type;
-        public int minPointsDeduction => _minPointsDeduction;
-        public int maxPointsDeduction => _maxPointsDeduction;
-        public int minRetrogradation => _minRetrogradation;
-        public int maxRetrogradation => _maxRetrogradation;
-
-        public AdministrativeSanction(SanctionType type, int minPointsDeduction, int maxPointsDeduction, int minRetrogradation, int maxRetrogradation)
-        {
-            _type = type;
-            _minPointsDeduction = minPointsDeduction;
-            _maxPointsDeduction = maxPointsDeduction;
-            _minRetrogradation = minRetrogradation;
-            _maxRetrogradation = maxRetrogradation;
-        }
-
-    }
-
-
-    [DataContract(IsReference = true)]
-    public class InternationalDates : IEquatable<InternationalDates>
-    {
-        [DataMember]
-        private GameDay _start;
-        [DataMember]
-        private GameDay _end;
-        [DataMember]
-        private Tournament _tournament;
-        [DataMember]
-        private bool _currentlyCalled;
-
-        public GameDay start => _start;
-        public GameDay end => _end;
-
-        public bool currentlyCalled { get => _currentlyCalled; set => _currentlyCalled = value; }
-
-        public Tournament tournament => _tournament;
-
-        public bool IsValid()
-        {
-            return tournament == null || tournament.IsCurrentlyPlaying(); // ((tournament.currentRound > -1) && (tournament.currentRound < tournament.rounds.Count - 1));
-        }
-
-        public bool IsEquals(InternationalDates obj)
-        {
-            return start == obj.start && end == obj.end && _tournament == tournament;
-        }
-
-        public int StartYear(int currentWeekNumber)
-        {
-            bool startIsNextYear = start.WeekNumber < (currentWeekNumber);
-            return Session.Instance.Game.date.Year + (startIsNextYear ? 1 : 0);
-        }
-
-        public int EndYear(int currentWeekNumber)
-        {
-            bool endIsNextYear = end.WeekNumber < (currentWeekNumber - 2); //-1 because players are release 2 days after the _end week definition so probably the next week, to avoiding getting a day one year after
-            return Session.Instance.Game.date.Year + (endIsNextYear ? 1 : 0);
-        }
-
-        public bool Equals(InternationalDates other)
-        {
-            throw new NotImplementedException();
-        }
-
-        public InternationalDates()
-        {
-
-        }
-
-        public InternationalDates(GameDay start, GameDay end, Tournament tournament, bool currentlyCalled)
-        {
-            _start = start;
-            _end = end;
-            _tournament = tournament;
-            _currentlyCalled = currentlyCalled;
-            if (tournament != null)
-            {
-                _start = tournament.rounds.First().programmation.gamesDays.First();
-                _end = tournament.rounds.Last().programmation.gamesDays.Last();
-            }
-        }
-    }
-
     [DataContract(IsReference =true)]
     public class Association : ILocalisation, IRecoverableTeams
     {
@@ -145,6 +40,19 @@ namespace tm
         private bool _enableInternationalClubsCompetitions;
 
 
+        [DataMember]
+        private Dictionary<Club, Tournament> _administrativeRetrogradations;
+        [DataMember]
+        private List<float[]> _gamesTimesWeekend;
+        [DataMember]
+        private List<float[]> _gamesTimesWeekdays;
+        [DataMember]
+        private List<AdministrativeSanction> _administrativeSanctionsDefinitions;
+
+        private List<Club>[] _cacheAdministrativeRetrogradationsChanges;
+
+
+
         public List<Tournament> tournaments => _tournaments;
 
 
@@ -154,6 +62,25 @@ namespace tm
         public ILocalisation localisation => _localisation;
         public Association parent { get => _parent; set => _parent = value; }
         public int resetWeek => _resetWeek;
+
+        public List<float[]> gamesTimesWeekend => _gamesTimesWeekend;
+        public List<float[]> gamesTimesWeekdays => _gamesTimesWeekdays;
+
+        public AdministrativeSanction GetSanction(SanctionType sanctionType)
+        {
+            AdministrativeSanction res = default;
+            foreach (AdministrativeSanction admS in _administrativeSanctionsDefinitions)
+            {
+                if (admS.type == sanctionType)
+                {
+                    res = admS;
+                }
+            }
+            return res;
+        }
+
+
+
         public bool enabledInternationalClubsCompetitions => _enableInternationalClubsCompetitions;
 
         public List<NationalTeam> nationalTeams => new List<NationalTeam>(_nationalTeams);
@@ -226,6 +153,7 @@ namespace tm
             _archivalAssociationRanking = new List<List<Association>>();
             _internationalDates = new List<InternationalDates>();
             _nationalTeams = new List<NationalTeam>();
+            _cacheAdministrativeRetrogradationsChanges = null;
         }
 
         public Association(int id, string name, string logo, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions)
@@ -244,6 +172,7 @@ namespace tm
             _parent = parent;
             _resetWeek = resetWeek;
             _enableInternationalClubsCompetitions = enableInternationalClubsCompetitions;
+            _cacheAdministrativeRetrogradationsChanges = null;
         }
 
         public void RegisterNationalTeam(NationalTeam nt)

@@ -781,7 +781,7 @@ namespace tm
         }
 
         /// <summary>
-        /// Affect stadiums to games in case of round is hosted by one country
+        /// Affect stadiums to games in case of round is hosted by one association
         /// </summary>
         public void AffectHostStadiumsToGames()
         {
