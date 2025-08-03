@@ -139,7 +139,7 @@ namespace tm
         {
             get
             {
-                return country.stadiums;
+                return (localisation as Country).stadiums;
             }
         }
 
@@ -822,6 +822,21 @@ namespace tm
 
         //RetrieveTeams() (don't forget Continent implementation)
         //CountWithoutReserves() (don't forget Continent implementation)
+
+        private Tournament GetTournamentByLevel(int rank, bool isChampionship)
+        {
+            Tournament res = null;
+
+            foreach (Tournament t in Tournaments())
+            {
+                if (t.isChampionship == isChampionship && t.level == rank)
+                {
+                    res = t;
+                }
+            }
+
+            return res;
+        }
 
     }
 }

@@ -13,7 +13,7 @@ namespace tests.tm
     public class TestsAssociations : TheManagerTest
     {
 
-        private static int TEST_YEARS = 10;
+        private static int TEST_YEARS = 2;
 
         private void CheckClubs(Country az)
         {

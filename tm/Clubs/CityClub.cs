@@ -136,7 +136,7 @@ namespace tm
         public bool isForbiddenToRecruit { get => _isForbiddenToRecruit; set => _isForbiddenToRecruit = value; }
         public float baseCityAttendanceMultiplier { get => _baseCityAttendanceMultiplier; set => _baseCityAttendanceMultiplier = value; }
         public List<Contract> contracts { get => _players; }
-        public Association association => _association;
+        public Association association { get => _association; set => _association = value; }
 
         /// <summary>
         /// Get the list of contracts of the club, including contracts in reserves teams

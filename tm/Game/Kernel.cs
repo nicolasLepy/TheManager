@@ -547,6 +547,19 @@ namespace tm
             return res;
         }
 
+        public Association Localisation2Association(ILocalisation localisation)
+        {
+            Association res = null;
+            foreach (Association a in GetAllAssociations())
+            {
+                if (a.localisation == localisation)
+                {
+                    res = a;
+                }
+            }
+            return res;
+        }
+
         public Association GetAssociation(int idAssociation)
         {
             Association res = null;

@@ -38,14 +38,19 @@ namespace tm
         private int _shapeNumber;
         [DataMember]
         private List<Association> _associations;
+        //TODELETE
         [DataMember]
         private Dictionary<Club, Tournament> _administrativeRetrogradations;
+        //TODELETE
         [DataMember]
         private List<float[]> _gamesTimesWeekend;
+        //TODELETE
         [DataMember]
         private List<float[]> _gamesTimesWeekdays;
+        //TODELETE
         [DataMember]
         private int _resetWeek;
+        //TODELETE
         [DataMember]
         private List<AdministrativeSanction> _administrativeSanctionsDefinitions;
 
@@ -60,6 +65,7 @@ namespace tm
         public List<float[]> gamesTimesWeekend => _gamesTimesWeekend;
         public List<float[]> gamesTimesWeekdays => _gamesTimesWeekdays;
 
+
         public int resetWeek => _resetWeek;
 
         public string Flag
@@ -73,6 +79,7 @@ namespace tm
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
+        //TODELETE
         public AdministrativeSanction GetSanction(SanctionType sanctionType)
         {
             AdministrativeSanction res = default;
@@ -202,7 +209,7 @@ namespace tm
             return _tournaments;
         }
 
-        // OK
+        // TODELETE
         private Tournament GetTournamentByLevel(int rank, bool isChampionship)
         {
             Tournament res = null;
@@ -252,14 +259,6 @@ namespace tm
                 }
             }
             res.Sort(new TournamentComparator());
-            /*
-            int i = 1;
-            Tournament cup = GetTournamentByLevel(i, false);
-            while(cup != null)
-            {
-                res.Add(cup);
-                cup = GetTournamentByLevel(++i, false);
-            }*/
             return res;
 
         }

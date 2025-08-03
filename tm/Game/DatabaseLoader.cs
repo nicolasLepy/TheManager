@@ -1030,17 +1030,12 @@ namespace tm
                         //Continental tournaments are stored by their association
                         if(localisation as Continent != null)
                         {
-                            foreach(Association a in _kernel.GetAllAssociations())
-                            {
-                                if (a.localisation == localisation)
-                                {
-                                    a.tournaments.Add(tournament);
-                                }
-                            }
+                            _kernel.Localisation2Association(localisation).tournaments.Add(tournament);
                         }
                         else
                         {
                             localisation.Tournaments().Add(tournament);
+                            //_kernel.Localisation2Association(localisation).tournaments.Add(tournament);
                         }
                     }
                 }
@@ -1518,6 +1513,10 @@ namespace tm
                         }
                         cityClub.city = country.cities[0];
                         cityClub.stadium.city = country.cities[0];
+                        if(cityClub.association == null)
+                        {
+                            cityClub.association = country.GetCountryAssociation();
+                        }
                         AddStadium(cityClub.stadium);
                     }
 
