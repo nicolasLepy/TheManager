@@ -519,7 +519,7 @@ namespace tm
             }
             else
             {
-                target = leagues[GetClubLevelInLeaguesHierarchy(club, clubsByLeagues)];
+                target = leagues[UtilsTournaments.GetClubLevelInLeaguesHierarchy(club, clubsByLeagues)];
             }
 
             int clubLevel = -1;
@@ -650,7 +650,7 @@ namespace tm
                 Club candidate = candidates[j];
                 ReserveClub candidateAsReserve = candidate as ReserveClub;
                 //TODO: Rules check (doublon ?)
-                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
+                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !UtilsTournaments.ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
                 {
                     found = true;
                     leagueSystem[indexLevelRepechage].Remove(candidate);
@@ -789,7 +789,7 @@ namespace tm
                         Round round = leagues[i].rounds[0];
                         int administrativeLevel = administrativeLevels[i];
                         //Repechage candidates : filtering by association if necessary
-                        List<Club> candidates = administrativeLevel == 0 ? clubsByLeagues[i] : FilterAssociation(clubsByLeagues[i], GetAssociationLevel(club.Association(), administrativeLevel));
+                        List<Club> candidates = administrativeLevel == 0 ? clubsByLeagues[i] : UtilsTournaments.FilterAssociation(clubsByLeagues[i], GetAssociationLevel(club.Association(), administrativeLevel));
                         if (administrativeLevel > 0)
                         {
                             Console.WriteLine("[Remonte un tour régional] " + GetAssociationLevel(club.Association(), administrativeLevel).name);
@@ -842,13 +842,13 @@ namespace tm
                             //Check only the penultimate league
                             if(maxPossibleIndex - i == 1)
                             {
-                                int missingTeam = FilterAssociation(currentLeagueSystem[i], association).Count - FilterAssociation(clubsByLeagues[i], association).Count;
-                                Console.WriteLine(association.name + " => missing " + missingTeam + " teams (" + (FilterAssociation(currentLeagueSystem[i], association).Count) + " - " + (FilterAssociation(clubsByLeagues[i], association).Count));
+                                int missingTeam = UtilsTournaments.FilterAssociation(currentLeagueSystem[i], association).Count - UtilsTournaments.FilterAssociation(clubsByLeagues[i], association).Count;
+                                Console.WriteLine(association.name + " => missing " + missingTeam + " teams (" + (UtilsTournaments.FilterAssociation(currentLeagueSystem[i], association).Count) + " - " + (UtilsTournaments.FilterAssociation(clubsByLeagues[i], association).Count));
                                 for (int t = 0; t < missingTeam; t++)
                                 {
                                     //Big duplicate
                                     int indexLevelRepechage = i + 1;
-                                    List <Club> candidates = round.administrativeLevel == 0 ? clubsByLeagues[indexLevelRepechage] : FilterAssociation(clubsByLeagues[indexLevelRepechage], association);
+                                    List <Club> candidates = round.administrativeLevel == 0 ? clubsByLeagues[indexLevelRepechage] : UtilsTournaments.FilterAssociation(clubsByLeagues[indexLevelRepechage], association);
                                     RescrueTeam(clubsByLeagues, candidates, indexLevelRepechage, leagues[indexLevelRepechage].rounds[0], clubsCantBeSaved);
                                     Console.WriteLine(candidates.Count + " candidates");
                                     /*bool found = false;
@@ -880,54 +880,6 @@ namespace tm
 
             _cacheAdministrativeRetrogradationsChanges = clubsByLeagues;
             return clubsByLeagues;
-        }
-
-        /// <summary>
-        /// Return true if a team of a specific club is inside a list
-        /// </summary>
-        /// <param name="clubs"></param>
-        /// <param name="club"></param>
-        /// <returns></returns>
-        private bool ContainsTeamOfClub(List<Club> clubs, Club club)
-        {
-            bool res = false;
-            foreach(Club c in clubs)
-            {
-                if(c == club || ((c as ReserveClub != null) && (c as ReserveClub).FannionClub == club))
-                {
-                    res = true;
-                }
-            }
-            return res;
-        }
-
-        /// <summary>
-        /// Returns clubs of a particuliar association from a list of clubs
-        /// </summary>
-        /// <param name="clubs"></param>
-        /// <param name="association"></param>
-        /// <returns></returns>
-        public List<Club> FilterAssociation(List<Club> clubs, Association association)
-        {
-            List<Club> clubsAssociation = new List<Club>();
-            foreach(Club c in clubs)
-            {
-                if(association.ContainsAssociation(c.Association()))
-                {
-                    clubsAssociation.Add(c);
-                }
-            }
-            return clubsAssociation;
-        }
-
-        public int GetClubLevelInLeaguesHierarchy(Club club, List<Club>[] leagues)
-        {
-            int res = -1;
-            for(int i = 0; i < leagues.Length && res == -1; i++)
-            {
-                res = leagues[i].Contains(club) ? i : res;
-            }
-            return res;
         }
 
         /// <summary>
@@ -987,8 +939,8 @@ namespace tm
 		            foreach(Association association in GetAssociationsLevel(administrativeLevel))
                     {
                         int maxLevelPossible = MaxLeagueLevelWithAssociation(association) - 1;
-                        List<Club> thisYearAssociation = FilterAssociation(thisYear, association);
-                        List<Club> nextYearAssociation = FilterAssociation(nextYear, association);
+                        List<Club> thisYearAssociation = UtilsTournaments.FilterAssociation(thisYear, association);
+                        List<Club> nextYearAssociation = UtilsTournaments.FilterAssociation(nextYear, association);
                         if(thisYearAssociation.Count != nextYearAssociation.Count && i != maxLevelPossible)
                         {
                             Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + " (" + association.name + ") have a different number of teams");

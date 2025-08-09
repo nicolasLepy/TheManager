@@ -1034,8 +1034,8 @@ namespace tm
                         }
                         else
                         {
-                            localisation.Tournaments().Add(tournament);
-                            //_kernel.Localisation2Association(localisation).tournaments.Add(tournament);
+                            //localisation.Tournaments().Add(tournament);
+                            _kernel.Localisation2Association(localisation).tournaments.Add(tournament);
                         }
                     }
                 }
@@ -1506,7 +1506,7 @@ namespace tm
                 {
                     if (cityClub.city == null)
                     {
-                        Country country = cityClub.Championship != null ? Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Country : _kernel.world.continents[1].countries[0];
+                        Country country = cityClub.Championship != null ? (Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Association).localisation as Country : _kernel.world.continents[1].countries[0];
                         if (country.cities.Count == 0)
                         {
                             country.cities.Add(new City(_kernel.NextIdCity(), country.Name(), 0, 0, 0));

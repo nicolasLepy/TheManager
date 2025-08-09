@@ -118,8 +118,9 @@ namespace tm
         /// <summary>
         /// The country associated to this association
         /// TODO: Change country to a generic geographic unit
+        /// FIXME: Seems not working currently
         /// </summary>
-        public Country country
+        /*public Country country
         {
             get
             {
@@ -133,7 +134,7 @@ namespace tm
                 }
                 return r;
             }
-        }
+        }*/
 
         public List<Stadium> stadiums
         {
