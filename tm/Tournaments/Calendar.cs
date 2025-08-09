@@ -862,6 +862,7 @@ namespace tm
                 {
                     foreach (Club c in allClubs)
                     {
+                        //c.Association().IsDirectConnected(localisationTournament as Association)
                         if (c.Country() != localisationTournament)
                         {
                             clubsToDispatch.Add(c);

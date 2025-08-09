@@ -202,6 +202,15 @@ namespace tm
         /// Hierarchical association querying
         ///
 
+        
+        /// <summary>
+        /// Return True if this association is a child or the same as the association passed as an argument
+        /// </summary>
+        public bool IsDirectConnected(Association association)
+        {
+            return association == this || (parent != null && parent.IsDirectConnected(association));
+        }
+
         /// <summary>
         /// Get the hierachical level of the association
         /// </summary>
@@ -246,6 +255,21 @@ namespace tm
                 foreach (Association ad in _associations)
                 {
                     res.AddRange(ad.GetAssociationsLevel(level - 1));
+                }
+            }
+            return res;
+        }
+
+        public Association GetAssociationLevel(Association association, int level)
+        {
+            Association res = null;
+            List<Association> levelAdm = GetAssociationsLevel(level);
+
+            foreach (Association adm in levelAdm)
+            {
+                if (adm == association || adm.ContainsAssociation(association))
+                {
+                    res = adm;
                 }
             }
             return res;
@@ -839,5 +863,130 @@ namespace tm
             return res;
         }
 
+        //OK
+        public List<Tournament> Leagues()
+        {
+            List<Tournament> res = new List<Tournament>();
+            foreach (Tournament t in Tournaments())
+            {
+                if (t.isChampionship)
+                {
+                    res.Add(t);
+                }
+            }
+            res.Sort((x, y) => x.level.CompareTo(y.level));
+            return res;
+        }
+
+        //OK
+        public Tournament League(int leagueRank)
+        {
+            return GetTournamentByLevel(leagueRank, true);
+        }
+
+        //OK
+        public List<Tournament> Cups()
+        {
+            List<Tournament> res = new List<Tournament>();
+            foreach (Tournament t in Tournaments())
+            {
+                if (!t.isChampionship && t.periodicity == 1)
+                {
+                    res.Add(t);
+                }
+            }
+            res.Sort(new TournamentComparator());
+            return res;
+
+        }
+
+        /**
+         * cupRank : for exemple : Coupe de France is level 1 and Coupe de la Ligue is level 2
+         */
+        //OK
+        public Tournament Cup(int cupRank)
+        {
+            return GetTournamentByLevel(cupRank, false);
+        }
+
+        /**
+         * Get last league with a national level, then league is subdivised by groups
+         */
+        public Tournament GetLastNationalLeague()
+        {
+            int res = -1;
+            foreach (Tournament t in Tournaments())
+            {
+                GroupsRound gr = t.rounds[0] as GroupsRound;
+                if (((gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative)) && t.level > res)
+                {
+                    res = t.level;
+                }
+            }
+
+            return League(res);
+        }
+
+        public Tournament GetLastRegionalLeague(int level)
+        {
+            int res = -1;
+            foreach (Tournament t in Tournaments())
+            {
+                GroupsRound gr = t.rounds[0] as GroupsRound;
+                if (gr != null && gr.RandomDrawingMethod == RandomDrawingMethod.Administrative && gr.administrativeLevel == level && t.level > res)
+                {
+                    res = t.level;
+                }
+            }
+
+            return League(res);
+        }
+
+        public Tournament FirstDivisionChampionship()
+        {
+            Tournament res = null;
+            foreach (Tournament t in _tournaments)
+            {
+                if (t.isChampionship && t.level == 1)
+                {
+                    res = t;
+                }
+            }
+            return res;
+        }
+
+        public Tournament GetHigherRegionalTournament(int administrativeLevel)
+        {
+            Tournament higherRegionalTournament = null;
+            foreach (Tournament t in Tournaments())
+            {
+                if (t.isChampionship && (t.rounds[0] as GroupsRound) != null && (t.rounds[0] as GroupsRound).administrativeLevel == administrativeLevel && (higherRegionalTournament == null || t.level < higherRegionalTournament.level))
+                {
+                    higherRegionalTournament = t;
+                }
+            }
+            return higherRegionalTournament;
+        }
+
+        public bool LeagueSystemWithReserves()
+        {
+            bool res = false;
+            for (int i = 0; i < _tournaments.Count && !res; i++)
+            {
+                Tournament t = _tournaments[i];
+                for (int j = 0; j < t.rounds.Count && !res; j++)
+                {
+                    Round r = t.rounds[j];
+                    foreach (Club c in r.clubs)
+                    {
+                        if ((c as ReserveClub) != null)
+                        {
+                            res = true;
+                        }
+                    }
+                }
+            }
+            return res;
+        }
     }
 }

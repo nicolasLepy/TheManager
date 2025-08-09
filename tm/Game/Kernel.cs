@@ -547,6 +547,11 @@ namespace tm
             return res;
         }
 
+        /// <summary>
+        /// FIXME: When multiple associations with the same location, the returned association is undefined, and the returned association is usually not the expected association
+        /// </summary>
+        /// <param name="localisation"></param>
+        /// <returns></returns>
         public Association Localisation2Association(ILocalisation localisation)
         {
             Association res = null;

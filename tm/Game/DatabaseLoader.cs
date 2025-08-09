@@ -1035,7 +1035,7 @@ namespace tm
                         else
                         {
                             //localisation.Tournaments().Add(tournament);
-                            _kernel.Localisation2Association(localisation).tournaments.Add(tournament);
+                            (localisation as Country).GetCountryAssociation().tournaments.Add(tournament);
                         }
                     }
                 }

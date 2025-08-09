@@ -214,6 +214,10 @@ namespace tm
                     Utils.Debug(_round.Tournament.name + " (" + _round.name + ") Echec du tirage au sort de ce tour. Nouvelle tentative");
                     succeed = false;
                 }
+                if(this._round.name == "Copa Libertadores")
+                {
+                    Console.WriteLine("...");
+                }
             }
 
         }

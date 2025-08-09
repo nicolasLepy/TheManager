@@ -79,7 +79,7 @@ namespace tm
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
-        //TODELETE
+        //Done
         public AdministrativeSanction GetSanction(SanctionType sanctionType)
         {
             AdministrativeSanction res = default;
@@ -209,7 +209,7 @@ namespace tm
             return _tournaments;
         }
 
-        // TODELETE
+        // Done
         private Tournament GetTournamentByLevel(int rank, bool isChampionship)
         {
             Tournament res = null;
@@ -226,7 +226,7 @@ namespace tm
 
         }
 
-        //OK
+        //Done
         public List<Tournament> Leagues()
         {
             List<Tournament> res = new List<Tournament>();
@@ -241,13 +241,13 @@ namespace tm
             return res;
         }
 
-        //OK
+        //Done
         public Tournament League(int leagueRank)
         {
             return GetTournamentByLevel(leagueRank, true);
         }
 
-        //OK
+        //Done
         public List<Tournament> Cups()
         {
             List<Tournament> res = new List<Tournament>();
@@ -266,7 +266,7 @@ namespace tm
         /**
          * cupRank : for exemple : Coupe de France is level 1 and Coupe de la Ligue is level 2
          */
-        //OK
+        //Done
         public Tournament Cup(int cupRank)
         {
             return GetTournamentByLevel(cupRank, false);
@@ -275,6 +275,7 @@ namespace tm
         /**
          * Get last league with a national level, then league is subdivised by groups
          */
+        //Done
         public Tournament GetLastNationalLeague()
         {
             int res = -1;
@@ -290,6 +291,7 @@ namespace tm
             return League(res);
         }
 
+        //Done
         public Tournament GetLastRegionalLeague(int level)
         {
             int res = -1;
@@ -305,6 +307,7 @@ namespace tm
             return League(res);
         }
 
+        //Done
         public Tournament FirstDivisionChampionship()
         {
             Tournament res = null;
@@ -318,6 +321,7 @@ namespace tm
             return res;
         }
 
+        //Done
         public Tournament GetHigherRegionalTournament(int administrativeLevel)
         {
             Tournament higherRegionalTournament = null;
@@ -331,6 +335,7 @@ namespace tm
             return higherRegionalTournament;
         }
 
+        //Done
         public bool LeagueSystemWithReserves()
         {
             bool res = false;

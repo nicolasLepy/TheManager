@@ -149,6 +149,7 @@ namespace tm
                 AddTeamsToRecover();
             }
             //If it's an international tournament (national teams or continental cup eg), we add all teams to recover for all rounds now because ranking can fluctuate after and the same team could be selected for 2 differents rounds
+            //FIXME: Not good architecture
             else if (tournament.rounds[0] == this)
             {
                 foreach (Round r in tournament.rounds)

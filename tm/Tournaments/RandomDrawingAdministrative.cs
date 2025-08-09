@@ -29,12 +29,14 @@ namespace tm.Tournaments
         public void RandomDrawing()
         {
             Console.WriteLine("[Draw " + _round.Tournament.name + "]");
-            Country hostCountry = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Country;
+            Country hostCountry = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Country; //TODELETE
+            Association hostAssociation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Association;
             List<List<Club>> groups = new List<List<Club>>();
             List<string> groupNames = new List<string>();
             Console.WriteLine("Host country = " + hostCountry);
             Console.WriteLine("Reference ClubsByGroup = " + _round.referenceClubsByGroup);
             Console.WriteLine("ClubsByGroup = " + _round.clubs.Count / _round.groupsCount);
+            //TODELETE
             if (hostCountry != null)
             {
                 int defaultMaxTeamsByGroup = _round.referenceClubsByGroup == 0 ? _round.clubs.Count / _round.groupsCount : _round.referenceClubsByGroup;
@@ -66,6 +68,38 @@ namespace tm.Tournaments
                     }
                 }
             }
+            if (hostAssociation != null)
+            {
+                int defaultMaxTeamsByGroup = _round.referenceClubsByGroup == 0 ? _round.clubs.Count / _round.groupsCount : _round.referenceClubsByGroup;
+                defaultMaxTeamsByGroup = _round.clubs.Count % _round.groupsCount != 0
+                    ? defaultMaxTeamsByGroup + 1
+                    : defaultMaxTeamsByGroup;
+                defaultMaxTeamsByGroup += 2;
+                //If the round is inactive, keep all clubs of a same association into one group
+                if ((_round as GroupInactiveRound) != null)
+                {
+                    defaultMaxTeamsByGroup = _round.clubs.Count;
+                }
+                Console.WriteLine("[MaxTeamsByGroup] " + defaultMaxTeamsByGroup);
+                foreach (Association ad in hostAssociation.GetAssociationsLevel(_round.administrativeLevel))
+                {
+                    int admCounter = 0;
+                    List<Club> clubsAdm = _round.GetClubsAssociation(ad);
+                    Console.WriteLine("[" + ad.name + "], équipes = " + clubsAdm.Count);
+                    if (clubsAdm.Count > 0)
+                    {
+
+                        List<int> groupsCount = GetGroupSize(clubsAdm.Count, defaultMaxTeamsByGroup);
+                        List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubsAdm, groupsCount.Count);
+                        for (int grp = 0; grp < groupsCount.Count; grp++)
+                        {
+                            groups.Add(splitClubs[grp]);
+                            groupNames.Add(ad.name + " " + ++admCounter);
+                        }
+                    }
+                }
+            }
+
 
             _round.groupsCount = groups.Count;
             _round.InitializeGroups();
