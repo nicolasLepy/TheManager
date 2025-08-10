@@ -540,10 +540,21 @@ namespace tm
             }
         }
 
+        public int GetMaxAssociationId(XDocument doc)
+        {
+            int maxAdmId = -1;
+            foreach(XElement e in doc.Descendants("AdministrativeDivision"))
+            {
+                int administrationId = int.Parse(e.Attribute("id").Value);
+                maxAdmId = Math.Max(maxAdmId, administrationId);
+            }
+            return maxAdmId;
+        }
+
         public void LoadWorld()
         {
             XDocument doc = XDocument.Load(Utils.dataFolderName + "/world.xml");
-            int maxAdmId = 0;
+            int maxAdmId = GetMaxAssociationId(doc);
             foreach (XElement e in doc.Descendants("World"))
             {
                 string worldName = e.Attribute("name").Value;
@@ -552,6 +563,8 @@ namespace tm
                 Continent world = new Continent(_kernel.NextIdContinent(), worldName, worldLogo, worldResetWeek);
                 _associationsLogo[world] = e.Attribute("association_logo").Value;
                 _kernel.world = world;
+                Association fifa = new Association(++maxAdmId, _kernel.world.Name(), _associationsLogo[_kernel.world], _kernel.world, null, _kernel.world.resetWeek, false, new List<AdministrativeSanction>());
+                _kernel.worldAssociation = fifa;
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
                     string continentName = e2.Attribute("name").Value;
@@ -559,6 +572,8 @@ namespace tm
                     int continentResetWeek = int.Parse(e2.Attribute("reset_week").Value);
                     Continent c = new Continent(_kernel.NextIdContinent(), continentName, continentLogo, continentResetWeek);
                     _associationsLogo[c] = e2.Attribute("association_logo").Value;
+                    Association ca = new Association(++maxAdmId, c.Name(), _associationsLogo[c], c, fifa, c.resetWeek, true, new List<AdministrativeSanction>());
+                    fifa.associations.Add(ca);
 
                     foreach (XElement e3 in e2.Descendants("Country"))
                     {
@@ -602,6 +617,10 @@ namespace tm
                         }
 
                         Country ct = new Country(_kernel.NextIdCountry(), countrydBName, countryName, l, countryShape, countryResetWeek, sanctions);
+                        Association adCountry = new Association(++maxAdmId, ct.Name(), ct.Flag, ct, ca, ct.resetWeek, false, sanctions);
+                        ct.associations.Add(adCountry);
+                        ca.associations.Add(adCountry);
+
                         foreach (XElement e4 in e3.Descendants("Ville"))
                         {
                             string cityName = e4.Attribute("nom").Value;
@@ -618,8 +637,7 @@ namespace tm
                             string administrationName = e4.Attribute("name").Value;
                             int administrationId = int.Parse(e4.Attribute("id").Value);
                             int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
-                            maxAdmId = administrationId > maxAdmId ? administrationId : maxAdmId;
-                            Association ad = new Association(administrationId, administrationName, "", ct, null, ct.resetWeek, false);
+                            Association ad = new Association(administrationId, administrationName, "", ct, null, ct.resetWeek, false, new List<AdministrativeSanction>());
                             if (administrationParent > 0)
                             {
                                 ct.GetAssociation(administrationParent).associations.Add(ad);
@@ -627,7 +645,8 @@ namespace tm
                             }
                             else
                             {
-                                ct.associations.Add(ad);
+                                ad.parent = adCountry;
+                                adCountry.associations.Add(ad);
                             }
                         }
 
@@ -644,7 +663,7 @@ namespace tm
                                     {
                                         for (int i = previousLevel; i < level; i++)
                                         {
-                                            float[] last = weekdaysDates ? ct.gamesTimesWeekdays.Last() : ct.gamesTimesWeekend.Last();
+                                            float[] last = weekdaysDates ? adCountry.gamesTimesWeekdays.Last() : adCountry.gamesTimesWeekend.Last();
                                             float[] newArray = new float[Utils.gamesTimesHoursCount * Utils.gamesTimesDaysCount];
                                             for (int d1 = 0; d1 < last.Length; d1++)
                                             {
@@ -652,11 +671,11 @@ namespace tm
                                             }
                                             if (weekdaysDates)
                                             {
-                                                ct.gamesTimesWeekdays.Add(newArray);
+                                                adCountry.gamesTimesWeekdays.Add(newArray);
                                             }
                                             else
                                             {
-                                                ct.gamesTimesWeekend.Add(newArray);
+                                                adCountry.gamesTimesWeekend.Add(newArray);
                                             }
                                         }
                                     }
@@ -676,11 +695,11 @@ namespace tm
                                     }
                                     if (weekdaysDates)
                                     {
-                                        ct.gamesTimesWeekdays.Add(gamesTimes);
+                                        adCountry.gamesTimesWeekdays.Add(gamesTimes);
                                     }
                                     else
                                     {
-                                        ct.gamesTimesWeekend.Add(gamesTimes);
+                                        adCountry.gamesTimesWeekend.Add(gamesTimes);
                                     }
                                 }
                             }
@@ -691,35 +710,6 @@ namespace tm
                     _kernel.world.continents.Add(c);
                 }
             }
-
-            maxAdmId++;
-            Association fifa = new Association(maxAdmId++, _kernel.world.Name(), _associationsLogo[_kernel.world], _kernel.world, null, _kernel.world.resetWeek, false);
-            foreach (Continent c in _kernel.world.continents)
-            {
-                Association ca = new Association(maxAdmId++, c.Name(), _associationsLogo[c], c, fifa, c.resetWeek, true);
-                foreach (Country cc in c.countries)
-                {
-                    Association adCountry = new Association(maxAdmId++, cc.Name(), cc.Flag, cc, ca, cc.resetWeek, false);
-                    cc.associations.Add(adCountry);
-                    ca.associations.Add(adCountry);
-                    foreach (Association a in cc.associations)
-                    {
-                        if(a != adCountry)
-                        {
-                            adCountry.associations.Add(a);
-                        }
-                        if(a.parent == null)
-                        {
-                            a.parent = adCountry;
-
-                        }
-                    }
-                    cc.associations.Clear();
-                    cc.associations.Add(adCountry);
-                }
-                fifa.associations.Add(ca);
-            }
-            _kernel.worldAssociation = fifa;
         }
 
         public void LoadStadiums()

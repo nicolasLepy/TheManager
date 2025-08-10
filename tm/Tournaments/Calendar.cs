@@ -62,7 +62,7 @@ namespace tm
             bool weekendGame = match.day.DayOfWeek == DayOfWeek.Saturday;
             if (matchChampionship != null)
             {
-                List<float[]> gamesTimesList = weekendGame ? match.home.Country().gamesTimesWeekend : match.home.Country().gamesTimesWeekdays;
+                List<float[]> gamesTimesList = weekendGame ? match.home.Association().gamesTimesWeekend : match.home.Association().gamesTimesWeekdays;
                 if(gamesTimesList.Count > 0)
                 {
                     float[] gamesTimes = gamesTimesList.Count > (matchChampionship.level - 1) ? gamesTimesList[matchChampionship.level - 1] : gamesTimesList[gamesTimesList.Count - 1];
@@ -763,7 +763,7 @@ namespace tm
             {
                 foreach(Club c in round.clubs)
                 {
-                    if(c.Country() != localisationTournament)
+                    if(!c.Association().IsDirectConnected(localisationTournament as Association))
                     {
                         fixedHomeOrAwayTeams.Add(c, false);
                     }
@@ -776,12 +776,13 @@ namespace tm
                 foreach (Club c in round.clubs)
                 {
                     //New ultramarine team entering this round
-                    if (c.Country() != localisationTournament && (previousRound != null && !previousRound.clubs.Contains(c)))
+                    
+                    if (!c.Association().IsDirectConnected(localisationTournament as Association) && (previousRound != null && !previousRound.clubs.Contains(c)))
                     {
                         newUltramarineTeams.Add(c);
                     }
                     //Ultramarine already in tournament
-                    else if(c.Country() != localisationTournament && previousRound != null)
+                    else if(!c.Association().IsDirectConnected(localisationTournament as Association) && previousRound != null)
                     {
                         foreach(Match m in previousRound.matches)
                         {
@@ -862,8 +863,7 @@ namespace tm
                 {
                     foreach (Club c in allClubs)
                     {
-                        //c.Association().IsDirectConnected(localisationTournament as Association)
-                        if (c.Country() != localisationTournament)
+                        if (!c.Association().IsDirectConnected(localisationTournament as Association))
                         {
                             clubsToDispatch.Add(c);
                         }
@@ -916,7 +916,7 @@ namespace tm
                     {
                         for (int j = 0; j < hats[currentGeographicHat].Count && home == null; j++)
                         {
-                            if (hats[currentGeographicHat][j].Country() != localisationTournament)
+                            if (!hats[currentGeographicHat][j].Association().IsDirectConnected(localisationTournament as Association))
                             {
                                 home = hats[currentGeographicHat][j];
                                 hats[currentGeographicHat].Remove(hats[currentGeographicHat][j]);

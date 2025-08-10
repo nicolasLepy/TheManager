@@ -67,7 +67,7 @@ namespace tests.tm
             //Club club = Session.Instance.Game.kernel.Clubs[70];
             Club club = Session.Instance.Game.kernel.Clubs[445];
             Session.Instance.Game.club = club as CityClub;
-            Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Country()));
+            Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Association()));
             Manager manager = new Manager(Session.Instance.Game.kernel.NextIdPerson(), "Name", "Name", 70, new DateTime(1980, 1, 1), fr);
             Session.Instance.Game.club.ChangeManager(manager);
             Session.Instance.Game.options.simulateGames = true;

@@ -425,11 +425,14 @@ namespace tm
             Tournament tournament = Tournament;
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
             adjustedQualifications.Sort(new QualificationComparator());
-            Country country = _groups[group][0].Country();
+            //Country country = _groups[group][0].Country();
+            //Association of the tournament
+            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(tournament) as Association;
+
             //Get the district of the group (at the good regional level)
-            Association association = country.GetAssociationLevel(_groups[group][0].Association(), _administrativeLevel);
+            Association association = tAssociation.GetAssociationLevel(_groups[group][0].Association(), _administrativeLevel);
             Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "]");
-            bool isHigherRegionalLevel = country.GetHigherRegionalTournament(administrativeLevel) == tournament;
+            bool isHigherRegionalLevel = tAssociation.GetHigherRegionalTournament(administrativeLevel) == tournament;
             //int teamsSentToHigherRegionalLevel = !isHigherRegionalLevel ? GetTeamsCountSentToHigherRegionalLevel(association, country) : 0;
             int teamsSentToHigherRegionalLevel = 0;
             int admGroupCount = GetGroupsFromAssociation(association).Count;
@@ -455,16 +458,19 @@ namespace tm
             teamsSentToHigherRegionalLevel = 1;
 
             //If this league is this first district league, automatically compute promotion slots
-            GroupsRound upperGroupRound = country.League(tournament.level - 1).rounds[0] as GroupsRound;
+            GroupsRound upperGroupRound = tAssociation.League(tournament.level - 1).rounds[0] as GroupsRound;
             bool extraPromotionOnGroup = false;
             int promotionSlots = 0;
             if (upperGroupRound != null && upperGroupRound.administrativeLevel > 0 && _administrativeLevel > upperGroupRound._administrativeLevel)
             {
-                Association upperAssociation = country.GetAssociationLevel(association, upperGroupRound.administrativeLevel);
+                Association upperAssociation = tAssociation.GetAssociationLevel(association, upperGroupRound.administrativeLevel);
                 int admGroupUpper = 0;
                 for (int i = 0; i < _groupsNumber; i++)
                 {
-                    if (groups[i][0].Country().GetAssociationLevel(groups[i][0].Association(), upperGroupRound._administrativeLevel) == upperAssociation)
+                    //Association associationAtLevel = groups[i][0].Country().GetAssociationLevel(groups[i][0].Association(), upperGroupRound._administrativeLevel);
+                    Association associationAtLevel = tAssociation.GetAssociationLevel(groups[i][0].Association(), upperGroupRound._administrativeLevel);
+                    //FIXME: Maybe this is better? : groups[i][0].Association().IsDirectConnected(upperAssociation)
+                    if (associationAtLevel == upperAssociation)
                     {
                         admGroupUpper++;
                     }
@@ -661,7 +667,7 @@ namespace tm
                     Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Case 1");
                     //It's probably to create a function in GroupsRound that return relegables teams
                     //Et dangereux de faire comme ça car compatibilité entre relegations au milieu de classement (réserve qui tombe, rétrogradation adm) sont pas forcément compatible avec le classement des meilleurs nième
-                    Association admAtLevel = upperGroupRound.administrativeLevel > 0 ? country.GetAssociationLevel(association, upperGroupRound._administrativeLevel) : null;
+                    Association admAtLevel = upperGroupRound.administrativeLevel > 0 ? tAssociation.GetAssociationLevel(association, upperGroupRound._administrativeLevel) : null;
                     for (int i = 0; i < upperGroupRound._groupsNumber; i++)
                     {
                         List<Qualification> groupQualifications = upperGroupRound.GetGroupQualifications(i);
@@ -670,7 +676,7 @@ namespace tm
                         foreach (Qualification q in groupQualifications)
                         {
                             Club concernedClub = upperGroupRanking[q.ranking - 1];
-                            if(country.GetAssociationLevel(concernedClub.Association(), _administrativeLevel) == association)
+                            if(tAssociation.GetAssociationLevel(concernedClub.Association(), _administrativeLevel) == association)
                             {
                                 if (q.roundId == 0 && q.isNextYear && q.tournament == tournament && q.qualifies == 0)
                                 {
@@ -695,7 +701,7 @@ namespace tm
                     Console.WriteLine("[" + tournament.name + "][" + association.name + "][Groupe " + group + "] Case 2");
                     List<Qualification> regularQualifications = upperGroupRound.qualifications;
                     int regularQualificationsCount = 0;
-                    Association upperAssociation = country.GetAssociationLevel(association, upperGroupRound.administrativeLevel);
+                    Association upperAssociation = tAssociation.GetAssociationLevel(association, upperGroupRound.administrativeLevel);
                     //Ignore qualifications relegations but take predefined relegations number of administrative divsiion
                     if (upperGroupRound.relegationsByAssociations.ContainsKey(upperAssociation))
                     {
@@ -766,7 +772,7 @@ namespace tm
             //Last check : if in the bottom division there is no club of you're administrative division, remove relegations
             //Check if bottom round is a group round or an inactive round (could be factorized)
             bool ok = false;
-            GroupsRound bottomGroupRound = country.League(tournament.level + 1)?.rounds[0] as GroupsRound;
+            GroupsRound bottomGroupRound = tAssociation.League(tournament.level + 1)?.rounds[0] as GroupsRound;
             if (bottomGroupRound != null)
             {
                 for (int i = 0; i < bottomGroupRound.groupsCount; i++)

@@ -69,12 +69,18 @@ namespace tm
         public AdministrativeSanction GetSanction(SanctionType sanctionType)
         {
             AdministrativeSanction res = default;
+            bool found = false;
             foreach (AdministrativeSanction admS in _administrativeSanctionsDefinitions)
             {
                 if (admS.type == sanctionType)
                 {
                     res = admS;
+                    found = true;
                 }
+            }
+            if(!found && parent != null)
+            {
+                res = parent.GetSanction(sanctionType);
             }
             return res;
         }
@@ -144,6 +150,25 @@ namespace tm
             }
         }
 
+        public List<float[]> GamesTimesWeekend()
+        {
+            List<float[]> res = gamesTimesWeekend;
+            if (res.Count == 0 && parent != null)
+            {
+                res = parent.GamesTimesWeekend();
+            }
+            return res;
+        }
+
+        public List<float[]> GamesTimesWeekdays()
+        {
+            List<float[]> res = gamesTimesWeekdays;
+            if (res.Count == 0 && parent != null)
+            {
+                res = parent.GamesTimesWeekdays();
+            }
+            return res;
+        }
 
         public Association()
         {
@@ -155,9 +180,13 @@ namespace tm
             _internationalDates = new List<InternationalDates>();
             _nationalTeams = new List<NationalTeam>();
             _cacheAdministrativeRetrogradationsChanges = null;
+            _gamesTimesWeekend = new List<float[]>();
+            _gamesTimesWeekdays = new List<float[]>();
+            _administrativeSanctionsDefinitions = new List<AdministrativeSanction>();
+
         }
 
-        public Association(int id, string name, string logo, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions)
+        public Association(int id, string name, string logo, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions, List<AdministrativeSanction> sanctionsDefinitions)
         {
             Id = id;
             _name = name;
@@ -174,6 +203,10 @@ namespace tm
             _resetWeek = resetWeek;
             _enableInternationalClubsCompetitions = enableInternationalClubsCompetitions;
             _cacheAdministrativeRetrogradationsChanges = null;
+            _gamesTimesWeekend = new List<float[]>();
+            _gamesTimesWeekdays = new List<float[]>();
+            _administrativeSanctionsDefinitions = sanctionsDefinitions;
+
         }
 
         public void RegisterNationalTeam(NationalTeam nt)
@@ -437,12 +470,12 @@ namespace tm
 
 
 
-        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c, int year)
+        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Association a, int year)
         {
             // Special case when getting clubs of the finished edition (Ireland 2022 for example) for an international tournament not started yet (CL 2023-2024 for example)
             if (year == Session.Instance.Game.CurrentSeason + 1)
             {
-                return GetClubsQualifiedForInternationalCompetitions(c, false);
+                return GetClubsQualifiedForInternationalCompetitions(a, false);
             }
             Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
 
@@ -455,7 +488,7 @@ namespace tm
                 {
                     foreach (Club club in r.clubs)
                     {
-                        if (club.Country() == c && (!res.ContainsKey(club) || Utils.IsBefore(r.DateInitialisationRound(), res[club].tournament.rounds[res[club].roundId].DateInitialisationRound())))
+                        if (club.Association().IsDirectConnected(a) && (!res.ContainsKey(club) || Utils.IsBefore(r.DateInitialisationRound(), res[club].tournament.rounds[res[club].roundId].DateInitialisationRound())))
                         {
                             res.Add(club, new Qualification(1, archive.rounds.IndexOf(r), tournament, true, 0));
                         }
@@ -472,7 +505,7 @@ namespace tm
         /// <summary>
         /// Get at this date the qualified clubs for a country for international tournaments
         /// </summary>
-        /// <param name="c">Country</param>
+        /// <param name="a">Association</param>
         /// <param name="onlyCurrentLeagueEdition">
         /// Change only behavior for country that use a different calendar of continental association (Ireland for exemple).
         /// Qualified clubs of these country are taken from an older league edition and not from the current running division. A new edition is started at this time.
@@ -481,12 +514,12 @@ namespace tm
         /// [TODO] Possible refactor to avoid this parameter     [(round = (last_round).finished ? last_round : previous_edition.rounds.last) could avoid date comparaison but not this parameter]
         /// </param>
         /// <returns></returns>
-        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Country c, bool onlyCurrentLeagueEdition)
+        public Dictionary<Club, Qualification> GetClubsQualifiedForInternationalCompetitions(Association a, bool onlyCurrentLeagueEdition)
         {
             Dictionary<Club, Qualification> res = new Dictionary<Club, Qualification>();
 
             List<Association> countriesRanking = new List<Association>(associationRanking);
-            int index = countriesRanking.IndexOf(c.GetCountryAssociation());
+            int index = countriesRanking.IndexOf(a);
             int rank = index + 1;
             List<Qualification> associationQualifications = (from q in _continentalQualifications where q.ranking == rank select q).ToList();
 
@@ -494,7 +527,7 @@ namespace tm
             List<Club> leagueClubs = new List<Club>();
 
             int leagueLevel = 1;
-            Tournament leagueDivisionChampionship = c.League(leagueLevel);
+            Tournament leagueDivisionChampionship = a.League(leagueLevel);
             while (leagueDivisionChampionship != null)
             {
                 //Manage association where calendar is not the same as the continent calendar
@@ -551,10 +584,10 @@ namespace tm
                     }
                 }
 
-                leagueDivisionChampionship = c.League(++leagueLevel);
+                leagueDivisionChampionship = a.League(++leagueLevel);
             }
 
-            List<Tournament> cups = c.Cups();
+            List<Tournament> cups = a.Cups();
             List<Club> cupWinners = new List<Club>();
             for (int i = 0; i < cups.Count; i++)
             {
@@ -606,7 +639,7 @@ namespace tm
                         //Sort to put the new qualification at the right place
                         associationQualifications.Sort((x, y) => x.tournament.level != y.tournament.level ? x.tournament.level - y.tournament.level : y.roundId - x.roundId);
                         int indexQ = -1;
-                        List<Qualification> cupQualifications = (from a in associationQualifications where a.isNextYear select a).ToList();
+                        List<Qualification> cupQualifications = (from aq in associationQualifications where aq.isNextYear select aq).ToList();
                         for (int q = 0; q < cupQualifications.Count; q++)
                         {
                             //Reminder isNextYear is used for isCupWinner
@@ -670,7 +703,7 @@ namespace tm
             List<Association> countriesRanking = new List<Association>(associationRanking);
             for (int i = 0; i < countriesRanking.Count; i++)
             {
-                Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i].localisation as Country, false);
+                Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i], false);
                 foreach (KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
                 {
                     Utils.Debug("[IC][preprocess][international qualfication][" + kvp.Value.tournament.shortName + "][" + kvp.Value.roundId + "][" + kvp.Key.Country().Name() + "] " + kvp.Key.name);
@@ -684,7 +717,7 @@ namespace tm
                         {
                             for (int k = t.nextYearQualified[j].Count - 1; k >= 0; k--)
                             {
-                                if (t.nextYearQualified[j][k].Country() == countriesRanking[i].localisation)
+                                if (t.nextYearQualified[j][k].Association().IsDirectConnected(countriesRanking[i].localisation as Association))
                                 {
                                     t.nextYearQualified[j].Remove(t.nextYearQualified[j][k]);
                                 }

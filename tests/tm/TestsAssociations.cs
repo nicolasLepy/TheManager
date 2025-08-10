@@ -15,12 +15,12 @@ namespace tests.tm
 
         private static int TEST_YEARS = 2;
 
-        private void CheckClubs(Country az)
+        private void CheckClubs(Association az)
         {
             Dictionary<Club, int> occurences = new Dictionary<Club, int>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
             {
-                if((c as NationalTeam) == null && c.Country() == az)
+                if((c as NationalTeam) == null && c.Association().IsDirectConnected(az))
                 {
                     occurences[c] = 0;
                 }
@@ -41,7 +41,7 @@ namespace tests.tm
 
         }
 
-        private void CheckRegionalLeague(Country az, Tournament t, List<Association> associations, Dictionary<Association, int> expectedTeams)
+        private void CheckRegionalLeague(Association az, Tournament t, List<Association> associations, Dictionary<Association, int> expectedTeams)
         {
             GroupsRound r = t.rounds[0] as GroupsRound;
             Assert.IsNotNull(r);
@@ -80,6 +80,7 @@ namespace tests.tm
                 }
 
                 Country az = Session.Instance.Game.kernel.String2Country("Azerbaïdjan");
+                Association aAz = az.GetCountryAssociation();
                 List<Association> aLevel0 = az.GetCountryAssociation().associations;
 
                 List<Association> aLevel1 = new List<Association>();
@@ -92,12 +93,12 @@ namespace tests.tm
                 Assert.AreEqual(2, aLevel1.Count);
 
                 //Check each national league have the required number of teams
-                Tournament t1 = az.League(1);
+                Tournament t1 = aAz.League(1);
 
                 int numberOfTeams = t1.rounds[0].clubs.Count;
                 Assert.AreEqual(12, numberOfTeams);
 
-                Tournament t2 = az.League(2);
+                Tournament t2 = aAz.League(2);
                 numberOfTeams = t2.rounds[0].clubs.Count;
                 Assert.AreEqual(numberOfTeams, 24);
                 GroupsRound r20 = t2.rounds[0] as GroupsRound;
@@ -107,10 +108,10 @@ namespace tests.tm
                 Assert.AreEqual(r20.Ranking(2).Count, 8);
 
                 //Check each regional league have teams of its association, and the correct number. Number of teams in the last level can vary
-                Tournament t3 = az.League(3);
-                Tournament t4 = az.League(4);
-                Tournament t5 = az.League(5);
-                Tournament t6 = az.League(6);
+                Tournament t3 = aAz.League(3);
+                Tournament t4 = aAz.League(4);
+                Tournament t5 = aAz.League(5);
+                Tournament t6 = aAz.League(6);
 
                 Dictionary<Association, int> aTeams3 = new Dictionary<Association, int>
                 {
@@ -129,13 +130,13 @@ namespace tests.tm
                 };
 
 
-                CheckRegionalLeague(az, t3, aLevel0, aTeams3);
-                CheckRegionalLeague(az, t4, aLevel0, aTeams4);
-                CheckRegionalLeague(az, t5, aLevel1, aTeams5);
-                CheckRegionalLeague(az, t6, aLevel1, new());
+                CheckRegionalLeague(aAz, t3, aLevel0, aTeams3);
+                CheckRegionalLeague(aAz, t4, aLevel0, aTeams4);
+                CheckRegionalLeague(aAz, t5, aLevel1, aTeams5);
+                CheckRegionalLeague(aAz, t6, aLevel1, new());
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
-                CheckClubs(az);
+                CheckClubs(aAz);
             }
 
         }

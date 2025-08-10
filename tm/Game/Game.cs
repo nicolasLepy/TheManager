@@ -652,8 +652,8 @@ namespace tm
                             ratio = ratio < 1 ? 1 : ratio;
                             ratio = ratio > 2 ? 2 : ratio;
                             ratio--;
-                            int maxPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).maxPointsDeduction;
-                            int minPoints = cl.Country().GetSanction(SanctionType.FinancialIrregularities).minPointsDeduction;
+                            int maxPoints = cl.Association().GetSanction(SanctionType.FinancialIrregularities).maxPointsDeduction;
+                            int minPoints = cl.Association().GetSanction(SanctionType.FinancialIrregularities).minPointsDeduction;
                             int pointsDeduction = (int)Math.Floor((maxPoints - minPoints) * ratio) + minPoints;
                             t.AddPointsDeduction(cl, SanctionType.FinancialIrregularities, _date, pointsDeduction);
                         }

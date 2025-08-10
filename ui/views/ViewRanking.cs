@@ -83,12 +83,12 @@ namespace TheManager_GUI.Views
         protected Dictionary<Club, Qualification> GetContinentalClubs(Round round)
         {
             ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
-            Country country = localisation as Country;
+            Association association = localisation as Association;
             Dictionary<Club, Qualification> continentalClubs = new Dictionary<Club, Qualification>();
-            if (country != null && country.GetCountryAssociation().parent.GetContinentalClubTournaments().Count > 0)
+            if (association != null && association.parent.GetContinentalClubTournaments().Count > 0)
             {
-                int weekStartContinental = country.GetCountryAssociation().parent.GetContinentalClubTournaments().First().rounds.First().programmation.initialisation.WeekNumber;
-                int weekEndContinental = country.GetCountryAssociation().parent.GetContinentalClubTournaments().First().rounds.Last().programmation.end.WeekNumber;
+                int weekStartContinental = association.parent.GetContinentalClubTournaments().First().rounds.First().programmation.initialisation.WeekNumber;
+                int weekEndContinental = association.parent.GetContinentalClubTournaments().First().rounds.Last().programmation.end.WeekNumber;
                 int continentalYear = _year; //International tournament edition where clubs are qualified
                 //If the domestic league calendar is not the same than continental association calendar (civil year vs rolling year), clubs are qualified for international tournaments playing one year after
                 if (_tournament.rounds.Last().programmation.end.WeekNumber > weekStartContinental)
@@ -102,7 +102,7 @@ namespace TheManager_GUI.Views
                 }
                 if (round == _tournament.GetLastChampionshipRound())
                 {
-                    continentalClubs = _year > -1 ? country.GetCountryAssociation().parent.GetClubsQualifiedForInternationalCompetitions(country, continentalYear) : country.GetCountryAssociation().parent.GetClubsQualifiedForInternationalCompetitions(country, true);
+                    continentalClubs = _year > -1 ? association.parent.GetClubsQualifiedForInternationalCompetitions(association, continentalYear) : association.parent.GetClubsQualifiedForInternationalCompetitions(association, true);
                 }
             }
             Console.WriteLine("Continental clubs : " + continentalClubs.Count);
