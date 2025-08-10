@@ -563,7 +563,7 @@ namespace tm
                 Continent world = new Continent(_kernel.NextIdContinent(), worldName, worldLogo, worldResetWeek);
                 _associationsLogo[world] = e.Attribute("association_logo").Value;
                 _kernel.world = world;
-                Association fifa = new Association(++maxAdmId, _kernel.world.Name(), _associationsLogo[_kernel.world], _kernel.world, null, _kernel.world.resetWeek, false, new List<AdministrativeSanction>());
+                Association fifa = new Association(++maxAdmId, _kernel.world.Name(), _associationsLogo[_kernel.world], _kernel.world, null, _kernel.world.resetWeek, false, new List<AdministrativeSanction>(), false);
                 _kernel.worldAssociation = fifa;
                 foreach (XElement e2 in e.Descendants("Continent"))
                 {
@@ -572,7 +572,7 @@ namespace tm
                     int continentResetWeek = int.Parse(e2.Attribute("reset_week").Value);
                     Continent c = new Continent(_kernel.NextIdContinent(), continentName, continentLogo, continentResetWeek);
                     _associationsLogo[c] = e2.Attribute("association_logo").Value;
-                    Association ca = new Association(++maxAdmId, c.Name(), _associationsLogo[c], c, fifa, c.resetWeek, true, new List<AdministrativeSanction>());
+                    Association ca = new Association(++maxAdmId, c.Name(), _associationsLogo[c], c, fifa, c.resetWeek, true, new List<AdministrativeSanction>(), false);
                     fifa.associations.Add(ca);
 
                     foreach (XElement e3 in e2.Descendants("Country"))
@@ -617,7 +617,7 @@ namespace tm
                         }
 
                         Country ct = new Country(_kernel.NextIdCountry(), countrydBName, countryName, l, countryShape, countryResetWeek, sanctions);
-                        Association adCountry = new Association(++maxAdmId, ct.Name(), ct.Flag, ct, ca, ct.resetWeek, false, sanctions);
+                        Association adCountry = new Association(++maxAdmId, ct.Name(), ct.Flag, ct, ca, ct.resetWeek, false, sanctions, true);
                         ct.associations.Add(adCountry);
                         ca.associations.Add(adCountry);
 
@@ -637,7 +637,7 @@ namespace tm
                             string administrationName = e4.Attribute("name").Value;
                             int administrationId = int.Parse(e4.Attribute("id").Value);
                             int administrationParent = e4.Attribute("parent") != null ? int.Parse(e4.Attribute("parent").Value) : 0;
-                            Association ad = new Association(administrationId, administrationName, "", ct, null, ct.resetWeek, false, new List<AdministrativeSanction>());
+                            Association ad = new Association(administrationId, administrationName, "", ct, null, ct.resetWeek, false, new List<AdministrativeSanction>(), false);
                             if (administrationParent > 0)
                             {
                                 ct.GetAssociation(administrationParent).associations.Add(ad);

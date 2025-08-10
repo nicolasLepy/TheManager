@@ -102,6 +102,10 @@ namespace tm
         private List<List<Association>> _archivalAssociationRanking;
         [DataMember]
         private List<InternationalDates> _internationalDates;
+        [DataMember]
+        private bool _stateAssociation;
+
+        public bool isStateAssociation => _stateAssociation;
 
         /// <summary>
         /// As association ranking can be long to be computed (and change only at the end of the season), ranking is stored here to be reused without computing all ranking
@@ -170,6 +174,20 @@ namespace tm
             return res;
         }
 
+        public Association ClosestStateAssociation()
+        {
+            Association res = null;
+            if (isStateAssociation)
+            {
+                res = this;
+            }
+            else if(parent != null)
+            {
+                res = parent.ClosestStateAssociation();
+            }
+            return res;
+        }
+
         public Association()
         {
             _associations = new List<Association>();
@@ -183,10 +201,11 @@ namespace tm
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
             _administrativeSanctionsDefinitions = new List<AdministrativeSanction>();
+            _stateAssociation = false;
 
         }
 
-        public Association(int id, string name, string logo, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions, List<AdministrativeSanction> sanctionsDefinitions)
+        public Association(int id, string name, string logo, ILocalisation localisation, Association parent, int resetWeek, bool enableInternationalClubsCompetitions, List<AdministrativeSanction> sanctionsDefinitions, bool isStateAssociation)
         {
             Id = id;
             _name = name;
@@ -206,6 +225,7 @@ namespace tm
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
             _administrativeSanctionsDefinitions = sanctionsDefinitions;
+            _stateAssociation = isStateAssociation;
 
         }
 
@@ -1020,6 +1040,57 @@ namespace tm
                 }
             }
             return res;
+        }
+
+        /// <summary>
+        /// Rescrue the best possible club from a league to the upper league.
+        /// </summary>
+        /// <param name="leagueSystem">League system</param>
+        /// <param name="candidates">List of club candidates to be rescrued</param>
+        /// <param name="indexLevelRepechage">League index where a club is rescrued</param>
+        /// <param name="round">Source round where club is rescrued</param>
+        /// <param name="clubsCantBeSaved">List of club who can't be rescrued</param>
+        private void RescrueTeam(List<Club>[] leagueSystem, List<Club> candidates, int indexLevelRepechage, Round round, List<Club> clubsCantBeSaved)
+        {
+            bool found = false;
+            int j = 0;
+            Console.WriteLine(candidates.Count + " candidates");
+            while (!found && j < candidates.Count)
+            {
+                Club candidate = candidates[j];
+                ReserveClub candidateAsReserve = candidate as ReserveClub;
+                //TODO: Rules check (doublon ?)
+                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !UtilsTournaments.ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
+                {
+                    found = true;
+                    leagueSystem[indexLevelRepechage].Remove(candidate);
+                    leagueSystem[indexLevelRepechage - 1].Add(candidate);
+                    Console.WriteLine("[Repêchage] " + candidate.name + " (" + Leagues()[indexLevelRepechage].name + " -> " + Leagues()[indexLevelRepechage - 1].name + ")");
+                }
+                else
+                {
+                    Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + Leagues()[indexLevelRepechage].name + ")");
+                }
+                j++;
+            }
+        }
+
+        public int GetLastLeagueLevelWithoutReserves()
+        {
+            int level = -1;
+            foreach (Tournament t in Tournaments())
+            {
+                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted) && t.level > level)
+                {
+                    level = t.level;
+                }
+            }
+            return level;
+        }
+
+        public void ClearAdministrativeRetrogradationsCache()
+        {
+            _cacheAdministrativeRetrogradationsChanges = null;
         }
     }
 }

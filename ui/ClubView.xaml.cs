@@ -180,7 +180,7 @@ namespace TheManager_GUI
                 ViewUtils.AddElementToGrid(gridChampionshipHistory, textGoalsDifference, gridChampionshipHistory.RowDefinitions.Count - 1, 9);
             }
 
-            List<Tournament> cups = new List<Tournament>(club.Country().Cups());
+            List<Tournament> cups = new List<Tournament>(club.Association().ClosestStateAssociation().Cups());
             foreach(Association a in Session.Instance.Game.kernel.GetAllAssociations())
             {
                 if(club.Country().GetCountryAssociation().parent == a || a.parent == null)

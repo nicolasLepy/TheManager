@@ -558,7 +558,7 @@ namespace tm
                 if(reserveCount > 0)
                 {
                     ReserveClub upperReserve = clubReserve.FannionClub.reserves[reserveCount - 1];
-                    Tournament up = club.Country().League(baseLevel - 1);
+                    Tournament up = club.Association().ClosestStateAssociation().League(baseLevel - 1);
                     Round r = up.rounds[0];
                     //TODO: Two reserves in the same league
                     if(r.clubs.Contains(upperReserve))
@@ -722,6 +722,7 @@ namespace tm
 
         public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, Association association, Tournament from, Round round, bool reservesCantBePromoted, int totalRelegations, int groupsCount)
         {
+            
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
             List<int> fixedRelegations = new List<int>(); // Contains ranking of teams that can't be saved
 

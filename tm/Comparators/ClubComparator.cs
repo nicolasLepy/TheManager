@@ -152,13 +152,13 @@ namespace tm
                     Round yChampionship;
                     if(_attribute == ClubAttribute.PAST_RANKING)
                     {
-                        xChampionship = (from Tournament t in x.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(x) select t.LastEdition().rounds[0]).FirstOrDefault();
-                        yChampionship = (from Tournament t in y.Country().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(y) select t.LastEdition().rounds[0]).FirstOrDefault();
+                        xChampionship = (from Tournament t in x.Association().ClosestStateAssociation().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(x) select t.LastEdition().rounds[0]).FirstOrDefault();
+                        yChampionship = (from Tournament t in y.Association().ClosestStateAssociation().Leagues() where t.previousEditions.Count > 0 && t.LastEdition().rounds.Count > 0 && t.LastEdition().rounds[0].clubs.Contains(y) select t.LastEdition().rounds[0]).FirstOrDefault();
                     }
                     else
                     {
-                        xChampionship = (from Tournament t in x.Country().Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(x) select t.rounds[0]).FirstOrDefault();
-                        yChampionship = (from Tournament t in y.Country().Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(y) select t.rounds[0]).FirstOrDefault();
+                        xChampionship = (from Tournament t in x.Association().ClosestStateAssociation().Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(x) select t.rounds[0]).FirstOrDefault();
+                        yChampionship = (from Tournament t in y.Association().ClosestStateAssociation().Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(y) select t.rounds[0]).FirstOrDefault();
                     }
                     if (xChampionship != default(Round) && yChampionship != default(Round))
                     {

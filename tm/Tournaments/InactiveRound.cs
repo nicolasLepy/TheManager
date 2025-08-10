@@ -257,7 +257,7 @@ namespace tm
                 int level = Tournament.level - 1;
                 while (upperGroupRound == null && level > 0)
                 {
-                    upperGroupRound = (_clubs[0].Country().League(level)?.rounds[0] as GroupsRound);
+                    upperGroupRound = (_clubs[0].Association().ClosestStateAssociation().League(level)?.rounds[0] as GroupsRound);
                     if (upperGroupRound != null && upperGroupRound.RandomDrawingMethod != RandomDrawingMethod.Administrative)
                     {
                         upperGroupRound = null;

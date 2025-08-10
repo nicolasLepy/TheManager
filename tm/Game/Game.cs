@@ -307,11 +307,11 @@ namespace tm
         /// <summary>
         /// Manage departures of journalists from a year to the next year
         /// </summary>
-        public void UpdateJournalists(Country country)
+        public void UpdateJournalists(Association association)
         {
             foreach(Media m in _kernel.medias)
             {
-                if(m.country == country)
+                if(m.country.GetCountryAssociation().IsDirectConnected(association))
                 {
                     for (int i = 0; i < m.journalists.Count; i++)
                     {
@@ -398,12 +398,12 @@ namespace tm
             _gameUniverse.AddInfo(totalBudgetInGame, averagePlayerLevelInGame, playersInGame, averageClubLevelInGame, averageFormationInGame, averageGoals, (indebtedClubs+0.0f)/(clubsCount+0.0f));
         }
 
-        public void UpdateClubs(Country country)
+        public void UpdateClubs(Association association)
         {
             //Update free players level
             foreach (Player j in _kernel.freePlayers)
             {
-                if(j.nationality == country)
+                if(j.nationality.GetCountryAssociation().IsDirectConnected(association))
                 {
                     j.UpdateLevel();
                     j.UpdateStatistics();
@@ -414,7 +414,7 @@ namespace tm
             foreach (Club c in _kernel.Clubs)
             {
                 CityClub cv = c as CityClub;
-                if (cv != null && cv.Country() == country)
+                if (cv != null && cv.Association().IsDirectConnected(association))
                 {
                     Console.WriteLine("[UpdateClub]" + cv.name);
                     DNCGPassage(cv);
@@ -668,7 +668,7 @@ namespace tm
             foreach (Tournament c in _kernel.Competitions)
             {
                 int i = 0;
-                Country tc = (_kernel.LocalisationTournament(c) as Country);
+                Association ta = (_kernel.LocalisationTournament(c) as Association);
                 foreach (Round t in c.rounds)
                 {
                     DeclareFinancialSanctions(c, t);
@@ -685,9 +685,9 @@ namespace tm
                             {
                                 //t.QualifyClubs(true);
                             }
-                            else if(tc != null)
+                            else if(ta != null)
                             {
-                                tc.ClearAdministrativeRetrogradationsCache();
+                                ta.ClearAdministrativeRetrogradationsCache();
                             }
                         }
                     }
@@ -854,7 +854,33 @@ namespace tm
                 }
             }
 
-            foreach (Country c in kernel.world.GetAllCountries())
+            foreach(Association a in kernel.GetAllAssociations())
+            {
+
+                if(a.isStateAssociation)
+                {
+                    //Update clubs before resetting league. Don't update clubs if the game date is before the start of the season of this country.
+                    if (Utils.Modulo(a.resetWeek - 1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(new GameDay(a.resetWeek, true, 0, 0).ConvertToDateTime(Utils.beginningYear), _date))
+                    {
+                        UpdateClubs(a);
+                        UpdateJournalists(a);
+                    }
+
+                    if (Utils.Modulo(a.resetWeek + 5, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday)
+                    {
+                        foreach (Club countryClub in kernel.Clubs)
+                        {
+                            if (countryClub.Association().IsDirectConnected(a))
+                            {
+                                countryClub.SetTicketPrice();
+                            }
+                        }
+                    }
+                }
+
+
+            }
+            /*foreach (Country c in kernel.world.GetAllCountries())
             {
                 //Update clubs before resetting league. Don't update clubs if the game date is before the start of the season of this country.
                 if(Utils.Modulo(c.resetWeek-1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(new GameDay(c.resetWeek, true, 0, 0).ConvertToDateTime(Utils.beginningYear), _date))
@@ -874,8 +900,7 @@ namespace tm
                         }
                     }
                 }
-
-            }
+            }*/
 
             List<NationalTeam> nationalTeams = GetAllNationalTeams();
             //Check every international window

@@ -1119,9 +1119,8 @@ namespace tm
                 if (additionalTeams >= currentTeamsCount)
                 {
                     Utils.Debug("Suffisament d'équipes disponibles pour les exigences du tour");
-
                     //On garde le nombre d'équipes maximales des ligues sans équipes réserves : leur structure ne changera pas avec les années, on garde tout (ex. le N1 au 5ème tour avec les 18 équipes au lieu de 10 équipes calculés avec la méthode du ratio)
-                    int lastLevelWithoutReserves = (Session.Instance.Game.kernel.LocalisationTournament(this) as Country).GetLastLeagueLevelWithoutReserves();
+                    int lastLevelWithoutReserves = (Session.Instance.Game.kernel.LocalisationTournament(this) as Association).GetLastLeagueLevelWithoutReserves();
                     List<LeagueCupApparition> lcaAddedByAnticipation = new List<LeagueCupApparition>();
                     foreach (LeagueCupApparition lca in leagueCupApparitions)
                     {
@@ -1446,7 +1445,8 @@ namespace tm
                     InitializeHost();
                 }
             }
-            if(!isChampionship && !IsInternational() && (Session.Instance.Game.kernel.LocalisationTournament(this) as Country).LeagueSystemWithReserves())
+            Association localisation = Session.Instance.Game.kernel.LocalisationTournament(this) as Association;
+            if (!isChampionship && !IsInternational() && localisation.LeagueSystemWithReserves())
             {
                 UpdateCupQualifications();
             }
@@ -2044,7 +2044,7 @@ namespace tm
         public bool IsInternational()
         {
             ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
-            return localisation as Continent != null || localisation as Association != null;
+            return localisation as Continent != null || (localisation as Association != null && !(localisation as Association).isStateAssociation);
         }
 
         public bool IsInvolved(Club c)
