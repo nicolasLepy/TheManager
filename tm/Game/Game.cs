@@ -171,14 +171,6 @@ namespace tm
             _kernel = kernel;
         }
 
-        //TODELETE
-        public DateTime GetBeginDate(Country c)
-        {
-            GameDay begin = new GameDay(c.resetWeek, true, 0, 0);
-            DateTime res = begin.ConvertToDateTime(begin.WeekNumber > Utils.defaultStartWeek ? Utils.beginningYear - 1 : Utils.beginningYear);
-            return res;
-        }
-
         public DateTime GetBeginDate(Association a)
         {
             GameDay begin = new GameDay(a.resetWeek, true, 0, 0);

@@ -107,7 +107,7 @@ namespace TheManager_GUI
             lbBudget.Content = FindResource("str_budget").ToString() + " : " + Utils.FormatMoney((club as CityClub).budget);
             lbCountry.Content = club.Country().Name();
             lbStatus.Content = FindResource(Utils.ClubStatus2ResourceString(club.status)).ToString();
-            DateTime beginDate = Session.Instance.Game.GetBeginDate(club.Country());
+            DateTime beginDate = Session.Instance.Game.GetBeginDate(club.Association());
             lbBeginDate.Content = string.Format("{0} : {1}", FindResource("str_startDate").ToString(), beginDate.ToShortDateString());
 
             FillSquad(club);
@@ -154,7 +154,7 @@ namespace TheManager_GUI
             if(club != null)
             {
                 Session.Instance.Game.club = club as CityClub;
-                Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Country()));
+                Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(club.Association()));
                 Manager manager = new Manager(Session.Instance.Game.kernel.NextIdPerson(), prenom, nom, 70, birthday, nationality);
                 Session.Instance.Game.club.ChangeManager(manager);
                 MainMenuView view = new MainMenuView();

@@ -389,7 +389,7 @@ namespace TheManager_GUI
             PlayersView view = new PlayersView(players, 1, true, true, true, false, true, true, false, false, false, true, false, false, false, false, false, false, false, false, true);
             view.Full(spClubPlayers);
 
-            DateTime beginDate = Session.Instance.Game.GetBeginDate(club.Country());
+            DateTime beginDate = Session.Instance.Game.GetBeginDate(club.Association());
 
             tbClubBudget.Text = Utils.FormatMoney((club as CityClub).budget);
             tbClubCountry.Text = club.Country().Name();
@@ -414,7 +414,7 @@ namespace TheManager_GUI
                 }
 
                 Session.Instance.Game.club = selectedClub as CityClub;
-                Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(selectedClub.Country()));
+                Session.Instance.Game.SetBeginDate(Session.Instance.Game.GetBeginDate(selectedClub.Association()));
                 Manager manager = new Manager(Session.Instance.Game.kernel.NextIdPerson(), firstName, lastName, 70, birthday, selectedCountry);
                 Session.Instance.Game.club.ChangeManager(manager);
                 MainMenuView view = new MainMenuView();

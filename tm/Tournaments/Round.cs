@@ -15,11 +15,11 @@ namespace tm
 
     public enum Rule
     {
+        Invalid,
         AtHomeIfTwoLevelDifference,
         OnlyFirstTeams,
         ReservesAreNotPromoted,
-        OneClubByCountryInGroup,
-        OneTeamByContinentInGroup,
+        OneTeamByAssociationInGroup,
         HostedByOneAssociation,
         UltramarineTeamsPlayHomeOrAway,
         UltramarineTeamsPlayAway,

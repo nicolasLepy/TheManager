@@ -13,6 +13,7 @@ using static System.Collections.Specialized.BitVector32;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
 using System.Data.Entity.ModelConfiguration.Conventions;
+using System.Windows.Documents;
 
 namespace tm
 {
@@ -1492,11 +1493,15 @@ namespace tm
                     }
                 }
                 CityClub cityClub = c as CityClub;
+                
                 if(cityClub != null)
                 {
                     if (cityClub.city == null)
                     {
                         Country country = cityClub.Championship != null ? (Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Association).localisation as Country : _kernel.world.continents[1].countries[0];
+                        if(country == _kernel.world.continents[1].countries[0])
+                        {
+                        }
                         if (country.cities.Count == 0)
                         {
                             country.cities.Add(new City(_kernel.NextIdCity(), country.Name(), 0, 0, 0));
@@ -1971,11 +1976,8 @@ namespace tm
                 case "RESERVES_NE_MONTENT_PAS":
                     rule = Rule.ReservesAreNotPromoted;
                     break;
-                case "UN_CLUB_PAR_PAYS_GROUPE":
-                    rule = Rule.OneClubByCountryInGroup;
-                    break;
-                case "ONE_TEAM_BY_CONTINENT_IN_GROUP":
-                    rule = Rule.OneTeamByContinentInGroup;
+                case "ONE_TEAM_BY_ASSOCIATION_PER_GROUP":
+                    rule = Rule.OneTeamByAssociationInGroup;
                     break;
                 case "HOSTED_BY_ONE_COUNTRY":
                     rule = Rule.HostedByOneAssociation;
@@ -1993,8 +1995,12 @@ namespace tm
                     rule = Rule.BottomTeamNotEligibleForRepechage;
                     break;
                 default:
-                    rule = Rule.OnlyFirstTeams;
+                    rule = Rule.Invalid;
                     break;
+            }
+            if (rule == Rule.Invalid)
+            {
+                throw new Exception("Error parsing rule : Unknown rule (" + value + ")");
             }
             return rule;
         }

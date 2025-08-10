@@ -188,6 +188,27 @@ namespace tm
             return res;
         }
 
+        /// <summary>
+        /// Get the association who is the direct children of an association
+        /// For exemple : When association=Europe, District of Côte d'Or will return France
+        /// For exemple : When association=World, Spain will return Europe
+        /// </summary>
+        /// <param name="association"></param>
+        /// <returns></returns>
+        public Association GetRepresentingAssociation(Association association)
+        {
+            Association res = null;
+            if(association.associations.Contains(this))
+            {
+                res = this;
+            }
+            else if(parent != null)
+            {
+                res = parent.GetRepresentingAssociation(association);
+            }
+            return res;
+        }
+
         public Association()
         {
             _associations = new List<Association>();
