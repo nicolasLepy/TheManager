@@ -108,14 +108,14 @@ namespace TheManager_GUI
 
         public void CheckDuplicates()
         {
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("France"));
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Martinique"));
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Guadeloupe"));
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Réunion"));
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Guyane"));
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Mayotte"));
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Tahiti"));
-            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Country("Nouvelle-Calédonie"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("France"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("Martinique"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("Guadeloupe"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("Réunion"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("Guyane"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("Mayotte"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("Tahiti"));
+            Utils.CheckDuplicates(Session.Instance.Game.kernel.String2Association("Nouvelle-Calédonie"));
 
         }
 

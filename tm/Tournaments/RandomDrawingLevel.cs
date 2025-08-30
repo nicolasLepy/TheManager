@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentNHibernate.Testing.Values;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,41 @@ using tm.Comparators;
 
 namespace tm
 {
+
+    public struct AssociationCount
+    {
+        public Association association;
+        public int count;
+    }
+
+    public struct GroupComposition
+    {
+        public int id;
+        public int associationOccurences;
+        public int groupSize;
+    }
+
+    public class AssociationCountComparator : IComparer<AssociationCount>
+    {
+        public int Compare(AssociationCount x, AssociationCount y)
+        {
+            return y.count - x.count;
+        }
+    }
+
+    public class GroupCompositionComparator : IComparer<GroupComposition>
+    {
+        public int Compare(GroupComposition x, GroupComposition y)
+        {
+            int res = x.associationOccurences - y.associationOccurences;
+            if(res == 0)
+            {
+                res = x.groupSize - y.groupSize;
+            }
+            return res;
+        }
+    }
+
     public class RandomDrawingLevel : IRandomDrawing
     {
         private readonly GroupsRound _round;
@@ -16,12 +52,251 @@ namespace tm
         /// Association holding the tournament
         /// </summary>
         private readonly Association _masterAssociation;
+        private readonly Dictionary<Club, float> _clubCoefficients;
 
-        public RandomDrawingLevel(GroupsRound tour, ClubAttribute attribute)
+        private readonly Dictionary<Club, Association> _associationMap;
+        private readonly Dictionary<Club, int> _potMap;
+
+        public RandomDrawingLevel(GroupsRound round, ClubAttribute attribute)
         {
-            _round = tour;
+            _round = round;
             _attribute = attribute;
             _masterAssociation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Association;
+            _clubCoefficients = null;
+            _associationMap = new Dictionary<Club, Association>();
+            _potMap = new Dictionary<Club, int>();
+        }
+
+        public RandomDrawingLevel(GroupsRound round, Dictionary<Club, float> coefficients)
+        {
+            _round = round;
+            _clubCoefficients = coefficients;
+            _masterAssociation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Association;
+            _associationMap = new Dictionary<Club, Association>();
+            _potMap = new Dictionary<Club, int>();
+        }
+
+        private void InitializeAssociationMap(List<Club> clubs)
+        {
+            _associationMap.Clear();
+            foreach(Club club in clubs)
+            {
+
+                Association a;
+                if (_round.rules.Contains(Rule.OneTeamByAssociationInGroup))
+                {
+                    a = club.Association().GetRepresentingAssociation(_masterAssociation);
+                }
+                else
+                {
+                    a = _masterAssociation;
+                }
+                _associationMap[club] = a;
+            }
+        }
+
+        private void InitializePotMap(List<Club>[] clubs)
+        {
+            _potMap.Clear();
+            int i = 0;
+            foreach(List<Club> group in clubs)
+            {
+                i++;
+                foreach(Club club in group)
+                {
+                    _potMap[club] = i;
+                }
+            }
+        }
+
+        public List<Club>[] SortAndShuffle(List<Club>[] clubs, int potsCount)
+        {
+            List<Club>[] res = new List<Club>[potsCount];
+
+            for (int i = 0; i < potsCount; i++)
+            {
+                List<Club> pot = new List<Club>(clubs[i]);
+                pot.Shuffle();
+                res[i] = pot;
+            }
+
+            return res;
+
+        }
+
+        private int CountAssociation(List<Club> group, Association association)
+        {
+            int res = 0;
+            foreach(Club c in group)
+            {
+                if (_associationMap[c] == association)
+                {
+                    res++;
+                }
+            }
+            return res;
+        }
+
+        private bool ContainsTeamOfPot(List<Club> group, int pot)
+        {
+            bool res = false;
+
+            foreach(Club c in group)
+            {
+                if (_potMap[c] == pot)
+                {
+                    res = true;
+                }
+            }
+
+            return res;
+        }
+
+        private List<GroupComposition> AssociationPresenceByGroup(List<Club>[] groups, Association association)
+        {
+            List<GroupComposition> res = new List<GroupComposition>();
+
+            for(int i = 0; i< groups.Length; i++)
+            {
+                int associationOccurences = CountAssociation(groups[i], association);
+                GroupComposition gc = new GroupComposition()
+                {
+                    id = i,
+                    associationOccurences = associationOccurences,
+                    groupSize = groups[i].Count
+                };
+                res.Add(gc);
+            }
+
+            res.Sort(new GroupCompositionComparator());
+            return res;
+        }
+
+        private int GetNextGroup(List<Club>[] groups, Club club)
+        {
+            int res = -1;
+            List<int> possibleGroups = new List<int>();
+            for(int i = 0; i < groups.Length; i++)
+            {
+                if (!ContainsTeamOfPot(groups[i], _potMap[club]))
+                {
+                    possibleGroups.Add(i);
+                }
+            }
+            if(possibleGroups.Count > 0)
+            {
+                List<int> bestPossibleGroups = new List<int>();
+
+                List<GroupComposition> groupsCompositionAll = AssociationPresenceByGroup(groups, _associationMap[club]);
+                List<GroupComposition> groupsComposition = new List<GroupComposition>();
+                foreach(GroupComposition gc in groupsCompositionAll)
+                {
+                    if(possibleGroups.Contains(gc.id))
+                    {
+                        groupsComposition.Add(gc);
+                    }
+                }
+                int refAssociationOccurences = groupsComposition[0].associationOccurences;
+                foreach(GroupComposition gc in groupsComposition)
+                {
+                    if(possibleGroups.Contains(gc.id) && gc.associationOccurences == refAssociationOccurences)
+                    {
+                        bestPossibleGroups.Add(gc.id);
+                    }
+                }
+                res = bestPossibleGroups[Session.Instance.Random(bestPossibleGroups.Count)];
+            }
+
+            return res;
+        }
+
+        private List<Club>[] ReorderGroups(List<Club>[] groups)
+        {
+            IEnumerable<List<Club>> sorted = groups.OrderByDescending(x => x.Count);
+            List<Club>[] newGroups = new List<Club>[groups.Length];
+            int i = 0;
+            foreach(List<Club> clubs in sorted)
+            {
+                newGroups[i++] = clubs;
+            }
+
+            if(_round.rules.Contains(Rule.HostedByOneAssociation))
+            {
+                List<Association> hosts = _round.Tournament.Hosts();
+                List<int> groupsWithHosts = new List<int>();
+                for(int g = 0; g < groups.Length; g++)
+                {
+                    foreach(Club c in groups[g])
+                    {
+                        if (hosts.Contains(c.Association().ClosestStateAssociation()))
+                        {
+                            groupsWithHosts.Add(g);
+                        }
+                    }
+                }
+                if(groupsWithHosts.Count == 1)
+                {
+                    List<Club> temp = newGroups[groupsWithHosts[0]];
+                    newGroups[groupsWithHosts[0]] = newGroups[0];
+                    newGroups[0] = temp;
+                }
+            }
+
+            return newGroups;
+        }
+
+        private List<Club>[] Draw(List<Club> pool, int groupsCount, List<AssociationCount> associations)
+        {
+            List<Club>[] groups = new List<Club>[groupsCount];
+            for(int i = 0; i < groupsCount; i++)
+            {
+                groups[i] = new List<Club>();
+            }
+            foreach(AssociationCount ac in associations)
+            {
+                List<Club> associationTeams = FilterByAssociation(pool, ac.association);
+                foreach(Club club in associationTeams)
+                {
+                    int nextGroup = GetNextGroup(groups, club);
+                    groups[nextGroup].Add(club);
+                }
+            }
+            groups = ReorderGroups(groups);
+            return groups;
+        }
+
+        private List<Club> FilterByAssociation(List<Club> clubs, Association association)
+        {
+            List<Club> result = new List<Club>();
+            foreach(Club club in clubs)
+            {
+                if (_associationMap[club] == association)
+                {
+                    result.Add(club);
+                }
+            }
+            return result;
+        }
+
+        private List<AssociationCount> CountAssociations(List<Club> teams)
+        {
+            Dictionary<Association, int> associations = new Dictionary<Association, int>();
+            foreach(Club club in teams)
+            {
+                if (!associations.ContainsKey(_associationMap[club]))
+                {
+                    associations[_associationMap[club]] = 0;
+                }
+                associations[_associationMap[club]]++;
+            }
+
+            List<AssociationCount> ac = new List<AssociationCount>();
+            foreach(KeyValuePair<Association, int> kvp in associations)
+            {
+                ac.Add(new AssociationCount() { association = kvp.Key, count = kvp.Value });
+            }
+            ac.Sort(new AssociationCountComparator());
+            return ac;
         }
 
         private Dictionary<Association, int> AssociationsRepresented()
@@ -39,12 +314,12 @@ namespace tm
             return representations;
         }
 
-        public void RandomDrawing()
+        private List<Club> SortClubsAttribute(List<Club> clubs, ClubAttribute attribute)
         {
-            List<Club> pot = new List<Club>(_round.clubs);
+            List<Club> pot = new List<Club>(clubs);
             try
             {
-                pot.Sort(new ClubComparator(_attribute, false));
+                pot.Sort(new ClubComparator(attribute, false));
                 if (pot[0] as NationalTeam != null)
                 {
                     List<NationalTeam> nationalsTeams = new List<NationalTeam>();
@@ -64,35 +339,77 @@ namespace tm
             {
                 Utils.Debug("Le tri pour " + _round.name + "(" + _round.Tournament.name + " de type niveau a echoué");
             }
+            return pot;
+        }
+
+        private List<Club> SortClubsCoefficient(List<Club> clubs, Dictionary<Club, float> coefficients)
+        {
+            List<Club> pot = new List<Club>(clubs);
+            pot.Sort(new CoefficientComparator<Club>(coefficients));
+            return pot;
+        }
+
+        private List<Club> SortClubs(List<Club> clubs, ClubAttribute attribute)
+        {
+            if(_clubCoefficients != null)
+            {
+                return SortClubsCoefficient(clubs, _clubCoefficients);
+            }
+            else
+            {
+                return SortClubsAttribute(clubs, attribute);
+            }
+        }
+
+        public void RandomDrawing()
+        {
+            List<Club> pool = SortClubs(_round.clubs, _attribute);
+            List<Club>[] pots = CreatePots(pool);
+            InitializeAssociationMap(pool);
+            InitializePotMap(pots);
+            List<AssociationCount> associations = CountAssociations(pool);
+            List<Club>[] groups = Draw(pool, _round.groupsCount, associations);
+            for (int i = 0; i < _round.groupsCount; i++)
+            {
+                _round.groups[i].Clear();
+                _round.groups[i].AddRange(groups[i]);
+            }
+        }
+        
+        public List<Club>[] CreatePots(List<Club> clubsSorted)
+        {
+            int minTeamsByGroup = _round.clubs.Count / _round.groupsCount;
+            int maxTeamsByGroup = (int)Math.Ceiling(_round.clubs.Count / (_round.groupsCount + 0.0));
+
+            int numberOfPots = _round.clubs.Count / _round.groupsCount;
+            if (_round.clubs.Count % _round.groupsCount != 0)
+            {
+                numberOfPots++;
+            }
+            int maxTeamsByPot = _round.groupsCount;
+
+            List<Club>[] pots = new List<Club>[numberOfPots];
+            for(int i = 0; i < numberOfPots; i++)
+            {
+                pots[i] = new List<Club>();
+            }
+
+            for(int i = 0; i < clubsSorted.Count; i++)
+            {
+                int potNumber = i / maxTeamsByPot;
+                pots[potNumber].Add(clubsSorted[i]);
+            }
+
+            return pots;
+
+        }
+
+        /*public void RandomDrawingOld()
+        {
+            List<Club> pot = SortClubs(_round.clubs, _attribute);
             int minTeamsByGroup = _round.clubs.Count / _round.groupsCount;
 
-            List<Club>[] baseHats = new List<Club>[minTeamsByGroup];
-
-            //Some groups will get one more team
-            if (_round.clubs.Count % _round.groupsCount > 0)
-            {
-                baseHats = new List<Club>[minTeamsByGroup + 1];
-            }
-            int ind = 0;
-            for (int i = 0; i < minTeamsByGroup; i++)
-            {
-                baseHats[i] = new List<Club>();
-                for (int j = 0; j < _round.groupsCount; j++)
-                {
-                    baseHats[i].Add(pot[ind]);
-                    ind++;
-                }
-
-            }
-            //Create last hat if there is remaining teams
-            if (_round.clubs.Count % _round.groupsCount > 0)
-            {
-                baseHats[baseHats.Length - 1] = new List<Club>();
-                for (int j = _round.groupsCount * minTeamsByGroup; j < _round.clubs.Count; j++)
-                {
-                    baseHats[baseHats.Length - 1].Add(pot[j]);
-                }
-            }
+            List<Club>[] baseHats = CreatePots(pot);
 
             //Shuffle hats because of the case 2
             for (int i = 0; i < baseHats.Count(); i++)
@@ -120,10 +437,8 @@ namespace tm
                     for (int i = 0; i < _round.groupsCount; i++)
                     {
 
-                        //Create constraints dictionnary. Specify for each continent or country minimum and maximum numbers of teams on each group to respect rules.
+                        //Create constraints dictionnary. Specify for each association minimum and maximum numbers of teams on each group to respect rules.
                         //Only used if round include OneTeamByAssociation rule
-                        Dictionary<ILocalisation, List<int>> constraintsContinents = new Dictionary<ILocalisation, List<int>>();
-                        Dictionary<ILocalisation, List<int>> constraintsCountry = new Dictionary<ILocalisation, List<int>>();
                         Dictionary<Association, List<int>> constraintsAssociations = new Dictionary<Association, List<int>>();
 
                         if(_round.rules.Contains(Rule.OneTeamByAssociationInGroup))
@@ -179,11 +494,11 @@ namespace tm
                         }
                     }
                 //}
-                /*catch(Exception e)
+                catch(Exception e)
                 {
                     Utils.Debug(_round.Tournament.name + " (" + _round.name + ") Echec du tirage au sort de ce tour. Nouvelle tentative");
                     succeed = false;
-                }*/
+                }
             }
         }
 
@@ -256,6 +571,6 @@ namespace tm
                 }
             }
             return res;
-        }
+        }*/
     }
 }

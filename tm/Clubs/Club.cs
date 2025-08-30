@@ -142,8 +142,9 @@ namespace tm
         {
             float res = 0;
 
-            Continent continent = Country().Continent;
-            Association continentalAssociation = Session.Instance.Game.kernel.GetAssociation(continent);
+            Association continentalAssociation = Association().ClosestStateAssociation().parent;
+            //Continent continent = Country().Continent;
+            //Association continentalAssociation = Session.Instance.Game.kernel.GetAssociation(continent);
             int tournamentsCount = continentalAssociation.ContinentalTournamentsCount;
             for (int i = 1; i <= tournamentsCount; i++)
             {
@@ -255,12 +256,12 @@ namespace tm
         public string extendedName(Tournament from, int year)
         {
             Tournament clubChampionshipLevel = from;
-            Country country = Country();
+            Association association = Association();
             string res = shortName.Length > 10 ? shortName.Substring(0, 10) : shortName;
             res = shortName;
             foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
             {
-                if(Session.Instance.Game.kernel.LocalisationTournament(c) == country && c.isChampionship && c.previousEditions.ContainsKey(year))
+                if(association.IsDirectConnected(Session.Instance.Game.kernel.LocalisationTournament(c)) && c.isChampionship && c.previousEditions.ContainsKey(year))
                 {
                     if (c.previousEditions[year].rounds[0].clubs.Contains(this))
                     {
@@ -617,6 +618,8 @@ namespace tm
         {
             return name;
         }
+
+
 
 
     }

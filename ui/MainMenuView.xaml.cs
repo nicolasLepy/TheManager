@@ -169,7 +169,7 @@ namespace TheManager_GUI
             bool ok = true;
 
             bool autosaveYear = _game.date.Year <= 2028;// || _game.date.Year % 4 == 0;
-            bool checkDate = (_game.kernel.String2Country("France").Leagues().Count > 5 && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[5].rounds[0].DateEndRound().AddDays(-1))) || (_game.kernel.String2Country("France").Leagues().Count < 5 && Utils.CompareDates(_game.date, _game.kernel.String2Country("France").Leagues()[0].rounds[0].DateEndRound().AddDays(-1)));
+            bool checkDate = (_game.kernel.String2Association("France").Leagues().Count > 5 && Utils.CompareDates(_game.date, _game.kernel.String2Association("France").Leagues()[5].rounds[0].DateEndRound().AddDays(-1))) || (_game.kernel.String2Association("France").Leagues().Count < 5 && Utils.CompareDates(_game.date, _game.kernel.String2Association("France").Leagues()[0].rounds[0].DateEndRound().AddDays(-1)));
             withAutosave = false;
             if (withAutosave && autosaveYear && checkDate)
             {
@@ -304,7 +304,7 @@ namespace TheManager_GUI
 
         private void FillTournamentsTreeView()
         {
-            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvTournaments, _game.kernel.world, _game.kernel.worldAssociation);
+            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvTournaments, _game.kernel.worldAssociation);
             controller.TournamentValidator = (t) => true;
             controller.OnClickTournament = stackPanelNavigation_OnClick;
             controller.Fill();

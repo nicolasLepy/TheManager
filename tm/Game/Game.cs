@@ -705,17 +705,18 @@ namespace tm
 
                 if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
                 {
-                    Country ctry = kernel.LocalisationTournament(c) as Country;
-                    if (ctry != null && c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
+                    Association association = kernel.LocalisationTournament(c);
+                    //and ctry != null => association.isStateAssociation ? (if needed, probably not)
+                    if (c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
                     {
-                        List<Tournament> leagues = ctry.Leagues();
+                        List<Tournament> leagues = association.Leagues();
                         List<Club>[] clubsByLeagues = new List<Club>[leagues.Count]; //Each leagues teams
                         for (int ii = 0; ii < leagues.Count; ii++)
                         {
                             clubsByLeagues[ii] = new List<Club>(leagues[ii].nextYearQualified[0]);
                         }
-                        bool isConformCurrent = ctry.CheckLeagueConformity(clubsByLeagues);
-                        bool isConformWithRetrogradations = ctry.CheckLeagueConformity(ctry.GetAdministrativeRetrogradations());
+                        bool isConformCurrent = association.CheckLeagueConformity(clubsByLeagues);
+                        bool isConformWithRetrogradations = association.CheckLeagueConformity(association.GetAdministrativeRetrogradations());
                         if(!isConformCurrent)
                         {
                             Console.WriteLine("-- Leagues are not conform --");
@@ -732,10 +733,10 @@ namespace tm
                 //if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-2), _date))
                 if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
                 {
-                    Country ctry = kernel.LocalisationTournament(c) as Country;
-                    if(ctry != null && c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
+                    Association association = kernel.LocalisationTournament(c);
+                    if(c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
                     {
-                        ctry.ApplyAdministrativeRetrogradations();
+                        association.ApplyAdministrativeRetrogradations();
                     }
                 }
 

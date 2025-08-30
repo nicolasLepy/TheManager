@@ -238,7 +238,7 @@ namespace TheManager_GUI
                             }
                             teamPerformance = teamPerformance == null ? FindResource("str_notQualified").ToString() : teamPerformance;
 
-                            List<Country> hosts = tournament.Hosts();
+                            List<Association> hosts = tournament.Hosts();
                             gridCountryHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
                             TextBlock tbYear = ViewUtils.CreateTextBlockOpenWindow(tournament, Handlers.OpenTournament, previousEdition.Key.ToString(), StyleDefinition.styleTextSecondary, -1, -1);
                             TextBlock tbPerformance = ViewUtils.CreateTextBlock(teamPerformance, StyleDefinition.styleTextSecondary);
@@ -248,7 +248,7 @@ namespace TheManager_GUI
                             {
                                 TextBlock tbHost = ViewUtils.CreateTextBlock(hosts[0].Name(), StyleDefinition.styleTextSecondary);
                                 double logoSize = (double)FindResource(StyleDefinition.fontSizeSecondary) * 5 / 3.0;
-                                Image imageFlag = ViewUtils.CreateFlag(hosts[0], logoSize, logoSize * 0.66);
+                                Image imageFlag = ViewUtils.CreateFlag(hosts[0].ClosestStateAssociation().localisation as Country, logoSize, logoSize * 0.66);
                                 ViewUtils.AddElementToGrid(gridCountryHistory, imageFlag, gridCountryHistory.RowDefinitions.Count - 1, 1);
                                 ViewUtils.AddElementToGrid(gridCountryHistory, tbHost, gridCountryHistory.RowDefinitions.Count - 1, 2);
                             }

@@ -739,7 +739,7 @@ namespace tm
             Console.WriteLine("regularRelegationPlaces : " + totalRelegations + "-" + automaticallyRelegatedReserves + "=" + regularRelegationPlaces);
             int index = 0;
             int regularRelegationCount = 0;
-            Tournament bottomTournament = (Session.Instance.Game.kernel.LocalisationTournament(from) as Country)?.League(from.level + 1);
+            Tournament bottomTournament = Session.Instance.Game.kernel.LocalisationTournament(from).ClosestStateAssociation()?.League(from.level + 1);
             if (automaticallyRelegatedReserves > 0 && regularRelegationPlaces > 0 && bottomTournament != null)
             {
                 while (!limitReached)
@@ -970,10 +970,10 @@ namespace tm
         /// Check if a team is entered more than one time in a cup
         /// </summary>
         /// <param name="c"></param>
-        public static void CheckDuplicates(Country c)
+        public static void CheckDuplicates(Association a)
         {
             Console.WriteLine("[Search for duplicates]");
-            foreach(Tournament t in c.Cups())
+            foreach(Tournament t in a.Cups())
             {
                 foreach(Round r in t.rounds)
                 {

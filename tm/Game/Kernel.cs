@@ -137,7 +137,7 @@ namespace tm
             get
             {
                 List<Tournament> tournaments = new List<Tournament>(_worldAssociation.GetAllTournaments());
-                tournaments.AddRange(_world.GetAllTournaments());
+                //tournaments.AddRange(_world.GetAllTournaments());
                 return tournaments;
             }
         }
@@ -624,9 +624,9 @@ namespace tm
             return res;
         }*/
 
-        public ILocalisation LocalisationTournament(Tournament tournament)
+        public Association LocalisationTournament(Tournament tournament)
         {
-            ILocalisation res = null;
+            /*ILocalisation res = null;
             foreach(Continent c in _world.GetAllContinents())
             {
                 if (c.Tournaments().Contains(tournament))
@@ -641,7 +641,8 @@ namespace tm
                         res = p;
                     }
                 }
-            }
+            }*/
+            Association res = null;
             foreach (Association association in GetAllAssociations())
             {
                 if (association.tournaments.Contains(tournament))

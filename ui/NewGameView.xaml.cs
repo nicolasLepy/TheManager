@@ -258,50 +258,45 @@ namespace TheManager_GUI
                 gridCountriesSelection.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(flagSize * 1.2, GridUnitType.Pixel) });
             }
             checkBoxes = new Dictionary<Tournament, CheckBox>();
-            FillContinent(game.kernel.world, 0);
+            FillAssociation(game.kernel.worldAssociation, 0);
             CountConfiguration();
         }
 
-        private int FillContinent(Continent continent, int counter)
+        private int FillAssociation(Association association, int counter)
         {
-            if (continent.countries.Count > 0)
+
+            //Display association name only if childs have championships
+            if (association.GetAllTournaments().Count(t => t.isChampionship) > association.Tournaments().Count(t => t.isChampionship))
             {
-                TextBlock tbContinentName = ViewUtils.CreateTextBlock(continent.Name(), StyleDefinition.styleTextPlainCenter);
+                TextBlock tbContinentName = ViewUtils.CreateTextBlock(association.Name(), StyleDefinition.styleTextPlainCenter);
                 ViewUtils.AddElementToGrid(gridCountriesSelection, tbContinentName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
-                counter++;
             }
 
-            foreach (Country country in continent.countries)
+            //TODO: Only tournaments where the top level is handled by this association
+            int championships = association.tournaments.Count(p => p.isChampionship);
+            if(championships > 0)
             {
-                if(country.Tournaments().Count > 0)
+                Image imageCountry = ViewUtils.CreateFlag(association.ClosestStateAssociation().localisation as Country, flagSize, flagSize * 0.66);
+                TextBlock tbCountryName = ViewUtils.CreateTextBlock(association.Name(), StyleDefinition.styleTextPlain);
+                ViewUtils.AddElementToGrid(gridCountriesSelection, imageCountry, counter % gridCountriesRows, (counter / gridCountriesRows) * 2);
+                ViewUtils.AddElementToGrid(gridCountriesSelection, tbCountryName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2 + 1);
+                foreach (Tournament league in association.Tournaments())
                 {
-                    Image imageCountry = ViewUtils.CreateFlag(country, flagSize, flagSize * 0.66);
-                    TextBlock tbCountryName = ViewUtils.CreateTextBlock(country.Name(), StyleDefinition.styleTextPlain);
-                    ViewUtils.AddElementToGrid(gridCountriesSelection, imageCountry, counter % gridCountriesRows, (counter / gridCountriesRows) * 2);
-                    ViewUtils.AddElementToGrid(gridCountriesSelection, tbCountryName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2 + 1);
-                    foreach (Tournament league in country.Tournaments())
+                    if (league.isChampionship)
                     {
-                        if (league.isChampionship)
-                        {
-                            CheckBox cbLeague = new CheckBox();
-                            cbLeague.IsChecked = true;
-                            cbLeague.Content = league.name;
-                            cbLeague.Style = FindResource(StyleDefinition.styleCheckBox) as Style;
-                            cbLeague.Click += CheckboxLeague_Click;
-                            ViewUtils.AddElementToGrid(gridCountriesSelection, cbLeague, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
-                            checkBoxes.Add(league, cbLeague);
-                        }
+                        CheckBox cbLeague = new CheckBox();
+                        cbLeague.IsChecked = true;
+                        cbLeague.Content = league.name;
+                        cbLeague.Style = FindResource(StyleDefinition.styleCheckBox) as Style;
+                        cbLeague.Click += CheckboxLeague_Click;
+                        ViewUtils.AddElementToGrid(gridCountriesSelection, cbLeague, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
+                        checkBoxes.Add(league, cbLeague);
                     }
                 }
             }
-            if(counter > 0)
+            foreach (Association a in association.associations)
             {
-                counter++;
-            }
-
-            foreach (Continent ct in continent.continents)
-            {
-                counter = FillContinent(ct, counter);
+                counter = FillAssociation(a, counter);
             }
             return counter;
         }
@@ -425,7 +420,7 @@ namespace TheManager_GUI
 
         private void FillSelectLeague()
         {
-            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvSelectLeague, Session.Instance.Game.kernel.world, Session.Instance.Game.kernel.worldAssociation);
+            TournamentsTreeViewController controller = new TournamentsTreeViewController(tvSelectLeague, Session.Instance.Game.kernel.worldAssociation);
             controller.TournamentValidator = TreeViewSelectClubTournamentIsValid;
             controller.OnClickTournament = stackPanelNavigation_OnClick;
             controller.ContentStyle = StyleDefinition.styleTextPlain;

@@ -85,8 +85,7 @@ namespace TheManager_GUI.Views
             Grid grid = new Grid();
             InitColumns(grid);
 
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
-            Country country = localisation as Country;
+            Association association = Session.Instance.Game.kernel.LocalisationTournament(_tournament) as Association;
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);

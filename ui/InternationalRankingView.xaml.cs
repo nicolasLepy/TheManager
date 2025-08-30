@@ -136,7 +136,7 @@ namespace TheManager_GUI
             {
                 rank++;
                 List<double> oldCoeffs = new List<double>() { ctr.ClubYearCoefficient(-5), ctr.ClubYearCoefficient(-4), ctr.ClubYearCoefficient(-3), ctr.ClubYearCoefficient(-2), ctr.ClubYearCoefficient(-1) };
-                items.Add(new ControlInternationalRankingItem(ctr.name, ViewUtils.CreateFlag(Session.Instance.Game.kernel.LocalisationTournament(ctr.Championship) as Country, 27, 20), rank, 0, oldCoeffs, ctr.ClubCoefficient(), new List<int>()));
+                items.Add(new ControlInternationalRankingItem(ctr.name, ViewUtils.CreateFlag(Session.Instance.Game.kernel.LocalisationTournament(ctr.Championship).ClosestStateAssociation().localisation as Country, 27, 20), rank, 0, oldCoeffs, ctr.ClubCoefficient(), new List<int>()));
             }
 
             ControlInternationalRanking view = new ControlInternationalRanking(items, new List<string>() { "-5", "-4", "-3", "-2", "-1" }, new List<string>());

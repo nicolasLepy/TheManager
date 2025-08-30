@@ -204,10 +204,10 @@ namespace TheManager_GUI
             int zoomLevel;
             List<MapClub> mapClubs = new List<MapClub>();
 
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(tournament);
-            if (localisation as Country != null)
+            Association association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            if (association.isStateAssociation)
             {
-                zoomLevel = (localisation as Country).ShapeNumber;
+                zoomLevel = (association.ClosestStateAssociation().localisation as Country).ShapeNumber;
             }
             else
             {

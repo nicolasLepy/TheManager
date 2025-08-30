@@ -267,12 +267,12 @@ namespace tm
         /// Get hosts countries of the tournament
         /// </summary>
         /// <returns>List of hosts countries</returns>
-        public List<Country> Hosts()
+        public List<Association> Hosts()
         {
-            List<Country> hosts = new List<Country>();
+            List<Association> hosts = new List<Association>();
             foreach(Stadium stadium in _hostStadiums)
             {
-                Country country = stadium.city.Country();
+                Association country = stadium.city.Country().GetCountryAssociation();
                 if(!hosts.Contains(country))
                 {
                     hosts.Add(country);
@@ -426,8 +426,9 @@ namespace tm
         public int[] GetTeamsAtEachRound()
         {
             int[] teamsAtEachRound = new int[rounds.Count];
-            Country country = Session.Instance.Game.kernel.LocalisationTournament(this) as Country;
-            List<Tournament> otherTournaments = country != null ? country.Leagues() : Session.Instance.Game.kernel.Competitions;
+            //Country country = Session.Instance.Game.kernel.LocalisationTournament(this) as Country;
+            Association association = Session.Instance.Game.kernel.LocalisationTournament(this).ClosestStateAssociation();
+            List<Tournament> otherTournaments = association != null ? association.Leagues() : Session.Instance.Game.kernel.Competitions;
             foreach (Tournament t in otherTournaments)
             {
                 List<Round> rounds = t != this ? t.rounds : new List<Round>() { t.rounds[0] };
@@ -560,7 +561,8 @@ namespace tm
         /// </summary>
         public void UpdateLeagueCupQualifications()
         {
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            //ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
             //Contains new league apparition through competition for each rounds
             List<List<RecoverTeams>> newRecoverTeams = new List<List<RecoverTeams>>();
             //Contains new extra rounds created if necessary
@@ -568,9 +570,9 @@ namespace tm
 
             List<int> leagueLevelsRepresented = new List<int>();
 
-            if (parent.Association != null && (localisation as Country) != null)
+            if (parent.Association != null && association.isStateAssociation)
             {
-                int levelsCount = (localisation as Country).Leagues().Count;
+                int levelsCount = association.Leagues().Count;
                 int[] teamsByLevel = new int[levelsCount];
                 for(int i = 0; i < levelsCount; i++)
                 {
@@ -689,7 +691,7 @@ namespace tm
             {
                 int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
                 Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
-                List<GameDay> availableDatesAll = (localisation as Country).GetAvailableCalendarDates(this.parent.Association == null, 2, leagueLevelsRepresented, true, false);
+                List<GameDay> availableDatesAll = (association.localisation as Country).GetAvailableCalendarDates(this.parent.Association == null, 2, leagueLevelsRepresented, true, false);
                 List<GameDay> availableDates = new List<GameDay>();
                 int beginningCompetition = this._seasonBeginning.WeekNumber;
                 int beginningRounds = rounds.First().programmation.initialisation.WeekNumber;

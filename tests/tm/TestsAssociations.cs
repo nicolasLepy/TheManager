@@ -68,7 +68,7 @@ namespace tests.tm
         }
 
         [TestMethod]
-        public void TestLeagueStructureConserved()
+        public void TestLeagueStructureConservedBasicStructure()
         {
             InitGame("database_unitttests", new List<string>());
             for(int y = 0; y < TEST_YEARS; y++)
@@ -137,6 +137,80 @@ namespace tests.tm
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
                 CheckClubs(aAz);
+            }
+
+        }
+
+        [TestMethod]
+        public void TestLeagueStructureConservedFranceExtended()
+        {
+            InitGame("database_france_nat", new List<string>());
+            for (int y = 0; y < TEST_YEARS; y++)
+            {
+                for (int i = 0; i < 365; i++)
+                {
+                    Session.Instance.Game.NextDay();
+                    Session.Instance.Game.UpdateTournaments();
+                }
+
+                Country fr = Session.Instance.Game.kernel.String2Country("France");
+                Association aFr = fr.GetCountryAssociation();
+                List<Association> aLevel0 = fr.GetCountryAssociation().associations;
+
+                List<Association> aLevel1 = new List<Association>();
+                foreach (Association a in aLevel0)
+                {
+                    aLevel1.AddRange(a.GetAllChilds());
+                }
+                Assert.AreEqual(3, aLevel0.Count);
+                Assert.AreEqual("Tatooine", aLevel0[2].name);
+                Assert.AreEqual(2, aLevel1.Count);
+
+                //Check each national league have the required number of teams
+                Tournament t1 = aFr.League(1);
+
+                int numberOfTeams = t1.rounds[0].clubs.Count;
+                Assert.AreEqual(12, numberOfTeams);
+
+                Tournament t2 = aFr.League(2);
+                numberOfTeams = t2.rounds[0].clubs.Count;
+                Assert.AreEqual(numberOfTeams, 24);
+                GroupsRound r20 = t2.rounds[0] as GroupsRound;
+                Assert.AreEqual(r20.groupsCount, 3);
+                Assert.AreEqual(r20.Ranking(0).Count, 8);
+                Assert.AreEqual(r20.Ranking(1).Count, 8);
+                Assert.AreEqual(r20.Ranking(2).Count, 8);
+
+                //Check each regional league have teams of its association, and the correct number. Number of teams in the last level can vary
+                Tournament t3 = aFr.League(3);
+                Tournament t4 = aFr.League(4);
+                Tournament t5 = aFr.League(5);
+                Tournament t6 = aFr.League(6);
+
+                Dictionary<Association, int> aTeams3 = new Dictionary<Association, int>
+                {
+                    [aLevel0[2]] = 8
+                };
+
+                Dictionary<Association, int> aTeams4 = new Dictionary<Association, int>
+                {
+                    [aLevel0[2]] = 16
+                };
+
+                Dictionary<Association, int> aTeams5 = new Dictionary<Association, int>
+                {
+                    [aLevel1[0]] = 8,
+                    [aLevel1[1]] = 8
+                };
+
+
+                CheckRegionalLeague(aFr, t3, aLevel0, aTeams3);
+                CheckRegionalLeague(aFr, t4, aLevel0, aTeams4);
+                CheckRegionalLeague(aFr, t5, aLevel1, aTeams5);
+                CheckRegionalLeague(aFr, t6, aLevel1, new());
+
+                //Check each club (and eventual reserve) have a league associated, and no doublons
+                CheckClubs(aFr);
             }
 
         }

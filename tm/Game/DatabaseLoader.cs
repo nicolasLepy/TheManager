@@ -400,6 +400,7 @@ namespace tm
                             break;
                     }
                     Country playerCountry = _kernel.String2Country(e2.Attribute("pays").Value);
+                    //TODO
                     Player j = new Player(_kernel.NextIdPerson(), firstName, lastName, playerBirth, level, potential, playerCountry == null ? _kernel.String2Country("France") : playerCountry, position);
                     if (club != null)
                     {
@@ -1579,18 +1580,17 @@ namespace tm
         /// </summary>
         public void CreateRegionalPathForCups()
         {
-            foreach(Continent ct in Session.Instance.Game.kernel.world.continents)
+            foreach(Association a in Session.Instance.Game.kernel.GetAllAssociations())
             {
-                foreach(Country c in ct.countries)
+                List<Tournament> ts = new List<Tournament>(a.Tournaments());
+                foreach (Tournament t in ts)
                 {
-                    List<Tournament> ts = new List<Tournament>(c.Tournaments());
-                    foreach(Tournament t in ts)
+                    if(!t.isChampionship)
                     {
                         t.CreateRegionalPathForCup();
                     }
                 }
             }
-
         }
 
         public void GenerateRegionalCup(Country c, Association association, int level, bool reservesAllowed)

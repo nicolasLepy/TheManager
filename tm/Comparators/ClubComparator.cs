@@ -87,6 +87,44 @@ namespace tm
             return _inverted ? -1 : 1;
         }
 
+        /*public object GetAttribute(Club club, ClubAttribute attribute)
+        {
+            CityClub cc = club as CityClub;
+            switch (attribute)
+            {
+                case ClubAttribute.STADIUM:
+                    return club.stadium.capacity;
+                    break;
+                case ClubAttribute.LEVEL:
+                    return club.Level();
+                    break;
+                case ClubAttribute.POTENTIEL:
+                    return club.Potential();
+                    break;
+                case ClubAttribute.BUDGET:
+                    return (cc != null) ? cc.budget : -1;
+                    break;
+                case ClubAttribute.SPONSOR:
+                    return (cc != null) ? cc.sponsor : 0;
+                    break;
+                case ClubAttribute.CONTINENTAL_COEFFICIENT:
+                    return club.ClubCoefficient();
+                    break;
+                case ClubAttribute.ELO:
+                    return club.elo;
+                    break;
+                case ClubAttribute.PAST_RANKING:
+                case ClubAttribute.CURRENT_RANKING:
+                    break;
+                case ClubAttribute.NAME:
+                    return club.name;
+                    break;
+                case ClubAttribute.CITY_NAME:
+                    return (cc != null) ? cc.city.Name : cc.name;
+                    break;
+            }
+        }*/
+
         public int Compare(Club x, Club y)
         {
             int res;

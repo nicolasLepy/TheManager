@@ -223,6 +223,7 @@ namespace tm
             _gamesTimesWeekdays = new List<float[]>();
             _administrativeSanctionsDefinitions = new List<AdministrativeSanction>();
             _stateAssociation = false;
+            _administrativeRetrogradations = new Dictionary<Club, Tournament>();
 
         }
 
@@ -247,6 +248,7 @@ namespace tm
             _gamesTimesWeekdays = new List<float[]>();
             _administrativeSanctionsDefinitions = sanctionsDefinitions;
             _stateAssociation = isStateAssociation;
+            _administrativeRetrogradations = new Dictionary<Club, Tournament>();
 
         }
 
@@ -279,6 +281,7 @@ namespace tm
         
         /// <summary>
         /// Return True if this association is a child or the same as the association passed as an argument
+        /// Warning: returns False if 'association' is a child of self
         /// </summary>
         public bool IsDirectConnected(Association association)
         {
@@ -819,10 +822,52 @@ namespace tm
             return res;
         }
 
+        /// <summary>
+        /// Returns list of tournaments organized by associations above it
+        /// </summary>
+        /// <returns></returns>
+        public List<Tournament> TournamentsAbove(bool onlyYearPeriodicity)
+        {
+            List<Tournament> res = new List<Tournament>();
+            if(parent != null)
+            {
+                foreach(Tournament t in parent.tournaments)
+                {
+                    if((t.periodicity == 1 || !onlyYearPeriodicity) && t.name != Utils.friendlyTournamentName)
+                    {
+                        res.Add(t);
+                    }
+                }
+                res.AddRange(parent.TournamentsAbove(onlyYearPeriodicity));
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Get clubs involved in tournaments organized by associations above it
+        /// </summary>
+        /// <param name="clubs"></param>
+        /// <returns></returns>
         public List<Club> GetContinentalClubs(List<Club> clubs)
         {
             List<Club> internationalClubs = new List<Club>();
-            int level = 1;
+
+            foreach(Tournament it in TournamentsAbove(true))
+            {
+                foreach (Round r in it.rounds)
+                {
+                    foreach (Club club in clubs)
+                    {
+                        if (r.clubs.Contains(club) && !internationalClubs.Contains(club))
+                        {
+                            internationalClubs.Add(club);
+                        }
+                    }
+                }
+            }
+
+            /*
+            level = 1;
             Tournament internationalTournament = GetContinentalClubTournament(level);
             while (internationalTournament != null)
             {
@@ -837,7 +882,7 @@ namespace tm
                     }
                 }
                 internationalTournament = GetContinentalClubTournament(++level);
-            }
+            }*/
             return internationalClubs;
         }
 
@@ -1112,6 +1157,202 @@ namespace tm
         public void ClearAdministrativeRetrogradationsCache()
         {
             _cacheAdministrativeRetrogradationsChanges = null;
+        }
+
+        /// <summary>
+        /// Check if a league system is conform compared to current league systel
+        /// </summary>
+        /// <param name="clubsByLeagues">The league system</param>
+        /// <returns>True it the league system is conform, False otherwise</returns>
+        public bool CheckLeagueConformity(List<Club>[] clubsByLeagues)
+        {
+            bool res = true;
+            List<Tournament> leagues = Leagues();
+            for (int i = 0; i < leagues.Count; i++)
+            {
+                List<Club> thisYear = leagues[i].rounds[0].clubs;
+                List<Club> nextYear = clubsByLeagues[i];
+                GroupsRound leagueGroupRound = leagues[i].rounds[0] as GroupsRound;
+                int administrativeLevel = leagueGroupRound != null ? leagueGroupRound.administrativeLevel : 0;
+                if (administrativeLevel > 0)
+                {
+                    foreach (Association association in GetAssociationsLevel(administrativeLevel))
+                    {
+                        int maxLevelPossible = MaxLeagueLevelWithAssociation(association) - 1;
+                        List<Club> thisYearAssociation = UtilsTournaments.FilterAssociation(thisYear, association);
+                        List<Club> nextYearAssociation = UtilsTournaments.FilterAssociation(nextYear, association);
+                        if (thisYearAssociation.Count != nextYearAssociation.Count && i != maxLevelPossible)
+                        {
+                            Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + " (" + association.name + ") have a different number of teams");
+                            res = false;
+                        }
+                    }
+                }
+                else
+                {
+                    if (thisYear.Count != nextYear.Count)
+                    {
+                        Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + "have a different number of teams");
+                        res = false;
+                    }
+                }
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Get the bottom league level that a team of an association can reach
+        /// </summary>
+        /// <param name="division"></param>
+        /// <returns>League level (not an index !, start at 1) </returns>
+        public int MaxLeagueLevelWithAssociation(Association division)
+        {
+            List<Tournament> leagues = Leagues();
+            int i = GetLastNationalLeague().level;
+            bool leagueWithoutTeams = false;
+            int associationLevel = 0;
+            while (!leagueWithoutTeams && i < leagues.Count)
+            {
+                Round round = leagues[i].rounds[0];
+                GroupsRound groupRound = round as GroupsRound;
+                if (groupRound != null)
+                {
+                    associationLevel = groupRound.administrativeLevel;
+                }
+                Association divisionLevel = GetAssociationLevel(division, associationLevel);
+
+                leagueWithoutTeams = true;
+                //Division level can be null. Ex : Corse have only 1 association level unlike other associations
+                if (divisionLevel != null)
+                {
+                    foreach (Club c in round.clubs)
+                    {
+                        if (divisionLevel.ContainsAssociation(c.Association()))
+                        {
+                            leagueWithoutTeams = false;
+                        }
+                    }
+                }
+                if (!leagueWithoutTeams)
+                {
+                    i++;
+                }
+            }
+            return i;
+        }
+
+        /// <summary>
+        /// Just before resetting leagues, update NextYearQualified by applying administrative retrogradations
+        /// </summary>
+        public void ApplyAdministrativeRetrogradations()
+        {
+            Console.WriteLine("[ApplyAdministrativeRetrogradations] " + this.Name());
+
+            List<Tournament> leagues = Leagues();
+            List<Club>[] clubsByLeagues = GetAdministrativeRetrogradations();
+
+            for (int i = 0; i < leagues.Count; i++)
+            {
+                leagues[i].nextYearQualified[0].Clear();
+                leagues[i].nextYearQualified[0].AddRange(clubsByLeagues[i]);
+            }
+
+            _administrativeRetrogradations.Clear();
+            ClearAdministrativeRetrogradationsCache();
+        }
+
+        public List<Club>[] GetAdministrativeRetrogradations()
+        {
+            if (_cacheAdministrativeRetrogradationsChanges != null)
+            {
+                return _cacheAdministrativeRetrogradationsChanges;
+            }
+            List<Tournament> leagues = Leagues();
+            List<Club>[] clubsByLeagues = new List<Club>[leagues.Count]; //Each leagues teams
+            List<Club> clubsCantBeSaved = new List<Club>(); //Clubs that can't be saved from relegation (bottom teams of each league if this rule is activated)
+            List<int> administrativeLevels = new List<int>(); //Each leagues administrative level
+            for (int i = 0; i < leagues.Count; i++)
+            {
+                clubsByLeagues[i] = new List<Club>(leagues[i].nextYearQualified[0]);
+                ClubComparator comparator = new ClubComparator(ClubAttribute.CURRENT_RANKING, false);
+                clubsByLeagues[i].Sort(comparator);
+                Console.WriteLine(clubsByLeagues[i].Count);
+
+                //Replace raw ranking by playoff order
+                List<KeyValuePair<Club, int>> promotionPlayOffs = leagues[i].GetTopPlayOffClubs();
+                promotionPlayOffs.Reverse();
+                promotionPlayOffs.Sort(new ClubPlayoffsComparator(new List<Club>(clubsByLeagues[i])));
+                foreach (KeyValuePair<Club, int> kvpC in promotionPlayOffs)
+                {
+                    Club c = kvpC.Key;
+                    if (clubsByLeagues[i].Contains(c))
+                    {
+                        clubsByLeagues[i].Remove(c);
+                        if (c.Championship.level < leagues[i].level)
+                        {
+                            clubsByLeagues[i].Insert(0, c);
+                        }
+                        else
+                        {
+                            int j = 0;
+                            while (clubsByLeagues[i][j].Championship.level < leagues[i].level)
+                            {
+                                j++;
+                            }
+                            clubsByLeagues[i].Insert(j, c);
+                        }
+                    }
+                }
+
+
+                Console.WriteLine("=====" + leagues[i].name + "===== " + clubsByLeagues[i].Count);
+                foreach (KeyValuePair<Club, int> c in promotionPlayOffs)
+                {
+                    Console.WriteLine("[playoffs] " + c.Key.name);
+                }
+                foreach (Club c in clubsByLeagues[i])
+                {
+                    Round clubC = (from Tournament t in Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
+                    string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + GetAssociationLevel(c.Association(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
+                    Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
+                }
+                int administrativeLevel = 0;
+                if (leagues[i].rounds.Count > 0)
+                {
+                    Round firstRound = leagues[i].rounds[0];
+                    if (firstRound as GroupsRound != null)
+                    {
+                        GroupsRound gFirstRound = firstRound as GroupsRound;
+                        administrativeLevel = gFirstRound.administrativeLevel;
+                        if (firstRound.rules.Contains(Rule.BottomTeamNotEligibleForRepechage))
+                        {
+                            for (int g = 0; g < gFirstRound.groupsCount; g++)
+                            {
+                                List<Club> gRanking = gFirstRound.Ranking(g);
+                                if (gRanking.Count > 0)
+                                {
+                                    clubsCantBeSaved.Add(gRanking.Last());
+                                }
+                            }
+                        }
+                    }
+                }
+                administrativeLevels.Add(administrativeLevel);
+            }
+
+            List<Club> allClubs = new List<Club>();
+            foreach (List<Club> allClubsLevel in clubsByLeagues)
+            {
+                foreach (Club allClubLevel in allClubsLevel)
+                {
+                    if ((allClubLevel as CityClub) != null)
+                    {
+                        allClubs.Add(allClubLevel);
+                    }
+                }
+            }
+            _cacheAdministrativeRetrogradationsChanges = clubsByLeagues;
+            return clubsByLeagues;
         }
     }
 }

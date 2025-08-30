@@ -50,14 +50,14 @@ namespace tests.tm
 
             if(activeLeagues != null)
             {
-                List<Country> activeCountries = new List<Country>();
+                List<Association> activeAssociations = new List<Association>();
                 foreach(string str in activeLeagues)
                 {
-                    activeCountries.Add(Session.Instance.Game.kernel.String2Country(str));
+                    activeAssociations.Add(Session.Instance.Game.kernel.String2Association(str));
                 }
                 foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
-                    if (c.isChampionship && !activeCountries.Contains(Session.Instance.Game.kernel.LocalisationTournament(c)))
+                    if (c.isChampionship && !activeAssociations.Contains(Session.Instance.Game.kernel.LocalisationTournament(c)))
                     {
                         c.DisableTournament();
                     }

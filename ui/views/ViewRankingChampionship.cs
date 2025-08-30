@@ -53,8 +53,7 @@ namespace TheManager_GUI.Views
             /*// Get international qualifications
             // Search if the round is an archived round to get qualified teams on the right year
             // Else get qualification for the current season
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
-            Country country = localisation as Country;
+            Association association = Session.Instance.Game.kernel.LocalisationTournament(_tournament) as Association;
 
             Dictionary<Club, Qualification> continentalClubs = new Dictionary<Club, Qualification>();
             if(country != null)

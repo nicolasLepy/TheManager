@@ -29,15 +29,14 @@ namespace tm.Tournaments
         public void RandomDrawing()
         {
             Console.WriteLine("[Draw " + _round.Tournament.name + "]");
-            Country hostCountry = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Country; //TODELETE
             Association hostAssociation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Association;
             List<List<Club>> groups = new List<List<Club>>();
             List<string> groupNames = new List<string>();
-            Console.WriteLine("Host country = " + hostCountry);
+            Console.WriteLine("Host association = " + hostAssociation.name);
             Console.WriteLine("Reference ClubsByGroup = " + _round.referenceClubsByGroup);
             Console.WriteLine("ClubsByGroup = " + _round.clubs.Count / _round.groupsCount);
             //TODELETE
-            if (hostCountry != null)
+            /*if (hostCountry != null)
             {
                 int defaultMaxTeamsByGroup = _round.referenceClubsByGroup == 0 ? _round.clubs.Count / _round.groupsCount : _round.referenceClubsByGroup;
                 defaultMaxTeamsByGroup = _round.clubs.Count % _round.groupsCount != 0
@@ -67,7 +66,7 @@ namespace tm.Tournaments
                         }
                     }
                 }
-            }
+            }*/
             if (hostAssociation != null)
             {
                 int defaultMaxTeamsByGroup = _round.referenceClubsByGroup == 0 ? _round.clubs.Count / _round.groupsCount : _round.referenceClubsByGroup;

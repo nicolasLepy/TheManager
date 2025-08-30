@@ -18,7 +18,6 @@ namespace TheManager_GUI.views
     {
 
         private TreeView treeView;
-        private Continent rootNode;
         private Association rootAssociation;
 
         public Func<Tournament, bool> TournamentValidator { get; set; }
@@ -26,10 +25,9 @@ namespace TheManager_GUI.views
 
         public string ContentStyle { get; set; }
 
-        public TournamentsTreeViewController(TreeView host, Continent rootNode, Association rootAssociation)
+        public TournamentsTreeViewController(TreeView host, Association rootAssociation)
         {
             this.treeView = host;
-            this.rootNode = rootNode;
             this.rootAssociation = rootAssociation;
             ContentStyle = StyleDefinition.styleTextNavigation;
             treeView.PreviewMouseWheel += treeView_PreviewMouseWheel;
@@ -43,7 +41,6 @@ namespace TheManager_GUI.views
         public void Fill()
         {
             treeView.Items.Clear();
-            treeView.Items.Add(CreateNavigationContinent(rootNode));
             treeView.Items.Add(CreateNavigationAssociation(rootAssociation));
         }
 
@@ -77,39 +74,6 @@ namespace TheManager_GUI.views
                 spTournament.MouseLeftButtonUp += (sender, e) => OnClickTournament(sender, e, tournament);
             }
             return spTournament;
-        }
-
-        private TreeViewItem CreateNavigationContinent(Continent continent)
-        {
-            TreeViewItem treeViewItemContainer = new TreeViewItem();
-            treeViewItemContainer.Margin = new Thickness(0, 2, 0, 2);
-
-            StackPanel spTreeViewItemHeader = CreateTreeViewItemComponent(continent.Name(), Utils.Logo(continent));
-            treeViewItemContainer.Header = spTreeViewItemHeader;
-
-            foreach (Tournament t in continent.Tournaments())
-            {
-                if (TournamentValidator == null || TournamentValidator(t))
-                {
-                    treeViewItemContainer.Items.Add(CreateNavigationTournament(t));
-                }
-            }
-
-            foreach (Continent subContinent in continent.continents)
-            {
-                treeViewItemContainer.Items.Add(CreateNavigationContinent(subContinent));
-            }
-
-            foreach (Country country in continent.countries)
-            {
-                int countryValidTournaments = country.Tournaments().Where(t => TournamentValidator == null || TournamentValidator(t)).Count();
-                if (countryValidTournaments > 0)
-                {
-                    treeViewItemContainer.Items.Add(CreateNavigationCountry(country));
-                }
-            }
-
-            return treeViewItemContainer;
         }
 
         private TreeViewItem CreateNavigationAssociation(Association association)
