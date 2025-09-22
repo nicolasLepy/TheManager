@@ -60,6 +60,7 @@ namespace tests.tm
                     if (c.isChampionship && !activeAssociations.Contains(Session.Instance.Game.kernel.LocalisationTournament(c)))
                     {
                         c.DisableTournament();
+                        Console.WriteLine(String.Format("Disable %s", c.name));
                     }
                 }
             }
@@ -190,6 +191,43 @@ namespace tests.tm
                     }
                 }
             }
+        }
+
+        public Association MakeBasicStructure()
+        {
+            Association world = new Association(1, "World", "", null, null, 0, false, null, false);
+            Association europe = new Association(2, "Europe", "", null, world, 0, false, null, false);
+            world.associations.Add(europe);
+            Association france = new Association(3, "France", "", null, europe, 0, false, null, true);
+            Association spain = new Association(4, "Spain", "", null, europe, 0, false, null, true);
+            europe.associations.Add(france);
+            europe.associations.Add(spain);
+            Association bfc = new Association(5, "BFC", "", null, france, 0, false, null, false);
+            france.associations.Add(bfc);
+
+            Tournament wt1 = new Tournament(1, "WT1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament wc1 = new Tournament(2, "WC1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament et1 = new Tournament(3, "ET1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament ec1 = new Tournament(4, "EC1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament ft1 = new Tournament(5, "FT1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament fc1 = new Tournament(6, "FC1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament st1 = new Tournament(7, "ST1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament sc1 = new Tournament(8, "SC1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament bt1 = new Tournament(9, "BT1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament bc1 = new Tournament(10, "BC1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null);
+
+            world.tournaments.Add(wt1);
+            world.tournaments.Add(wc1);
+            europe.tournaments.Add(et1);
+            europe.tournaments.Add(ec1);
+            france.tournaments.Add(ft1);
+            france.tournaments.Add(fc1);
+            spain.tournaments.Add(st1);
+            spain.tournaments.Add(sc1);
+            bfc.tournaments.Add(bt1);
+            bfc.tournaments.Add(bc1);
+
+            return world;
         }
 
     }

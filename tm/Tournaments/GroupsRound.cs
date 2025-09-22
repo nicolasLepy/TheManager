@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -887,6 +888,7 @@ namespace tm
                 //Adapt qualifications to adapt negative ranking to real ranking in the group
                 int totalClubs = _groups[group].Count > 0 ? _groups[group].Count : _clubs.Count / _groupsNumber; //Get theoretical clubs by group if groups were not drawn
                 allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
+
                 if (_randomDrawingMethod == RandomDrawingMethod.Administrative && _groups[group].Count > 0)
                 {
                     allQualifications = AdjustQualificationAssociation(allQualifications, group);
