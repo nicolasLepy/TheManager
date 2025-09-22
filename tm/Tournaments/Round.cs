@@ -55,6 +55,12 @@ namespace tm
         Discipline
     }
 
+    public enum QualificationTargetType
+    {
+        Tournament,
+        ExcludeFromLeagueSystem
+    }
+
     [DataContract]
     public struct RecoverTeams : IEquatable<RecoverTeams>
     {
@@ -150,6 +156,47 @@ namespace tm
         public bool Equals(TvOffset other)
         {
             throw new NotImplementedException();
+        }
+    }
+
+    public abstract class QualificationTarget
+    {
+        private QualificationTargetType _type;
+
+        public QualificationTargetType Type => _type;
+        public abstract Tournament Tournament();
+
+        public QualificationTarget(QualificationTargetType type)
+        {
+            _type = type;
+        }
+    }
+
+    public class QualificationTargetTournament : QualificationTarget
+    {
+        private Tournament _tournament;
+
+        public QualificationTargetTournament(QualificationTargetType type, Tournament t) : base(type)
+        {
+            _tournament = t;
+        }
+
+        public override Tournament Tournament()
+        {
+            return _tournament;
+        }
+    }
+
+    public class QualificationTargetExcludeLeagueSystem : QualificationTarget
+    {
+
+        public QualificationTargetExcludeLeagueSystem(QualificationTargetType type) : base(type)
+        {
+        }
+
+        public override Tournament Tournament()
+        {
+            return null;
         }
     }
 

@@ -209,6 +209,26 @@ namespace tests.tm
             }
         }
 
+        private void CheckAssociations(List<int> expectedId, List<Association> associations)
+        {
+            foreach (Association a in associations)
+            {
+                Assert.IsTrue(expectedId.Contains(a.Id));
+                expectedId.Remove(a.Id);
+            }
+            Assert.IsTrue(expectedId.Count == 0);
+        }
+
+        private void CheckTournaments(List<int> expectedId, List<Tournament> tournaments)
+        {
+            foreach (Tournament t in tournaments)
+            {
+                Assert.IsTrue(expectedId.Contains(t.Id));
+                expectedId.Remove(t.Id);
+            }
+            Assert.IsTrue(expectedId.Count == 0);
+        }
+
         [TestMethod]
         public void TestTournamentAbove()
         {
@@ -219,25 +239,37 @@ namespace tests.tm
 
             List<Tournament> ta = fr.TournamentsAbove(false);
             List<int> expectedId = new List<int>() { 1, 2, 3, 4 };
-            foreach(Tournament t in ta)
-            {
-                Assert.IsTrue(expectedId.Contains(t.Id));
-                expectedId.Remove(t.Id);
-            }
-            Assert.IsTrue(expectedId.Count == 0);
+            CheckTournaments(expectedId, ta);
 
             Association bfc = fr.associations[0];
             Assert.AreEqual(bfc.Id, 5);
 
             ta = bfc.TournamentsAbove(false);
             expectedId = new List<int>() { 1, 2, 3, 4, 5, 6 };
-            foreach (Tournament t in ta)
-            {
-                Assert.IsTrue(expectedId.Contains(t.Id));
-                expectedId.Remove(t.Id);
-            }
-            Assert.IsTrue(expectedId.Count == 0);
+            CheckTournaments(expectedId, ta);
 
+        }
+
+        [TestMethod]
+        public void TestGetAllChilds()
+        {
+            Association world = MakeBasicStructure();
+
+            List<Association> childs1 = world.GetAllChilds(1);
+            List<int> expectedId = new List<int>() { 2 };  //Europe
+            CheckAssociations(expectedId, childs1);
+
+            List<Association> childs2 = world.GetAllChilds(2);
+            expectedId = new List<int>() { 3, 4};  //France, Spain
+            CheckAssociations(expectedId, childs2);
+
+            List<Association> childs3 = world.GetAllChilds(3);
+            expectedId = new List<int>() { 5 };  //BFC
+            CheckAssociations(expectedId, childs3);
+
+            List<Association> childs4 = world.GetAllChilds(4);
+            expectedId = new List<int>() { };  //Nothing
+            CheckAssociations(expectedId, childs4);
         }
 
     }

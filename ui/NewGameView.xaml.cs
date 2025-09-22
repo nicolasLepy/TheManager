@@ -285,7 +285,7 @@ namespace TheManager_GUI
                     if (league.isChampionship)
                     {
                         CheckBox cbLeague = new CheckBox();
-                        cbLeague.IsChecked = true;
+                        cbLeague.IsChecked = DefaultChecked(league);
                         cbLeague.Content = league.name;
                         cbLeague.Style = FindResource(StyleDefinition.styleCheckBox) as Style;
                         cbLeague.Click += CheckboxLeague_Click;
@@ -299,6 +299,12 @@ namespace TheManager_GUI
                 counter = FillAssociation(a, counter);
             }
             return counter;
+        }
+
+        private bool DefaultChecked(Tournament t)
+        {
+            Association fr = Session.Instance.Game.kernel.String2Association("France");
+            return Session.Instance.Game.kernel.LocalisationTournament(t).IsDirectConnected(fr);
         }
 
         private void CountConfiguration()
@@ -464,6 +470,49 @@ namespace TheManager_GUI
             }
         }
 
+        private List<Tournament> GetTournamentsBelow(Tournament selected)
+        {
+            List<Tournament> tournaments = new List<Tournament>();
+
+            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(selected);
+            foreach (Tournament t in tAssociation.Tournaments())
+            {
+                if (t.level > selected.level && t.isChampionship)
+                {
+                    tournaments.Add(t);
+                }
+            }
+            foreach(Association a in tAssociation.GetAllChilds())
+            {
+                tournaments.AddRange(a.Leagues());
+            }
+
+
+            return tournaments;
+        }
+
+        private List<Tournament> GetTournamentsAbove(Tournament selected)
+        {
+            List<Tournament> tournaments = new List<Tournament>();
+
+            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(selected);
+            foreach (Tournament t in tAssociation.Tournaments())
+            {
+                if (t.level < selected.level && t.isChampionship)
+                {
+                    tournaments.Add(t);
+                }
+            }
+            foreach(Tournament t in tAssociation.TournamentsAbove(false))
+            {
+                if(t.isChampionship)
+                {
+                    tournaments.Add(t);
+                }
+            }
+            return tournaments;
+        }
+
         private void CheckboxLeague_Click(object sender, RoutedEventArgs e)
         {
             CheckBox checkBox = sender as CheckBox;
@@ -475,16 +524,15 @@ namespace TheManager_GUI
                     selected = kvp.Key;
                 }
             }
-            foreach (Tournament t in Session.Instance.Game.kernel.LocalisationTournament(selected).Tournaments())
+            List<Tournament> tAbove = GetTournamentsAbove(selected);
+            List<Tournament> tBelow = GetTournamentsBelow(selected);
+            foreach(Tournament t in tAbove)
             {
-                if (t.level > selected.level && t.isChampionship)
-                {
-                    checkBoxes[t].IsChecked = false;
-                }
-                else if (t.level < selected.level && t.isChampionship)
-                {
-                    checkBoxes[t].IsChecked = true;
-                }
+                checkBoxes[t].IsChecked = true;
+            }
+            foreach (Tournament t in tBelow)
+            {
+                checkBoxes[t].IsChecked = false;
             }
             CountConfiguration();
 

@@ -1031,9 +1031,7 @@ namespace tm
                         }
                     }
                 }
-
             }
-
 
             foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/comp/"))
             {
@@ -1377,6 +1375,7 @@ namespace tm
                         }
                     }
                 }
+                PostProcessTournaments();
 
             }
 
@@ -1385,6 +1384,122 @@ namespace tm
             {
                 c.InitializeQualificationsNextYearsLists();
             }*/
+        }
+
+        private int TournamentRegionalLevel(Tournament t)
+        {
+            int regionalLevel = 0;
+            foreach (Round r in t.rounds)
+            {
+                GroupsRound gr = r as GroupsRound;
+                regionalLevel = (regionalLevel != 0 || gr == null) ? regionalLevel : gr.administrativeLevel;
+            }
+            return regionalLevel;
+        }
+
+        private bool IsTournamentRegional(Tournament t)
+        {
+            return t == null || TournamentRegionalLevel(t) > 0;
+        }
+
+
+        /// <summary>
+        /// Post process loaded tournaments and create regional tournaments instances for league systems relying on multiple regional structure
+        /// </summary>
+        public void PostProcessTournaments()
+        {
+            foreach(Association a in _kernel.GetAllAssociations())
+            {
+                List<Tournament> leagues = a.Leagues();
+                foreach (Tournament t in leagues)
+                {
+                    int regionalLevel = TournamentRegionalLevel(t);
+                    if(regionalLevel > 0)
+                    {
+                        List<Association> assocationsManaging = a.GetAllChilds(regionalLevel);
+                        foreach(Association regionalAssociation in assocationsManaging)
+                        {
+                            Tournament copy = t.CopyForArchive(false);
+                            copy.Id = _kernel.NextIdTournament();
+                            copy.level = regionalAssociation.Leagues().Count + 1;
+                            int clubsCount = 0;
+                            foreach (Round round in copy.rounds)
+                            {
+                                round.Id = _kernel.NextIdRound();
+                                // Keep only teams of this association
+                                List<Club> clubs = round.clubs;
+                                List<Club> newClubs = new List<Club>();
+                                foreach(Club club in clubs)
+                                {
+                                    if(club.Association().IsDirectConnected(regionalAssociation))
+                                    {
+                                        newClubs.Add(club);
+                                        clubsCount++;
+                                    }
+                                }
+                                round.clubs.Clear();
+                                round.clubs.AddRange(newClubs);
+
+                                // Change random drawing method
+                                GroupsRound gr = round as GroupsRound;
+                                if(gr != null && gr.RandomDrawingMethod == RandomDrawingMethod.Administrative)
+                                {
+                                    gr.RandomDrawingMethod = RandomDrawingMethod.Geographic;
+                                    gr.groupsCount = 1;
+                                    gr.administrativeLevel = 0;
+                                }
+                            }
+                            if(clubsCount > 0)
+                            {
+                                regionalAssociation.tournaments.Add(copy);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Delete obsoletes leagues
+            foreach (Association a in _kernel.GetAllAssociations())
+            {
+                List<Tournament> leagues = a.Leagues();
+                foreach (Tournament t in leagues)
+                {
+                    if (IsTournamentRegional(t))
+                    {
+                        a.tournaments.Remove(t);
+                    }
+                }
+            }
+
+            // Change qualifications targets to target regional leagues
+            foreach (Association a in _kernel.GetAllAssociations())
+            {
+                foreach(Tournament t in a.Leagues())
+                {
+                    foreach(Round round in t.rounds)
+                    {
+                        for(int i = 0; i < round.qualifications.Count; i++)
+                        {
+                            Qualification q = round.qualifications[i];
+                            if (IsTournamentRegional(q.tournament))
+                            {
+                                Tournament newTarget = null;
+                                foreach(Tournament league in a.Leagues())
+                                {
+                                    if(q.tournament != null && !IsTournamentRegional(league) && league.name.Equals(q.tournament.name))
+                                    {
+                                        newTarget = league;
+                                    }
+                                }
+                                //q.tournament == null => excluded from league system (from N3 to R1)
+                                Qualification q2 = new Qualification(q.ranking, q.roundId, newTarget, q.isNextYear, q.qualifies);
+                                round.qualifications[i] = q2;
+                            }
+                        }
+                    }
+                }
+            }
+
         }
 
         public void LoadRules()

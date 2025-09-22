@@ -1163,12 +1163,11 @@ namespace tm
         {
             foreach(Player p in compo)
             {
-
-                if(!p.Statistics.GamesPlayed.Any(x => x.Club == club))
+                if(!p.Statistics.GamesPlayed.Any(x => x._idClub == club.id))
                 {
                     p.Statistics.GamesPlayed.Add(new PlayerClubStatistic(club.id, 0));
                 }
-                p.Statistics.GamesPlayed.Find(x => x.Club == club).Statistic++;
+                p.Statistics.GamesPlayed.Find(x => x._idClub == club.id).Statistic++;
             }
         }
 

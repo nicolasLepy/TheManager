@@ -16,7 +16,7 @@ namespace tm
 
         
         [DataMember]
-        private int _idClub;
+        public int _idClub;
 
         [DataMember]
         public int Statistic { get; set; }

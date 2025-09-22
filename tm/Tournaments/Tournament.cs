@@ -211,7 +211,10 @@ namespace tm
         /// <summary>
         /// Level in the hierarchy (L1 = 1, L2 = 2 ...)
         /// </summary>
-        public int level => _level;
+        public int level //TODO: Getter only
+        {
+            get => _level; set => _level = value;
+        }
         
         /// <summary>
         /// General rules applied to the tournament
@@ -883,7 +886,7 @@ namespace tm
                         {
                             for (int i = 0; i < r.qualifications.Count; i++)
                             {
-                                if (r.qualifications[i].tournament.parent.Tournament == this || (r.qualifications[i].tournament == this && r.qualifications[i].roundId < idRoundPivot))
+                                if (r.qualifications[i].tournament != null && (r.qualifications[i].tournament.parent.Tournament == this || (r.qualifications[i].tournament == this && r.qualifications[i].roundId < idRoundPivot)))
                                 {
                                     Tournament hostTournament = childTournaments[Session.Instance.Random(0, childTournaments.Count)];
                                     Utils.Debug(string.Format("[Host Cup] {0} send winner of {1} to {2}", t.name, r.name, hostTournament.name));

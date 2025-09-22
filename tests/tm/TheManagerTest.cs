@@ -55,12 +55,16 @@ namespace tests.tm
                 {
                     activeAssociations.Add(Session.Instance.Game.kernel.String2Association(str));
                 }
+                foreach(Association a in new List<Association>(activeAssociations))
+                {
+                    activeAssociations.AddRange(a.GetAllChilds());
+                }
                 foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
                     if (c.isChampionship && !activeAssociations.Contains(Session.Instance.Game.kernel.LocalisationTournament(c)))
                     {
                         c.DisableTournament();
-                        Console.WriteLine(String.Format("Disable %s", c.name));
+                        Console.WriteLine(String.Format("Disable {0}", c.name));
                     }
                 }
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using tm.Comparators;
 
 namespace tm.Tournaments
@@ -13,19 +14,6 @@ namespace tm.Tournaments
             _round = tour;
         }
 
-        private List<int> GetGroupSize(int totalTeams, int defaultMaxTeamsByGroup)
-        {
-            int groupCount = totalTeams / defaultMaxTeamsByGroup + (totalTeams % defaultMaxTeamsByGroup != 0 ? 1 : 0);
-            int ecart = groupCount > 0 ? totalTeams % groupCount : totalTeams;
-            List<int> res = new List<int>();
-            for (int i = 0; i < groupCount; i++)
-            {
-                int add = i < ecart ? 1 : 0;
-                res.Add(totalTeams/groupCount + add);
-            }
-            return res;
-        }
-        
         public void RandomDrawing()
         {
             Console.WriteLine("[Draw " + _round.Tournament.name + "]");
@@ -88,7 +76,7 @@ namespace tm.Tournaments
                     if (clubsAdm.Count > 0)
                     {
 
-                        List<int> groupsCount = GetGroupSize(clubsAdm.Count, defaultMaxTeamsByGroup);
+                        List<int> groupsCount = Utils.GetGroupSize(clubsAdm.Count, defaultMaxTeamsByGroup);
                         List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubsAdm, groupsCount.Count);
                         for (int grp = 0; grp < groupsCount.Count; grp++)
                         {
@@ -111,6 +99,5 @@ namespace tm.Tournaments
                 i++;
             }
         }
-        
     }
 }

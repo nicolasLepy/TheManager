@@ -1003,5 +1003,18 @@ namespace tm
             }
             Console.WriteLine("[Search for duplicates finished]");
         }
+
+        public static List<int> GetGroupSize(int totalTeams, int defaultMaxTeamsByGroup)
+        {
+            int groupCount = totalTeams / defaultMaxTeamsByGroup + (totalTeams % defaultMaxTeamsByGroup != 0 ? 1 : 0);
+            int ecart = groupCount > 0 ? totalTeams % groupCount : totalTeams;
+            List<int> res = new List<int>();
+            for (int i = 0; i < groupCount; i++)
+            {
+                int add = i < ecart ? 1 : 0;
+                res.Add(totalTeams / groupCount + add);
+            }
+            return res;
+        }
     }
 }

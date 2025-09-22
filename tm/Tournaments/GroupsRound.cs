@@ -85,7 +85,11 @@ namespace tm
 
         public int maxClubsInGroup => _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
 
-        public int administrativeLevel => _administrativeLevel;
+        //TODO: Getter only
+        public int administrativeLevel
+        {
+            get => _administrativeLevel; set => _administrativeLevel = value;
+        }
 
         public int nonGroupGamesByTeams => _nonGroupGamesByTeams;
         public int nonGroupGamesByGameday => _nonGroupGamesByGameday;
@@ -93,7 +97,11 @@ namespace tm
 
         public List<GeographicPosition> groupsLocalisation { get => _groupsLocalisation; }
 
-        public RandomDrawingMethod RandomDrawingMethod => _randomDrawingMethod;
+        //TODO: Getter only
+        public RandomDrawingMethod RandomDrawingMethod
+        {
+            get => _randomDrawingMethod; set => _randomDrawingMethod = value;
+        }
         
         public Dictionary<Association, int> relegationsByAssociations => _relegationsByAssociations;
 

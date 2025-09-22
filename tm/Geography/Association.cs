@@ -416,6 +416,27 @@ namespace tm
             return res;
         }
 
+        /// <summary>
+        /// Return all childs at a specific level
+        /// </summary>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        public List<Association> GetAllChilds(int level)
+        {
+            List<Association> childs = new List<Association>();
+            if(level == 1)
+            {
+                childs = new List<Association>(associations);
+            }
+            if(level > 1)
+            {
+                foreach(Association ad in associations)
+                {
+                    childs.AddRange(ad.GetAllChilds(level - 1));
+                }
+            }
+            return childs;
+        }
 
         ///
         /// International tournaments related methods
