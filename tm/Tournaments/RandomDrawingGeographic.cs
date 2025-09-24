@@ -59,7 +59,8 @@ namespace tm
             }
             else
             {
-                Draw(clubs, _round.maxClubsInGroup);
+                int maxTeamsByGroups = _round.referenceClubsByGroup > 0 ? _round.referenceClubsByGroup : clubs.Count;
+                Draw(clubs, maxTeamsByGroups);
                 /*List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubs, _round.groupsCount);
                 for(int i = 0; i<_round.groupsCount; i++)
                 {

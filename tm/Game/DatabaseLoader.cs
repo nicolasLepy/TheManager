@@ -1080,7 +1080,7 @@ namespace tm
                             {
                                 int lastDaysSameDay = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
                                 //round = new ChampionshipRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, lastDaysSameDay, gamesPriority);
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), 1, phases, initialisationDate, endDate, keepRankingFromPreviousRound, RandomDrawingMethod.Level, 0, false, 0, 0, gamesPriority, lastDaysSameDay);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), 1, 0, phases, initialisationDate, endDate, keepRankingFromPreviousRound, RandomDrawingMethod.Level, 0, false, 0, 0, gamesPriority, lastDaysSameDay);
                             }
                             else if (type == "elimination")
                             {
@@ -1099,6 +1099,7 @@ namespace tm
                             else if (type == "poules")
                             {
                                 int groupsNumber = int.Parse(e3.Attribute("nombrePoules").Value);
+                                int maxTeamsByGroups = e3.Attribute("maxTeamsByGroup") != null ? int.Parse(e3.Attribute("maxTeamsByGroup").Value) : 0;
                                 RandomDrawingMethod method = String2DrawingMethod(e3.Attribute("methode").Value);
                                 int administrativeLevel = 0;
                                 if (method == RandomDrawingMethod.Administrative)
@@ -1108,8 +1109,8 @@ namespace tm
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority, 0);
-
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, maxTeamsByGroups, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority, 0);
+                                
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
                                     //Read groups localisation
@@ -1422,6 +1423,7 @@ namespace tm
                             Tournament copy = t.CopyForArchive(false);
                             copy.Id = _kernel.NextIdTournament();
                             copy.level = regionalAssociation.Leagues().Count + 1;
+                            copy.InitializeQualificationsNextYearsLists();
                             int clubsCount = 0;
                             foreach (Round round in copy.rounds)
                             {

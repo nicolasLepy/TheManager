@@ -144,6 +144,7 @@ namespace tests.tm
         [TestMethod]
         public void TestLeagueStructureConservedFranceExtended()
         {
+            //Objectif : <1 min [22/05/2022] [debug]
             InitGame("database_france_nat", new List<string>() { "France"});
             for (int y = 0; y < TEST_YEARS; y++)
             {

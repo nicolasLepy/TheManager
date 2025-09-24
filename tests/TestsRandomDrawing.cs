@@ -50,7 +50,7 @@ namespace tests
 
             Tournament t = new Tournament();
             world.tournaments.Add(t);
-            GroupsRound r = new GroupActiveRound(0, "", t, null, new List<GameDay>(), new List<TvOffset>(), 4, 1, null, null, 0, RandomDrawingMethod.Level, 0, false, 0, 0, 1, 1);
+            GroupsRound r = new GroupActiveRound(0, "", t, null, new List<GameDay>(), new List<TvOffset>(), 4, 0, 1, null, null, 0, RandomDrawingMethod.Level, 0, false, 0, 0, 1, 1);
             r.rules.Add(Rule.OneTeamByAssociationInGroup);
             t.rounds.Add(r);
             r.clubs.AddRange(new List<Club> { ca1, ca2, ca3, ca4, ca5, cb6, cb7, cb8, cb9, cb10, cc11, cc12, cc13, cc14, cd15, cd16, cd17, cd18 });
