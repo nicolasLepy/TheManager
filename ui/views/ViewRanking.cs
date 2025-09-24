@@ -163,23 +163,24 @@ namespace TheManager_GUI.Views
         private string InternationalQualificationColor(Qualification q)
         {
             string color = "";
-            if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupActiveRound != null)
+            int targetTournamentLevel = q.target.Tournament().level;
+            if (targetTournamentLevel == 1 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound != null)
             {
                 color = StyleDefinition.slotQualification1a;
             }
-            else if (q.tournament.level == 1 && q.tournament.rounds[q.roundId] as GroupActiveRound == null)
+            else if (targetTournamentLevel == 1 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound == null)
             {
                 color = StyleDefinition.slotQualification1b;
             }
-            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupActiveRound != null)
+            else if (targetTournamentLevel == 2 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound != null)
             {
                 color = StyleDefinition.slotQualification2a;
             }
-            else if (q.tournament.level == 2 && q.tournament.rounds[q.roundId] as GroupActiveRound == null)
+            else if (targetTournamentLevel == 2 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound == null)
             {
                 color = StyleDefinition.slotQualification2b;
             }
-            else if (q.tournament.level == 3)
+            else if (targetTournamentLevel == 3)
             {
                 color = StyleDefinition.slotQualification3a;
             }
@@ -197,36 +198,36 @@ namespace TheManager_GUI.Views
 
             string color = StyleDefinition.solidColorBrushColorTransparent;
 
-            if (q.tournament.isChampionship)
+            if (q.target.ToChampionshipTournament())
             {
-                if (q.tournament.level < roundLevel || (clubNextLevel > 0 && clubNextLevel < roundLevel))
+                if (_tournament.IsBelow(q.target) || (clubNextLevel > 0 && clubNextLevel < roundLevel))
                 {
                     color = StyleDefinition.slotPromotion;
                 }
-                else if ( ((clubNextLevel - roundLevel) > 1) || (q.tournament.level == roundLevel && clubNextLevel > roundLevel) )
+                else if ( ((clubNextLevel - roundLevel) > 1) || (_tournament.IsSameLevel(q.target) && clubNextLevel > roundLevel) )
                 {
                     color = StyleDefinition.slotRetrogradation;
                 }
-                else if (q.tournament.level > roundLevel)
+                else if (_tournament.IsAbove(q.target))
                 {
                     color = clubNextLevel == roundLevel ? StyleDefinition.slotBackground : StyleDefinition.slotRelegation; //Don't forget case were club is rescued
                 }
-                else if (q.tournament.level == roundLevel && q.roundId > _tournament.rounds.IndexOf(Round()))
+                else if (_tournament.IsSameLevel(q.target) && q.roundId > _tournament.rounds.IndexOf(Round()))
                 {
                     color = StyleDefinition.slotBarrage;
                 }
             }
             else if (nationalTeamTournament)
             {
-                if (q.tournament.level == roundLevel && q.tournament != _tournament)
+                if (_tournament.IsSameLevel(q.target) && q.target.Tournament() != _tournament)
                 {
                     color = StyleDefinition.slotQualification1a;
                 }
-                else if (q.tournament.level == roundLevel && q.tournament == _tournament)
+                else if (_tournament.IsSameLevel(q.target) && q.target.Tournament() == _tournament)
                 {
                     color = StyleDefinition.slotQualification1b;
                 }
-                else if (q.tournament.level > roundLevel)
+                else if (_tournament.IsAbove(q.target))
                 {
                     color = StyleDefinition.slotBarrageRelegation;
                 }
@@ -254,7 +255,7 @@ namespace TheManager_GUI.Views
             bool res = false;
             foreach (Qualification q in r.qualifications)
             {
-                if (q.isNextYear && q.tournament.level > tournamentReference.level)
+                if (q.isNextYear && tournamentReference.IsAbove(q.target))
                 {
                     res = true;
                 }
@@ -263,9 +264,10 @@ namespace TheManager_GUI.Views
             {
                 foreach (Qualification q in r.qualifications)
                 {
-                    if (!q.isNextYear && q.tournament == tournamentReference && !q.tournament.IsInternational() && q.tournament.isChampionship)
+                    
+                    if (!q.isNextYear && tournamentReference.IsSameLevel(q.target) && !q.target.IsInternational() && q.target.ToChampionshipTournament())
                     {
-                        res = QualificationCanLeadToRelegation(q.tournament.rounds[q.roundId], tournamentReference);
+                        res = QualificationCanLeadToRelegation(q.target.Tournament().rounds[q.roundId], tournamentReference);
                     }
                 }
             }
@@ -413,7 +415,7 @@ namespace TheManager_GUI.Views
                 if(ranking.Count > 0)
                 {
                     //Teams qualified for next rounds in this tournament
-                    int qualificationsToTournamentNextRounds = qualifications.Count(q => !q.isNextYear && q.tournament == _tournament && !QualificationCanLeadToRelegation(q.tournament.rounds[q.roundId], _tournament));
+                    int qualificationsToTournamentNextRounds = qualifications.Count(q => !q.isNextYear && q.target.Tournament() == _tournament && !QualificationCanLeadToRelegation(q.target.Tournament().rounds[q.roundId], _tournament));
                     foreach (Qualification q in qualifications)
                     {
                         int index = q.ranking > 0 ? q.ranking - 1 : ranking.Count + q.ranking;

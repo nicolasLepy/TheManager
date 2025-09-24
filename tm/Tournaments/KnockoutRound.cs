@@ -218,11 +218,11 @@ namespace tm
                         c = m.Winner;
                         if (!q.isNextYear && !forNextYear)
                         {
-                            q.tournament.rounds[q.roundId].clubs.Add(c);
+                            q.target.Tournament(c).rounds[q.roundId].clubs.Add(c);
                         }
                         else if (q.isNextYear && forNextYear)
                         {
-                            q.tournament.AddClubForNextYear(c, q.roundId);
+                            q.target.RegisterTeamForNextEdition(c, q.roundId);
                         }
                     }
                     //Losers
@@ -231,22 +231,22 @@ namespace tm
                         c = m.Looser;
                         if (!q.isNextYear && !forNextYear)
                         {
-                            q.tournament.rounds[q.roundId].clubs.Add(c);
+                            q.target.Tournament(c).rounds[q.roundId].clubs.Add(c);
                         }
                         else if(q.isNextYear && forNextYear)
                         {
-                            q.tournament.AddClubForNextYear(c, q.roundId);
+                            q.target.RegisterTeamForNextEdition(c, q.roundId);
                         }
                     }
                     if(c != null)
                     {
-                        if (q.tournament.isChampionship && c.Championship != null)
+                        if (q.target.ToChampionshipTournament() && c.Championship != null)
                         {
-                            if (q.tournament.level > c.Championship.level)
+                            if (c.Championship.IsAbove(q.target))
                             {
                                 c.supporters = (int)(c.supporters / 1.8f);
                             }
-                            else if (q.tournament.level < c.Championship.level)
+                            else if (c.Championship.IsBelow(q.target))
                             {
                                 c.supporters = (int)(c.supporters * 1.8f);
                             }

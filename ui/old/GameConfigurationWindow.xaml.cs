@@ -210,11 +210,12 @@ namespace TheManager_GUI
                 int re = 0;
                 foreach(Qualification q in c.rounds[0].qualifications)
                 {
-                    if(q.isNextYear && q.roundId == 0 && q.tournament.level > c.level)
+                    
+                    if(q.isNextYear && q.roundId == 0 && c.IsAbove(q.target))
                     {
                         re++;
                     }
-                    if (q.isNextYear && q.roundId == 0 && q.tournament.level < c.level)
+                    if (q.isNextYear && q.roundId == 0 && c.IsBelow(q.target))
                     {
                         pr++;
                     }

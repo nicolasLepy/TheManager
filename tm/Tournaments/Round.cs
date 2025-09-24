@@ -55,12 +55,6 @@ namespace tm
         Discipline
     }
 
-    public enum QualificationTargetType
-    {
-        Tournament,
-        ExcludeFromLeagueSystem
-    }
-
     [DataContract]
     public struct RecoverTeams : IEquatable<RecoverTeams>
     {
@@ -154,76 +148,6 @@ namespace tm
         }
 
         public bool Equals(TvOffset other)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public abstract class QualificationTarget
-    {
-        private QualificationTargetType _type;
-
-        public QualificationTargetType Type => _type;
-        public abstract Tournament Tournament();
-
-        public QualificationTarget(QualificationTargetType type)
-        {
-            _type = type;
-        }
-    }
-
-    public class QualificationTargetTournament : QualificationTarget
-    {
-        private Tournament _tournament;
-
-        public QualificationTargetTournament(QualificationTargetType type, Tournament t) : base(type)
-        {
-            _tournament = t;
-        }
-
-        public override Tournament Tournament()
-        {
-            return _tournament;
-        }
-    }
-
-    public class QualificationTargetExcludeLeagueSystem : QualificationTarget
-    {
-
-        public QualificationTargetExcludeLeagueSystem(QualificationTargetType type) : base(type)
-        {
-        }
-
-        public override Tournament Tournament()
-        {
-            return null;
-        }
-    }
-
-    [DataContract]
-    public struct Qualification : IEquatable<Qualification>
-    {
-        [DataMember]
-        public int ranking { get; set; }
-        [DataMember]
-        public int roundId { get; set; }
-        [DataMember]
-        public Tournament tournament { get; set; }
-        [DataMember]
-        public bool isNextYear { get; set; }
-        [DataMember]
-        public int qualifies { get; set; }
-
-        public Qualification(int Ranking, int RoundId, Tournament Tournament, bool nextYear, int Qualifies)
-        {
-            ranking = Ranking;
-            roundId = RoundId;
-            tournament = Tournament;
-            isNextYear = nextYear;
-            qualifies = Qualifies;
-        }
-
-        public bool Equals(Qualification other)
         {
             throw new NotImplementedException();
         }
@@ -1009,7 +933,7 @@ namespace tm
                 Qualification q = qualificationsList[i];
                 if (q.ranking < 0)
                 {
-                    qualificationsList[i] = new Qualification(totalClubsInRanking + q.ranking + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies);
+                    qualificationsList[i] = new Qualification(totalClubsInRanking + q.ranking + 1, q.roundId, q.target, q.isNextYear, q.qualifies);
                 }
 
                 // This ranking have a qualification to another round, remove it from the list
@@ -1021,7 +945,7 @@ namespace tm
             {
                 foreach (int remainingRanking in allRankings)
                 {
-                    qualificationsList.Add(new Qualification(remainingRanking, 0, Tournament, true, 0));
+                    qualificationsList.Add(new Qualification(remainingRanking, 0, new QualificationTournament(Tournament), true, 0));
                 }
             }
             return qualificationsList;

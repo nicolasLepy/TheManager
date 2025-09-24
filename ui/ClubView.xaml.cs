@@ -341,7 +341,7 @@ namespace TheManager_GUI
             bool res = true;
             foreach(Qualification q in round.qualifications)
             {
-                if(!q.isNextYear && q.tournament == tournament)
+                if(!q.isNextYear && q.target.Tournament() == tournament)
                 {
                     res = false;
                 }

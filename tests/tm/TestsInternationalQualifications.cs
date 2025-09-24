@@ -102,14 +102,14 @@ namespace tests.tm
                         if(q.isNextYear && cupWinners.Count > 0)
                         {
                             Club club = cupWinners[0];
-                            Assert.IsTrue(q.tournament.nextYearQualified[q.roundId].Contains(club));
+                            Assert.IsTrue(q.target.Tournament().nextYearQualified[q.roundId].Contains(club));
                             cupWinners.RemoveAt(0);
                             checksCount++;
                         }
                         else
                         {
                             Club club = bestTeams[0];
-                            Assert.IsTrue(q.tournament.nextYearQualified[q.roundId].Contains(club));
+                            Assert.IsTrue(q.target.Tournament().nextYearQualified[q.roundId].Contains(club));
                             bestTeams.RemoveAt(0);
                             checksCount++;
                         }

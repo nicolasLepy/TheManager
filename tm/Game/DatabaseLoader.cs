@@ -1357,7 +1357,7 @@ namespace tm
                                 {
                                     int ranking = int.Parse(e4.Attribute("classement").Value);
 
-                                    Qualification qu = new Qualification(ranking, tourId, targetedTournament, nextYear, qualifies);
+                                    Qualification qu = new Qualification(ranking, tourId, new QualificationTournament(targetedTournament), nextYear, qualifies);
                                     round.qualifications.Add(qu);
                                 }
                                 else
@@ -1366,7 +1366,7 @@ namespace tm
                                     int to = int.Parse(e4.Attribute("a").Value);
                                     for (int j = from; j <= to; j++)
                                     {
-                                        Qualification qu = new Qualification(j, tourId, targetedTournament, nextYear, qualifies);
+                                        Qualification qu = new Qualification(j, tourId, new QualificationTournament(targetedTournament), nextYear, qualifies);
                                         round.qualifications.Add(qu);
                                     }
                                 }
@@ -1399,7 +1399,7 @@ namespace tm
 
         private bool IsTournamentRegional(Tournament t)
         {
-            return t == null || TournamentRegionalLevel(t) > 0;
+            return TournamentRegionalLevel(t) > 0;
         }
 
 
@@ -1481,18 +1481,19 @@ namespace tm
                         for(int i = 0; i < round.qualifications.Count; i++)
                         {
                             Qualification q = round.qualifications[i];
-                            if (IsTournamentRegional(q.tournament))
+                            if (q.target.Type == QualificationTargetType.Tournament && IsTournamentRegional(q.target.Tournament()))
                             {
                                 Tournament newTarget = null;
                                 foreach(Tournament league in a.Leagues())
                                 {
-                                    if(q.tournament != null && !IsTournamentRegional(league) && league.name.Equals(q.tournament.name))
+                                    if(q.target.Type != QualificationTargetType.Tournament && !IsTournamentRegional(league) && league.name.Equals(q.target.Tournament().name))
                                     {
                                         newTarget = league;
                                     }
                                 }
                                 //q.tournament == null => excluded from league system (from N3 to R1)
-                                Qualification q2 = new Qualification(q.ranking, q.roundId, newTarget, q.isNextYear, q.qualifies);
+                                QualificationTarget qt = newTarget == null ? new QualificationExcludeLeagueSystem(a) : new QualificationTournament(newTarget);
+                                Qualification q2 = new Qualification(q.ranking, q.roundId, qt, q.isNextYear, q.qualifies);
                                 round.qualifications[i] = q2;
                             }
                         }
@@ -1524,7 +1525,7 @@ namespace tm
                             isCupWinner = e3.Attribute("cup").Value.ToLower() == "yes";
                         }
                         //Here qualification structure is used to store continental qualifications but meaning of field can differ than "classic" qualification (rank is nation coefficient rank instead of league rank and isNextYear is used for isCupWinner)
-                        Qualification q = new Qualification(rank, roundId, targetTournament, isCupWinner, count);
+                        Qualification q = new Qualification(rank, roundId, new QualificationTournament(targetTournament), isCupWinner, count);
                         association.continentalQualifications.Add(q);
                     }
                 }
@@ -1873,7 +1874,7 @@ namespace tm
                 {
                     round.rules.Add(Rule.OnlyFirstTeams);
                 }
-                round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
+                round.qualifications.Add(new Qualification(1, indexRound + 1, new QualificationTournament(nationalCup), false, 1));
                 int currentAddedTeams = 0;
                 while(currentAddedTeams < preliRoundTeams)
                 {
@@ -1924,7 +1925,7 @@ namespace tm
                 }
                 if (j > 2)
                 {
-                    round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
+                    round.qualifications.Add(new Qualification(1, indexRound + 1, new QualificationTournament(nationalCup), false, 1));
                 }
                 //First final round : add not added teams
                 foreach(KeyValuePair<Tournament, int> kvp in teamsByTournaments)

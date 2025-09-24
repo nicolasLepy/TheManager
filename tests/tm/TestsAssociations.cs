@@ -272,5 +272,73 @@ namespace tests.tm
             CheckAssociations(expectedId, childs4);
         }
 
+        [TestMethod]
+        public void TestGetLevelOfAssociation()
+        {
+            Association world = MakeBasicStructure();
+
+            Association fr = world.associations[0].associations[0];
+            Assert.AreEqual(fr.Id, 3);
+
+            Association bfc = fr.associations[0];
+            Assert.AreEqual(bfc.Id, 5);
+
+            Assert.AreEqual(world.GetLevelOfAssociation(fr, 0), -1);
+            Assert.AreEqual(world.GetLevelOfAssociation(bfc, 0), -1);
+        }
+
+        [TestMethod]
+        public void TestLeagueAbove()
+        {
+            Association world = MakeBasicStructure();
+
+            Association europe = world.associations[0];
+            Assert.AreEqual(europe.Id, 2);
+
+            Association fr = world.associations[0].associations[0];
+            Assert.AreEqual(fr.Id, 3);
+
+            Association bfc = fr.associations[0];
+            Assert.AreEqual(bfc.Id, 5);
+
+            Assert.IsNull(world.LeagueAbove(world.League(1)));
+            Assert.AreEqual(fr.LeagueAbove(fr.League(1)).Tournament(), europe.League(1));
+            Assert.AreEqual(fr.LeagueAbove(fr.League(2)).Tournament(), fr.League(1));
+            Assert.AreEqual(bfc.LeagueAbove(bfc.League(1)).Tournament(), fr.League(2));
+            Assert.AreEqual(bfc.LeagueAbove(bfc.League(3)).Tournament(), bfc.League(2));
+            try
+            {
+                fr.LeagueAbove(bfc.League(1));
+                Assert.Fail();
+            } catch(Exception e){}
+        }
+
+        [TestMethod]
+        public void TestLeagueBelow()
+        {
+            Association world = MakeBasicStructure();
+
+            Association europe = world.associations[0];
+            Assert.AreEqual(europe.Id, 2);
+
+            Association fr = world.associations[0].associations[0];
+            Assert.AreEqual(fr.Id, 3);
+
+            Association bfc = fr.associations[0];
+            Assert.AreEqual(bfc.Id, 5);
+
+            Assert.AreEqual(fr.LeagueBelow(fr.League(1)).Tournament(), fr.League(2));
+            Assert.AreEqual(fr.LeagueBelow(fr.League(2)).Type, QualificationTargetType.ExcludeFromLeagueSystem);
+            Assert.AreEqual(bfc.LeagueBelow(bfc.League(1)).Tournament(), bfc.League(2));
+            Assert.IsNull(bfc.LeagueBelow(bfc.League(3)));
+            try
+            {
+                fr.LeagueBelow(bfc.League(1));
+                Assert.Fail();
+            }
+            catch (Exception e) { }
+        }
+
+
     }
 }
