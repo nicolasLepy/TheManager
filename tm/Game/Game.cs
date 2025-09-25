@@ -746,13 +746,6 @@ namespace tm
 
                 if (Utils.CompareDates(c.seasonBeginning.ConvertToDateTime(), _date))
                 {
-
-                    GroupsRound gr = c.rounds[0] as GroupsRound;
-                    if (gr != null && (ta.name == "France" || ta.parent?.name == "France"))
-                    {
-                        gr.PrintRanking();
-                    }
-
                     c.Reset();
                 }
 

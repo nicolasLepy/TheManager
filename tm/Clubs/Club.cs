@@ -265,7 +265,7 @@ namespace tm
                 {
                     if (c.previousEditions[year].rounds[0].clubs.Contains(this))
                     {
-                        res = c.level > from.level ? res + " (P) " : c.level < from.level ? res + " (R) " : res;
+                        res = c.IsBelow(new QualificationTournament(from)) ? res + " (P) " : c.IsAbove(new QualificationTournament(from)) ? res + " (R) " : res;
                     }
                 }
             }

@@ -1382,20 +1382,5 @@ namespace tm
                 return null;
             }
         }
-
-        public void PrintRanking()
-        {
-            Console.WriteLine("\nRanking : ----- {0} ----- {1} teams", Tournament.name, clubs.Count);
-            for(int g = 0; g < groupsCount; g++)
-            {
-                Console.WriteLine("Groupe {0}", GroupName(g));
-                int i = 0;
-                foreach(Club club in Ranking(g))
-                {
-                    Console.WriteLine("{0}. {1}", ++i, club.name);
-                }
-            }
-
-        }
     }
 }

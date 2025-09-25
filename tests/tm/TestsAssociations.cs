@@ -144,14 +144,25 @@ namespace tests.tm
             InitGame("database_france_nat", new List<string>() { "France"});
             for (int y = 0; y < TEST_YEARS; y++)
             {
-                for (int i = 0; i < 365; i++)
-                {
-                    Session.Instance.Game.NextDay();
-                    Session.Instance.Game.UpdateTournaments();
-                }
-
                 Country fr = Session.Instance.Game.kernel.String2Country("France");
                 Association aFr = fr.GetCountryAssociation();
+
+                for (int i = 0; i < 365; i++)
+                {
+                    if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime(), Session.Instance.Game.date))
+                    {
+                        Console.WriteLine("[{0}] Classements finaux", Session.Instance.Game.date.Year);
+                        PrintLeagueSystem(aFr);
+                    }
+                    Session.Instance.Game.NextDay();
+                    Session.Instance.Game.UpdateTournaments();
+                    if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(31), Session.Instance.Game.date))
+                    {
+                        Console.WriteLine("[{0}-{1}] Nouveaux championnats", Session.Instance.Game.date.Year, Session.Instance.Game.date.Year + 1);
+                        PrintLeagueSystem(aFr);
+                    }
+                }
+
                 List<Association> aLevel0 = fr.GetCountryAssociation().associations;
 
                 List<Association> aLevel1 = new List<Association>();
@@ -191,24 +202,85 @@ namespace tests.tm
                 Association aReg1 = aFr.associations[0]; //BFC
                 Association aReg2 = aFr.associations[1]; //GE
                 Association aReg3 = aFr.associations[2]; //HDF
+                Association aReg4 = aFr.associations[3]; //Nor
+                Association aReg5 = aFr.associations[4]; //IDF
+                Association aReg6 = aFr.associations[5]; //Bre
+                Association aReg7 = aFr.associations[6]; //PdL
+                Association aReg8 = aFr.associations[7]; //CVL
+                Association aReg9 = aFr.associations[8]; //NA
+                Association aReg10 = aFr.associations[9]; //Occ
+                Association aReg11 = aFr.associations[10]; //ARH
+                Association aReg12 = aFr.associations[11]; //Cor
+                Association aReg13 = aFr.associations[12]; //Med
                 Assert.AreEqual("Bourgogne Franche-Comte", aReg1.name);
                 Assert.AreEqual("Grand-Est", aReg2.name);
                 Assert.AreEqual("Hauts de France", aReg3.name);
+                Assert.AreEqual("Normandie", aReg4.name);
+                Assert.AreEqual("Ile de France", aReg5.name);
+                Assert.AreEqual("Bretagne", aReg6.name);
+                Assert.AreEqual("Pays De La Loire", aReg7.name);
+                Assert.AreEqual("Centre-Val de Loire", aReg8.name);
+                Assert.AreEqual("Nouvelle Aquitaine", aReg9.name);
+                Assert.AreEqual("Occitanie", aReg10.name);
+                Assert.AreEqual("Auvergne Rhone-Alpes", aReg11.name);
+                Assert.AreEqual("Corse", aReg12.name);
+                Assert.AreEqual("Méditerranée", aReg13.name);
 
                 Tournament t6_a = aReg1.League(1);
                 Tournament t6_b = aReg2.League(1);
                 Tournament t6_c = aReg3.League(1);
+                Tournament t6_d = aReg4.League(1);
+                Tournament t6_e = aReg5.League(1);
+                Tournament t6_f = aReg6.League(1);
+                Tournament t6_g = aReg7.League(1);
+                Tournament t6_h = aReg8.League(1);
+                Tournament t6_i = aReg9.League(1);
+                Tournament t6_j = aReg10.League(1);
+                Tournament t6_k = aReg11.League(1);
+                Tournament t6_l = aReg12.League(1);
+                Tournament t6_m = aReg13.League(1);
 
                 Tournament t7_a = aReg1.League(2);
                 Tournament t7_b = aReg2.League(2);
                 Tournament t7_c = aReg3.League(2);
+                Tournament t7_d = aReg4.League(2);
+                Tournament t7_e = aReg5.League(2);
+                Tournament t7_f = aReg6.League(2);
+                Tournament t7_g = aReg7.League(2);
+                Tournament t7_h = aReg8.League(2);
+                Tournament t7_i = aReg9.League(2);
+                Tournament t7_j = aReg10.League(2);
+                Tournament t7_k = aReg11.League(2);
+                Tournament t7_l = aReg12.League(2);
+                Tournament t7_m = aReg13.League(2);
 
                 CheckRegionalLeague(t6_a, aReg1, 35);
                 CheckRegionalLeague(t6_b, aReg2, 47);
                 CheckRegionalLeague(t6_c, aReg3, 36);
+                CheckRegionalLeague(t6_d, aReg4, 26);
+                CheckRegionalLeague(t6_e, aReg5, 27);
+                CheckRegionalLeague(t6_f, aReg6, 34);
+                CheckRegionalLeague(t6_g, aReg7, 27);
+                CheckRegionalLeague(t6_h, aReg8, 18);
+                CheckRegionalLeague(t6_i, aReg9, 44);
+                CheckRegionalLeague(t6_j, aReg10, 42);
+                CheckRegionalLeague(t6_k, aReg11, 35);
+                CheckRegionalLeague(t6_l, aReg12, 13);
+                CheckRegionalLeague(t6_m, aReg13, 16);
+
                 CheckRegionalLeague(t7_a, aReg1, -1);
                 CheckRegionalLeague(t7_b, aReg2, -1);
                 CheckRegionalLeague(t7_c, aReg3, -1);
+                CheckRegionalLeague(t7_d, aReg4, -1);
+                CheckRegionalLeague(t7_e, aReg5, -1);
+                CheckRegionalLeague(t7_f, aReg6, -1);
+                CheckRegionalLeague(t7_g, aReg7, -1);
+                CheckRegionalLeague(t7_h, aReg8, -1);
+                CheckRegionalLeague(t7_i, aReg9, -1);
+                CheckRegionalLeague(t7_j, aReg10, -1);
+                CheckRegionalLeague(t7_k, aReg11, -1);
+                CheckRegionalLeague(t7_l, aReg12, -1);
+                CheckRegionalLeague(t7_m, aReg13, -1);
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
                 CheckLeagueSystem(aFr, 1404);
