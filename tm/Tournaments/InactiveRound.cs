@@ -115,7 +115,7 @@ namespace tm
         {
             Country c = _clubs[0].Country();
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
-            adjustedQualifications.Sort(new QualificationComparator());
+            adjustedQualifications.Sort(new QualificationRankingComparator());
 
             int promotionsSlotByAd = 0;
             int relegationsSlotByAd = 0;
@@ -232,7 +232,7 @@ namespace tm
             Tournament tournament = Tournament;
             int res = 0;
             List<Qualification> adjustedQualifications = new List<Qualification>(_qualifications);
-            adjustedQualifications.Sort(new QualificationComparator());
+            adjustedQualifications.Sort(new QualificationRankingComparator());
             adjustedQualifications = AdaptQualificationsToRanking(adjustedQualifications, clubs.Count);
 
             foreach (Qualification q in adjustedQualifications)
@@ -249,7 +249,7 @@ namespace tm
         {
             List<Club> ranking = Ranking();
             List<Qualification> adjustedQualifications = new List<Qualification>(_qualifications);
-            adjustedQualifications.Sort(new QualificationComparator());
+            adjustedQualifications.Sort(new QualificationRankingComparator());
 
             adjustedQualifications = AdaptQualificationsToRanking(adjustedQualifications, clubs.Count);
 

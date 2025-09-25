@@ -46,6 +46,7 @@ namespace tests.tm
             cbdd.GenerateNationalCup();
             cbdd.CreateRegionalPathForCups();
             cbdd.LoadArchives();
+            cbdd.PostProcess();
             Country fr = Session.Instance.Game.kernel.String2Country("France");
 
             if(activeLeagues != null)

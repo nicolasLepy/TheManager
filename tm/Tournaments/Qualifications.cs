@@ -22,6 +22,8 @@ namespace tm
 
         public abstract Tournament Tournament(Club club);
 
+        public abstract Tournament Tournament(Association association);
+
         public QualificationTarget(QualificationTargetType type)
         {
             _type = type;
@@ -118,6 +120,11 @@ namespace tm
             return _tournament;
         }
 
+        public override Tournament Tournament(Association association)
+        {
+            return _tournament;
+        }
+
         public override int GetAssociationLevel()
         {
             Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
@@ -170,6 +177,11 @@ namespace tm
             return clubRepresentingAssociation.League(1);
         }
 
+        public override Tournament Tournament(Association association)
+        {
+            return association.League(1);
+        }
+
         public override Tournament Tournament()
         {
             return null;
@@ -217,6 +229,7 @@ namespace tm
                     throw new Exception(String.Format("[RegisterTeamForNextEdition] {0} association have no top level league", clubRepresentingAssociation.name));
                 }
                 topLevelLeague.AddClubForNextYear(club, roundIndex);
+                Console.WriteLine("[Exclusion de {0}] {1} ({2})", association.name, club.name, topLevelLeague.name);
             }
             return topLevelLeague;
         }

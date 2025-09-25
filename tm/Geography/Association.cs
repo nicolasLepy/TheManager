@@ -560,6 +560,41 @@ namespace tm
             }
         }
 
+        public override string ToString()
+        {
+            return String.Format("tm.Association {0}", _name);
+        }
+
+        /// <summary>
+        /// Returns the number of teams of an association who will be relegated
+        /// </summary>
+        /// <param name="association"></param>
+        /// <returns></returns>
+        public int GetExcludedTeamsFromLeagueSystem(Association association)
+        {
+            int res = 0;
+            if(parent != null)
+            {
+                res += parent.GetExcludedTeamsFromLeagueSystem(this);
+            }
+            Tournament lastLevel = Leagues().LastOrDefault();
+            List<Club> clubs = new List<Club>();
+            if (lastLevel != null)
+            {
+                foreach (Round r in lastLevel.rounds)
+                {
+                    GroupsRound gr = r as GroupsRound;
+                    if (gr != null)
+                    {
+                        List<Club> relegablesCandidates = gr.GetAssociationRelegables(association);
+                        clubs.AddRange(relegablesCandidates);
+                    }
+                }
+            }
+            res += clubs.Count;
+            return res;
+        }
+
         public List<Tournament> GetAllTournaments()
         {
             List<Tournament> res = new List<Tournament>();
@@ -1130,7 +1165,7 @@ namespace tm
             return League(res);
         }
 
-        public Tournament GetLastRegionalLeague(int level)
+        /*public Tournament GetLastRegionalLeague(int level)
         {
             int res = -1;
             foreach (Tournament t in Tournaments())
@@ -1143,7 +1178,7 @@ namespace tm
             }
 
             return League(res);
-        }
+        }*/
 
         public Tournament FirstDivisionChampionship()
         {
@@ -1244,7 +1279,7 @@ namespace tm
         }
 
         /// <summary>
-        /// Check if a league system is conform compared to current league systel
+        /// Check if a league system is conform compared to current league system
         /// </summary>
         /// <param name="clubsByLeagues">The league system</param>
         /// <returns>True it the league system is conform, False otherwise</returns>
@@ -1256,29 +1291,11 @@ namespace tm
             {
                 List<Club> thisYear = leagues[i].rounds[0].clubs;
                 List<Club> nextYear = clubsByLeagues[i];
-                GroupsRound leagueGroupRound = leagues[i].rounds[0] as GroupsRound;
-                int administrativeLevel = leagueGroupRound != null ? leagueGroupRound.administrativeLevel : 0;
-                if (administrativeLevel > 0)
+                bool leagueTeamsCanVary = LeagueBelow(leagues[i]) == null && parent.Leagues().Count > 0;
+                if (thisYear.Count != nextYear.Count && !leagueTeamsCanVary)
                 {
-                    foreach (Association association in GetAssociationsLevel(administrativeLevel))
-                    {
-                        int maxLevelPossible = MaxLeagueLevelWithAssociation(association) - 1;
-                        List<Club> thisYearAssociation = UtilsTournaments.FilterAssociation(thisYear, association);
-                        List<Club> nextYearAssociation = UtilsTournaments.FilterAssociation(nextYear, association);
-                        if (thisYearAssociation.Count != nextYearAssociation.Count && i != maxLevelPossible)
-                        {
-                            Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + " (" + association.name + ") have a different number of teams");
-                            res = false;
-                        }
-                    }
-                }
-                else
-                {
-                    if (thisYear.Count != nextYear.Count)
-                    {
-                        Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + "have a different number of teams");
-                        res = false;
-                    }
+                    Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + " have a different number of teams");
+                    res = false;
                 }
             }
             return res;
@@ -1388,18 +1405,23 @@ namespace tm
                     }
                 }
 
+                if(name == "France" || parent?.name == "France")
+                {
+                    Console.WriteLine("=====" + leagues[i].name + "===== " + clubsByLeagues[i].Count);
+                    foreach (KeyValuePair<Club, int> c in promotionPlayOffs)
+                    {
+                        Console.WriteLine("[playoffs] " + c.Key.name);
+                    }
+                    foreach (Club c in clubsByLeagues[i])
+                    {
+                        Round clubC = c.Championship?.rounds[0];
+                        //Round clubC = (from Tournament t in Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
+                        string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + GetAssociationLevel(c.Association(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
+                        Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
+                    }
+                }
 
-                Console.WriteLine("=====" + leagues[i].name + "===== " + clubsByLeagues[i].Count);
-                foreach (KeyValuePair<Club, int> c in promotionPlayOffs)
-                {
-                    Console.WriteLine("[playoffs] " + c.Key.name);
-                }
-                foreach (Club c in clubsByLeagues[i])
-                {
-                    Round clubC = (from Tournament t in Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
-                    string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + GetAssociationLevel(c.Association(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
-                    Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
-                }
+
                 int administrativeLevel = 0;
                 if (leagues[i].rounds.Count > 0)
                 {

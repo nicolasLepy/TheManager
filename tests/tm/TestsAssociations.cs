@@ -15,7 +15,24 @@ namespace tests.tm
 
         private static int TEST_YEARS = 2;
 
-        private void CheckClubs(Association az, int expectedTotalClubs)
+        private void CheckAssociationLeagueSystem(Association association, Dictionary<Club, int> occurences)
+        {
+            foreach(Tournament t in association.Leagues())
+            {
+                Round r = t.rounds[0];
+                foreach(Club c in r.clubs)
+                {
+                    occurences[c]++;
+                    Assert.IsTrue(c.Association().IsDirectConnected(association));
+                }
+            }
+            foreach(Association a in association.associations)
+            {
+                CheckAssociationLeagueSystem(a, occurences);
+            }
+        }
+
+        private void CheckLeagueSystem(Association az, int expectedTotalClubs)
         {
             Dictionary<Club, int> occurences = new Dictionary<Club, int>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
@@ -25,46 +42,33 @@ namespace tests.tm
                     occurences[c] = 0;
                 }
             }
-            foreach(Tournament t in az.Leagues())
-            {
-                Round r = t.rounds[0];
-                foreach(Club c in r.clubs)
-                {
-                    occurences[c]++;
-                }
-            }
+
+            CheckAssociationLeagueSystem(az, occurences);
+
             Assert.AreEqual(expectedTotalClubs, occurences.Count);
             foreach(KeyValuePair<Club, int> kvp in occurences)
             {
                 Assert.AreEqual(1, kvp.Value);
             }
-
         }
 
-        private void CheckRegionalLeague(Association az, Tournament t, List<Association> associations, Dictionary<Association, int> expectedTeams)
+        private void CheckRegionalLeague(Tournament t, Association aReg, int expectedTeams)
         {
             GroupsRound r = t.rounds[0] as GroupsRound;
             Assert.IsNotNull(r);
-            foreach(Association a in associations)
+            int teams = 0;
+            foreach(List<Club> cGroups in r.groups)
             {
-                int teams = 0;
-                List<int> groups = r.GetGroupsFromAssociation(a);
-                foreach(int g in groups)
+                foreach(Club c in cGroups)
                 {
-                    List<Club> cGroups = r.groups[g];
-                    foreach(Club c in cGroups)
-                    {
-                        Assert.IsTrue(a.ContainsAssociation(c.Association()));
-                        teams++;
-                    }
+                    Assert.IsTrue(aReg.ContainsAssociation(c.Association()));
+                    teams++;
                 }
-                if(expectedTeams.ContainsKey(a))
-                {
-                    Assert.AreEqual(teams, expectedTeams[a]);
-                }
-
             }
-
+            if(expectedTeams > -1)
+            {
+                Assert.AreEqual(teams, expectedTeams);
+            }
         }
 
         [TestMethod]
@@ -113,30 +117,22 @@ namespace tests.tm
                 Tournament t5 = aAz.League(5);
                 Tournament t6 = aAz.League(6);
 
-                Dictionary<Association, int> aTeams3 = new Dictionary<Association, int>
-                {
-                    [aLevel0[2]] = 8
-                };
+                Association a02 = aLevel0[2];
+                Association a10 = aLevel1[0];
+                Association a11 = aLevel1[1];
 
-                Dictionary<Association, int> aTeams4 = new Dictionary<Association, int>
-                {
-                    [aLevel0[2]] = 16
-                };
+                Tournament a02_1 = a02.League(1);
+                Tournament a02_2 = a02.League(2);
+                Tournament a10_1 = a10.League(1);
+                Tournament a11_1 = a11.League(1);
 
-                Dictionary<Association, int> aTeams5 = new Dictionary<Association, int>
-                {
-                    [aLevel1[0]] = 8,
-                    [aLevel1[1]] = 8
-                };
-
-
-                CheckRegionalLeague(aAz, t3, aLevel0, aTeams3);
-                CheckRegionalLeague(aAz, t4, aLevel0, aTeams4);
-                CheckRegionalLeague(aAz, t5, aLevel1, aTeams5);
-                CheckRegionalLeague(aAz, t6, aLevel1, new());
+                CheckRegionalLeague(a02_1, a02, 8);
+                CheckRegionalLeague(a02_2, a02, 16);
+                CheckRegionalLeague(a10_1, a10, 8);
+                CheckRegionalLeague(a11_1, a11, 8);
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
-                CheckClubs(aAz, 108);
+                CheckLeagueSystem(aAz, 108);
             }
 
         }
@@ -144,7 +140,7 @@ namespace tests.tm
         [TestMethod]
         public void TestLeagueStructureConservedFranceExtended()
         {
-            //Objectif : <1 min [22/05/2022] [debug]
+            //Objectif : <30 sec [28/05/2022] [debug]
             InitGame("database_france_nat", new List<string>() { "France"});
             for (int y = 0; y < TEST_YEARS; y++)
             {
@@ -189,24 +185,33 @@ namespace tests.tm
                 Assert.AreEqual(r40.Ranking(3).Count, 16);
 
                 Tournament t5 = aFr.League(5);
-                Assert.AreEqual(t5.rounds[0].clubs.Count, 171);
+                Assert.AreEqual(t5.rounds[0].clubs.Count, 181);
 
                 //Check each regional league have teams of its association, and the correct number. Number of teams in the last level can vary
-                Tournament t6 = aFr.League(6);
-                Tournament t7 = aFr.League(7);
+                Association aReg1 = aFr.associations[0]; //BFC
+                Association aReg2 = aFr.associations[1]; //GE
+                Association aReg3 = aFr.associations[2]; //HDF
+                Assert.AreEqual("Bourgogne Franche-Comte", aReg1.name);
+                Assert.AreEqual("Grand-Est", aReg2.name);
+                Assert.AreEqual("Hauts de France", aReg3.name);
 
-                Dictionary<Association, int> aTeams6 = new Dictionary<Association, int>
-                {
-                    [aLevel0[0]] = 35,
-                    [aLevel0[1]] = 47,
-                    [aLevel0[2]] = 36
-                };
+                Tournament t6_a = aReg1.League(1);
+                Tournament t6_b = aReg2.League(1);
+                Tournament t6_c = aReg3.League(1);
 
-                CheckRegionalLeague(aFr, t6, aLevel0, aTeams6);
-                CheckRegionalLeague(aFr, t7, aLevel1, new());
+                Tournament t7_a = aReg1.League(2);
+                Tournament t7_b = aReg2.League(2);
+                Tournament t7_c = aReg3.League(2);
+
+                CheckRegionalLeague(t6_a, aReg1, 35);
+                CheckRegionalLeague(t6_b, aReg2, 47);
+                CheckRegionalLeague(t6_c, aReg3, 36);
+                CheckRegionalLeague(t7_a, aReg1, -1);
+                CheckRegionalLeague(t7_b, aReg2, -1);
+                CheckRegionalLeague(t7_c, aReg3, -1);
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
-                CheckClubs(aFr, 1444);
+                CheckLeagueSystem(aFr, 1404);
             }
         }
 

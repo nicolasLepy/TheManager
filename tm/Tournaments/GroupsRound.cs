@@ -73,6 +73,14 @@ namespace tm
         /// </summary>
         protected int __computationRelegationPlaces;
 
+        /// <summary>
+        /// If False, qualification are defined for each group (1st of each group will qualifie for ...).
+        /// Otherwise, qualifications are defined for all group (only 1 team will qualifie for ...).
+        /// </summary>
+        [DataMember]
+        protected bool _qualificationsDefinedForAllGroup;
+
+
         public int referenceClubsByGroup => _referenceClubsByGroup;
 
 
@@ -94,6 +102,8 @@ namespace tm
         public int nonGroupGamesByTeams => _nonGroupGamesByTeams;
         public int nonGroupGamesByGameday => _nonGroupGamesByGameday;
         public bool fusionGroupAndNoGroupGames => _fusionGroupAndNoGroupGames;
+
+        public bool qualificationsDefinedForAllGroup => _qualificationsDefinedForAllGroup;
 
         public List<GeographicPosition> groupsLocalisation { get => _groupsLocalisation; }
 
@@ -142,7 +152,7 @@ namespace tm
             _cacheRanking = new List<Club>[0];
         }
 
-        public GroupsRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority, int lastDaysSameDay) : base(id, name, tournament, hour, dates, offsets, initialisation,end, phases, lastDaysSameDay, keepRankingFromPreviousRound, gamesPriority)
+        public GroupsRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool qualificationsDefinedForAllGroup, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority, int lastDaysSameDay) : base(id, name, tournament, hour, dates, offsets, initialisation,end, phases, lastDaysSameDay, keepRankingFromPreviousRound, gamesPriority)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -161,6 +171,7 @@ namespace tm
             _fusionGroupAndNoGroupGames = fusionGroupAndNoGroupGames;
             _cacheRanking = new List<Club>[0];
             __computationRelegationPlaces = 0;
+            _qualificationsDefinedForAllGroup = qualificationsDefinedForAllGroup;
         }
 
         public void ClearCache()
@@ -234,6 +245,31 @@ namespace tm
                 }
             }
             return res;
+        }
+
+        /// <summary>
+        /// Returns the number of teams of an association who will be relegated
+        /// </summary>
+        /// <param name="association"></param>
+        /// <returns></returns>
+        public List<Club> GetAssociationRelegables(Association association)
+        {
+            Tournament selfTournament = Tournament;
+            List<Club> candidates = new List<Club>();
+            for(int group = 0; group < groupsCount; group++)
+            {
+                List<Club> ranking = Ranking(group);
+                List<Qualification> qualifications = GetGroupQualifications(group);
+                foreach(Qualification q in qualifications)
+                {
+                    Club c = ranking[q.ranking-1];
+                    if(selfTournament.IsAbove(q.target) && c.Association().IsDirectConnected(association))
+                    {
+                        candidates.Add(c);
+                    }
+                }
+            }
+            return candidates;
         }
 
         public List<Club> GetAssociationRelegablesCandidates(Association association)
@@ -424,6 +460,150 @@ namespace tm
         }
 
         /// <summary>
+        /// Get the number of teams relegated from above division that will be entering this league for the next edition
+        /// </summary>
+        /// <param name="selfTournament"></param>
+        /// <returns></returns>
+        private KeyValuePair<Tournament, int> GetRelegatedFromAbove(Tournament selfTournament)
+        {
+            int count = 0;
+            Association selfAssociation = Session.Instance.Game.kernel.LocalisationTournament(selfTournament);
+            Tournament source = selfAssociation.LeagueAbove(selfTournament).Tournament();
+            GroupsRound upperRound = source.rounds[0] as GroupsRound;
+            if(upperRound != null)
+            {
+                for(int i = 0; i < upperRound.groupsCount; i++)
+                {
+                    List<Qualification> qualifications = upperRound.GetGroupQualifications(i);
+                    foreach(Qualification q in qualifications)
+                    {
+                        if(q.target.Tournament(selfAssociation) == selfTournament)
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+            return new KeyValuePair<Tournament, int>(source, count);
+        }
+
+        /// <summary>
+        /// Adjust qualifications according to region and district constraints
+        /// </summary>
+        /// <param name="baseQualifications">List of initial qualifications</param>
+        /// <param name="group">Concerned group</param>
+        /// <param name="tournament">Base tournament</param>
+        /// <returns>New list of qualifications</returns>
+        public List<Qualification> AdjustQualifications(List<Qualification> baseQualifications, int group, Tournament selfTournament)
+        {
+
+            List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
+            adjustedQualifications.Sort(new QualificationRankingComparator());
+            Association selfAssociation = Session.Instance.Game.kernel.LocalisationTournament(selfTournament);
+            Console.WriteLine("[{0}][{1}][Groupe {2}]", selfTournament.name, selfAssociation.name, group);
+
+            //J'ai juste à savoir le nombre d'équipes reléguées du haut et j'adapte
+            //int totalRelegationsFromAbove = GetRelegatedFromAbove(selfTournament).Value;
+            Tournament upperTournament = selfAssociation.LeagueAbove(selfTournament)?.Tournament();
+            GroupsRound upperRound = upperTournament?.rounds[0] as GroupsRound;
+
+            if(qualificationsDefinedForAllGroup)
+            {
+                adjustedQualifications = new List<Qualification>();
+                int totalPromotion = 0;
+                int totalRelegations = 0;
+                foreach (Qualification q in qualifications)
+                {
+                    if (selfTournament.IsBelow(q.target))
+                    {
+                        totalPromotion++;
+                    }
+                    if (selfTournament.IsAbove(q.target))
+                    {
+                        totalRelegations++;
+                    }
+                }
+                int totalRelegationsFromAbove = 0;
+                if (selfAssociation.parent != null)
+                {
+                    totalRelegationsFromAbove = selfAssociation.parent.GetExcludedTeamsFromLeagueSystem(selfAssociation);
+                }
+                Console.WriteLine("[{0}] Association {1} got {2} excluded teams", _tournament.name, selfAssociation.name, totalRelegationsFromAbove);
+                /*if (upperRound != null)
+                {
+                    totalRelegationsFromAbove = upperRound.GetAssociationRelegables(selfAssociation).Count;
+                }*/
+                totalRelegations += totalRelegationsFromAbove;
+
+                List<Club> groupRanking = Ranking(group);
+                // == Move to a independant method ==
+                int promotionsOfGroup = totalPromotion / groupsCount;
+                int relegationsOfGroup = totalRelegations / groupsCount;
+                int extraPromotions = totalPromotion % groupsCount;
+                int extraRelegations = totalRelegations % groupsCount;
+                if (extraPromotions != 0)
+                {
+                    List<Club> rankingRank = RankingByRank(promotionsOfGroup + 1, null);
+                    if(rankingRank.IndexOf(groupRanking[promotionsOfGroup+1 - 1]) < extraPromotions)
+                    {
+                        promotionsOfGroup++;
+                    }
+                }
+                if(extraRelegations != 0)
+                {
+                    int negativeRanking = -relegationsOfGroup - 1;
+                    List<Club> rankingRank = RankingByRank(negativeRanking, null);
+                    rankingRank.Reverse();
+                    if (rankingRank.IndexOf(groupRanking[groupRanking.Count + negativeRanking]) < extraRelegations)
+                    {
+                        relegationsOfGroup++;
+                    }
+                }
+
+                if (promotionsOfGroup + relegationsOfGroup > groupRanking.Count)
+                {
+                    throw new Exception("Too many promotion and relegation for the group");
+                }
+
+                QualificationTarget promotionTarget = new QualificationTournament(upperTournament);
+                QualificationTarget relegationTarget = selfAssociation.LeagueBelow(selfTournament);
+                QualificationTarget noChangeTarget = new QualificationTournament(selfTournament);
+                if(relegationTarget == null)
+                {
+                    relegationsOfGroup = 0;
+                }
+                //TODO: Attention, pour les coupes qui définissent des qualifiés à dispatcher pour les groupes (qualifications internationales), il faut récupérer les Qualifications pour les dispatcher et non en recréer comme ça
+                for(int i = 0; i < groupRanking.Count; i++)
+                {
+                    if(i < promotionsOfGroup)
+                    {
+                        adjustedQualifications.Add(new Qualification(i + 1, 0, promotionTarget, true, 0));
+                    }
+                    else if(groupRanking.Count - i <= relegationsOfGroup)
+                    {
+                        adjustedQualifications.Add(new Qualification(i + 1, 0, relegationTarget, true, 0));
+                    }
+                    else
+                    {
+                        adjustedQualifications.Add(new Qualification(i + 1, 0, noChangeTarget, true, 0));
+                    }
+                }
+                // == End ==
+
+                if (selfAssociation.parent.name.Equals("France") && selfTournament.level == 1)
+                {
+                    Console.Write("");
+                }
+
+            }
+
+            //Ensuite j'adapte le nombre total de places à mon groupe spécifique
+            //Et je retourne
+
+            return adjustedQualifications;
+        }
+
+        /// <summary>
         /// Adjust qualifications according to region and district constraints
         /// </summary>
         /// <param name="baseQualifications">List of initial qualifications</param>
@@ -433,10 +613,10 @@ namespace tm
         {
             Tournament tournament = Tournament;
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
-            adjustedQualifications.Sort(new QualificationComparator());
+            adjustedQualifications.Sort(new QualificationRankingComparator());
             //Country country = _groups[group][0].Country();
             //Association of the tournament
-            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(tournament) as Association;
+            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(tournament);
 
             //Get the district of the group (at the good regional level)
             Association association = tAssociation.GetAssociationLevel(_groups[group][0].Association(), _administrativeLevel);
@@ -863,21 +1043,14 @@ namespace tm
                 ClearRankingCache();
                 Tournament tournament = Tournament;
                 List<Qualification> allQualifications = new List<Qualification>(qualifications);
-                int countChampionshipQualifications = 0;
-                foreach (Qualification qualification in qualifications)
-                {
-                    if (qualification.target.ToChampionshipTournament())
-                    {
-                        countChampionshipQualifications++;
-                    }
-                }
+                int countChampionshipQualifications = Utils.CountChampionshipQualifications(qualifications);
                 int minTeamsByGroup = clubs.Count / groupsCount;
                 int groupsWithExtraTeam = clubs.Count % groupsCount;
 
                 //It's a group with extra team, qualifications needs to be adapted
                 if (group < groupsWithExtraTeam /*groups[group].Count == minTeamsByGroup + 1*/ && countChampionshipQualifications == minTeamsByGroup)
                 {
-                    allQualifications.Sort(new QualificationComparator());
+                    allQualifications.Sort(new QualificationRankingComparator());
                     int firstRankingToBottom = -1;
                     foreach (Qualification q in allQualifications)
                     {
@@ -906,13 +1079,21 @@ namespace tm
                 int totalClubs = _groups[group].Count > 0 ? _groups[group].Count : _clubs.Count / _groupsNumber; //Get theoretical clubs by group if groups were not drawn
                 allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
 
-                if (_randomDrawingMethod == RandomDrawingMethod.Administrative && _groups[group].Count > 0)
+                
+                //Old implementation
+                /*if (_randomDrawingMethod == RandomDrawingMethod.Administrative && _groups[group].Count > 0)
                 {
                     allQualifications = AdjustQualificationAssociation(allQualifications, group);
                 }
                 else if (_groups[group].Count > 0)
                 {
                     allQualifications = AdjustQualificationsGroup(allQualifications, group, tournament);
+                }*/
+                // New implementation
+                if (_groups[group].Count > 0)
+                {
+                    allQualifications = AdjustQualificationsGroup(allQualifications, group, tournament);
+                    allQualifications = AdjustQualifications(allQualifications, group, tournament);
                 }
 
                 if (groups[group].Count > 0)
@@ -921,7 +1102,10 @@ namespace tm
                     Association association = _randomDrawingMethod == RandomDrawingMethod.Administrative ? country.GetAssociationLevel(_groups[group][0].Association(), _administrativeLevel) : null;
                     int groupsCount = association != null ? GetGroupsFromAssociation(association).Count : groups.Length;
                     int totalRelegations = GetRelegations(association);
-                    allQualifications = Utils.AdjustQualificationsToNotPromoteReserves(allQualifications, Ranking(group), association, tournament, this, _rules.Contains(Rule.ReservesAreNotPromoted), totalRelegations, groupsCount);
+                    if(!Utils.DISABLE_RESERVES_RULES)
+                    {
+                        allQualifications = Utils.AdjustQualificationsToNotPromoteReserves(allQualifications, Ranking(group), association, tournament, this, _rules.Contains(Rule.ReservesAreNotPromoted), totalRelegations, groupsCount);
+                    }
                 }
                 _storedGroupQualifications[group] = allQualifications;
                 return allQualifications;
@@ -971,7 +1155,7 @@ namespace tm
             for (int i = 0; i < _groupsNumber; i++)
             {
                 List<Qualification> qualifications = GetGroupQualifications(i);// new List<Qualification>(_qualifications);
-                qualifications.Sort(new QualificationComparator());
+                qualifications.Sort(new QualificationRankingComparator());
 
                 foreach (Qualification q in qualifications)
                 {
@@ -1197,6 +1381,21 @@ namespace tm
             {
                 return null;
             }
+        }
+
+        public void PrintRanking()
+        {
+            Console.WriteLine("\nRanking : ----- {0} ----- {1} teams", Tournament.name, clubs.Count);
+            for(int g = 0; g < groupsCount; g++)
+            {
+                Console.WriteLine("Groupe {0}", GroupName(g));
+                int i = 0;
+                foreach(Club club in Ranking(g))
+                {
+                    Console.WriteLine("{0}. {1}", ++i, club.name);
+                }
+            }
+
         }
     }
 }

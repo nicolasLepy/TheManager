@@ -1458,8 +1458,8 @@ namespace tm
                 if(makeRoundsInactive)
                 {
                     int associationLevel = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).administrativeLevel : 0;
-                    //roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end, associationLevel);
-                    roundCopy = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), roundCopy.name, this, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    bool qualificationsForAllGroups = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).qualificationsDefinedForAllGroup : false;
+                    roundCopy = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), roundCopy.name, this, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, qualificationsForAllGroups, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 }
                 for (int i = 0; i < roundCopy.qualifications.Count; i++)
                 {
@@ -2047,7 +2047,8 @@ namespace tm
                 {
                     int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
                     int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
-                    GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, this, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    bool qualificationsForAllGroups = (t as GroupsRound != null) ? (t as GroupsRound).qualificationsDefinedForAllGroup : false;
+                    GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, this, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, qualificationsForAllGroups, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                     newRound.rules.AddRange(t.rules);
                     newRounds.Add(newRound);
 

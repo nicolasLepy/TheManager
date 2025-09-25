@@ -100,6 +100,7 @@ namespace TheManager_GUI
                 cbdd.CreateRegionalPathForCups();
                 RaiseUpdateEvent(98, Application.Current.FindResource("str_loading_archives").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadArchives();
+                cbdd.PostProcess();
                 RaiseUpdateEvent(100, "", LoadDatabaseProgressReportType.FINISH, game);
 
             });

@@ -163,26 +163,29 @@ namespace TheManager_GUI.Views
         private string InternationalQualificationColor(Qualification q)
         {
             string color = "";
-            int targetTournamentLevel = q.target.Tournament().level;
-            if (targetTournamentLevel == 1 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound != null)
+            if(q.target.Type == QualificationTargetType.Tournament)
             {
-                color = StyleDefinition.slotQualification1a;
-            }
-            else if (targetTournamentLevel == 1 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound == null)
-            {
-                color = StyleDefinition.slotQualification1b;
-            }
-            else if (targetTournamentLevel == 2 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound != null)
-            {
-                color = StyleDefinition.slotQualification2a;
-            }
-            else if (targetTournamentLevel == 2 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound == null)
-            {
-                color = StyleDefinition.slotQualification2b;
-            }
-            else if (targetTournamentLevel == 3)
-            {
-                color = StyleDefinition.slotQualification3a;
+                int targetTournamentLevel = q.target.Tournament().level;
+                if (targetTournamentLevel == 1 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound != null)
+                {
+                    color = StyleDefinition.slotQualification1a;
+                }
+                else if (targetTournamentLevel == 1 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound == null)
+                {
+                    color = StyleDefinition.slotQualification1b;
+                }
+                else if (targetTournamentLevel == 2 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound != null)
+                {
+                    color = StyleDefinition.slotQualification2a;
+                }
+                else if (targetTournamentLevel == 2 && q.target.Tournament().rounds[q.roundId] as GroupActiveRound == null)
+                {
+                    color = StyleDefinition.slotQualification2b;
+                }
+                else if (targetTournamentLevel == 3)
+                {
+                    color = StyleDefinition.slotQualification3a;
+                }
             }
             return color;
         }

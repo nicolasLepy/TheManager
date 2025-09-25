@@ -14,6 +14,9 @@ namespace tm
     public static class Utils
     {
 
+        public readonly static bool DISABLE_RESERVES_RULES = true;
+        public readonly static bool DISABLE_ADMINISTRATIVE_RETROGRADATIONS = true;
+
         private static bool providerRegistered = false;
 
         public readonly static int beginningYear = 2021;
@@ -813,7 +816,8 @@ namespace tm
                 Console.WriteLine("new relegations places : " + newRelegationPlaces + " (+" + additionalRelegationPlaces + ")");
                 if(bottomTournament != null)
                 {
-                    int rankingRelegationLimit = qualifications.Where(x => x.target.Equals(bottomTournament)).Min(x => x.ranking);
+                    
+                    int rankingRelegationLimit = qualifications.Where(x => bottomTournament.SameLevel(x.target)).Min(x => x.ranking);
                     int maxRanking = qualifications.Max(x => x.ranking);
                     //Special feature for championship round :
                     //If relegation barrage, move them just up direct relegations places so there is no offset between barrage places and direct relegations places
@@ -866,7 +870,7 @@ namespace tm
 
             for (int i = 0; i<qualifications.Count && ranking.Count > 0; i++)
             {
-                qualifications.Sort(new QualificationComparator());
+                qualifications.Sort(new QualificationRankingComparator());
                 Qualification q = qualifications[i];
                 Club concernedClub = ranking[q.ranking - 1];
                 RuleStatus ruleStatus = RuleIsRespected(concernedClub, q, from, reservesCantBePromoted);
@@ -1050,9 +1054,14 @@ namespace tm
             Console.WriteLine("[Search for duplicates finished]");
         }
 
-        public static List<int> GetGroupSize(int totalTeams, int defaultMaxTeamsByGroup)
+        public static int GroupCount(int totalTeams, int defaultMaxTeamsByGroup)
         {
             int groupCount = totalTeams / defaultMaxTeamsByGroup + (totalTeams % defaultMaxTeamsByGroup != 0 ? 1 : 0);
+            return groupCount;
+        }
+
+        public static List<int> GetGroupSize(int totalTeams, int groupCount)
+        {
             int ecart = groupCount > 0 ? totalTeams % groupCount : totalTeams;
             List<int> res = new List<int>();
             for (int i = 0; i < groupCount; i++)
@@ -1061,6 +1070,19 @@ namespace tm
                 res.Add(totalTeams / groupCount + add);
             }
             return res;
+        }
+
+        public static int CountChampionshipQualifications(List<Qualification> qualifications)
+        {
+            int countChampionshipQualifications = 0;
+            foreach (Qualification qualification in qualifications)
+            {
+                if (qualification.target.ToChampionshipTournament())
+                {
+                    countChampionshipQualifications++;
+                }
+            }
+            return countChampionshipQualifications;
         }
     }
 }

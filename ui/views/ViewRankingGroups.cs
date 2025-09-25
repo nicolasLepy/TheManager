@@ -98,7 +98,7 @@ namespace TheManager_GUI.Views
                 for (int i = 0; i < _round.groupsCount; i++)
                 {
                     qualifications[i] = _round.GetGroupQualifications(i);// new List<Qualification>(_round.qualifications);
-                    qualifications[i].Sort(new QualificationComparator());
+                    qualifications[i].Sort(new QualificationRankingComparator());
                 }
             }
 
