@@ -13,7 +13,13 @@ namespace tests.tm
     public class TestsAssociations : TheManagerTest
     {
 
-        private static int TEST_YEARS = 2;
+        //dotnet test --collect:"XPlat Code Coverage"
+        //Results are stored into TestResults folder
+        //Install tool for html report
+        ///dotnet tool install -g dotnet-reportgenerator-globaltool
+        // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+
+        private static int TEST_YEARS = 15;
 
         private void CheckAssociationLeagueSystem(Association association, Dictionary<Club, int> occurences)
         {
@@ -285,6 +291,38 @@ namespace tests.tm
                 //Check each club (and eventual reserve) have a league associated, and no doublons
                 CheckLeagueSystem(aFr, 1404);
             }
+        }
+
+        // TODO [TestMethod]
+        public void TestSeasonsLight() //About 3 minutes / season
+        {
+            InitGame("database_france_light", null);
+
+            int years = 2;
+            for (int i = 0; i < 365 * years; i++)
+            {
+                Session.Instance.Game.NextDay();
+                Session.Instance.Game.UpdateTournaments();
+            }
+
+            Session.Instance.Game.Save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_big.csave");
+
+            //TODO: Check everything are correct : league structure doesn't changed, cup with right teams count
+        }
+
+        // TODO [TestMethod]
+        public void TestSeasonsLightFast()
+        {
+            InitGame("database_france_light", new List<string>() { "France" });
+
+            int years = 10;
+            for (int i = 0; i < 365 * years; i++)
+            {
+                Session.Instance.Game.NextDay();
+                Session.Instance.Game.UpdateTournaments();
+            }
+
+            //TODO: Check everything are correct : league structure doesn't changed, cup with right teams count
         }
 
         private void CheckAssociations(List<int> expectedId, List<Association> associations)

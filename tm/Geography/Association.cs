@@ -880,7 +880,7 @@ namespace tm
                         {
                             for (int k = t.nextYearQualified[j].Count - 1; k >= 0; k--)
                             {
-                                if (t.nextYearQualified[j][k].Association().IsDirectConnected(countriesRanking[i].localisation as Association))
+                                if (t.nextYearQualified[j][k].Association().IsDirectConnected(countriesRanking[i]))
                                 {
                                     t.nextYearQualified[j].Remove(t.nextYearQualified[j][k]);
                                 }

@@ -486,9 +486,9 @@ namespace tm
             return res;
         }
 
-        public static void Debug(string str)
+        public static void Debug(string str, params object[] args)
         {
-            Console.WriteLine(str);
+            Console.WriteLine(str, args);
         }
 
         [Flags]

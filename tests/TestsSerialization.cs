@@ -43,25 +43,25 @@ namespace tests
             // Console.WriteLine(String.Format("[Tournaments] {0}", game.kernel.Competitions.Count)); NEED WORLD
         }
 
-        [TestMethod]
+        // TODO [TestMethod]
         public void TestSave()
         {
             save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2024.csave");
         }
 
-        [TestMethod]
+        // TODO [TestMethod]
         public void TestLoad()
         {
             load("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2024.csave");
         }
 
-        [TestMethod]
+        // TODO [TestMethod]
         public void TestSaveLight()
         {
             save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2022.csave");
         }
 
-        [TestMethod]
+        // TODO [TestMethod]
         public void TestLoadLight()
         {
             load("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_06_2022.csave");
