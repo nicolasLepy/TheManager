@@ -2104,7 +2104,7 @@ namespace tm
                     rule = Rule.OnlyFirstTeams;
                     break;
                 case "RESERVES_NE_MONTENT_PAS":
-                    rule = Rule.ReservesAreNotPromoted;
+                    rule = Rule.ReservesCannotBePromoted;
                     break;
                 case "ONE_TEAM_BY_ASSOCIATION_PER_GROUP":
                     rule = Rule.OneTeamByAssociationInGroup;

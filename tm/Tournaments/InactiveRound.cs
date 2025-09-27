@@ -253,7 +253,7 @@ namespace tm
 
             adjustedQualifications = AdaptQualificationsToRanking(adjustedQualifications, clubs.Count);
 
-            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, null, Tournament, this, _rules.Contains(Rule.ReservesAreNotPromoted), CountRelegations(), 1);
+            adjustedQualifications = Utils.AdjustQualificationsToReserves(adjustedQualifications, ranking, null, Tournament, this, _rules.Contains(Rule.ReservesCannotBePromoted), CountRelegations(), -1, null, null, 1);
 
             if (_clubs.Count > 0)
             {

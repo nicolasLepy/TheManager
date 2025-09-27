@@ -663,7 +663,10 @@ namespace tm
                 Association ta = _kernel.LocalisationTournament(c);
                 foreach (Round t in c.rounds)
                 {
-                    DeclareFinancialSanctions(c, t);
+                    if(!Utils.DISABLE_FINANCIAL_SANCTIONS)
+                    {
+                        DeclareFinancialSanctions(c, t);
+                    }
 
                     //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
                     if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)

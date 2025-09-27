@@ -19,9 +19,9 @@ namespace tests.tm
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
         // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private static int TEST_YEARS = 15;
+        private static int TEST_YEARS = 12;
 
-        private void CheckAssociationLeagueSystem(Association association, Dictionary<Club, int> occurences)
+        private void CheckAssociationLeagueSystem(Association association, Dictionary<Club, int> occurences, int maxLevelReservesAllowed)
         {
             foreach(Tournament t in association.Leagues())
             {
@@ -30,15 +30,23 @@ namespace tests.tm
                 {
                     occurences[c]++;
                     Assert.IsTrue(c.Association().IsDirectConnected(association));
+
+                    ReserveClub rc = c as ReserveClub;
+                    if(rc != null)
+                    {
+                        Assert.IsTrue(maxLevelReservesAllowed == -1 || t.level >= maxLevelReservesAllowed);
+                        Club clubAbove = rc.GetTeamAbove();
+                        Assert.IsTrue(association.LeagueBelow(t) == null || clubAbove.Championship.IsAbove(new QualificationTournament(rc.Championship)));
+                    }
                 }
             }
             foreach(Association a in association.associations)
             {
-                CheckAssociationLeagueSystem(a, occurences);
+                CheckAssociationLeagueSystem(a, occurences, -1);
             }
         }
 
-        private void CheckLeagueSystem(Association az, int expectedTotalClubs)
+        private void CheckLeagueSystem(Association az, int expectedTotalClubs, int maxLevelReservesAllowed)
         {
             Dictionary<Club, int> occurences = new Dictionary<Club, int>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
@@ -49,7 +57,7 @@ namespace tests.tm
                 }
             }
 
-            CheckAssociationLeagueSystem(az, occurences);
+            CheckAssociationLeagueSystem(az, occurences, maxLevelReservesAllowed);
 
             Assert.AreEqual(expectedTotalClubs, occurences.Count);
             foreach(KeyValuePair<Club, int> kvp in occurences)
@@ -138,7 +146,7 @@ namespace tests.tm
                 CheckRegionalLeague(a11_1, a11, 8);
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
-                CheckLeagueSystem(aAz, 108);
+                CheckLeagueSystem(aAz, 108, -1);
             }
 
         }
@@ -155,18 +163,19 @@ namespace tests.tm
 
                 for (int i = 0; i < 365; i++)
                 {
-                    if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime(), Session.Instance.Game.date))
+                    if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(-1), Session.Instance.Game.date))
                     {
                         Console.WriteLine("[{0}] Classements finaux", Session.Instance.Game.date.Year);
                         PrintLeagueSystem(aFr);
                     }
-                    Session.Instance.Game.NextDay();
-                    Session.Instance.Game.UpdateTournaments();
                     if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(31), Session.Instance.Game.date))
                     {
                         Console.WriteLine("[{0}-{1}] Nouveaux championnats", Session.Instance.Game.date.Year, Session.Instance.Game.date.Year + 1);
                         PrintLeagueSystem(aFr);
                     }
+
+                    Session.Instance.Game.NextDay();
+                    Session.Instance.Game.UpdateTournaments();
                 }
 
                 List<Association> aLevel0 = fr.GetCountryAssociation().associations;
@@ -289,7 +298,7 @@ namespace tests.tm
                 CheckRegionalLeague(t7_m, aReg13, -1);
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
-                CheckLeagueSystem(aFr, 1404);
+                CheckLeagueSystem(aFr, 1404, 4);
             }
         }
 

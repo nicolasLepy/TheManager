@@ -18,7 +18,7 @@ namespace tm
         Invalid,
         AtHomeIfTwoLevelDifference,
         OnlyFirstTeams,
-        ReservesAreNotPromoted,
+        ReservesCannotBePromoted,
         OneTeamByAssociationInGroup,
         HostedByOneAssociation,
         UltramarineTeamsPlayHomeOrAway,

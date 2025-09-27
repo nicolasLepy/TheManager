@@ -372,7 +372,7 @@ namespace tm
             int level = -1;
             foreach (Tournament t in Tournaments())
             {
-                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted) && t.level > level)
+                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesCannotBePromoted) && t.level > level)
                 {
                     level = t.level;
                 }
@@ -655,7 +655,7 @@ namespace tm
                 Club candidate = candidates[j];
                 ReserveClub candidateAsReserve = candidate as ReserveClub;
                 //TODO: Rules check (doublon ?)
-                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !UtilsTournaments.ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
+                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !UtilsTournaments.ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
                 {
                     found = true;
                     leagueSystem[indexLevelRepechage].Remove(candidate);
@@ -808,7 +808,7 @@ namespace tm
                             Club candidate = candidates[j];
                             ReserveClub candidateAsReserve = candidate as ReserveClub;
                             //TODO: Rules check (doublon ?)
-                            if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !ContainsTeamOfClub(clubsByLeagues[i - 1], candidateAsReserve.FannionClub))))
+                            if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !ContainsTeamOfClub(clubsByLeagues[i - 1], candidateAsReserve.FannionClub))))
                             {
                                 found = true;
                                 clubsByLeagues[i].Remove(candidate);
@@ -863,7 +863,7 @@ namespace tm
                                         Club candidate = candidates[j];
                                         ReserveClub candidateAsReserve = candidate as ReserveClub;
                                         //TODO: Rules check (doublon ?)
-                                        if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !ContainsTeamOfClub(clubsByLeagues[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
+                                        if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !ContainsTeamOfClub(clubsByLeagues[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
                                         {
                                             found = true;
                                             clubsByLeagues[indexLevelRepechage].Remove(candidate);
