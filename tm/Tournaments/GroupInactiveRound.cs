@@ -99,5 +99,12 @@ namespace tm.Tournaments
             this._ranking = clubs;
         }
 
+        protected override void SetGroups()
+        {
+            _groupsNumber = 1;
+            _groups = new List<Club>[1];
+            _groups[0] = new List<Club>(_clubs);
+        }
+
     }
 }

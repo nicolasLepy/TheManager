@@ -82,5 +82,32 @@ namespace tm.Tournaments
         {
             _referenceClubsByGroup = maxTeamsByGroups;
         }
+
+        protected override void SetGroups()
+        {
+            IRandomDrawing randomDrawing;
+            switch (_randomDrawingMethod)
+            {
+                case RandomDrawingMethod.Coefficient:
+                    randomDrawing = new RandomDrawingLevel(this, _clubs[0] as NationalTeam == null ? ClubAttribute.CONTINENTAL_COEFFICIENT : ClubAttribute.LEVEL);
+                    break;
+                case RandomDrawingMethod.Geographic:
+                    randomDrawing = new RandomDrawingGeographic(this);
+                    break;
+                case RandomDrawingMethod.Administrative:
+                    randomDrawing = new RandomDrawingAdministrative(this);
+                    break;
+                case RandomDrawingMethod.Level:
+                default:
+                    randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);
+                    break;
+            }
+            randomDrawing.RandomDrawing();
+
+            if (_referenceClubsByGroup == 0)
+            {
+                _referenceClubsByGroup = (_clubs.Count / groupsCount); // + 1;
+            }
+        }
     }
 }

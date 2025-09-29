@@ -627,11 +627,6 @@ namespace tm
                 }
                 // == End ==
 
-                if (selfAssociation.parent.name.Equals("France") && selfTournament.level == 1)
-                {
-                    Console.Write("");
-                }
-
             }
 
             return adjustedQualifications;
@@ -1084,15 +1079,6 @@ namespace tm
                 allQualifications = AdaptQualificationsToRanking(allQualifications, totalClubs);
 
                 
-                //Old implementation
-                /*if (_randomDrawingMethod == RandomDrawingMethod.Administrative && _groups[group].Count > 0)
-                {
-                    allQualifications = AdjustQualificationAssociation(allQualifications, group);
-                }
-                else if (_groups[group].Count > 0)
-                {
-                    allQualifications = AdjustQualificationsGroup(allQualifications, group, tournament);
-                }*/
                 // New implementation
                 if (_groups[group].Count > 0)
                 {
@@ -1106,13 +1092,11 @@ namespace tm
                     int totalPromotions = promRelSpots[QualificationType.DirectPromotion].Value;
                     QualificationTarget targetDirectRelegation = promRelSpots[QualificationType.DirectRelegation].Key;
                     QualificationTarget targetDirectPromotion = promRelSpots[QualificationType.DirectPromotion].Key;
-                    if (!Utils.DISABLE_RESERVES_RULES)
+                    if (tournament.isChampionship)
                     {
-                        if(tournament.isChampionship && tournament.rounds.IndexOf(this) == 0)
-                        {
-                            allQualifications = Utils.AdjustQualificationsToReserves(allQualifications, Ranking(group), selfAssociation, tournament, this, _rules.Contains(Rule.ReservesCannotBePromoted), totalRelegations, totalPromotions, targetDirectRelegation, targetDirectPromotion, groupsCount);
-                        }
+                        allQualifications = Utils.AdjustQualificationsToReserves(allQualifications, Ranking(group), selfAssociation, tournament, this, _rules.Contains(Rule.ReservesCannotBePromoted), totalRelegations, totalPromotions, targetDirectRelegation, targetDirectPromotion, groupsCount);
                     }
+
                 }
                 _storedGroupQualifications[group] = allQualifications;
                 return allQualifications;
@@ -1328,31 +1312,7 @@ namespace tm
             return res;
         }
 
-        private void SetGroups()
-        {
-            IRandomDrawing randomDrawing;
-            switch (_randomDrawingMethod)
-            {
-                case RandomDrawingMethod.Coefficient:
-                    randomDrawing = new RandomDrawingLevel(this, _clubs[0] as NationalTeam == null ? ClubAttribute.CONTINENTAL_COEFFICIENT : ClubAttribute.LEVEL);
-                    break;
-                case RandomDrawingMethod.Geographic:
-                    randomDrawing = new RandomDrawingGeographic(this);
-                    break;
-                case RandomDrawingMethod.Administrative:
-                    randomDrawing = new RandomDrawingAdministrative(this);
-                    break;
-                case RandomDrawingMethod.Level : default:
-                    randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);
-                    break;
-            }
-            randomDrawing.RandomDrawing();
-
-            if (_referenceClubsByGroup == 0)
-            {
-                _referenceClubsByGroup = (_clubs.Count / groupsCount); // + 1;
-            }
-        }
+        protected abstract void SetGroups();
 
         public override void DistributeGrants()
         {

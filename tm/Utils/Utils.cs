@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NHibernate.Id;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,7 +25,6 @@ namespace tm
     {
 
         public readonly static bool DISABLE_FINANCIAL_SANCTIONS = true;
-        public readonly static bool DISABLE_RESERVES_RULES = false;
         public readonly static bool DISABLE_ADMINISTRATIVE_RETROGRADATIONS = true;
 
         private static bool providerRegistered = false;
@@ -782,6 +782,56 @@ namespace tm
             return res;
         }
 
+        private static Dictionary<QualificationType, List<Qualification>> ComputeRoundDestinations(List<Qualification> initialQualifications, List<Round> relegationBarrageRounds, List<Round> promotionBarrageRounds)
+        {
+            //== Déplacable dans une autre fonction
+            Dictionary<QualificationType, List<Qualification>> roundQualifications = new Dictionary<QualificationType, List<Qualification>>
+            {
+                { QualificationType.PossiblePromotion, new List<Qualification>() },
+                { QualificationType.PossibleRelegation, new List<Qualification>() },
+            };
+            initialQualifications = new List<Qualification>(initialQualifications);
+            initialQualifications.Sort(new QualificationRankingComparator());
+            foreach (Qualification q in initialQualifications)
+            {
+                if (!q.isNextYear && relegationBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId]))
+                {
+                    roundQualifications[QualificationType.PossibleRelegation].Add(q);
+                }
+                if (!q.isNextYear && promotionBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId]))
+                {
+                    roundQualifications[QualificationType.PossiblePromotion].Add(q);
+                }
+            }
+            // Cas un peu spécial où des qualifications vers une autre phase de ligue qui n'implique pas de promotion/relégation. On les ajoute à la liste des promotions car elles seront ajoutées dans l'ordre de classement aux clubs
+            foreach (Qualification q in initialQualifications)
+            {
+                if (!q.isNextYear && (!relegationBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId])) && (!promotionBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId])))
+                {
+                    roundQualifications[QualificationType.PossiblePromotion].Add(q);
+                }
+            }
+
+            // == Security check
+            int specialQualifications = 0;
+            foreach (Qualification q in initialQualifications)
+            {
+                if (!q.isNextYear || q.roundId > 0)
+                {
+                    specialQualifications++;
+                }
+            }
+            if (specialQualifications != roundQualifications[QualificationType.PossiblePromotion].Count + roundQualifications[QualificationType.PossibleRelegation].Count)
+            {
+                throw new Exception("Some qualifications were not taken into account");
+            }
+            // == End of security check
+
+            return roundQualifications;
+
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -826,51 +876,8 @@ namespace tm
             //TODO: Problème à gérer : s'il y a trop de réserves releguées d'office : peut mener à plus de relégations que prévue : il faut transférer l'information aux ligues inférieures pour adapter.
 
             //Note : Les qualifications pour les playsoffs sont propres au groupe.
-            //== Déplacable dans une autre fonction
-            Dictionary<QualificationType, List<Qualification>> roundQualifications = new Dictionary<QualificationType, List<Qualification>>
-            {
-                { QualificationType.PossiblePromotion, new List<Qualification>() },
-                { QualificationType.PossibleRelegation, new List<Qualification>() },
-            };
-            initialQualifications = new List<Qualification>(initialQualifications);
-            initialQualifications.Sort(new QualificationRankingComparator());
-            foreach (Qualification q in initialQualifications)
-            {
-                if(!q.isNextYear && relegationBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId]))
-                {
-                    roundQualifications[QualificationType.PossibleRelegation].Add(q);
-                }
-                if (!q.isNextYear && promotionBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId]))
-                {
-                    roundQualifications[QualificationType.PossiblePromotion].Add(q);
-                }
-            }
-            // Cas un peu spécial où des qualifications vers une autre phase de ligue qui n'implique pas de promotion/relégation. On les ajoute à la liste des promotions car elles seront ajoutées dans l'ordre de classement aux clubs
-            foreach(Qualification q in initialQualifications)
-            {
-                if(!q.isNextYear && (!relegationBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId])) && (!promotionBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId])))
-                {
-                    roundQualifications[QualificationType.PossiblePromotion].Add(q);
-                }
-            }
 
-            // == Security check
-            int specialQualifications = 0;
-            foreach(Qualification q in initialQualifications)
-            {
-                if(!q.isNextYear || q.roundId > 0)
-                {
-                    specialQualifications++;
-                }
-            }
-            if(specialQualifications != roundQualifications[QualificationType.PossiblePromotion].Count + roundQualifications[QualificationType.PossibleRelegation].Count)
-            {
-                throw new Exception("Some qualifications were not taken into account");
-            }
-            // == End of security check
-
-
-            //== Fin fonction
+            Dictionary<QualificationType, List<Qualification>> roundQualifications = ComputeRoundDestinations(initialQualifications, relegationBarrageRounds, promotionBarrageRounds);
 
             int promotionsCounter = totalPromotions;
             int relegationsCounter = totalRelegations;
@@ -886,38 +893,25 @@ namespace tm
                     int remainingClubs = fullInverseRanking.Count - i;
                     Club club = fullInverseRanking[fullInverseRanking.Count - i - 1];
                     bool isRelegated = automaticallyRelegatedReserves.Contains(club);
-                    if (isRelegated)
+                    bool atLeastBarragist = relegationsCounter + roundQualifications[QualificationType.PossibleRelegation].Count == remainingClubs;
+                    if (isRelegated || atLeastBarragist)
                     {
-                        //Duplicated code
-                        if (relegationsCounter == 0)
+                        Qualification qualif;
+                        if (!isRelegated && (roundQualifications[QualificationType.PossibleRelegation].Count > 0 && ranking.Contains(club)))
                         {
-                            throw new Exception(string.Format("Should relegate {0} but no relegation available", club.name));
+                            qualif = roundQualifications[QualificationType.PossibleRelegation][0];
+                            roundQualifications[QualificationType.PossibleRelegation].RemoveAt(0);
                         }
-                        relegationsCounter--;
-                        qualificationsMap[club] = new Qualification(-1, 0, targetDirectRelegation, true, 0);
-                    }
-                    else
-                    {
-                        if (relegationsCounter + roundQualifications[QualificationType.PossibleRelegation].Count == remainingClubs)
+                        else
                         {
-                            Qualification qualif;
-                            if (roundQualifications[QualificationType.PossibleRelegation].Count > 0 && ranking.Contains(club))
+                            if (relegationsCounter == 0)
                             {
-                                qualif = roundQualifications[QualificationType.PossibleRelegation][0];
-                                roundQualifications[QualificationType.PossibleRelegation].RemoveAt(0);
+                                throw new Exception(string.Format("Should relegate {0} but no relegation available", club.name));
                             }
-                            else
-                            {
-                                //Duplicated code
-                                if (relegationsCounter == 0)
-                                {
-                                    throw new Exception(string.Format("Should relegate {0} but no relegation available", club.name));
-                                }
-                                qualif = new Qualification(-1, 0, targetDirectRelegation, true, 0);
-                                relegationsCounter--;
-                            }
-                            qualificationsMap[club] = qualif;
+                            qualif = new Qualification(-1, 0, targetDirectRelegation, true, 0);
+                            relegationsCounter--;
                         }
+                        qualificationsMap[club] = qualif;
                     }
                 }
             }
