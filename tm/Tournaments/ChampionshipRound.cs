@@ -135,7 +135,7 @@ namespace tm
             List<Club> ranking = Ranking();
             List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
             adjustedQualifications.Sort(new QualificationRankingComparator());
-            adjustedQualifications = Utils.AdjustQualificationsToReserves(adjustedQualifications, ranking, null, Tournament, this, rules.Contains(Rule.ReservesCannotBePromoted), CountDirectRelegations(), -1, null, null, 1);
+            //adjustedQualifications = Utils.AdjustQualificationsToReserves(adjustedQualifications, ranking, null, Tournament, this, rules.Contains(Rule.ReservesCannotBePromoted), CountDirectRelegations(), -1, null, null, 1);
             return adjustedQualifications;
         }
 
