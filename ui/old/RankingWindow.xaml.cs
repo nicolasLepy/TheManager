@@ -74,11 +74,11 @@ namespace TheManager_GUI
                 {
                     if (q.ranking == rank)
                     {
-                        if (!qualifications.ContainsKey(q.tournament.level))
+                        if (!qualifications.ContainsKey(q.target.Tournament().level))
                         {
-                            qualifications.Add(q.tournament.level, 0);
+                            qualifications.Add(q.target.Tournament().level, 0);
                         }
-                        qualifications[q.tournament.level] += q.qualifies;
+                        qualifications[q.target.Tournament().level] += q.qualifies;
                     }
                 }
                 StackPanel spLine = new StackPanel();

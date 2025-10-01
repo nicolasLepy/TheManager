@@ -100,6 +100,8 @@ namespace tm
         [DataMember]
         private int _nextIdClub = 0;
 
+        private List<Tournament> _cacheTournaments;
+
         public int NextIdStadium() => ++_nextIdStadium;
         public int NextIdPerson() => ++_nextIdPerson;
         public int NextIdTournament() => ++_nextIdTournament;
@@ -136,9 +138,14 @@ namespace tm
         {
             get
             {
-                List<Tournament> tournaments = new List<Tournament>(_worldAssociation.GetAllTournaments());
-                //tournaments.AddRange(_world.GetAllTournaments());
-                return tournaments;
+                if(_cacheTournaments == null)
+                {
+                    return GetAllTournaments();
+                }
+                else
+                {
+                    return _cacheTournaments;
+                }
             }
         }
         public List<Player> freePlayers { get => _freePlayers; }
@@ -169,6 +176,18 @@ namespace tm
             _freeJournalists = new List<Journalist>();
             _genericCalendars = new List<GenericCalendar>();
             _audioSources = new List<AudioSource>();
+        }
+
+        private List<Tournament> GetAllTournaments()
+        {
+            List<Tournament> tournaments = new List<Tournament>(_worldAssociation.GetAllTournaments());
+            return tournaments;
+        }
+
+        public void CacheListOfAllTournaments()
+        {
+            _cacheTournaments = GetAllTournaments();
+
         }
 
         public GenericCalendar GetGenericCalendar(string name)

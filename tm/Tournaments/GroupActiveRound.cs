@@ -42,7 +42,7 @@ namespace tm.Tournaments
 
         protected override GroupsRound Clone()
         {
-            return new GroupActiveRound(Session.Instance.Game.kernel.NextIdRound(), name, Tournament, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority, programmation.lastMatchDaysSameDayNumber);
+            return new GroupActiveRound(Session.Instance.Game.kernel.NextIdRound(), name, Tournament, this.programmation.defaultHour, new List<GameDay>(programmation.gamesDays), new List<TvOffset>(programmation.tvScheduling), groupsCount, _qualificationsDefinedForAllGroup, _referenceClubsByGroup, phases, programmation.initialisation, programmation.end, keepRankingFromPreviousRound, _randomDrawingMethod, _administrativeLevel, _fusionGroupAndNoGroupGames, _nonGroupGamesByTeams, _nonGroupGamesByGameday, programmation.gamesPriority, programmation.lastMatchDaysSameDayNumber);
         }
 
         public override List<Club> Ranking(int group, bool inverse = false)
@@ -78,9 +78,36 @@ namespace tm.Tournaments
         {
 
         }
-        public GroupActiveRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority, int lastDaysSameDay) : base(id, name, tournament, hour, dates, offsets, groupsCount, phases, initialisation, end, keepRankingFromPreviousRound, randomDrawingMethod, administrativeLevel, fusionGroupAndNoGroupGames, nonGroupGamesByTeams, nonGroupGamesByGameday, gamesPriority, lastDaysSameDay)
+        public GroupActiveRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool qualificationsDefinedForAllGroup, int maxTeamsByGroups, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority, int lastDaysSameDay) : base(id, name, tournament, hour, dates, offsets, groupsCount, qualificationsDefinedForAllGroup, phases, initialisation, end, keepRankingFromPreviousRound, randomDrawingMethod, administrativeLevel, fusionGroupAndNoGroupGames, nonGroupGamesByTeams, nonGroupGamesByGameday, gamesPriority, lastDaysSameDay)
         {
+            _referenceClubsByGroup = maxTeamsByGroups;
+        }
 
+        protected override void SetGroups()
+        {
+            IRandomDrawing randomDrawing;
+            switch (_randomDrawingMethod)
+            {
+                case RandomDrawingMethod.Coefficient:
+                    randomDrawing = new RandomDrawingLevel(this, _clubs[0] as NationalTeam == null ? ClubAttribute.CONTINENTAL_COEFFICIENT : ClubAttribute.LEVEL);
+                    break;
+                case RandomDrawingMethod.Geographic:
+                    randomDrawing = new RandomDrawingGeographic(this);
+                    break;
+                case RandomDrawingMethod.Administrative:
+                    randomDrawing = new RandomDrawingAdministrative(this);
+                    break;
+                case RandomDrawingMethod.Level:
+                default:
+                    randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);
+                    break;
+            }
+            randomDrawing.RandomDrawing();
+
+            if (_referenceClubsByGroup == 0)
+            {
+                _referenceClubsByGroup = (_clubs.Count / groupsCount); // + 1;
+            }
         }
     }
 }

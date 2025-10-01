@@ -18,11 +18,12 @@ namespace tm
             _round = tour;
         }
 
-        public void Draw(List<Club> clubs, int defaultMaxTeamsByGroup)
+        public void Draw(List<Club> clubs, int defaultMaxTeamsByGroup, bool keepSameNumberOfGroups)
         {
             List<List<Club>> groups = new List<List<Club>>();
 
-            List<int> groupsCount = Utils.GetGroupSize(clubs.Count, defaultMaxTeamsByGroup);
+            int groupCount = keepSameNumberOfGroups ? _round.groupsCount : Utils.GroupCount(clubs.Count, defaultMaxTeamsByGroup);
+            List<int> groupsCount = Utils.GetGroupSize(clubs.Count, groupCount);
             List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubs, groupsCount.Count);
             for (int grp = 0; grp < groupsCount.Count; grp++)
             {
@@ -59,7 +60,9 @@ namespace tm
             }
             else
             {
-                Draw(clubs, _round.maxClubsInGroup);
+                bool keepSameNumberOfGroups = !_round.qualificationsDefinedForAllGroup;
+                int maxTeamsByGroups = _round.referenceClubsByGroup > 0 ? _round.referenceClubsByGroup : clubs.Count;
+                Draw(clubs, maxTeamsByGroups, keepSameNumberOfGroups);
                 /*List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubs, _round.groupsCount);
                 for(int i = 0; i<_round.groupsCount; i++)
                 {

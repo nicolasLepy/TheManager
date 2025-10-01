@@ -265,7 +265,7 @@ namespace tm
                 {
                     if (c.previousEditions[year].rounds[0].clubs.Contains(this))
                     {
-                        res = c.level > from.level ? res + " (P) " : c.level < from.level ? res + " (R) " : res;
+                        res = c.IsBelow(new QualificationTournament(from)) ? res + " (P) " : c.IsAbove(new QualificationTournament(from)) ? res + " (R) " : res;
                     }
                 }
             }
@@ -360,9 +360,11 @@ namespace tm
             get
             {
                 Tournament res = null;
-
-                foreach(Tournament tournament in Session.Instance.Game.kernel.Competitions)
+                List<Tournament> allTournaments = Session.Instance.Game.kernel.Competitions;
+                int tCount = allTournaments.Count;
+                for (int t = 0; t < tCount && res == null; t++)
                 {
+                    Tournament tournament = allTournaments[t];
                     if(tournament.isChampionship)
                     {
                         foreach (Club cl in tournament.rounds[0].clubs)
@@ -372,8 +374,6 @@ namespace tm
                                 res = tournament;
                             }
                         }
-                            
-                                
                     }
                 }
 

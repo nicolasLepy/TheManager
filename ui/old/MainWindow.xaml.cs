@@ -196,6 +196,7 @@ namespace TheManager_GUI
                 pbLoading.Value = 98;
                 lbCreationPartie.Content = "Chargement des archives";
                 cbdd.LoadArchives();
+                cbdd.PostProcess();
 
                 pbLoading.Value = 100;
 

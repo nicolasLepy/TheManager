@@ -184,7 +184,7 @@ namespace TheManager_GUI
                 {
                     if (q.ranking == rank)
                     {
-                        slots[q.tournament.level-1] += q.qualifies;
+                        slots[q.target.Tournament().level-1] += q.qualifies;
                     }
                 }
                 List<double> oldCoeffs = new List<double>() { a.YearAssociationCoefficient(-5), a.YearAssociationCoefficient(-4), a.YearAssociationCoefficient(-3), a.YearAssociationCoefficient(-2), a.YearAssociationCoefficient(-1) };

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using NHibernate.Id;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,8 +12,20 @@ using tm.Comparators;
 
 namespace tm
 {
+
+    public enum QualificationType
+    {
+        DirectPromotion,
+        PossiblePromotion,
+        PossibleRelegation,
+        DirectRelegation
+    }
+
     public static class Utils
     {
+
+        public readonly static bool DISABLE_FINANCIAL_SANCTIONS = true;
+        public readonly static bool DISABLE_ADMINISTRATIVE_RETROGRADATIONS = true;
 
         private static bool providerRegistered = false;
 
@@ -474,7 +487,7 @@ namespace tm
                 case Rule.OnlyFirstTeams:
                     res = "Seulement les équipes premières peuvent entrer";
                     break;
-                case Rule.ReservesAreNotPromoted:
+                case Rule.ReservesCannotBePromoted:
                     res = "Les réserves ne peuvent pas monter";
                     break; 
                 default:
@@ -483,9 +496,9 @@ namespace tm
             return res;
         }
 
-        public static void Debug(string str)
+        public static void Debug(string str, params object[] args)
         {
-            Console.WriteLine(str);
+            Console.WriteLine(str, args);
         }
 
         [Flags]
@@ -500,141 +513,156 @@ namespace tm
         /// Allows to know if a club entering a specific round can access promotion or relegation
         /// </summary>
         /// <param name="originQualification">Club original qualification to next round</param>
-        /// <param name="fromLevel">Club's tournament level</param>
+        /// <param name="originTournament">Club's tournament</param>
         /// <param name="promotion">If true, consider promotion. Otherwise, consider relegation</param>
         /// <returns>True if the round can lead to [promotion/relegation], False otherwise.</returns>
-        private static bool QualificationCanLeadToNewLeague(Qualification originQualification, int fromLevel, bool promotion)
+        private static bool QualificationCanLeadToNewLeague(Qualification originQualification, Tournament originTournament, bool promotion)
         {
-            if(originQualification.isNextYear)
-            {
-                if(promotion)
-                {
-                    return originQualification.tournament.level < fromLevel ? true : false;
-                }
-                if (!promotion)
-                {
-                    return originQualification.tournament.level > fromLevel ? true : false;
-                }
-            }
-            Round r = originQualification.tournament.rounds[originQualification.roundId];
             bool res = false;
-            foreach (Qualification q in r.qualifications)
+            if(originQualification.target.Type == QualificationTargetType.ExcludeFromLeagueSystem)
             {
-                if (q.isNextYear && q.tournament.isChampionship && ((promotion && q.tournament.level < fromLevel) || (!promotion && q.tournament.level > fromLevel)))
-                {
-                    res = true;
-                }
+                res = true;
             }
-            if (!res)
+            else
             {
+                if (originQualification.isNextYear)
+                {
+                    if (promotion)
+                    {
+                        return originTournament.IsBelow(originQualification.target);
+                    }
+                    if (!promotion)
+                    {
+                        return originTournament.IsAbove(originQualification.target);
+                    }
+                }
+                Round r = originQualification.target.Tournament().rounds[originQualification.roundId];
                 foreach (Qualification q in r.qualifications)
                 {
-                    if (!q.isNextYear && q.tournament.level == fromLevel && !q.tournament.IsInternational() && q.tournament.isChampionship)
+                    if (q.isNextYear && q.target.Tournament().isChampionship && ((promotion && originTournament.IsBelow(q.target)) || (!promotion && originTournament.IsAbove(q.target))))
                     {
-                        res = QualificationCanLeadToNewLeague(q, fromLevel, promotion);
+                        res = true;
+                    }
+                }
+                if (!res)
+                {
+                    foreach (Qualification q in r.qualifications)
+                    {
+                        //Qualifie pour un tour de barrage qui peut mener à une promotion ou à une relegation
+                        if (q.target.Type == QualificationTargetType.Tournament && !q.isNextYear && originTournament.IsSameLevel(q.target) && !q.target.Tournament().IsInternational() && q.target.Tournament().isChampionship)
+                        {
+                            res = QualificationCanLeadToNewLeague(q, originTournament, promotion);
+                        }
                     }
                 }
             }
+            
 
             return res;
         }
 
 
-        public static RuleStatus RuleIsRespected(Club club, Qualification qualification, int baseLevel, bool reservesCantBePromoted)
+        private static int GetGroup(GroupsRound groupRound, Club club)
+        {
+            int group = -1;
+            for (int i = 0; i < groupRound.groupsCount; i++)
+            {
+                if (groupRound.groups[i].Contains(club))
+                {
+                    group = i;
+                }
+            }
+            return group;
+        }
+
+
+        /// <summary>
+        /// Return True if the rules are respected
+        /// </summary>
+        /// <param name="club">Club to check</param>
+        /// <param name="qualification">Qualification to test</param>
+        /// <param name="baseTournament">Tournament of the club</param>
+        /// <param name="reservesCantBePromoted">Prevent reserves teams to be promoted</param>
+        /// <returns></returns>
+        public static RuleStatus RuleIsRespected(Club club, Qualification qualification, Tournament baseTournament, bool reservesCantBePromoted)
         {
             //Rule 1 : Reserve can't be promoted
-            //Rule 2 : Reserve can't be promoted if another reserve of the club is in the higher division
-            //Rule 3 : Reserve is relegated if another reserve of the club in the higher division is relegated
+            //Rule 2 : Reserve can't be promoted if another reserve of the club (or the fannion club) is in the higher division
+            //Rule 3 : Reserve is relegated if another reserve of the club (or the fannion club) in the division above is relegated
             ReserveClub clubReserve = club as ReserveClub;
-            bool resRule2 = true;
-            bool resRule3 = false;
+            bool isReserve = clubReserve != null;
+            bool inPromotionSpot = ((qualification.target.ToChampionshipTournament()) && baseTournament.IsBelow(qualification.target)) || (!qualification.isNextYear && QualificationCanLeadToNewLeague(qualification, baseTournament, true));
+            bool relegable = !qualification.isNextYear && QualificationCanLeadToNewLeague(qualification, baseTournament, false);
 
-            bool promotable = (qualification.tournament.isChampionship && qualification.tournament.level < baseLevel) || (!qualification.isNextYear && QualificationCanLeadToNewLeague(qualification, baseLevel, true));
-            bool relegable = !qualification.isNextYear && QualificationCanLeadToNewLeague(qualification, baseLevel, false);
+            bool breakRule2 = isReserve && inPromotionSpot;
+            bool breakRule3 = false;
+
 
             if (clubReserve != null)
             {
-                int reserveCount = clubReserve.FannionClub.reserves.IndexOf(clubReserve);
-                if(reserveCount > 0)
+                Club upperTeam = clubReserve.GetTeamAbove();
+                //TODO: Two reserves in the same league
+                Club upperReserve = upperTeam;// clubReserve.FannionClub.reserves[reserveCount - 1];
+                Association baseAssociation = Session.Instance.Game.kernel.LocalisationTournament(baseTournament);
+                Tournament tournamentAbove = baseAssociation.LeagueAbove(baseTournament).Tournament();
+
+                Tournament up = upperReserve.Championship;
+                Round upRound = up.rounds[0];
+                if(up.IsAbove(new QualificationTournament(baseTournament)) && upRound.clubs.Contains(upperReserve))
                 {
-                    ReserveClub upperReserve = clubReserve.FannionClub.reserves[reserveCount - 1];
-                    Tournament up = club.Association().ClosestStateAssociation().League(baseLevel - 1);
-                    Round r = up.rounds[0];
-                    //TODO: Two reserves in the same league
-                    if(r.clubs.Contains(upperReserve))
+                    List<Qualification> upperQualifications = null;
+                    List<Club> upperRanking = null;
+                    GroupsRound upGr = upRound as GroupsRound;
+                    if(upGr != null)
                     {
-                        List<Qualification> upperQualifications = null;
-                        List<Club> upperRanking = null;
-                        ChampionshipRound cr = r as ChampionshipRound;
-                        GroupsRound gr = r as GroupsRound;
-                        if(cr != null)
+                        int group = GetGroup(upGr, upperReserve);
+                        if(group == -1)
                         {
-                            upperQualifications = cr.GetQualifications();
-                            upperRanking = cr.Ranking();
+                            throw new Exception(String.Format("{0} was not found on {1}", upperReserve.name, upGr.Tournament.name));
                         }
-                        if(gr != null)
-                        {
-                            int group = 0;
-                            for(int i = 0; i<gr.groupsCount; i++)
-                            {
-                                if(gr.groups[i].Contains(upperReserve))
-                                {
-                                    group = i;
-                                }
-                            }
-                            upperQualifications = gr.GetGroupQualifications(group);
-                            upperRanking = gr.Ranking(group);
-                        }
-                        Qualification reserveQualification = upperQualifications[upperRanking.IndexOf(upperReserve)];
-                        /*bool upperReserveCanBePromoted = QualificationCanLeadToNewLeague(reserveQualification, baseLevel-1, true);
-                        bool upperReserveCanBeReleguated = QualificationCanLeadToNewLeague(reserveQualification, baseLevel - 1, false);*/ //TODO: Handle consequence of reserves promotions/non promotion by playoffs with administrative relegations ?
-                        if(reserveQualification.isNextYear && reserveQualification.roundId == 0 && reserveQualification.tournament.level == r.Tournament.level && promotable)
-                        {
-                            resRule2 = false;
-                        }
-                        if(reserveQualification.isNextYear && reserveQualification.roundId == 0 && reserveQualification.tournament.level == baseLevel)
-                        {
-                            resRule3 = true;
-                        }
+                        upperQualifications = upGr.GetGroupQualifications(group);
+                        upperRanking = upGr.Ranking(group);
                     }
+                    Qualification upperReserveQualification = upperQualifications[upperRanking.IndexOf(upperReserve)];
+
+                    /*bool upperReserveCanBePromoted = QualificationCanLeadToNewLeague(reserveQualification, baseLevel-1, true);
+                    bool upperReserveCanBeReleguated = QualificationCanLeadToNewLeague(reserveQualification, baseLevel - 1, false);*/ //TODO: Handle consequence of reserves promotions/non promotion by playoffs with administrative relegations ?
+
+                    bool aboveIsBelowReserve = tournamentAbove.IsBelow(upperReserveQualification.target);
+                    if (upperReserveQualification.isNextYear && upperReserveQualification.roundId == 0 && aboveIsBelowReserve && inPromotionSpot)
+                    {
+                        breakRule2 = false;
+                    }
+                    bool debug = inPromotionSpot && baseTournament.level == 5 && false;
+                    Console.WriteLine("[RuleIsRespected][Check Rule 2][{0}][{1} ({2}->{3})] inPromSpot : {4} // With team {5} ({6}->{7}, iny: {8}, ri: {9}) UpIsBelow : {10}     = breakRule2: {11}", baseTournament.name, club.name, club.Championship.shortName, qualification.target.Tournament(club).shortName, inPromotionSpot, upperReserve.name, upperReserve.Championship.shortName, upperReserveQualification.target.Tournament(upperReserve).shortName, upperReserveQualification.isNextYear, upperReserveQualification.roundId, aboveIsBelowReserve, breakRule2);
+
+                    breakRule3 = upperReserveQualification.isNextYear && upperReserveQualification.roundId == 0 && baseTournament.IsSameLevel(upperReserveQualification.target);
+                    Console.WriteLine("[RuleIsRespected][Check Rule 3][{0}][{1} ({2}->{3})] // With team {4} ({5}->{6}, iny: {7}, ri: {8})     = breakRule3: {9}", baseTournament.name, club.name, club.Championship.shortName, qualification.target.Tournament(club).shortName, upperReserve.name, upperReserve.Championship.shortName, upperReserveQualification.target.Tournament(upperReserve).shortName, upperReserveQualification.isNextYear, upperReserveQualification.roundId, breakRule3);
+
                 }
             }
 
             //Console.WriteLine("QualificationCanLeadToNewLeague ? " + QualificationCanLeadToNewLeague(qualification, baseLevel, true) + " from " + qualification.tournament.rounds[qualification.roundId]);
 
-            bool isReserve = clubReserve != null;
-            bool resRule1 = !reservesCantBePromoted || (!isReserve || (isReserve && !promotable));
-            return ((resRule1 && resRule2) ? RuleStatus.RuleRespected : RuleStatus.RuleNotRespected) | (resRule3 ? RuleStatus.RuleRelegation : 0);
+            //bool breakRule1 = !reservesCantBePromoted || (!isReserve || (isReserve && !inPromotionSpot));
+            bool breakRule1 = reservesCantBePromoted && isReserve && inPromotionSpot;
+            RuleStatus res = ((breakRule1 || breakRule2) ? RuleStatus.RuleNotRespected : RuleStatus.RuleRespected) | (breakRule3 ? RuleStatus.RuleRelegation : 0);
+            Console.WriteLine("[RuleIsRespected] {0} : {1} ", club.name, res);
+            return res;
         }
 
-        public static int ReservesAutomaticallyRelegatedCount(List<Club> ranking, Association association, Tournament from, bool reservesCantBePromoted)
+        public static List<Club> ReservesAutomaticallyRelegated(List<Club> ranking, Association association, Tournament from, bool reservesCantBePromoted)
         {
-            int count = 0;
-            Qualification qMock = new Qualification(1, 0, from, true, 0);
+            List<Club> reservesAutomaticallyRelegated = new List<Club>();
+            Qualification qMock = new Qualification(1, 0, new QualificationTournament(from), true, 0);
             foreach(Club concernedClub in ranking)
             {
-                if (RuleIsRespected(concernedClub, qMock, from.level, reservesCantBePromoted).HasFlag(RuleStatus.RuleRelegation) && (association == null || association.ContainsAssociation(concernedClub.Association())))
+                if (RuleIsRespected(concernedClub, qMock, from, reservesCantBePromoted).HasFlag(RuleStatus.RuleRelegation) && (association == null || association.ContainsAssociation(concernedClub.Association())))
                 {
-                    count++;
+                    reservesAutomaticallyRelegated.Add(concernedClub);
                 }
             }
-            return count;
-        }
-
-        public static List<Club> GetFullRankingInversed(Round round, Association association)
-        {
-            ChampionshipRound cRound = round as ChampionshipRound;
-            GroupsRound gRound = round as GroupsRound;
-            List<Club> ranking = new List<Club>();
-            if(cRound != null)
-            {
-                ranking = GetFullRankingInversed(cRound, association);
-            }
-            else if(gRound != null)
-            {
-                ranking = GetFullRankingInversed(gRound, association);
-            }
-            return ranking;
+            return reservesAutomaticallyRelegated;
         }
 
         public static List<Club> GetFullRankingInversed(GroupsRound round, Association association)
@@ -656,6 +684,17 @@ namespace tm
             return ranking;
         }
 
+        public static List<Club> GetFullRanking(GroupsRound round)
+        {
+            List<Club> ranking = new List<Club>();
+            for(int i = 0; i < round.maxClubsInGroup; i++)
+            {
+                List<Club> rankingI = round.RankingByRank(i+1, null);
+                ranking.AddRange(rankingI);
+            }
+            return ranking;
+        }
+
 
         /// <summary>
         /// Clear all relegation places and replace them by qualifications to current tournament. Qualifications to play-offs are not affected
@@ -669,23 +708,24 @@ namespace tm
             List<Qualification> qualifications = new List<Qualification>();
             foreach(Qualification q in initialQualifications)
             {
-                if(q.isNextYear && q.tournament.level > baseTournament.level && q.qualifies <= 0)
+                if(q.isNextYear && baseTournament.IsAbove(q.target) && q.qualifies <= 0)
                 {
-                    qualifications.Add(new Qualification(q.ranking, q.roundId, baseTournament, q.isNextYear, 0));
+                    qualifications.Add(new Qualification(q.ranking, q.roundId, new QualificationTournament(baseTournament), q.isNextYear, 0));
                 }
-                else if (q.isNextYear || q.tournament.level < baseTournament.level || (q.tournament == baseTournament && q.qualifies <= 0))
+
+                else if (q.isNextYear || baseTournament.IsBelow(q.target) || (q.target.Tournament() == baseTournament && q.qualifies <= 0))
                 {
                     qualifications.Add(q);
                 }
-                else if(!q.isNextYear && q.tournament.level > baseTournament.level)
+                else if(!q.isNextYear && baseTournament.IsAbove(q.target))
                 {
-                    qualifications.Add(new Qualification(q.ranking, q.roundId, baseTournament, q.isNextYear, q.qualifies));
+                    qualifications.Add(new Qualification(q.ranking, q.roundId, new QualificationTournament(baseTournament), q.isNextYear, q.qualifies));
                 }
             }
             return qualifications;
         }
 
-        /// <summary>
+        /*/// <summary>
         /// Update a specific qualification in a list of qualifications
         /// </summary>
         /// <param name="qualifications">List of qualifications</param>
@@ -700,9 +740,32 @@ namespace tm
             for (int j = 0; j < qualifications.Count; j++)
             {
                 Qualification q = qualifications[j];
-                if ((q.isNextYear || eraseQualificationSameYear) && q.tournament.isChampionship && (q.roundId == 0 || eraseQualificationSameYear ) && q.ranking == ranking)
+                if ((q.isNextYear || eraseQualificationSameYear) && q.target.ToChampionshipTournament() && (q.roundId == 0 || eraseQualificationSameYear ) && q.ranking == ranking)
                 {
-                    qualifications[j] = new Qualification(q.ranking, eraseRoundId > -1 ? eraseRoundId : q.roundId, tournament, q.isNextYear, qualifies);
+                    qualifications[j] = new Qualification(q.ranking, eraseRoundId > -1 ? eraseRoundId : q.roundId, new QualificationTournament(tournament), q.isNextYear, qualifies);
+                }
+            }
+        }*/
+
+        /// <summary>
+        /// Update a specific qualification in a list of qualifications
+        /// </summary>
+        /// <param name="qualifications">List of qualifications</param>
+        /// <param name="ranking">Update qualification at this rank</param>
+        /// <param name="target">New qualification tournament</param>
+        /// <param name="qualifies">New number of qualified for this qualification</param>
+        /// <param name="eraseQualificationSameYear">Update qualification even if its a same year qualification</param>
+        /// <param name="eraseRoundId">New qualification round id (default leave)</param>
+
+        public static void UpdateQualificationTournament(List<Qualification> qualifications, int ranking, QualificationTarget target, int qualifies = 0, bool eraseQualificationSameYear = false, int eraseRoundId = -1)
+        {
+            //TODO : Maybe add a check if the ranking is neutral
+            for (int j = 0; j < qualifications.Count; j++)
+            {
+                Qualification q = qualifications[j];
+                if ((q.isNextYear || eraseQualificationSameYear) && q.target.ToChampionshipTournament() && (q.roundId == 0 || eraseQualificationSameYear) && q.ranking == ranking)
+                {
+                    qualifications[j] = new Qualification(q.ranking, eraseRoundId > -1 ? eraseRoundId : q.roundId, target, q.isNextYear, qualifies);
                 }
             }
         }
@@ -712,7 +775,7 @@ namespace tm
             bool res = false;
             foreach(Qualification q in qualifications)
             {
-                if(q.ranking == rank && !q.isNextYear && relegationBarrageRounds.Contains(q.tournament.rounds[q.roundId]))
+                if(q.ranking == rank && !q.isNextYear && relegationBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId]))
                 {
                     res = true;
                 }
@@ -720,7 +783,68 @@ namespace tm
             return res;
         }
 
-        public static List<Qualification> AdjustQualificationsToNotPromoteReserves(List<Qualification> initialQualifications, List<Club> ranking, Association association, Tournament from, Round round, bool reservesCantBePromoted, int totalRelegations, int groupsCount)
+        public static Dictionary<QualificationType, List<Qualification>> ComputeRoundDestinations(Tournament tournament, List<Qualification> initialQualifications, List<Round> relegationBarrageRounds, List<Round> promotionBarrageRounds)
+        {
+            //== Déplacable dans une autre fonction
+            Dictionary<QualificationType, List<Qualification>> roundQualifications = new Dictionary<QualificationType, List<Qualification>>
+            {
+                { QualificationType.PossiblePromotion, new List<Qualification>() },
+                { QualificationType.PossibleRelegation, new List<Qualification>() },
+                { QualificationType.DirectPromotion, new List<Qualification>() },
+                { QualificationType.DirectRelegation, new List<Qualification>() },
+            };
+            initialQualifications = new List<Qualification>(initialQualifications);
+            initialQualifications.Sort(new QualificationRankingComparator());
+            foreach (Qualification q in initialQualifications)
+            {
+                if (!q.isNextYear && relegationBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId]))
+                {
+                    roundQualifications[QualificationType.PossibleRelegation].Add(q);
+                }
+                if (!q.isNextYear && promotionBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId]))
+                {
+                    roundQualifications[QualificationType.PossiblePromotion].Add(q);
+                }
+                if(q.isNextYear && tournament.IsBelow(q.target))
+                {
+                    roundQualifications[QualificationType.DirectPromotion].Add(q);
+                }
+                if(q.isNextYear && tournament.IsAbove(q.target))
+                {
+                    roundQualifications[QualificationType.DirectRelegation].Add(q);
+                }
+            }
+            // Cas un peu spécial où des qualifications vers une autre phase de ligue qui n'implique pas de promotion/relégation. On les ajoute à la liste des promotions car elles seront ajoutées dans l'ordre de classement aux clubs
+            foreach (Qualification q in initialQualifications)
+            {
+                if (!q.isNextYear && (!relegationBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId])) && (!promotionBarrageRounds.Contains(q.target.Tournament()?.rounds[q.roundId])))
+                {
+                    roundQualifications[QualificationType.PossiblePromotion].Add(q);
+                }
+            }
+
+            // == Security check
+            int specialQualifications = 0;
+            foreach (Qualification q in initialQualifications)
+            {
+                if (!q.isNextYear || q.roundId > 0)
+                {
+                    specialQualifications++;
+                }
+            }
+            if (specialQualifications != roundQualifications[QualificationType.PossiblePromotion].Count + roundQualifications[QualificationType.PossibleRelegation].Count)
+            {
+                throw new Exception("Some qualifications were not taken into account");
+            }
+            // == End of security check
+
+            return roundQualifications;
+
+
+        }
+
+        [Obsolete("Please use AdjustQualificationsToReserves instead")]
+        public static List<Qualification> AdjustQualificationsToNotPromoteReservesOld(List<Qualification> initialQualifications, List<Club> ranking, Association association, Tournament from, Round round, bool reservesCantBePromoted, int totalRelegations, int totalPromotions, int groupsCount)
         {
             
             List<Qualification> qualifications = new List<Qualification>(initialQualifications);
@@ -728,26 +852,26 @@ namespace tm
 
             // Get new relegation zone taking account of retrograded reserves
             Console.WriteLine("[AdjustQualificationsToNotPromoteReserves] " + from.name + ", " + totalRelegations + " relegations for " + groupsCount + " groups. Association : " + association);
-            List<Club> roundClubs = association == null ? round.clubs : round.GetClubsAssociation(association);
-            int automaticallyRelegatedReserves = ReservesAutomaticallyRelegatedCount(roundClubs, association, from, reservesCantBePromoted);
-            List<Club> fullInverseRanking = GetFullRankingInversed(round, association);
+            List<Club> roundClubs = round.clubs;
+            List<Club> automaticallyRelegatedReserves = ReservesAutomaticallyRelegated(roundClubs, null, from, reservesCantBePromoted);
+            List<Club> fullInverseRanking = GetFullRankingInversed(round as GroupsRound, null);
             GroupsRound gRound = round as GroupsRound;
             //int groupsCount = (gRound != null) ? (association != null ? gRound.GetGroupsFromAssociation(association).Count : gRound.groups.Length) : 1;
-            int regularRelegationPlaces = totalRelegations - automaticallyRelegatedReserves;
+            int regularRelegationPlaces = totalRelegations - automaticallyRelegatedReserves.Count;
             bool limitReached = false;
-            Console.WriteLine("automaticallyRelegatedReserves : " + automaticallyRelegatedReserves);
-            Console.WriteLine("regularRelegationPlaces : " + totalRelegations + "-" + automaticallyRelegatedReserves + "=" + regularRelegationPlaces);
+            Console.WriteLine("automaticallyRelegatedReserves : " + automaticallyRelegatedReserves.Count);
+            Console.WriteLine("regularRelegationPlaces : " + totalRelegations + "-" + automaticallyRelegatedReserves.Count + "=" + regularRelegationPlaces);
             int index = 0;
             int regularRelegationCount = 0;
-            Tournament bottomTournament = Session.Instance.Game.kernel.LocalisationTournament(from).ClosestStateAssociation()?.League(from.level + 1);
-            if (automaticallyRelegatedReserves > 0 && regularRelegationPlaces > 0 && bottomTournament != null)
+
+            QualificationTarget bottomTournament = Session.Instance.Game.kernel.LocalisationTournament(from).LeagueBelow(from);
+            if (automaticallyRelegatedReserves.Count > 0 && regularRelegationPlaces > 0 && bottomTournament != null)
             {
                 while (!limitReached)
                 {
                     Club currentClub = fullInverseRanking[index];
-
-                    //FIXME: Anti-pattern : initialQualifications[0] because qualification doesn't matter here : we want to know if club must be relegated due to fanion team/other reserve
-                    if (!RuleIsRespected(currentClub, initialQualifications[0], from.level, reservesCantBePromoted).HasFlag(RuleStatus.RuleRelegation))
+                    bool isAutoRelegated = automaticallyRelegatedReserves.Contains(currentClub);
+                    if (!isAutoRelegated)
                     {
                         regularRelegationCount++;
                     }
@@ -759,42 +883,45 @@ namespace tm
                     else if (index > fullInverseRanking.Count)
                     {
                         limitReached = true;
+                        throw new Exception("Should not happen");
                     }
                     index++;
                 }
                 int newRelegationPlaces = index / groupsCount; // 12 / 5 -> 2 last places leading to relegation
                 int additionalRelegationPlaces = index % groupsCount; // 12 % 5 -> 2 additional relegation slot
             
-                Console.WriteLine("new relegations places : " + newRelegationPlaces + " (+" + additionalRelegationPlaces + ")");
+                Console.WriteLine("new relegations places : {0} (+{1})", newRelegationPlaces, additionalRelegationPlaces);
                 if(bottomTournament != null)
                 {
-                    int rankingRelegationLimit = qualifications.Where(x => x.tournament == bottomTournament).Min(x => x.ranking);
+                    
+                    int rankingRelegationLimit = qualifications.Where(x => bottomTournament.SameLevel(x.target)).Min(x => x.ranking);
                     int maxRanking = qualifications.Max(x => x.ranking);
+
+                    // ================================================
                     //Special feature for championship round :
                     //If relegation barrage, move them just up direct relegations places so there is no offset between barrage places and direct relegations places
                     List<Qualification> relegationsBarrages = new List<Qualification>();
-                    if((round as ChampionshipRound) != null)
+                    //Get all barrages qualifications places
+                    Round relegationBarrageFinalRound = from.GetFinalTopPlayOffRound(true);
+                    List<Round> relegationBarrageRounds = from.GetPlayOffsTree(relegationBarrageFinalRound.Tournament, relegationBarrageFinalRound, new List<Round>());
+                    rankingRelegationLimit--;
+                    while (RankLeadingToRelegationBarrage(qualifications, rankingRelegationLimit, relegationBarrageRounds))
                     {
-                        //Get all barrages qualifications places
-                        Round relegationBarrageFinalRound = from.GetFinalTopPlayOffRound(true);
-                        List<Round> relegationBarrageRounds = from.GetPlayOffsTree(relegationBarrageFinalRound.Tournament, relegationBarrageFinalRound, new List<Round>());
-                        rankingRelegationLimit--;
-                        while (RankLeadingToRelegationBarrage(qualifications, rankingRelegationLimit, relegationBarrageRounds))
+                        foreach(Qualification q in qualifications)
                         {
-                            foreach(Qualification q in qualifications)
+                            if(q.ranking == rankingRelegationLimit)
                             {
-                                if(q.ranking == rankingRelegationLimit)
-                                {
-                                    relegationsBarrages.Add(q);
-                                }
+                                relegationsBarrages.Add(q);
                             }
-                            rankingRelegationLimit--;
                         }
+                        rankingRelegationLimit--;
                     }
+                    // ================================================
+
                     qualifications = ClearRelegations(qualifications, from);
                     for (int i = maxRanking; i > maxRanking - newRelegationPlaces; i--)
                     {
-                        Console.WriteLine("=> Update Ranking " + i + " to " + bottomTournament.name);
+                        Console.WriteLine("=> Update Ranking {0} to {1}", i, bottomTournament.ToString());
                         UpdateQualificationTournament(qualifications, i, bottomTournament);
                     }
 
@@ -804,32 +931,34 @@ namespace tm
                     int barrageIndex = maxRanking - newRelegationPlaces;
                     foreach (Qualification q in relegationsBarrages)
                     {
-                        Console.WriteLine("=> Update barrage Ranking " + q.ranking + " to " + q.tournament.name);
-                        UpdateQualificationTournament(qualifications, barrageIndex, q.tournament, q.qualifies, true, q.roundId);
+                        Console.WriteLine("=> Update barrage Ranking {0} to {1} ", q.ranking, q.target.ToString());
+                        UpdateQualificationTournament(qualifications, barrageIndex, q.target, q.qualifies, true, q.roundId);
                         barrageIndex--;
                     }
                     
                     if (groupsCount > 1 && additionalRelegationPlaces != 0)
                     {
-                        bool teamOfGroupIsUp = gRound.TeamIsTopRBottom(ranking, maxRanking - newRelegationPlaces, groupsCount - additionalRelegationPlaces, association);
-                        Tournament targetTournament = teamOfGroupIsUp ? from : bottomTournament;
+                        bool teamOfGroupIsUp = gRound.TeamIsTopRBottom(ranking, maxRanking - newRelegationPlaces, groupsCount - additionalRelegationPlaces, null);
+                        QualificationTarget targetTournament = teamOfGroupIsUp ? new QualificationTournament(from) : bottomTournament;
                         UpdateQualificationTournament(qualifications, maxRanking - newRelegationPlaces, targetTournament);
-                        Console.WriteLine("=> Update Ranking " + (maxRanking - newRelegationPlaces) + " to " + targetTournament.name + ", (line separation " + (-additionalRelegationPlaces) + ")");
+                        Console.WriteLine("=> Update Ranking {0} to {1}, (line separation {2})", (maxRanking - newRelegationPlaces), targetTournament.ToString(), (-additionalRelegationPlaces));
                     }
                 }
             }
 
+            // == Step 2 == Readapt qualifications
+
             for (int i = 0; i<qualifications.Count && ranking.Count > 0; i++)
             {
-                qualifications.Sort(new QualificationComparator());
+                qualifications.Sort(new QualificationRankingComparator());
                 Qualification q = qualifications[i];
                 Club concernedClub = ranking[q.ranking - 1];
-                RuleStatus ruleStatus = RuleIsRespected(concernedClub, q, from.level, reservesCantBePromoted);
+                RuleStatus ruleStatus = RuleIsRespected(concernedClub, q, from, reservesCantBePromoted);
                 bool ok = ruleStatus.HasFlag(RuleStatus.RuleRespected);
-                bool toRelegate = ruleStatus.HasFlag(RuleStatus.RuleRelegation);
-                if (toRelegate)
+                bool ruleRelegation = ruleStatus.HasFlag(RuleStatus.RuleRelegation);
+                if (ruleRelegation)
                 {
-                    ok = q.isNextYear && q.tournament.level >= from.level;
+                    ok = q.isNextYear && (!from.IsBelow(q.target));
                 }
                 int j = i;
                 if (from.isChampionship)
@@ -839,22 +968,49 @@ namespace tm
                         int tempValue = qualifications[j].ranking;
                         Qualification first = qualifications[j];
                         Qualification second = qualifications[j + 1];
-                        Console.WriteLine("Swap " + (j+1) + ". " + qualifications[j].tournament.rounds[qualifications[j].roundId].name + " and " + (j+2) + ". " + qualifications[j].tournament.rounds[qualifications[j+1].roundId].name);
+                        Console.WriteLine("Swap {0}. =>{1} and {2} . =>{3} ", (j+1), qualifications[j].target.Tournament(concernedClub).shortName, (j+2), qualifications[j+1].target.Tournament(concernedClub).shortName);
                         first.ranking = qualifications[j + 1].ranking;
                         second.ranking = tempValue;
                         qualifications[j] = first;
                         qualifications[j + 1] = second;
-                        ruleStatus = RuleIsRespected(concernedClub, qualifications[j], from.level, reservesCantBePromoted);
-                        ok = !toRelegate ? ruleStatus.HasFlag(RuleStatus.RuleRespected) : qualifications[j].isNextYear && qualifications[j].tournament.level >= from.level;
-                        Console.WriteLine("[RuleIsRespected] ? " + qualifications[j].tournament + " " + qualifications[j].tournament.rounds[qualifications[j].roundId].name + " : " + ok);
+                        ruleStatus = RuleIsRespected(concernedClub, qualifications[j], from, reservesCantBePromoted);
+
+                        ok = !ruleRelegation ? ruleStatus.HasFlag(RuleStatus.RuleRespected) : qualifications[j].isNextYear && (from.IsAbove(qualifications[j].target) || from.IsSameLevel(qualifications[j].target));
+                        Console.WriteLine("[RuleIsRespected] ? {0} pour accéder à {1} (iny: {2}, ri: {3}) : {4}", concernedClub.name, qualifications[j].target.Tournament(concernedClub).name, qualifications[j].isNextYear, qualifications[j].roundId, ok);
                         j++;
                     }
-                    if(toRelegate && bottomTournament != null && regularRelegationPlaces > 0)
+                    if(ruleRelegation && bottomTournament != null && regularRelegationPlaces > 0)
                     {
                         UpdateQualificationTournament(qualifications, qualifications[j].ranking, bottomTournament, 0, true, 0);
                     }
                 }
             }
+
+            // == Step 3 == Tests
+            bool playsOff = false;
+            int newTotalRelegations = index + automaticallyRelegatedReserves.Count;
+            int newTotalPromotions = 0;
+            foreach(Qualification q in qualifications)
+            {
+                playsOff = playsOff || !q.isNextYear;
+                /*if(from.IsBelow(q.target))
+                {
+                    newTotalPromotions++;
+                }
+                if (from.IsAbove(q.target))
+                {
+                    newTotalRelegations++;
+                }*/
+            }
+            if (bottomTournament != null && automaticallyRelegatedReserves.Count > 0 && !playsOff && totalRelegations != newTotalRelegations)
+            {
+                Console.WriteLine("Danger. Total relegations slots computed ({0}) differ from original relegation slots count {1}) ({2}, {3})", newTotalRelegations, totalRelegations, from.name, association.name);
+                //throw new Exception("Total relegations slots computed differ from original relegation slots count");
+            }
+            /*if (!playsOff && totalPromotions != newTotalPromotions)
+            {
+                throw new Exception("Total promotions slots computed differ from original promotions slots count");
+            }*/
             return qualifications;
         }
 
@@ -1004,9 +1160,14 @@ namespace tm
             Console.WriteLine("[Search for duplicates finished]");
         }
 
-        public static List<int> GetGroupSize(int totalTeams, int defaultMaxTeamsByGroup)
+        public static int GroupCount(int totalTeams, int defaultMaxTeamsByGroup)
         {
             int groupCount = totalTeams / defaultMaxTeamsByGroup + (totalTeams % defaultMaxTeamsByGroup != 0 ? 1 : 0);
+            return groupCount;
+        }
+
+        public static List<int> GetGroupSize(int totalTeams, int groupCount)
+        {
             int ecart = groupCount > 0 ? totalTeams % groupCount : totalTeams;
             List<int> res = new List<int>();
             for (int i = 0; i < groupCount; i++)
@@ -1015,6 +1176,26 @@ namespace tm
                 res.Add(totalTeams / groupCount + add);
             }
             return res;
+        }
+
+        public static int CountChampionshipQualifications(List<Qualification> qualifications)
+        {
+            int countChampionshipQualifications = 0;
+            foreach (Qualification qualification in qualifications)
+            {
+                if (qualification.target.ToChampionshipTournament())
+                {
+                    countChampionshipQualifications++;
+                }
+            }
+            return countChampionshipQualifications;
+        }
+
+        public static List<T> Inverse<T>(List<T> clubs)
+        {
+            List<T> newList = new List<T>(clubs);
+            newList.Reverse();
+            return newList;
         }
     }
 }

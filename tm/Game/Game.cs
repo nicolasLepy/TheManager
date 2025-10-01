@@ -660,10 +660,13 @@ namespace tm
             foreach (Tournament c in _kernel.Competitions)
             {
                 int i = 0;
-                Association ta = (_kernel.LocalisationTournament(c) as Association);
+                Association ta = _kernel.LocalisationTournament(c);
                 foreach (Round t in c.rounds)
                 {
-                    DeclareFinancialSanctions(c, t);
+                    if(!Utils.DISABLE_FINANCIAL_SANCTIONS)
+                    {
+                        DeclareFinancialSanctions(c, t);
+                    }
 
                     //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
                     if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
@@ -703,7 +706,8 @@ namespace tm
                     }
                 }*/
 
-                if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
+                bool isFirstLevelChampionship = c.level == 1 && c.isChampionship && (ta.parent == null || ta.parent.Leagues().Count == 0);
+                if (isFirstLevelChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
                 {
                     Association association = kernel.LocalisationTournament(c);
                     //and ctry != null => association.isStateAssociation ? (if needed, probably not)
@@ -731,12 +735,15 @@ namespace tm
                 }
 
                 //if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-2), _date))
-                if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
+                if (isFirstLevelChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
                 {
                     Association association = kernel.LocalisationTournament(c);
                     if(c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
                     {
-                        association.ApplyAdministrativeRetrogradations();
+                        if(!Utils.DISABLE_ADMINISTRATIVE_RETROGRADATIONS)
+                        {
+                            association.ApplyAdministrativeRetrogradations();
+                        }
                     }
                 }
 

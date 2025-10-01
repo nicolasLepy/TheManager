@@ -76,7 +76,8 @@ namespace tm.Tournaments
                     if (clubsAdm.Count > 0)
                     {
 
-                        List<int> groupsCount = Utils.GetGroupSize(clubsAdm.Count, defaultMaxTeamsByGroup);
+                        int newGroupCount = Utils.GroupCount(clubsAdm.Count, defaultMaxTeamsByGroup);
+                        List<int> groupsCount = Utils.GetGroupSize(clubsAdm.Count, newGroupCount);
                         List<Club>[] splitClubs = Utils.CreateGeographicClusters(clubsAdm, groupsCount.Count);
                         for (int grp = 0; grp < groupsCount.Count; grp++)
                         {

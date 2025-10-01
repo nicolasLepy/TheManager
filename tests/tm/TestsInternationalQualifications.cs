@@ -23,37 +23,32 @@ namespace tests.tm
             InitGame("database_france_light", new List<string>());
             bool keepGoin = true;
             Continent europe = Session.Instance.Game.kernel.String2Continent("Europe");
-            Country france = Session.Instance.Game.kernel.String2Country("France");
+            Country cFrance = Session.Instance.Game.kernel.String2Country("France");
             Association uefa = (from a in Session.Instance.Game.kernel.worldAssociation.associations where a.localisation == europe select a).First();
+            Association france = (from a in uefa.associations where a.localisation == cFrance select a).First();
             Tournament championsLeague = uefa.GetContinentalClubTournament(1);
             Tournament europaLeague = uefa.GetContinentalClubTournament(2);
             Tournament europaConferenceLeague = uefa.GetContinentalClubTournament(3);
-
-            //SWITCH FROM ASSOCIATION TO CONTINENT HOLDING :
-            // => uefa.getcont... -> europe.getcont
-            // => from q in uefa.continentalQualifications -> from q in europe.continentalQualifications
-            // => datasetloader.cs => if(false && localisation as Continent != null)
-            // => game.cs => foreach(Association a in kernel.GetAllAssociations())
 
             while (keepGoin)
             {
                 Session.Instance.Game.NextDay();
                 Session.Instance.Game.UpdateTournaments();
 
-                foreach (Country country in europe.countries)
+                foreach (Association association in uefa.associations)
                 {
-                    foreach(Tournament cup in country.Cups())
+                    foreach(Tournament cup in association.Cups())
                     {
                         if (Utils.CompareDates(Session.Instance.Game.date, cup.rounds.Last().DateEndRound()))
                         {
-                            ForceCupWinner(country, cup);
+                            ForceCupWinner(association, cup);
                             Console.WriteLine("[" + Session.Instance.Game.date.ToShortDateString() + "][force] " + cup.name);
                         }
                     }
-                    if (country.League(1) != null && Utils.CompareDates(Session.Instance.Game.date, country.League(1).rounds.Last().DateEndRound()))
+                    if (association.League(1) != null && Utils.CompareDates(Session.Instance.Game.date, association.League(1).rounds.Last().DateEndRound()))
                     {
-                        ForceLeague(country, country.League(1));
-                        Console.WriteLine("[" + Session.Instance.Game.date.ToShortDateString() + "][force] " + country.League(1).name);
+                        ForceLeague(association, association.League(1));
+                        Console.WriteLine("[" + Session.Instance.Game.date.ToShortDateString() + "][force] " + association.League(1).name);
                     }
                 }
                 int weekNumber = CultureInfo.InvariantCulture.Calendar.GetWeekOfYear(Session.Instance.Game.date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
@@ -87,29 +82,36 @@ namespace tests.tm
                 }
             }
             int rank = 1;
-            List<Country> associations = (from a in uefa.associationRanking select a.localisation as Country).ToList();
+            List<Association> associations = (from a in uefa.associationRanking select a).ToList();
             int checksCount = 0;
-            foreach (Country association in associations)
+            foreach (Association association in associations)
             {
                 List<Qualification> associationQualifications = (from q in uefa.continentalQualifications where q.ranking == rank select q).ToList();
                 Console.WriteLine(associationQualifications.Count);
                 List<Club> cupWinners = (from c in association.Cups() select c.Winner()).ToList();
                 List<Club> bestTeams = association.League(1).rounds[0].clubs.GetRange(0, 8);
+                //Cas particulier de l'Irlande qui fonctionne sur année civile
+                if(association.name == "Irlande")
+                {
+                    int maxValueKey = association.League(1).previousEditions.Aggregate((x, y) => x.Key > y.Key ? x : y).Key;
+                    bestTeams = association.League(1).previousEditions[maxValueKey].rounds[0].clubs.GetRange(0, 8);
+                }
                 foreach(Qualification q in associationQualifications)
                 {
                     for(int i = 0; i < q.qualifies; i++)
                     {
+                        //q.isNextYear define 'isCupWinner'
                         if(q.isNextYear && cupWinners.Count > 0)
                         {
                             Club club = cupWinners[0];
-                            Assert.IsTrue(q.tournament.nextYearQualified[q.roundId].Contains(club));
+                            Assert.IsTrue(q.target.Tournament().nextYearQualified[q.roundId].Contains(club));
                             cupWinners.RemoveAt(0);
                             checksCount++;
                         }
                         else
                         {
                             Club club = bestTeams[0];
-                            Assert.IsTrue(q.tournament.nextYearQualified[q.roundId].Contains(club));
+                            Assert.IsTrue(q.target.Tournament().nextYearQualified[q.roundId].Contains(club));
                             bestTeams.RemoveAt(0);
                             checksCount++;
                         }
@@ -120,7 +122,7 @@ namespace tests.tm
             Assert.AreEqual(checksCount, 124);
         }
 
-        private void ForceLeague(Country country, Tournament league)
+        private void ForceLeague(Association association, Tournament league)
         {
             if(league != null)
             {
@@ -138,9 +140,9 @@ namespace tests.tm
             }
         }
 
-        private void ForceCupWinner(Country country, Tournament cup)
+        private void ForceCupWinner(Association association, Tournament cup)
         {
-            Tournament firstLeague = country.League(1);
+            Tournament firstLeague = association.League(1);
             if(firstLeague != null)
             {
                 Round lastRound = cup.rounds[cup.rounds.Count - 1];
@@ -150,6 +152,5 @@ namespace tests.tm
                 lastRound.matches[0].Force(1, 0);
             }
         }
-
     }
 }

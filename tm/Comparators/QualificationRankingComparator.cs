@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace tm.Comparators
 {
-    public class QualificationComparator : IComparer<Qualification>
+    public class QualificationRankingComparator : IComparer<Qualification>
     {
         public int Compare(Qualification x, Qualification y)
         {

@@ -174,6 +174,66 @@ namespace tm
             return res;
         }
 
+        /// <summary>
+        /// Get the tournament definition just below. Can represent a tournament if the tournament below in managed by the same association or an exclusion (relegation to regional league)
+        /// </summary>
+        /// <returns>A QualificationTarget object</returns>
+        public QualificationTarget LeagueBelow(Tournament tournament)
+        {
+            QualificationTarget below = null;
+            if(!_tournaments.Contains(tournament))
+            {
+                throw new Exception(String.Format("The tournament {0} is not holded by the association {1}", tournament.name, name));
+            }
+            Tournament belowInAssociation = this.League(tournament.level + 1);
+            if(belowInAssociation != null)
+            {
+                below = new QualificationTournament(belowInAssociation);
+            }
+            else
+            {
+                //If a child association define a league system, so we define a "ExcludeFromLeagueSystem" qualification
+                foreach(Association a in _associations)
+                {
+                    if(a.League(1) != null)
+                    {
+                        below = new QualificationExcludeLeagueSystem(this);
+                    }
+                }
+            }
+            return below;
+        }
+
+        /// <summary>
+        /// Get the tournament definition just above. Can represent a tournament if the tournament below in managed by the same association or an exclusion (relegation to regional league)
+        /// </summary>
+        /// <returns>A QualificationTarget object</returns>
+        public QualificationTarget LeagueAbove(Tournament tournament)
+        {
+            QualificationTarget above = null;
+            if (!_tournaments.Contains(tournament))
+            {
+                throw new Exception(String.Format("The tournament {0} is not holded by the association {1}", tournament.name, name));
+            }
+            Tournament aboveInAssociation = this.League(tournament.level - 1);
+            if (aboveInAssociation != null)
+            {
+                above = new QualificationTournament(aboveInAssociation);
+            }
+            else
+            {
+                if(parent != null)
+                {
+                    Tournament t = parent.Leagues().LastOrDefault();
+                    if(t != null)
+                    {
+                        above = new QualificationTournament(t);
+                    }
+                }
+            }
+            return above;
+        }
+
         public Association ClosestStateAssociation()
         {
             Association res = null;
@@ -500,6 +560,41 @@ namespace tm
             }
         }
 
+        public override string ToString()
+        {
+            return String.Format("tm.Association {0}", _name);
+        }
+
+        /// <summary>
+        /// Returns the number of teams of an association who will be relegated
+        /// </summary>
+        /// <param name="association"></param>
+        /// <returns></returns>
+        public int GetExcludedTeamsFromLeagueSystem(Association association)
+        {
+            int res = 0;
+            if(parent != null)
+            {
+                res += parent.GetExcludedTeamsFromLeagueSystem(this);
+            }
+            Tournament lastLevel = Leagues().LastOrDefault();
+            List<Club> clubs = new List<Club>();
+            if (lastLevel != null)
+            {
+                foreach (Round r in lastLevel.rounds)
+                {
+                    GroupsRound gr = r as GroupsRound;
+                    if (gr != null)
+                    {
+                        List<Club> relegablesCandidates = gr.GetAssociationRelegables(association);
+                        clubs.AddRange(relegablesCandidates);
+                    }
+                }
+            }
+            res += clubs.Count;
+            return res;
+        }
+
         public List<Tournament> GetAllTournaments()
         {
             List<Tournament> res = new List<Tournament>();
@@ -553,9 +648,9 @@ namespace tm
                 {
                     foreach (Club club in r.clubs)
                     {
-                        if (club.Association().IsDirectConnected(a) && (!res.ContainsKey(club) || Utils.IsBefore(r.DateInitialisationRound(), res[club].tournament.rounds[res[club].roundId].DateInitialisationRound())))
+                        if (club.Association().IsDirectConnected(a) && (!res.ContainsKey(club) || Utils.IsBefore(r.DateInitialisationRound(), res[club].target.Tournament(club).rounds[res[club].roundId].DateInitialisationRound())))
                         {
-                            res.Add(club, new Qualification(1, archive.rounds.IndexOf(r), tournament, true, 0));
+                            res.Add(club, new Qualification(1, archive.rounds.IndexOf(r), new QualificationTournament(tournament), true, 0));
                         }
                     }
                 }
@@ -691,7 +786,7 @@ namespace tm
                         List<Qualification> tQualifications = t.rounds.Last().qualifications;
                         if (tWinner == club && tQualifications.Count > 0 && tQualifications[0].isNextYear && tQualifications[0].ranking == 1)
                         {
-                            cdq = new KeyValuePair<Tournament, int>(tQualifications[0].tournament, tQualifications[0].roundId);
+                            cdq = new KeyValuePair<Tournament, int>(tQualifications[0].target.Tournament(), tQualifications[0].roundId);
                         }
                     }
 
@@ -699,16 +794,19 @@ namespace tm
                     if (clubQualifiedAsWinner)
                     {
                         //Add a new qualification corresponding to the place reserved to the international cup winner
-                        Qualification qualificationCupWinner = new Qualification(rank, cdq.Value, cdq.Key, true, 1);
+                        Qualification qualificationCupWinner = new Qualification(rank, cdq.Value, new QualificationTournament(cdq.Key), true, 1);
                         associationQualifications.Add(qualificationCupWinner);
                         //Sort to put the new qualification at the right place
-                        associationQualifications.Sort((x, y) => x.tournament.level != y.tournament.level ? x.tournament.level - y.tournament.level : y.roundId - x.roundId);
+
+
+                        associationQualifications.Sort(new QualificationTournamentComparator());
+
                         int indexQ = -1;
                         List<Qualification> cupQualifications = (from aq in associationQualifications where aq.isNextYear select aq).ToList();
                         for (int q = 0; q < cupQualifications.Count; q++)
                         {
                             //Reminder isNextYear is used for isCupWinner
-                            indexQ = (indexQ == -1 && cupQualifications[q].roundId == cdq.Value && cupQualifications[q].tournament == cdq.Key) ? q : indexQ;
+                            indexQ = (indexQ == -1 && cupQualifications[q].roundId == cdq.Value && cupQualifications[q].target.Tournament() == cdq.Key) ? q : indexQ;
                         }
                         //Resort cup winners to match added qualification
                         if (cupWinners.IndexOf(club) > -1 && cupWinners.IndexOf(club) < indexQ)
@@ -771,7 +869,7 @@ namespace tm
                 Dictionary<Club, Qualification> qualifiedClubs = GetClubsQualifiedForInternationalCompetitions(countriesRanking[i], false);
                 foreach (KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
                 {
-                    Utils.Debug("[IC][preprocess][international qualfication][" + kvp.Value.tournament.shortName + "][" + kvp.Value.roundId + "][" + kvp.Key.Country().Name() + "] " + kvp.Key.name);
+                    Utils.Debug("[IC][preprocess][international qualfication][" + kvp.Value.target.Tournament().shortName + "][" + kvp.Value.roundId + "][" + kvp.Key.Country().Name() + "] " + kvp.Key.name);
                 }
                 bool ruleR1 = GetContinentalClubTournament(1) != null ? GetContinentalClubTournament(1).rules.Contains(TournamentRule.OnWinnerQualifiedAdaptClubsQualifications) : false;
                 if (ruleR1)
@@ -782,7 +880,7 @@ namespace tm
                         {
                             for (int k = t.nextYearQualified[j].Count - 1; k >= 0; k--)
                             {
-                                if (t.nextYearQualified[j][k].Association().IsDirectConnected(countriesRanking[i].localisation as Association))
+                                if (t.nextYearQualified[j][k].Association().IsDirectConnected(countriesRanking[i]))
                                 {
                                     t.nextYearQualified[j].Remove(t.nextYearQualified[j][k]);
                                 }
@@ -792,8 +890,8 @@ namespace tm
                 }
                 foreach (KeyValuePair<Club, Qualification> kvp in qualifiedClubs)
                 {
-                    Utils.Debug("[IC][international qualfication][" + kvp.Value.tournament.shortName + "][" + kvp.Value.roundId + "][" + kvp.Key.Country().Name() + "] " + kvp.Key.name);
-                    kvp.Value.tournament.AddClubForNextYear(kvp.Key, kvp.Value.roundId);
+                    Utils.Debug("[IC][international qualfication][" + kvp.Value.target.Tournament().shortName + "][" + kvp.Value.roundId + "][" + kvp.Key.Country().Name() + "] " + kvp.Key.name);
+                    kvp.Value.target.RegisterTeamForNextEdition(kvp.Key, kvp.Value.roundId);
                 }
             }
         }
@@ -1067,7 +1165,7 @@ namespace tm
             return League(res);
         }
 
-        public Tournament GetLastRegionalLeague(int level)
+        /*public Tournament GetLastRegionalLeague(int level)
         {
             int res = -1;
             foreach (Tournament t in Tournaments())
@@ -1080,7 +1178,7 @@ namespace tm
             }
 
             return League(res);
-        }
+        }*/
 
         public Tournament FirstDivisionChampionship()
         {
@@ -1147,7 +1245,7 @@ namespace tm
                 Club candidate = candidates[j];
                 ReserveClub candidateAsReserve = candidate as ReserveClub;
                 //TODO: Rules check (doublon ?)
-                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesAreNotPromoted) && !UtilsTournaments.ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
+                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !UtilsTournaments.ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
                 {
                     found = true;
                     leagueSystem[indexLevelRepechage].Remove(candidate);
@@ -1167,7 +1265,7 @@ namespace tm
             int level = -1;
             foreach (Tournament t in Tournaments())
             {
-                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesAreNotPromoted) && t.level > level)
+                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesCannotBePromoted) && t.level > level)
                 {
                     level = t.level;
                 }
@@ -1181,7 +1279,7 @@ namespace tm
         }
 
         /// <summary>
-        /// Check if a league system is conform compared to current league systel
+        /// Check if a league system is conform compared to current league system
         /// </summary>
         /// <param name="clubsByLeagues">The league system</param>
         /// <returns>True it the league system is conform, False otherwise</returns>
@@ -1193,29 +1291,11 @@ namespace tm
             {
                 List<Club> thisYear = leagues[i].rounds[0].clubs;
                 List<Club> nextYear = clubsByLeagues[i];
-                GroupsRound leagueGroupRound = leagues[i].rounds[0] as GroupsRound;
-                int administrativeLevel = leagueGroupRound != null ? leagueGroupRound.administrativeLevel : 0;
-                if (administrativeLevel > 0)
+                bool leagueTeamsCanVary = LeagueBelow(leagues[i]) == null && parent.Leagues().Count > 0;
+                if (thisYear.Count != nextYear.Count && !leagueTeamsCanVary)
                 {
-                    foreach (Association association in GetAssociationsLevel(administrativeLevel))
-                    {
-                        int maxLevelPossible = MaxLeagueLevelWithAssociation(association) - 1;
-                        List<Club> thisYearAssociation = UtilsTournaments.FilterAssociation(thisYear, association);
-                        List<Club> nextYearAssociation = UtilsTournaments.FilterAssociation(nextYear, association);
-                        if (thisYearAssociation.Count != nextYearAssociation.Count && i != maxLevelPossible)
-                        {
-                            Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + " (" + association.name + ") have a different number of teams");
-                            res = false;
-                        }
-                    }
-                }
-                else
-                {
-                    if (thisYear.Count != nextYear.Count)
-                    {
-                        Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + "have a different number of teams");
-                        res = false;
-                    }
+                    Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + " have a different number of teams");
+                    res = false;
                 }
             }
             return res;
@@ -1325,18 +1405,23 @@ namespace tm
                     }
                 }
 
+                if(name == "France" || parent?.name == "France")
+                {
+                    Console.WriteLine("=====" + leagues[i].name + "===== " + clubsByLeagues[i].Count);
+                    foreach (KeyValuePair<Club, int> c in promotionPlayOffs)
+                    {
+                        Console.WriteLine("[playoffs] " + c.Key.name);
+                    }
+                    foreach (Club c in clubsByLeagues[i])
+                    {
+                        Round clubC = c.Championship?.rounds[0];
+                        //Round clubC = (from Tournament t in Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
+                        string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + GetAssociationLevel(c.Association(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
+                        Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
+                    }
+                }
 
-                Console.WriteLine("=====" + leagues[i].name + "===== " + clubsByLeagues[i].Count);
-                foreach (KeyValuePair<Club, int> c in promotionPlayOffs)
-                {
-                    Console.WriteLine("[playoffs] " + c.Key.name);
-                }
-                foreach (Club c in clubsByLeagues[i])
-                {
-                    Round clubC = (from Tournament t in Leagues() where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
-                    string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + GetAssociationLevel(c.Association(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
-                    Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
-                }
+
                 int administrativeLevel = 0;
                 if (leagues[i].rounds.Count > 0)
                 {

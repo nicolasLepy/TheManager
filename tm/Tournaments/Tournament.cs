@@ -440,7 +440,7 @@ namespace tm
                 {
                     foreach (Qualification q in r.qualifications)
                     {
-                        if (!q.isNextYear && q.tournament == this)
+                        if (!q.isNextYear && q.target.Tournament() == this)
                         {
                             if ((r as KnockoutRound) == null)
                             {
@@ -474,11 +474,11 @@ namespace tm
                 int games = teamsAtEachRound[i] / 2;
                 foreach (Qualification q in rounds[i].qualifications)
                 {
-                    if (q.isNextYear && ((relegation && q.tournament.level > level) || (!relegation && q.tournament.level < level)))
+                    if (q.isNextYear && ((relegation && IsAbove(q.target)) || (!relegation && IsBelow(q.target))))
                     {
                         res += games;
                     }
-                    else if (!q.isNextYear && q.tournament == this)
+                    else if (!q.isNextYear && q.target.Tournament() == this)
                     {
                         teamsAtEachRound[q.roundId] += games;
                     }
@@ -556,6 +556,118 @@ namespace tm
                 res = rt.Source.RetrieveTeams(-1, rt.Method, false, parent.Association).Count;
             }
             return res;
+        }
+
+        /// <summary>
+        /// Return True if this tournament is above in the league system to the target tournament.
+        /// Return False otherwise or if the two tournaments sits at the same level in the league system
+        /// </summary>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public bool IsAbove(QualificationTarget to)
+        {
+            bool isAbove = false;
+            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            int hierarchyAssociation = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(tAssociation, 0);
+            if (to.Type == QualificationTargetType.Tournament)
+            {
+                Tournament t = to.Tournament();
+                Association otherAssociation = Session.Instance.Game.kernel.LocalisationTournament(t);
+                // if tAssociation is a parent of otherAssociation, so self is above
+                if (tAssociation.GetAllChilds().Contains(otherAssociation))
+                {
+                    isAbove = true;
+                }
+                // else if tAssociation and otherAssociation are on the same hierarchal level, check the level of the tournaments
+                else
+                {
+                    int hierarchyOther = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(otherAssociation, 0);
+                    if (hierarchyAssociation == hierarchyOther)
+                    {
+                        isAbove = this.level < t.level;
+                    }
+                }
+            }
+            else
+            {                
+                int qDestinationLevel = to.GetAssociationLevel();
+                int selfLevel = hierarchyAssociation;
+                if(selfLevel < qDestinationLevel)
+                {
+                    isAbove = true;
+                }
+                else if (qDestinationLevel == selfLevel)
+                {
+                    int selfTLevel = level;
+                    int otherTLevel = to.GetTournamentLevel();
+                    isAbove = otherTLevel > selfTLevel;
+                }
+            }
+            return isAbove;
+        }
+
+        /// <summary>
+        /// Return True if this tournament is below in the league system to the target tournament
+        /// Return False otherwise or if the two tournaments sits at the same level in the league system
+        /// </summary>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public bool IsBelow(QualificationTarget to)
+        {
+            bool isBelow = false;
+            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            int hierarchyAssociation = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(tAssociation, 0);
+            if (to.Type == QualificationTargetType.Tournament)
+            {
+                Tournament t = to.Tournament();
+                Association otherAssociation = Session.Instance.Game.kernel.LocalisationTournament(t);
+                // if otherAssociation is a parent of tAssociation, so self is above
+                if (otherAssociation.GetAllChilds().Contains(tAssociation))
+                {
+                    isBelow = true;
+                }
+                // else if tAssociation and otherAssociation are on the same hierarchal level, check the level of the tournaments
+                else
+                {
+                    int hierarchyOther = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(otherAssociation, 0);
+                    if (hierarchyAssociation == hierarchyOther)
+                    {
+                        isBelow = this.level > t.level;
+                    }
+                }
+            }
+            else
+            {
+                int qDestinationLevel = to.GetAssociationLevel();
+                int selfLevel = hierarchyAssociation;
+                if (qDestinationLevel < selfLevel)
+                {
+                    isBelow = true;
+                }
+                else if(qDestinationLevel == selfLevel)
+                {
+                    int selfTLevel = level;
+                    int otherTLevel = to.GetTournamentLevel();
+                    isBelow = selfTLevel > otherTLevel;
+                }
+            }
+            return isBelow;
+        }
+
+        /// <summary>
+        /// Return True if this tournament sits at the same level in the league system
+        /// Return False otherwise
+        /// </summary>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        public bool IsSameLevel(QualificationTarget to)
+        {
+            int otherALevel = to.GetAssociationLevel();
+            int otherTLevel = to.GetTournamentLevel();
+            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            int selfALevel = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(tAssociation, 0);
+            int selfTLevel = this.level;
+            return otherALevel == selfALevel && otherTLevel == selfTLevel;
         }
 
         /// <summary>
@@ -739,7 +851,7 @@ namespace tm
                     newRounds.Add(new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), "Tour préliminaire", this, firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber - 1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber + 1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority)); ;
                     newRounds[newRounds.Count - 1].recuperedTeams.AddRange(worstTeams);
                     newRounds[newRounds.Count - 1].rules.AddRange(firstRound.rules);
-                    newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, this, false, -1));
+                    newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, new QualificationTournament(this), false, -1));
                     roundCreated++;
                     if (teamsToAdd > 0)
                     {
@@ -784,7 +896,7 @@ namespace tm
                 for(int j = 0; j < rounds[i].qualifications.Count; j++)
                 {
                     int newRoundId = i < roundCreated ? (i + 1) : (rounds[i].qualifications[j].roundId + roundCreated);
-                    rounds[i].qualifications[j] = new Qualification(rounds[i].qualifications[j].ranking, newRoundId, rounds[i].qualifications[j].tournament, rounds[i].qualifications[j].isNextYear, rounds[i].qualifications[j].qualifies);
+                    rounds[i].qualifications[j] = new Qualification(rounds[i].qualifications[j].ranking, newRoundId, rounds[i].qualifications[j].target, rounds[i].qualifications[j].isNextYear, rounds[i].qualifications[j].qualifies);
                 }
             }
         }
@@ -833,9 +945,9 @@ namespace tm
                     for (int i = 0; i < regionalTournament.rounds.Last().qualifications.Count; i++)
                     {
                         Qualification qualification = regionalTournament.rounds.Last().qualifications[i];
-                        if (qualification.tournament == regionalTournament && !qualification.isNextYear)
+                        if (qualification.target.Tournament() == regionalTournament && !qualification.isNextYear)
                         {
-                            regionalTournament.rounds.Last().qualifications[i] = new Qualification(qualification.ranking, qualification.roundId, this, qualification.isNextYear, qualification.qualifies);
+                            regionalTournament.rounds.Last().qualifications[i] = new Qualification(qualification.ranking, qualification.roundId, new QualificationTournament(this), qualification.isNextYear, qualification.qualifies);
                         }
                     }
                     Session.Instance.Game.kernel.LocalisationTournament(this).Tournaments().Add(regionalTournament);
@@ -886,11 +998,11 @@ namespace tm
                         {
                             for (int i = 0; i < r.qualifications.Count; i++)
                             {
-                                if (r.qualifications[i].tournament != null && (r.qualifications[i].tournament.parent.Tournament == this || (r.qualifications[i].tournament == this && r.qualifications[i].roundId < idRoundPivot)))
+                                if (r.qualifications[i].target.Tournament() != null && (r.qualifications[i].target.Tournament().parent.Tournament == this || (r.qualifications[i].target.Tournament() == this && r.qualifications[i].roundId < idRoundPivot)))
                                 {
                                     Tournament hostTournament = childTournaments[Session.Instance.Random(0, childTournaments.Count)];
                                     Utils.Debug(string.Format("[Host Cup] {0} send winner of {1} to {2}", t.name, r.name, hostTournament.name));
-                                    r.qualifications[i] = new Qualification(r.qualifications[i].ranking, r.qualifications[i].roundId, hostTournament, r.qualifications[i].isNextYear, r.qualifications[i].qualifies);
+                                    r.qualifications[i] = new Qualification(r.qualifications[i].ranking, r.qualifications[i].roundId, new QualificationTournament(hostTournament), r.qualifications[i].isNextYear, r.qualifications[i].qualifies);
                                 }
                             }
                         }
@@ -933,7 +1045,7 @@ namespace tm
                         {
                             foreach (Qualification q in r.qualifications)
                             {
-                                if (q.tournament == this)
+                                if (q.target.Tournament() == this)
                                 {
                                     teamsFromOutsideLeagueSystem[q.roundId] += (q.qualifies != 0 ? q.qualifies : 1);
                                 }
@@ -1346,15 +1458,15 @@ namespace tm
                 if(makeRoundsInactive)
                 {
                     int associationLevel = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).administrativeLevel : 0;
-                    //roundCopy = new InactiveRound(roundCopy.name, roundCopy.programmation.defaultHour, roundCopy.programmation.initialisation, roundCopy.programmation.end, associationLevel);
-                    roundCopy = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), roundCopy.name, this, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    bool qualificationsForAllGroups = (roundCopy as GroupsRound != null) ? (roundCopy as GroupsRound).qualificationsDefinedForAllGroup : false;
+                    roundCopy = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), roundCopy.name, this, roundCopy.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), 1, qualificationsForAllGroups, 1, roundCopy.programmation.initialisation, roundCopy.programmation.end, -1, RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                 }
                 for (int i = 0; i < roundCopy.qualifications.Count; i++)
                 {
                     Qualification q = roundCopy.qualifications[i];
-                    if (roundCopy.qualifications[i].tournament == this)
+                    if (roundCopy.qualifications[i].target.Tournament() == this)
                     {
-                        q.tournament = copy;
+                        q = new Qualification(q.ranking, q.roundId, new QualificationTournament(copy), q.isNextYear, q.qualifies);
                         roundCopy.qualifications[i] = q;
                     }
                 }
@@ -1440,7 +1552,7 @@ namespace tm
                 {
                     for (int j = 0; j < rounds[i].qualifications.Count; j++)
                     {
-                        rounds[i].qualifications[j] = new Qualification(rounds[i].qualifications[j].ranking, rounds[i].qualifications[j].roundId - _extraRounds, rounds[i].qualifications[j].tournament, rounds[i].qualifications[j].isNextYear, rounds[i].qualifications[j].qualifies);
+                        rounds[i].qualifications[j] = new Qualification(rounds[i].qualifications[j].ranking, rounds[i].qualifications[j].roundId - _extraRounds, rounds[i].qualifications[j].target, rounds[i].qualifications[j].isNextYear, rounds[i].qualifications[j].qualifies);
                     }
                 }
                 _extraRounds = 0;
@@ -1557,13 +1669,13 @@ namespace tm
                 browsed.Add(r);
                 foreach (Qualification q in r.qualifications)
                 {
-                    if (q.isNextYear && q.tournament.isChampionship && ((!relegation && q.tournament.level < level) || (relegation && q.tournament.level > level)) )
+                    if (q.isNextYear && q.target.ToChampionshipTournament() && ((!relegation && IsBelow(q.target)) || (relegation && IsAbove(q.target))) )
                     {
                         res = r;
                     }
-                    if (!q.isNextYear && q.tournament.isChampionship && !browsed.Contains(q.tournament.rounds[q.roundId]))
+                    if (!q.isNextYear && q.target.ToChampionshipTournament() && !browsed.Contains(q.target.Tournament()?.rounds[q.roundId]))
                     {
-                        tas.Add(q.tournament.rounds[q.roundId]);
+                        tas.Add(q.target.Tournament().rounds[q.roundId]);
                     }
                 }
             }
@@ -1586,26 +1698,32 @@ namespace tm
             //Step 1 : Append rounds with losing teams
             foreach (Qualification q in round.qualifications)
             {
-                if (!q.isNextYear && q.tournament.isChampionship && q.ranking > 1)
+                if (!q.isNextYear && q.target.ToChampionshipTournament() && q.ranking > 1)
                 {
-                    Tournament targetTournament = q.tournament;
-                    Round targetRound = q.tournament.rounds[q.roundId];
-                    if (!allRounds.Contains(targetRound))
+                    Tournament targetTournament = q.target.Tournament();
+                    if(targetTournament != null)
                     {
-                        res.AddRange(GetPlayOffsTree(targetTournament, targetRound, allRounds));
+                        Round targetRound = q.target.Tournament().rounds[q.roundId];
+                        if (!allRounds.Contains(targetRound))
+                        {
+                            res.AddRange(GetPlayOffsTree(targetTournament, targetRound, allRounds));
+                        }
                     }
                 }
             }
             //Step 2 : Append rounds with winning teams
             foreach (Qualification q in round.qualifications)
             {
-                if (!q.isNextYear && q.tournament.isChampionship && q.ranking == 1)
+                if (!q.isNextYear && q.target.ToChampionshipTournament() && q.ranking == 1)
                 {
-                    Tournament targetTournament = q.tournament;
-                    Round targetRound = this.rounds[q.roundId];
-                    if (!allRounds.Contains(targetRound))
+                    Tournament targetTournament = q.target.Tournament();
+                    if(targetTournament != null)
                     {
-                        res.AddRange(GetPlayOffsTree(targetTournament, targetRound, allRounds));
+                        Round targetRound = this.rounds[q.roundId];
+                        if (!allRounds.Contains(targetRound))
+                        {
+                            res.AddRange(GetPlayOffsTree(targetTournament, targetRound, allRounds));
+                        }
                     }
                 }
             }
@@ -1624,9 +1742,9 @@ namespace tm
                     foreach (Qualification q in ri.qualifications)
                     {
                         //Don't know if q.ranking == 1 is mandatory or not. Isn't adequate with some relegation barrages where the qualified team is the looser team
-                        if (!q.isNextYear && q.tournament == tournament && q.roundId == roundIndex /*&& q.ranking == 1*/)
+                        if (!q.isNextYear && q.target.Tournament() == tournament && q.roundId == roundIndex /*&& q.ranking == 1*/)
                         {
-                            Tournament targetTournament = q.tournament;
+                            Tournament targetTournament = q.target.Tournament();
                             res.InsertRange(0, GetPlayOffsTree(targetTournament, ri, allRounds));
                         }
                     }
@@ -1743,7 +1861,7 @@ namespace tm
             List<Club> finalClubs = new List<Club>();
             Round finalRound = null;
             Round lastChampionshipRound = GetLastChampionshipRound();
-            lastChampionshipRound.qualifications.ForEach(q => finalRound = (!q.isNextYear && q.tournament == this && q.roundId > 0 && q.ranking == 1) ? _rounds[q.roundId] : finalRound);
+            lastChampionshipRound.qualifications.ForEach(q => finalRound = (!q.isNextYear && q.target.Tournament() == this && q.roundId > 0 && q.ranking == 1) ? _rounds[q.roundId] : finalRound);
             //If the league winner is qualified on another round this year on this tournament then the tournament finish with a final phase
             List<Round> finalRounds = new List<Round>();
 
@@ -1929,7 +2047,8 @@ namespace tm
                 {
                     int associationLevel = (t as GroupsRound != null) ? (t as GroupsRound).administrativeLevel : 0;
                     int groupCount = (t as GroupsRound != null) ? (t as GroupsRound).groupsCount : 1;
-                    GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, this, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
+                    bool qualificationsForAllGroups = (t as GroupsRound != null) ? (t as GroupsRound).qualificationsDefinedForAllGroup : false;
+                    GroupInactiveRound newRound = new GroupInactiveRound(Session.Instance.Game.kernel.NextIdRound(), t.name, this, t.programmation.defaultHour, new List<GameDay>(), new List<TvOffset>(), groupCount, qualificationsForAllGroups, 1, t.programmation.initialisation, t.programmation.end, -1, associationLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, associationLevel, false, 0, 0, 0);
                     newRound.rules.AddRange(t.rules);
                     newRounds.Add(newRound);
 
@@ -1952,7 +2071,7 @@ namespace tm
                                 {
                                     foreach (Qualification otherQualifications in otherRound.qualifications)
                                     {
-                                        if (otherQualifications.tournament == this && !otherQualifications.isNextYear && otherQualifications.roundId == i)
+                                        if (otherQualifications.target.Tournament() == this && !otherQualifications.isNextYear && otherQualifications.roundId == i)
                                         {
                                             clubCount++;
                                         }
@@ -1962,7 +2081,7 @@ namespace tm
                             int numberOfGames = clubCount / 2;
                             for (int j = numberOfGames * (q.ranking - 1); j < numberOfGames * q.ranking; j++)
                             {
-                                newRound.qualifications.Add(new Qualification(j + 1, q.roundId, q.tournament, q.isNextYear, q.qualifies));
+                                newRound.qualifications.Add(new Qualification(j + 1, q.roundId, q.target, q.isNextYear, q.qualifies));
                             }
                         }
                         else if(t as GroupsRound != null)

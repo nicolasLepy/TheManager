@@ -100,6 +100,7 @@ namespace TheManager_GUI
                 cbdd.CreateRegionalPathForCups();
                 RaiseUpdateEvent(98, Application.Current.FindResource("str_loading_archives").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadArchives();
+                cbdd.PostProcess();
                 RaiseUpdateEvent(100, "", LoadDatabaseProgressReportType.FINISH, game);
 
             });
@@ -344,11 +345,11 @@ namespace TheManager_GUI
                 int re = 0;
                 foreach (Qualification q in c.rounds[0].qualifications)
                 {
-                    if (q.isNextYear && q.roundId == 0 && q.tournament.level > c.level)
+                    if (q.isNextYear && q.roundId == 0 && c.IsAbove(q.target))
                     {
                         re++;
                     }
-                    if (q.isNextYear && q.roundId == 0 && q.tournament.level < c.level)
+                    if (q.isNextYear && q.roundId == 0 && c.IsBelow(q.target))
                     {
                         pr++;
                     }

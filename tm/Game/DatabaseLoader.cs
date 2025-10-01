@@ -1076,11 +1076,18 @@ namespace tm
                             {
                                 gamesPriority = int.Parse(e3.Attribute("gamesPriority").Value);
                             }
+
+                            bool qualificationsDefinedForAllGroup = false;
+                            if (e3.Attribute("qualificationsDefinedForAllGroup") != null)
+                            {
+                                qualificationsDefinedForAllGroup = e3.Attribute("qualificationsDefinedForAllGroup").Value.Equals("true");
+                            }
+
                             if (type == "championnat")
                             {
                                 int lastDaysSameDay = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
                                 //round = new ChampionshipRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, lastDaysSameDay, gamesPriority);
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), 1, phases, initialisationDate, endDate, keepRankingFromPreviousRound, RandomDrawingMethod.Level, 0, false, 0, 0, gamesPriority, lastDaysSameDay);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), 1, false, 0, phases, initialisationDate, endDate, keepRankingFromPreviousRound, RandomDrawingMethod.Level, 0, false, 0, 0, gamesPriority, lastDaysSameDay);
                             }
                             else if (type == "elimination")
                             {
@@ -1099,6 +1106,7 @@ namespace tm
                             else if (type == "poules")
                             {
                                 int groupsNumber = int.Parse(e3.Attribute("nombrePoules").Value);
+                                int maxTeamsByGroups = e3.Attribute("maxTeamsByGroup") != null ? int.Parse(e3.Attribute("maxTeamsByGroup").Value) : 0;
                                 RandomDrawingMethod method = String2DrawingMethod(e3.Attribute("methode").Value);
                                 int administrativeLevel = 0;
                                 if (method == RandomDrawingMethod.Administrative)
@@ -1108,7 +1116,7 @@ namespace tm
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority, 0);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, qualificationsDefinedForAllGroup, maxTeamsByGroups, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority, 0);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1141,7 +1149,7 @@ namespace tm
                                     administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
                                 }
                                 int groupsCount = 1;
-                                round = new GroupInactiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
+                                round = new GroupInactiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, qualificationsDefinedForAllGroup, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
                             }
                             foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
                             {
@@ -1357,7 +1365,7 @@ namespace tm
                                 {
                                     int ranking = int.Parse(e4.Attribute("classement").Value);
 
-                                    Qualification qu = new Qualification(ranking, tourId, targetedTournament, nextYear, qualifies);
+                                    Qualification qu = new Qualification(ranking, tourId, new QualificationTournament(targetedTournament), nextYear, qualifies);
                                     round.qualifications.Add(qu);
                                 }
                                 else
@@ -1366,7 +1374,7 @@ namespace tm
                                     int to = int.Parse(e4.Attribute("a").Value);
                                     for (int j = from; j <= to; j++)
                                     {
-                                        Qualification qu = new Qualification(j, tourId, targetedTournament, nextYear, qualifies);
+                                        Qualification qu = new Qualification(j, tourId, new QualificationTournament(targetedTournament), nextYear, qualifies);
                                         round.qualifications.Add(qu);
                                     }
                                 }
@@ -1399,7 +1407,7 @@ namespace tm
 
         private bool IsTournamentRegional(Tournament t)
         {
-            return t == null || TournamentRegionalLevel(t) > 0;
+            return TournamentRegionalLevel(t) > 0;
         }
 
 
@@ -1422,6 +1430,7 @@ namespace tm
                             Tournament copy = t.CopyForArchive(false);
                             copy.Id = _kernel.NextIdTournament();
                             copy.level = regionalAssociation.Leagues().Count + 1;
+                            copy.InitializeQualificationsNextYearsLists();
                             int clubsCount = 0;
                             foreach (Round round in copy.rounds)
                             {
@@ -1481,18 +1490,19 @@ namespace tm
                         for(int i = 0; i < round.qualifications.Count; i++)
                         {
                             Qualification q = round.qualifications[i];
-                            if (IsTournamentRegional(q.tournament))
+                            if (q.target.Type == QualificationTargetType.Tournament && IsTournamentRegional(q.target.Tournament()))
                             {
                                 Tournament newTarget = null;
                                 foreach(Tournament league in a.Leagues())
                                 {
-                                    if(q.tournament != null && !IsTournamentRegional(league) && league.name.Equals(q.tournament.name))
+                                    if(!IsTournamentRegional(league) && league.name.Equals(q.target.Tournament().name))
                                     {
                                         newTarget = league;
                                     }
                                 }
                                 //q.tournament == null => excluded from league system (from N3 to R1)
-                                Qualification q2 = new Qualification(q.ranking, q.roundId, newTarget, q.isNextYear, q.qualifies);
+                                QualificationTarget qt = newTarget == null ? new QualificationExcludeLeagueSystem(a) : new QualificationTournament(newTarget);
+                                Qualification q2 = new Qualification(q.ranking, q.roundId, qt, q.isNextYear, q.qualifies);
                                 round.qualifications[i] = q2;
                             }
                         }
@@ -1524,7 +1534,7 @@ namespace tm
                             isCupWinner = e3.Attribute("cup").Value.ToLower() == "yes";
                         }
                         //Here qualification structure is used to store continental qualifications but meaning of field can differ than "classic" qualification (rank is nation coefficient rank instead of league rank and isNextYear is used for isCupWinner)
-                        Qualification q = new Qualification(rank, roundId, targetTournament, isCupWinner, count);
+                        Qualification q = new Qualification(rank, roundId, new QualificationTournament(targetTournament), isCupWinner, count);
                         association.continentalQualifications.Add(q);
                     }
                 }
@@ -1873,7 +1883,7 @@ namespace tm
                 {
                     round.rules.Add(Rule.OnlyFirstTeams);
                 }
-                round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
+                round.qualifications.Add(new Qualification(1, indexRound + 1, new QualificationTournament(nationalCup), false, 1));
                 int currentAddedTeams = 0;
                 while(currentAddedTeams < preliRoundTeams)
                 {
@@ -1924,7 +1934,7 @@ namespace tm
                 }
                 if (j > 2)
                 {
-                    round.qualifications.Add(new Qualification(1, indexRound + 1, nationalCup, false, 1));
+                    round.qualifications.Add(new Qualification(1, indexRound + 1, new QualificationTournament(nationalCup), false, 1));
                 }
                 //First final round : add not added teams
                 foreach(KeyValuePair<Tournament, int> kvp in teamsByTournaments)
@@ -1949,6 +1959,11 @@ namespace tm
 
             nationalCup.InitializeQualificationsNextYearsLists();
             c.Tournaments().Add(nationalCup);
+        }
+
+        public void PostProcess()
+        {
+            _kernel.CacheListOfAllTournaments();
         }
 
         private Hour String2Hour(string hour)
@@ -2089,7 +2104,7 @@ namespace tm
                     rule = Rule.OnlyFirstTeams;
                     break;
                 case "RESERVES_NE_MONTENT_PAS":
-                    rule = Rule.ReservesAreNotPromoted;
+                    rule = Rule.ReservesCannotBePromoted;
                     break;
                 case "ONE_TEAM_BY_ASSOCIATION_PER_GROUP":
                     rule = Rule.OneTeamByAssociationInGroup;

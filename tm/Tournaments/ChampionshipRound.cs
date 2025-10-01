@@ -118,7 +118,7 @@ namespace tm
             int res = 0;
             foreach(Qualification q in this.qualifications)
             {
-                if(q.isNextYear && q.tournament.level > tournament.level)
+                if(q.isNextYear && tournament.IsAbove(q.target))
                 {
                     res++;
                 }
@@ -134,8 +134,8 @@ namespace tm
         {
             List<Club> ranking = Ranking();
             List<Qualification> adjustedQualifications = AdaptQualificationsToRanking(new List<Qualification>(qualifications), clubs.Count);
-            adjustedQualifications.Sort(new QualificationComparator());
-            adjustedQualifications = Utils.AdjustQualificationsToNotPromoteReserves(adjustedQualifications, ranking, null, Tournament, this, rules.Contains(Rule.ReservesAreNotPromoted), CountDirectRelegations(), 1);
+            adjustedQualifications.Sort(new QualificationRankingComparator());
+            //adjustedQualifications = Utils.AdjustQualificationsToReserves(adjustedQualifications, ranking, null, Tournament, this, rules.Contains(Rule.ReservesCannotBePromoted), CountDirectRelegations(), -1, null, null, 1);
             return adjustedQualifications;
         }
 
@@ -150,11 +150,11 @@ namespace tm
                 Club c = ranking[q.ranking-1];
                 if (!q.isNextYear && !forNextYear)
                 {
-                    q.tournament.rounds[q.roundId].clubs.Add(c);
+                    q.target.Tournament(c).rounds[q.roundId].clubs.Add(c);
                 }
                 else if(q.isNextYear && forNextYear)
                 {
-                    q.tournament.AddClubForNextYear(c, q.roundId);
+                    q.target.Tournament(c).AddClubForNextYear(c, q.roundId);
                 }
                 /*
                 if(q.tournament.isChampionship && c.Championship != null)

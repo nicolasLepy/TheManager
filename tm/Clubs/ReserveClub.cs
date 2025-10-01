@@ -59,5 +59,18 @@ namespace tm
             this._status = newStatus;
         }
 
+        /// <summary>
+        /// Return the team above this reserve.
+        /// Club C -> Club B
+        /// Club B -> Club
+        /// </summary>
+        /// <returns></returns>
+        public Club GetTeamAbove()
+        {
+            CityClub fannion = FannionClub;
+            int idx = fannion.reserves.IndexOf(this);
+            return idx == 0 ? fannion : fannion.reserves[idx - 1];
+        }
+
     }
 }

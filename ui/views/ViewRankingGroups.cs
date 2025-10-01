@@ -98,7 +98,7 @@ namespace TheManager_GUI.Views
                 for (int i = 0; i < _round.groupsCount; i++)
                 {
                     qualifications[i] = _round.GetGroupQualifications(i);// new List<Qualification>(_round.qualifications);
-                    qualifications[i].Sort(new QualificationComparator());
+                    qualifications[i].Sort(new QualificationRankingComparator());
                 }
             }
 
@@ -219,7 +219,7 @@ namespace TheManager_GUI.Views
                         for (int i = 0; i < Math.Abs(q.qualifies); i++)
                         {
                             int rank = q.qualifies > 0 ? i + 1 : concernedClubs.Count - i;
-                            rankQualifications.Add(new Qualification(rank, q.roundId, q.tournament, q.isNextYear, 0));
+                            rankQualifications.Add(new Qualification(rank, q.roundId, q.target, q.isNextYear, 0));
                         }
                         FillRanking(grid, grid.RowDefinitions.Count, concernedClubs, rankQualifications, true);
                     }

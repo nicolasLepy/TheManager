@@ -13,9 +13,94 @@ namespace tests.tm
     public class TestsAssociations : TheManagerTest
     {
 
-        private static int TEST_YEARS = 2;
+        //dotnet test --collect:"XPlat Code Coverage"
+        //Results are stored into TestResults folder
+        //Install tool for html report
+        ///dotnet tool install -g dotnet-reportgenerator-globaltool
+        // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private void CheckClubs(Association az, int expectedTotalClubs)
+        private static int TEST_YEARS = 15;
+
+        private void CheckAssociationLeagueSystem(Association association, Dictionary<Club, int> occurences, int maxLevelReservesAllowed)
+        {
+            foreach(Tournament t in association.Leagues())
+            {
+                Round r = t.rounds[0];
+                foreach(Club c in r.clubs)
+                {
+                    occurences[c]++;
+                    Assert.IsTrue(c.Association().IsDirectConnected(association));
+
+                    ReserveClub rc = c as ReserveClub;
+                    if(rc != null)
+                    {
+                        Assert.IsTrue(maxLevelReservesAllowed == -1 || t.level >= maxLevelReservesAllowed);
+                        Club clubAbove = rc.GetTeamAbove();
+                        Assert.IsTrue(association.LeagueBelow(t) == null || clubAbove.Championship.IsAbove(new QualificationTournament(rc.Championship)));
+                    }
+                }
+            }
+            foreach(Association a in association.associations)
+            {
+                CheckAssociationLeagueSystem(a, occurences, -1);
+            }
+        }
+
+        /// <summary>
+        /// Check only one team from each N3 group was promoted to N2
+        /// </summary>
+        /// <param name="masterAssociation"></param>
+        private void CheckN3N2(Association masterAssociation)
+        {
+            Tournament n2 = masterAssociation.League(4);
+            Tournament n3 = masterAssociation.League(5);
+            if(n2.previousEditions.Count > 0)
+            {
+                int maxValueKey = n3.previousEditions.Aggregate((x, y) => x.Key > y.Key ? x : y).Key;
+                Tournament n3previous = n3.previousEditions[maxValueKey];
+                GroupsRound n3previousRound = n3previous.rounds[0] as GroupsRound;
+                Assert.IsTrue(n3previousRound != null);
+                for(int i = 0; i < n3previousRound.groupsCount; i++)
+                {
+                    int teamsPromotedInN2 = 0;
+                    List<Club> ranking = n3previousRound.Ranking(i);
+                    foreach (Club c in ranking)
+                    {
+                        if (c.Championship.level == 4)
+                        {
+                            teamsPromotedInN2++;
+                        }
+                    }
+                    Assert.AreEqual(teamsPromotedInN2, 1);
+                }
+            }
+        }
+
+        private void CheckBottomTeamsWereRelegated(Association masterAssociation)
+        {
+            foreach(Tournament league in masterAssociation.Leagues())
+            {
+                if (masterAssociation.LeagueBelow(league) != null && league.previousEditions.Count > 0)
+                {
+                    int maxValueKey = league.previousEditions.Aggregate((x, y) => x.Key > y.Key ? x : y).Key;
+                    Tournament leaguePrevious = league.previousEditions[maxValueKey];
+                    GroupsRound gr = leaguePrevious.rounds[0] as GroupsRound;
+                    Assert.IsTrue(gr != null);
+                    for(int i = 0; i < gr.groupsCount; i++)
+                    {
+                        List<Club> ranking = gr.Ranking(i);
+                        Club last = ranking[ranking.Count - 1];
+                        Assert.IsTrue(last.Championship.IsBelow(new QualificationTournament(league)));
+                    }
+                }
+            }
+            foreach(Association a in masterAssociation.associations)
+            {
+                CheckBottomTeamsWereRelegated(a);
+            }
+        }
+
+        private void CheckLeagueSystem(Association az, int expectedTotalClubs, int maxLevelReservesAllowed)
         {
             Dictionary<Club, int> occurences = new Dictionary<Club, int>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
@@ -25,46 +110,33 @@ namespace tests.tm
                     occurences[c] = 0;
                 }
             }
-            foreach(Tournament t in az.Leagues())
-            {
-                Round r = t.rounds[0];
-                foreach(Club c in r.clubs)
-                {
-                    occurences[c]++;
-                }
-            }
+
+            CheckAssociationLeagueSystem(az, occurences, maxLevelReservesAllowed);
+
             Assert.AreEqual(expectedTotalClubs, occurences.Count);
             foreach(KeyValuePair<Club, int> kvp in occurences)
             {
                 Assert.AreEqual(1, kvp.Value);
             }
-
         }
 
-        private void CheckRegionalLeague(Association az, Tournament t, List<Association> associations, Dictionary<Association, int> expectedTeams)
+        private void CheckRegionalLeague(Tournament t, Association aReg, int expectedTeams)
         {
             GroupsRound r = t.rounds[0] as GroupsRound;
             Assert.IsNotNull(r);
-            foreach(Association a in associations)
+            int teams = 0;
+            foreach(List<Club> cGroups in r.groups)
             {
-                int teams = 0;
-                List<int> groups = r.GetGroupsFromAssociation(a);
-                foreach(int g in groups)
+                foreach(Club c in cGroups)
                 {
-                    List<Club> cGroups = r.groups[g];
-                    foreach(Club c in cGroups)
-                    {
-                        Assert.IsTrue(a.ContainsAssociation(c.Association()));
-                        teams++;
-                    }
+                    Assert.IsTrue(aReg.ContainsAssociation(c.Association()));
+                    teams++;
                 }
-                if(expectedTeams.ContainsKey(a))
-                {
-                    Assert.AreEqual(teams, expectedTeams[a]);
-                }
-
             }
-
+            if(expectedTeams > -1)
+            {
+                Assert.AreEqual(teams, expectedTeams);
+            }
         }
 
         [TestMethod]
@@ -108,37 +180,24 @@ namespace tests.tm
                 Assert.AreEqual(r20.Ranking(2).Count, 8);
 
                 //Check each regional league have teams of its association, and the correct number. Number of teams in the last level can vary
-                Tournament t3 = aAz.League(3);
-                Tournament t4 = aAz.League(4);
-                Tournament t5 = aAz.League(5);
-                Tournament t6 = aAz.League(6);
 
-                Dictionary<Association, int> aTeams3 = new Dictionary<Association, int>
-                {
-                    [aLevel0[2]] = 8
-                };
+                Association a02 = aLevel0[2];
+                Association a10 = aLevel1[0];
+                Association a11 = aLevel1[1];
 
-                Dictionary<Association, int> aTeams4 = new Dictionary<Association, int>
-                {
-                    [aLevel0[2]] = 16
-                };
+                Tournament a02_1 = a02.League(1);
+                Tournament a02_2 = a02.League(2);
+                Tournament a10_1 = a10.League(1);
+                Tournament a11_1 = a11.League(1);
 
-                Dictionary<Association, int> aTeams5 = new Dictionary<Association, int>
-                {
-                    [aLevel1[0]] = 8,
-                    [aLevel1[1]] = 8
-                };
-
-
-                CheckRegionalLeague(aAz, t3, aLevel0, aTeams3);
-                CheckRegionalLeague(aAz, t4, aLevel0, aTeams4);
-                CheckRegionalLeague(aAz, t5, aLevel1, aTeams5);
-                CheckRegionalLeague(aAz, t6, aLevel1, new());
+                CheckRegionalLeague(a02_1, a02, 8);
+                CheckRegionalLeague(a02_2, a02, 16);
+                CheckRegionalLeague(a10_1, a10, 8);
+                CheckRegionalLeague(a11_1, a11, 8);
 
                 //Check each club (and eventual reserve) have a league associated, and no doublons
-                CheckClubs(aAz, 108);
+                CheckLeagueSystem(aAz, 108, -1);
             }
-
         }
 
         [TestMethod]
@@ -147,14 +206,26 @@ namespace tests.tm
             InitGame("database_france_nat", new List<string>() { "France"});
             for (int y = 0; y < TEST_YEARS; y++)
             {
+                Country fr = Session.Instance.Game.kernel.String2Country("France");
+                Association aFr = fr.GetCountryAssociation();
+
                 for (int i = 0; i < 365; i++)
                 {
+                    if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(-1), Session.Instance.Game.date))
+                    {
+                        Console.WriteLine("[{0}] Classements finaux", Session.Instance.Game.date.Year);
+                        PrintLeagueSystem(aFr);
+                    }
+                    if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(31), Session.Instance.Game.date))
+                    {
+                        Console.WriteLine("[{0}-{1}] Nouveaux championnats", Session.Instance.Game.date.Year, Session.Instance.Game.date.Year + 1);
+                        PrintLeagueSystem(aFr);
+                    }
+
                     Session.Instance.Game.NextDay();
                     Session.Instance.Game.UpdateTournaments();
                 }
 
-                Country fr = Session.Instance.Game.kernel.String2Country("France");
-                Association aFr = fr.GetCountryAssociation();
                 List<Association> aLevel0 = fr.GetCountryAssociation().associations;
 
                 List<Association> aLevel1 = new List<Association>();
@@ -188,25 +259,154 @@ namespace tests.tm
                 Assert.AreEqual(r40.Ranking(3).Count, 16);
 
                 Tournament t5 = aFr.League(5);
-                Assert.AreEqual(t5.rounds[0].clubs.Count, 171);
+                Assert.AreEqual(t5.rounds[0].clubs.Count, 181);
 
                 //Check each regional league have teams of its association, and the correct number. Number of teams in the last level can vary
-                Tournament t6 = aFr.League(6);
-                Tournament t7 = aFr.League(7);
+                Association aReg1 = aFr.associations[0]; //BFC
+                Association aReg2 = aFr.associations[1]; //GE
+                Association aReg3 = aFr.associations[2]; //HDF
+                Association aReg4 = aFr.associations[3]; //Nor
+                Association aReg5 = aFr.associations[4]; //IDF
+                Association aReg6 = aFr.associations[5]; //Bre
+                Association aReg7 = aFr.associations[6]; //PdL
+                Association aReg8 = aFr.associations[7]; //CVL
+                Association aReg9 = aFr.associations[8]; //NA
+                Association aReg10 = aFr.associations[9]; //Occ
+                Association aReg11 = aFr.associations[10]; //ARH
+                Association aReg12 = aFr.associations[11]; //Cor
+                Association aReg13 = aFr.associations[12]; //Med
+                Assert.AreEqual("Bourgogne Franche-Comte", aReg1.name);
+                Assert.AreEqual("Grand-Est", aReg2.name);
+                Assert.AreEqual("Hauts de France", aReg3.name);
+                Assert.AreEqual("Normandie", aReg4.name);
+                Assert.AreEqual("Ile de France", aReg5.name);
+                Assert.AreEqual("Bretagne", aReg6.name);
+                Assert.AreEqual("Pays De La Loire", aReg7.name);
+                Assert.AreEqual("Centre-Val de Loire", aReg8.name);
+                Assert.AreEqual("Nouvelle Aquitaine", aReg9.name);
+                Assert.AreEqual("Occitanie", aReg10.name);
+                Assert.AreEqual("Auvergne Rhone-Alpes", aReg11.name);
+                Assert.AreEqual("Corse", aReg12.name);
+                Assert.AreEqual("Méditerranée", aReg13.name);
 
-                Dictionary<Association, int> aTeams6 = new Dictionary<Association, int>
-                {
-                    [aLevel0[0]] = 35,
-                    [aLevel0[1]] = 47,
-                    [aLevel0[2]] = 36
-                };
+                Tournament t6_a = aReg1.League(1);
+                Tournament t6_b = aReg2.League(1);
+                Tournament t6_c = aReg3.League(1);
+                Tournament t6_d = aReg4.League(1);
+                Tournament t6_e = aReg5.League(1);
+                Tournament t6_f = aReg6.League(1);
+                Tournament t6_g = aReg7.League(1);
+                Tournament t6_h = aReg8.League(1);
+                Tournament t6_i = aReg9.League(1);
+                Tournament t6_j = aReg10.League(1);
+                Tournament t6_k = aReg11.League(1);
+                Tournament t6_l = aReg12.League(1);
+                Tournament t6_m = aReg13.League(1);
 
-                CheckRegionalLeague(aFr, t6, aLevel0, aTeams6);
-                CheckRegionalLeague(aFr, t7, aLevel1, new());
+                Tournament t7_a = aReg1.League(2);
+                Tournament t7_b = aReg2.League(2);
+                Tournament t7_c = aReg3.League(2);
+                Tournament t7_d = aReg4.League(2);
+                Tournament t7_e = aReg5.League(2);
+                Tournament t7_f = aReg6.League(2);
+                Tournament t7_g = aReg7.League(2);
+                Tournament t7_h = aReg8.League(2);
+                Tournament t7_i = aReg9.League(2);
+                Tournament t7_j = aReg10.League(2);
+                Tournament t7_k = aReg11.League(2);
+                Tournament t7_l = aReg12.League(2);
+                Tournament t7_m = aReg13.League(2);
 
-                //Check each club (and eventual reserve) have a league associated, and no doublons
-                CheckClubs(aFr, 1444);
+                CheckRegionalLeague(t6_a, aReg1, 35);
+                CheckRegionalLeague(t6_b, aReg2, 47);
+                CheckRegionalLeague(t6_c, aReg3, 36);
+                CheckRegionalLeague(t6_d, aReg4, 26);
+                CheckRegionalLeague(t6_e, aReg5, 27);
+                CheckRegionalLeague(t6_f, aReg6, 34);
+                CheckRegionalLeague(t6_g, aReg7, 27);
+                CheckRegionalLeague(t6_h, aReg8, 18);
+                CheckRegionalLeague(t6_i, aReg9, 44);
+                CheckRegionalLeague(t6_j, aReg10, 42);
+                CheckRegionalLeague(t6_k, aReg11, 35);
+                CheckRegionalLeague(t6_l, aReg12, 13);
+                CheckRegionalLeague(t6_m, aReg13, 16);
+
+                CheckRegionalLeague(t7_a, aReg1, -1);
+                CheckRegionalLeague(t7_b, aReg2, -1);
+                CheckRegionalLeague(t7_c, aReg3, -1);
+                CheckRegionalLeague(t7_d, aReg4, -1);
+                CheckRegionalLeague(t7_e, aReg5, -1);
+                CheckRegionalLeague(t7_f, aReg6, -1);
+                CheckRegionalLeague(t7_g, aReg7, -1);
+                CheckRegionalLeague(t7_h, aReg8, -1);
+                CheckRegionalLeague(t7_i, aReg9, -1);
+                CheckRegionalLeague(t7_j, aReg10, -1);
+                CheckRegionalLeague(t7_k, aReg11, -1);
+                CheckRegionalLeague(t7_l, aReg12, -1);
+                CheckRegionalLeague(t7_m, aReg13, -1);
+
+                //Check each club (and eventual reserves) have a league associated, and no doublons
+                CheckLeagueSystem(aFr, 1404, 4);
+                CheckN3N2(aFr);
+                CheckBottomTeamsWereRelegated(aFr);
             }
+        }
+
+        [TestMethod]
+        public void TestLeagueStructureConservedFranceLight()
+        {
+            InitGame("database_france_light", null);
+            for (int y = 0; y < TEST_YEARS; y++)
+            {
+                Country fr = Session.Instance.Game.kernel.String2Country("France");
+                Association aFr = fr.GetCountryAssociation();
+
+                for (int i = 0; i < 365; i++)
+                {
+                    Session.Instance.Game.NextDay();
+                    Session.Instance.Game.UpdateTournaments();
+                }
+
+                //Check each national league have the required number of teams
+                Tournament t1 = aFr.League(1);
+
+                int numberOfTeams = t1.rounds[0].clubs.Count;
+                Assert.AreEqual(20, numberOfTeams);
+
+                Tournament t2 = aFr.League(2);
+                numberOfTeams = t2.rounds[0].clubs.Count;
+                Assert.AreEqual(numberOfTeams, 20);
+
+                Tournament t3 = aFr.League(3);
+                Assert.AreEqual(t3.rounds[0].clubs.Count, 18);
+
+                Tournament t4 = aFr.League(4);
+                GroupsRound r40 = t4.rounds[0] as GroupsRound;
+                Assert.AreEqual(r40.groupsCount, 4);
+                Assert.AreEqual(r40.Ranking(0).Count, 16);
+                Assert.AreEqual(r40.Ranking(1).Count, 16);
+                Assert.AreEqual(r40.Ranking(2).Count, 16);
+                Assert.AreEqual(r40.Ranking(3).Count, 16);
+
+                CheckLeagueSystem(aFr, 122, 4);
+            }
+        }
+
+        // TODO [TestMethod]
+        public void TestSeasonsLight() //About 3 minutes / season
+        {
+            InitGame("database_france_light", null);
+
+            int years = 2;
+            for (int i = 0; i < 365 * years; i++)
+            {
+                Session.Instance.Game.NextDay();
+                Session.Instance.Game.UpdateTournaments();
+            }
+
+            Session.Instance.Game.Save("D:\\Projets\\TheManager\\ui\\bin\\Debug\\test_big.csave");
+
+            //TODO: Check everything are correct : league structure doesn't changed, cup with right teams count
         }
 
         private void CheckAssociations(List<int> expectedId, List<Association> associations)
@@ -272,5 +472,71 @@ namespace tests.tm
             CheckAssociations(expectedId, childs4);
         }
 
+        [TestMethod]
+        public void TestGetLevelOfAssociation()
+        {
+            Association world = MakeBasicStructure();
+
+            Association fr = world.associations[0].associations[0];
+            Assert.AreEqual(fr.Id, 3);
+
+            Association bfc = fr.associations[0];
+            Assert.AreEqual(bfc.Id, 5);
+
+            Assert.AreEqual(world.GetLevelOfAssociation(fr, 0), -1);
+            Assert.AreEqual(world.GetLevelOfAssociation(bfc, 0), -1);
+        }
+
+        [TestMethod]
+        public void TestLeagueAbove()
+        {
+            Association world = MakeBasicStructure();
+
+            Association europe = world.associations[0];
+            Assert.AreEqual(europe.Id, 2);
+
+            Association fr = world.associations[0].associations[0];
+            Assert.AreEqual(fr.Id, 3);
+
+            Association bfc = fr.associations[0];
+            Assert.AreEqual(bfc.Id, 5);
+
+            Assert.IsNull(world.LeagueAbove(world.League(1)));
+            Assert.AreEqual(fr.LeagueAbove(fr.League(1)).Tournament(), europe.League(1));
+            Assert.AreEqual(fr.LeagueAbove(fr.League(2)).Tournament(), fr.League(1));
+            Assert.AreEqual(bfc.LeagueAbove(bfc.League(1)).Tournament(), fr.League(2));
+            Assert.AreEqual(bfc.LeagueAbove(bfc.League(3)).Tournament(), bfc.League(2));
+            try
+            {
+                fr.LeagueAbove(bfc.League(1));
+                Assert.Fail();
+            } catch(Exception e){}
+        }
+
+        [TestMethod]
+        public void TestLeagueBelow()
+        {
+            Association world = MakeBasicStructure();
+
+            Association europe = world.associations[0];
+            Assert.AreEqual(europe.Id, 2);
+
+            Association fr = world.associations[0].associations[0];
+            Assert.AreEqual(fr.Id, 3);
+
+            Association bfc = fr.associations[0];
+            Assert.AreEqual(bfc.Id, 5);
+
+            Assert.AreEqual(fr.LeagueBelow(fr.League(1)).Tournament(), fr.League(2));
+            Assert.AreEqual(fr.LeagueBelow(fr.League(2)).Type, QualificationTargetType.ExcludeFromLeagueSystem);
+            Assert.AreEqual(bfc.LeagueBelow(bfc.League(1)).Tournament(), bfc.League(2));
+            Assert.IsNull(bfc.LeagueBelow(bfc.League(3)));
+            try
+            {
+                fr.LeagueBelow(bfc.League(1));
+                Assert.Fail();
+            }
+            catch (Exception e) { }
+        }
     }
 }

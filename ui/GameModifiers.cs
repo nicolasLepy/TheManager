@@ -164,7 +164,7 @@ namespace TheManager_GUI
             GroupsRound baseRound = league2.rounds[0] as GroupsRound;
             foreach(Qualification q in baseRound.GetGroupQualifications(0))
             {
-                Console.WriteLine(q.ranking + " => " + q.tournament.name + ", " + q.roundId);
+                Console.WriteLine(q.ranking + " => " + q.target.ToString() + ", " + q.roundId);
             }
             foreach(Club c in baseRound.Ranking(0))
             {
