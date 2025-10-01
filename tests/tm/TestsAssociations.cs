@@ -19,7 +19,7 @@ namespace tests.tm
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
         // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private static int TEST_YEARS = 7;
+        private static int TEST_YEARS = 15;
 
         private void CheckAssociationLeagueSystem(Association association, Dictionary<Club, int> occurences, int maxLevelReservesAllowed)
         {
@@ -355,7 +355,7 @@ namespace tests.tm
         [TestMethod]
         public void TestLeagueStructureConservedFranceLight()
         {
-            InitGame("database_france_light", new List<string>() { "France" });
+            InitGame("database_france_light", null);
             for (int y = 0; y < TEST_YEARS; y++)
             {
                 Country fr = Session.Instance.Game.kernel.String2Country("France");
