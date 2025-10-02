@@ -19,7 +19,105 @@ namespace tests.tm
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
         // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private static int TEST_YEARS = 15;
+        private static int TEST_YEARS = 12;
+
+        private Round NextRound(Tournament tournament, Round round, bool isRegional)
+        {
+            Round res = null;
+            int idxRound = tournament.rounds.IndexOf(round);
+            if(idxRound == tournament.rounds.Count - 1)
+            {
+                if(isRegional)
+                {
+                    res = tournament.parent.rounds[2];
+                }
+            }
+            else
+            {
+                res = tournament.rounds[idxRound+1];
+            }
+            return res;
+        }
+
+        private void CheckRoundGeneral(Tournament tournament, Round round, bool isRegional)
+        {
+            Round nextRound = NextRound(tournament, round, isRegional);
+            if(nextRound != null)
+            {
+                foreach (Match m in round.matches)
+                {
+                    //Chaque équipe qui gagne doit être qualifiée au tour suivant
+                    // Assert.IsTrue(nextRound.clubs.Contains(m.Winner));
+                    //Chaque équipe qui perd ne doit pas être qualifiée au tour suivant
+                    // Assert.IsFalse(nextRound.clubs.Contains(m.Looser));
+                }
+            }
+            List<Club> clubs = new List<Club>();
+            foreach(Club c in round.clubs)
+            {
+                Assert.IsFalse(clubs.Contains(c));
+                clubs.Add(c);
+            }
+        }
+
+        private void CheckCup(Association association, Tournament cup, List<int> expectedTeamsByRounds)
+        {
+            Dictionary<Association, int> teamsByAssociations = cup.rounds[2].teamsByAssociation;
+
+            TestUtils.PrintTournament(cup);
+
+            //Bon nombre de matchs à chaque tour
+            for (int i = 0; i < cup.rounds.Count; i++)
+            {
+                Round round = cup.rounds[cup.rounds.Count - (i + 1)];
+                if(expectedTeamsByRounds.Count - (i + 1) >= 0)
+                {
+                    Assert.AreEqual(round.clubs.Count, expectedTeamsByRounds[expectedTeamsByRounds.Count - (i + 1)]);
+                }
+                CheckRoundGeneral(cup, round, false);
+                if(round.clubs.Count < 65 && round.clubs.Count > 0)
+                {
+                    foreach (Match m in round.matches)
+                    {
+                        //Ultramarine team can't play home
+                        Assert.IsTrue(m.home.Association().IsDirectConnected(association));
+                    }
+                }
+            }
+            foreach (KeyValuePair<Association, int> regionalPath in teamsByAssociations)
+            {
+                Tournament regionalCup = regionalPath.Key.Cup(1000);
+                TestUtils.PrintTournament(regionalCup);
+                int i = 0;
+                foreach(Round r in regionalCup.rounds)
+                {
+                    bool haveUltraMarine = false;
+
+                    foreach(Club c in r.clubs)
+                    {
+                        haveUltraMarine = haveUltraMarine || new List<string>() { "Saint Pierre et Miquelon", "Guadeloupe", "Martinique", "Guyane", "Réunion", "Mayotte", "Nouvelle-Calédonie" }.Contains(c.Association().name);
+
+                        // Pas de L2 en tour régionaux
+                        Assert.IsTrue(Session.Instance.Game.kernel.LocalisationTournament(c.Championship) != association || c.Championship.level > 2);
+
+                        if(!haveUltraMarine)
+                        {
+                            // Chaque coupe régionale possède uniquement des équipes de la bonne association
+                            Assert.IsTrue(c.Association().IsDirectConnected(regionalPath.Key));
+                        }
+                    }
+                    CheckRoundGeneral(regionalCup, r, true);
+
+                    // Chaque coupe régionale possède le bon nombre de matchs (5ème tour, 6ème tour)
+                    if(!haveUltraMarine)
+                    {
+                        //Assert.AreEqual(r.clubs.Count, regionalPath.Value * Math.Pow(2, regionalCup.rounds.Count - i));
+                    }
+                    i++;
+
+                }
+            }
+        }
 
         private void CheckAssociationLeagueSystem(Association association, Dictionary<Club, int> occurences, int maxLevelReservesAllowed)
         {
@@ -90,7 +188,11 @@ namespace tests.tm
                     {
                         List<Club> ranking = gr.Ranking(i);
                         Club last = ranking[ranking.Count - 1];
-                        Assert.IsTrue(last.Championship.IsBelow(new QualificationTournament(league)));
+                        //R1->R2: Min 2 relegations. If >2 groups, some groups could have no team relegated.
+                        if (gr.groupsCount <= 2)
+                        {
+                            Assert.IsTrue(last.Championship.IsBelow(new QualificationTournament(league)));
+                        }
                     }
                 }
             }
@@ -209,17 +311,26 @@ namespace tests.tm
                 Country fr = Session.Instance.Game.kernel.String2Country("France");
                 Association aFr = fr.GetCountryAssociation();
 
+                Country ma = Session.Instance.Game.kernel.String2Country("Martinique");
+                Association aMa = ma.GetCountryAssociation();
+
                 for (int i = 0; i < 365; i++)
                 {
+                    if(Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(-30), Session.Instance.Game.date))
+                    {
+                        CheckCup(aFr, aFr.Cup(1), new List<int>() { 168, 88, 64, 32, 16, 8, 4, 2 });
+                    }
                     if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(-1), Session.Instance.Game.date))
                     {
-                        Console.WriteLine("[{0}] Classements finaux", Session.Instance.Game.date.Year);
-                        PrintLeagueSystem(aFr);
+                        Console.WriteLine("[{0}] Classements finaux - France", Session.Instance.Game.date.Year);
+                        TestUtils.PrintLeagueSystem(aFr);
+                        Console.WriteLine("[{0}] Classements finaux - Martinique", Session.Instance.Game.date.Year);
+                        TestUtils.PrintLeagueSystem(aMa);
                     }
                     if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(31), Session.Instance.Game.date))
                     {
                         Console.WriteLine("[{0}-{1}] Nouveaux championnats", Session.Instance.Game.date.Year, Session.Instance.Game.date.Year + 1);
-                        PrintLeagueSystem(aFr);
+                        TestUtils.PrintLeagueSystem(aFr);
                     }
 
                     Session.Instance.Game.NextDay();

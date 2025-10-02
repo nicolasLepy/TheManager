@@ -522,7 +522,9 @@ namespace tm
         {
             Tournament champH = home.Championship;
             Tournament champA = away.Championship;
-            if ((champH != null && champA != null) && champA.level - champH.level >= 2)
+            QualificationTarget champAAbove = Session.Instance.Game.kernel.LocalisationTournament(champA).LeagueAbove(champA);
+            bool twoLevelsGap = champAAbove != null && champAAbove.IsBelow(new QualificationTournament(champH));
+            if ((champH != null && champA != null) && twoLevelsGap)
             {
                 Club temp = home;
                 home = away;

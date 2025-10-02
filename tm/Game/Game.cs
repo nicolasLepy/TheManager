@@ -812,7 +812,7 @@ namespace tm
                             }
                             else
                             {
-                                if (c.isChampionship && (date.Month == 1 || date.Month == 12) &&
+                                if (!Utils.DISABLE_POSTPONE_GAMES && c.isChampionship && (date.Month == 1 || date.Month == 12) &&
                                     Session.Instance.Random(1, 26) == 2)
                                 {
                                     m.Reprogram(3);

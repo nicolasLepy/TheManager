@@ -764,7 +764,7 @@ namespace tm
                 {
                     cupWinners.Add(cup.Winner());
                 }
-                else if (cup.parent.Association == null) //This cup is not the regional path of a bigger cup
+                else if (cup.parent == null) //This cup is not the regional path of a bigger cup
                 {
                     cupWinners.Add(null); //Placeholder to tell this cup expect a winner but is not finished
                 }
@@ -1222,6 +1222,13 @@ namespace tm
                             res = true;
                         }
                     }
+                }
+            }
+            if (LeagueBelow(Leagues()[Leagues().Count - 1]) != null)
+            {
+                foreach (Association a in _associations)
+                {
+                    res = res || a.LeagueSystemWithReserves();
                 }
             }
             return res;

@@ -999,7 +999,7 @@ namespace tm
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Console.WriteLine(name);
-                        Tournament tournament = new Tournament(_kernel.NextIdTournament(), name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, new ParentTournament());
+                        Tournament tournament = new Tournament(_kernel.NextIdTournament(), name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, null);
                         if (tournamentRuleStr != null)
                         {
                             TournamentRule tRule;
@@ -1853,7 +1853,7 @@ namespace tm
             }
             string cupName = "Coupe " + acr + tournamentName;
             int cupLevel = association != null ? 3 : 1; //c.Cups().Count + 1;
-            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, new ParentTournament(association, null));
+            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null);
 
             int roundCount = 0;
             int j = 1;

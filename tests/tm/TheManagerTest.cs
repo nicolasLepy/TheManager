@@ -254,54 +254,5 @@ namespace tests.tm
 
             return world;
         }
-
-
-        protected void PrintLeagueSystem(Association association)
-        {
-            foreach(Tournament league in association.Leagues())
-            {
-                if(league.rounds.Count > 0)
-                {
-                    GroupsRound gr = league.rounds[0] as GroupsRound;
-                    if (gr != null)
-                    {
-                        PrintRanking(gr);
-                    }
-                }
-            }
-            foreach(Association a in association.associations)
-            {
-                PrintLeagueSystem(a);
-            }
-        }
-
-        protected void PrintRanking(GroupsRound gr)
-        {
-            Console.WriteLine("\nRanking : ----- {0} ----- {1} teams", gr.Tournament.name, gr.clubs.Count);
-            for (int g = 0; g < gr.groupsCount; g++)
-            {
-                Console.WriteLine(gr.GroupName(g));
-                int i = 0;
-                List<Qualification> gq = gr.GetGroupQualifications(g);
-                foreach (Club club in gr.Ranking(g))
-                {
-                    Tournament clubChampionship = club.Championship;
-                    string clubName = club.extendedName(clubChampionship, Session.Instance.Game.date.Year).PadRight(40);
-
-                    Qualification clubQualification = gq.Where(x => x.ranking == i + 1).Select(x => x).FirstOrDefault();
-                    string qualification = "";
-                    if(!clubQualification.isNextYear || !clubQualification.target.SameLevel(new QualificationTournament(clubChampionship)))
-                    {
-                        qualification = string.Format("{0} ({1})", clubQualification.target.Tournament(club).name, clubQualification.roundId);
-                        if(!clubQualification.isNextYear)
-                        {
-                            qualification = string.Format("[{0}]", qualification);
-                        }
-                    }
-                    Console.WriteLine("{0}. {1}{2}", ++i, clubName, qualification);
-                }
-            }
-        }
-
     }
 }

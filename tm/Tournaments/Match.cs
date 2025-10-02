@@ -902,16 +902,6 @@ namespace tm
             Dictionary<Match, DateTime> homePossibleDates = new Dictionary<Match, DateTime>();
             Dictionary<Match, DateTime> awayPossibleDates = new Dictionary<Match, DateTime>();
 
-            /*
-            Country fr = Session.Instance.Game.kernel.String2Country("France");
-            Tournament cdf = fr.Cup(1);
-            Tournament cdl = fr.Cup(2);
-            if (Tournament == cdf || Tournament == cdl)
-            {
-                Console.WriteLine("[CC " + Tournament.shortName + "]");
-                Console.WriteLine("Check conflit of " + home.name + "-" + away.name + " (" + Round.Tournament.name + ", " + Round.name + ", priorité de "+ gamePriority + ") le " + day.ToShortDateString());
-            }*/
-
             DateTime baseDay = day;
             DateTime dt = day;
             DateTime dtEnd = Round.DateEndRound();

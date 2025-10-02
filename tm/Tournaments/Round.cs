@@ -744,7 +744,7 @@ namespace tm
                 {
                     teamsToGrab = re.Source.CountWithoutReserves();
                 }
-                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Tournament.parent.Association))
+                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(Tournament)))
                 {
                     _clubs.Add(c);
                 }
@@ -911,7 +911,7 @@ namespace tm
 
             for (int i = 0; i < number; i++)
             {
-               res.Add(roundClubs[i]);
+                res.Add(roundClubs[i]);
             }
             return res;
         }

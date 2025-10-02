@@ -26,6 +26,7 @@ namespace tm
 
         public readonly static bool DISABLE_FINANCIAL_SANCTIONS = true;
         public readonly static bool DISABLE_ADMINISTRATIVE_RETROGRADATIONS = true;
+        public readonly static bool DISABLE_POSTPONE_GAMES = true;
 
         private static bool providerRegistered = false;
 
