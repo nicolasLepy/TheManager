@@ -189,7 +189,7 @@ namespace TheManager_GUI
             {
                 totalCountries[i] = 0;
                 rankings[i] = 0;
-                labelsYearsAsso[assoArchivalEntries - i - 1] = String.Format("{0}", Utils.beginningYear + i);
+                labelsYearsAsso[assoArchivalEntries - i - 1] = String.Format("{0}", Session.Instance.Game.kernel.startYear + i);
                 rankings[i] = continent.archivalAssociationRanking[i].IndexOf(nationalTeam.country.GetCountryAssociation()) + 1;
                 totalCountries[i] = continent.archivalAssociationRanking[i].Count;
             }

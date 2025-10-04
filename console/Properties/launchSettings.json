@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "console": {
+      "commandName": "Project",
+      "commandLineArgs": "cl\r\ndatabase_leaguemanager"
+    }
+  }
+}

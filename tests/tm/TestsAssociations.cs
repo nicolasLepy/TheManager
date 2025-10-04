@@ -244,7 +244,7 @@ namespace tests.tm
         [TestMethod]
         public void TestLeagueStructureConservedBasicStructure()
         {
-            InitGame("database_unitttests", new List<string>() { "France"});
+            InitGame("ui", "database_unitttests", new List<string>() { "France"});
             for(int y = 0; y < TEST_YEARS; y++)
             {
                 for (int i = 0; i < 365; i++)
@@ -305,7 +305,7 @@ namespace tests.tm
         [TestMethod]
         public void TestLeagueStructureConservedFranceExtended()
         {
-            InitGame("database_france_nat", new List<string>() { "France"});
+            InitGame("ui", "database_france_nat", new List<string>() { "France"});
             for (int y = 0; y < TEST_YEARS; y++)
             {
                 Country fr = Session.Instance.Game.kernel.String2Country("France");
@@ -316,7 +316,7 @@ namespace tests.tm
 
                 for (int i = 0; i < 365; i++)
                 {
-                    if(Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(-30), Session.Instance.Game.date))
+                    if (Utils.CompareDates(aFr.League(1).seasonBeginning.ConvertToDateTime().AddDays(-30), Session.Instance.Game.date))
                     {
                         CheckCup(aFr, aFr.Cup(1), new List<int>() { 168, 88, 64, 32, 16, 8, 4, 2 });
                     }
@@ -466,7 +466,7 @@ namespace tests.tm
         [TestMethod]
         public void TestLeagueStructureConservedFranceLight()
         {
-            InitGame("database_france_light", null);
+            InitGame("ui", "database_france_light", null);
             for (int y = 0; y < TEST_YEARS; y++)
             {
                 Country fr = Session.Instance.Game.kernel.String2Country("France");
@@ -506,7 +506,7 @@ namespace tests.tm
         // TODO [TestMethod]
         public void TestSeasonsLight() //About 3 minutes / season
         {
-            InitGame("database_france_light", null);
+            InitGame("ui", "database_france_light", null);
 
             int years = 2;
             for (int i = 0; i < 365 * years; i++)

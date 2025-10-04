@@ -43,7 +43,7 @@ namespace tm.Parsers
 
             Session.Instance.Game = new Game();
 
-            DatabaseLoader dl = new DatabaseLoader(Session.Instance.Game.kernel);
+            DatabaseLoader dl = new DatabaseLoader(Session.Instance.Game, Session.Instance.Game.kernel);
             dl.LoadLanguages();
             dl.LoadWorld();
             dl.LoadCities();

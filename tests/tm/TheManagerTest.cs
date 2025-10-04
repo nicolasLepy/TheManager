@@ -16,17 +16,18 @@ namespace tests.tm
     public class TheManagerTest
     {
 
-        protected void InitGame(string dataset, List<string> activeLeagues)
+        protected void InitGame(string project, string dataset, List<string> activeLeagues)
         {
-            string dir = Path.Join((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.Parent.ToString(), "ui", "bin", "Debug", "net6.0-windows");
+            string dir = Path.Join((Directory.GetParent(Directory.GetCurrentDirectory())).Parent.Parent.Parent.ToString(), project, "bin", "Debug", "net6.0-windows");
             Directory.SetCurrentDirectory(dir);
             Console.WriteLine("[current directory] " + Directory.GetCurrentDirectory());
-            Game partie = new Game();
-            Session.Instance.Game = partie;
-            Kernel g = partie.kernel;
+            Game game = new Game();
+            Session.Instance.Game = game;
+            Kernel g = game.kernel;
             Utils.dataFolderName = "data\\" + dataset;
-            DatabaseLoader cbdd = new DatabaseLoader(g);
+            DatabaseLoader cbdd = new DatabaseLoader(game, g);
 
+            cbdd.LoadDatabaseMetadata();
             cbdd.LoadLanguages();
             cbdd.LoadWorld();
             cbdd.LoadAudios();
@@ -50,7 +51,7 @@ namespace tests.tm
             cbdd.PostProcess();
             Country fr = Session.Instance.Game.kernel.String2Country("France");
 
-            if(activeLeagues != null)
+            if (activeLeagues != null)
             {
                 List<Association> activeAssociations = new List<Association>();
                 foreach(string str in activeLeagues)

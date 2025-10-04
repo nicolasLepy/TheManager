@@ -25,13 +25,16 @@ namespace tm
 
         private readonly Dictionary<int, Club> _clubsId;
 
+        private readonly Game _game;
+
         private readonly Kernel _kernel;
 
         private readonly Dictionary<Continent, string> _associationsLogo;
 
-        public DatabaseLoader(Kernel kernel)
+        public DatabaseLoader(Game game, Kernel kernel)
         {
             _kernel = kernel;
+            _game = game;
             _clubsId = new Dictionary<int, Club>();
             _associationsLogo = new Dictionary<Continent, string>();
         }
@@ -404,7 +407,7 @@ namespace tm
                     Player j = new Player(_kernel.NextIdPerson(), firstName, lastName, playerBirth, level, potential, playerCountry == null ? _kernel.String2Country("France") : playerCountry, position);
                     if (club != null)
                     {
-                        club.AddPlayer(new Contract(_kernel.NextIdContract(), j, j.EstimateWage(), new DateTime(Session.Instance.Random(Utils.beginningYear, Utils.beginningYear + 5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
+                        club.AddPlayer(new Contract(_kernel.NextIdContract(), j, j.EstimateWage(), new DateTime(Session.Instance.Random(Session.Instance.Game.kernel.startYear, Session.Instance.Game.kernel.startYear + 5), 7, 1), new DateTime(Session.Instance.Game.date.Year, Session.Instance.Game.date.Month, Session.Instance.Game.date.Day)));
                         j.UpdateClub(club);
                     }
                     else
@@ -551,6 +554,17 @@ namespace tm
                 maxAdmId = Math.Max(maxAdmId, administrationId);
             }
             return maxAdmId;
+        }
+
+        public void LoadDatabaseMetadata()
+        {
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "database.xml"));
+            XElement root = doc.Root;
+            int startYear = int.Parse(root.Attribute("start_year").Value);
+            int startWeek = int.Parse(root.Attribute("start_week").Value);
+            _kernel.startWeek = startWeek;
+            _kernel.startYear = startYear;
+            _game.InitializeDate();
         }
 
         public void LoadWorld()
@@ -1383,7 +1397,7 @@ namespace tm
                         }
                     }
                 }
-                PostProcessTournaments();
+                //PostProcessTournaments();
 
             }
 
@@ -1410,6 +1424,21 @@ namespace tm
             return TournamentRegionalLevel(t) > 0;
         }
 
+        private Tournament SearchTournament(List<Tournament> tournaments, Tournament tournament)
+        {
+            Tournament t = null;
+            foreach (Tournament league in tournaments)
+            {
+                string leagueName1 = league.name.Split("-")[0].Trim();
+                string leagueName2 = tournament.name.Split("-")[0].Trim();
+                if (!IsTournamentRegional(league) && leagueName1.Equals(leagueName2))
+                {
+                    t = league;
+                }
+            }
+            return t;
+        }
+
 
         /// <summary>
         /// Post process loaded tournaments and create regional tournaments instances for league systems relying on multiple regional structure
@@ -1427,7 +1456,7 @@ namespace tm
                         List<Association> assocationsManaging = a.GetAllChilds(regionalLevel);
                         foreach(Association regionalAssociation in assocationsManaging)
                         {
-                            Tournament copy = t.CopyForArchive(false);
+                            Tournament copy = t.CopyForArchive(false, t.name);
                             copy.Id = _kernel.NextIdTournament();
                             copy.level = regionalAssociation.Leagues().Count + 1;
                             copy.InitializeQualificationsNextYearsLists();
@@ -1466,21 +1495,8 @@ namespace tm
                     }
                 }
             }
-
-            // Delete obsoletes leagues
-            foreach (Association a in _kernel.GetAllAssociations())
-            {
-                List<Tournament> leagues = a.Leagues();
-                foreach (Tournament t in leagues)
-                {
-                    if (IsTournamentRegional(t))
-                    {
-                        a.tournaments.Remove(t);
-                    }
-                }
-            }
-
             // Change qualifications targets to target regional leagues
+            // Change RecoverTeams to target regional leagues
             foreach (Association a in _kernel.GetAllAssociations())
             {
                 foreach(Tournament t in a.Leagues())
@@ -1492,14 +1508,7 @@ namespace tm
                             Qualification q = round.qualifications[i];
                             if (q.target.Type == QualificationTargetType.Tournament && IsTournamentRegional(q.target.Tournament()))
                             {
-                                Tournament newTarget = null;
-                                foreach(Tournament league in a.Leagues())
-                                {
-                                    if(!IsTournamentRegional(league) && league.name.Equals(q.target.Tournament().name))
-                                    {
-                                        newTarget = league;
-                                    }
-                                }
+                                Tournament newTarget = SearchTournament(a.Leagues(), q.target.Tournament());
                                 //q.tournament == null => excluded from league system (from N3 to R1)
                                 QualificationTarget qt = newTarget == null ? new QualificationExcludeLeagueSystem(a) : new QualificationTournament(newTarget);
                                 Qualification q2 = new Qualification(q.ranking, q.roundId, qt, q.isNextYear, q.qualifies);
@@ -1508,8 +1517,59 @@ namespace tm
                         }
                     }
                 }
+                foreach(Tournament t in a.Cups())
+                {
+                    foreach(Round round in t.rounds)
+                    {
+                        for (int i = 0; i < round.baseRecuperedTeams.Count; i++)
+                        {
+                            RecoverTeams rt = round.baseRecuperedTeams[i];
+                            Round rtr = rt.Source as Round;
+                            if (rtr != null)
+                            {
+                                Tournament rtrt = rtr.Tournament;
+                                if (IsTournamentRegional(rtrt))
+                                {
+                                    Tournament newTarget = SearchTournament(a.Leagues(), rtrt);
+                                    RecoverTeams rt2 = new RecoverTeams(newTarget.rounds[0], rt.Number, rt.Method);
+                                    round.baseRecuperedTeams[i] = rt2;
+                                }
+                            }
+                        }
+                        for (int i = 0; i < round.recuperedTeams.Count; i++)
+                        {
+                            RecoverTeams rt = round.recuperedTeams[i];
+                            Round rtr = rt.Source as Round;
+                            if (rtr != null)
+                            {
+                                Tournament rtrt = rtr.Tournament;
+                                if (IsTournamentRegional(rtrt))
+                                {
+                                    Tournament newTarget = SearchTournament(a.Leagues(), rtrt);
+                                    RecoverTeams rt2 = new RecoverTeams(newTarget.rounds[0], rt.Number, rt.Method);
+                                    round.recuperedTeams[i] = rt2;
+                                }
+                            }
+                        }
+
+                    }
+                }
             }
 
+            // Delete obsoletes leagues
+            foreach (Association a in _kernel.GetAllAssociations())
+            {
+                List<Tournament> leagues = a.Leagues();
+                foreach (Tournament t in leagues)
+                {
+                    if (IsTournamentRegional(t))
+                    {
+                        DeleteTournament(t);
+                    }
+                }
+            }
+
+            EnsureNoAdministrative();
         }
 
         public void LoadRules()
@@ -1672,7 +1732,7 @@ namespace tm
                         {
                             string firstName = nationalTeam.country.language.GetFirstName();
                             string lastName = nationalTeam.country.language.GetLastName();
-                            DateTime birthday = new DateTime(Session.Instance.Random(Utils.beginningYear-30, Utils.beginningYear - 18) , Session.Instance.Random(1,13), Session.Instance.Random(1,28));
+                            DateTime birthday = new DateTime(Session.Instance.Random(Session.Instance.Game.kernel.startYear - 30, Session.Instance.Game.kernel.startYear - 18) , Session.Instance.Random(1,13), Session.Instance.Random(1,28));
                             Position p;
                             switch(Session.Instance.Random(1,10))
                             {
@@ -1774,6 +1834,70 @@ namespace tm
                         foreach (Association ad in c.associations)
                         {
                             //GenerateRegionalCup(c, ad, 1, false);
+                        }
+                    }
+                }
+            }
+        }
+
+        public void EnsureNoAdministrative()
+        {
+            foreach(Tournament t in _kernel.Competitions)
+            {
+                foreach(Round r in t.rounds)
+                {
+                    GroupsRound gr = r as GroupsRound;
+                    if(gr != null && gr.RandomDrawingMethod == RandomDrawingMethod.Administrative)
+                    {
+                        throw new Exception(String.Format("{0} still using Administrative", t.name));
+                    }
+                    List<RecoverTeams> rts = new List<RecoverTeams>(r.recuperedTeams);
+                    rts.AddRange(r.baseRecuperedTeams);
+                    foreach (RecoverTeams rt in rts)
+                    {
+                        GroupsRound rtgr = rt.Source as GroupsRound;
+                        if (rtgr != null && rtgr.RandomDrawingMethod == RandomDrawingMethod.Administrative)
+                        {
+                            throw new Exception(String.Format("{0} still using Administrative", t.name));
+                        }
+                    }
+                }
+            }
+        }
+
+        public void DeleteTournament(Tournament tournament)
+        {
+            // Delete obsoletes leagues
+            foreach (Association a in _kernel.GetAllAssociations())
+            {
+                if(a.tournaments.Contains(tournament))
+                {
+                    a.tournaments.Remove(tournament);
+                }
+            }
+            foreach(Tournament t in _kernel.Competitions)
+            {
+                if(t == tournament || t.Id == tournament.Id)
+                {
+                    throw new Exception(String.Format("{0} is still referenced", tournament.name));
+                }
+                foreach (Round r in t.rounds)
+                {
+                    List<RecoverTeams> rts = new List<RecoverTeams>(r.recuperedTeams);
+                    rts.AddRange(r.baseRecuperedTeams);
+                    foreach(RecoverTeams rt in rts)
+                    {
+                        Round gr = rt.Source as Round;
+                        if(gr != null && (gr.Tournament == tournament || gr.Tournament?.Id == tournament.Id))
+                        {
+                            throw new Exception(String.Format("{0} is still referenced", tournament.name));
+                        }
+                    }
+                    foreach(Qualification q in r.qualifications)
+                    {
+                        if(q.target.Tournament() == tournament || q.target.Tournament()?.Id == tournament.Id)
+                        {
+                            throw new Exception(String.Format("{0} is still referenced", tournament.name));
                         }
                     }
                 }
@@ -1963,6 +2087,7 @@ namespace tm
 
         public void PostProcess()
         {
+            PostProcessTournaments();
             _kernel.CacheListOfAllTournaments();
         }
 

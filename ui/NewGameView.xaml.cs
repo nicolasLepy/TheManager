@@ -67,10 +67,11 @@ namespace TheManager_GUI
                 Session.Instance.Game = game;
                 Kernel g = game.kernel;
 
-                DatabaseLoader _loader = new DatabaseLoader(g);
+                DatabaseLoader _loader = new DatabaseLoader(game, g);
                 DatabaseLoader cbdd = _loader;
                 //cbdd.ReformateCities();
 
+                cbdd.LoadDatabaseMetadata();
                 cbdd.LoadLanguages();
                 RaiseUpdateEvent(2, Application.Current.FindResource("str_loading_env").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadWorld();

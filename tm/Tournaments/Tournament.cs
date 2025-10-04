@@ -1432,9 +1432,13 @@ namespace tm
             return alreadyStoredRecuperedTeams;
         }
 
-        public Tournament CopyForArchive(bool makeRoundsInactive)
+        public Tournament CopyForArchive(bool makeRoundsInactive, string newName = "")
         {
-            Tournament copy = new Tournament(Session.Instance.Game.kernel.NextIdTournament(), _name, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent);
+            if(newName.Length == 0)
+            {
+                newName = _name;
+            }
+            Tournament copy = new Tournament(Session.Instance.Game.kernel.NextIdTournament(), newName, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent);
             foreach (Round r in rounds)
             {
                 Round roundCopy = r.Copy();
@@ -2011,7 +2015,6 @@ namespace tm
                     for(int i = 0; i < r.recuperedTeams.Count; i++)
                     {
                         RecoverTeams rt = r.recuperedTeams[i];
-                        Console.WriteLine(rt.Source.ToString());
                         if (rt.Source == oldRound)
                         {
                             Console.WriteLine("Match entre " + rt.Source.ToString() + " et " + oldRound.ToString());

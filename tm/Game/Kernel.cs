@@ -159,6 +159,9 @@ namespace tm
         public List<AudioSource> audioSources => _audioSources;
         public int retiredPlayersCount => _retiredPlayersCount;
 
+        public int startWeek { get; set; }
+        public int startYear { get; set; }
+
         public Kernel()
         {
             _retiredPlayersCount = 0;

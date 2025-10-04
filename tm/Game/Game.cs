@@ -158,8 +158,6 @@ namespace tm
         public Game()
         {
             _articles = new List<Article>();
-            GameDay beginSeasons = new GameDay(Utils.defaultStartWeek, true, 0, 0);
-            _date = beginSeasons.ConvertToDateTime(Utils.beginningYear);
             _kernel = new Kernel();
             _options = new Options();
             _club = null;
@@ -174,8 +172,14 @@ namespace tm
         public DateTime GetBeginDate(Association a)
         {
             GameDay begin = new GameDay(a.resetWeek, true, 0, 0);
-            DateTime res = begin.ConvertToDateTime(begin.WeekNumber > Utils.defaultStartWeek ? Utils.beginningYear - 1 : Utils.beginningYear);
+            DateTime res = begin.ConvertToDateTime(begin.WeekNumber > Session.Instance.Game.kernel.startWeek ? Session.Instance.Game.kernel.startYear - 1 : Session.Instance.Game.kernel.startYear);
             return res;
+        }
+
+        public void InitializeDate()
+        {
+            GameDay beginSeasons = new GameDay(_kernel.startWeek, true, 0, 0);
+            _date = beginSeasons.ConvertToDateTime(_kernel.startYear);
         }
 
         /// <summary>
@@ -225,7 +229,7 @@ namespace tm
 
             foreach (Tournament t in _kernel.Competitions)
             {
-                DateTime tBegin = t.seasonBeginning.ConvertToDateTime(Utils.beginningYear);
+                DateTime tBegin = t.seasonBeginning.ConvertToDateTime(Session.Instance.Game.kernel.startYear);
                 if(Utils.IsBefore(_date, tBegin) && Utils.IsBefore(tBegin, defaultStart))
                 {
                     Utils.Debug("[AddYearToRemainingYears] " + t.name + " (" + defaultStart.ToShortDateString() + ", " + tBegin.ToShortDateString() + ", " + _date.ToShortDateString());
@@ -669,7 +673,7 @@ namespace tm
                     }
 
                     //End round (every year when c.periodicity == 1, else every c.periodicity years). Take care of YearOffset based on c.remainingYears who is based on tournament reset date. Additional check to avoid updating a non started tournament
-                    if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.end.YearOffset)
+                    if (c.remainingYears == (c.periodicity - t.programmation.end.YearOffset) && (this.CurrentSeason - Session.Instance.Game.kernel.startYear) >= t.programmation.end.YearOffset)
                     {
                         if (Utils.CompareDates(t.DateEndRound(), _date))
                         {
@@ -686,7 +690,7 @@ namespace tm
                             }
                         }
                     }
-                    if (c.remainingYears == (c.periodicity - t.programmation.initialisation.YearOffset) && (this.CurrentSeason - Utils.beginningYear) >= t.programmation.initialisation.YearOffset)
+                    if (c.remainingYears == (c.periodicity - t.programmation.initialisation.YearOffset) && (this.CurrentSeason - Session.Instance.Game.kernel.startYear) >= t.programmation.initialisation.YearOffset)
                     {
                         if (Utils.CompareDates(t.DateInitialisationRound(), _date) && c.name != Utils.friendlyTournamentName)
                         {
@@ -860,7 +864,7 @@ namespace tm
                 if(a.isStateAssociation)
                 {
                     //Update clubs before resetting league. Don't update clubs if the game date is before the start of the season of this country.
-                    if (Utils.Modulo(a.resetWeek - 1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(new GameDay(a.resetWeek, true, 0, 0).ConvertToDateTime(Utils.beginningYear), _date))
+                    if (Utils.Modulo(a.resetWeek - 1, 52) == weekNumber && date.DayOfWeek == DayOfWeek.Wednesday && Utils.IsBefore(new GameDay(a.resetWeek, true, 0, 0).ConvertToDateTime(Session.Instance.Game.kernel.startYear), _date))
                     {
                         UpdateClubs(a);
                         UpdateJournalists(a);

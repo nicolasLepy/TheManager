@@ -746,6 +746,14 @@ namespace tm
                 }
                 foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(Tournament)))
                 {
+                    if(_clubs.Contains(c))
+                    {
+                        re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(Tournament));
+                    }
+                    if(_clubs.Contains(c))
+                    {
+                        throw new Exception(String.Format("[{0}] {1} is already registered", _name, c.name));
+                    }
                     _clubs.Add(c);
                 }
             }

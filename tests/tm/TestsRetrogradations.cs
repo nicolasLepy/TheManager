@@ -13,7 +13,7 @@ namespace tests.tm
         [TestMethod]
         public void TestRetrogradation()
         {
-            InitGame("database_france_nat", new List<string>());
+            InitGame("ui", "database_france_nat", new List<string>());
         }
     }
 }

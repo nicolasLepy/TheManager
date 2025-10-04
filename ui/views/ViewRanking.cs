@@ -70,7 +70,7 @@ namespace TheManager_GUI.Views
                 //Get cups winner to add an annotation
                 foreach (Tournament cup in association.Cups())
                 {
-                    if (cup.parent.Tournament == null)
+                    if (cup.parent == null)
                     {
                         _cupsWinners.Add(cup, _year > -1 ? cup.previousEditions[_year].Winner() : cup.Winner());
                     }

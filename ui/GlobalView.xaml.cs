@@ -51,7 +51,7 @@ namespace TheManager_GUI
         {
 
             List<string> years = new List<string>();
-            int year = Utils.beginningYear;
+            int year = Session.Instance.Game.kernel.startYear;
             foreach (float f in Session.Instance.Game.gameUniverse.AverageClubLevelInGame)
             {
                 years.Add(year.ToString());

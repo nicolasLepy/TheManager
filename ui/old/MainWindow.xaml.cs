@@ -129,12 +129,12 @@ namespace TheManager_GUI
                 Session.Instance.Game = partie;
                 Kernel g = partie.kernel;
                 Utils.dataFolderName = "data\\database_" + dd.Database;
-                _loader = new DatabaseLoader(g);
+                _loader = new DatabaseLoader(partie, g);
                 DatabaseLoader cbdd = _loader;
                 //cbdd.ReformateCities();
 
 
-
+                cbdd.LoadDatabaseMetadata();
                 cbdd.LoadLanguages();
                 pbLoading.Value = 2;
                 lbCreationPartie.Content = "Chargement de l'environnement";
