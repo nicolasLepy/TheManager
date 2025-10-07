@@ -17,6 +17,13 @@ namespace tests
             {
                 PrintRound(round);
             }
+            foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
+            {
+                if(t.parent == tournament)
+                {
+                    PrintTournament(t);
+                }
+            }
         }
 
         public static void PrintRound(Round round)
@@ -55,7 +62,8 @@ namespace tests
         public static void PrintRound(KnockoutRound kr)
         {
             Console.WriteLine("\nRound : ----- {0} ----- {1} teams", kr.name, kr.clubs.Count);
-            foreach(Match match in kr.matches)
+            PrintLeagueRepartition(kr);
+            foreach (Match match in kr.matches)
             {
                 PrintGame(match);
             }
@@ -77,6 +85,26 @@ namespace tests
                 extra = String.Format("{0} {1}-{2}p", extra, match.penaltyShootout1, match.penaltyShootout2);
             }
             Console.WriteLine("{0} - {1} {2}-{3} {4}", home.PadRight(40), away.PadRight(40), score1, score2, extra);
+        }
+
+        public static void PrintLeagueRepartition(Round r)
+        {
+            Dictionary<Tournament, int> teamsRepr = new Dictionary<Tournament, int>();
+            foreach(Club c in r.clubs)
+            {
+                Tournament t = c.Championship;
+                if(!teamsRepr.ContainsKey(t))
+                {
+                    teamsRepr[t] = 0;
+                }
+                teamsRepr[t]++;
+            }
+            List<KeyValuePair<Tournament, int>> list = teamsRepr.ToList();
+            list.Sort((x, y) => x.Key.IsAbove(new QualificationTournament(y.Key)) ? -1 : (x.Key.IsBelow(new QualificationTournament(y.Key)) ? 1 : 0));
+            foreach(KeyValuePair<Tournament, int> kvp in list)
+            {
+                Console.WriteLine("{0} : {1} teams", kvp.Key.name, kvp.Value);
+            }
         }
 
         public static void PrintRound(GroupsRound gr)

@@ -913,6 +913,7 @@ namespace tm
             if(idRoundPivot > -1)
             {
                 Round pivotRound = rounds[idRoundPivot];
+                List<Tournament> newTournaments = new List<Tournament>();
                 foreach (KeyValuePair<Association, int> kvp in pivotRound.teamsByAssociation)
                 {
                     //Copie du tournoi est créée
@@ -925,6 +926,10 @@ namespace tm
                     {
                         regionalTournament.rounds.RemoveAt(id);
                     }
+                    foreach(Round r in regionalTournament.rounds)
+                    {
+                        r.clubs.Clear();
+                    }
                     //Le dernier tour doit qualifier à la compétition principale, CopyForArchive ayant reporté les autres qualifications à la nouvelle compétition
                     for (int i = 0; i < regionalTournament.rounds.Last().qualifications.Count; i++)
                     {
@@ -935,12 +940,27 @@ namespace tm
                         }
                     }
                     kvp.Key.tournaments.Add(regionalTournament);
-                    regionalTournament.UpdateCupQualifications();
+                    newTournaments.Add(regionalTournament);
                 }
                 //Dans un premier temps pour éviter les rework qualifs et qualifs outre-mer ne pas supprimer les premiers tours mais les équipes qui y rentrent
                 for(int i = 0; i < idRoundPivot; i++)
                 {
                     rounds[i].recuperedTeams.Clear();
+                }
+                //Dispatcher les équipes enregistrées en dur dans les compétitions filles
+                newTournaments.Shuffle();
+                for (int i = 0; i < idRoundPivot; i++)
+                {
+                    for(int j = 0; j < rounds[i].clubs.Count; j++)
+                    {
+                        Club c = rounds[i].clubs[j];
+                        newTournaments[j % newTournaments.Count].rounds[i].clubs.Add(c);
+                    }
+                    rounds[i].clubs.Clear();
+                }
+                foreach(Tournament regionalTournament in newTournaments)
+                {
+                    regionalTournament.UpdateCupQualifications();
                 }
             }
         }
@@ -1008,7 +1028,7 @@ namespace tm
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
 
             //if (leagueCupLike)
-            if (idRoundPivot == -1 && parent == null) //Regional cup are updated following league cup algorithm
+            if (idRoundPivot == -1 && parent == null) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
             {
                 UpdateLeagueCupQualifications();
             }
@@ -1017,7 +1037,7 @@ namespace tm
                 List<LeagueCupApparition> leagueCupApparitions = new List<LeagueCupApparition>();
                 for (int i = 0; i < _rounds.Count; i++)
                 {
-                    teamsFromOutsideLeagueSystem[i] = 0;
+                    teamsFromOutsideLeagueSystem[i] = _rounds[i].clubs.Count;  //Certaines équipes hors du système de ligue peuvent être déjà écrites en dur pour la première édition
                 }
 
                 //Garde en mémoire les équipes qui participent à la compétition sans participer aux ligues (cas des équipes outre-mer en coupe de France) afin de garder leurs places.
@@ -1090,6 +1110,13 @@ namespace tm
                             if (otherRecoverTeams.Source != null)
                             {
                                 clubsCount = otherRecoverTeams.Method == RecuperationMethod.Worst ? -rt.Number : Math.Max(0, clubsCount - otherRecoverTeams.Number);
+                            }
+                            else
+                            {
+                                if(rt.Method == RecuperationMethod.Best)
+                                {
+                                    clubsCount = -clubsCount;
+                                }
                             }
                             //Du au changement de structure de ligue d'une année sur l'autre, éviter qu'on demande à une ligue plus d'équipe qu'elle n'en a
                             if(clubsCount > roundsClubCount)
