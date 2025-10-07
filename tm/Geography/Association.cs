@@ -1267,17 +1267,17 @@ namespace tm
             }
         }
 
-        public int GetLastLeagueLevelWithoutReserves()
+        public Tournament GetLastLeagueWithoutReserves()
         {
-            int level = -1;
+            Tournament league = null;
             foreach (Tournament t in Tournaments())
             {
-                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesCannotBePromoted) && t.level > level)
+                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesCannotBePromoted) && t.IsBelow(new QualificationTournament(league)))
                 {
-                    level = t.level;
+                    league = t;
                 }
             }
-            return level;
+            return league;
         }
 
         public void ClearAdministrativeRetrogradationsCache()

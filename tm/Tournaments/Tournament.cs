@@ -1249,11 +1249,11 @@ namespace tm
                 {
                     Utils.Debug("Suffisament d'équipes disponibles pour les exigences du tour");
                     //On garde le nombre d'équipes maximales des ligues sans équipes réserves : leur structure ne changera pas avec les années, on garde tout (ex. le N1 au 5ème tour avec les 18 équipes au lieu de 10 équipes calculés avec la méthode du ratio)
-                    int lastLevelWithoutReserves = (Session.Instance.Game.kernel.LocalisationTournament(this) as Association).GetLastLeagueLevelWithoutReserves();
+                    Tournament lastLevelWithoutReserves = Session.Instance.Game.kernel.LocalisationTournament(this).GetLastLeagueWithoutReserves();
                     List<LeagueCupApparition> lcaAddedByAnticipation = new List<LeagueCupApparition>();
                     foreach (LeagueCupApparition lca in leagueCupApparitions)
                     {
-                        if (lca.apparitionRound == 0 && lca.tournament.level <= lastLevelWithoutReserves)
+                        if (lca.apparitionRound == 0 && ((lastLevelWithoutReserves == null && lca.isBestTeams) || (lastLevelWithoutReserves != null && lca.tournament.IsAbove(new QualificationTournament(lastLevelWithoutReserves)))))
                         {
                             currentTeamsCount -= lca.teams;
                             additionalTeams -= lca.teams;
