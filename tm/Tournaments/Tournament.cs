@@ -340,7 +340,7 @@ namespace tm
         }
 
 
-        private class LeagueCupApparition
+        public class LeagueCupApparition
         {
 
             public bool isBestTeams { get => _teams < 0; }
@@ -1133,7 +1133,8 @@ namespace tm
                 }
 
                 //Trie la liste en fonction du niveau de la compétition (et si jamais une ligue entre dans la compétition en deux fois avec meilleurs/plus mauvaises équipes)
-                leagueCupApparitions.Sort((a, b) => (a.tournament.level != b.tournament.level ? a.tournament.level - b.tournament.level : (a.teams > 0 ? -1 : 0)));
+                // leagueCupApparitions.Sort((a, b) => (a.tournament.level != b.tournament.level ? a.tournament.level - b.tournament.level : (a.teams > 0 ? -1 : 0)));
+                leagueCupApparitions.Sort(new LeagueCupApparitionComparator());
 
                 //roundStart désigne le tour où les dernières équipes entrent en compétition
                 int roundStart = 0;
@@ -1267,8 +1268,9 @@ namespace tm
                     }
                     //Ratio d'équipes à prendre dans chaque ligue pour obtenir le nombre d'équipes ciblé
                     double ratio = additionalTeams / (currentTeamsCount + 0.0);
-                    int currentTeamsAdded = 0;
+                    SampleTeams(leagueCupApparitions, currentTeamsCount);
 
+                    /*int currentTeamsAdded = 0;
                     for (int i = 0; i < leagueCupApparitions.Count; i++)
                     {
                         int teamsToSelectFromLeague = leagueCupApparitions[i].apparitionRound == 0 ? (int)Math.Round(leagueCupApparitions[i].teams / ratio) : leagueCupApparitions[i].teams;
@@ -1295,7 +1297,7 @@ namespace tm
                                 margin = 0;
                             }
                         }
-                    }
+                    }*/
                 }
                 //On a pas suffisament d'équipes dans les ligues inférieures qui entrent au premier tour, on supprime ce tour pour passer directement au suivant (voir plus loin si on a toujours pas suffisament d'équipes) en simulant n qualifiés parmis les équipes des ligues inférieures
                 else
@@ -1457,6 +1459,42 @@ namespace tm
                 }
             }
             return alreadyStoredRecuperedTeams;
+        }
+
+        /// <summary>
+        /// Sample teams from LeagueCupApparitions.
+        /// Warning : LeagueCupApparition from round 0 with isBestTeams were removed.
+        /// </summary>
+        /// <param name="leagueCupApparitions"></param>
+        /// <param name="firstRoundTeams"></param>
+        /// <returns></returns>
+        private void SampleTeams(List<LeagueCupApparition> leagueCupApparitions, int expectedTeamsRound0)
+        {
+            //Samples teams from round 0
+            List<LeagueCupApparition> lcaRound0 = new List<LeagueCupApparition>();
+            List<int> idxRound0 = new List<int>();
+            for(int i = 0; i < leagueCupApparitions.Count; i++)
+            {
+                if (leagueCupApparitions[i].apparitionRound == 0)
+                {
+                    lcaRound0.Add(leagueCupApparitions[i]);
+                    idxRound0.Add(i);
+                }
+                else //Directly update the recupered teams object with the same number of teams
+                {
+                    UpdateRecuperedTeams(leagueCupApparitions[i].teams, leagueCupApparitions[i].tournament, leagueCupApparitions[i].isBestTeams, false);
+                }
+            }
+            lcaRound0 = UtilsTournaments.SampleTeams(lcaRound0, expectedTeamsRound0);
+
+            for(int i = 0; i < lcaRound0.Count; i++)
+            {
+                LeagueCupApparition lca = lcaRound0[i];
+                int idx = idxRound0[i];
+                leagueCupApparitions[idx].teams = lca.teams;
+                Console.WriteLine(String.Format("Must update {0} with {1} teams at round {2}, (is best teams ? {3})", leagueCupApparitions[idx].tournament.name, leagueCupApparitions[idx].teams, leagueCupApparitions[idx].apparitionRound, leagueCupApparitions[idx].isBestTeams));
+                UpdateRecuperedTeams(leagueCupApparitions[idx].teams, leagueCupApparitions[idx].tournament, leagueCupApparitions[idx].isBestTeams, false);
+            }
         }
 
         public Tournament CopyForArchive(bool makeRoundsInactive, string newName = "")

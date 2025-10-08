@@ -744,7 +744,8 @@ namespace tm
                 {
                     teamsToGrab = re.Source.CountWithoutReserves();
                 }
-                foreach (Club c in re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(Tournament)))
+                List<Club> selected = re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(Tournament));
+                foreach (Club c in selected)
                 {
                     if(_clubs.Contains(c))
                     {

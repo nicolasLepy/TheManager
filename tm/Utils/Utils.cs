@@ -1196,5 +1196,19 @@ namespace tm
             newList.Reverse();
             return newList;
         }
+
+        public static int CompareQualificationTargets(QualificationTarget x, QualificationTarget y)
+        {
+            int xALevel = x.GetAssociationLevel();
+            int yALevel = y.GetAssociationLevel();
+            int res = xALevel - yALevel;
+            if (res == 0)
+            {
+                int xTLevel = x.GetTournamentLevel();
+                int yTLevel = y.GetTournamentLevel();
+                res = xTLevel - yTLevel;
+            }
+            return res;
+        }
     }
 }

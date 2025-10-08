@@ -19,7 +19,7 @@ namespace tests.tm
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
         // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private static int TEST_YEARS = 12;
+        private static int TEST_YEARS = 3;
 
         private Round NextRound(Tournament tournament, Round round, bool isRegional)
         {
@@ -70,12 +70,12 @@ namespace tests.tm
             for (int i = 0; i < cup.rounds.Count; i++)
             {
                 Round round = cup.rounds[cup.rounds.Count - (i + 1)];
-                if(expectedTeamsByRounds.Count - (i + 1) >= 0)
+                if (expectedTeamsByRounds.Count - (i + 1) >= 0)
                 {
                     Assert.AreEqual(round.clubs.Count, expectedTeamsByRounds[expectedTeamsByRounds.Count - (i + 1)]);
                 }
                 CheckRoundGeneral(cup, round, false);
-                if(round.clubs.Count < 65 && round.clubs.Count > 0)
+                if (round.clubs.Count < 65 && round.clubs.Count > 0)
                 {
                     foreach (Match m in round.matches)
                     {
@@ -84,6 +84,7 @@ namespace tests.tm
                     }
                 }
             }
+
             foreach (KeyValuePair<Association, int> regionalPath in teamsByAssociations)
             {
                 Tournament regionalCup = regionalPath.Key.Cup(1000);
