@@ -958,7 +958,8 @@ namespace tm
                     }
                     rounds[i].clubs.Clear();
                 }
-                foreach(Tournament regionalTournament in newTournaments)
+                UpdateCupQualifications();
+                foreach (Tournament regionalTournament in newTournaments)
                 {
                     regionalTournament.UpdateCupQualifications();
                 }
@@ -1037,7 +1038,7 @@ namespace tm
                 List<LeagueCupApparition> leagueCupApparitions = new List<LeagueCupApparition>();
                 for (int i = 0; i < _rounds.Count; i++)
                 {
-                    teamsFromOutsideLeagueSystem[i] = _rounds[i].clubs.Count;  //Certaines équipes hors du système de ligue peuvent être déjà écrites en dur pour la première édition
+                    teamsFromOutsideLeagueSystem[i] = 0;
                 }
 
                 //Garde en mémoire les équipes qui participent à la compétition sans participer aux ligues (cas des équipes outre-mer en coupe de France) afin de garder leurs places.
@@ -1067,7 +1068,6 @@ namespace tm
                 }
 
                 foreach (int i in teamsFromOutsideLeagueSystem) Console.WriteLine("[Update " + this.name + "] teamsFromOutsideLeagueSystem round " + i);
-
                 //Obtient le nombre d'équipes une fois toutes les ligues entrées dans la compétition (64 en Coupe de France)
                 //Dans le cas d'une phase qualificative régionale avant la phase nationale, 
                 int teamsAtTheLastRound = 2;
@@ -1155,7 +1155,7 @@ namespace tm
                 //TODO: Ajouter une troisième condition à l'étape suivante qui prend en compte ce cas de figure ?
                 while (!noTeamsCongestion)
                 {
-                    currentTeamsCount = teamsKnockout - teamsFromOutsideLeagueSystem[roundStart];
+                    currentTeamsCount = teamsKnockout;// - teamsFromOutsideLeagueSystem[roundStart];
                     additionalTeams = 0;
                     //Remonte la compétition pour récupérer le nombre d'équipes à ajouter au premier tour
                     for (int i = roundStart - 1; i > -1; i--)
@@ -1410,19 +1410,24 @@ namespace tm
 
                 if (this._rounds.Count > 8)
                 {
-                    Console.WriteLine("Résumé de la compétition " + this.name);
-                    foreach (Round r in _rounds)
-                    {
-                        Console.WriteLine("= " + r.name + " =");
-                        foreach (RecoverTeams rt in r.recuperedTeams)
-                        {
-                            Console.WriteLine(rt.Source.ToString() + " - " + rt.Number + " - " + rt.Method);
-                        }
-                    }
+                    PrintTournamentResumeShort();
                 }
             }
 
             //PrintTournamentResume(teamsFromOutsideLeagueSystem);
+        }
+
+        private void PrintTournamentResumeShort()
+        {
+            Console.WriteLine("Résumé de la compétition " + this.name);
+            foreach (Round r in _rounds)
+            {
+                Console.WriteLine("= " + r.name + " =");
+                foreach (RecoverTeams rt in r.recuperedTeams)
+                {
+                    Console.WriteLine(rt.Source.ToString() + " - " + rt.Number + " - " + rt.Method);
+                }
+            }
         }
 
         private void PrintTournamentResume(int[] teamsFromOutsideLeagueSystem)

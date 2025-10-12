@@ -47,7 +47,7 @@ public class ExportTournament: ISimulationExport
         {
             throw new Exception("Tournament is null");
         }
-        string fileName = Path.Join(dir, String.Format("games_{0}_{1}.json", Tournament.Id, RoundIndex));
+        string fileName = Path.Join(dir, String.Format("games_{0}_{1}_{2}.json", Tournament.Id, Session.Instance.Game.date.Year, RoundIndex));
         Round r = Tournament.rounds[RoundIndex];
         List<GameDefinition> gameDefinitions = GetGameDefinitions(r);
         foreach(Tournament t in Session.Instance.Game.kernel.Competitions)

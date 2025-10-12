@@ -1272,7 +1272,7 @@ namespace tm
             Tournament league = null;
             foreach (Tournament t in Tournaments())
             {
-                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesCannotBePromoted) && t.IsBelow(new QualificationTournament(league)))
+                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesCannotBePromoted) && (league == null || t.IsBelow(new QualificationTournament(league))))
                 {
                     league = t;
                 }

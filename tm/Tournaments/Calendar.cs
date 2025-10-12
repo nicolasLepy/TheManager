@@ -755,7 +755,7 @@ namespace tm
                 Console.WriteLine("Date: " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].matches[0].day.ToString());
             }
             List<Match> res = new List<Match>();
-            ILocalisation localisationTournament = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament);
+            Association localisationTournament = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament);
 
             List<Club>[] hats = new List<Club>[] { new List<Club>(), new List<Club>() };
 
@@ -765,7 +765,7 @@ namespace tm
             {
                 foreach(Club c in round.clubs)
                 {
-                    if(!c.Association().IsDirectConnected(localisationTournament as Association))
+                    if(!c.Association().IsDirectConnected(localisationTournament))
                     {
                         fixedHomeOrAwayTeams.Add(c, false);
                     }
@@ -779,12 +779,12 @@ namespace tm
                 {
                     //New ultramarine team entering this round
                     
-                    if (!c.Association().IsDirectConnected(localisationTournament as Association) && (previousRound != null && !previousRound.clubs.Contains(c)))
+                    if (!c.Association().IsDirectConnected(localisationTournament) && (previousRound != null && !previousRound.clubs.Contains(c)))
                     {
                         newUltramarineTeams.Add(c);
                     }
                     //Ultramarine already in tournament
-                    else if(!c.Association().IsDirectConnected(localisationTournament as Association) && previousRound != null)
+                    else if(!c.Association().IsDirectConnected(localisationTournament) && previousRound != null)
                     {
                         foreach(Match m in previousRound.matches)
                         {
@@ -893,7 +893,6 @@ namespace tm
                 }
             }
 
-
             RoundProgrammation programmation = round.programmation;
             int currentGeographicHat = 0;
             for (int i = 0; i < round.clubs.Count / 2; i++)
@@ -918,7 +917,7 @@ namespace tm
                     {
                         for (int j = 0; j < hats[currentGeographicHat].Count && home == null; j++)
                         {
-                            if (!hats[currentGeographicHat][j].Association().IsDirectConnected(localisationTournament as Association))
+                            if (!hats[currentGeographicHat][j].Association().IsDirectConnected(localisationTournament))
                             {
                                 home = hats[currentGeographicHat][j];
                                 hats[currentGeographicHat].Remove(hats[currentGeographicHat][j]);

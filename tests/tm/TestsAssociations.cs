@@ -19,7 +19,7 @@ namespace tests.tm
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
         // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private static int TEST_YEARS = 3;
+        private static int TEST_YEARS = 12;
 
         private Round NextRound(Tournament tournament, Round round, bool isRegional)
         {
@@ -46,10 +46,13 @@ namespace tests.tm
             {
                 foreach (Match m in round.matches)
                 {
-                    //Chaque équipe qui gagne doit être qualifiée au tour suivant
-                    // Assert.IsTrue(nextRound.clubs.Contains(m.Winner));
-                    //Chaque équipe qui perd ne doit pas être qualifiée au tour suivant
-                    // Assert.IsFalse(nextRound.clubs.Contains(m.Looser));
+                    if(m.Played)
+                    {
+                        //Chaque équipe qui gagne doit être qualifiée au tour suivant
+                        Assert.IsTrue(nextRound.clubs.Contains(m.Winner));
+                        //Chaque équipe qui perd ne doit pas être qualifiée au tour suivant
+                        Assert.IsFalse(nextRound.clubs.Contains(m.Looser));
+                    }
                 }
             }
             List<Club> clubs = new List<Club>();
