@@ -973,6 +973,16 @@ namespace tm
             _kernel.SetClubIdIterator(maxId);
         }
 
+        private int ParseIDTournament(XElement e2)
+        {
+            int value = int.Parse(e2.Attribute("id").Value);
+            if(value >= Utils.tournamentMaxId)
+            {
+                throw new Exception(String.Format("Tournament ID can't be greater than {0}", Utils.tournamentMaxId));
+            }
+            return value;
+        }
+
         public void LoadTournaments()
         {
             SetStartClubId();
@@ -990,6 +1000,7 @@ namespace tm
                         string seasonBeginning = e2.Attribute("debut_saison").Value;
                         string tournamentRuleStr = e2.Attribute("rule") != null ? e2.Attribute("rule").Value : null;
                         bool isChampionship = e2.Attribute("championnat").Value == "oui" ? true : false;
+                        int id = e2.Attribute("id") != null ? ParseIDTournament(e2) : _kernel.NextIdTournament();
                         ClubStatus tournamentStatus = ClubStatus.Professional;
                         if(isChampionship)
                         {
@@ -1013,7 +1024,7 @@ namespace tm
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Console.WriteLine(name);
-                        Tournament tournament = new Tournament(_kernel.NextIdTournament(), name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, null);
+                        Tournament tournament = new Tournament(id, name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, null);
                         if (tournamentRuleStr != null)
                         {
                             TournamentRule tRule;
@@ -1031,7 +1042,6 @@ namespace tm
                         }
 
                         tournament.InitializeQualificationsNextYearsLists(e2.Descendants("Tour").Count());
-
 
                         //Continental tournaments are stored by their association
                         if(localisation as Continent != null)

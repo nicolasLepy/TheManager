@@ -113,12 +113,6 @@ namespace TheManager_GUI
             newGameView.Show();
             return;
 
-            /*
-            FifaDataParser fifaDataParser = new FifaDataParser();
-            fifaDataParser.Parse();*/
-
-
-
             //await CallLoadingGame();
 
             DialogDatabase dd = new DialogDatabase();

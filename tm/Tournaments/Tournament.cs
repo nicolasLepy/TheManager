@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows;
 using System.Text;
-using tm.Exportation;
 using System.Windows.Media;
 using tm.Tournaments;
 using tm.Comparators;
@@ -994,7 +993,9 @@ namespace tm
             int idRoundPivot = GetFirstNationalRound();
             if(idRoundPivot > -1)
             {
-                List<Tournament> childTournaments = GetChildTournaments();
+                List<Tournament> childTournaments = new List<Tournament>(GetChildTournaments());
+                childTournaments.Shuffle();
+                int counter = 0;
                 foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
                 {
                     if (!t.IsInternational() && t != this && t.parent != this)
@@ -1005,7 +1006,7 @@ namespace tm
                             {
                                 if (r.qualifications[i].target.Tournament() != null && (r.qualifications[i].target.Tournament().parent == this || (r.qualifications[i].target.Tournament() == this && r.qualifications[i].roundId < idRoundPivot)))
                                 {
-                                    Tournament hostTournament = childTournaments[Session.Instance.Random(0, childTournaments.Count)];
+                                    Tournament hostTournament = childTournaments[(counter++)%childTournaments.Count];
                                     Utils.Debug(string.Format("[Host Cup] {0} send winner of {1} to {2}", t.name, r.name, hostTournament.name));
                                     r.qualifications[i] = new Qualification(r.qualifications[i].ranking, r.qualifications[i].roundId, new QualificationTournament(hostTournament), r.qualifications[i].isNextYear, r.qualifications[i].qualifies);
                                 }

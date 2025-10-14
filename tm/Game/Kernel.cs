@@ -80,7 +80,7 @@ namespace tm
         [DataMember]
         private int _nextIdPerson = 0;
         [DataMember]
-        private int _nextIdTournament = 0;
+        private int _nextIdTournament = Utils.tournamentMaxId;
         [DataMember]
         private int _nextIdRound = 0;
         [DataMember]
@@ -413,6 +413,18 @@ namespace tm
                 {
                     res = club;
                 }
+            }
+            return res;
+        }
+
+        public Tournament GetTournamentById(int id)
+        {
+            List<Tournament> t = this.Competitions;
+            Tournament res = null;
+            for(int i = 0; i < t.Count && res == null; i++)
+            {
+                Tournament ti = t[i];
+                res = ti.Id == id ? ti : res;
             }
             return res;
         }

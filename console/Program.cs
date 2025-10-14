@@ -82,7 +82,7 @@ public class TheManagerRunner : TheManagerTest
         _simulationResults = new List<ISimulationExport>();
         foreach (XElement exp in root.Descendants("export"))
         {
-            Tournament t = Session.Instance.Game.kernel.String2Tournament(exp.Attribute("tournament").Value);
+            Tournament t = Session.Instance.Game.kernel.GetTournamentById(int.Parse(exp.Attribute("tournament").Value));
             int roundIdx = int.Parse(exp.Attribute("round_index").Value);
             _simulationResults.Add(new ExportTournament(t, roundIdx));
         }
@@ -90,7 +90,8 @@ public class TheManagerRunner : TheManagerTest
 
     private void ExtractResults()
     {
-        Tournament t = Session.Instance.Game.kernel.worldAssociation.associations[0].associations[0].Cup(1);
+        TestUtils.PrintTournament(Session.Instance.Game.kernel.worldAssociation.associations[0].associations[5].Cup(1));
+        Tournament t = Session.Instance.Game.kernel.worldAssociation.associations[0].associations[4].Cup(1);
         TestUtils.PrintTournament(t);
         foreach(ISimulationExport export in _simulationResults)
         {

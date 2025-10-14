@@ -47,29 +47,21 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 
 ## Features
 
-| Task                                                                  | Status           |
-| --------------------------------------------------------------------- | ---------------- |
-| **Tournaments**                                                       |                 |
-| Hierarchical Competitions (promotion, relegation ...)                 | 🟢 OK  |
-| Automatically created domestic cup (qualifications and scheduling)    | 🟢 OK  |
-| International tournaments                                 			| 🟢 OK  |
-| International ranking                                 				| 🟢 OK  |
-| Special rules                                                         | 🟢 OK  |
-| **Club**                                                              |                 |
-| Transferts                                                            | 🟡 In progress  |
-| Players progression                                                   | 🟡 In progress  |
-| Managers and staff                                                    | 🟡 In progress |
-| Evolution of club facilities                                          | 🟡 In progress |
-| Financial control                                                     | 🔴 Not started |
-| **Managing**                                                          |                 |
-| Staff management                                                      | 🔴 Not started |
-| Youth team management                                                 | 🔴 Not started |
-| Recruitment tasks                                                     | 🟡 In progress |
-| **Games**                                                              |                 |
-| Detailed game engine                                                  | 🔴 Not started  |
-| Games in real-time                                                    | 🟡 In progress  |
-| **Miscellaneous**                                                     |				  |
-| SQL                   				                                | 🟡 In progress |
+| Task                                      | Status         |
+| ----------------------------------------- | -------------- |
+| **Tournaments**                           |                |
+| Association system                        | 🟢 OK          |
+| Competition schedule                      | 🟢 OK          |
+| **Club**                                  |                |
+| Transfer system                           | 🟡 Partial     |
+| Players progression                       | 🟡 Partial     |
+| Club life (management, staff, facilities) | 🟡 Partial     |
+| Financial control                         | 🔴 Not started |
+| **Games**                                 |                |
+| Detailed game engine                      | 🔴 Not started |
+| **Miscellaneous**                         |                |
+| Persistent data                           | 🟠 Deprecated  |
+| Real-time                                 | 🔴 Not started |
 
 ## Tools and extensions
 
@@ -82,10 +74,8 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 *   Windows Media Player library
 *   MathNet.Numerics
 
-## Data
+## Links
 
-*   Cities : [SimpleMaps](https://simplemaps.com/data/world-cities)
-*   Players and clubs : [Kaggle](https://www.kaggle.com/stefanoleone992/fifa-22-complete-player-dataset?select=players_22.csv)
 *   [flaticon.com (iconnut, Freepik, kerismaker and Futuer)](https://www.flaticon.com)
 
 ## License

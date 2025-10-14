@@ -46,6 +46,8 @@ namespace tm
         public readonly static int gamesTimesHoursCount = 24;
         public readonly static int gamesTimesDaysCount = 4;
 
+        public readonly static int tournamentMaxId = 1000;
+
         /// <summary>
         /// Transform a name to a complient logo file name
         /// Removes accents, space and hyphens

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using tm.Comparators;
-using tm.Exportation;
 using MathNet.Numerics.Distributions;
 using tm.Tournaments;
 using System.Globalization;
@@ -267,7 +266,7 @@ namespace tm
         {
             if (Utils.CompareDatesWithoutYear(t.seasonBeginning.ConvertToDateTime().AddDays(-7), _date))
             {
-                Exporteur.Exporter(t);
+                
             }
         }
 
