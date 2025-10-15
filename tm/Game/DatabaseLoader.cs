@@ -31,12 +31,15 @@ namespace tm
 
         private readonly Dictionary<Continent, string> _associationsLogo;
 
+        private readonly Dictionary<Tournament, int> _regionalTournaments;
+
         public DatabaseLoader(Game game, Kernel kernel)
         {
             _kernel = kernel;
             _game = game;
             _clubsId = new Dictionary<int, Club>();
             _associationsLogo = new Dictionary<Continent, string>();
+            _regionalTournaments = new Dictionary<Tournament, int>();
         }
 
         private string SlugifyName(string name)
@@ -1079,7 +1082,13 @@ namespace tm
                             GameDay initialisationDate = String2GameDay(e3.Attribute("initialisation").Value);
                             GameDay endDate = String2GameDay(e3.Attribute("fin").Value);
                             List<GameDay> dates = CreateGameDaysList(e3);
-                            if(dates.Count == 0)
+                            int administrativeLevel = e3.Attribute("administrative_level") != null ? int.Parse(e3.Attribute("administrative_level").Value) : 0;
+                            if (administrativeLevel > 0)
+                            {
+                                _regionalTournaments[c] = administrativeLevel;
+                            }
+
+                            if (dates.Count == 0)
                             {
                                 if(e3.Attribute("calendrier") != null)
                                 {
@@ -1110,8 +1119,7 @@ namespace tm
                             if (type == "championnat")
                             {
                                 int lastDaysSameDay = int.Parse(e3.Attribute("dernieresJourneesMemeJour").Value);
-                                //round = new ChampionshipRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, phases, new List<TvOffset>(), initialisationDate, endDate, keepRankingFromPreviousRound, lastDaysSameDay, gamesPriority);
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), 1, false, 0, phases, initialisationDate, endDate, keepRankingFromPreviousRound, RandomDrawingMethod.Level, 0, false, 0, 0, gamesPriority, lastDaysSameDay);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), 1, false, 0, phases, initialisationDate, endDate, keepRankingFromPreviousRound, RandomDrawingMethod.Level, false, 0, 0, gamesPriority, lastDaysSameDay);
                             }
                             else if (type == "elimination")
                             {
@@ -1132,15 +1140,10 @@ namespace tm
                                 int groupsNumber = int.Parse(e3.Attribute("nombrePoules").Value);
                                 int maxTeamsByGroups = e3.Attribute("maxTeamsByGroup") != null ? int.Parse(e3.Attribute("maxTeamsByGroup").Value) : 0;
                                 RandomDrawingMethod method = String2DrawingMethod(e3.Attribute("methode").Value);
-                                int administrativeLevel = 0;
-                                if (method == RandomDrawingMethod.Administrative)
-                                {
-                                    administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
-                                }
                                 int nonConferencesGamesByTeams = e3.Attribute("non_conferences_games_by_teams") != null ? int.Parse(e3.Attribute("non_conferences_games_by_teams").Value) : 0;
                                 bool fusionConferenceAndNoConferenceGames = e3.Attribute("fusion_conferences_and_non_conferences_days") != null ? e3.Attribute("fusion_conferences_and_non_conferences_days").Value.ToLower() == "yes" : false;
                                 int nonConferencesGamesByGameday = e3.Attribute("non_conferences_games_by_gameday") != null ? int.Parse(e3.Attribute("non_conferences_games_by_gameday").Value) : 0;
-                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, qualificationsDefinedForAllGroup, maxTeamsByGroups, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, administrativeLevel, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority, 0);
+                                round = new GroupActiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), dates, new List<TvOffset>(), groupsNumber, qualificationsDefinedForAllGroup, maxTeamsByGroups, phases, initialisationDate, endDate, keepRankingFromPreviousRound, method, fusionConferenceAndNoConferenceGames, nonConferencesGamesByTeams, nonConferencesGamesByGameday, gamesPriority, 0);
 
                                 if (method == RandomDrawingMethod.Geographic)
                                 {
@@ -1167,13 +1170,8 @@ namespace tm
                             }
                             else if (type == "inactif")
                             {
-                                int administrativeLevel = 0;
-                                if(e3.Attribute("administrative_level") != null)
-                                {
-                                    administrativeLevel = int.Parse(e3.Attribute("administrative_level").Value);
-                                }
                                 int groupsCount = 1;
-                                round = new GroupInactiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, qualificationsDefinedForAllGroup, 1, initialisationDate, endDate, -1, administrativeLevel == 0 ? RandomDrawingMethod.Random : RandomDrawingMethod.Administrative, administrativeLevel, false, 0, 0, 0);
+                                round = new GroupInactiveRound(_kernel.NextIdRound(), roundName, c, String2Hour(hourByDefault), new List<GameDay>(), new List<TvOffset>(), groupsCount, qualificationsDefinedForAllGroup, 1, initialisationDate, endDate, -1, RandomDrawingMethod.Random, false, 0, 0, 0);
                             }
                             foreach(XElement e4 in e3.Descendants("TeamsByAdministrativeDivision"))
                             {
@@ -1418,7 +1416,7 @@ namespace tm
             }*/
         }
 
-        private int TournamentRegionalLevel(Tournament t)
+        /*private int TournamentRegionalLevel(Tournament t)
         {
             int regionalLevel = 0;
             foreach (Round r in t.rounds)
@@ -1427,11 +1425,12 @@ namespace tm
                 regionalLevel = (regionalLevel != 0 || gr == null) ? regionalLevel : gr.administrativeLevel;
             }
             return regionalLevel;
-        }
+        }*/
 
         private bool IsTournamentRegional(Tournament t)
         {
-            return TournamentRegionalLevel(t) > 0;
+            return _regionalTournaments.ContainsKey(t);
+            //return TournamentRegionalLevel(t) > 0;
         }
 
         private Tournament SearchTournament(List<Tournament> tournaments, Tournament tournament)
@@ -1460,9 +1459,9 @@ namespace tm
                 List<Tournament> leagues = a.Leagues();
                 foreach (Tournament t in leagues)
                 {
-                    int regionalLevel = TournamentRegionalLevel(t);
-                    if(regionalLevel > 0)
+                    if(_regionalTournaments.ContainsKey(t))
                     {
+                        int regionalLevel = _regionalTournaments[t];
                         List<Association> assocationsManaging = a.GetAllChilds(regionalLevel);
                         foreach(Association regionalAssociation in assocationsManaging)
                         {
@@ -1494,7 +1493,6 @@ namespace tm
                                 {
                                     gr.RandomDrawingMethod = RandomDrawingMethod.Geographic;
                                     gr.groupsCount = 1;
-                                    gr.administrativeLevel = 0;
                                 }
                             }
                             if(clubsCount > 0)
@@ -1788,7 +1786,7 @@ namespace tm
             }
         }
 
-        public void GenerateRegionalCup(Association association, int level, bool reservesAllowed)
+        public void GenerateRegionalCup(Association association, bool reservesAllowed)
         {
             Utils.Debug(string.Format("[{0}] New regional Cup", association.name));
             int admTeams = 0;
@@ -1797,7 +1795,7 @@ namespace tm
             foreach(Tournament t in association.Leagues())
             {
                 GroupsRound groupRound = t.GetLastChampionshipRound() as GroupsRound;
-                if (groupRound != null && groupRound.administrativeLevel == level)
+                if (groupRound != null)
                 {
                     regionalLeagueExists = true;
                     foreach(Club cl in groupRound.clubs)
@@ -1812,7 +1810,7 @@ namespace tm
             }
             foreach (Association ad in association.associations)
             {
-                GenerateRegionalCup(ad, level + 1, reservesAllowed);
+                GenerateRegionalCup(ad, reservesAllowed);
             }
         }
 

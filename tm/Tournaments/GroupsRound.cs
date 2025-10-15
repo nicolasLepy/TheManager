@@ -34,14 +34,6 @@ namespace tm
 
         [DataMember]
         protected RandomDrawingMethod _randomDrawingMethod;
-        /// <summary>
-        /// Administrative level of the round.
-        /// 0 : National round
-        /// 1 : Regional round
-        /// 2 : Departemental/District round
-        /// </summary>
-        [DataMember]
-        protected int _administrativeLevel;
         [DataMember]
         protected List<GeographicPosition> _groupsLocalisation;
         [DataMember]
@@ -93,12 +85,6 @@ namespace tm
         }
 
         public int maxClubsInGroup => _clubs.Count % _groupsNumber > 0 ? (_clubs.Count / _groupsNumber) + 1 : _clubs.Count / _groupsNumber;
-
-        //TODO: Getter only
-        public int administrativeLevel
-        {
-            get => _administrativeLevel; set => _administrativeLevel = value;
-        }
 
         public int nonGroupGamesByTeams => _nonGroupGamesByTeams;
         public int nonGroupGamesByGameday => _nonGroupGamesByGameday;
@@ -153,7 +139,7 @@ namespace tm
             _cacheRanking = new List<Club>[0];
         }
 
-        public GroupsRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool qualificationsDefinedForAllGroup, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, int administrativeLevel, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority, int lastDaysSameDay) : base(id, name, tournament, hour, dates, offsets, initialisation,end, phases, lastDaysSameDay, keepRankingFromPreviousRound, gamesPriority)
+        public GroupsRound(int id, string name, Tournament tournament, Hour hour, List<GameDay> dates, List<TvOffset> offsets, int groupsCount, bool qualificationsDefinedForAllGroup, int phases, GameDay initialisation, GameDay end, int keepRankingFromPreviousRound, RandomDrawingMethod randomDrawingMethod, bool fusionGroupAndNoGroupGames, int nonGroupGamesByTeams, int nonGroupGamesByGameday, int gamesPriority, int lastDaysSameDay) : base(id, name, tournament, hour, dates, offsets, initialisation,end, phases, lastDaysSameDay, keepRankingFromPreviousRound, gamesPriority)
         {
             _groupsNumber = groupsCount;
             _groups = new List<Club>[_groupsNumber];
@@ -165,7 +151,6 @@ namespace tm
             _randomDrawingMethod = randomDrawingMethod;
             _groupsLocalisation = new List<GeographicPosition>();
             _referenceClubsByGroup = 0;
-            _administrativeLevel = administrativeLevel;
             _relegationsByAssociations = new Dictionary<Association, int>();
             _nonGroupGamesByTeams = nonGroupGamesByTeams;
             _nonGroupGamesByGameday = nonGroupGamesByGameday;
@@ -273,29 +258,6 @@ namespace tm
             return candidates;
         }
 
-        public List<Club> GetAssociationRelegablesCandidates(Association association)
-        {
-            List<Club> candidates = new List<Club>();
-            List<int> admGroups = GetGroupsFromAssociation(association);
-            int maxTeamByGroup = 0;
-            foreach (int group in admGroups)
-            {
-                maxTeamByGroup = groups[group].Count > maxTeamByGroup ? groups[group].Count : maxTeamByGroup;
-            }
-
-            for (int i = -1; i > -maxTeamByGroup-1; i--)
-            {
-                List<Club> rankingI = RankingByRank(i, association);
-                rankingI.Reverse();
-                foreach(Club c in rankingI)
-                {
-                    //Pour chaque club, si déjà pas concerné par une relegation, on ajoute
-                    candidates.Add(c);
-                }
-            }
-            return candidates;
-        }
-
         protected abstract List<Club> RankClubs(List<Club> clubs, List<Tiebreaker> tiebreakers, Dictionary<Club, List<PointDeduction>> pointsDeduction);
 
         /// <summary>
@@ -357,24 +319,6 @@ namespace tm
                 res[0].ranking = qualifications[1].ranking;
                 res[1].ranking = qualifications[0].ranking;
             }
-            return res;
-        }
-
-        public List<int> GetGroupsFromAssociation(Association association)
-        {
-            List<int> res = new List<int>();
-            for (int i = 0; i < _groupsNumber; i++)
-            {
-                if (_groups[i].Count > 0)
-                {
-                    Association admAtLeagueLevel = _groups[i][0].Country().GetAssociationLevel(_groups[i][0].Association(), _administrativeLevel);
-                    if (admAtLeagueLevel == association)
-                    {
-                        res.Add(i);
-                    }
-                }
-            }
-
             return res;
         }
 
