@@ -789,7 +789,7 @@ namespace tm
             {
                 int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
                 Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
-                List<GameDay> availableDatesAll = (association.localisation as Country).GetAvailableCalendarDates(Session.Instance.Game.kernel.LocalisationTournament(this).isStateAssociation, 2, leagueLevelsRepresented, true, false);
+                List<GameDay> availableDatesAll = association.GetAvailableCalendarDates(Session.Instance.Game.kernel.LocalisationTournament(this).isStateAssociation, 2, leagueLevelsRepresented, true, false);
                 List<GameDay> availableDates = new List<GameDay>();
                 int beginningCompetition = this._seasonBeginning.WeekNumber;
                 int beginningRounds = rounds.First().programmation.initialisation.WeekNumber;

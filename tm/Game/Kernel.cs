@@ -38,7 +38,7 @@ namespace tm
 
         public string Commentary(MatchEvent em)
         {
-            string brutCommentary = commentaries[Session.Instance.Random(0, commentaries.Count - 1)];
+            string brutCommentary = commentaries.Count > 0 ? commentaries[Session.Instance.Random(0, commentaries.Count - 1)] : "";
             brutCommentary = brutCommentary.Replace(" CLUB ", " " + em.club.shortName + " ");
             brutCommentary = brutCommentary.Replace(" JOUEUR ", " " + em.player.lastName + " ");
             return brutCommentary;

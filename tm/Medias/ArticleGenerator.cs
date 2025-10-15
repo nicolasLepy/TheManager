@@ -71,6 +71,12 @@ namespace tm
 
         }
 
+        private string PickArticle(List<string> pool)
+        {
+            string res = pool.Count > 0 ? pool[Session.Instance.Random(0, pool.Count)] : "";
+            return res;
+        }
+
         public string GenerateArticle(Match match)
         {
             string res = "";
@@ -87,17 +93,17 @@ namespace tm
                 //Large victoire
                 if ((team1 == match.home && score1 - score2 > 2) || (team1 == match.away && score2 - score1 > 2))
                 {
-                    res = _gl_f[Session.Instance.Random(0, _gl_f.Count)];
+                    res = PickArticle(_gl_f);
                 }
                 //Match nul
                 else if (score1 - score2 == 0)
                 {
-                    res = _n_f[Session.Instance.Random(0, _n_f.Count)];
+                    res = PickArticle(_n_f);
                 }
                 //Petite victoire
                 else
                 {
-                    res = _gs_f[Session.Instance.Random(0, _gs_f.Count)];
+                    res = PickArticle(_gs_f);
                 }
             }
             
@@ -107,17 +113,17 @@ namespace tm
                 //Large victoire
                 if ((team1 == match.home && score1 - score2 > 2) || (team1 == match.away && score2 - score1 > 2))
                 {
-                    res = _gl_o[Session.Instance.Random(0, _gl_o.Count)];
+                    res = PickArticle(_gl_o);
                 }
                 //Match nul
                 else if (score1 - score2 == 0)
                 {
-                    res = _n_o[Session.Instance.Random(0, _n_o.Count)];
+                    res = PickArticle(_n_o);
                 }
                 //Petite victoire
                 else
                 {
-                    res = _gs_o[Session.Instance.Random(0, _gs_o.Count)];
+                    res = PickArticle(_gs_o);
                 }
             }
             
@@ -127,17 +133,17 @@ namespace tm
                 //Large victoire
                 if ((team1 == match.home && score1 - score2 > 2) || (team1 == match.away && score2 - score1 > 2))
                 {
-                    res = _gl_e[Session.Instance.Random(0, _gl_e.Count)];
+                    res = PickArticle(_gl_e);
                 }
                 //Match nul
                 else if (score1 - score2 == 0)
                 {
-                    res = _n_e[Session.Instance.Random(0, _n_e.Count)];
+                    res = PickArticle(_n_e);
                 }
                 //Petite victoire
                 else
                 {
-                    res = _gs_e[Session.Instance.Random(0, _gs_e.Count)];
+                    res = PickArticle(_gs_e);
                 }
             }
 

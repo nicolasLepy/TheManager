@@ -51,7 +51,7 @@ namespace TheManager_GUI
                             TreeViewItem tv = new TreeViewItem();
                             tv.Header = cp.name;
 
-                            if((cp.rounds[0] as InactiveRound) == null)
+                            if((cp.rounds[0] as GroupInactiveRound) == null)
                             {
                                 foreach (Club club in cp.rounds[0].clubs)
                                 {

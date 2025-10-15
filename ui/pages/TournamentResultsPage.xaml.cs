@@ -53,7 +53,7 @@ namespace TheManager_GUI.pages
             foreach (KeyValuePair<Round, int> registeredRound in controler.GetRoundsRegistered())
             {
                 string name = registeredRound.Key.IsKnockOutRound() ? (registeredRound.Key.MatchesDayNumber() == 1 ? "" : (registeredRound.Value == 1 ? FindResource("str_first_leg").ToString() : FindResource("str_second_leg").ToString())) : String.Format(FindResource("str_matchweek").ToString(), (registeredRound.Value), (registeredRound.Value) == 1 ? FindResource("str_matchweek_numeral_first").ToString() : FindResource("str_matchweek_numeral_more").ToString());
-                bool isChampionship = registeredRound.Key as ChampionshipRound != null || (tournament.rounds.Count > 0 && tournament.rounds[0] == registeredRound.Key && tournament.isChampionship);
+                bool isChampionship = (tournament.rounds.Count > 0 && tournament.rounds[0] == registeredRound.Key && tournament.isChampionship);
                 if (!isChampionship)
                 {
                     name = String.Format("{0}{1}{2}", registeredRound.Key.name, name.Length > 0 ? " - " : "", name);

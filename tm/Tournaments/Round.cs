@@ -200,8 +200,6 @@ namespace tm
     }
 
     [DataContract(IsReference =true)]
-    [KnownType(typeof(ChampionshipRound))]
-    [System.Xml.Serialization.XmlInclude(typeof(ChampionshipRound))]
     [KnownType(typeof(KnockoutRound))]
     [System.Xml.Serialization.XmlInclude(typeof(KnockoutRound))]
     [KnownType(typeof(GroupsRound))]

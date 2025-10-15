@@ -130,11 +130,7 @@ namespace TheManager_GUI
                 int goalsAgainst = archive.Value.rounds[0].GoalsAgainst(club);
                 int goalsAverage = archive.Value.rounds[0].Difference(club);
                 //If the league is active (round 0 is a championship round, not inactive)
-                if ((archive.Value.rounds[0] as ChampionshipRound) != null)
-                {
-                    ranking = (archive.Value.rounds[0] as ChampionshipRound).Ranking().IndexOf(club) + 1;
-                }
-                else if ((archive.Value.rounds[0] as GroupsRound) != null)
+                if ((archive.Value.rounds[0] as GroupsRound) != null)
                 {
                     GroupsRound rnd = (archive.Value.rounds[0] as GroupsRound);
                     for (int j = 0; j < rnd.groupsCount; j++)

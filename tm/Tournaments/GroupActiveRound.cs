@@ -95,7 +95,7 @@ namespace tm.Tournaments
                     randomDrawing = new RandomDrawingGeographic(this);
                     break;
                 case RandomDrawingMethod.Administrative:
-                    randomDrawing = new RandomDrawingAdministrative(this);
+                    throw new Exception("RandomDrawingMethod.Administrative is unauthorized");
                     break;
                 case RandomDrawingMethod.Level:
                 default:

@@ -11,6 +11,7 @@ using tm;
 using tm.Comparators;
 using TheManager_GUI.ViewMisc;
 using TheManager_GUI.Views;
+using tm.Tournaments;
 
 namespace TheManager_GUI
 {
@@ -588,7 +589,7 @@ namespace TheManager_GUI
 
                 Round t = arc.Value.rounds[arc.Value.rounds.Count - 1];
                 //If the final round was not inactive, we can make the palmares
-                if ((t as InactiveRound) == null)
+                if ((t as GroupInactiveRound) == null)
                 {
                     int year = arc.Key;
                     StackPanel sp = new StackPanel();

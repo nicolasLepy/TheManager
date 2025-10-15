@@ -65,7 +65,6 @@ Some realism issues : Small clubs at beginning can't stabilize at professionnal 
 
 ## Tools and extensions
 
-*   Visual Studio
 *   .NET 6.0
 *	Microsoft.Extensions.Logging.Debug
 *   WPF

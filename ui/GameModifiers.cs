@@ -39,20 +39,6 @@ namespace TheManager_GUI
                 }
                 Console.WriteLine("========================");
             }
-            int i = 0;
-            ClubComparator comparator = new ClubComparator(ClubAttribute.CURRENT_RANKING, false);
-            foreach (List<Club> clubs in fr.GetAdministrativeRetrogradations())
-            {
-                Console.WriteLine("============" + leagues[i].name + "==========");
-                foreach (Club c in clubs)
-                {
-                    Round clubC = (from Tournament t in leagues where t.rounds.Count > 0 && t.rounds[0].clubs.Contains(c) select t.rounds[0]).FirstOrDefault();
-                    string adm = (leagues[i].rounds[0] as GroupsRound != null && (leagues[i].rounds[0] as GroupsRound).administrativeLevel > 0) ? "[" + fr.GetAssociationLevel(c.Association(), (leagues[i].rounds[0] as GroupsRound).administrativeLevel).name + "] " : "";
-                    Console.WriteLine(adm + c.Championship.name + " - " + comparator.GetRanking(clubC, c) + ". " + c.name);
-                }
-                i++;
-            }
-
         }
 
         public void RemovingPoints()
@@ -75,7 +61,7 @@ namespace TheManager_GUI
             {
                 foreach (Round r in t.rounds)
                 {
-                    if ((r as ChampionshipRound) != null || (r as GroupsRound) != null)
+                    if ((r as GroupsRound) != null)
                     {
                         r.rules.Add(Rule.BottomTeamNotEligibleForRepechage);
                     }
@@ -96,14 +82,15 @@ namespace TheManager_GUI
             };
 
 
-            foreach (Club c in Session.Instance.Game.kernel.Clubs)
+            //Temporary commented
+            /*foreach (Club c in Session.Instance.Game.kernel.Clubs)
             {
                 if (retrogradations.ContainsKey(c.name))
                 {
                     Console.WriteLine("Relegue " + c.name);
                     fr.AddAdministrativeRetrogradation(c, fr.League(retrogradations[c.name]));
                 }
-            }
+            }*/
         }
 
         public void CheckDuplicates()

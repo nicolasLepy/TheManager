@@ -1788,13 +1788,13 @@ namespace tm
             }
         }
 
-        public void GenerateRegionalCup(Country c, Association association, int level, bool reservesAllowed)
+        public void GenerateRegionalCup(Association association, int level, bool reservesAllowed)
         {
             Utils.Debug(string.Format("[{0}] New regional Cup", association.name));
             int admTeams = 0;
             bool regionalLeagueExists = false;
             bool regionalCupExist = false; //TODO
-            foreach(Tournament t in c.Leagues())
+            foreach(Tournament t in association.Leagues())
             {
                 GroupsRound groupRound = t.GetLastChampionshipRound() as GroupsRound;
                 if (groupRound != null && groupRound.administrativeLevel == level)
@@ -1808,43 +1808,40 @@ namespace tm
             }
             if(regionalLeagueExists && admTeams > 1 && !regionalCupExist)
             {
-                CreateNationalCup(c, association, false, false, reservesAllowed);
+                CreateNationalCup(association, false, false, reservesAllowed);
             }
             foreach (Association ad in association.associations)
             {
-                GenerateRegionalCup(c, ad, level + 1, reservesAllowed);
+                GenerateRegionalCup(ad, level + 1, reservesAllowed);
             }
         }
 
         public void GenerateNationalCup()
         {
-            foreach(Continent ct in Session.Instance.Game.kernel.world.continents)
+            foreach(Association a in Session.Instance.Game.kernel.GetAllAssociations())
             {
-                foreach(Country c in ct.countries)
+                bool noCup = true;
+                int totalTeams = 0;
+                foreach (Tournament t in a.Tournaments())
                 {
-                    bool noCup = true;
-                    int totalTeams = 0;
-                    foreach (Tournament t in c.Tournaments())
+                    if (!t.isChampionship)
                     {
-                        if (!t.isChampionship)
-                        {
-                            noCup = false;
-                        }
-                        else
-                        {
-                            totalTeams += t.rounds[0].CountWithoutReserves();
-                        }
+                        noCup = false;
                     }
-                    if (noCup && c.Tournaments().Count > 0 && totalTeams > 1)
+                    else
                     {
-                        CreateNationalCup(c, null, false, true, false);
+                        totalTeams += t.rounds[0].CountWithoutReserves();
                     }
-                    if(c.Tournaments().Count > 0 && totalTeams > 1)
+                }
+                if (noCup && a.Tournaments().Count > 0 && totalTeams > 1)
+                {
+                    CreateNationalCup(a, false, true, false);
+                }
+                if(a.Tournaments().Count > 0 && totalTeams > 1)
+                {
+                    foreach (Association ad in a.associations)
                     {
-                        foreach (Association ad in c.associations)
-                        {
-                            //GenerateRegionalCup(c, ad, 1, false);
-                        }
+                        //GenerateRegionalCup(c, ad, 1, false);
                     }
                 }
             }
@@ -1935,32 +1932,53 @@ namespace tm
             return total;
         }
 
+        private string NameOfRound(int teams)
+        {
+            string res = String.Format("Round of {0}", teams);
+            if(teams == 2)
+            {
+                res = "Final";
+            }
+            else if(teams == 4)
+            {
+                res = "Semifinals";
+            }
+            else if(teams == 8)
+            {
+                res = "Quarterfinals";
+            }
+            return res;
+        }
+
+        private string NameOfCup(Association association)
+        {
+            string tournamentName = association.name;
+            string acr = "de ";
+            if (new char[] { 'E', 'A', 'I', 'O', 'U' }.Contains(tournamentName[0]))
+            {
+                acr = "d'";
+            }
+            string cupName = "Coupe " + acr + tournamentName;
+            return cupName;
+        }
+
         /// <summary>
         /// Create a national/regional cup
         /// </summary>
-        /// <param name="country">Create cup for this country</param>
-        /// <param name="association">Only teams of this association are allowed to enter</param>
+        /// <param name="association">Create cup for this association</param>
         /// <param name="allowTeamsOfSubAdministrativesDivision">Teams playing on a child association can enter</param>
         /// <param name="midweekGames">TODO: Not used yet. Games are played wednesday</param>
         /// <param name="reservesAllowed">Reserves allowed to enter</param>
-        public void CreateNationalCup(Country c, Association association, bool allowTeamsOfSubAdministrativesDivision, bool midweekGames, bool reservesAllowed)
+        public void CreateNationalCup(Association association, bool allowTeamsOfSubAdministrativesDivision, bool midweekGames, bool reservesAllowed)
         {
             Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
             List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
             int totalTeams = 0;
-            int associationLevel = c.GetLevelOfAssociation(association);
-            int currentAdministrativeLevel = 0;
-            foreach (Tournament t in c.Tournaments())
+            foreach (Tournament t in association.Tournaments())
             {
                 GroupsRound roundChampionship = (t.GetLastChampionshipRound() as GroupsRound);
-                if(roundChampionship != null)
-                {
-                    currentAdministrativeLevel = roundChampionship.administrativeLevel;
-                }
-                bool associationGoodLevel = association == null || (associationLevel == currentAdministrativeLevel || (allowTeamsOfSubAdministrativesDivision && associationLevel < currentAdministrativeLevel));
-
-
-                if (t.isChampionship && associationGoodLevel)
+                //TODO: Aller chercher les équipes en dessous
+                if (t.isChampionship)
                 {
                     if(!teamsByLevel.ContainsKey(t.level))
                     {
@@ -1973,21 +1991,15 @@ namespace tm
                 }
             }
 
-            List<GameDay> availableWeeks = c.GetAvailableCalendarDates(association == null, 2, teamsByLevel.Keys.ToList(), true, false);
+            List<GameDay> availableWeeks = association.GetAvailableCalendarDates(association == null, 2, teamsByLevel.Keys.ToList(), true, false);
             for(int week=25; week<(association == null ? 40 : 48); week++) //52
             {
                 availableWeeks.RemoveAll(s => s.WeekNumber == week);
             }
 
-            string tournamentName = association == null ? c.Name() : association.name;
-            string acr = "de ";
-            if(tournamentName[0] == 'E' || tournamentName[0] == 'A' || tournamentName[0] == 'I' || tournamentName[0] == 'O' || tournamentName[0] == 'U')
-            {
-                acr = "d'";
-            }
-            string cupName = "Coupe " + acr + tournamentName;
-            int cupLevel = association != null ? 3 : 1; //c.Cups().Count + 1;
-            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(c.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null);
+            string cupName = NameOfCup(association);
+            int cupLevel = association.Cups().Count + 1;
+            Tournament nationalCup = new Tournament(_kernel.NextIdTournament(), cupName, "",new GameDay(association.resetWeek,false,0,0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null);
 
             int roundCount = 0;
             int j = 1;
@@ -2039,21 +2051,9 @@ namespace tm
                 nationalCup.rounds.Add(round);
                 indexRound++;
             }
-            while (j != 1) 
+            while (j != 1)
             {
-                string name = (j/2) + "èmes de finale";
-                if(j == 8)
-                {
-                    name = "Quarts de finale";
-                }
-                else if (j == 4)
-                {
-                    name = "Demis-finale";
-                }
-                else if (j == 2)
-                {
-                    name = "Finale";
-                }
+                string name = NameOfRound(j);
 
                 Hour hour = new Hour() { Hours = 20, Minutes = 0 };
                 int weekIndex = (availableWeeks.Count / roundCount) * indexRound;
@@ -2083,7 +2083,7 @@ namespace tm
                 j /= 2;
             }
 
-            int maxPrize = c.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? c.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
+            int maxPrize = association.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? association.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
 
             for(int i = roundCount-1; i >= 0; i--)
             {
@@ -2092,7 +2092,7 @@ namespace tm
             }
 
             nationalCup.InitializeQualificationsNextYearsLists();
-            c.Tournaments().Add(nationalCup);
+            association.Tournaments().Add(nationalCup);
         }
 
         public void PostProcess()

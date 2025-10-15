@@ -678,13 +678,6 @@ namespace tm
             return ranking;
         }
 
-        public static List<Club> GetFullRankingInversed(ChampionshipRound round, Association association)
-        {
-            List<Club> ranking = round.Ranking();
-            ranking.Reverse();
-            return ranking;
-        }
-
         public static List<Club> GetFullRanking(GroupsRound round)
         {
             List<Club> ranking = new List<Club>();

@@ -136,7 +136,7 @@ namespace TheManager_GUI.Views
                     spHost.Children.Add(ViewUtils.CreateTextBlock(String.Format("{0} : {1} points ({2})", c.name, -pointsDeduction, reasons), StyleDefinition.styleTextPlain, (int)(14 * sizeMultiplier), -1));
                 }
             }
-            Country ctry = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament).ClosestStateAssociation()?.localisation as Country;
+            Association ctry = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament).ClosestStateAssociation();
             if(ctry != null)
             {
                 foreach(Club c in round.clubs)

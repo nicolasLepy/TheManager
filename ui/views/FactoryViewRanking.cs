@@ -10,10 +10,6 @@ namespace TheManager_GUI.Views
         {
             View res = null;
 
-            if (round as ChampionshipRound != null)
-            {
-                res = new ViewRankingChampionship(round as ChampionshipRound, sizeMultiplier, focusOnTeam, team, reduced, rankingType);
-            }
             if (round as KnockoutRound != null)
             {
                 res = new ViewRankingKnockout(round as KnockoutRound, sizeMultiplier+0.2);

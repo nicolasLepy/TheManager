@@ -634,10 +634,11 @@ namespace TheManager_GUI
                 if ((t as GroupInactiveRound) == null)
                 {
                     List<Club> finalPhaseClubs = baseTournament.isChampionship ? arc.Value.GetFinalPhasesClubs() : new List<Club>();
-                    ChampionshipRound lastChampionshipRound = arc.Value.GetLastChampionshipRound() as ChampionshipRound;
+                    GroupsRound lastChampionshipRound = arc.Value.GetLastChampionshipRound() as GroupsRound;
+                    List<Club> fullRanking = Utils.GetFullRanking(lastChampionshipRound);
                     Club winner = arc.Value.Winner();
-                    Club runnerup = baseTournament.isChampionship ? (finalPhaseClubs.Count > 1 ? finalPhaseClubs[1] : (lastChampionshipRound.Ranking().Count > 1 ? lastChampionshipRound.Ranking()[1] : null)) : arc.Value.rounds.Last().matches.Last().Looser;
-                    Club third = baseTournament.isChampionship ? (finalPhaseClubs.Count > 2 ? finalPhaseClubs[2] : (lastChampionshipRound.Ranking().Count > 2 ? lastChampionshipRound.Ranking()[2] : null)) : null;
+                    Club runnerup = baseTournament.isChampionship ? (finalPhaseClubs.Count > 1 ? finalPhaseClubs[1] : (fullRanking.Count > 1 ? fullRanking[1] : null)) : arc.Value.rounds.Last().matches.Last().Looser;
+                    Club third = baseTournament.isChampionship ? (finalPhaseClubs.Count > 2 ? finalPhaseClubs[2] : (fullRanking.Count > 2 ? fullRanking[2] : null)) : null;
 
 
                     int year = arc.Key;

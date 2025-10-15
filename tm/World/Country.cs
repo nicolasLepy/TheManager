@@ -40,9 +40,6 @@ namespace tm
         private List<Association> _associations;
         //TODELETE
         [DataMember]
-        private Dictionary<Club, Tournament> _administrativeRetrogradations;
-        //TODELETE
-        [DataMember]
         private List<float[]> _gamesTimesWeekend;
         //TODELETE
         [DataMember]
@@ -99,7 +96,6 @@ namespace tm
             _stadiums = new List<Stadium>();
             _tournaments = new List<Tournament>();
             _associations = new List<Association>();
-            _administrativeRetrogradations = new Dictionary<Club, Tournament>();
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
         }
@@ -115,7 +111,6 @@ namespace tm
             _tournaments = new List<Tournament>();
             _shapeNumber = shapeNumber;
             _associations = new List<Association>();
-            _administrativeRetrogradations = new Dictionary<Club, Tournament>();
             _gamesTimesWeekend = new List<float[]>();
             _gamesTimesWeekdays = new List<float[]>();
             _resetWeek = resetWeek;
@@ -291,72 +286,6 @@ namespace tm
             return League(res);
         }
 
-        //Done
-        public Tournament GetLastRegionalLeague(int level)
-        {
-            int res = -1;
-            foreach (Tournament t in Tournaments())
-            {
-                GroupsRound gr = t.rounds[0] as GroupsRound;
-                if (gr != null && gr.RandomDrawingMethod == RandomDrawingMethod.Administrative && gr.administrativeLevel == level && t.level > res)
-                {
-                    res = t.level;
-                }
-            }
-
-            return League(res);
-        }
-
-        //Done
-        public Tournament FirstDivisionChampionship()
-        {
-            Tournament res = null;
-            foreach (Tournament t in _tournaments)
-            {
-                if (t.isChampionship && t.level == 1)
-                {
-                    res = t;
-                }
-            }
-            return res;
-        }
-
-        //Done
-        public Tournament GetHigherRegionalTournament(int administrativeLevel)
-        {
-            Tournament higherRegionalTournament = null;
-            foreach (Tournament t in Tournaments())
-            {
-                if (t.isChampionship && (t.rounds[0] as GroupsRound) != null && (t.rounds[0] as GroupsRound).administrativeLevel == administrativeLevel && (higherRegionalTournament == null || t.level < higherRegionalTournament.level))
-                {
-                    higherRegionalTournament = t;
-                }
-            }
-            return higherRegionalTournament;
-        }
-
-        //Done
-        public bool LeagueSystemWithReserves()
-        {
-            bool res = false;
-            for (int i = 0; i < _tournaments.Count && !res; i++)
-            {
-                Tournament t = _tournaments[i];
-                for (int j = 0; j < t.rounds.Count && !res; j++)
-                {
-                    Round r = t.rounds[j];
-                    foreach (Club c in r.clubs)
-                    {
-                        if ((c as ReserveClub) != null)
-                        {
-                            res = true;
-                        }
-                    }
-                }
-            }
-            return res;
-        }
-
         public override string ToString()
         {
             return _name;
@@ -366,20 +295,6 @@ namespace tm
         {
             return _name;
         }
-
-        public int GetLastLeagueLevelWithoutReserves()
-        {
-            int level = -1;
-            foreach (Tournament t in Tournaments())
-            {
-                if (t.isChampionship && t.rounds[0].rules.Contains(Rule.ReservesCannotBePromoted) && t.level > level)
-                {
-                    level = t.level;
-                }
-            }
-            return level;
-        }
-
 
         public Continent Continent
         {
@@ -405,115 +320,11 @@ namespace tm
             return GetCountryAssociation().parent;
         }
 
-        /// <summary>
-        /// Get list of available dates on a calendar
-        /// </summary>
-        /// <param name="withContinentalDates">Remove date taken by continental dates</param>
-        /// <param name="removeDateOfCupUntilLevel">Ignore dates of cup below specified level</param>
-        /// <returns></returns>
-        public List<GameDay> GetAvailableCalendarDates(bool withContinentalDates, int maxCupLevel, List<int> leaguesLevel, bool weekdays, bool weekend)
-        {
-            List<GameDay> availableDates = new List<GameDay>();
-            //Continent ct = GetContinent();
-            Association continentalAssociation = GetCountryAssociation().parent;
-            Tournament firstDivision = League(1);
-            int startWeek = Utils.Modulo(resetWeek + 2, 52);
-            int endWeek = firstDivision != null ? (firstDivision.rounds.Last().programmation.end.WeekNumber + 1) : Utils.Modulo(resetWeek - 15, 52);
-            if (endWeek < startWeek)
-            {
-                endWeek = 52 + endWeek;
-            }
-            for (int i = startWeek; i < endWeek; i++)
-            {
-                int week = i % 52;
-                availableDates.Add(new GameDay(week, true, 0, 0));
-                availableDates.Add(new GameDay(week, false, 0, 0));
-            }
 
-            List<Tournament> tournaments = new List<Tournament>();
-            if (withContinentalDates)
-            {
-                foreach (Tournament t in continentalAssociation.Tournaments())
-                {
-                    if (!t.isChampionship && t.periodicity == 1)
-                    {
-                        tournaments.Add(t);
-                    }
-                }
-            }
-            foreach (Tournament t in this.Tournaments())
-            {
-                if (t.periodicity == 1 && ((t.isChampionship && leaguesLevel.Contains(t.level)) || t.level <= maxCupLevel))
-                {
-                    tournaments.Add(t);
-                }
-            }
-            foreach (Tournament t in tournaments)
-            {
-                foreach (Round r in t.rounds)
-                {
-                    foreach (GameDay gd in r.programmation.gamesDays)
-                    {
-                        if ((gd.MidWeekGame && !weekdays) || (!gd.MidWeekGame && !weekend))
-                        {
-                            availableDates.RemoveAll(s => s.WeekNumber == gd.WeekNumber && s.MidWeekGame == gd.MidWeekGame);
-                        }
-                    }
-                }
-            }
-
-            availableDates.RemoveAll(s => s.WeekNumber == 51);
-            availableDates.RemoveAll(s => s.WeekNumber == 52); //A mid-week game on the last year week lead to the next year
-            availableDates.RemoveAll(s => s.WeekNumber == 0); //Bug 2027
-
-            return availableDates;
-        }
-
-        /// <summary>
-        /// Get the bottom league level that a team of an association can reach
-        /// </summary>
-        /// <param name="division"></param>
-        /// <returns>League level (not an index !, start at 1) </returns>
-        public int MaxLeagueLevelWithAssociation(Association division)
-        {
-            List<Tournament> leagues = Leagues();
-            int i = GetLastNationalLeague().level;
-            bool leagueWithoutTeams = false;
-            int associationLevel = 0;
-            while(!leagueWithoutTeams && i < leagues.Count)
-            {
-                Round round = leagues[i].rounds[0];
-                GroupsRound groupRound = round as GroupsRound;
-                if(groupRound != null)
-                {
-                    associationLevel = groupRound.administrativeLevel;
-                }
-                Association divisionLevel = GetAssociationLevel(division, associationLevel);
-
-                leagueWithoutTeams = true;
-                //Division level can be null. Ex : Corse have only 1 association level unlike other associations
-                if(divisionLevel != null)
-                {
-                    foreach (Club c in round.clubs)
-                    {
-                        if (divisionLevel.ContainsAssociation(c.Association()))
-                        {
-                            leagueWithoutTeams = false;
-                        }
-                    }
-                }
-                if(!leagueWithoutTeams)
-                {
-                    i++;
-                }
-            }
-            return i;
-        }
-
-        /// <summary>
+        /*/// <summary>
         /// Preprocess administrative retrogradation by appliying changes to reserves due to retrogradation of fannion teams
         /// </summary>
-        public Dictionary<Club, Tournament> PreprocessAdministrativeRetrogradation(Club club, Tournament retrogradationTournament, List<Tournament> leagues, List<Club>[] clubsByLeagues, List<int> administrativeLevels, bool bankruptcy)
+        public Dictionary<Club, Tournament> PreprocessAdministrativeRetrogradation(Club club, Tournament retrogradationTournament, List<Tournament> leagues, List<Club>[] clubsByLeagues, bool bankruptcy)
         {
             KeyValuePair<Club, Tournament> retrogradation = new KeyValuePair<Club, Tournament>(club, retrogradationTournament);
             Tournament target = retrogradationTournament;
@@ -588,89 +399,9 @@ namespace tm
             }
 
             return newRetrogradations;
-        }
+        }*/
 
-        public void AddAdministrativeRetrogradation(Club club, Tournament target)
-        {
-            if(_administrativeRetrogradations.ContainsKey(club))
-            {
-                _administrativeRetrogradations.Remove(club);
-            }
-            _administrativeRetrogradations.Add(club, target);
-            ClearAdministrativeRetrogradationsCache();
-            _cacheAdministrativeRetrogradationsChanges = null;
-        }
-
-        public int CountAdministrativeRetrogradations()
-        {
-            return _administrativeRetrogradations.Count;
-        }
-
-        public Dictionary<Club, Tournament> GetRetrogradations()
-        {
-            return _administrativeRetrogradations;
-        }
-
-        public void ClearAdministrativeRetrogradationsCache()
-        {
-            _cacheAdministrativeRetrogradationsChanges = null;
-        }
-
-
-        /// <summary>
-        /// Just before resetting leagues, update NextYearQualified by applying administrative retrogradations
-        /// </summary>
-        public void ApplyAdministrativeRetrogradations()
-        {
-            Console.WriteLine("[ApplyAdministrativeRetrogradations] " + this.Name());
-
-            List<Tournament> leagues = Leagues();
-            List<Club>[] clubsByLeagues = GetAdministrativeRetrogradations();
-
-            for (int i = 0; i < leagues.Count; i++)
-            {
-                leagues[i].nextYearQualified[0].Clear();
-                leagues[i].nextYearQualified[0].AddRange(clubsByLeagues[i]);
-            }
-
-            _administrativeRetrogradations.Clear();
-            ClearAdministrativeRetrogradationsCache();
-        }
-
-        /// <summary>
-        /// Rescrue the best possible club from a league to the upper league.
-        /// </summary>
-        /// <param name="leagueSystem">League system</param>
-        /// <param name="candidates">List of club candidates to be rescrued</param>
-        /// <param name="indexLevelRepechage">League index where a club is rescrued</param>
-        /// <param name="round">Source round where club is rescrued</param>
-        /// <param name="clubsCantBeSaved">List of club who can't be rescrued</param>
-        private void RescrueTeam(List<Club>[] leagueSystem, List<Club> candidates, int indexLevelRepechage, Round round, List<Club> clubsCantBeSaved)
-        {
-            bool found = false;
-            int j = 0;
-            Console.WriteLine(candidates.Count + " candidates");
-            while (!found && j < candidates.Count)
-            {
-                Club candidate = candidates[j];
-                ReserveClub candidateAsReserve = candidate as ReserveClub;
-                //TODO: Rules check (doublon ?)
-                if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !UtilsTournaments.ContainsTeamOfClub(leagueSystem[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
-                {
-                    found = true;
-                    leagueSystem[indexLevelRepechage].Remove(candidate);
-                    leagueSystem[indexLevelRepechage - 1].Add(candidate);
-                    Console.WriteLine("[Repêchage] " + candidate.name + " (" + Leagues()[indexLevelRepechage].name + " -> " + Leagues()[indexLevelRepechage - 1].name + ")");
-                }
-                else
-                {
-                    Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + Leagues()[indexLevelRepechage].name + ")");
-                }
-                j++;
-            }
-        }
-
-        public List<Club>[] GetAdministrativeRetrogradations()
+        /*public List<Club>[] GetAdministrativeRetrogradations()
         {
             if (_cacheAdministrativeRetrogradationsChanges != null)
             {
@@ -800,27 +531,27 @@ namespace tm
                             Console.WriteLine("[Remonte un tour régional] " + GetAssociationLevel(club.Association(), administrativeLevel).name);
                         }
                         RescrueTeam(clubsByLeagues, candidates, i, round, clubsCantBeSaved);
-                        /*
-                        int j = 0;
-                        bool found = false;
-                        while (!found && j < candidates.Count)
-                        {
-                            Club candidate = candidates[j];
-                            ReserveClub candidateAsReserve = candidate as ReserveClub;
-                            //TODO: Rules check (doublon ?)
-                            if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !ContainsTeamOfClub(clubsByLeagues[i - 1], candidateAsReserve.FannionClub))))
-                            {
-                                found = true;
-                                clubsByLeagues[i].Remove(candidate);
-                                clubsByLeagues[i - 1].Add(candidate);
-                                Console.WriteLine("[Repêchage] " + candidate.name + " (" + leagues[i].name + " -> " + leagues[i - 1].name + ")");
-                            }
-                            else
-                            {
-                                Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + leagues[i].name + ")");
-                            }
-                            j++;
-                        }*/
+                        
+                        //int j = 0;
+                        //bool found = false;
+                        //while (!found && j < candidates.Count)
+                        //{
+                        //    Club candidate = candidates[j];
+                        //    ReserveClub candidateAsReserve = candidate as ReserveClub;
+                        //    //TODO: Rules check (doublon ?)
+                        //    if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !ContainsTeamOfClub(clubsByLeagues[i - 1], candidateAsReserve.FannionClub))))
+                        //    {
+                        //        found = true;
+                        //        clubsByLeagues[i].Remove(candidate);
+                        //        clubsByLeagues[i - 1].Add(candidate);
+                        //        Console.WriteLine("[Repêchage] " + candidate.name + " (" + leagues[i].name + " -> " + leagues[i - 1].name + ")");
+                        //    }
+                        //    else
+                        //    {
+                        //        Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + leagues[i].name + ")");
+                        //    }
+                        //    j++;
+                        //}
                     }
                 }
             }
@@ -856,26 +587,26 @@ namespace tm
                                     List <Club> candidates = round.administrativeLevel == 0 ? clubsByLeagues[indexLevelRepechage] : UtilsTournaments.FilterAssociation(clubsByLeagues[indexLevelRepechage], association);
                                     RescrueTeam(clubsByLeagues, candidates, indexLevelRepechage, leagues[indexLevelRepechage].rounds[0], clubsCantBeSaved);
                                     Console.WriteLine(candidates.Count + " candidates");
-                                    /*bool found = false;
-                                    int j = 0;
-                                    while (!found && j < candidates.Count)
-                                    {
-                                        Club candidate = candidates[j];
-                                        ReserveClub candidateAsReserve = candidate as ReserveClub;
-                                        //TODO: Rules check (doublon ?)
-                                        if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !ContainsTeamOfClub(clubsByLeagues[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
-                                        {
-                                            found = true;
-                                            clubsByLeagues[indexLevelRepechage].Remove(candidate);
-                                            clubsByLeagues[indexLevelRepechage - 1].Add(candidate);
-                                            Console.WriteLine("[Repêchage] " + candidate.name + " (" + leagues[indexLevelRepechage].name + " -> " + leagues[indexLevelRepechage - 1].name + ")");
-                                        }
-                                        else
-                                        {
-                                            Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + leagues[indexLevelRepechage].name + ")");
-                                        }
-                                        j++;
-                                    }*/
+                                    //bool found = false;
+                                    //int j = 0;
+                                    //while (!found && j < candidates.Count)
+                                    //{
+                                    //    Club candidate = candidates[j];
+                                    //    ReserveClub candidateAsReserve = candidate as ReserveClub;
+                                    //    //TODO: Rules check (doublon ?)
+                                    //    if (!clubsCantBeSaved.Contains(candidate) && ((candidateAsReserve == null) || (!round.rules.Contains(Rule.ReservesCannotBePromoted) && !ContainsTeamOfClub(clubsByLeagues[indexLevelRepechage - 1], candidateAsReserve.FannionClub))))
+                                    //    {
+                                    //        found = true;
+                                    //        clubsByLeagues[indexLevelRepechage].Remove(candidate);
+                                    //        clubsByLeagues[indexLevelRepechage - 1].Add(candidate);
+                                    //        Console.WriteLine("[Repêchage] " + candidate.name + " (" + leagues[indexLevelRepechage].name + " -> " + leagues[indexLevelRepechage - 1].name + ")");
+                                    //    }
+                                    //   else
+                                    //    {
+                                    //        Console.WriteLine("[Impossible de repêcher] " + candidate.name + "(" + leagues[indexLevelRepechage].name + ")");
+                                    //    }
+                                    //    j++;
+                                    //}
                                 }
                             }
                         }
@@ -885,84 +616,7 @@ namespace tm
 
             _cacheAdministrativeRetrogradationsChanges = clubsByLeagues;
             return clubsByLeagues;
-        }
+        }*/
 
-        /// <summary>
-        /// Never used
-        /// Switch clubs between two leagues before the beginning of the season. Modify NextYearQualified. Used when checking administratives retrogradations.
-        /// </summary>
-        public void SwitchClubsOfLeagueForNextYear(Club c1, Club c2)
-        {
-            List<Tournament> leagues = this.Leagues();
-            Tournament tournament1 = null;
-            Tournament tournament2 = null;
-            foreach(Tournament league in leagues)
-            {
-                if(league.nextYearQualified.Length > 0 && league.nextYearQualified[0].Contains(c1))
-                {
-                    tournament1 = league;
-                }
-                if (league.nextYearQualified.Length > 0 && league.nextYearQualified[0].Contains(c2))
-                {
-                    tournament2 = league;
-                }
-            }
-            tournament1.nextYearQualified[0].Add(c2);
-            tournament2.nextYearQualified[0].Add(c1);
-            tournament1.nextYearQualified[0].Remove(c2);
-            tournament2.nextYearQualified[0].Remove(c1);
-        }
-
-        public List<Club>[] GetCurrentLeagueSystem()
-        {
-            List<Tournament> leagues = Leagues();
-            List<Club>[] res = new List<Club>[leagues.Count];
-            for (int i = 0; i < leagues.Count; i++)
-            {
-                res[i] = new List<Club>(leagues[i].rounds[0].clubs);
-            }
-            return res;
-        }
-
-        /// <summary>
-        /// Check if a league system is conform compared to current league systel
-        /// </summary>
-        /// <param name="clubsByLeagues">The league system</param>
-        /// <returns>True it the league system is conform, False otherwise</returns>
-        public bool CheckLeagueConformity(List<Club>[] clubsByLeagues)
-        {
-            bool res = true;
-            List<Tournament> leagues = Leagues();
-            for (int i = 0; i < leagues.Count; i++)
-            {
-                List<Club> thisYear = leagues[i].rounds[0].clubs;
-                List<Club> nextYear = clubsByLeagues[i];
-                GroupsRound leagueGroupRound = leagues[i].rounds[0] as GroupsRound;
-                int administrativeLevel = leagueGroupRound != null ? leagueGroupRound.administrativeLevel : 0;
-                if (administrativeLevel > 0)
-                {
-		            foreach(Association association in GetAssociationsLevel(administrativeLevel))
-                    {
-                        int maxLevelPossible = MaxLeagueLevelWithAssociation(association) - 1;
-                        List<Club> thisYearAssociation = UtilsTournaments.FilterAssociation(thisYear, association);
-                        List<Club> nextYearAssociation = UtilsTournaments.FilterAssociation(nextYear, association);
-                        if(thisYearAssociation.Count != nextYearAssociation.Count && i != maxLevelPossible)
-                        {
-                            Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + " (" + association.name + ") have a different number of teams");
-                            res = false;
-                        }
-                    }
-                }
-                else
-                {
-                    if(thisYear.Count != nextYear.Count)
-                    {
-                        Console.WriteLine("[CheckLeagueConformity] Error : " + leagues[i].name + "have a different number of teams");
-                        res = false;
-                    }
-                }
-            }
-            return res;
-        }
     }
 }
