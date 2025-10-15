@@ -2104,10 +2104,9 @@ namespace tm
 
             List<Qualification> qualificationsToAdd = new List<Qualification>(round.qualifications);
 
-            GroupsRound cRound = round as GroupsRound;
-            if (cRound != null && cRound.groupsCount == 1)
+            if (round.groupsCount == 1)
             {
-                qualificationsToAdd = cRound.AdaptQualificationsToRanking(cRound.qualifications, cRound.clubs.Count);
+                qualificationsToAdd = round.AdaptQualificationsToRanking(round.qualifications, round.clubs.Count);
             }
 
             foreach (Qualification q in qualificationsToAdd)
@@ -2120,9 +2119,21 @@ namespace tm
                 {
                     for(int g = 0; g < groupCount; g++)
                     {
-                        int newRanking = ((q.ranking-1) * groupCount + g)+1;
-                        Qualification nq = new Qualification(newRanking, q.roundId, q.target, q.isNextYear, 0);
-                        newRound.qualifications.Add(nq);
+                        bool valid = q.qualifies == 0 || (q.qualifies < 0 && g < -q.qualifies) || (q.qualifies > 0 && g >= groupCount-q.qualifies);
+                        if(valid)
+                        {
+                            int newRanking;
+                            if (q.ranking > 0)
+                            {
+                                newRanking = ((q.ranking - 1) * groupCount + g) + 1;
+                            }
+                            else
+                            {
+                                newRanking = ((q.ranking + 1) * groupCount) - g - 1;
+                            }
+                            Qualification nq = new Qualification(newRanking, q.roundId, q.target, q.isNextYear, 0);
+                            newRound.qualifications.Add(nq);
+                        }
                     }
                 }
             }

@@ -309,7 +309,8 @@ namespace tests.tm
         [TestMethod]
         public void TestLeagueStructureConservedFranceExtended()
         {
-            InitGame("ui", "database_france_nat", new List<string>() { "France"});
+            bool disabled = false;
+            InitGame("ui", "database_france_nat", disabled ? new List<string>() { } : new List<string>() { "France"});
             for (int y = 0; y < TEST_YEARS; y++)
             {
                 Country fr = Session.Instance.Game.kernel.String2Country("France");
@@ -366,13 +367,16 @@ namespace tests.tm
                 Assert.AreEqual(t3.rounds[0].clubs.Count, 18);
 
                 Tournament t4 = aFr.League(4);
+                Assert.AreEqual(t4.rounds[0].clubs.Count, 64);
                 GroupsRound r40 = t4.rounds[0] as GroupsRound;
-                Assert.AreEqual(r40.groupsCount, 4);
-                Assert.AreEqual(r40.Ranking(0).Count, 16);
-                Assert.AreEqual(r40.Ranking(1).Count, 16);
-                Assert.AreEqual(r40.Ranking(2).Count, 16);
-                Assert.AreEqual(r40.Ranking(3).Count, 16);
-
+                if(!disabled)
+                {
+                    Assert.AreEqual(r40.groupsCount, 4);
+                    Assert.AreEqual(r40.Ranking(0).Count, 16);
+                    Assert.AreEqual(r40.Ranking(1).Count, 16);
+                    Assert.AreEqual(r40.Ranking(2).Count, 16);
+                    Assert.AreEqual(r40.Ranking(3).Count, 16);
+                }
                 Tournament t5 = aFr.League(5);
                 Assert.AreEqual(t5.rounds[0].clubs.Count, 181);
 
@@ -462,7 +466,10 @@ namespace tests.tm
 
                 //Check each club (and eventual reserves) have a league associated, and no doublons
                 CheckLeagueSystem(aFr, 1404, 4);
-                CheckN3N2(aFr);
+                if(!disabled)
+                {
+                    CheckN3N2(aFr);
+                }
                 CheckBottomTeamsWereRelegated(aFr);
             }
         }

@@ -76,61 +76,6 @@ namespace tm
             return res;
         }
 
-        /*
-        public void FIFACSV2Joueurs()
-        {
-            XDocument d = new XDocument(new XDeclaration("1.0", "utf-8", "yes"));
-            XElement root = new XElement("Joueurs");
-            d.Add(root);
-
-            string[] lines = File.ReadAllLines("Donnees/Joueurs_FIFA.csv",Encoding.UTF8);
-            foreach(string line in lines)
-            {
-                string[] joueur = line.Split(';');
-                string nom = joueur[0];
-                int age = int.Parse(joueur[1]);
-                DateTime naissance = new DateTime(2019 - age, 1, 1);
-                string paysNom = joueur[2];
-                Country pays = _kernel.String2Country(paysNom);
-                if (pays == null)
-                {
-                    pays = _kernel.String2Country("France");
-                }
-                int niveau = int.Parse(joueur[3]) - 2;
-                int potentiel = int.Parse(joueur[4]) - 2;
-                int idclub = 0;
-                bool res = int.TryParse(joueur[5],out idclub);
-                string postestr = joueur[6];
-                Position p = Position.Midfielder;
-                switch (postestr)
-                {
-                    case "GK": p = Position.Goalkeeper;
-                        break;
-                    case "CB": case "LB": case "RB": case "LCB": case "RCB": case "RDM": p = Position.Defender; 
-                        break;
-                    case "CDM": case "CM": case "LM": case "LW": case "LWB":  case "RM": case "RCM": case "LDM":  case "RW": case "RWB": p = Position.Midfielder; 
-                        break;
-                    case "CAM": case "CF": case "ST": case "LAM": case "RF": case "LCM": case "RAM": case "LF": case "LS": case "RS": p = Position.Striker;
-                        break;   
-                    default : p = Position.Defender;
-                        break;
-                }
-                if(idclub != 0)
-                {
-                    Utils.Debug(nom);
-                    XElement e = new XElement("Joueur");
-                    e.Add(new XAttribute("prenom", ""));
-                    e.Add(new XAttribute("nom", nom));
-                    e.Add(new XAttribute("niveau", niveau));
-                    e.Add(new XAttribute("potentiel", potentiel));
-                    e.Add(new XAttribute("poste", p.ToString()));
-                    e.Add(new XAttribute("club", idclub));
-                    root.Add(e);
-                }
-            }
-            d.Save("Donnees/joueursFIFA.xml");
-        }*/
-
         public void AddIdToClubs()
         {
             int id = 0;
@@ -171,26 +116,6 @@ namespace tm
             }
 
             doc.Save(Utils.dataFolderName + "/competitions_id.xml");
-        }
-
-        public void Load()
-        {
-            /*
-            LoadLanguages();
-            LoadWorld();
-            LoadCities();
-            LoadStadiums();
-            LoadClubs();
-            LoadTournaments();
-            LoadPlayers();
-            LoadManagers();
-            InitTeams();
-            InitPlayers();
-            LoadMedias();
-            LoadGamesComments();
-
-            */
-            //FIFACSV2Joueurs();
         }
 
         public void LoadGamesComments()
@@ -1409,23 +1334,7 @@ namespace tm
 
             }
 
-            /*
-            foreach (Tournament c in _kernel.Competitions)
-            {
-                c.InitializeQualificationsNextYearsLists();
-            }*/
         }
-
-        /*private int TournamentRegionalLevel(Tournament t)
-        {
-            int regionalLevel = 0;
-            foreach (Round r in t.rounds)
-            {
-                GroupsRound gr = r as GroupsRound;
-                regionalLevel = (regionalLevel != 0 || gr == null) ? regionalLevel : gr.administrativeLevel;
-            }
-            return regionalLevel;
-        }*/
 
         private bool IsTournamentRegional(Tournament t)
         {

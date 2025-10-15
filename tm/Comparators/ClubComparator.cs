@@ -202,12 +202,15 @@ namespace tm
                     {
                         Tournament xTournament = xChampionship.Tournament;
                         Tournament yTournament = yChampionship.Tournament;
-                        res = xChampionship.Tournament.level - yChampionship.Tournament.level;
+                        res = xChampionship.Tournament.IsBelow(new QualificationTournament(yChampionship.Tournament)) ? 1 : 0;
                         if(res == 0)
+                        {
+                            res = xChampionship.Tournament.IsAbove(new QualificationTournament(yChampionship.Tournament)) ? -1 : 0;
+                        }
+                        if (res == 0)
                         {
                             int xRanking = GetRanking(xChampionship, x);
                             int yRanking = GetRanking(yChampionship, y);
-                            //Console.WriteLine("[Ranking " + x.name + " : "+xRanking+ "][Ranking " + y.name + " : "+yRanking+"]");
                             res = xRanking - yRanking;
                         }
                         GroupsRound xGroup = xTournament.rounds[0] as GroupsRound;
@@ -218,7 +221,7 @@ namespace tm
                     }
                     else
                     {
-                        res = x.Level() > y.Level() ? -1 : 1;
+                        res = x.id > y.id ? -1 : 1;
                     }
                     break;
                 default:
