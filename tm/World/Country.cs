@@ -253,7 +253,7 @@ namespace tm
                     res.Add(t);
                 }
             }
-            res.Sort(new TournamentComparator());
+            res.Sort((x, y) => x.level.CompareTo(y.level));
             return res;
 
         }

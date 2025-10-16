@@ -8,57 +8,57 @@ namespace TheManager_GUI.Styles
 {
     public static class StyleDefinition
     {
-        public static string styleTextNavigation = "textNavigation";
-        public static string styleTextPlain = "textPlain";
-        public static string styleTextPlainCenter = "textPlainCenter";
-        public static string styleTextButton = "textButton";
-        public static string styleTextTitle = "textTitle";
-        public static string styleTextSecondary = "textSecondary";
-        public static string styleLiveChartAxis = "liveChartAxisStyle";
-        public static string styleLiveChartPieChart = "liveChartPieChartStyle";
-        public static string styleLiveChartPieSerie = "liveChartPieSerieStyle";
-        public static string styleLiveChartCartesianChart = "liveChartCartesianChartStyle";
-        public static string styleCheckBox = "checkBoxStyle";
-        public static string styleToolTip = "toolTipStyle";
-        public static string styleButtonMenu = "buttonMenu";
-        public static string styleButtonMenuTitle = "buttonMenuTitle";
-        public static string comboBoxFlatStyle = "ComboBoxFlatStyle";
-        public static string comboBoxStyle = "comboBoxStyle";
-        public static string tabItemStyle = "tabItemStyle";
+        public static readonly string styleTextNavigation = "textNavigation";
+        public static readonly string styleTextPlain = "textPlain";
+        public static readonly string styleTextPlainCenter = "textPlainCenter";
+        public static readonly string styleTextButton = "textButton";
+        public static readonly string styleTextTitle = "textTitle";
+        public static readonly string styleTextSecondary = "textSecondary";
+        public static readonly string styleLiveChartAxis = "liveChartAxisStyle";
+        public static readonly string styleLiveChartPieChart = "liveChartPieChartStyle";
+        public static readonly string styleLiveChartPieSerie = "liveChartPieSerieStyle";
+        public static readonly string styleLiveChartCartesianChart = "liveChartCartesianChartStyle";
+        public static readonly string styleCheckBox = "checkBoxStyle";
+        public static readonly string styleToolTip = "toolTipStyle";
+        public static readonly string styleButtonMenu = "buttonMenu";
+        public static readonly string styleButtonMenuTitle = "buttonMenuTitle";
+        public static readonly string comboBoxFlatStyle = "ComboBoxFlatStyle";
+        public static readonly string comboBoxStyle = "comboBoxStyle";
+        public static readonly string tabItemStyle = "tabItemStyle";
 
-        public static string fontSizeTitle = "fontSizeTitle";
-        public static string fontSizeSecondary = "fontSizeSecondary";
-        public static string fontSizeRegular = "fontSizeRegular";
-        public static string fontSizeNavigation = "fontSizeNavigation";
+        public static readonly string fontSizeTitle = "fontSizeTitle";
+        public static readonly string fontSizeSecondary = "fontSizeSecondary";
+        public static readonly string fontSizeRegular = "fontSizeRegular";
+        public static readonly string fontSizeNavigation = "fontSizeNavigation";
 
-        public static string solidColorBrushColorTitle1 = "colorTitle1";
-        public static string solidColorBrushColorTitle2 = "colorTitle2";
-        public static string solidColorBrushColorPlainText11 = "colorPlainText1";
-        public static string solidColorBrushColorPanel1 = "colorPanel1";
-        public static string solidColorBrushColorPanel2 = "colorPanel2";
-        public static string solidColorBrushColorPanel3 = "colorPanel3";
-        public static string solidColorBrushColorButtonOver = "colorButtonOver";
-        public static string solidColorBrushColorBorderLight = "colorBorderLight";
-        public static string solidColorBrushColorTransparent = "colorTransparent";
-        public static string solidColorBrushColorLight = "colorLight";
+        public static readonly string solidColorBrushColorTitle1 = "colorTitle1";
+        public static readonly string solidColorBrushColorTitle2 = "colorTitle2";
+        public static readonly string solidColorBrushColorPlainText11 = "colorPlainText1";
+        public static readonly string solidColorBrushColorPanel1 = "colorPanel1";
+        public static readonly string solidColorBrushColorPanel2 = "colorPanel2";
+        public static readonly string solidColorBrushColorPanel3 = "colorPanel3";
+        public static readonly string solidColorBrushColorButtonOver = "colorButtonOver";
+        public static readonly string solidColorBrushColorBorderLight = "colorBorderLight";
+        public static readonly string solidColorBrushColorTransparent = "colorTransparent";
+        public static readonly string solidColorBrushColorLight = "colorLight";
         
-        public static string colorViewBorder1 = "colorViewBorder1";
-        public static string colorViewBorder2 = "colorViewBorder2";
-        public static string colorViewBorder3 = "colorViewBorder3";
-        public static string colorPositive = "colorPositive";
-        public static string colorNegative = "colorNegative";
+        public static readonly string colorViewBorder1 = "colorViewBorder1";
+        public static readonly string colorViewBorder2 = "colorViewBorder2";
+        public static readonly string colorViewBorder3 = "colorViewBorder3";
+        public static readonly string colorPositive = "colorPositive";
+        public static readonly string colorNegative = "colorNegative";
 
-        public static string slotPromotion = "promotionColor";
-        public static string slotRetrogradation = "retrogradationColor";
-        public static string slotBarrageRelegation = "barrageRelegationColor";
-        public static string slotBackground = "backgroundColor";
-        public static string slotRelegation = "relegationColor";
-        public static string slotBarrage = "barrageColor";
-        public static string slotQualification1a = "cl1Color";
-        public static string slotQualification1b = "cl2Color";
-        public static string slotQualification2a = "el1Color";
-        public static string slotQualification2b = "el2Color";
-        public static string slotQualification3a = "ecl1Color";
+        public static readonly string slotPromotion = "promotionColor";
+        public static readonly string slotRetrogradation = "retrogradationColor";
+        public static readonly string slotBarrageRelegation = "barrageRelegationColor";
+        public static readonly string slotBackground = "backgroundColor";
+        public static readonly string slotRelegation = "relegationColor";
+        public static readonly string slotBarrage = "barrageColor";
+        public static readonly string slotQualification1a = "cl1Color";
+        public static readonly string slotQualification1b = "cl2Color";
+        public static readonly string slotQualification2a = "el1Color";
+        public static readonly string slotQualification2b = "el2Color";
+        public static readonly string slotQualification3a = "ecl1Color";
 
         public static Dictionary<string, string> slotLightShade = new Dictionary<string, string>()
         {

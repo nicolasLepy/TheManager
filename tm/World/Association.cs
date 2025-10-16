@@ -606,6 +606,31 @@ namespace tm
             return res;
         }
 
+        /// <summary>
+        /// Get the level of a tournament in relation of this association
+        /// [Fr, N1] -> 3
+        /// [Fr, R2] -> 7
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <param name="level"></param>
+        /// <returns></returns>
+        public int TournamentLevel(Tournament tournament, int level = 0)
+        {
+            int res = -1;
+            if(_tournaments.Contains(tournament))
+            {
+                return level + tournament.level;
+            }
+            else
+            {
+                foreach(Association a in _associations)
+                {
+                    res = Math.Max(res, a.TournamentLevel(tournament, level + Leagues().Count));
+                }
+            }
+            return res;
+        }
+
 
         public void UpdateStoredAssociationRanking()
         {
@@ -1133,7 +1158,8 @@ namespace tm
                     res.Add(t);
                 }
             }
-            res.Sort(new TournamentComparator());
+            res.Sort((x, y) => x.level.CompareTo(y.level));
+            //res.Sort(new TournamentComparator());
             return res;
 
         }
@@ -1145,24 +1171,6 @@ namespace tm
         public Tournament Cup(int cupRank)
         {
             return GetTournamentByLevel(cupRank, false);
-        }
-
-        /**
-         * Get last league with a national level, then league is subdivised by groups
-         */
-        public Tournament GetLastNationalLeague()
-        {
-            int res = -1;
-            foreach (Tournament t in Tournaments())
-            {
-                GroupsRound gr = t.rounds[0] as GroupsRound;
-                if (((gr != null && gr.RandomDrawingMethod != RandomDrawingMethod.Administrative)) && t.level > res)
-                {
-                    res = t.level;
-                }
-            }
-
-            return League(res);
         }
 
         public Tournament FirstDivisionChampionship()

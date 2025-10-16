@@ -45,7 +45,6 @@ namespace tests.tm
             cbdd.LoadMedias();
             cbdd.LoadGamesComments();
             cbdd.LoadRules();
-            cbdd.GenerateNationalCup();
             cbdd.CreateRegionalPathForCups();
             cbdd.LoadArchives();
             cbdd.PostProcess();

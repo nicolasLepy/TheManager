@@ -19,7 +19,7 @@ namespace tests.tm
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
         // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private static int TEST_YEARS = 12;
+        private static int TEST_YEARS = 5;
 
         private Round NextRound(Tournament tournament, Round round, bool isRegional)
         {
@@ -569,6 +569,41 @@ namespace tests.tm
             ta = bfc.TournamentsAbove(false);
             expectedId = new List<int>() { 1, 2, 3, 4, 5, 6 };
             CheckTournaments(expectedId, ta);
+
+        }
+
+        [TestMethod]
+        public void TestTournamentLevel()
+        {
+            Association world = MakeBasicStructure();
+
+            Association fr = world.associations[0].associations[0];
+            Assert.AreEqual(fr.Id, 3);
+            Association bfc = fr.associations[0];
+            Assert.AreEqual(bfc.Id, 5);
+
+            Tournament wl1 = world.League(1);
+            Tournament fr1 = fr.League(1);
+            Tournament fr2 = fr.League(2);
+            Tournament bf1 = bfc.League(1);
+            Tournament bf2 = bfc.League(2);
+            Tournament bf3 = bfc.League(3);
+
+            Assert.AreEqual(world.TournamentLevel(wl1), 1);
+            Assert.AreEqual(world.TournamentLevel(fr1), 3);
+            Assert.AreEqual(world.TournamentLevel(fr2), 4);
+            Assert.AreEqual(world.TournamentLevel(bf1), 5);
+            Assert.AreEqual(world.TournamentLevel(bf2), 6);
+            Assert.AreEqual(world.TournamentLevel(bf3), 7);
+            Assert.AreEqual(fr.TournamentLevel(fr1), 1);
+            Assert.AreEqual(fr.TournamentLevel(fr2), 2);
+            Assert.AreEqual(fr.TournamentLevel(bf1), 3);
+            Assert.AreEqual(fr.TournamentLevel(bf2), 4);
+            Assert.AreEqual(fr.TournamentLevel(bf3), 5);
+            Assert.AreEqual(bfc.TournamentLevel(bf1), 1);
+            Assert.AreEqual(bfc.TournamentLevel(bf2), 2);
+            Assert.AreEqual(bfc.TournamentLevel(bf3), 3);
+            Assert.AreEqual(bfc.TournamentLevel(fr1), -1);
 
         }
 

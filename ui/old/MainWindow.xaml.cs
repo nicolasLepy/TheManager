@@ -183,7 +183,6 @@ namespace TheManager_GUI
                 lbCreationPartie.Content = "Chargement des commentaires de match";
                 cbdd.LoadGamesComments();
                 cbdd.LoadRules();
-                cbdd.GenerateNationalCup();
                 cbdd.CreateRegionalPathForCups();
 
                 pbLoading.Value = 98;

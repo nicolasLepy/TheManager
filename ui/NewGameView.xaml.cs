@@ -97,7 +97,6 @@ namespace TheManager_GUI
                 cbdd.LoadMedias();
                 cbdd.LoadGamesComments();
                 cbdd.LoadRules();
-                cbdd.GenerateNationalCup();
                 cbdd.CreateRegionalPathForCups();
                 RaiseUpdateEvent(98, Application.Current.FindResource("str_loading_archives").ToString(), LoadDatabaseProgressReportType.PROGRESS);
                 cbdd.LoadArchives();

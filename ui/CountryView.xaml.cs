@@ -95,7 +95,7 @@ namespace TheManager_GUI
         public void InitializeTournaments()
         {
             List<Tournament> tournaments = new List<Tournament>(nationalTeam.country.Tournaments());
-            tournaments.Sort(new TournamentComparator());
+            tournaments.Sort(new TournamentComparator(Session.Instance.Game.kernel.worldAssociation));
             foreach (Tournament tournament in tournaments)
             {
                 string winnerName = "-";

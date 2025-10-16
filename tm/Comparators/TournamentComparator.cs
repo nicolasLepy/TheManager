@@ -8,6 +8,19 @@ namespace tm.Comparators
 {
     public class TournamentComparator : IComparer<Tournament>
     {
+
+        private readonly Association _reference;
+
+        public TournamentComparator(Association reference)
+        {
+            _reference = reference;
+        }
+
+        private int Level(Tournament t)
+        {
+            return _reference.TournamentLevel(t);
+        }
+
         public int Compare(Tournament x, Tournament y)
         {
             int res = 1;
@@ -17,7 +30,7 @@ namespace tm.Comparators
             }
             else if(y.isChampionship == x.isChampionship)
             {
-                res = x.level - y.level;
+                res = Level(x) - Level(y);
             }
             return res;
         }
