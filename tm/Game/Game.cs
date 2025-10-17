@@ -583,8 +583,8 @@ namespace tm
                         bool followGame = true;
                         CityClub homeCityClub = m.home as CityClub;
                         CityClub awayCityClub = m.away as CityClub;
-                        if (cc.MinimumLevel != -1 && homeCityClub != null && homeCityClub.Championship != null && homeCityClub.Championship.level > cc.MinimumLevel
-                            && awayCityClub != null && awayCityClub.Championship != null && awayCityClub.Championship.level > cc.MinimumLevel)
+                        if (cc.MinimumLevel != -1 && homeCityClub != null && homeCityClub.Championship != null && Session.Instance.Game.kernel.worldAssociation.TournamentLevel(homeCityClub.Championship) > cc.MinimumLevel
+                            && awayCityClub != null && awayCityClub.Championship != null && Session.Instance.Game.kernel.worldAssociation.TournamentLevel(awayCityClub.Championship) > cc.MinimumLevel)
                         {
                             followGame = false;
                         }
@@ -737,7 +737,6 @@ namespace tm
                     }
                 }
 
-                //if (c.level == 1 && c.isChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-2), _date))
                 if (isFirstLevelChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
                 {
                     Association association = kernel.LocalisationTournament(c);

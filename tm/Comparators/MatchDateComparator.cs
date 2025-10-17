@@ -23,7 +23,7 @@ namespace tm.Comparators
                 CityClub cc = c as CityClub;
                 if (cc != null && cc.Championship != null)
                 {
-                    int clubIndex = (int)Math.Pow(2, 10 - cc.Championship.level);
+                    int clubIndex = (int)Math.Pow(2, 10 - Session.Instance.Game.kernel.worldAssociation.TournamentLevel(cc.Championship));
                     clubsIndex[c] = clubIndex;
                 }
                 else
@@ -46,30 +46,6 @@ namespace tm.Comparators
             {
                 int X = GetClubIndex(x.home) + GetClubIndex(x.away);
                 int Y = GetClubIndex(y.home) + GetClubIndex(y.away);
-                /*int X = 0;
-                int Y = 0;
-                CityClub home = x.home as CityClub;
-                CityClub away = x.away as CityClub;
-                if (home != null && home.Championship != null)
-                {
-                    X += (int)Math.Pow(2, 10 - home.Championship.level);
-                }
-
-                if (away != null && away.Championship != null)
-                {
-                    X += (int)Math.Pow(2, 10 - away.Championship.level);
-                }
-                home = y.home as CityClub;
-                away = y.away as CityClub;
-                if (home != null && home.Championship != null)
-                {
-                    Y += (int)Math.Pow(2, 10 - home.Championship.level);
-                }
-
-                if (away != null && away.Championship != null)
-                {
-                    Y += (int)Math.Pow(2, 10 - away.Championship.level);
-                }*/
                 if (X > Y)
                 {
                     res = -1;

@@ -61,7 +61,7 @@ namespace tm.Tournaments
                 _ranking = new List<Club>(_clubs);
                 try
                 {
-                    _ranking.Sort(new ClubRandomRankingComparator(5, -1));
+                    _ranking.Sort(new ClubRandomRankingComparator(5, null));
                 }
                 catch
                 {

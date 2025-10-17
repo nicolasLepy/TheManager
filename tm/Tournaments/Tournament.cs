@@ -477,7 +477,7 @@ namespace tm
             {
                 apps.Add(new RecoverTeams(rt.Source, rt.Number, rt.Method));
             }
-            apps.Sort((a, b) => ( (a.Source as Round).Tournament.level - (b.Source as Round).Tournament.level) * (selectWorstTeams ? -1 : 1));
+            apps.Sort((a, b) => ( Session.Instance.Game.kernel.worldAssociation.TournamentLevel((a.Source as Round).Tournament) - Session.Instance.Game.kernel.worldAssociation.TournamentLevel((b.Source as Round).Tournament)) * (selectWorstTeams ? -1 : 1));
             List<RecoverTeams> best = new List<RecoverTeams>();
             List<RecoverTeams> worst = new List<RecoverTeams>();
             foreach(RecoverTeams rt in apps)
@@ -694,7 +694,7 @@ namespace tm
 
                         if(rt.Source as Round != null)
                         {
-                            leagueLevelsRepresented.Add((rt.Source as Round).Tournament.level);
+                            leagueLevelsRepresented.Add(association.TournamentLevel((rt.Source as Round).Tournament));
                         }
                     }
                 }
@@ -1134,7 +1134,6 @@ namespace tm
                 }
 
                 //Trie la liste en fonction du niveau de la compétition (et si jamais une ligue entre dans la compétition en deux fois avec meilleurs/plus mauvaises équipes)
-                // leagueCupApparitions.Sort((a, b) => (a.tournament.level != b.tournament.level ? a.tournament.level - b.tournament.level : (a.teams > 0 ? -1 : 0)));
                 leagueCupApparitions.Sort(new LeagueCupApparitionComparator());
 
                 //roundStart désigne le tour où les dernières équipes entrent en compétition
@@ -1173,7 +1172,7 @@ namespace tm
                     {
                         Console.WriteLine("[Cas currentTeamsCount < 0]");
 
-                        LeagueCupApparition lca = leagueCupApparitions.OrderByDescending(l => l.apparitionRound).ThenByDescending(l => l.tournament.level).FirstOrDefault();
+                        LeagueCupApparition lca = leagueCupApparitions.OrderByDescending(l => l.apparitionRound).ThenByDescending(l => Session.Instance.Game.kernel.worldAssociation.TournamentLevel(l.tournament)).FirstOrDefault();
                         if(lca != default(LeagueCupApparition) && lca.apparitionRound > 0)
                         {
                             //Met à jour la LeagueCupApparition correspondante
@@ -1228,17 +1227,17 @@ namespace tm
                 {
                     Utils.Debug("[Fix applied]");
                     int minApp = -1;
-                    int maxLeagueLevel = -1;
+                    Tournament lowestTournament = null;
                     int index = 0;
                     int minIndex = 0;
                     foreach(LeagueCupApparition lca in leagueCupApparitions)
                     {
-                        bool selectedLca = minApp == -1 || (lca.apparitionRound < minApp || (lca.apparitionRound == minApp && lca.tournament.level > maxLeagueLevel));
+                        bool selectedLca = minApp == -1 || (lca.apparitionRound < minApp || (lca.apparitionRound == minApp && (lowestTournament == null || lca.tournament.IsBelow(new QualificationTournament(lowestTournament)))));
                         if(selectedLca)
                         {
                             minIndex = index;
                             minApp = lca.apparitionRound;
-                            maxLeagueLevel = lca.tournament.level;
+                            lowestTournament = lca.tournament;
                         }
                         index++;
                     }
@@ -1621,8 +1620,9 @@ namespace tm
                     InitializeHost();
                 }
             }
-            Association localisation = Session.Instance.Game.kernel.LocalisationTournament(this) as Association;
-            if (!isChampionship && !IsInternational() && localisation.LeagueSystemWithReserves())
+            Association localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Tournament locTopLeague = localisation.League(1);
+            if (!isChampionship && !IsInternational() && (localisation.LeagueSystemWithReserves() || (locTopLeague != null && localisation.LeagueAbove(locTopLeague) != null)))
             {
                 UpdateCupQualifications();
             }

@@ -49,25 +49,27 @@ namespace tm.Comparators
                 int Y = 0;
                 CityClub home = x.home as CityClub;
                 CityClub away = x.away as CityClub;
+                int homeLevel = (home != null && home.Championship != null) ? Session.Instance.Game.kernel.worldAssociation.TournamentLevel(home.Championship) : 0;
+                int awayLevel = (away != null && away.Championship != null) ? Session.Instance.Game.kernel.worldAssociation.TournamentLevel(away.Championship) : 0;
                 if (home != null && home.Championship != null)
                 {
-                    X += (int)Math.Pow(2, 10 - home.Championship.level);
+                    X += (int)Math.Pow(2, 10 - homeLevel);
                 }
 
                 if (away != null && away.Championship != null)
                 {
-                    X += (int)Math.Pow(2, 10 - away.Championship.level);
+                    X += (int)Math.Pow(2, 10 - awayLevel);
                 }
                 home = y.home as CityClub;
                 away = y.away as CityClub;
                 if (home != null && home.Championship != null)
                 {
-                    Y += (int)Math.Pow(2, 10 - home.Championship.level);
+                    Y += (int)Math.Pow(2, 10 - homeLevel);
                 }
 
                 if (away != null && away.Championship != null)
                 {
-                    Y += (int)Math.Pow(2, 10 - away.Championship.level);
+                    Y += (int)Math.Pow(2, 10 - awayLevel);
                 }
                 if (X > Y)
                 {

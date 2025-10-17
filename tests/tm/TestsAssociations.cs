@@ -567,7 +567,7 @@ namespace tests.tm
             Assert.AreEqual(bfc.Id, 5);
 
             ta = bfc.TournamentsAbove(false);
-            expectedId = new List<int>() { 1, 2, 3, 4, 5, 6 };
+            expectedId = new List<int>() { 1, 2, 3, 4, 5, 6, 11 };
             CheckTournaments(expectedId, ta);
 
         }
@@ -621,7 +621,7 @@ namespace tests.tm
             CheckAssociations(expectedId, childs2);
 
             List<Association> childs3 = world.GetAllChilds(3);
-            expectedId = new List<int>() { 5 };  //BFC
+            expectedId = new List<int>() { 5, 6 };  //BFC, Nord
             CheckAssociations(expectedId, childs3);
 
             List<Association> childs4 = world.GetAllChilds(4);
@@ -640,8 +640,9 @@ namespace tests.tm
             Association bfc = fr.associations[0];
             Assert.AreEqual(bfc.Id, 5);
 
-            Assert.AreEqual(world.GetLevelOfAssociation(fr, 0), -1);
-            Assert.AreEqual(world.GetLevelOfAssociation(bfc, 0), -1);
+            Assert.AreEqual(world.GetLevelOfAssociation(fr, 0), 2);
+            Assert.AreEqual(world.GetLevelOfAssociation(bfc, 0), 3);
+            Assert.AreEqual(bfc.GetLevelOfAssociation(world, 0), -1);
         }
 
         [TestMethod]

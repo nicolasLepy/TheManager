@@ -286,17 +286,18 @@ namespace tm
             return res;
         }
 
-        public List<Player> TransferList(int clubChampionshipLevel, Country country)
+        public List<Player> TransferList(Tournament clubChampionship)
         {
             List<Player> players = new List<Player>();
 
             foreach(Tournament c in Competitions)
             {
-                if (c.isChampionship && c.level <= clubChampionshipLevel)
+                if (c.isChampionship && (c.IsBelow(new QualificationTournament(clubChampionship)) || c.IsSameLevel(new QualificationTournament(clubChampionship))))
                 {
-                    if(c.level == 1 || (LocalisationTournament(c).Name() == country.Name() && c.level <= 2))
+                    Association a = LocalisationTournament(clubChampionship);
+                    if (c.level == 1 || (LocalisationTournament(c).IsDirectConnected(a) && c.level <= 2))
                     {
-                        players.AddRange(TransferList(c));
+                        players.AddRange(MakeTransferList(c));
                     }
                 }
             }
@@ -308,7 +309,7 @@ namespace tm
         /// </summary>
         /// <param name="c">The tournament</param>
         /// <returns></returns>
-        public List<Player> TransferList(Tournament c)
+        public List<Player> MakeTransferList(Tournament c)
         {
             List<Player> players = new List<Player>();
             Round tournamentRound = c.rounds[0];

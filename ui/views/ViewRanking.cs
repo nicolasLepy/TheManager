@@ -195,7 +195,7 @@ namespace TheManager_GUI.Views
             int index = q.ranking > 0 ? q.ranking - 1 : clubs.Count + q.ranking;
             Club club = clubs[index];
             int clubNextLevel = Array.FindIndex(_retrogradations, w => w.Contains(club)) + 1;
-            int roundLevel = _tournament.level;
+            int roundLevel = Session.Instance.Game.kernel.worldAssociation.TournamentLevel(_tournament);
             bool nationalTeamTournament = Round().clubs.Count > 0 && ((Round().clubs[0] as NationalTeam) != null);
             nationalTeamTournament = nationalTeamTournament || !Session.Instance.Game.kernel.LocalisationTournament(_tournament).isStateAssociation; //Include all international tournaments
 
@@ -410,7 +410,7 @@ namespace TheManager_GUI.Views
                 AddElementToGrid(grid, tbGoalsDifference, startRow + i, _reduced ? 5 : 10);
             }
 
-            int level = _tournament.level;
+            int level = Session.Instance.Game.kernel.worldAssociation.TournamentLevel(_tournament);
 
             //Only show colors when the ranking is not focused on a team
             if (!_focusOnTeam)

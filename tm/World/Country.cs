@@ -40,28 +40,13 @@ namespace tm
         private List<Association> _associations;
         //TODELETE
         [DataMember]
-        private List<float[]> _gamesTimesWeekend;
-        //TODELETE
-        [DataMember]
-        private List<float[]> _gamesTimesWeekdays;
-        //TODELETE
-        [DataMember]
         private int _resetWeek;
-        //TODELETE
-        [DataMember]
-        private List<AdministrativeSanction> _administrativeSanctionsDefinitions;
-
-        private List<Club>[] _cacheAdministrativeRetrogradationsChanges;
 
         public List<City> cities => _cities;
         public List<Stadium> stadiums => _stadiums;
         public Language language => _language;
 
         public List<Association> associations => _associations;
-
-        public List<float[]> gamesTimesWeekend => _gamesTimesWeekend;
-        public List<float[]> gamesTimesWeekdays => _gamesTimesWeekdays;
-
 
         public int resetWeek => _resetWeek;
 
@@ -76,28 +61,12 @@ namespace tm
         public string DbName { get => _dbName; }
         public int ShapeNumber { get => _shapeNumber; }
 
-        //Done
-        public AdministrativeSanction GetSanction(SanctionType sanctionType)
-        {
-            AdministrativeSanction res = default;
-            foreach (AdministrativeSanction admS in _administrativeSanctionsDefinitions)
-            {
-                if (admS.type == sanctionType)
-                {
-                    res = admS;
-                }
-            }
-            return res;
-        }
-
         public Country()
         {
             _cities = new List<City>();
             _stadiums = new List<Stadium>();
             _tournaments = new List<Tournament>();
             _associations = new List<Association>();
-            _gamesTimesWeekend = new List<float[]>();
-            _gamesTimesWeekdays = new List<float[]>();
         }
 
         public Country(int id, string dbName, string name, Language language, int shapeNumber, int resetWeek, List<AdministrativeSanction> administrativeSanctionsDefinitions)
@@ -111,11 +80,7 @@ namespace tm
             _tournaments = new List<Tournament>();
             _shapeNumber = shapeNumber;
             _associations = new List<Association>();
-            _gamesTimesWeekend = new List<float[]>();
-            _gamesTimesWeekdays = new List<float[]>();
             _resetWeek = resetWeek;
-            _administrativeSanctionsDefinitions = administrativeSanctionsDefinitions;
-            _cacheAdministrativeRetrogradationsChanges = null;
         }
 
         public Association GetCountryAssociation()

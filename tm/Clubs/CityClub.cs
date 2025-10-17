@@ -596,7 +596,7 @@ namespace tm
                 foreach (Club c in Session.Instance.Game.kernel.Clubs)
                 {
                     CityClub cv = c as CityClub;
-                    if (cv != null && cv.Championship != null && Utils.Distance(cv.city, city) < 500/cv.Championship.level)
+                    if (cv != null && cv.Championship != null && Utils.Distance(cv.city, city) < 500/Session.Instance.Game.kernel.worldAssociation.TournamentLevel(cv.Championship))
                     {
                         possibleOpponents.Add(cv);
                     }
@@ -694,7 +694,7 @@ namespace tm
             int playersToResearch = GetPlayersToResearch(level);
             int playersFound = 0;
             int chance = 150 - (int)level;
-            List<Player> transferables = Session.Instance.Game.kernel.TransferList(Championship.level, city.Country());
+            List<Player> transferables = Session.Instance.Game.kernel.TransferList(Championship);
             transferables.Sort(new PlayerComparator(true, PlayerAttribute.LEVEL));
             int i = 0;
             while(i < transferables.Count && playersFound < playersToResearch)

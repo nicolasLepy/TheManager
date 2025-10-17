@@ -142,7 +142,7 @@ namespace TheManager_GUI
                     }
                 }
 
-                string brushColor = next != null && next.level > archive.Value.level ? StyleDefinition.colorNegative : next != null && next.level < archive.Value.level ? StyleDefinition.colorPositive : "";
+                string brushColor = next != null && next.IsBelow(new QualificationTournament(archive.Value)) ? StyleDefinition.colorNegative : next != null && next.IsAbove(new QualificationTournament(archive.Value)) ? StyleDefinition.colorPositive : "";
 
                 gridChampionshipHistory.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(50, GridUnitType.Pixel) });
                 TextBlock textLeague = ViewUtils.CreateTextBlockOpenWindow<Tournament>(archive.Value, Handlers.OpenTournament, archive.Value.name, StyleDefinition.styleTextPlainCenter, -1, -1);

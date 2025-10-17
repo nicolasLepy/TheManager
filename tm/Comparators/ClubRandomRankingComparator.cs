@@ -12,14 +12,14 @@ namespace tm.Comparators
         private Dictionary<Club, int> clubsArtificalLevel;
 
         private readonly int _strength;
-        private readonly int _makeClubsOfAtLeastChampionshipLevelOnTop;
+        private readonly Tournament _makeClubsOfAtLeastChampionshipLevelOnTop;
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="strength"></param>
-        /// <param name="championship">Clubs that are at or above the level of this championship on league system are automatically at the top of the ranking (-1 to not consider this parameter)</param>
-        public ClubRandomRankingComparator(int strength, int championship)
+        /// <param name="championship">Clubs that are at or above this championship on league system are automatically at the top of the ranking (null to not consider this parameter)</param>
+        public ClubRandomRankingComparator(int strength, Tournament championship)
         {
             clubsArtificalLevel = new Dictionary<Club, int>();
             _strength = strength;
@@ -30,11 +30,11 @@ namespace tm.Comparators
         {
             if(!clubsArtificalLevel.ContainsKey(x))
             {
-                clubsArtificalLevel[x] = (int)((100 * x.Level()) * Session.Instance.Random(10-_strength, 10+_strength) / 10.0f) + ((_makeClubsOfAtLeastChampionshipLevelOnTop > -1 && x.Championship != null && x.Championship.level <= _makeClubsOfAtLeastChampionshipLevelOnTop) ? 100000 : 0);
+                clubsArtificalLevel[x] = (int)((100 * x.Level()) * Session.Instance.Random(10-_strength, 10+_strength) / 10.0f) + ((_makeClubsOfAtLeastChampionshipLevelOnTop != null && x.Championship != null && !x.Championship.IsBelow(new QualificationTournament(_makeClubsOfAtLeastChampionshipLevelOnTop))) ? 100000 : 0);
             }
             if (!clubsArtificalLevel.ContainsKey(y))
             {
-                clubsArtificalLevel[y] = (int)((100 * y.Level()) * Session.Instance.Random(10 - _strength, 10 + _strength) / 10.0f) + ((_makeClubsOfAtLeastChampionshipLevelOnTop > -1 && y.Championship != null && y.Championship.level <= _makeClubsOfAtLeastChampionshipLevelOnTop) ? 100000 : 0);
+                clubsArtificalLevel[y] = (int)((100 * y.Level()) * Session.Instance.Random(10 - _strength, 10 + _strength) / 10.0f) + ((_makeClubsOfAtLeastChampionshipLevelOnTop != null && y.Championship != null && !x.Championship.IsBelow(new QualificationTournament(_makeClubsOfAtLeastChampionshipLevelOnTop))) ? 100000 : 0);
             }
 
             return clubsArtificalLevel[y]-clubsArtificalLevel[x];
