@@ -135,10 +135,11 @@ namespace tm
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="association">Coefficient of the club for this association. Ex: Europe</param>
         /// <param name="nSeason">Last n season. -1 is last season</param>
-        /// <param name="associationCoefficient"></param>
+        /// <param name="forAssociationCoefficient"></param>
         /// <returns></returns>
-        public float ClubYearCoefficient(int nSeason, bool associationCoefficient = false)
+        public float ClubYearCoefficient(int nSeason, bool forAssociationCoefficient = false)
         {
             float res = 0;
 
@@ -167,7 +168,7 @@ namespace tm
                             {
                                 res += 4;
                             }
-                            if (!associationCoefficient)
+                            if (!forAssociationCoefficient)
                             {
                                 if (r.clubs.Contains(this) && continentalTournament.level == 2)
                                 {
@@ -209,7 +210,7 @@ namespace tm
                                 }
                             }
                         }
-                        if (associationCoefficient && rg == null)
+                        if (forAssociationCoefficient && rg == null)
                         {
                             res += Utils.Wins(r.matches, this);
                             res += Utils.Draws(r.matches, this) * 0.5f;
@@ -222,7 +223,7 @@ namespace tm
                             res += 1;
                         }
                     }
-                    if (!associationCoefficient && continentalTournament.level == 3)
+                    if (!forAssociationCoefficient && continentalTournament.level == 3)
                     {
                         float[] allowedPoints = new float[] { 1, 1.5f, 2, 2.5f };
                         for (int r = 0; r < indexGroupRound; r++)

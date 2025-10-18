@@ -1205,5 +1205,26 @@ namespace tm
             }
             return res;
         }
+
+        public static List<Club> SortClubsAttribute(List<Club> clubs, ClubAttribute attribute)
+        {
+            List<Club> pot = new List<Club>(clubs);
+            pot.Sort(new ClubComparator(attribute, false));
+            if (pot[0] as NationalTeam != null)
+            {
+                List<NationalTeam> nationalsTeams = new List<NationalTeam>();
+                foreach (Club c in pot)
+                {
+                    nationalsTeams.Add(c as NationalTeam);
+                }
+                nationalsTeams.Sort(new NationsFifaRankingComparator(false));
+                pot.Clear();
+                foreach (NationalTeam nt in nationalsTeams)
+                {
+                    pot.Add(nt);
+                }
+            }
+            return pot;
+        }
     }
 }

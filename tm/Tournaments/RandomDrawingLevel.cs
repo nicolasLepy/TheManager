@@ -47,7 +47,6 @@ namespace tm
     public class RandomDrawingLevel : IRandomDrawing
     {
         private readonly GroupsRound _round;
-        private readonly ClubAttribute _attribute;
         /// <summary>
         /// Association holding the tournament
         /// </summary>
@@ -57,14 +56,17 @@ namespace tm
         private readonly Dictionary<Club, Association> _associationMap;
         private readonly Dictionary<Club, int> _potMap;
 
-        public RandomDrawingLevel(GroupsRound round, ClubAttribute attribute)
+        public RandomDrawingLevel(GroupsRound round, List<Club> sortedClubs)
         {
             _round = round;
-            _attribute = attribute;
             _masterAssociation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Association;
-            _clubCoefficients = null;
+            _clubCoefficients = new Dictionary<Club, float>();
             _associationMap = new Dictionary<Club, Association>();
             _potMap = new Dictionary<Club, int>();
+            for (int i = 0; i < sortedClubs.Count; i++)
+            {
+                _clubCoefficients[sortedClubs[i]] = sortedClubs.Count-i;
+            }
         }
 
         public RandomDrawingLevel(GroupsRound round, Dictionary<Club, float> coefficients)
@@ -314,34 +316,6 @@ namespace tm
             return representations;
         }
 
-        private List<Club> SortClubsAttribute(List<Club> clubs, ClubAttribute attribute)
-        {
-            List<Club> pot = new List<Club>(clubs);
-            try
-            {
-                pot.Sort(new ClubComparator(attribute, false));
-                if (pot[0] as NationalTeam != null)
-                {
-                    List<NationalTeam> nationalsTeams = new List<NationalTeam>();
-                    foreach (Club c in pot)
-                    {
-                        nationalsTeams.Add(c as NationalTeam);
-                    }
-                    nationalsTeams.Sort(new NationsFifaRankingComparator(false));
-                    pot.Clear();
-                    foreach (NationalTeam nt in nationalsTeams)
-                    {
-                        pot.Add(nt);
-                    }
-                }
-            }
-            catch
-            {
-                Utils.Debug("Le tri pour " + _round.name + "(" + _round.Tournament.name + " de type niveau a echoué");
-            }
-            return pot;
-        }
-
         private List<Club> SortClubsCoefficient(List<Club> clubs, Dictionary<Club, float> coefficients)
         {
             List<Club> pot = new List<Club>(clubs);
@@ -349,21 +323,14 @@ namespace tm
             return pot;
         }
 
-        private List<Club> SortClubs(List<Club> clubs, ClubAttribute attribute)
+        private List<Club> SortClubs(List<Club> clubs)
         {
-            if(_clubCoefficients != null)
-            {
-                return SortClubsCoefficient(clubs, _clubCoefficients);
-            }
-            else
-            {
-                return SortClubsAttribute(clubs, attribute);
-            }
+            return SortClubsCoefficient(clubs, _clubCoefficients);
         }
 
         public void RandomDrawing()
         {
-            List<Club> pool = SortClubs(_round.clubs, _attribute);
+            List<Club> pool = SortClubs(_round.clubs);
             List<Club>[] pots = CreatePots(pool);
             InitializeAssociationMap(pool);
             InitializePotMap(pots);

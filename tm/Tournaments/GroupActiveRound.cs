@@ -89,7 +89,8 @@ namespace tm.Tournaments
             switch (_randomDrawingMethod)
             {
                 case RandomDrawingMethod.Coefficient:
-                    randomDrawing = new RandomDrawingLevel(this, _clubs[0] as NationalTeam == null ? ClubAttribute.CONTINENTAL_COEFFICIENT : ClubAttribute.LEVEL);
+                    List<Club> sorted = Utils.SortClubsAttribute(clubs, _clubs[0] as NationalTeam == null ? ClubAttribute.CONTINENTAL_COEFFICIENT : ClubAttribute.LEVEL);
+                    randomDrawing = new RandomDrawingLevel(this, sorted);
                     break;
                 case RandomDrawingMethod.Geographic:
                     randomDrawing = new RandomDrawingGeographic(this);
@@ -99,7 +100,8 @@ namespace tm.Tournaments
                     break;
                 case RandomDrawingMethod.Level:
                 default:
-                    randomDrawing = new RandomDrawingLevel(this, ClubAttribute.LEVEL);
+                    List<Club> clubsSorted = Utils.SortClubsAttribute(clubs, ClubAttribute.LEVEL);
+                    randomDrawing = new RandomDrawingLevel(this, clubsSorted);
                     break;
             }
             randomDrawing.RandomDrawing();

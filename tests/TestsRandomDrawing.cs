@@ -79,12 +79,16 @@ namespace tests
                 [cd17] = 7,
                 [cd18] = 6
             };
+            List<Club> clubsSorted = new List<Club>() { ca1, ca2, cb6, ca3, ca4, cb7, cc14, cc13, cb8, ca5, cb9, cb10, cc12, cc11, cd15, cd16, cd17, cd18};
 
             RandomDrawingLevel rdl = new RandomDrawingLevel(r, coefficients);
-            for(int i = 0; i < 100; i++)
+            for(int i = 0; i < 200; i++)
             {
+                if(i == 100)
+                {
+                    rdl = new RandomDrawingLevel(r, clubsSorted);
+                }
                 rdl.RandomDrawing();
-            
 
                 List<Club>[] groups = r.groups;
                 //(g1, g2) -> 5 équipes, (g3, g4) -> 4 équipes
