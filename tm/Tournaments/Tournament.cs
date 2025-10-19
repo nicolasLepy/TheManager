@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 using tm.Algorithms;
+using System.Diagnostics.Metrics;
 
 /*
  * TODO: Factorisations possibles :
@@ -267,6 +268,7 @@ namespace tm
         /// </summary>
         public void InitializeHost()
         {
+            _hostStadiums.Clear();
             List<Association> candidates = new List<Association>();
             //Find country
             foreach (Round r in _rounds)
@@ -285,13 +287,13 @@ namespace tm
             //Find stadiums
             if (host != null)
             {
-                Console.WriteLine(host.Name() + " chosen to host " + _name);
+                Console.WriteLine("[{0}] {1} chosen to host the tournament.", _name, host.Name());
                 List<Stadium> stadiums = new List<Stadium>(host.stadiums);
                 stadiums.Sort(new StadiumComparator());
                 for (int i = 0; i < 8; i++)
                 {
                     _hostStadiums.Add(stadiums[i]);
-                    Console.WriteLine(stadiums[i].name + " - " + stadiums[i].capacity);
+                    Console.WriteLine(stadiums[i].name + " - " + stadiums[i].capacity + " (" + stadiums[i].city.Country().GetCountryAssociation().name + ")");
                 }
                 Console.WriteLine("=================================");
             }
@@ -495,7 +497,6 @@ namespace tm
                 Utils.Debug("Récupère " + teamsToTake + " équipes de Ligue " + (apps[i].Source as Round).Tournament.name + " (actuellement " + currentCount + " sur " + count + ")");
 
                 best.Add(new RecoverTeams(apps[i].Source, teamsToTake, appRecuperationMethod));
-                //RecuperationMethod rm = selectWorstTeams ? appRecuperationMethod : (appRecuperationMethod == RecuperationMethod.NotQualifiedForInternationalCompetitionBest ? RecuperationMethod.NotQualifiedForInternationalCompetitionWorst : RecuperationMethod.Worst);
                 worst[i] = new RecoverTeams(worst[i].Source, appTeamsCount - teamsToTake, worst[i].Method);
                 currentCount += teamsToTake;
                 i += 1;
@@ -510,7 +511,10 @@ namespace tm
                 {
                     if (rt.Number > 0 && rt.Source == worstTeams[j].Source)
                     {
-                        worstTeams[j] = new RecoverTeams(worstTeams[j].Source, worstTeams[j].Number, rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest ? RecuperationMethod.NotQualifiedForInternationalCompetitionWorst : RecuperationMethod.Worst);
+                        RecuperationMethod rm = rt.Method;
+                        rm = rm &= ~RecuperationMethod.Best; //Remove Best property
+                        rm = rm | RecuperationMethod.Worst; //Add Worst property
+                        worstTeams[j] = new RecoverTeams(worstTeams[j].Source, worstTeams[j].Number, rm);
                     }
                 }
             }
@@ -535,7 +539,7 @@ namespace tm
                 res = rt.Number;
                 //res = (this.parent.Key == null) ? rt.Number : rt.Source.RetrieveTeams(-1, rt.Method, true, parent.Key).Count; //Take into account teams count variation due to administrative divisions (in remplacement of res = rt.Number);
             }
-            else if (rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || rt.Method == RecuperationMethod.StatusPro)
+            else if (rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro))
             {
                 res = rt.Source.RetrieveTeams(-1, rt.Method, false, Session.Instance.Game.kernel.LocalisationTournament(this)).Count;
             }
@@ -738,7 +742,7 @@ namespace tm
                 {
                     for (int i = 0; i < lrt.Count; i++)
                     {
-                        if (lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || lrt[i].Method == RecuperationMethod.QualifiedForInternationalCompetition || lrt[i].Method == RecuperationMethod.StatusPro)
+                        if (lrt[i].Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || lrt[i].Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || lrt[i].Method.HasFlag(RecuperationMethod.StatusPro))
                         {
                             lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i]), lrt[i].Method);
                         }
@@ -852,7 +856,7 @@ namespace tm
                 //TODO: Is this loop really needed ? Use case : CDL with 15 continental teams
                 for(int j = 0; j < newRecoverTeams[rounds.Count - i - 1].Count; j++)
                 {
-                    if(newRecoverTeams[rounds.Count - i - 1][j].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst)
+                    if(newRecoverTeams[rounds.Count - i - 1][j].Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition | RecuperationMethod.Worst))
                     {
                         if(!nonInternationalWorstAppeared)
                         {
@@ -860,7 +864,7 @@ namespace tm
                         }
                         else
                         {
-                            newRecoverTeams[rounds.Count - i - 1][j] = new RecoverTeams(newRecoverTeams[rounds.Count - i - 1][j].Source, newRecoverTeams[rounds.Count - i - 1][j].Number, RecuperationMethod.NotQualifiedForInternationalCompetitionBest);
+                            newRecoverTeams[rounds.Count - i - 1][j] = new RecoverTeams(newRecoverTeams[rounds.Count - i - 1][j].Source, newRecoverTeams[rounds.Count - i - 1][j].Number, RecuperationMethod.NotQualifiedForInternationalCompetition | RecuperationMethod.Best);
                         }
                     }
                 }
@@ -1085,7 +1089,7 @@ namespace tm
             {
                 foreach(RecoverTeams rt in r.baseRecuperedTeams)
                 {
-                    if(rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest)
+                    if(rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition))
                     {
                         leagueCupLike = leagueCupLike && true;
                     }

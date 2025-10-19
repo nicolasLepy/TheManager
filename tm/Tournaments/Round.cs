@@ -38,14 +38,12 @@ namespace tm
     [Flags]
     public enum RecuperationMethod
     {
-        Randomly,
-        Best,
-        Worst,
-        QualifiedForInternationalCompetition,
-        NotQualifiedForInternationalCompetitionWorst,
-        NotQualifiedForInternationalCompetitionBest,
-        NotQualifiedForInternationalCompetition,
-        StatusPro
+        Randomly=1,
+        Best=2,
+        Worst=4,
+        QualifiedForInternationalCompetition=8,
+        NotQualifiedForInternationalCompetition=16,
+        StatusPro=32
     }
 
     public enum Tiebreaker
@@ -865,70 +863,52 @@ namespace tm
                         toDelete.Add(c);
                     }
                 }
-
                 foreach (Club c in toDelete)
                 {
                     roundClubs.Remove(c);
                 }
-
             }
 
-            switch (method)
+            if(method.HasFlag(RecuperationMethod.Randomly))
             {
-                case RecuperationMethod.Randomly:
-                    roundClubs = Utils.ShuffleList<Club>(roundClubs);
-                    break;
-                case RecuperationMethod.Best:
-                    try
-                    {
-                        roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
-                    }
-                    catch (Exception e)
-                    {
-                        Utils.Debug("Erreur sort Club_Niveau_Comparator pour " + name);
-                    }
-                    break;
-                case RecuperationMethod.Worst :
-                    try
-                    {
-                        roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, true));
-                    }
-                    catch(Exception e)
-                    {
-                        Utils.Debug("Erreur sort Club_Niveau_Comparator pour " + name);
-                    }
-                    break;
-                case RecuperationMethod.QualifiedForInternationalCompetition:
-                    roundClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
-                    roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
-                    break;
-                case RecuperationMethod.NotQualifiedForInternationalCompetitionBest:
-                case RecuperationMethod.NotQualifiedForInternationalCompetitionWorst:
-                case RecuperationMethod.NotQualifiedForInternationalCompetition:
-                    List<Club> internationalClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
-                    foreach (Club c in internationalClubs)
-                    {
-                        roundClubs.Remove(c);
-                    }
-                    roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst));
-                    break;
-                case RecuperationMethod.StatusPro:
-                    List<Club> pro = new List<Club>();
-                    foreach(Club c in roundClubs)
-                    {
-                        if(c.status == ClubStatus.Professional)
-                        {
-                            pro.Add(c);
-                        }
-                    }
-                    roundClubs.Clear();
-                    roundClubs.AddRange(pro);
-                    break;
-                default:
-                    roundClubs.Sort(new ClubComparator(ClubAttribute.LEVEL));
-                    break;
-
+                roundClubs = Utils.ShuffleList<Club>(roundClubs);
             }
+            if (method.HasFlag(RecuperationMethod.Best))
+            {
+                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
+            }
+            if(method.HasFlag(RecuperationMethod.Worst))
+            {
+                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, true));
+            }
+            if(method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition))
+            {
+                roundClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
+                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method.HasFlag(RecuperationMethod.Worst)));
+            }
+            if(method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition))
+            {
+                List<Club> internationalClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
+                foreach (Club c in internationalClubs)
+                {
+                    roundClubs.Remove(c);
+                }
+                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method.HasFlag(RecuperationMethod.Worst)));
+            }
+            if(method.HasFlag(RecuperationMethod.StatusPro))
+            {
+                List<Club> pro = new List<Club>();
+                foreach (Club c in roundClubs)
+                {
+                    if (c.status == ClubStatus.Professional)
+                    {
+                        pro.Add(c);
+                    }
+                }
+                roundClubs.Clear();
+                roundClubs.AddRange(pro);
+            }
+
             if (number == -1)
             {
                 number = roundClubs.Count;

@@ -1192,7 +1192,7 @@ namespace tm
                                         method = RecuperationMethod.QualifiedForInternationalCompetition;
                                         break;
                                     case "notinternational":
-                                        method = RecuperationMethod.NotQualifiedForInternationalCompetition;
+                                        method = RecuperationMethod.NotQualifiedForInternationalCompetition | RecuperationMethod.Best;
                                         break;
                                     case "pro":
                                         method = RecuperationMethod.StatusPro;
@@ -1727,10 +1727,10 @@ namespace tm
             foreach(Association a in _kernel.GetAllAssociations())
             {
                 bool isPartOfAnotherCup = IsPartOfAnotherCup(a);
-                //if(!isPartOfAnotherCup)
-                //{
+                if(!isPartOfAnotherCup)
+                {
                     GenerateCup(a, isPartOfAnotherCup, !isPartOfAnotherCup);
-                //}
+                }
             }
         }
 

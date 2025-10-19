@@ -136,7 +136,17 @@ namespace tm.Algorithms
             return res;
         }
 
-        private void GetBestTeams(List<RecoverTeams> recoverTeams, int count, bool selectWorstTeams, bool onlyFirstTeams, ref List<RecoverTeams> bestTeams, ref List<RecoverTeams> worstTeams, ref int missingTeams)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="recoverTeams">Source recover teams</param>
+        /// <param name="count">Split teams by extracting {count} teams</param>
+        /// <param name="selectWorstTeams">Extract worst teams instead of best teams</param>
+        /// <param name="onlyFirstTeams">Reserves filter</param>
+        /// <param name="bestTeams">output containing best teams extracted</param>
+        /// <param name="worstTeams">output containing worst teams extracted</param>
+        /// <param name="missingTeams">expected count - count of teams extracted</param>
+        private void SplitTeams(List<RecoverTeams> recoverTeams, int count, bool selectWorstTeams, bool onlyFirstTeams, ref List<RecoverTeams> bestTeams, ref List<RecoverTeams> worstTeams, ref int missingTeams)
         {
             List<RecoverTeams> apps = new List<RecoverTeams>();
             foreach (RecoverTeams rt in recoverTeams)
@@ -160,7 +170,6 @@ namespace tm.Algorithms
                 Utils.Debug("Récupère " + teamsToTake + " équipes de Ligue " + (apps[i].Source as Round).Tournament.name + " (actuellement " + currentCount + " sur " + count + ")");
 
                 best.Add(new RecoverTeams(apps[i].Source, teamsToTake, appRecuperationMethod));
-                //RecuperationMethod rm = selectWorstTeams ? appRecuperationMethod : (appRecuperationMethod == RecuperationMethod.NotQualifiedForInternationalCompetitionBest ? RecuperationMethod.NotQualifiedForInternationalCompetitionWorst : RecuperationMethod.Worst);
                 worst[i] = new RecoverTeams(worst[i].Source, appTeamsCount - teamsToTake, worst[i].Method);
                 currentCount += teamsToTake;
                 i += 1;
@@ -175,7 +184,10 @@ namespace tm.Algorithms
                 {
                     if (rt.Number > 0 && rt.Source == worstTeams[j].Source)
                     {
-                        worstTeams[j] = new RecoverTeams(worstTeams[j].Source, worstTeams[j].Number, rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest ? RecuperationMethod.NotQualifiedForInternationalCompetitionWorst : RecuperationMethod.Worst);
+                        RecuperationMethod rm = rt.Method;
+                        rm = rm &= ~RecuperationMethod.Best; //Remove Best property
+                        rm = rm | RecuperationMethod.Worst; //Add Worst property
+                        worstTeams[j] = new RecoverTeams(worstTeams[j].Source, worstTeams[j].Number, rm);
                     }
                 }
             }
@@ -251,7 +263,7 @@ namespace tm.Algorithms
                     List<RecoverTeams> worstTeams = new List<RecoverTeams>();
                     int missingTeams = 0;
                     //According to the count of teams to move up, some teams are moved up (bestTeams) and the other remains on the first round (worstTeams)
-                    GetBestTeams(qualifications[roundId], teamsToMoveUp, false, onlyFirstTeams, ref bestTeams, ref worstTeams, ref missingTeams);
+                    SplitTeams(qualifications[roundId], teamsToMoveUp, false, onlyFirstTeams, ref bestTeams, ref worstTeams, ref missingTeams);
                     teamsToMoveUp = missingTeams;
                     qualifications[roundId + 1].AddRange(bestTeams);
                     qualifications[roundId] = worstTeams;
@@ -269,7 +281,7 @@ namespace tm.Algorithms
                     List<RecoverTeams> worstTeams = new List<RecoverTeams>();
                     int missingTeams = 0;
                     //According to the teams numbers to add to an extra round, some teams begin tournament at the current round (bestTeams) and the other play the extra round (worstTeams)
-                    GetBestTeams(qualifications.First(), teamsToAdd, true, onlyFirstTeams, ref bestTeams, ref worstTeams, ref missingTeams);
+                    SplitTeams(qualifications.First(), teamsToAdd, true, onlyFirstTeams, ref bestTeams, ref worstTeams, ref missingTeams);
                     //If new rounds can't play all teams, so the missing teams are the new qualified teams from a second extra round etc.
                     teamsToAdd = missingTeams;
                     qualifications[0] = bestTeams;
