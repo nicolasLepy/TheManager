@@ -7,16 +7,69 @@ using static tm.Tournament;
 using System.Xml.Linq;
 using tm.Comparators;
 using tm.Tournaments;
+using FluentNHibernate.Testing.Values;
 
 namespace tm.Algorithms
 {
 
 
+    public class CupQualification
+    {
+        public int teams { get; set; }
+        public RecuperationMethod method { get; set; }
+        public int indexRound { get; set; }
+        public Tournament tournament { get; set; }
+
+        public CupQualification(int teams, RecuperationMethod method, int indexRound, Tournament tournament)
+        {
+            this.teams = teams;
+            this.method = method;
+            this.indexRound = indexRound;
+            this.tournament = tournament;
+        }
+    }
+
+    public class CupAdapterResult
+    {
+        public HashSet<int> leagueLevelsRepresented { get; set; }
+        public int newRounds { get; set; }
+        public List<List<RecoverTeams>> qualifications { get; set; }
+        public int removedRounds
+        {
+            get
+            {
+                int res = 0;
+                bool disabled = true;
+                for(int i = 0; i < qualifications.Count && disabled; i++)
+                {
+                    foreach(RecoverTeams rt in qualifications[i])
+                    {
+                        disabled = disabled && rt.Number == 0;
+                    }
+                    if(disabled)
+                    {
+                        res++;
+                    }
+                }
+                return res;
+            }
+        }
+
+        public CupAdapterResult(int newRounds, List<List<RecoverTeams>> qualifications, HashSet<int> leagueLevelsRepresented)
+        {
+            this.newRounds = newRounds;
+            this.qualifications = qualifications;
+            this.leagueLevelsRepresented = leagueLevelsRepresented;
+        }
+    }
+
 
     public class CupAdapter
     {
 
-        /*public CupAdapter()
+        private Association association { get; set; }
+
+        public CupAdapter()
         {
 
         }
@@ -26,7 +79,214 @@ namespace tm.Algorithms
 
         }
 
-        /// <summary>
+        private HashSet<int> GetLeagueLevelRepresented(Tournament t, Association a)
+        {
+            List<int> levels = new List<int>();
+            foreach(Round r in t.rounds)
+            {
+                foreach(RecoverTeams rt in r.recuperedTeams)
+                {
+                    Round source = rt.Source as Round;
+                    if(source != null)
+                    {
+                        levels.Add(a.TournamentLevel(source.Tournament));
+                    }
+                }
+            }
+            return new HashSet<int>(levels);
+        }
+
+        private List<List<RecoverTeams>> ExtractCupQualifications(Tournament tournament)
+        {
+            List<List<RecoverTeams>> res = new List<List<RecoverTeams>>();
+            for(int i = 0; i< tournament.rounds.Count; i++)
+            {
+                res.Add(new List<RecoverTeams>());
+                foreach (RecoverTeams rt in tournament.rounds[i].recuperedTeams)
+                {
+                    RecoverTeams nrt = rt.Clone();
+                    nrt.Number = -1;
+                    res[i].Add(rt.Clone());
+                }
+            }
+            return res;
+        }
+
+        private bool Constrained(RecoverTeams rt)
+        {
+            bool res = false;
+            if(rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition))
+            {
+                res = true;
+            }
+            return res;
+        }
+
+        private int TeamsCount(RecoverTeams rt, bool onlyFirstTeams, Association association)
+        {
+            int res;
+            if(rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro))
+            {
+                res = rt.Available(onlyFirstTeams, association);
+            }
+            else
+            {
+                res = rt.Number;
+            }
+            return res;
+        }
+
+        private void GetBestTeams(List<RecoverTeams> recoverTeams, int count, bool selectWorstTeams, bool onlyFirstTeams, ref List<RecoverTeams> bestTeams, ref List<RecoverTeams> worstTeams, ref int missingTeams)
+        {
+            List<RecoverTeams> apps = new List<RecoverTeams>();
+            foreach (RecoverTeams rt in recoverTeams)
+            {
+                apps.Add(new RecoverTeams(rt.Source, rt.Number, rt.Method));
+            }
+            apps.Sort((a, b) => (Session.Instance.Game.kernel.worldAssociation.TournamentLevel((a.Source as Round).Tournament) - Session.Instance.Game.kernel.worldAssociation.TournamentLevel((b.Source as Round).Tournament)) * (selectWorstTeams ? -1 : 1));
+            List<RecoverTeams> best = new List<RecoverTeams>();
+            List<RecoverTeams> worst = new List<RecoverTeams>();
+            foreach (RecoverTeams rt in apps)
+            {
+                worst.Add(rt);
+            }
+            int currentCount = 0;
+            int i = 0;
+            while (currentCount < count && i < apps.Count)
+            {
+                RecuperationMethod appRecuperationMethod = apps[i].Method;
+                int appTeamsCount = TeamsCount(apps[i], onlyFirstTeams, association);
+                int teamsToTake = appTeamsCount < (count - currentCount) ? appTeamsCount : (count - currentCount);
+                Utils.Debug("Récupère " + teamsToTake + " équipes de Ligue " + (apps[i].Source as Round).Tournament.name + " (actuellement " + currentCount + " sur " + count + ")");
+
+                best.Add(new RecoverTeams(apps[i].Source, teamsToTake, appRecuperationMethod));
+                //RecuperationMethod rm = selectWorstTeams ? appRecuperationMethod : (appRecuperationMethod == RecuperationMethod.NotQualifiedForInternationalCompetitionBest ? RecuperationMethod.NotQualifiedForInternationalCompetitionWorst : RecuperationMethod.Worst);
+                worst[i] = new RecoverTeams(worst[i].Source, appTeamsCount - teamsToTake, worst[i].Method);
+                currentCount += teamsToTake;
+                i += 1;
+            }
+            bestTeams = selectWorstTeams ? worst : best;
+            worstTeams = selectWorstTeams ? best : worst;
+            missingTeams = count - currentCount;
+
+            for (int j = 0; j < worstTeams.Count; j++)
+            {
+                foreach (RecoverTeams rt in bestTeams)
+                {
+                    if (rt.Number > 0 && rt.Source == worstTeams[j].Source)
+                    {
+                        worstTeams[j] = new RecoverTeams(worstTeams[j].Source, worstTeams[j].Number, rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest ? RecuperationMethod.NotQualifiedForInternationalCompetitionWorst : RecuperationMethod.Worst);
+                    }
+                }
+            }
+        }
+
+        public CupAdapterResult AdaptLeagueCup(Tournament tournament)
+        {
+            association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            bool onlyFirstTeams = false;
+            HashSet<int> leagueLevelsRepresented = GetLeagueLevelRepresented(tournament, association);
+
+            List<List<RecoverTeams>> qualifications = ExtractCupQualifications(tournament);
+            int roundsCount = tournament.rounds.Count;
+
+            //First phase: go through tournament qualifications with the new league system to check if adaptations must be made
+            int currentTeams = 1;
+            List<int> teamsByRound = new List<int>();
+            for(int i = roundsCount-1; i >= 0; i--)
+            {
+                currentTeams = currentTeams * 2;
+                int newTeams = 0;
+                foreach(RecoverTeams rt in qualifications[i])
+                {
+                    newTeams += TeamsCount(rt, onlyFirstTeams, association);
+                }
+                if(currentTeams <= newTeams && i > 0)
+                {
+                    qualifications[i - 1].AddRange(qualifications[i]);
+                    qualifications[i].Clear();
+                    newTeams = 0;
+                }
+                teamsByRound.Add(currentTeams);
+                currentTeams = currentTeams - newTeams;
+            }
+
+            //Replace old RecoverTeams with new RecoverTeams with actual count of clubs when the number is fixed (non continental or continental)
+
+            foreach (List<RecoverTeams> lrt in qualifications)
+            {
+                for(int i = 0; i < lrt.Count; i++)
+                {
+                    if (lrt[i].Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || lrt[i].Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || lrt[i].Method.HasFlag(RecuperationMethod.StatusPro))
+                    {
+                        lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i], onlyFirstTeams, association), lrt[i].Method);
+                    }
+                }
+            }
+
+            currentTeams = -currentTeams;
+            int newRounds = 0;
+
+            //Trois cas
+            //Case 1 : currentTeams == 0
+            //Parfait
+            //Case 2 : currentTeams < 0
+            //Pas assez d'équipes pour compléter les premiers tours, certaines équipes sont remontées au tour suivant.
+            //Ex. Coupe de la Ligue : certaines équipes de L2 entrent directement au deuxième tour
+            //Case 3 : currentTeams > 0
+            //Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour
+            Utils.Debug("[currentTeams] " + currentTeams);
+            if(currentTeams == 0)
+            {
+                Utils.Debug("Parfait !");
+            }
+            else if(currentTeams < 0)
+            {
+                Utils.Debug("Pas assez d'équipes pour compléter les premiers tours, certaines équipes sont remontées au tour suivant");
+                int teamsToMoveUp = -currentTeams;
+                int roundId = 0;
+                while(teamsToMoveUp > 0)
+                {
+                    List<RecoverTeams> bestTeams = new List<RecoverTeams>();
+                    List<RecoverTeams> worstTeams = new List<RecoverTeams>();
+                    int missingTeams = 0;
+                    //According to the count of teams to move up, some teams are moved up (bestTeams) and the other remains on the first round (worstTeams)
+                    GetBestTeams(qualifications[roundId], teamsToMoveUp, false, onlyFirstTeams, ref bestTeams, ref worstTeams, ref missingTeams);
+                    teamsToMoveUp = missingTeams;
+                    qualifications[roundId + 1].AddRange(bestTeams);
+                    qualifications[roundId] = worstTeams;
+                    roundId += -1;
+                    teamsToMoveUp = teamsToMoveUp / 2;
+                }
+            }
+            else if(currentTeams > 0)
+            {
+                int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
+                Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
+                while (teamsToAdd > 0)
+                {
+                    List<RecoverTeams> bestTeams = new List<RecoverTeams>();
+                    List<RecoverTeams> worstTeams = new List<RecoverTeams>();
+                    int missingTeams = 0;
+                    //According to the teams numbers to add to an extra round, some teams begin tournament at the current round (bestTeams) and the other play the extra round (worstTeams)
+                    GetBestTeams(qualifications.First(), teamsToAdd, true, onlyFirstTeams, ref bestTeams, ref worstTeams, ref missingTeams);
+                    //If new rounds can't play all teams, so the missing teams are the new qualified teams from a second extra round etc.
+                    teamsToAdd = missingTeams;
+                    qualifications[0] = bestTeams;
+                    qualifications.Insert(0, worstTeams);
+                    newRounds++;
+                    if(teamsToAdd > 0)
+                    {
+                        teamsToAdd *= 2;
+                    }
+                }
+            }
+
+            return new CupAdapterResult(newRounds, qualifications, leagueLevelsRepresented);
+
+        }
+
+        /*/// <summary>
         /// Update national cup qualifications due to annual league structure modifications
         /// </summary>
         public void UpdateCupQualifications()
@@ -519,228 +779,6 @@ namespace tm.Algorithms
             }
         }
 
-        /// <summary>
-        /// Update league cup qualifications due to clubs qualified for international competitions and professionnals teams count changes
-        /// Regional competitions (with parent.key != null) and national league cup competitions (with teams appearing in function of their international qualifications) are incompatible
-        /// </summary>
-        public void UpdateLeagueCupQualifications()
-        {
-            //ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
-            //Contains new league apparition through competition for each rounds
-            List<List<RecoverTeams>> newRecoverTeams = new List<List<RecoverTeams>>();
-            //Contains new extra rounds created if necessary
-            List<Round> newRounds = new List<Round>();
-
-            List<int> leagueLevelsRepresented = new List<int>();
-
-            if (parent == null && association.isStateAssociation)
-            {
-                int levelsCount = association.Leagues().Count;
-                int[] teamsByLevel = new int[levelsCount];
-                for (int i = 0; i < levelsCount; i++)
-                {
-                    teamsByLevel[i] = 0;
-                }
-                for (int i = 0; i < _rounds.Count; i++)
-                {
-                    Round round = _rounds[i];
-                    for (int j = round.recuperedTeams.Count - 1; j >= 0; j--)
-                    {
-                        RecoverTeams rt = round.recuperedTeams[j];
-                        int newTeamsCount = rt.Method == RecuperationMethod.Best ? rt.Source.RetrieveTeams(-1, rt.Method, true, Session.Instance.Game.kernel.LocalisationTournament(this)).Count : 0;
-                        if (newTeamsCount > 0)
-                        {
-                            round.recuperedTeams[j] = new RecoverTeams(rt.Source, newTeamsCount, rt.Method);
-                        }
-                        else
-                        {
-                            round.recuperedTeams.RemoveAt(j);
-                        }
-
-                        if (rt.Source as Round != null)
-                        {
-                            leagueLevelsRepresented.Add(association.TournamentLevel((rt.Source as Round).Tournament));
-                        }
-                    }
-                }
-            }
-
-            //First phase : go through tournament qualifications with the new league system to check if adaptations must be made
-            List<int> teamsRounds = new List<int>();
-            int currentTeams = 1;
-            int newTeams = 0;
-            for (int i = _rounds.Count - 1; i >= 0; i--)
-            {
-                Round round = _rounds[i];
-                currentTeams = currentTeams * 2;
-                newTeams = 0;
-                foreach (RecoverTeams app in round.recuperedTeams)
-                {
-                    int newTeamsRound = TeamsCount(app);
-                    newTeams += newTeamsRound;
-                }
-                if (currentTeams <= newTeams && i > 0)
-                {
-                    foreach (RecoverTeams rt in round.recuperedTeams)
-                    {
-                        rounds[i - 1].recuperedTeams.Add(rt);
-                    }
-                    round.recuperedTeams.Clear();
-                    newTeams = 0;
-                }
-                newRecoverTeams.Add(new List<RecoverTeams>(round.recuperedTeams));
-                teamsRounds.Add(currentTeams);
-                currentTeams = currentTeams - newTeams;
-            }
-
-            //Replace old RecoverTeams with new RecoverTeams with actual count of clubs (non continental or continental)
-
-            //Case national League Cup
-            if (parent == null)
-            {
-                foreach (List<RecoverTeams> lrt in newRecoverTeams)
-                {
-                    for (int i = 0; i < lrt.Count; i++)
-                    {
-                        if (lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || lrt[i].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest || lrt[i].Method == RecuperationMethod.QualifiedForInternationalCompetition || lrt[i].Method == RecuperationMethod.StatusPro)
-                        {
-                            lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i]), lrt[i].Method);
-                        }
-                    }
-                }
-            }
-
-            currentTeams = -currentTeams;
-            int roundCreated = 0;
-            //Trois cas
-            //Case 1 : currentTeams == 0
-            //Parfait
-            //Case 2 : currentTeams < 0
-            //Pas assez d'équipes pour compléter les premiers tours, certaines équipes sont remontées au tour suivant.
-            //Ex. Coupe de la Ligue : certaines équipes de L2 entrent directement au deuxième tour
-            //Case 3 : currentTeams > 0
-            //Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour
-            Utils.Debug("[currentTeams] " + currentTeams);
-            if (currentTeams == 0)
-            {
-                Utils.Debug("Parfait !");
-            }
-            else if (currentTeams < 0)
-            {
-                Utils.Debug("Pas assez d'équipes pour compléter les premiers tours, certaines équipes sont remontées au tour suivant");
-                int teamsToMoveUp = -currentTeams;
-                int roundId = newRecoverTeams.Count - 1;
-                //Start with first round
-                while (teamsToMoveUp > 0)
-                {
-                    List<RecoverTeams> bestTeams = new List<RecoverTeams>();
-                    List<RecoverTeams> worstTeams = new List<RecoverTeams>();
-                    int missingTeams = 0;
-                    //According to the count of teams to move up, some teams are moved up (bestTeams) and the other remains on the first round (worstTeams)
-                    GetBestTeams(newRecoverTeams[roundId], teamsToMoveUp, false, ref bestTeams, ref worstTeams, ref missingTeams);
-                    //If additionnal teams need to be promoted to next round but can't because all teams are already moved up
-                    //In this case the same operation is made again with round n°1 to round n°2...
-                    teamsToMoveUp = missingTeams;
-                    foreach (RecoverTeams bt in bestTeams)
-                    {
-                        newRecoverTeams[roundId - 1].Add(bt);
-                    }
-                    newRecoverTeams[roundId] = worstTeams;
-                    roundId -= 1;
-                    teamsToMoveUp = teamsToMoveUp / 2;
-                }
-            }
-            else if (currentTeams > 0)
-            {
-                int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
-                Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
-                List<GameDay> availableDatesAll = association.GetAvailableCalendarDates(Session.Instance.Game.kernel.LocalisationTournament(this).isStateAssociation, 2, leagueLevelsRepresented, true, false);
-                List<GameDay> availableDates = new List<GameDay>();
-                int beginningCompetition = this._seasonBeginning.WeekNumber;
-                int beginningRounds = rounds.First().programmation.initialisation.WeekNumber;
-                //Filter to get available dates to play the new round
-                foreach (GameDay ad in availableDatesAll)
-                {
-                    //Les dates sont centrées sur le début de la compétition -> pas de problème en cas de passage d'une année à l'autre (semaines 52 puis semaine 02 par ex.)
-                    int absoluteAd = Utils.Modulo(ad.WeekNumber - beginningCompetition, 53); // TODO: Des fois 52 ou 53 semaines !
-                    int absoluteBeginFirstRound = Utils.Modulo(beginningRounds - beginningCompetition, 53); // TODO: Des fois 52 ou 53 semaines !
-
-                    if (absoluteAd < absoluteBeginFirstRound && absoluteAd > 0)
-                    {
-                        availableDates.Add(ad);
-                    }
-                }
-
-                while (teamsToAdd > 0)
-                {
-                    List<RecoverTeams> bestTeams = new List<RecoverTeams>();
-                    List<RecoverTeams> worstTeams = new List<RecoverTeams>();
-                    int missingTeams = 0;
-                    //According to the teams numbers to add to an extra round, some teams begin tournament at the current round (bestTeams) and the other play the extra round (worstTeams)
-                    GetBestTeams(newRecoverTeams.Last(), teamsToAdd, true, ref bestTeams, ref worstTeams, ref missingTeams);
-                    //If new rounds can't play all teams, so the missing teams are the new qualified teams from a second extra round etc.
-                    teamsToAdd = missingTeams;
-                    newRecoverTeams[newRecoverTeams.Count - 1] = bestTeams;
-                    newRecoverTeams.Add(worstTeams);
-                    Round firstRound = this.rounds[0];
-                    List<GameDay> newRoundTimes = new List<GameDay>();
-                    int dateIndex = (availableDates.Count - 2) - (3 * roundCreated);
-                    foreach (GameDay dt in firstRound.programmation.gamesDays)
-                    {
-                        newRoundTimes.Add(new GameDay(availableDates[dateIndex].WeekNumber, dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
-                    }
-                    newRounds.Add(new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), "Tour préliminaire", this, firstRound.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), firstRound.phases, new GameDay(availableDates[dateIndex].WeekNumber - 1, true, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), new GameDay(availableDates[dateIndex].WeekNumber + 1, firstRound.programmation.initialisation.MidWeekGame, firstRound.programmation.initialisation.YearOffset, firstRound.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, firstRound.programmation.gamesPriority)); ;
-                    newRounds[newRounds.Count - 1].recuperedTeams.AddRange(worstTeams);
-                    newRounds[newRounds.Count - 1].rules.AddRange(firstRound.rules);
-                    newRounds[newRounds.Count - 1].qualifications.Add(new Qualification(1, 1, new QualificationTournament(this), false, -1));
-                    roundCreated++;
-                    if (teamsToAdd > 0)
-                    {
-                        teamsToAdd *= 2;
-                    }
-                }
-            }
-
-            //Set extraRounds to keep trace of extra rounds (needed when reset the tournament)
-            _extraRounds = roundCreated;
-            foreach (Round newRound in newRounds)
-            {
-                rounds.Insert(0, newRound);
-            }
-
-            //Set newRecoverTeams to be the official league apparition in the tournament now
-            bool nonInternationalWorstAppeared = false;
-            for (int i = 0; i < rounds.Count; i++)
-            {
-                rounds[i].recuperedTeams.Clear();
-                //TODO: Is this loop really needed ? Use case : CDL with 15 continental teams
-                for (int j = 0; j < newRecoverTeams[rounds.Count - i - 1].Count; j++)
-                {
-                    if (newRecoverTeams[rounds.Count - i - 1][j].Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst)
-                    {
-                        if (!nonInternationalWorstAppeared)
-                        {
-                            nonInternationalWorstAppeared = true;
-                        }
-                        else
-                        {
-                            newRecoverTeams[rounds.Count - i - 1][j] = new RecoverTeams(newRecoverTeams[rounds.Count - i - 1][j].Source, newRecoverTeams[rounds.Count - i - 1][j].Number, RecuperationMethod.NotQualifiedForInternationalCompetitionBest);
-                        }
-                    }
-                }
-                rounds[i].recuperedTeams.AddRange(newRecoverTeams[rounds.Count - i - 1]);
-            }
-
-            // Qualifications to next rounds are recalibrated in case of extra rounds (because old second round in the tournament doesn't refer to the same round now)
-            for (int i = 0; i < rounds.Count; i++)
-            {
-                for (int j = 0; j < rounds[i].qualifications.Count; j++)
-                {
-                    int newRoundId = i < roundCreated ? (i + 1) : (rounds[i].qualifications[j].roundId + roundCreated);
-                    rounds[i].qualifications[j] = new Qualification(rounds[i].qualifications[j].ranking, newRoundId, rounds[i].qualifications[j].target, rounds[i].qualifications[j].isNextYear, rounds[i].qualifications[j].qualifies);
-                }
-            }
-        }*/
+        */
     }
 }

@@ -16,6 +16,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
+using tm.Algorithms;
 
 /*
  * TODO: Factorisations possibles :
@@ -668,7 +669,7 @@ namespace tm
 
             List<int> leagueLevelsRepresented = new List<int>();
 
-            if (parent == null && association.isStateAssociation)
+            if (parent != null && association.isStateAssociation)
             {
                 int levelsCount = association.Leagues().Count;
                 int[] teamsByLevel = new int[levelsCount];
@@ -683,7 +684,7 @@ namespace tm
                     {
                         RecoverTeams rt = round.recuperedTeams[j];
                         int newTeamsCount = rt.Method == RecuperationMethod.Best ? rt.Source.RetrieveTeams(-1, rt.Method, true, Session.Instance.Game.kernel.LocalisationTournament(this)).Count : 0;
-                        if(newTeamsCount > 0)
+                        if (newTeamsCount > 0)
                         {
                             round.recuperedTeams[j] = new RecoverTeams(rt.Source, newTeamsCount, rt.Method);
                         }
@@ -805,13 +806,6 @@ namespace tm
                         availableDates.Add(ad);
                     }
                 }
-
-                /*Console.WriteLine("availableDates");
-                foreach (GameDay dd in availableDates)
-                {
-                    Console.WriteLine(dd.WeekNumber);
-                }*/
-
 
                 while (teamsToAdd > 0)
                 {
@@ -965,6 +959,76 @@ namespace tm
             }
         }
 
+        private List<GameDay> GetAvailableDates(Tournament tournament, HashSet<int> leagueLevels)
+        {
+            Association association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            List<GameDay> dates = new List<GameDay>();
+            List<GameDay> allDates = association.GetAvailableCalendarDates(association.isStateAssociation, 2, leagueLevels.ToList(), true, false);
+            int beginTournament = tournament.seasonBeginning.WeekNumber;
+            int beginRounds = tournament.rounds.First().programmation.initialisation.WeekNumber;
+            //Filter to get available dates to play the new round
+            foreach (GameDay gd in allDates)
+            {
+                //Les dates sont centrées sur le début de la compétition -> pas de problème en cas de passage d'une année à l'autre (semaines 52 puis semaine 02 par ex.)
+                int absoluteGd = Utils.Modulo(gd.WeekNumber - beginTournament, 53);  // TODO: Des fois 52 ou 53 semaines !
+                int absoluteBeginFirstRound = Utils.Modulo(beginRounds - beginTournament, 53); // TODO: Des fois 52 ou 53 semaines !
+                if (absoluteGd < absoluteBeginFirstRound && absoluteGd > 0)
+                {
+                    dates.Add(gd);
+                }
+            }
+            return dates;
+        }
+
+        private string MakeExtraRoundName(int round, int extraRounds)
+        {
+            string n = extraRounds == 1 ? "" : (round + 1).ToString();
+            return String.Format("Extra preliminary round {0}", n);
+        }
+
+        private void WriteCupAdapterResult(CupAdapterResult result)
+        { 
+            List<GameDay> dates = GetAvailableDates(this, result.leagueLevelsRepresented);
+            List<GameDay> newDates = new List<GameDay>();
+            for(int i = 0; i < result.newRounds; i++)
+            {
+                int dateIndex = (dates.Count - 2) - (3 * i);
+                GameDay gd = dates[dateIndex];
+                newDates.Add(gd);
+            }
+
+            Round roundModel = rounds[0];
+            for(int i = 0; i < result.newRounds; i++)
+            {
+                List<GameDay> newRoundTimes = new List<GameDay>();
+                foreach (GameDay dt in roundModel.programmation.gamesDays)
+                {
+                    newRoundTimes.Add(new GameDay(newDates[i].WeekNumber, dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
+                }
+                //Extra preliminary round
+                KnockoutRound kr = new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), MakeExtraRoundName(i, result.newRounds), this, roundModel.programmation.defaultHour, newRoundTimes, new List<TvOffset>(), roundModel.phases, new GameDay(newDates[i].WeekNumber - 1, true, roundModel.programmation.initialisation.YearOffset, roundModel.programmation.initialisation.DayOffset), new GameDay(newDates[i].WeekNumber + 1, roundModel.programmation.initialisation.MidWeekGame, roundModel.programmation.initialisation.YearOffset, roundModel.programmation.initialisation.DayOffset), RandomDrawingMethod.Random, false, roundModel.programmation.gamesPriority);
+                kr.recuperedTeams.AddRange(result.qualifications[i]);
+                kr.rules.AddRange(roundModel.rules);
+                kr.qualifications.Add(new Qualification(1, i+1, new QualificationTournament(this), false, -1));
+                rounds.Insert(i, kr);
+            }
+            _extraRounds = result.newRounds;
+
+            for (int i = result.newRounds; i < result.qualifications.Count; i++)
+            {
+                rounds[i].recuperedTeams.Clear();
+                rounds[i].recuperedTeams.AddRange(result.qualifications[i]);
+                for(int j = 0; j < rounds[i].qualifications.Count; j++)
+                {
+                    Qualification q = rounds[i].qualifications[j];
+                    if(!q.isNextYear && q.target.Tournament() == this)
+                    {
+                        rounds[i].qualifications[j] = new Qualification(q.ranking, q.roundId + result.newRounds, q.target, q.isNextYear, q.qualifies);
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// Update national cup qualifications due to annual league structure modifications
         /// </summary>
@@ -1032,7 +1096,9 @@ namespace tm
             //if (leagueCupLike)
             if (idRoundPivot == -1 && parent == null) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
             {
-                UpdateLeagueCupQualifications();
+                CupAdapter adapter = new CupAdapter();
+                CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
+                WriteCupAdapterResult(adaptation);
             }
             else
             {

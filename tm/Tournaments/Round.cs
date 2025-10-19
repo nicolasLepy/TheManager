@@ -35,6 +35,7 @@ namespace tm
         
     }
 
+    [Flags]
     public enum RecuperationMethod
     {
         Randomly,
@@ -43,6 +44,7 @@ namespace tm
         QualifiedForInternationalCompetition,
         NotQualifiedForInternationalCompetitionWorst,
         NotQualifiedForInternationalCompetitionBest,
+        NotQualifiedForInternationalCompetition,
         StatusPro
     }
 
@@ -74,6 +76,26 @@ namespace tm
         public bool Equals(RecoverTeams other)
         {
             return this.Source == other.Source && this.Number == other.Number && this.Method == other.Method;
+        }
+
+        public RecoverTeams Clone()
+        {
+            return new RecoverTeams(Source, Number, Method);
+        }
+
+        public int Available(bool onlyFirstTeams, Association filter)
+        {
+            return this.Source.RetrieveTeams(-1, Method, onlyFirstTeams, filter).Count;
+        }
+
+        public override String ToString()
+        {
+            string source = Source.ToString();
+            if(Source as Round != null)
+            {
+                source = String.Format("{0} ({1})", (Source as Round).Tournament.name, Source.ToString());
+            }
+            return String.Format("[RecoverTeam {0} teams from {1} ({2})]", Number, source, Method);
         }
     }
 
@@ -882,6 +904,7 @@ namespace tm
                     break;
                 case RecuperationMethod.NotQualifiedForInternationalCompetitionBest:
                 case RecuperationMethod.NotQualifiedForInternationalCompetitionWorst:
+                case RecuperationMethod.NotQualifiedForInternationalCompetition:
                     List<Club> internationalClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
                     foreach (Club c in internationalClubs)
                     {
