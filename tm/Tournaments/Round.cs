@@ -38,12 +38,13 @@ namespace tm
     [Flags]
     public enum RecuperationMethod
     {
-        Randomly=1,
-        Best=2,
-        Worst=4,
-        QualifiedForInternationalCompetition=8,
-        NotQualifiedForInternationalCompetition=16,
-        StatusPro=32
+        Randomly=1, //Select teams randomly
+        Best=2, //Select the best teams
+        Worst=4, //Select the worst teams
+        QualifiedForInternationalCompetition=8, //Select only teams qualified for international tournaments
+        NotQualifiedForInternationalCompetition=16, //Select only teams not qualified for international tournaments
+        StatusPro=32, //Select only pro teams
+        AllTeams=64 //(to combine with another flag) All teams from the league must be selected in the tournament
     }
 
     public enum Tiebreaker

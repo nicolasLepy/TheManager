@@ -62,11 +62,6 @@ namespace tm
         protected List<Club>[] _cacheRanking;
 
         /// <summary>
-        /// Used to share information between qualifications computation phases
-        /// </summary>
-        protected int __computationRelegationPlaces;
-
-        /// <summary>
         /// If False, qualification are defined for each group (1st of each group will qualifie for ...).
         /// Otherwise, qualifications are defined for all group (only 1 team will qualifie for ...).
         /// </summary>
@@ -156,7 +151,6 @@ namespace tm
             _nonGroupGamesByGameday = nonGroupGamesByGameday;
             _fusionGroupAndNoGroupGames = fusionGroupAndNoGroupGames;
             _cacheRanking = new List<Club>[0];
-            __computationRelegationPlaces = 0;
             _qualificationsDefinedForAllGroup = qualificationsDefinedForAllGroup;
         }
 

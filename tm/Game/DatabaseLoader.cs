@@ -81,7 +81,7 @@ namespace tm
         {
             int id = 0;
 
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "clubs.xml"));
 
             foreach (XElement x in doc.Descendants("Clubs"))
             {
@@ -100,12 +100,12 @@ namespace tm
                 }
             }
 
-            doc.Save(Utils.dataFolderName + "/clubs_id.xml");
+            doc.Save(Path.Join(Utils.dataFolderName, "clubs_id.xml"));
         }
 
         private void ReplaceCompetitionId()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/competitions.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "competitions.xml"));
 
             foreach (XElement x in doc.Descendants("Club"))
             {
@@ -116,12 +116,12 @@ namespace tm
                 x.Add(new XAttribute("id", id_club));
             }
 
-            doc.Save(Utils.dataFolderName + "/competitions_id.xml");
+            doc.Save(Path.Join(Utils.dataFolderName, "competitions_id.xml"));
         }
 
         public void LoadGamesComments()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/actions.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "actions.xml"));
             foreach (XElement e in doc.Descendants("Actions"))
             {
                 foreach (XElement e2 in e.Descendants("Action"))
@@ -197,7 +197,7 @@ namespace tm
 
         public void LoadCalendars()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/calendars.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "calendars.xml"));
             foreach (XElement e in doc.Descendants("Calendars"))
             {
                 foreach (XElement e2 in e.Descendants("Calendar"))
@@ -213,7 +213,7 @@ namespace tm
 
         public void LoadAudios()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/audio.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "audio.xml"));
             foreach (XElement e in doc.Descendants("Audio"))
             {
                 foreach (XElement e2 in e.Descendants("Sound"))
@@ -233,7 +233,7 @@ namespace tm
 
         public void LoadMedias()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/medias.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "medias.xml"));
             foreach (XElement e in doc.Descendants("Medias"))
             {
                 foreach (XElement e2 in e.Descendants("Media"))
@@ -300,7 +300,7 @@ namespace tm
 
         public void LoadPlayers()
         {
-            StreamReader reader = new StreamReader(Utils.dataFolderName + "/players.xml", Encoding.UTF8);
+            StreamReader reader = new StreamReader(Path.Join(Utils.dataFolderName, "players.xml"), Encoding.UTF8);
             XDocument doc = XDocument.Load(reader);
             foreach (XElement e in doc.Descendants("Joueurs"))
             {
@@ -349,7 +349,7 @@ namespace tm
 
         public void LoadManagers()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/entraineurs.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "entraineurs.xml"));
             foreach (XElement e in doc.Descendants("Entraineurs"))
             {
                 foreach (XElement e2 in e.Descendants("Entraineur"))
@@ -369,9 +369,8 @@ namespace tm
 
         public void LoadCities()
         {
-            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/cities/"))
+            foreach (string xmlFile in Directory.EnumerateFiles(Path.Join(Utils.dataFolderName, "cities")))
             {
-                //XDocument doc = XDocument.Load(Utils.dataFolderName + "/cities/cities.xml");
                 XDocument doc = XDocument.Load(xmlFile);
                 foreach (XElement e in doc.Descendants("Cities"))
                 {
@@ -400,9 +399,8 @@ namespace tm
 
         public void ReformateCities()
         {
-            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/old_rawdb/rawcities/"))
+            foreach (string xmlFile in Directory.EnumerateFiles(Path.Join(Utils.dataFolderName, "old_rawdb", "rawcities")))
             {
-                //XDocument doc = XDocument.Load(Utils.dataFolderName + "/cities/cities.xml");
                 XDocument doc = XDocument.Load(xmlFile);
                 List<XElement> toDelete = new List<XElement>();
                 foreach (XElement e in doc.Descendants("Cities"))
@@ -461,7 +459,7 @@ namespace tm
 
         public void LoadInternationalDates()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/world.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "world.xml"));
             foreach(XElement e in doc.Descendants("World"))
             {
                 foreach (XElement e2 in e.Descendants("InternationalDates"))
@@ -498,7 +496,7 @@ namespace tm
 
         public void LoadWorld()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/world.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "world.xml"));
             int maxAdmId = GetMaxAssociationId(doc);
             foreach (XElement e in doc.Descendants("World"))
             {
@@ -659,7 +657,7 @@ namespace tm
 
         public void LoadStadiums()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/stades.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "stades.xml"));
             foreach (XElement e in doc.Descendants("Stades"))
             {
                 foreach (XElement e2 in e.Descendants("Stade"))
@@ -699,9 +697,8 @@ namespace tm
 
         public void LoadClubs()
         {
-            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/clubs/"))
+            foreach (string xmlFile in Directory.EnumerateFiles(Path.Join(Utils.dataFolderName, "clubs")))
             {
-                //XDocument doc = XDocument.Load(Utils.dataFolderName + "/clubs/clubs.xml");
                 Utils.Debug(xmlFile);
                 XDocument doc = XDocument.Load(xmlFile);
 
@@ -771,8 +768,8 @@ namespace tm
 
                         int centreFormation = int.Parse(e2.Attribute("centreFormation").Value);
                         string logo = e2.Attribute("logo").Value;
-                        if (logo == "" ||
-                            !File.Exists(System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\" + Utils.clubLogoFolderName + "\\" + logo + ".png"))
+                        string logoPath = Path.Join(System.IO.Directory.GetCurrentDirectory(), Utils.imagesFolderName, Utils.clubLogoFolderName, string.Format("{0}.png", logo));
+                        if (logo == "" || !File.Exists(logoPath))
                         {
                             logo = "generic";
                         }
@@ -856,7 +853,7 @@ namespace tm
         
         public void LoadArchives()
         {
-            foreach(string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/arch/"))
+            foreach(string xmlFile in Directory.EnumerateFiles(Path.Join(Utils.dataFolderName, "arch")))
             {
                 XDocument doc = XDocument.Load(xmlFile);
                 foreach(XElement a in doc.Descendants("Archives"))
@@ -915,7 +912,7 @@ namespace tm
         public void LoadTournaments()
         {
             SetStartClubId();
-            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/comp/"))
+            foreach (string xmlFile in Directory.EnumerateFiles(Path.Join(Utils.dataFolderName, "comp")))
             {
                 XDocument doc = XDocument.Load(xmlFile);
                 //Chargement préliminaire de toutes les compétitons pour les référancer
@@ -986,7 +983,7 @@ namespace tm
                 }
             }
 
-            foreach (string xmlFile in Directory.EnumerateFiles(Utils.dataFolderName + "/comp/"))
+            foreach (string xmlFile in Directory.EnumerateFiles(Path.Join(Utils.dataFolderName, "comp")))
             {
                 XDocument doc = XDocument.Load(xmlFile);
                 //Chargement détaillé de toutes les compétitions
@@ -1492,7 +1489,7 @@ namespace tm
 
         public void LoadRules()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/rules.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "rules.xml"));
             foreach (XElement e in doc.Descendants("Rules"))
             {
                 foreach (XElement e2 in e.Descendants("Association"))
@@ -1528,12 +1525,12 @@ namespace tm
         private void LoadLanguage(string languageName, string filename)
         {
             Language language = new Language(languageName);
-            string[] text = System.IO.File.ReadAllLines(Utils.dataFolderName + "/" + Utils.namesSubfolderName + "/" + filename + "_p.txt", Encoding.UTF8);
+            string[] text = System.IO.File.ReadAllLines(Path.Join(Utils.dataFolderName, Utils.namesSubfolderName, string.Format("{0}_p.txt", filename)), Encoding.UTF8);
             foreach(string line in text)
             {
                 language.AddFirstName(line);
             }
-            text = System.IO.File.ReadAllLines(Utils.dataFolderName + "/" + Utils.namesSubfolderName + "/" + filename + "_n.txt", Encoding.UTF8);
+            text = System.IO.File.ReadAllLines(Path.Join(Utils.dataFolderName, Utils.namesSubfolderName, string.Format("{0}_n.txt", filename)), Encoding.UTF8);
             foreach (string line in text)
             {
                 language.AddLastName(line);
@@ -1727,10 +1724,10 @@ namespace tm
             foreach(Association a in _kernel.GetAllAssociations())
             {
                 bool isPartOfAnotherCup = IsPartOfAnotherCup(a);
-                if(!isPartOfAnotherCup)
-                {
+                //if(!isPartOfAnotherCup)
+                //{
                     GenerateCup(a, isPartOfAnotherCup, !isPartOfAnotherCup);
-                }
+                //}
             }
         }
 

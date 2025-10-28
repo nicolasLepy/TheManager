@@ -9,12 +9,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using tm;
-using WMPLib;
+//using WMPLib;
 
 namespace TheManager_GUI.utils
 {
 
-    public class ThreadDuree
+    /*public class ThreadDuree
     {
 
         private readonly WindowsMediaPlayer _player;
@@ -36,7 +36,7 @@ namespace TheManager_GUI.utils
             _player.close();
         }
 
-    }
+    }*/
 
     public class ThreadDureeWAV
     {

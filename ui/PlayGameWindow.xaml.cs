@@ -75,7 +75,7 @@ namespace TheManager_GUI
                     StackPanel spAction = new StackPanel();
                     spAction.Orientation = Orientation.Horizontal;
 
-                    spAction.Children.Add(ViewUtils.CreateImage(Utils.Image(icone), 20, 20));
+                    spAction.Children.Add(ViewUtils.CreateImage(Utils.Icon(icone), 20, 20));
                     spAction.Children.Add(ViewUtils.CreateLabel(em.MinuteToString, "StyleLabel2", 11, 25, System.Windows.Media.Brushes.LightSalmon, null, true));
                     spAction.Children.Add(ViewUtils.CreateLabel(game.home.shortName + " - " + game.away.shortName + " : " + game.score1 + " - " + game.score2, "StyleLabel2", 11, 210, icone == "red_card.png" ? System.Windows.Media.Brushes.LightSalmon : null, null, icone == "goal.png" || icone == "red_card.png"));
                     spAction.Children.Add(ViewUtils.CreateLabel(em.player.lastName + " (" + em.player.Club.shortName + ")", "StyleLabel2", 11, 125, null, null, icone == "goal.png"));

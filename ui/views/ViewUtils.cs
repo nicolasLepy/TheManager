@@ -559,7 +559,7 @@ namespace TheManager_GUI
                 Image img = new Image();
                 img.Height = starSize;
                 img.Width = starSize;
-                img.Source = new BitmapImage(new Uri(Utils.Image("star.png")));
+                img.Source = new BitmapImage(new Uri(Utils.Icon("star.png")));
                 img.Margin = new Thickness(0, 0, 5, 0);
                 RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
                 spStars.Children.Add(img);
@@ -569,7 +569,7 @@ namespace TheManager_GUI
                 Image img = new Image();
                 img.Height = starSize;
                 img.Width = starSize;
-                img.Source = new BitmapImage(new Uri(Utils.Image("star_half.png")));
+                img.Source = new BitmapImage(new Uri(Utils.Icon("star_half.png")));
                 img.Margin = new Thickness(0, 0, 5, 0);
                 RenderOptions.SetBitmapScalingMode(img, BitmapScalingMode.HighQuality);
                 spStars.Children.Add(img);

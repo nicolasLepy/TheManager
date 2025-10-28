@@ -81,7 +81,7 @@ namespace TheManager_GUI
                 }
                 string playerName = String.Format("{0}{1}{2}", em.player.Name, em.type == GameEvent.PenaltyGoal ? " (" + strPen + ")" : "", em.type == GameEvent.AgGoal ?  " (" + strOg + ")" : "");
                 string time = em.MinuteToString;
-                string imageIconPath = Utils.Image(icon);
+                string imageIconPath = Utils.Icon(icon);
 
                 if (em.type != GameEvent.Shot)
                 {
@@ -125,7 +125,7 @@ namespace TheManager_GUI
                 {
                     wasSubstitued = true;
                     Image imageSub = new Image();
-                    imageSub.Source = new BitmapImage(new Uri(Utils.Image("sub.png")));
+                    imageSub.Source = new BitmapImage(new Uri(Utils.Icon("sub.png")));
                     imageSub.Height = fontSize * 5 / 3;
                     int minute = substitution.Period == 1 ? substitution.Minute : substitution.Period == 2 ? substitution.Minute + 45 : substitution.Period == 3 ? substitution.Minute + 90 : substitution.Minute + 105;
                     string subText = string.Format("{0}° {1} - {2}", substitution.Minute, substitution.PlayerOut, substitution.PlayerIn);
@@ -274,7 +274,7 @@ namespace TheManager_GUI
                     string penText = FindResource("str_pen").ToString();
                     string eventText = String.Format("{0} {1}{2}{3}", em.MinuteToString, em.player.Name, em.type == GameEvent.PenaltyGoal ? string.Format(" ({0})", penText) : "", em.type == GameEvent.AgGoal ? string.Format(" ({0})", ogText) : "");
                     string eventImg = "";
-                    eventImg = Utils.Image(icone);
+                    eventImg = Utils.Icon(icone);
 
                     Image imEvent = new Image();
                     imEvent.Width = 20;

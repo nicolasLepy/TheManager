@@ -19,7 +19,7 @@ namespace tests.tm
         ///dotnet tool install -g dotnet-reportgenerator-globaltool
         // reportgenerator -reports:"TheManagerTests\TestResults\ffe9acf3-b390-4734-aa2a-26f41f6a445a\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
 
-        private static int TEST_YEARS = 5;
+        private static int TEST_YEARS = 10;
         private static bool DISABLED = true; //should be false
 
         private Round NextRound(Tournament tournament, Round round, bool isRegional)

@@ -990,6 +990,15 @@ namespace tm
             return String.Format("Extra preliminary round {0}", n);
         }
 
+        private void WriteCupStrutureResult(CupStructureResult result)
+        {
+            int extraRounds = result.roundsCount - rounds.Count;
+            for(int i = 0; i < result.roundsCount; i++)
+            {
+                Round r = null;
+            }
+        }
+
         private void WriteCupAdapterResult(CupAdapterResult result)
         { 
             List<GameDay> dates = GetAvailableDates(this, result.leagueLevelsRepresented);

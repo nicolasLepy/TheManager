@@ -129,7 +129,7 @@ namespace TheManager_GUI
                 string img2 = "";
                 if (em.club == match.home)
                 {
-                    img1 = Utils.Image(icone);
+                    img1 = Utils.Icon(icone);
                     c1 = em.MinuteToString;
                     c2 = em.player.firstName + " " + em.player.lastName;
                     if (em.type == GameEvent.PenaltyGoal)
@@ -144,7 +144,7 @@ namespace TheManager_GUI
                 }
                 else
                 {
-                    img2 = Utils.Image(icone);
+                    img2 = Utils.Icon(icone);
                     c4 = em.MinuteToString;
                     c3 = em.player.firstName + " " + em.player.lastName;
                     if (em.type == GameEvent.PenaltyGoal)
@@ -270,7 +270,7 @@ namespace TheManager_GUI
                 }
                 string eventText = "";
                 string eventImg = "";
-                eventImg = Utils.Image(icone);
+                eventImg = Utils.Icon(icone);
                 eventText = em.player.firstName + " " + em.player.lastName;
                 if (em.type == GameEvent.PenaltyGoal)
                 {

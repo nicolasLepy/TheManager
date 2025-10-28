@@ -22,6 +22,7 @@ using tm;
 using tm.Comparators;
 using TheManager_GUI.Styles;
 using TheManager_GUI.views;
+using Path = System.IO.Path;
 
 namespace TheManager_GUI
 {
@@ -175,13 +176,16 @@ namespace TheManager_GUI
         private List<string> GetDatabases()
         {
             List<string> databases = new List<string>();
-            string[] directories = Directory.GetDirectories("data");
-            foreach (string directory in directories)
+            if(Directory.Exists("data"))
             {
-                if (directory.StartsWith("data\\database_"))
+                string[] directories = Directory.GetDirectories("data");
+                foreach (string directory in directories)
                 {
-                    databases.Add(directory.Remove(0, 14));
-                    
+                    if (directory.StartsWith(Path.Join("data", "database_")))
+                    {
+                        databases.Add(directory.Remove(0, 14));
+
+                    }
                 }
             }
             return databases;
@@ -194,10 +198,12 @@ namespace TheManager_GUI
             {
                 comboBoxDatabase.Items.Add(database);
             }
-            if(comboBoxDatabase.Items.Count > 0)
+            if(comboBoxDatabase.Items.Count == 0)
             {
-                comboBoxDatabase.SelectedIndex = 0;
+                comboBoxDatabase.Items.Add("No database found");
+                comboBoxDatabase.IsEnabled = false;
             }
+            comboBoxDatabase.SelectedIndex = 0;
         }
 
         private void FillNationalities()
@@ -462,7 +468,7 @@ namespace TheManager_GUI
 
         private async void buttonSelectDatabase_Click(object sender, RoutedEventArgs e)
         {
-            if(comboBoxDatabase.SelectedItem != null)
+            if(comboBoxDatabase.IsEnabled && comboBoxDatabase.SelectedItem != null)
             {
                 Utils.dataFolderName = String.Format("data{0}database_{1}", System.IO.Path.DirectorySeparatorChar, comboBoxDatabase.SelectedItem.ToString());
                 progressBarLoading.Visibility = Visibility.Visible;

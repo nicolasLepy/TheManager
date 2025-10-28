@@ -33,52 +33,52 @@ namespace TheManager_GUI
                     string e5 = "";
                     if (etoiles >= 1)
                     {
-                        e1 = Utils.Image("star.png");
+                        e1 = Utils.Icon("star.png");
                     }
 
                     if (etoiles >= 2)
                     {
-                        e2 = Utils.Image("star.png");
+                        e2 = Utils.Icon("star.png");
                     }
 
                     if (etoiles >= 3)
                     {
-                        e3 = Utils.Image("star.png");
+                        e3 = Utils.Icon("star.png");
                     }
 
                     if (etoiles >= 4)
                     {
-                        e4 = Utils.Image("star.png");
+                        e4 = Utils.Icon("star.png");
                     }
 
                     if (etoiles >= 5)
                     {
-                        e5 = Utils.Image("star.png");
+                        e5 = Utils.Icon("star.png");
                     }
 
                     if (etoiles < 1)
                     {
-                        e1 = Utils.Image("demistar.png");
+                        e1 = Utils.Icon("demistar.png");
                     }
 
                     if (etoiles > 1 && etoiles < 2)
                     {
-                        e2 = Utils.Image("demistar.png");
+                        e2 = Utils.Icon("demistar.png");
                     }
 
                     if (etoiles > 2 && etoiles < 3)
                     {
-                        e3 = Utils.Image("demistar.png");
+                        e3 = Utils.Icon("demistar.png");
                     }
 
                     if (etoiles > 3 && etoiles < 4)
                     {
-                        e4 = Utils.Image("demistar.png");
+                        e4 = Utils.Icon("demistar.png");
                     }
 
                     if (etoiles > 4 && etoiles < 5)
                     {
-                        e5 = Utils.Image("demistar.png");
+                        e5 = Utils.Icon("demistar.png");
                     }
 
                     dgClubs.Items.Add(new ClubElement { Nom = cl.shortName, Niveau = cl.Level(), Budget = budget, Affluence = c.AverageAttendance(cl), MasseSalariale = masseSalariale, Status = FindResource(Utils.ClubStatus2ResourceString(cl.status)).ToString(), Star1=e1, Star2=e2, Star3=e3, Star4=e4,Star5=e5 });

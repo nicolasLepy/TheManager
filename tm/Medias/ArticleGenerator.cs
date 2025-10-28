@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -155,7 +156,7 @@ namespace tm
 
         private void LoadArticles()
         {
-            XDocument doc = XDocument.Load(Utils.dataFolderName + "/articles.xml");
+            XDocument doc = XDocument.Load(Path.Join(Utils.dataFolderName, "articles.xml"));
             foreach (XElement e in doc.Descendants("Articles"))
             {
                 foreach (XElement e2 in e.Descendants("Article"))

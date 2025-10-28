@@ -122,8 +122,48 @@ namespace tm.Algorithms
             return res;
         }
 
+        private List<RecoverTeams> FindSameSource(RecoverTeams qualification, List<RecoverTeams> qualifications)
+        {
+            List<RecoverTeams> res = new List<RecoverTeams>();
+            foreach(RecoverTeams q in qualifications)
+            {
+                if(q.Source == qualification.Source && q.Method != qualification.Method)
+                {
+                    res.Add(q);
+                }
+            }
+            return res;
+        }
+
+        private int TeamsCountNew(RecoverTeams rt, List<RecoverTeams> qualifications, bool filterOnlyFirstTeam, Association filterAssociation)
+        {
+            int count = rt.Number;
+            int availableTeams = rt.Available(filterOnlyFirstTeam, filterAssociation);
+            Console.WriteLine("[{0}] Available: {1}", rt.ToString(), availableTeams);
+            int teams = 0;
+            List<RecoverTeams> others = FindSameSource(rt, qualifications);
+            foreach(RecoverTeams ot in others)
+            {
+                teams += Math.Min(availableTeams, ot.Number);
+            }
+            Console.WriteLine("Other qualifications : {0} teams", teams);
+            if(rt.Method.HasFlag(RecuperationMethod.AllTeams))
+            {
+                availableTeams = availableTeams - teams;
+            }
+
+            if (rt.Method.HasFlag(RecuperationMethod.AllTeams) || rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro))
+            {
+                count = availableTeams;
+            }
+            Console.WriteLine("[Method : {0}] {1}->{2}", rt.Method, rt.Number, count);
+            return count;
+
+        }
+
         private int TeamsCount(RecoverTeams rt, bool onlyFirstTeams, Association association)
         {
+            return rt.Number;
             int res;
             if(rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro))
             {
@@ -193,13 +233,33 @@ namespace tm.Algorithms
             }
         }
 
+        /// <summary>
+        /// Update RecoverTeams with the actual number of clubs
+        /// </summary>
+        public void UpdateRecoverTeams(List<List<RecoverTeams>> recoverTeams, bool filterOnlyFirstTeams, Association filterAssociation)
+        {
+            int roundsCount = recoverTeams.Count;
+            for(int i = 0; i < roundsCount; i++)
+            {
+                for(int j = 0; j < recoverTeams[i].Count; j++)
+                {
+                    List<RecoverTeams> flatten = Utils.Flatten(recoverTeams);
+                    int newCount = TeamsCountNew(recoverTeams[i][j], flatten, filterOnlyFirstTeams, filterAssociation);
+                    RecoverTeams rt = new RecoverTeams(recoverTeams[i][j].Source, newCount, recoverTeams[i][j].Method);
+                    recoverTeams[i][j] = rt;
+                }
+            }
+        }
+
         public CupAdapterResult AdaptLeagueCup(Tournament tournament)
         {
+            Console.WriteLine("[AdaptLeagueCup] {0}", tournament.name);
             association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
             bool onlyFirstTeams = false;
             HashSet<int> leagueLevelsRepresented = GetLeagueLevelRepresented(tournament, association);
 
             List<List<RecoverTeams>> qualifications = ExtractCupQualifications(tournament);
+            UpdateRecoverTeams(qualifications, onlyFirstTeams, association);
             int roundsCount = tournament.rounds.Count;
 
             //First phase: go through tournament qualifications with the new league system to check if adaptations must be made
@@ -225,7 +285,7 @@ namespace tm.Algorithms
 
             //Replace old RecoverTeams with new RecoverTeams with actual count of clubs when the number is fixed (non continental or continental)
 
-            foreach (List<RecoverTeams> lrt in qualifications)
+            /*foreach (List<RecoverTeams> lrt in qualifications)
             {
                 for(int i = 0; i < lrt.Count; i++)
                 {
@@ -234,7 +294,7 @@ namespace tm.Algorithms
                         lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i], onlyFirstTeams, association), lrt[i].Method);
                     }
                 }
-            }
+            }*/
 
             currentTeams = -currentTeams;
             int newRounds = 0;

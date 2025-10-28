@@ -31,6 +31,7 @@ namespace tm
         private static bool providerRegistered = false;
 
         public readonly static string imagesFolderName = "images";
+        public readonly static string iconsFolderName = "icons";
         public readonly static string tournamentLogoFolderName = "tournaments";
         public readonly static string clubLogoFolderName = "clubs";
         public readonly static string nationalFlagsFolderName = "flags";
@@ -383,35 +384,35 @@ namespace tm
 
         public static string MediaLogo(Media m)
         {
-            return Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\" + mediaLogoFolderName + "\\" + m.name.Replace(" ","") + ".png";
+            return Path.Join(Environment.CurrentDirectory, Utils.imagesFolderName, mediaLogoFolderName, string.Format("{0}.png", m.name.Replace(" ","")));
         }
 
         public static string Flag(Country c)
         {
-            string flag = Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\"+ nationalFlagsFolderName + "\\" + c.Flag + ".png";
+            string flag = Path.Join(Environment.CurrentDirectory, Utils.imagesFolderName, nationalFlagsFolderName, string.Format("{0}.png", c.Flag));
             if (!File.Exists(flag))
             {
-                flag = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+                flag = Path.Join(System.IO.Directory.GetCurrentDirectory(), imagesFolderName, clubLogoFolderName, "generic.png");
             }
             return flag;
         }
 
         public static string Logo(Continent c)
         {
-            string flag = Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\" + universeLogoFolderName + "\\" + c.Logo() + ".png";
+            string flag = Path.Join(Environment.CurrentDirectory, Utils.imagesFolderName, universeLogoFolderName, string.Format("{0}.png", c.Logo()));
             if (!File.Exists(flag))
             {
-                flag = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+                flag = Path.Join(System.IO.Directory.GetCurrentDirectory(), imagesFolderName, clubLogoFolderName, "generic.png");
             }
             return flag;
         }
 
         public static string Logo(Association a)
         {
-            string flag = Environment.CurrentDirectory + "\\" + Utils.imagesFolderName + "\\" + universeLogoFolderName + "\\" + a.logo + ".png";
+            string flag = Path.Join(Environment.CurrentDirectory, Utils.imagesFolderName, universeLogoFolderName, string.Format("{0}.png", a.logo));
             if (!File.Exists(flag))
             {
-                flag = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+                flag = Path.Join(System.IO.Directory.GetCurrentDirectory(), imagesFolderName, clubLogoFolderName, "generic.png");
             }
             return flag;
         }
@@ -431,10 +432,10 @@ namespace tm
                 {
                     folder = nationalFlagsFolderName;
                 }
-                res = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\"+folder+"\\" + logoString + ".png";
+                res = Path.Join(System.IO.Directory.GetCurrentDirectory(), imagesFolderName, folder, string.Format("{0}.png", logoString));
                 if (!File.Exists(res))
                 {
-                    res = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + clubLogoFolderName + "\\" + "generic.png";
+                    res = Path.Join(System.IO.Directory.GetCurrentDirectory(), imagesFolderName, clubLogoFolderName, "generic.png");
                 }
             }
             else
@@ -446,22 +447,27 @@ namespace tm
 
         public static string Image(string imageName)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\" + Utils.imagesFolderName + "\\" + imageName;
+            return Path.Join(System.IO.Directory.GetCurrentDirectory(), Utils.imagesFolderName, imageName);
+        }
+
+        public static string Icon(string iconName)
+        {
+            return Path.Join(System.IO.Directory.GetCurrentDirectory(), Utils.imagesFolderName, iconsFolderName, iconName);
         }
 
         public static string LogoTournament(Tournament tournament)
         {
-            string path = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + tournamentLogoFolderName + "\\" + tournament.logo + ".png";
+            string path = Path.Join(System.IO.Directory.GetCurrentDirectory(), imagesFolderName, tournamentLogoFolderName, string.Format("{0}.png", tournament.logo));
             if(!File.Exists(path))
             {
-                path = System.IO.Directory.GetCurrentDirectory() + "\\" + imagesFolderName + "\\" + tournamentLogoFolderName + "\\" + "generic.png";
+                path = Path.Join(System.IO.Directory.GetCurrentDirectory(), imagesFolderName, tournamentLogoFolderName, "generic.png");
             }
             return path;
         }
 
         public static string PathSong(string song)
         {
-            return System.IO.Directory.GetCurrentDirectory() + "\\"+ musicFolderName + "\\" + song + ".wav";
+            return Path.Join(System.IO.Directory.GetCurrentDirectory(), musicFolderName, string.Format("{0}.wav", song));
         }
 
         public static bool RetoursContient(RetourMatchEvenement evenement, List<RetourMatch> retours)
@@ -1183,6 +1189,16 @@ namespace tm
                 }
             }
             return countChampionshipQualifications;
+        }
+
+        public static List<T> Flatten<T>(List<List<T>> lists)
+        {
+            List<T> list = new List<T>();
+            foreach(List<T> l in lists)
+            {
+                list.AddRange(l);
+            }
+            return list;
         }
 
         public static List<T> Inverse<T>(List<T> clubs)
