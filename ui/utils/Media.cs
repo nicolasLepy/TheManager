@@ -38,7 +38,7 @@ namespace TheManager_GUI.utils
 
     }*/
 
-    public class ThreadDureeWAV
+    /*public class ThreadDureeWAV
     {
 
         private readonly SoundPlayer _player;
@@ -61,9 +61,9 @@ namespace TheManager_GUI.utils
 
         }
 
-    }
+    }*/
 
-    public class ThreadEventGoal
+    public class ThreadEvent
     {
         private readonly Thread _thread;
 
@@ -71,7 +71,7 @@ namespace TheManager_GUI.utils
 
         public string Path { get => _path; }
 
-        public ThreadEventGoal(string path, int offset, int length)
+        public ThreadEvent(string path, int offset, int length)
         {
             _path = path;
             _thread = new Thread(() =>
@@ -114,14 +114,14 @@ namespace TheManager_GUI.utils
 
     }
 
-    public class MediaWAV
+    public class MediaPlayerTM
     {
-        private readonly List<ThreadEventGoal> _players;
+        private readonly List<ThreadEvent> _players;
 
         public bool IsPlaying(string sound)
         {
             bool res = false;
-            foreach(ThreadEventGoal tb in _players)
+            foreach(ThreadEvent tb in _players)
             {
                 if (tb.Path == sound)
                 {
@@ -132,16 +132,16 @@ namespace TheManager_GUI.utils
             return res;
         }
 
-        public MediaWAV()
+        public MediaPlayerTM()
         {
-            _players = new List<ThreadEventGoal>();
+            _players = new List<ThreadEvent>();
         }
 
         public void AddSound(string path, bool loop, int length = 0, int offset = 0)
         {
             if(!IsPlaying(path))
             {
-                ThreadEventGoal tb = new ThreadEventGoal(path, offset, length);
+                ThreadEvent tb = new ThreadEvent(path, offset, length);
                 _players.Add(tb);
                 tb.Start();
             }
@@ -165,7 +165,7 @@ namespace TheManager_GUI.utils
         }
 
 
-        public void EventGoal(Match m)
+        public void TriggerEvent(Match m)
         {
             List<AudioSource> sources = new List<AudioSource>();
             foreach(AudioSource source in Session.Instance.Game.kernel.audioSources)
@@ -181,13 +181,13 @@ namespace TheManager_GUI.utils
 
         public void Destroy()
         {
-            foreach (ThreadEventGoal p in _players)
+            foreach (ThreadEvent p in _players)
             {
                 try
                 {
                     p.Stop();
                 }
-                catch { Utils.Debug("Impossible de fermer le thread"); }
+                catch { Utils.Debug("Can't stop the thread"); }
             }
         }
     }

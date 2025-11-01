@@ -807,6 +807,7 @@ namespace tm
                                 games.Add(r, new List<Match>());
                             }
                             games[r].Add(m);
+                            m.Prepare();
                             m.SetCompo();
                             if ((m.home == club || m.away == club) && !options.simulateGames)
                             {

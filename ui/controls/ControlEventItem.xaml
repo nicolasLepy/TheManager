@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="ui.controls.ControlEventItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ui.controls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="300">
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="0.08*"/> <!-- Time -->
+			<ColumnDefinition Width="0.12*"/> <!-- Logo -->
+			<ColumnDefinition Width="0.13*"/> <!-- Team -->
+			<ColumnDefinition Width="0.05*"/> <!-- Score -->
+			<ColumnDefinition Width="0.13*"/> <!-- Team -->
+			<ColumnDefinition Width="0.12*"/> <!-- Logo -->
+			<ColumnDefinition Width="0.07*"/> <!-- Icon -->
+			<ColumnDefinition Width="0.3*"/> <!-- Player -->
+		</Grid.ColumnDefinitions>
+		<TextBlock Grid.Column="0" x:Name="textTime" Style="{StaticResource textPlainCenter}" Text="20°" />
+		<Image Grid.Column="1" x:Name="imageHome" Style="{StaticResource image}" HorizontalAlignment="Center" Width="20"/>
+		<TextBlock Grid.Column="2" x:Name="textHome" Style="{StaticResource textPlainCenter}" HorizontalAlignment="Right" Text="HOME" />
+		<TextBlock Grid.Column="3" x:Name="textScore" Style="{StaticResource textPlainCenter}" Text="" />
+		<TextBlock Grid.Column="4" x:Name="textAway" Style="{StaticResource textPlainCenter}" HorizontalAlignment="Left" Text="AWAY" />
+		<Image Grid.Column="5" x:Name="imageAway" Style="{StaticResource image}" HorizontalAlignment="Center" Width="20"/>
+		<Image Grid.Column="6" x:Name="imageIcon" Style="{StaticResource image}" HorizontalAlignment="Center" Width="20"/>
+		<TextBlock Grid.Column="7" x:Name="textPlayer" Style="{StaticResource textSmallCenter}" Text="VERY VERY LONG PLAYERNAME" TextWrapping="Wrap" />
+	</Grid>
+</UserControl>

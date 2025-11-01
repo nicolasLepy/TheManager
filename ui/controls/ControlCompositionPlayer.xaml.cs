@@ -27,14 +27,26 @@ namespace TheManager_GUI.controls
         public string PlayerNumber { get; set; }
         public SolidColorBrush JerseyColor { get; set; }
         public SolidColorBrush JerseyTextColor { get; set; }
+        public int Energy { get; set; }
 
-        public ControlCompositionPlayer(Player player, SolidColorBrush backgroundColor, SolidColorBrush frontColor, float sizeMultiplier)
+        public bool DisplayEnergy { get; set; }
+
+        public ControlCompositionPlayer(Player player, SolidColorBrush backgroundColor, SolidColorBrush frontColor, float sizeMultiplier, bool displayEnergy)
         {
             InitializeComponent();
             this.PlayerName = player.ShortName;
             this.PlayerNumber = player.level.ToString();
             this.JerseyColor = backgroundColor;
-            if(frontColor != null)
+            this.DisplayEnergy = displayEnergy;
+            if(!displayEnergy)
+            {
+                pbEnergy.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                this.Energy = player.energy;
+            }
+            if (frontColor != null)
             {
                 this.JerseyTextColor = frontColor;
             }

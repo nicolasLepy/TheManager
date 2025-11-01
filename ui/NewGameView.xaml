@@ -61,13 +61,34 @@
 
 					</StackPanel>
 
-					<StackPanel Grid.Row="1" VerticalAlignment="Bottom" Margin="15">
-						<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_activeClubs}"/>
-						<TextBlock x:Name="tbActiveClubs" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 25"/>
-						<TextBlock Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_playersEstimation}"/>
-						<TextBlock x:Name="tbPlayersEstimation" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 25"/>
+					<Grid Grid.Row="1" Margin="10, 0, 10, 0">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="0.5*"/>
+							<ColumnDefinition Width="0.5*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="0.5*"/>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+							<RowDefinition Height="0.2*"/>
+						</Grid.RowDefinitions>
+						<TextBlock Grid.Column="0" Grid.Row="1" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_leagues}"/>
+						<TextBlock Grid.Column="0" Grid.Row="2" x:Name="tbLeagues" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 15"/>
+						<TextBlock Grid.Column="1" Grid.Row="1" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_cups}"/>
+						<TextBlock Grid.Column="1" Grid.Row="2" x:Name="tbCups" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 15"/>
 
-					</StackPanel>
+						<TextBlock Grid.Column="0" Grid.Row="3" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_clubs}"/>
+						<TextBlock Grid.Column="0" Grid.Row="4" x:Name="tbTotalClubs" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 15"/>
+						<TextBlock Grid.Column="1" Grid.Row="3" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_activeClubs}"/>
+						<TextBlock Grid.Column="1" Grid.Row="4" x:Name="tbActiveClubs" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 15"/>
+						<TextBlock Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="2" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="{StaticResource str_playersEstimation}"/>
+						<TextBlock Grid.Column="0" Grid.Row="6" x:Name="tbPlayersEstimation" Style="{StaticResource textPlain}" TextWrapping="Wrap" Text="0" Margin="0, 0, 0, 15"/>
+
+					</Grid>
+
 
 				</Grid>
 

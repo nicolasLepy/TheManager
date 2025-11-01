@@ -16,7 +16,7 @@ namespace TheManager_GUI.Views
             }
             if (round as GroupsRound != null)
             {
-                res = new ViewRankingGroups(round as GroupsRound, sizeMultiplier, focusOnTeam, team);
+                res = new ViewRankingGroups(round as GroupsRound, sizeMultiplier, focusOnTeam, team, reduced);
             }
             return res;
         }

@@ -91,7 +91,7 @@
 	<system:String x:Key="str_achievementsClub">Achievements by clubs</system:String>
 	<system:String x:Key="str_achievementsYear">Achievements by years</system:String>
 	<system:String x:Key="str_statistics">Statistics</system:String>
-	<system:String x:Key="str_gameStatistics">Game statistics</system:String>
+	<system:String x:Key="str_gameStatistics">Simulation statistics</system:String>
 	<system:String x:Key="str_lineups">Line-ups</system:String>
 	<system:String x:Key="str_substitutes">Substitute players</system:String>
 	<system:String x:Key="str_statisticsYear">Statistics by year</system:String>
@@ -143,7 +143,7 @@
 	<system:String x:Key="str_fast">Fast</system:String>
 	<system:String x:Key="str_slow">Slow</system:String>
 	<system:String x:Key="str_abandonAndInstantResult">Abandon and instant result</system:String>
-	<system:String x:Key="str_activeClubs">Number of active clubs</system:String>
+	<system:String x:Key="str_activeClubs">Active clubs</system:String>
 	<system:String x:Key="str_playersEstimation">Approximate number of players</system:String>
 	<system:String x:Key="str_today">Today</system:String>
 	<system:String x:Key="str_daysAgo">{0} day{1} ago</system:String>
@@ -210,5 +210,10 @@
 	<system:String x:Key="str_results">Results</system:String>
 	<system:String x:Key="str_retiredPlayers">{0} retired players</system:String>
 	<system:String x:Key="str_playersCount">{0} players</system:String>
+	<system:String x:Key="str_start">Start</system:String>
+	<system:String x:Key="str_abandon_game">The game is not finished. If you quit now, the end of the game will be simulated.</system:String>
+	<system:String x:Key="str_leagues">Leagues</system:String>
+	<system:String x:Key="str_cups">Cups</system:String>
+	<system:String x:Key="str_never_qualified">Never qualified</system:String>
 
 </ResourceDictionary>

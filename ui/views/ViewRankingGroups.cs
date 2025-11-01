@@ -18,7 +18,7 @@ namespace TheManager_GUI.Views
 
         private readonly GroupsRound _round;
 
-        public ViewRankingGroups(GroupsRound round, double sizeMultiplier, bool focusOnTeam, Club team) : base(round, round.Tournament, false, sizeMultiplier, RankingType.General, focusOnTeam, team)
+        public ViewRankingGroups(GroupsRound round, double sizeMultiplier, bool focusOnTeam, Club team, bool reduced) : base(round, round.Tournament, reduced, sizeMultiplier, RankingType.General, focusOnTeam, team)
         {
             _round = round;
         }
@@ -28,6 +28,7 @@ namespace TheManager_GUI.Views
             return _round;
         }
 
+        [Obsolete("Use Full() instead of CreateRanking()")]
         private StackPanel CreateRanking(int index, Club c)
         {
             StackPanel sp = new StackPanel();

@@ -37,17 +37,23 @@ namespace TheManager_GUI.controls
 
         public ControlCompositionType Type { get; set; }
 
-        private readonly Club club;
-        private readonly SolidColorBrush[] jersayBrushes = new SolidColorBrush[] {null, null};
+        private Club club;
+        private SolidColorBrush[] jersayBrushes = new SolidColorBrush[] {null, null};
+        private bool displayEnergy;
 
-        public ControlComposition(ControlCompositionType type, Club club)
+        public ControlComposition(ControlCompositionType type, Club club, bool displayEnergy)
+        {
+            this.Type = type;
+            this.displayEnergy = displayEnergy;
+            InitializeComponent();
+            Update(club);
+        }
+
+        public void Update(Club club)
         {
             this.club = club;
-            this.Type = type;
             GetColors();
-
-            InitializeComponent();
-            if(this.Type == ControlCompositionType.Subs)
+            if (this.Type == ControlCompositionType.Subs)
             {
                 RowDefinition first = grid.RowDefinitions[0];
                 RowDefinition second = grid.RowDefinitions[1];
@@ -130,7 +136,7 @@ namespace TheManager_GUI.controls
             }
             for (int i = 0; i < players.Count; i++)
             {
-                ControlCompositionPlayer control = new ControlCompositionPlayer(players[i], jersayBrushes[0], jersayBrushes[1], Type == ControlCompositionType.Composition ? 1 : 0.63f);
+                ControlCompositionPlayer control = new ControlCompositionPlayer(players[i], jersayBrushes[0], jersayBrushes[1], Type == ControlCompositionType.Composition ? 1 : 0.63f, displayEnergy);
                 control.Margin = new Thickness(10);
 
                 if (OnClickPlayer != null)

@@ -61,6 +61,7 @@
     <Resource Include="icons\city.png" />
     <Resource Include="icons\manager.png" />
     <Resource Include="icons\stadium.png" />
+    <Resource Include="icons\start.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icons\contract.png" />

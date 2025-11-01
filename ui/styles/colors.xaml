@@ -27,6 +27,7 @@
 	<SolidColorBrush x:Key="colorPanel2">#281269</SolidColorBrush>
 	<SolidColorBrush x:Key="colorPanel3">#2B1372</SolidColorBrush>
 	<SolidColorBrush x:Key="colorButtonOver">#9B00E8</SolidColorBrush>
+	<SolidColorBrush x:Key="colorPale">#db7093</SolidColorBrush>
 
 	<SolidColorBrush x:Key="colorBackgroundStars">#07072a</SolidColorBrush>
 

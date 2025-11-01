@@ -470,12 +470,12 @@ namespace tm
             return Path.Join(System.IO.Directory.GetCurrentDirectory(), musicFolderName, string.Format("{0}.wav", song));
         }
 
-        public static bool RetoursContient(RetourMatchEvenement evenement, List<RetourMatch> retours)
+        public static bool FeedbackContains(MatchFeedbackEvent mfEvent, List<MatchFeedback> feedbacks)
         {
             bool res = false;
-            foreach(RetourMatch rm in retours)
+            foreach(MatchFeedback rm in feedbacks)
             {
-                if (rm.Evenement == evenement)
+                if (rm.Event == mfEvent)
                 {
                     res = true;
                 }
@@ -1241,6 +1241,11 @@ namespace tm
                 }
             }
             return pot;
+        }
+
+        public static void DisplayThreads()
+        {
+            Console.WriteLine("Number of threads : {0}", System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
         }
     }
 }

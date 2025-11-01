@@ -60,10 +60,10 @@ namespace TheManager_GUI
             imageHomeClub.Source = new BitmapImage(new Uri(Utils.Logo(matchs[0].home)));
             imageAwayClub.Source = new BitmapImage(new Uri(Utils.Logo(matchs[0].away)));
 
-            controlHomeComposition = new ControlComposition(ControlCompositionType.Composition, matchs[0].home);
-            controlAwayComposition = new ControlComposition(ControlCompositionType.Composition, matchs[0].away);
-            controlHomeSubs = new ControlComposition(ControlCompositionType.Subs, matchs[0].home);
-            controlAwaySubs = new ControlComposition(ControlCompositionType.Subs, matchs[0].away);
+            controlHomeComposition = new ControlComposition(ControlCompositionType.Composition, matchs[0].home, true);
+            controlAwayComposition = new ControlComposition(ControlCompositionType.Composition, matchs[0].away, true);
+            controlHomeSubs = new ControlComposition(ControlCompositionType.Subs, matchs[0].home, false);
+            controlAwaySubs = new ControlComposition(ControlCompositionType.Subs, matchs[0].away, false);
             if (matchs[0].home == activeClub)
             {
                 controlHomeComposition.OnClickPlayer = OnRemovePlayerFromComposition;
@@ -216,8 +216,8 @@ namespace TheManager_GUI
             if (CheckComposition())
             {
                 SetPlayerClubCompo();
-                Windows_JouerMatch wjm = new Windows_JouerMatch(matchs);
-                wjm.ShowDialog();
+                LiveGameView view = new LiveGameView(matchs);
+                view.ShowDialog();
                 Close();
             }
         }

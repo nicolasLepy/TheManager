@@ -22,20 +22,20 @@ namespace TheManager_GUI
         private readonly List<Match> _matchs;
         private readonly Round _tour;
 
-        private MediaWAV _media;
+        private MediaPlayerTM _media;
 
         private readonly List<bool> _enCours;
 
 
         async Task Match(Match game)
         {
-            List<RetourMatch> res = game.NextMinute();
-            if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, res))
+            List<MatchFeedback> res = game.NextMinute();
+            if (Utils.FeedbackContains(MatchFeedbackEvent.END_GAME, res))
             {
                 _enCours[_matchs.IndexOf(game)] = false;
             }
             //Si y a un évenement
-            if (Utils.RetoursContient(RetourMatchEvenement.EVENEMENT,res))
+            if (Utils.FeedbackContains(MatchFeedbackEvent.EVENT, res))
             {
                 MatchEvent em = game.events[game.events.Count - 1];
                 string icone = "";
@@ -47,7 +47,7 @@ namespace TheManager_GUI
                     afficherAction = true;
                     if (em.club == game.home)
                     {
-                        _media.EventGoal(game);
+                        _media.TriggerEvent(game);
                     }
 
                     if (cbJingleBut.IsChecked == true)
@@ -139,7 +139,7 @@ namespace TheManager_GUI
 
             cbJingleBut.IsChecked = true;
 
-            _media = new MediaWAV();
+            _media = new MediaPlayerTM();
             _enCours = new List<bool>();
             _matchs = matchs;
             _tour = _matchs[0].Round;
@@ -220,15 +220,15 @@ namespace TheManager_GUI
                 bool termine = false;
                 while(!termine)
                 {
-                    List<RetourMatch> rm = match.NextMinute();
-                    if (Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, rm))
+                    List<MatchFeedback> rm = match.NextMinute();
+                    if (Utils.FeedbackContains(MatchFeedbackEvent.END_GAME, rm))
                     {
                         termine = true;
                     }
                 }
                 //_matchs[i].Jouer();
             }
-            //while (!Utils.RetoursContient(RetourMatchEvenement.FIN_MATCH, _matchs[0].MinuteSuivante())) ;
+            //while (!Utils.FeedbackContains(MatchFeedbackEvent.END_GAME, _matchs[0].MinuteSuivante())) ;
             _media.Destroy();
             _media = null;
             Close();

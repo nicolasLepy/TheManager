@@ -115,7 +115,8 @@ namespace TheManager_GUI
     {
 
         private int gridCountriesColumns = 5;
-        private int gridCountriesRows = 25;
+        private int defaultGridCountriesRows = 25;
+        private int gridCountriesRows;
         private double flagSize = 0;
 
         private Club selectedClub = null;
@@ -252,6 +253,7 @@ namespace TheManager_GUI
 
         private void FillLeaguesGrid(Game game)
         {
+            gridCountriesRows = defaultGridCountriesRows;
             gridCountriesSelection.Children.Clear();
             gridCountriesSelection.RowDefinitions.Clear();
             gridCountriesSelection.ColumnDefinitions.Clear();
@@ -260,23 +262,33 @@ namespace TheManager_GUI
                 gridCountriesSelection.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 gridCountriesSelection.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(5, GridUnitType.Star) });
             }
+            int countItems = FillAssociation(game.kernel.worldAssociation, 0, false);
+            if (countItems > gridCountriesRows * gridCountriesColumns)
+            {
+                gridCountriesRows = (int)Math.Ceiling(countItems / (gridCountriesColumns + 0.0));
+            }
+
             for (int i = 0; i < gridCountriesRows; i++)
             {
                 gridCountriesSelection.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(flagSize * 1.2, GridUnitType.Pixel) });
             }
             checkBoxes = new Dictionary<Tournament, CheckBox>();
-            FillAssociation(game.kernel.worldAssociation, 0);
+            FillAssociation(game.kernel.worldAssociation, 0, true);
             CountConfiguration();
         }
 
-        private int FillAssociation(Association association, int counter)
+        private int FillAssociation(Association association, int counter, bool addItemsToGrid)
         {
 
             //Display association name only if childs have championships
             if (association.GetAllTournaments().Count(t => t.isChampionship) > association.Tournaments().Count(t => t.isChampionship))
             {
                 TextBlock tbContinentName = ViewUtils.CreateTextBlock(association.Name(), StyleDefinition.styleTextPlainCenter);
-                ViewUtils.AddElementToGrid(gridCountriesSelection, tbContinentName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
+                if(addItemsToGrid)
+                {
+                    ViewUtils.AddElementToGrid(gridCountriesSelection, tbContinentName, counter % gridCountriesRows, (counter / gridCountriesRows) * 2, 2);
+                }
+                counter++;
             }
 
             //TODO: Only tournaments where the top level is handled by this association
@@ -285,8 +297,12 @@ namespace TheManager_GUI
             {
                 Image imageCountry = ViewUtils.CreateFlag(association.ClosestStateAssociation().localisation as Country, flagSize, flagSize * 0.66);
                 TextBlock tbCountryName = ViewUtils.CreateTextBlock(association.Name(), StyleDefinition.styleTextPlain);
-                ViewUtils.AddElementToGrid(gridCountriesSelection, imageCountry, counter % gridCountriesRows, (counter / gridCountriesRows) * 2);
-                ViewUtils.AddElementToGrid(gridCountriesSelection, tbCountryName, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2 + 1);
+                if(addItemsToGrid)
+                {
+                    ViewUtils.AddElementToGrid(gridCountriesSelection, imageCountry, counter % gridCountriesRows, (counter / gridCountriesRows) * 2);
+                    ViewUtils.AddElementToGrid(gridCountriesSelection, tbCountryName, counter % gridCountriesRows, (counter / gridCountriesRows) * 2 + 1);
+                }
+                counter++;
                 foreach (Tournament league in association.Tournaments())
                 {
                     if (league.isChampionship)
@@ -296,14 +312,18 @@ namespace TheManager_GUI
                         cbLeague.Content = league.name;
                         cbLeague.Style = FindResource(StyleDefinition.styleCheckBox) as Style;
                         cbLeague.Click += CheckboxLeague_Click;
-                        ViewUtils.AddElementToGrid(gridCountriesSelection, cbLeague, counter % gridCountriesRows, (counter++ / gridCountriesRows) * 2, 2);
-                        checkBoxes.Add(league, cbLeague);
+                        if(addItemsToGrid)
+                        {
+                            ViewUtils.AddElementToGrid(gridCountriesSelection, cbLeague, counter % gridCountriesRows, (counter / gridCountriesRows) * 2, 2);
+                            checkBoxes.Add(league, cbLeague);
+                        }
+                        counter++;
                     }
                 }
             }
             foreach (Association a in association.associations)
             {
-                counter = FillAssociation(a, counter);
+                counter = FillAssociation(a, counter, addItemsToGrid);
             }
             return counter;
         }
@@ -317,18 +337,33 @@ namespace TheManager_GUI
         private void CountConfiguration()
         {
             int clubs = 0;
+            int totalClubs = 0;
             int players = 0;
+            int leagues = 0;
+            int cups = 0;
+            foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
+            {
+                if(!t.isChampionship)
+                {
+                    cups++;
+                }
+            }
             foreach (KeyValuePair<Tournament, CheckBox> kvp in checkBoxes)
             {
+                Tournament c = kvp.Key;
+                totalClubs += c.rounds[0].clubs.Count;
                 if (kvp.Value.IsChecked == true)
                 {
-                    Tournament c = kvp.Key;
+                    leagues++;
                     clubs += c.rounds[0].clubs.Count;
                     players += c.rounds[0].clubs.Count * 21;
                 }
             }
 
+            tbLeagues.Text = leagues.ToString();
+            tbCups.Text = cups.ToString();
             tbActiveClubs.Text = clubs.ToString();
+            tbTotalClubs.Text = totalClubs.ToString();
             tbPlayersEstimation.Text = players.ToString();
         }
 

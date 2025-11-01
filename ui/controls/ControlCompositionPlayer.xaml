@@ -11,11 +11,14 @@
 			<RowDefinition Height="0.05*"/>
 			<RowDefinition Height="0.6*"/>
 			<RowDefinition Height="0.7*"/>
+			<RowDefinition Height="0.1*"/>
 		</Grid.RowDefinitions>
-		<Canvas Background="Transparent" Grid.Row="0" Grid.RowSpan="2">
+		<Canvas Background="Transparent" Grid.Row="0" Grid.RowSpan="3">
 			<Ellipse Width="{Binding ActualWidth, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}" Height="{Binding ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}}" Fill="{Binding JerseyColor}"  />
 		</Canvas>
 		<TextBlock Grid.Row="1" Name="textPlayer" Style="{StaticResource textPlainCenter}" Text="{Binding PlayerName}" Foreground="{Binding JerseyTextColor}" TextAlignment="Center" TextWrapping="Wrap" FontSize="{StaticResource fontSizeNavigation}"/>
 		<TextBlock Grid.Row="2" Name="textNumber" Style="{StaticResource textSecondary}" Text="{Binding PlayerNumber}" Foreground="{Binding JerseyTextColor}" TextAlignment="Center"/>
+		<ProgressBar Grid.Row="3" x:Name="pbEnergy" Style="{StaticResource progressBarSmallStyle}" Value="{Binding Energy}" Minimum="0" Maximum="100" Padding="5"/>
+
 	</Grid>
 </UserControl>

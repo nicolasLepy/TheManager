@@ -5,6 +5,8 @@
 					xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
 					xmlns:core="clr-namespace:System;assembly=mscorlib">
 
+	<core:Double x:Key="fontSizeScore">90</core:Double>
+	<core:Double x:Key="fontSizeBig">26</core:Double>
 	<core:Double x:Key="fontSizeTitle">20</core:Double>
 	<core:Double x:Key="fontSizeSecondary">16.5</core:Double>
 	<core:Double x:Key="fontSizeRegular">13.5</core:Double>
@@ -15,6 +17,23 @@
 
 	<FontFamily x:Key="fontFamily">Montserrat</FontFamily>
 
+	<Style x:Key="textScore" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{StaticResource colorButtonOver}"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontWeight" Value="ExtraBold"/>
+		<Setter Property="FontStyle" Value="Oblique"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeScore}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+
+	<Style x:Key="textBig" TargetType="TextBlock">
+		<Setter Property="Foreground" Value="{StaticResource colorTitle2}"/>
+		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
+		<Setter Property="FontWeight" Value="Medium"/>
+		<Setter Property="FontSize" Value="{StaticResource fontSizeBig}"/>
+		<Setter Property="VerticalAlignment" Value="Center"/>
+	</Style>
+	
 	<Style x:Key="textTitle" TargetType="TextBlock">
 		<Setter Property="Foreground" Value="{StaticResource colorTitle1}"/>
 		<Setter Property="FontFamily" Value="{StaticResource fontFamily}"/>
@@ -39,7 +58,15 @@
 		<Setter Property="VerticalAlignment" Value="Center"/>
 	</Style>
 
+	<Style x:Key="textSmall" TargetType="TextBlock" BasedOn="{StaticResource textPlain}">
+		<Setter Property="FontSize" Value="{StaticResource fontSizeNavigation}"/>
+	</Style>
+
 	<Style x:Key="textPlainCenter" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource textPlain}">
+		<Setter Property="HorizontalAlignment" Value="Center"/>
+	</Style>
+
+	<Style x:Key="textSmallCenter" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource textSmall}">
 		<Setter Property="HorizontalAlignment" Value="Center"/>
 	</Style>
 
@@ -373,6 +400,31 @@
 							</VisualStateManager.VisualStateGroups>
 							<Border x:Name="PART_Track" Margin="0" BorderThickness="0" CornerRadius="15" />
 							<Border x:Name="PART_Indicator" Margin="0" BorderThickness="0" CornerRadius="15" HorizontalAlignment="Left"
+                                    Background="{StaticResource colorButtonOver}" ClipToBounds="True">
+							</Border>
+						</Grid>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<Style x:Key="progressBarSmallStyle" TargetType="{x:Type ProgressBar}">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type ProgressBar}">
+					<Border x:Name="BorderBackground" CornerRadius="3" BorderThickness="0"
+                            BorderBrush="Transparent"
+                            Background="{StaticResource colorPanel1}">
+						<Grid>
+							<VisualStateManager.VisualStateGroups>
+								<VisualStateGroup x:Name="CommonStates">
+									<VisualState x:Name="Determinate" />
+									<VisualState x:Name="Indeterminate" />
+								</VisualStateGroup>
+							</VisualStateManager.VisualStateGroups>
+							<Border x:Name="PART_Track" Margin="0" BorderThickness="0" CornerRadius="3" />
+							<Border x:Name="PART_Indicator" Margin="0" BorderThickness="0" CornerRadius="3" HorizontalAlignment="Left"
                                     Background="{StaticResource colorButtonOver}" ClipToBounds="True">
 							</Border>
 						</Grid>

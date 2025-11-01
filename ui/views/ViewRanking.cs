@@ -281,7 +281,7 @@ namespace TheManager_GUI.Views
         protected void InitColumns(Grid grid)
         {
             int cols = _reduced ? 6 : 11;
-            float[] colsWidths = _reduced ? new float[] { 8, 10, 70, 10, 10, 10 } : new float[] { 8, 10, 70, 10, 10, 10, 10, 10, 10, 10, 10 };
+            float[] colsWidths = _reduced ? new float[] { 8, 10, 30, 10, 10, 10 } : new float[] { 8, 10, 70, 10, 10, 10, 10, 10, 10, 10, 10 };
             for (int col = 0; col < cols; col++)
             {
                 grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(colsWidths[col], GridUnitType.Star) });
@@ -295,7 +295,12 @@ namespace TheManager_GUI.Views
             int rows = 1 + ranking.Count; //Rows numbers
             for (int row = 0; row < rows; row++)
             {
-                grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(fontSize * 1.8, GridUnitType.Pixel) });
+                double rowHeight = fontSize * 1.8;
+                if(_reduced)
+                {
+                    rowHeight *= 1.3;
+                }
+                grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(rowHeight, GridUnitType.Pixel) });
             }
 
             int i = 0;
@@ -387,7 +392,10 @@ namespace TheManager_GUI.Views
                 {
                     cupWinnerStr.Append(" (TT) ");
                 }
-                TextBlock tbClub = ViewUtils.CreateTextBlockOpenWindow<Club>(c, OpenClub, (_tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear - 1) : c.shortName) + cupWinnerStr.ToString(), StyleDefinition.styleTextPlain, fontSize * _sizeMultiplier, -1);
+
+                string clubStr = (_tournament.isChampionship ? c.extendedName(_tournament, _absoluteYear - 1) : c.shortName) + cupWinnerStr.ToString();
+                clubStr = _reduced ? c.abbr() : clubStr;
+                TextBlock tbClub = ViewUtils.CreateTextBlockOpenWindow<Club>(c, OpenClub, clubStr, StyleDefinition.styleTextPlain, fontSize * _sizeMultiplier, -1);
                 AddElementToGrid(grid, tbClub, startRow + i, 2);
                 TextBlock tbPoints = ViewUtils.CreateTextBlock(Round().Points(c, _rankingType).ToString(), StyleDefinition.styleTextPlainCenter, fontSize * _sizeMultiplier, -1, null, null, true);
                 AddElementToGrid(grid, tbPoints, startRow + i, 3);

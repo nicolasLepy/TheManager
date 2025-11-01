@@ -45,30 +45,30 @@ namespace tm
         }
     }
 
-    public struct RetourMatch : IEquatable<RetourMatch>
+    public struct MatchFeedback : IEquatable<MatchFeedback>
     {
-        public RetourMatchEvenement Evenement { get; set; }
-        public object Acteur { get; set; }
+        public MatchFeedbackEvent Event { get; set; }
+        public object Actor { get; set; }
 
-        public RetourMatch(RetourMatchEvenement evenement, object acteur)
+        public MatchFeedback(MatchFeedbackEvent evnt, object actor)
         {
-            Evenement = evenement;
-            Acteur = acteur;
+            Event = evnt;
+            Actor = actor;
         }
 
-        public bool Equals(RetourMatch other)
+        public bool Equals(MatchFeedback other)
         {
             throw new NotImplementedException();
         }
     }
 
-    public enum RetourMatchEvenement
+    public enum MatchFeedbackEvent
     {
-        EVENEMENT,
-        REMPLACEMENT,
+        EVENT,
+        SUBSTITUION,
         ACTION,
-        FIN_MITEMPS,
-        FIN_MATCH
+        END_HALFTIME,
+        END_GAME
     }
 
     [DataContract(IsReference =true)]
@@ -355,26 +355,43 @@ namespace tm
             }
         }
 
-        public string Time
+        private int PlayedMinutes
         {
             get
             {
                 int tmp = _minute;
                 switch (_period)
                 {
-                    case 2: 
+                    case 2:
                         tmp += 45;
                         break;
-                    case 3: 
+                    case 3:
                         tmp += 90;
                         break;
-                    case 4 : 
+                    case 4:
                         tmp += 105;
                         break;
-                   default:
-                       tmp += 0;
-                       break;
+                    default:
+                        tmp += 0;
+                        break;
                 }
+                return tmp;
+            }
+        }
+
+        public TimeSpan TimeSpan
+        {
+            get
+            {
+                return new TimeSpan(0, PlayedMinutes, 0);
+            }
+        }
+
+        public string Time
+        {
+            get
+            {
+                int tmp = PlayedMinutes;
                 int tmpAdd = _minute - ((_period < 3) ? 45 : 15);
                 string time = tmp.ToString();
                 if (tmpAdd > 0)
@@ -1320,21 +1337,20 @@ namespace tm
             this._levelDifference = (int)diffF;
             this._levelDifferenceRatio = (CompositionLevel(home) * 1.04f) / CompositionLevel(away);
         }
-
-        public List<RetourMatch> NextMinute()
+        
+        public void Prepare()
         {
-            List<RetourMatch> lookbacks = new List<RetourMatch>();
+            CalculateLevelDifference();
+            SetAttendance();
+            UpdatePlayersMatchPlayedStat(home, _compo1);
+            UpdatePlayersMatchPlayedStat(away, _compo2);
+        }
+
+        public List<MatchFeedback> NextMinute()
+        {
+            List<MatchFeedback> lookbacks = new List<MatchFeedback>();
             if (!forfeit)
             {
-                //At the beginning of the game
-                if (_minute == 0 && _period == 1)
-                {
-                    CalculateLevelDifference();
-                    SetAttendance();
-                    UpdatePlayersMatchPlayedStat(home, _compo1);
-                    UpdatePlayersMatchPlayedStat(away, _compo2);
-                }
-
                 Club a = home;
                 Club b = away;
 
@@ -1362,7 +1378,7 @@ namespace tm
                         }
                         else
                         {
-                            lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                            lookbacks.Add(new MatchFeedback(MatchFeedbackEvent.END_GAME, null));
                             EndOfGame();
 
                         }
@@ -1373,14 +1389,14 @@ namespace tm
                         {
                             PlayPenaltyShootout();
                         }
-                        lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                        lookbacks.Add(new MatchFeedback(MatchFeedbackEvent.END_GAME, null));
                         EndOfGame();
                     }
                 }
             }
             else
             {
-                lookbacks.Add(new RetourMatch(RetourMatchEvenement.FIN_MATCH, null));
+                lookbacks.Add(new MatchFeedback(MatchFeedbackEvent.END_GAME, null));
             }
             return lookbacks;
         }
@@ -1391,10 +1407,6 @@ namespace tm
             {
                 Club a = home;
                 Club b = away;
-                CalculateLevelDifference();
-                SetAttendance();
-                UpdatePlayersMatchPlayedStat(home, _compo1);
-                UpdatePlayersMatchPlayedStat(away, _compo2);
 
                 for (_period = 1; _period < 3; _period++)
                 {
@@ -1502,9 +1514,9 @@ namespace tm
             }
         }
 
-        private List<RetourMatch> PlayMinute(Club a, Club b)
+        private List<MatchFeedback> PlayMinute(Club a, Club b)
         {
-            List<RetourMatch> lookbacks = new List<RetourMatch>();
+            List<MatchFeedback> lookbacks = new List<MatchFeedback>();
 
             //Every 10 minutes from second periods, clubs do substitutions
             if (_minute % 10 == 0 && _period > 1)
@@ -1626,10 +1638,10 @@ namespace tm
             return lookbacks;
         }
 
-        private List<RetourMatch> MatchIteration(Club a, Club b, int aMin, int aMax, int bMin,int bMax)
+        private List<MatchFeedback> MatchIteration(Club a, Club b, int aMin, int aMax, int bMin,int bMax)
         {
 
-            List<RetourMatch> res = new List<RetourMatch>();
+            List<MatchFeedback> res = new List<MatchFeedback>();
 
             int random = Session.Instance.Random(0, 500);
 
@@ -1640,13 +1652,13 @@ namespace tm
                 {
                     _statistics.HomeShoots++;
                     Shot(home);
-                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                    res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
                 }
                 else
                 {
                     _statistics.AwayShoots++;
                     Shot(away);
-                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                    res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
                 }
             }
             else if (random >= bMin && random <= bMax + ((bMax + 1 - bMin) * 4))
@@ -1655,13 +1667,13 @@ namespace tm
                 {
                     _statistics.AwayShoots++;
                     Shot(away);
-                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                    res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
                 }
                 else
                 {
                     _statistics.HomeShoots++;
                     Shot(home);
-                    res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                    res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
                 }
             }
 
@@ -1676,7 +1688,7 @@ namespace tm
                 {
                     _score2++;
                 }
-                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
                 Goal(a);
             }
             else if (random >= bMin && random <= bMax)
@@ -1689,31 +1701,31 @@ namespace tm
                 {
                     _score1++;
                 }
-                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
                 Goal(b);
             }
             //Yellow cards
             else if (random >= 4 && random <= 9)
             {
                 YellowCard(a);
-                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
             }
             else if (random >= 14 && random <= 19)
             {
                 YellowCard(b);
-                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
             }
             //Red cards
             //Second random to reduce chance to have a red card
             else if (random == 2 && Session.Instance.Random(1, 10) < 6)
             {
                 RedCard(a);
-                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
             }
             else if (random == 3 && Session.Instance.Random(1, 10) < 6)
             {
                 RedCard(b);
-                res.Add(new RetourMatch(RetourMatchEvenement.EVENEMENT, null));
+                res.Add(new MatchFeedback(MatchFeedbackEvent.EVENT, null));
             }
             
 

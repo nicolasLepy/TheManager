@@ -195,6 +195,9 @@ namespace TheManager_GUI
                 StackPanel spTournament = new StackPanel();
                 spTournament.Orientation = Orientation.Vertical;
                 spTournament.Children.Add(ViewUtils.CreateTextBlock(t.name, StyleDefinition.styleTextPlainCenter, -1, -1));
+
+                List<string> performances = new List<string>();
+                bool reduced = true;
                 foreach (KeyValuePair<int, Tournament> previousEdition in t.previousEditions)
                 {
                     Tournament tournament = previousEdition.Value;
@@ -206,15 +209,30 @@ namespace TheManager_GUI
                             teamPerformance = (i == tournament.rounds.Count - 1 && tournament.Winner() == club) ? FindResource("str_winner").ToString() : tournament.rounds[i].name;
                         }
                     }
+                    reduced = reduced && teamPerformance == null;
                     teamPerformance = teamPerformance == null ? FindResource("str_notQualified").ToString() : teamPerformance;
-
-                    StackPanel spEdition = new StackPanel();
-                    spEdition.Orientation = Orientation.Horizontal;
-                    spEdition.Children.Add(ViewUtils.CreateTextBlock(String.Format("{0}", previousEdition.Key), StyleDefinition.styleTextPlain, -1, 100));
-                    spEdition.Children.Add(ViewUtils.CreateTextBlock(teamPerformance, StyleDefinition.styleTextPlain, -1, 500));
-                    spTournament.Children.Add(spEdition);
-
+                    performances.Add(teamPerformance);
                 }
+
+                if(reduced)
+                {
+                    TextBlock tb = ViewUtils.CreateTextBlock(FindResource("str_never_qualified").ToString(), StyleDefinition.styleTextSecondary);
+                    spTournament.Children.Add(tb);
+                }
+                else
+                {
+                    int i = 0;
+                    foreach (KeyValuePair<int, Tournament> previousEdition in t.previousEditions)
+                    {
+                        StackPanel spEdition = new StackPanel();
+                        spEdition.Orientation = Orientation.Horizontal;
+                        spEdition.Children.Add(ViewUtils.CreateTextBlock(String.Format("{0}", previousEdition.Key), StyleDefinition.styleTextPlain, -1, 100));
+                        spEdition.Children.Add(ViewUtils.CreateTextBlock(performances[i], StyleDefinition.styleTextPlain, -1, 500));
+                        spTournament.Children.Add(spEdition);
+                        i++;
+                    }
+                }
+
                 panelCupHistory.Children.Add(spTournament);
             }
 

@@ -47,10 +47,8 @@ namespace TheManager_GUI
 
         private void FillStats()
         {
-            ControlStatItem csiPossession = new ControlStatItem(FindResource("str_possession").ToString(), match.statistics.HomePossession * 100, match.statistics.AwayPossession * 100, true);
-            ControlStatItem csiShots = new ControlStatItem(FindResource("str_shots").ToString(), match.statistics.HomeShoots, match.statistics.AwayShoots, false);
-            spStats.Children.Add(csiPossession);
-            spStats.Children.Add(csiShots);
+            ControlStats cs = new ControlStats(match);
+            spStats.Children.Add(cs);
         }
 
         private void FillEvents()
@@ -300,6 +298,25 @@ namespace TheManager_GUI
 
         }
 
+        public void DisplayTimelineSteps()
+        {
+            int[] steps = match.prolongations ? new int[] { 45, 45, 15, 15 } : new int[] { 45, 45 };
+            for(int i = 0; i < steps.Length; i++)
+            {
+                gridTimelineSteps.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(steps[i], GridUnitType.Star) });
+                if(i > 0)
+                {
+                    Border border = new Border
+                    {
+                        Width = 5,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Background = FindResource("colorPale") as SolidColorBrush
+                    };
+                    ViewUtils.AddElementToGrid(gridTimelineSteps, border, -1, i);
+                }
+            }
+
+        }
         public void Initialize()
         {
             tbStatistics.Text = tbStatistics.Text.ToUpper();
@@ -308,24 +325,18 @@ namespace TheManager_GUI
             tbAttendance.Text = String.Format(FindResource("str_attendance").ToString(), match.attendance);
             tbStadium.Text = match.stadium.name;
             imageTournament.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.LogoTournament(tournament)));
-            imageHomeClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(match.home)));
-            imageAwayClub.Source = ViewUtils.LoadBitmapImageWithCache(new Uri(Utils.Logo(match.away)));
-            tbHomeClubName.Text = match.home.name.ToUpper();
-            tbAwayClubName.Text = match.away.name.ToUpper();
-            tbScore.Text = match.Played ? String.Format("{0} - {1}{2}", match.score1, match.score2, match.prolongations ? String.Format(" {0}", FindResource("str_aet").ToString()) : "") : "";
-            tbHalfTimeScore.Text = match.Played ? String.Format("({0} - {1})", match.ScoreHalfTime1, match.ScoreHalfTime2) : "";
+            ucScoreboard.Update(match, false);
             tbOddHome.Text = String.Format("{0:0.00}", match.odd1);
             tbOddDraw.Text = String.Format("{0:0.00}", match.oddD);
             tbOddAway.Text = String.Format("{0:0.00}", match.odd2);
 
             if(match.PenaltyShootout)
             {
-                //Double the size of the score cell : to display penalty shootout results
-                gridMainScore.ColumnDefinitions[(gridMainScore.ColumnDefinitions.Count - 1) / 2].Width = new GridLength(gridMainScore.ColumnDefinitions[(gridMainScore.ColumnDefinitions.Count - 1) / 2].Width.Value * 2, GridUnitType.Star);
                 ControlPenaltyShootout cps = new ControlPenaltyShootout(match);
                 cps.HorizontalAlignment = HorizontalAlignment.Center;
-                ViewUtils.AddElementToGrid(gridScore, cps, 3, -1);
+                spMainScore.Children.Add(cps);
             }
+            DisplayTimelineSteps();
         }
 
         [DllImport("user32.dll")]

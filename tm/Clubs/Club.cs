@@ -10,6 +10,7 @@ using System.Reflection;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace tm
 {
@@ -131,6 +132,16 @@ namespace tm
         public string goalSong { get => _goalSong; }
         public ClubRecords records { get => _records; }
         public ClubStatus status => _status;
+
+        public string abbr()
+        {
+            string abr = new Regex("[^A-Z]").Replace(shortName, "").Replace(" ", "");
+            if(abr.Length == 1 && shortName.Replace(" ", "").Length >= 3)
+            {
+                abr = shortName.Replace(" ", "").Substring(0, 3).ToUpper();
+            }
+            return abr;
+        }
 
         /// <summary>
         /// 
