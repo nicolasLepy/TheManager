@@ -671,7 +671,7 @@ namespace tm
             //Contains new extra rounds created if necessary
             List<Round> newRounds = new List<Round>();
 
-            List<int> leagueLevelsRepresented = new List<int>();
+            List<Tournament> leagueLevelsRepresented = new List<Tournament>();
 
             if (parent != null && association.isStateAssociation)
             {
@@ -699,7 +699,7 @@ namespace tm
 
                         if(rt.Source as Round != null)
                         {
-                            leagueLevelsRepresented.Add(association.TournamentLevel((rt.Source as Round).Tournament));
+                            leagueLevelsRepresented.Add((rt.Source as Round).Tournament);
                         }
                     }
                 }
@@ -963,45 +963,62 @@ namespace tm
             }
         }
 
-        private List<GameDay> GetAvailableDates(Tournament tournament, HashSet<int> leagueLevels)
-        {
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
-            List<GameDay> dates = new List<GameDay>();
-            List<GameDay> allDates = association.GetAvailableCalendarDates(association.isStateAssociation, 2, leagueLevels.ToList(), true, false);
-            int beginTournament = tournament.seasonBeginning.WeekNumber;
-            int beginRounds = tournament.rounds.First().programmation.initialisation.WeekNumber;
-            //Filter to get available dates to play the new round
-            foreach (GameDay gd in allDates)
-            {
-                //Les dates sont centrées sur le début de la compétition -> pas de problème en cas de passage d'une année à l'autre (semaines 52 puis semaine 02 par ex.)
-                int absoluteGd = Utils.Modulo(gd.WeekNumber - beginTournament, 53);  // TODO: Des fois 52 ou 53 semaines !
-                int absoluteBeginFirstRound = Utils.Modulo(beginRounds - beginTournament, 53); // TODO: Des fois 52 ou 53 semaines !
-                if (absoluteGd < absoluteBeginFirstRound && absoluteGd > 0)
-                {
-                    dates.Add(gd);
-                }
-            }
-            return dates;
-        }
-
         private string MakeExtraRoundName(int round, int extraRounds)
         {
             string n = extraRounds == 1 ? "" : (round + 1).ToString();
             return String.Format("Extra preliminary round {0}", n);
         }
 
-        private void WriteCupStrutureResult(CupStructureResult result)
+        public void WriteCupStrutureResult(CupStructureResult result)
         {
             int extraRounds = result.roundsCount - rounds.Count;
-            for(int i = 0; i < result.roundsCount; i++)
+            List<GameDay> availableDates = UtilsTournaments.GetDatesForExtraRound(this, result.leaguesRepresented);
+            List<GameDay> extraDates = new List<GameDay>();
+            for (int i = 0; i < extraRounds; i++)
             {
-                Round r = null;
+                int dateIndex = (availableDates.Count - 2) - (3 * i);
+                GameDay gd = availableDates[dateIndex];
+                extraDates.Add(gd);
+            }
+
+            Round roundModel = rounds[0];
+            for(int i = 0; i < extraRounds; i++)
+            {
+                List<GameDay> extraRoundDates = new List<GameDay>();
+                foreach(GameDay dt in roundModel.programmation.gamesDays)
+                {
+                    extraRoundDates.Add(new GameDay(extraDates[i].WeekNumber, dt.MidWeekGame, dt.YearOffset, dt.DayOffset));
+                }
+                //Create a new extra preliminary round
+                GameDay gdInit = new GameDay(extraDates[i].WeekNumber - 1, true, roundModel.programmation.initialisation.YearOffset, roundModel.programmation.initialisation.DayOffset);
+                GameDay gdEnd = new GameDay(extraDates[i].WeekNumber + 2, roundModel.programmation.initialisation.MidWeekGame, roundModel.programmation.initialisation.YearOffset, roundModel.programmation.initialisation.DayOffset);
+                KnockoutRound kr = new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), MakeExtraRoundName(i, extraRounds), this, roundModel.programmation.defaultHour, extraRoundDates, new List<TvOffset>(), roundModel.phases, gdInit, gdEnd, RandomDrawingMethod.Random, false, roundModel.programmation.gamesPriority);
+                kr.recuperedTeams.AddRange(result.structure[i]);
+                kr.rules.AddRange(roundModel.rules);
+                kr.qualifications.Add(new Qualification(1, i + 1, new QualificationTournament(this), false, -1));
+                rounds.Insert(i, kr);
+            }
+            _extraRounds = extraRounds;
+
+            for (int i = extraRounds; i < result.structure.Count; i++)
+            {
+                rounds[i].recuperedTeams.Clear();
+                rounds[i].recuperedTeams.AddRange(result.structure[i]);
+                for (int j = 0; j < rounds[i].qualifications.Count; j++)
+                {
+                    Qualification q = rounds[i].qualifications[j];
+                    if (!q.isNextYear && q.target.Tournament() == this)
+                    {
+                        rounds[i].qualifications[j] = new Qualification(q.ranking, q.roundId + extraRounds, q.target, q.isNextYear, q.qualifies);
+                    }
+                }
             }
         }
 
+        //Mostly a duplication of WriteCupStructureResult
         private void WriteCupAdapterResult(CupAdapterResult result)
         { 
-            List<GameDay> dates = GetAvailableDates(this, result.leagueLevelsRepresented);
+            List<GameDay> dates = UtilsTournaments.GetDatesForExtraRound(this, result.leaguesRepresented);
             List<GameDay> newDates = new List<GameDay>();
             for(int i = 0; i < result.newRounds; i++)
             {
@@ -1093,25 +1110,33 @@ namespace tm
                 }
             }
 
-            bool leagueCupLike = idRoundPivot == -1;
+            bool leagueCupLike = false;
             foreach(Round r in _rounds)
             {
                 foreach(RecoverTeams rt in r.baseRecuperedTeams)
                 {
-                    if(rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition))
-                    {
-                        leagueCupLike = leagueCupLike && true;
-                    }
+                    bool flagLeagueCupStyle = rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition);
+                    leagueCupLike = leagueCupLike || flagLeagueCupStyle;
                 }
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
 
-            //if (leagueCupLike)
             if (idRoundPivot == -1 && parent == null) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
             {
-                CupAdapter adapter = new CupAdapter();
-                CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
-                WriteCupAdapterResult(adaptation);
+                if(leagueCupLike)
+                {
+                    CupAdapter adapter = new CupAdapter();
+                    CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
+                    WriteCupAdapterResult(adaptation);
+                }
+                else
+                {
+                    CupCreator adapter = new CupCreator(Session.Instance.Game.kernel);
+                    Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
+                    CupStructureResult structure = adapter.CreateStructure(association, ChildAssociationsLeaguesAllowed(), ReservesAllowed());
+                    WriteCupStrutureResult(structure);
+                    
+                }
             }
             else
             {
@@ -2340,6 +2365,31 @@ namespace tm
                 if(r.clubs.Contains(c))
                 {
                     res = true;
+                }
+            }
+            return res;
+        }
+
+        private bool ReservesAllowed()
+        {
+            bool reservesForbidden = false;
+            foreach (Round r in _rounds)
+            {
+                reservesForbidden = reservesForbidden || r.rules.Contains(Rule.OnlyFirstTeams);
+            }
+            return !reservesForbidden;
+        }
+
+        private bool ChildAssociationsLeaguesAllowed()
+        {
+            Association a = Session.Instance.Game.kernel.LocalisationTournament(this);
+            bool res = false;
+            foreach(Round r in _rounds)
+            {
+                foreach(RecoverTeams rt in r.recuperedTeams)
+                {
+                    Tournament source = rt.Source as Tournament;
+                    res = res || (source != null && a.GetAllChilds().Contains(Session.Instance.Game.kernel.LocalisationTournament(source)));
                 }
             }
             return res;

@@ -105,5 +105,45 @@ namespace tm.Tournaments
             return res;
         }
 
+        public static HashSet<Tournament> GetLeaguesRepresented(Tournament t)
+        {
+            List<Tournament> leagues = new List<Tournament>();
+            foreach (Round r in t.rounds)
+            {
+                foreach (RecoverTeams rt in r.recuperedTeams)
+                {
+                    Round source = rt.Source as Round;
+                    if (source != null)
+                    {
+                        leagues.Add(source.Tournament);
+                    }
+                }
+            }
+            return new HashSet<Tournament>(leagues);
+        }
+
+        public static List<GameDay> GetDatesForExtraRound(Tournament tournament, HashSet<Tournament> leaguesConcerned)
+        {
+            Association association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            int beginTournament = tournament.seasonBeginning.WeekNumber;
+            int beginRounds = tournament.rounds.First().programmation.initialisation.WeekNumber;
+            List<GameDay> dates = new List<GameDay>();
+            List<GameDay> allDates = association.GetAvailableCalendarDates(association.isStateAssociation, 2, leaguesConcerned.ToList(), true, false);
+            //Filter to get available dates to play the new round
+            foreach (GameDay gd in allDates)
+            {
+                //Les dates sont centrées sur le début de la compétition -> pas de problème en cas de passage d'une année à l'autre (semaines 52 puis semaine 02 par ex.)
+                int absoluteGd = Utils.Modulo(gd.WeekNumber - beginTournament, 53);  // TODO: Des fois 52 ou 53 semaines !
+                int absoluteBeginFirstRound = Utils.Modulo(beginRounds - beginTournament, 53); // TODO: Des fois 52 ou 53 semaines !
+                if (absoluteGd < absoluteBeginFirstRound && absoluteGd > 0)
+                {
+                    dates.Add(gd);
+                }
+            }
+            return dates;
+        }
+
+
+
     }
 }

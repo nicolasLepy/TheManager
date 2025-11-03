@@ -1428,7 +1428,7 @@ namespace tm
         /// <param name="removeParentsDates">Remove date taken by parents tournaments</param>
         /// <param name="removeDateOfCupUntilLevel">Ignore dates of cup below specified level</param>
         /// <returns></returns>
-        public List<GameDay> GetAvailableCalendarDates(bool removeParentsDates, int maxCupLevel, List<int> leaguesLevel, bool weekdays, bool weekend)
+        public List<GameDay> GetAvailableCalendarDates(bool removeParentsDates, int maxCupLevel, List<Tournament> concernedLeagues, bool weekdays, bool weekend)
         {
             List<GameDay> availableDates = new List<GameDay>();
             Tournament firstDivision = League(1);
@@ -1458,7 +1458,7 @@ namespace tm
             }
             foreach (Tournament t in this.Tournaments())
             {
-                if (t.periodicity == 1 && ((t.isChampionship && leaguesLevel.Contains(t.level)) || t.level <= maxCupLevel))
+                if (t.periodicity == 1 && ((t.isChampionship && concernedLeagues.Contains(t)) || t.level <= maxCupLevel))
                 {
                     tournaments.Add(t);
                 }

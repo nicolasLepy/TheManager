@@ -31,7 +31,7 @@ namespace tm.Algorithms
 
     public class CupAdapterResult
     {
-        public HashSet<int> leagueLevelsRepresented { get; set; }
+        public HashSet<Tournament> leaguesRepresented { get; set; }
         public int newRounds { get; set; }
         public List<List<RecoverTeams>> qualifications { get; set; }
         public int removedRounds
@@ -55,11 +55,11 @@ namespace tm.Algorithms
             }
         }
 
-        public CupAdapterResult(int newRounds, List<List<RecoverTeams>> qualifications, HashSet<int> leagueLevelsRepresented)
+        public CupAdapterResult(int newRounds, List<List<RecoverTeams>> qualifications, HashSet<Tournament> leaguesRepresented)
         {
             this.newRounds = newRounds;
             this.qualifications = qualifications;
-            this.leagueLevelsRepresented = leagueLevelsRepresented;
+            this.leaguesRepresented = leaguesRepresented;
         }
     }
 
@@ -77,23 +77,6 @@ namespace tm.Algorithms
         public void Adapt(Tournament tournament)
         {
 
-        }
-
-        private HashSet<int> GetLeagueLevelRepresented(Tournament t, Association a)
-        {
-            List<int> levels = new List<int>();
-            foreach(Round r in t.rounds)
-            {
-                foreach(RecoverTeams rt in r.recuperedTeams)
-                {
-                    Round source = rt.Source as Round;
-                    if(source != null)
-                    {
-                        levels.Add(a.TournamentLevel(source.Tournament));
-                    }
-                }
-            }
-            return new HashSet<int>(levels);
         }
 
         private List<List<RecoverTeams>> ExtractCupQualifications(Tournament tournament)
@@ -256,7 +239,7 @@ namespace tm.Algorithms
             Console.WriteLine("[AdaptLeagueCup] {0}", tournament.name);
             association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
             bool onlyFirstTeams = false;
-            HashSet<int> leagueLevelsRepresented = GetLeagueLevelRepresented(tournament, association);
+            HashSet<Tournament> leaguesRepresented = UtilsTournaments.GetLeaguesRepresented(tournament);
 
             List<List<RecoverTeams>> qualifications = ExtractCupQualifications(tournament);
             UpdateRecoverTeams(qualifications, onlyFirstTeams, association);
@@ -354,7 +337,7 @@ namespace tm.Algorithms
                 }
             }
 
-            return new CupAdapterResult(newRounds, qualifications, leagueLevelsRepresented);
+            return new CupAdapterResult(newRounds, qualifications, leaguesRepresented);
 
         }
 
