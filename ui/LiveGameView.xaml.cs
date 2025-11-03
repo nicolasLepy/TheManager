@@ -183,12 +183,7 @@ namespace TheManager_GUI
                 if (matches[i].isLive)
                 {
                     Match match = matches[i].match;
-                    bool finished = false;
-                    while (!finished)
-                    {
-                        List<MatchFeedback> rm = match.NextMinute();
-                        finished = Utils.FeedbackContains(MatchFeedbackEvent.END_GAME, rm);
-                    }
+                    match.Play();
                 }
             }
         }

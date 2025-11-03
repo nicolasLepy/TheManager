@@ -1754,7 +1754,12 @@ namespace tm
                 int winnerPrize = association.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? association.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
                 string cupName = creator.NameOfCup(association);
                 int cupLevel = association.Cups().Count + 1;
-                CupStructureResult structure = creator.CreateStructure(association, allowTeamsOfChildAssociations, reservesAllowed);
+                CupStructure constraints = new CupStructure()
+                {
+                    allowReserves = reservesAllowed,
+                    includeChildAssociations = allowTeamsOfChildAssociations
+                };
+                CupStructureResult structure = creator.CreateStructure(association, constraints);
                 List<GameDay> availableDates = association.GetAvailableCalendarDates(true, 1, structure.leaguesRepresented.ToList(), true, false);
                 Tournament cup = creator.CreateEmptyTournament(_kernel.NextIdTournament(), cupName, cupLevel, association, structure.roundsCount, structure.teamsByRound, availableDates, winnerPrize, reservesAllowed);
                 association.Tournaments().Add(cup);

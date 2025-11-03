@@ -1133,7 +1133,12 @@ namespace tm
                 {
                     CupCreator adapter = new CupCreator(Session.Instance.Game.kernel);
                     Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
-                    CupStructureResult structure = adapter.CreateStructure(association, ChildAssociationsLeaguesAllowed(), ReservesAllowed());
+                    CupStructure constraints = new CupStructure()
+                    {
+                        includeChildAssociations = ChildAssociationsLeaguesAllowed(),
+                        allowReserves = ReservesAllowed()
+                    };
+                    CupStructureResult structure = adapter.CreateStructure(association, constraints);
                     WriteCupStrutureResult(structure);
                     
                 }

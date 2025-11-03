@@ -1210,6 +1210,13 @@ namespace tm
 
         private void EndOfGame()
         {
+            if (home == Session.Instance.Game.club || away == Session.Instance.Game.club)
+            {
+                string res = ArticleGenerator.Instance.GenerateArticle(this);
+                Article article = new Article(Session.Instance.Game.kernel.NextIdArticle(), res, "", new DateTime(day.Year, day.Month, day.Day), 2);
+                Session.Instance.Game.articles.Add(article);
+            }
+
             SetOdds();
             UpdateRecords();
             UpdateElo();
@@ -1403,43 +1410,7 @@ namespace tm
 
         public void Play()
         {
-            if(!forfeit)
-            {
-                Club a = home;
-                Club b = away;
-
-                for (_period = 1; _period < 3; _period++)
-                {
-                    for (_minute = 1; _minute < 50; _minute++)
-                    {
-                        PlayMinute(a, b);
-                    }
-                }
-
-                if ((_prolongationsIfDraw && (_score1 == _score2)) || SecondLegIsDraw())
-                {
-                    _prolongations = true;
-                    for (_period = 3; _period < 5; _period++)
-                    {
-                        for (_minute = 1; _minute < 16; _minute++)
-                        {
-                            PlayMinute(a, b);
-                        }
-                    }
-                    if ((_prolongationsIfDraw && _score1 == _score2) || SecondLegIsDraw())
-                    {
-                        PlayPenaltyShootout();
-                    }
-                }
-
-                if (home == Session.Instance.Game.club || away == Session.Instance.Game.club)
-                {
-                    string res = ArticleGenerator.Instance.GenerateArticle(this);
-                    Article article = new Article(Session.Instance.Game.kernel.NextIdArticle(), res, "", new DateTime(day.Year, day.Month, day.Day), 2);
-                    Session.Instance.Game.articles.Add(article);
-                }
-                EndOfGame();
-            }
+            while (!Utils.FeedbackContains(MatchFeedbackEvent.END_GAME, NextMinute()));
         }
 
         private bool SecondLegIsDraw()
