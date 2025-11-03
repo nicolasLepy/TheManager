@@ -148,6 +148,13 @@ namespace tm
         [DataMember]
         private Tournament _parent;
 
+        /// <summary>
+        /// Keep the overall structure and constraints of the cup in order to build the cup structure.
+        /// Can be null
+        /// </summary>
+        [DataMember]
+        private CupStructure _cupStructure;
+
         public string name { get => _name; }
         public Color color => _color;
         public List<Round> rounds { get => _rounds; }
@@ -210,7 +217,7 @@ namespace tm
             _rules = new List<TournamentRule>();
         }
 
-        public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, Tournament parent)
+        public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, Tournament parent, CupStructure structure)
         {
             Id = id;
             _rounds = new List<Round>();
@@ -230,6 +237,7 @@ namespace tm
             _rules = new List<TournamentRule>();
             _status = status;
             _parent = parent;
+            _cupStructure = structure;
         }
 
         public void InitializeQualificationsNextYearsLists(int count = -1)
@@ -1121,27 +1129,18 @@ namespace tm
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
 
-            if (idRoundPivot == -1 && parent == null) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
+            if (idRoundPivot == -1 && parent == null && leagueCupLike) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
             {
-                if(leagueCupLike)
-                {
-                    CupAdapter adapter = new CupAdapter();
-                    CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
-                    WriteCupAdapterResult(adaptation);
-                }
-                else
-                {
-                    CupCreator adapter = new CupCreator(Session.Instance.Game.kernel);
-                    Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
-                    CupStructure constraints = new CupStructure()
-                    {
-                        includeChildAssociations = ChildAssociationsLeaguesAllowed(),
-                        allowReserves = ReservesAllowed()
-                    };
-                    CupStructureResult structure = adapter.CreateStructure(association, constraints);
-                    WriteCupStrutureResult(structure);
-                    
-                }
+                CupAdapter adapter = new CupAdapter();
+                CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
+                WriteCupAdapterResult(adaptation);
+            }
+            else if(idRoundPivot == -1 && parent == null && _cupStructure != null)
+            {
+                CupCreator adapter = new CupCreator(Session.Instance.Game.kernel);
+                Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
+                CupStructureResult structure = adapter.CreateStructure(association, _cupStructure);
+                WriteCupStrutureResult(structure);
             }
             else
             {
@@ -1617,7 +1616,7 @@ namespace tm
             {
                 newName = _name;
             }
-            Tournament copy = new Tournament(Session.Instance.Game.kernel.NextIdTournament(), newName, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent);
+            Tournament copy = new Tournament(Session.Instance.Game.kernel.NextIdTournament(), newName, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent, _cupStructure);
             foreach (Round r in rounds)
             {
                 Round roundCopy = r.Copy();

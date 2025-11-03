@@ -20,14 +20,30 @@ namespace tm.Algorithms
 
     public class CupStructure
     {
+        /// <summary>
+        /// Reserves can enter the tournament
+        /// </summary>
         public bool allowReserves { get; set; }
+        /// <summary>
+        /// Teams for child associations can enter the tournament
+        /// </summary>
         public bool includeChildAssociations { get; set; }
 
+        /// <summary>
+        /// Structure constraints
+        /// </summary>
         public List<List<RecoverTeams>> constraints { get; set; }
+        /// <summary>
+        /// All teams entering the tournament at the first round
+        /// </summary>
+        public List<RecoverTeams> teams { get; set; }
 
-        public CupStructure()
+        public CupStructure(bool allowReserves, bool includeChildAssociations, List<List<RecoverTeams>> constraints, List<RecoverTeams> teams)
         {
-
+            this.allowReserves = allowReserves;
+            this.includeChildAssociations = includeChildAssociations;
+            this.constraints = constraints;
+            this.teams = teams;
         }
     }
 
@@ -112,25 +128,22 @@ namespace tm.Algorithms
             Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
             List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
             int totalTeams = 0;
-            List<Tournament> lt = new List<Tournament>(association.Leagues());
-            if (constraints.includeChildAssociations)
+
+            List<Tournament> tournamentsIncluded = new List<Tournament>();
+
+            foreach(RecoverTeams source in constraints.teams)
             {
-                foreach (Association ca in association.GetAllChilds())
-                {
-                    lt.AddRange(ca.Leagues());
-                }
-            }
-            foreach (Tournament t in lt)
-            {
-                int tournamentLevel = association.TournamentLevel(t);
+                Tournament tSource = (source.Source as Round).Tournament;
+                int tournamentLevel = association.TournamentLevel(tSource);
                 if (!teamsByLevel.ContainsKey(tournamentLevel))
                 {
                     teamsByLevel.Add(tournamentLevel, 0);
                 }
-                int teamsCount = constraints.allowReserves ? t.rounds[0].clubs.Count : CountTeamsWithoutReserves(t.rounds[0], association);
+                int teamsCount = source.Available(!constraints.allowReserves, association);
                 teamsByLevel[tournamentLevel] += teamsCount;
-                teamsByTournaments.Add(new KeyValuePair<Tournament, int>(t, teamsCount));
+                teamsByTournaments.Add(new KeyValuePair<Tournament, int>(tSource, teamsCount));
                 totalTeams += teamsCount;
+                tournamentsIncluded.Add(tSource);
             }
 
             teamsByTournaments.Sort((x, y) => association.TournamentLevel(x.Key) - association.TournamentLevel(y.Key));
@@ -193,19 +206,19 @@ namespace tm.Algorithms
                 structure = structure,
                 roundsCount = structure.Count,
                 teamsByRound = teamsByRound,
-                leaguesRepresented = new HashSet<Tournament>(lt)
+                leaguesRepresented = new HashSet<Tournament>(tournamentsIncluded)
             };
         }
 
 
 
-        public Tournament CreateEmptyTournament(int cupId, string cupName, int cupLevel, Association association, int roundsCount, List<int> teamsByRound, List<GameDay> availableDates, int winnerPrize, bool reservesAllowed)
+        public Tournament CreateEmptyTournament(int cupId, string cupName, int cupLevel, Association association, int roundsCount, List<int> teamsByRound, List<GameDay> availableDates, int winnerPrize, CupStructure structure)
         {
             if (roundsCount > availableDates.Count)
             {
                 throw new Exception("Too few dates available");
             }
-            Tournament emptyCup = new Tournament(cupId, cupName, "", new GameDay(association.resetWeek, false, 0, 0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null);
+            Tournament emptyCup = new Tournament(cupId, cupName, "", new GameDay(association.resetWeek, false, 0, 0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null, structure);
             for (int i = 0; i < roundsCount; i++)
             {
                 Hour hour = new Hour() { Hours = 20, Minutes = 0 };
@@ -217,7 +230,7 @@ namespace tm.Algorithms
                 Round round = new KnockoutRound(Session.Instance.Game.kernel.NextIdRound(), name, emptyCup, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
 
                 round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                if (!reservesAllowed)
+                if (!structure.allowReserves)
                 {
                     round.rules.Add(Rule.OnlyFirstTeams);
                 }
