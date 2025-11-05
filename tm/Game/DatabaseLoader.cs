@@ -15,6 +15,7 @@ using File = System.IO.File;
 using System.Data.Entity.ModelConfiguration.Conventions;
 using System.Windows.Documents;
 using tm.Algorithms;
+using Antlr.Runtime;
 
 namespace tm
 {
@@ -909,6 +910,42 @@ namespace tm
             return value;
         }
 
+        private CupStructure ExtractCupStructure(Tournament tournament)
+        {
+            Association a = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            bool allowReserves = true;
+            bool includeChildAssociations = false;
+            List<List<RecoverTeams>> constraints = new List<List<RecoverTeams>>();
+            List<RecoverTeams> pool = new List<RecoverTeams>();
+
+            for(int i = 0; i < tournament.rounds.Count; i++)
+            {
+                Round r = tournament.rounds[i];
+                constraints.Add(new List<RecoverTeams>());
+                allowReserves = allowReserves && !r.rules.Contains(Rule.OnlyFirstTeams);
+                foreach(RecoverTeams rt in r.recuperedTeams)
+                {
+                    //bool requestAllTeams = rt.Method.HasFlag(RecuperationMethod.AllTeams) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro);
+                    if (i == 0)
+                    {
+                        pool.Add(rt);
+                    }
+                    else
+                    {
+                        constraints[i].Add(rt);
+                    }
+                    Round rtr = rt.Source as Round;
+                    if(rtr != null && a.GetAllChilds().Contains(Session.Instance.Game.kernel.LocalisationTournament(rtr.Tournament)))
+                    {
+                        includeChildAssociations = true;
+                    }
+
+                }
+            }
+
+            return new CupStructure(allowReserves, includeChildAssociations, constraints, pool, 1);
+        }
+
         public void LoadTournaments()
         {
             SetStartClubId();
@@ -1173,30 +1210,13 @@ namespace tm
                                     Round r = comp.rounds[tourIndex];
                                     source = r;
                                 }
-                                RecuperationMethod method;
-                                switch (e4.Attribute("methode").Value)
+                                RecuperationMethod method = RecuperationMethod.Randomly;
+                                string[] tokens = e4.Attribute("methode").Value.Split(" ");
+
+                                for(int i = 0; i < tokens.Length; i++)
                                 {
-                                    case "meilleurs":
-                                        method = RecuperationMethod.Best;
-                                        break;
-                                    case "pires":
-                                        method = RecuperationMethod.Worst;
-                                        break;
-                                    case "aleatoire":
-                                        method = RecuperationMethod.Randomly;
-                                        break;
-                                    case "international":
-                                        method = RecuperationMethod.QualifiedForInternationalCompetition;
-                                        break;
-                                    case "notinternational":
-                                        method = RecuperationMethod.NotQualifiedForInternationalCompetition | RecuperationMethod.Best;
-                                        break;
-                                    case "pro":
-                                        method = RecuperationMethod.StatusPro;
-                                        break;
-                                    default:
-                                        method = RecuperationMethod.Best;
-                                        break;
+                                    RecuperationMethod parsed = ParseRecuperationMethod(tokens[i]);
+                                    method = i == 0 ? parsed : method | parsed;
                                 }
                                 round.recuperedTeams.Add(new RecoverTeams(source, number, method));
                             }
@@ -1355,11 +1375,43 @@ namespace tm
             return t;
         }
 
+        private RecuperationMethod ParseRecuperationMethod(string token)
+        {
+            RecuperationMethod method;
+            switch (token)
+            {
+                case "meilleurs":
+                    method = RecuperationMethod.Best;
+                    break;
+                case "pires":
+                    method = RecuperationMethod.Worst;
+                    break;
+                case "aleatoire":
+                    method = RecuperationMethod.Randomly;
+                    break;
+                case "international":
+                    method = RecuperationMethod.QualifiedForInternationalCompetition;
+                    break;
+                case "notinternational":
+                    method = RecuperationMethod.NotQualifiedForInternationalCompetition | RecuperationMethod.Best;
+                    break;
+                case "pro":
+                    method = RecuperationMethod.StatusPro;
+                    break;
+                case "all":
+                    method = RecuperationMethod.AllTeams;
+                    break;
+                default:
+                    throw new Exception("Method not recognized");
+                    break;
+            }
+            return method;
+        }
 
-        /// <summary>
-        /// Post process loaded tournaments and create regional tournaments instances for league systems relying on multiple regional structure
-        /// </summary>
-        public void PostProcessTournaments()
+    /// <summary>
+    /// Post process loaded tournaments and create regional tournaments instances for league systems relying on multiple regional structure
+    /// </summary>
+    public void PostProcessTournaments()
         {
             foreach(Association a in _kernel.GetAllAssociations())
             {
@@ -1538,10 +1590,48 @@ namespace tm
             _kernel.languages.Add(language);
         }
 
+        private bool IsNationalCup(Tournament tournament)
+        {
+            bool res = true;
+            int total = 0;
+            Association a = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            if(tournament.name == "Coupe de la Ligue")
+            {
+                Console.WriteLine("ok");
+            }
+            foreach(Round r in tournament.rounds)
+            {
+                foreach(RecoverTeams rt in r.recuperedTeams)
+                {
+                    total++;
+                    Round rtr = rt.Source as Round;
+                    if(rtr == null)
+                    {
+                        res = false;
+                    }
+                    else
+                    {
+                        res = res && Session.Instance.Game.kernel.LocalisationTournament(rtr.Tournament).IsDirectConnected(a);
+                    }
+                }
+            }
+            if(total == 0)
+            {
+                res = false;
+            }
+            return res;
+        }
+
         public void InitTournaments()
         {
             foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
             {
+                if (!t.isChampionship && IsNationalCup(t))
+                {
+                    Utils.Debug("[{0}] Extract cup structure", t.name);
+                    t.cupStructure = ExtractCupStructure(t);
+                }
+
                 //TODO: remove this in the reset fonction (reset function to adapt to the first initialization)
                 if (t.isHostedByOneAssociation)
                 {
@@ -1773,7 +1863,7 @@ namespace tm
                 int winnerPrize = association.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? association.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
                 string cupName = creator.NameOfCup(association);
                 int cupLevel = association.Cups().Count + 1;
-                CupStructure constraints = new CupStructure(reservesAllowed, allowTeamsOfChildAssociations, new List<List<RecoverTeams>>(), CreateTeamsSourcePool(association, allowTeamsOfChildAssociations));
+                CupStructure constraints = new CupStructure(reservesAllowed, allowTeamsOfChildAssociations, new List<List<RecoverTeams>>(), CreateTeamsSourcePool(association, allowTeamsOfChildAssociations), 1);
                 CupStructureResult structure = creator.CreateStructure(association, constraints);
                 List<GameDay> availableDates = association.GetAvailableCalendarDates(true, 1, structure.leaguesRepresented.ToList(), true, false);
                 Tournament cup = creator.CreateEmptyTournament(_kernel.NextIdTournament(), cupName, cupLevel, association, structure.roundsCount, structure.teamsByRound, availableDates, winnerPrize, constraints);

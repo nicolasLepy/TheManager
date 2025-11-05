@@ -38,12 +38,19 @@ namespace tm.Algorithms
         /// </summary>
         public List<RecoverTeams> teams { get; set; }
 
-        public CupStructure(bool allowReserves, bool includeChildAssociations, List<List<RecoverTeams>> constraints, List<RecoverTeams> teams)
+        /// <summary>
+        /// Number of teams expected to win the competition
+        /// Ex: Regional path of national cups can have more than one winner
+        /// </summary>
+        public int winners { get; set; }
+
+        public CupStructure(bool allowReserves, bool includeChildAssociations, List<List<RecoverTeams>> constraints, List<RecoverTeams> teams, int winners)
         {
             this.allowReserves = allowReserves;
             this.includeChildAssociations = includeChildAssociations;
             this.constraints = constraints;
             this.teams = teams;
+            this.winners = winners;
         }
     }
 
@@ -120,6 +127,11 @@ namespace tm.Algorithms
             return cupName;
         }
 
+        public List<List<RecoverTeams>> StructureFromPool(int winners, List<RecoverTeams> pool)
+        {
+
+        }
+
         public CupStructureResult CreateStructure(Association association, CupStructure constraints)
         {
             Console.WriteLine("[Create Structure] {0}", association.name);
@@ -149,7 +161,7 @@ namespace tm.Algorithms
             teamsByTournaments.Sort((x, y) => association.TournamentLevel(x.Key) - association.TournamentLevel(y.Key));
 
             int roundCount = 0;
-            int j = 1;
+            int j = constraints.winners;
             while ((j * 2) <= totalTeams)
             {
                 j *= 2;

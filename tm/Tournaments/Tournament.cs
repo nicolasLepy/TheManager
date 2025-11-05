@@ -155,6 +155,8 @@ namespace tm
         [DataMember]
         private CupStructure _cupStructure;
 
+        public CupStructure cupStructure { get => _cupStructure; set => _cupStructure = value; }
+
         public string name { get => _name; }
         public Color color => _color;
         public List<Round> rounds { get => _rounds; }
@@ -1129,13 +1131,13 @@ namespace tm
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
 
-            if (idRoundPivot == -1 && parent == null && leagueCupLike) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
+            /*if (idRoundPivot == -1 && parent == null && leagueCupLike) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
             {
                 CupAdapter adapter = new CupAdapter();
                 CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
                 WriteCupAdapterResult(adaptation);
-            }
-            else if(idRoundPivot == -1 && parent == null && _cupStructure != null)
+            }*/
+            if(idRoundPivot == -1 && parent == null && _cupStructure != null)
             {
                 CupCreator adapter = new CupCreator(Session.Instance.Game.kernel);
                 Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
