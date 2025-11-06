@@ -380,7 +380,7 @@ namespace tm
         private KeyValuePair<Tournament, int> GetRelegatedFromAbove(Tournament selfTournament)
         {
             int count = 0;
-            Association selfAssociation = Session.Instance.Game.kernel.LocalisationTournament(selfTournament);
+            Association selfAssociation = selfTournament.association;
             Tournament source = selfAssociation.LeagueAbove(selfTournament).Tournament();
             GroupsRound upperRound = source.rounds[0] as GroupsRound;
             if(upperRound != null)
@@ -468,10 +468,9 @@ namespace tm
         /// <returns>New list of qualifications</returns>
         public List<Qualification> AdjustQualifications(List<Qualification> baseQualifications, int group, Tournament selfTournament)
         {
-
             List<Qualification> adjustedQualifications = new List<Qualification>(baseQualifications);
             adjustedQualifications.Sort(new QualificationRankingComparator());
-            Association selfAssociation = Session.Instance.Game.kernel.LocalisationTournament(selfTournament);
+            Association selfAssociation = selfTournament.association;
             Console.WriteLine("[{0}][{1}][Groupe {2}]", selfTournament.name, selfAssociation.name, group);
 
             Tournament upperTournament = selfAssociation.LeagueAbove(selfTournament)?.Tournament();
@@ -603,7 +602,7 @@ namespace tm
                     allQualifications = AdjustQualificationsGroup(allQualifications, group, tournament);
                     allQualifications = AdjustQualifications(allQualifications, group, tournament);
 
-                    Association selfAssociation = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+                    Association selfAssociation = tournament.association;
                     int groupsCount = groups.Length;
                     Dictionary<QualificationType, KeyValuePair<QualificationTarget, int>> promRelSpots = GetDirectPromotionsRelegationsSpots(qualifications, selfAssociation, tournament);
                     QualificationTarget targetDirectRelegation = promRelSpots[QualificationType.DirectRelegation].Key;
@@ -841,7 +840,7 @@ namespace tm
                         else if(q.isNextYear && forNextYear)
                         {
                             Tournament clubNewTournament = q.target.RegisterTeamForNextEdition(c, q.roundId);
-                            if (Tournament.level == 1 && !Session.Instance.Game.kernel.LocalisationTournament(Tournament).isStateAssociation)
+                            if (Tournament.level == 1 && !Tournament.association.isStateAssociation)
                             {
                                 Console.WriteLine("[" + i + "], " + c.name + " - " + q.ranking + " -> " + clubNewTournament.name + " [" + q.qualifies + ", " + caseQualifieMoreThan0 + ", " + caseQualifieLessThan0 + "]");
                             }

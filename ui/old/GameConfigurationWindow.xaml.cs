@@ -135,7 +135,7 @@ namespace TheManager_GUI
 
             CheckBox checkBox = sender as CheckBox;
             Tournament selected = Session.Instance.Game.kernel.String2Tournament(checkBox.Content.ToString());
-            foreach (Tournament t in Session.Instance.Game.kernel.LocalisationTournament(selected).Tournaments())
+            foreach (Tournament t in selected.association.Tournaments())
             {
                 if (t.level > selected.level && t.isChampionship)
                 {

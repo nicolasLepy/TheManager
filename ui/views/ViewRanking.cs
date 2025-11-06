@@ -46,7 +46,7 @@ namespace TheManager_GUI.Views
             _team = team;
 
 
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
+            ILocalisation localisation = _tournament.association;
             Association association = localisation as Association;
             _retrogradations = association != null ? association.GetAdministrativeRetrogradations() : new List<Club>[0];
 
@@ -82,7 +82,7 @@ namespace TheManager_GUI.Views
 
         protected Dictionary<Club, Qualification> GetContinentalClubs(Round round)
         {
-            ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
+            ILocalisation localisation = _tournament.association;
             Association association = localisation as Association;
             Dictionary<Club, Qualification> continentalClubs = new Dictionary<Club, Qualification>();
             if (association != null && association.parent != null && association.parent.GetContinentalClubTournaments().Count > 0)
@@ -136,7 +136,7 @@ namespace TheManager_GUI.Views
                     spHost.Children.Add(ViewUtils.CreateTextBlock(String.Format("{0} : {1} points ({2})", c.name, -pointsDeduction, reasons), StyleDefinition.styleTextPlain, (int)(14 * sizeMultiplier), -1));
                 }
             }
-            Association ctry = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament).ClosestStateAssociation();
+            Association ctry = round.Tournament.association.ClosestStateAssociation();
             if(ctry != null)
             {
                 foreach(Club c in round.clubs)
@@ -197,7 +197,7 @@ namespace TheManager_GUI.Views
             int clubNextLevel = Array.FindIndex(_retrogradations, w => w.Contains(club)) + 1;
             int roundLevel = Session.Instance.Game.kernel.worldAssociation.TournamentLevel(_tournament);
             bool nationalTeamTournament = Round().clubs.Count > 0 && ((Round().clubs[0] as NationalTeam) != null);
-            nationalTeamTournament = nationalTeamTournament || !Session.Instance.Game.kernel.LocalisationTournament(_tournament).isStateAssociation; //Include all international tournaments
+            nationalTeamTournament = nationalTeamTournament || !_tournament.association.isStateAssociation; //Include all international tournaments
 
             string color = StyleDefinition.solidColorBrushColorTransparent;
 
@@ -310,7 +310,7 @@ namespace TheManager_GUI.Views
             // Get international qualifications
             // Search if the round is an archived round to get qualified teams on the right year
             // Else get qualification for the current season
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(_tournament) as Association;
+            Association association = _tournament.association;
 
             //If we choose to focus on a team, we center the ranking on the team and +-2 other teams around
             int indexTeam = -1;

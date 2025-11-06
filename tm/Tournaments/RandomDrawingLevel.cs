@@ -59,7 +59,7 @@ namespace tm
         public RandomDrawingLevel(GroupsRound round, List<Club> sortedClubs)
         {
             _round = round;
-            _masterAssociation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Association;
+            _masterAssociation = _round.Tournament.association;
             _clubCoefficients = new Dictionary<Club, float>();
             _associationMap = new Dictionary<Club, Association>();
             _potMap = new Dictionary<Club, int>();
@@ -73,7 +73,7 @@ namespace tm
         {
             _round = round;
             _clubCoefficients = coefficients;
-            _masterAssociation = Session.Instance.Game.kernel.LocalisationTournament(_round.Tournament) as Association;
+            _masterAssociation = _round.Tournament.association;
             _associationMap = new Dictionary<Club, Association>();
             _potMap = new Dictionary<Club, int>();
         }

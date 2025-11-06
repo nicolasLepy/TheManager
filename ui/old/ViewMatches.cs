@@ -91,7 +91,7 @@ namespace TheManager_GUI.ViewMisc
                 {
                     StackPanel spTournamentLine = new StackPanel();
                     spTournamentLine.Orientation = Orientation.Horizontal;
-                    Country tournamentCountry = Session.Instance.Game.kernel.LocalisationTournament(match.Tournament).ClosestStateAssociation().localisation as Country;
+                    Country tournamentCountry = match.Tournament.association.ClosestStateAssociation().localisation as Country;
                     if(tournamentCountry != null)
                     {
                         spTournamentLine.Children.Add(ViewUtils.CreateFlag(tournamentCountry, 30 * sizeMultiplier, 20 * sizeMultiplier));

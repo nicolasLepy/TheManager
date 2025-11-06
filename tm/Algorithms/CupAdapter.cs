@@ -237,7 +237,7 @@ namespace tm.Algorithms
         public CupAdapterResult AdaptLeagueCup(Tournament tournament)
         {
             Console.WriteLine("[AdaptLeagueCup] {0}", tournament.name);
-            association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            association = tournament.association;
             bool onlyFirstTeams = false;
             HashSet<Tournament> leaguesRepresented = UtilsTournaments.GetLeaguesRepresented(tournament);
 
@@ -346,7 +346,7 @@ namespace tm.Algorithms
         /// </summary>
         public void UpdateCupQualifications()
         {
-            Utils.Debug(Session.Instance.Game.date.ToShortDateString() + " [UpdateCupQualifications " + name + "] (" + Session.Instance.Game.kernel.LocalisationTournament(this) + ")");
+            Utils.Debug(Session.Instance.Game.date.ToShortDateString() + " [UpdateCupQualifications " + name + "] (" + this.association + ")");
             //Sauvegarde en mémoire les qualifications en coupe par défaut, elles pourraient être amenées à changer en cas de modification de la structure de la ligue
             if (!AlreadyStoredRecuperedTeams())
             {
@@ -450,7 +450,7 @@ namespace tm.Algorithms
                 int teamsAtTheLastRound = 2;
                 if (parent != null)
                 {
-                    Association concernedRegion = Session.Instance.Game.kernel.LocalisationTournament(this);
+                    Association concernedRegion = this.association;
                     foreach (Round r in parent.rounds)
                     {
                         if (r.teamsByAssociation.ContainsKey(concernedRegion))
@@ -481,7 +481,7 @@ namespace tm.Algorithms
                         Round rtRound = rt.Source as Round;
                         if (rtRound != null)
                         {
-                            int roundsClubCount = _parent == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(Session.Instance.Game.kernel.LocalisationTournament(this));
+                            int roundsClubCount = _parent == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(this.association);
                             int clubsCount = roundsClubCount;
                             RecoverTeams otherRecoverTeams = GetOtherRecoverTeamsOfRound(rt);
                             if (otherRecoverTeams.Source != null)
@@ -626,7 +626,7 @@ namespace tm.Algorithms
                 {
                     Utils.Debug("Suffisament d'équipes disponibles pour les exigences du tour");
                     //On garde le nombre d'équipes maximales des ligues sans équipes réserves : leur structure ne changera pas avec les années, on garde tout (ex. le N1 au 5ème tour avec les 18 équipes au lieu de 10 équipes calculés avec la méthode du ratio)
-                    Tournament lastLevelWithoutReserves = Session.Instance.Game.kernel.LocalisationTournament(this).GetLastLeagueWithoutReserves();
+                    Tournament lastLevelWithoutReserves = this.association.GetLastLeagueWithoutReserves();
                     List<LeagueCupApparition> lcaAddedByAnticipation = new List<LeagueCupApparition>();
                     foreach (LeagueCupApparition lca in leagueCupApparitions)
                     {
@@ -777,7 +777,7 @@ namespace tm.Algorithms
                 Console.WriteLine("Cloturé le " + rounds[i].programmation.end.WeekNumber + " " + rounds[i].programmation.end.MidWeekGame);
                 foreach (RecoverTeams rt in recoverTeams)
                 {
-                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(this)).Count;
+                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), this.association).Count;
                     Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + totalAdmTeamsCount + " - " + rt.Method);
                 }
                 Console.WriteLine(cupTeams + " équipes pour " + (cupTeams / 2) + " matchs");

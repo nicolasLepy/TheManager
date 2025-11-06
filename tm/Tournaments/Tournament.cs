@@ -155,6 +155,9 @@ namespace tm
         [DataMember]
         private CupStructure _cupStructure;
 
+        [DataMember]
+        private Association _association;
+
         public CupStructure cupStructure { get => _cupStructure; set => _cupStructure = value; }
 
         public string name { get => _name; }
@@ -163,6 +166,7 @@ namespace tm
         public string logo { get => _logo; }
         public ClubStatus status => _status;
 
+        public Association association => _association;
         public List<Club>[] nextYearQualified => _nextYearQualified;
 
         public List<Stadium> hostStadiums => _hostStadiums;
@@ -219,12 +223,13 @@ namespace tm
             _rules = new List<TournamentRule>();
         }
 
-        public Tournament(int id, string name, string logo, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, Tournament parent, CupStructure structure)
+        public Tournament(int id, string name, string logo, Association association, GameDay seasonBeginning, string shortName, bool isChampionship, int level, int periodicity, int remainingYears, Color color, ClubStatus status, Tournament parent, CupStructure structure)
         {
             Id = id;
             _rounds = new List<Round>();
             _name = name;
             _logo = logo;
+            _association = association;
             _seasonBeginning = seasonBeginning;
             _shortName = shortName;
             _isChampionship = isChampionship;
@@ -425,8 +430,7 @@ namespace tm
         public int[] GetTeamsAtEachRound()
         {
             int[] teamsAtEachRound = new int[rounds.Count];
-            //Country country = Session.Instance.Game.kernel.LocalisationTournament(this) as Country;
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(this).ClosestStateAssociation();
+            Association association = this.association.ClosestStateAssociation();
             List<Tournament> otherTournaments = association != null ? association.Leagues() : Session.Instance.Game.kernel.Competitions;
             foreach (Tournament t in otherTournaments)
             {
@@ -551,7 +555,7 @@ namespace tm
             }
             else if (rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro))
             {
-                res = rt.Source.RetrieveTeams(-1, rt.Method, false, Session.Instance.Game.kernel.LocalisationTournament(this)).Count;
+                res = rt.Source.RetrieveTeams(-1, rt.Method, false, this.association).Count;
             }
             return res;
         }
@@ -565,12 +569,12 @@ namespace tm
         public bool IsAbove(QualificationTarget to)
         {
             bool isAbove = false;
-            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Association tAssociation = this.association;
             int hierarchyAssociation = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(tAssociation, 0);
             if (to.Type == QualificationTargetType.Tournament)
             {
                 Tournament t = to.Tournament();
-                Association otherAssociation = Session.Instance.Game.kernel.LocalisationTournament(t);
+                Association otherAssociation = t.association;
                 // if tAssociation is a parent of otherAssociation, so self is above
                 if (tAssociation.GetAllChilds().Contains(otherAssociation))
                 {
@@ -613,12 +617,12 @@ namespace tm
         public bool IsBelow(QualificationTarget to)
         {
             bool isBelow = false;
-            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Association tAssociation = this.association;
             int hierarchyAssociation = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(tAssociation, 0);
             if (to.Type == QualificationTargetType.Tournament)
             {
                 Tournament t = to.Tournament();
-                Association otherAssociation = Session.Instance.Game.kernel.LocalisationTournament(t);
+                Association otherAssociation = t.association;
                 // if otherAssociation is a parent of tAssociation, so self is above
                 if (otherAssociation.GetAllChilds().Contains(tAssociation))
                 {
@@ -662,7 +666,7 @@ namespace tm
         {
             int otherALevel = to.GetAssociationLevel();
             int otherTLevel = to.GetTournamentLevel();
-            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Association tAssociation = this.association;
             int selfALevel = Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(tAssociation, 0);
             int selfTLevel = this.level;
             return otherALevel == selfALevel && otherTLevel == selfTLevel;
@@ -674,8 +678,6 @@ namespace tm
         /// </summary>
         public void UpdateLeagueCupQualifications()
         {
-            //ILocalisation localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
             //Contains new league apparition through competition for each rounds
             List<List<RecoverTeams>> newRecoverTeams = new List<List<RecoverTeams>>();
             //Contains new extra rounds created if necessary
@@ -697,7 +699,7 @@ namespace tm
                     for(int j = round.recuperedTeams.Count-1; j >= 0; j--)
                     {
                         RecoverTeams rt = round.recuperedTeams[j];
-                        int newTeamsCount = rt.Method == RecuperationMethod.Best ? rt.Source.RetrieveTeams(-1, rt.Method, true, Session.Instance.Game.kernel.LocalisationTournament(this)).Count : 0;
+                        int newTeamsCount = rt.Method == RecuperationMethod.Best ? rt.Source.RetrieveTeams(-1, rt.Method, true, this.association).Count : 0;
                         if (newTeamsCount > 0)
                         {
                             round.recuperedTeams[j] = new RecoverTeams(rt.Source, newTeamsCount, rt.Method);
@@ -804,7 +806,7 @@ namespace tm
             {
                 int teamsToAdd = currentTeams * 2; //New round : double teams from qualified teams for the "old first round"
                 Utils.Debug("Trop d'équipes pour le nombre de places aux tours suivants : création d'un nouveau tour");
-                List<GameDay> availableDatesAll = association.GetAvailableCalendarDates(Session.Instance.Game.kernel.LocalisationTournament(this).isStateAssociation, 2, leagueLevelsRepresented, true, false);
+                List<GameDay> availableDatesAll = association.GetAvailableCalendarDates(this.association.isStateAssociation, 2, leagueLevelsRepresented, true, false);
                 List<GameDay> availableDates = new List<GameDay>();
                 int beginningCompetition = this._seasonBeginning.WeekNumber;
                 int beginningRounds = rounds.First().programmation.initialisation.WeekNumber;
@@ -1074,7 +1076,7 @@ namespace tm
         /// </summary>
         public void UpdateCupQualifications()
         {
-            Utils.Debug(Session.Instance.Game.date.ToShortDateString() + " [UpdateCupQualifications " + name + "] (" + Session.Instance.Game.kernel.LocalisationTournament(this) + ")");
+            Utils.Debug(Session.Instance.Game.date.ToShortDateString() + " [UpdateCupQualifications " + name + "] (" + this.association + ")");
             //Sauvegarde en mémoire les qualifications en coupe par défaut, elles pourraient être amenées à changer en cas de modification de la structure de la ligue
             if(!AlreadyStoredRecuperedTeams())
             {
@@ -1131,16 +1133,15 @@ namespace tm
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
 
-            /*if (idRoundPivot == -1 && parent == null && leagueCupLike) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
+            if (idRoundPivot == -1 && parent == null && leagueCupLike) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
             {
                 CupAdapter adapter = new CupAdapter();
                 CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
                 WriteCupAdapterResult(adaptation);
-            }*/
-            if(idRoundPivot == -1 && parent == null && _cupStructure != null)
+            }
+            else if(idRoundPivot == -1 && parent == null && _cupStructure != null)
             {
                 CupCreator adapter = new CupCreator(Session.Instance.Game.kernel);
-                Association association = Session.Instance.Game.kernel.LocalisationTournament(this);
                 CupStructureResult structure = adapter.CreateStructure(association, _cupStructure);
                 WriteCupStrutureResult(structure);
             }
@@ -1184,7 +1185,7 @@ namespace tm
                 int teamsAtTheLastRound = 2;
                 if(parent != null)
                 {
-                    Association concernedRegion = Session.Instance.Game.kernel.LocalisationTournament(this);
+                    Association concernedRegion = this.association;
                     foreach(Round r in parent.rounds)
                     {
                         if(r.teamsByAssociation.ContainsKey(concernedRegion))
@@ -1215,7 +1216,7 @@ namespace tm
                         Round rtRound = rt.Source as Round;
                         if (rtRound != null)
                         {
-                            int roundsClubCount = _parent == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(Session.Instance.Game.kernel.LocalisationTournament(this));
+                            int roundsClubCount = _parent == null ? rtRound.CountWithoutReserves() : rtRound.CountWithoutReserves(this.association);
                             int clubsCount = roundsClubCount;
                             RecoverTeams otherRecoverTeams = GetOtherRecoverTeamsOfRound(rt);
                             if (otherRecoverTeams.Source != null)
@@ -1360,7 +1361,7 @@ namespace tm
                 {
                     Utils.Debug("Suffisament d'équipes disponibles pour les exigences du tour");
                     //On garde le nombre d'équipes maximales des ligues sans équipes réserves : leur structure ne changera pas avec les années, on garde tout (ex. le N1 au 5ème tour avec les 18 équipes au lieu de 10 équipes calculés avec la méthode du ratio)
-                    Tournament lastLevelWithoutReserves = Session.Instance.Game.kernel.LocalisationTournament(this).GetLastLeagueWithoutReserves();
+                    Tournament lastLevelWithoutReserves = this.association.GetLastLeagueWithoutReserves();
                     List<LeagueCupApparition> lcaAddedByAnticipation = new List<LeagueCupApparition>();
                     foreach (LeagueCupApparition lca in leagueCupApparitions)
                     {
@@ -1442,7 +1443,7 @@ namespace tm
                             List<RecoverTeams> newRecoverTeams = new List<RecoverTeams>();
 
                             /*//On garde le nombre d'équipes maximales des ligues sans équipes réserves : leur structure ne changera pas avec les années, on garde tout (ex. le N1 au 5ème tour avec les 18 équipes au lieu de 10 équipes calculés avec la méthode du ratio)
-                            int lastLevelWithoutReserves = (Session.Instance.Game.kernel.LocalisationTournament(this) as Country).GetLastLeagueLevelWithoutReserves();
+                            int lastLevelWithoutReserves = (this.association as Country).GetLastLeagueLevelWithoutReserves();
                             foreach(LeagueCupApparition lca in leagueCupApparitions)
                             {
                                 if(lca.tournament.level <= lastLevelWithoutReserves && lca.apparitionRound < delRoundId)
@@ -1555,7 +1556,7 @@ namespace tm
                 Console.WriteLine("Cloturé le " + rounds[i].programmation.end.WeekNumber + " " + rounds[i].programmation.end.MidWeekGame);
                 foreach (RecoverTeams rt in recoverTeams)
                 {
-                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(this)).Count;
+                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), this.association).Count;
                     Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + totalAdmTeamsCount + " - " + rt.Method);
                 }
                 Console.WriteLine(cupTeams + " équipes pour " + (cupTeams / 2) + " matchs");
@@ -1618,7 +1619,7 @@ namespace tm
             {
                 newName = _name;
             }
-            Tournament copy = new Tournament(Session.Instance.Game.kernel.NextIdTournament(), newName, _logo, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent, _cupStructure);
+            Tournament copy = new Tournament(Session.Instance.Game.kernel.NextIdTournament(), newName, _logo, _association, _seasonBeginning, _shortName, _isChampionship, _level, _periodicity, _remainingYears, _color, _status, _parent, _cupStructure);
             foreach (Round r in rounds)
             {
                 Round roundCopy = r.Copy();
@@ -1730,7 +1731,7 @@ namespace tm
                     InitializeHost();
                 }
             }
-            Association localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Association localisation = this.association;
             Tournament locTopLeague = localisation.League(1);
             if (!isChampionship && !IsInternational() && (localisation.LeagueSystemWithReserves() || (locTopLeague != null && localisation.LeagueAbove(locTopLeague) != null)))
             {
@@ -2359,7 +2360,7 @@ namespace tm
 
         public bool IsInternational()
         {
-            Association localisation = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Association localisation = this.association;
             return localisation.ClosestStateAssociation() == null;
         }
 
@@ -2388,14 +2389,14 @@ namespace tm
 
         private bool ChildAssociationsLeaguesAllowed()
         {
-            Association a = Session.Instance.Game.kernel.LocalisationTournament(this);
+            Association a = this.association;
             bool res = false;
             foreach(Round r in _rounds)
             {
                 foreach(RecoverTeams rt in r.recuperedTeams)
                 {
                     Tournament source = rt.Source as Tournament;
-                    res = res || (source != null && a.GetAllChilds().Contains(Session.Instance.Game.kernel.LocalisationTournament(source)));
+                    res = res || (source != null && a.GetAllChilds().Contains(source.association));
                 }
             }
             return res;

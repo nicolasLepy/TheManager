@@ -331,7 +331,7 @@ namespace TheManager_GUI
         private bool DefaultChecked(Tournament t)
         {
             Association fr = Session.Instance.Game.kernel.String2Association("France");
-            return Session.Instance.Game.kernel.LocalisationTournament(t).IsDirectConnected(fr);
+            return t.association.IsDirectConnected(fr);
         }
 
         private void CountConfiguration()
@@ -516,7 +516,7 @@ namespace TheManager_GUI
         {
             List<Tournament> tournaments = new List<Tournament>();
 
-            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(selected);
+            Association tAssociation = selected.association;
             foreach (Tournament t in tAssociation.Tournaments())
             {
                 if (t.level > selected.level && t.isChampionship)
@@ -537,7 +537,7 @@ namespace TheManager_GUI
         {
             List<Tournament> tournaments = new List<Tournament>();
 
-            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(selected);
+            Association tAssociation = selected.association;
             foreach (Tournament t in tAssociation.Tournaments())
             {
                 if (t.level < selected.level && t.isChampionship)

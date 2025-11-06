@@ -763,7 +763,7 @@ namespace tm
                 {
                     teamsToGrab = re.Source.CountWithoutReserves();
                 }
-                List<Club> selected = re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Session.Instance.Game.kernel.LocalisationTournament(Tournament));
+                List<Club> selected = re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Tournament.association);
                 foreach (Club c in selected)
                 {
                     if(_clubs.Contains(c))
@@ -884,12 +884,12 @@ namespace tm
             }
             if(method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition))
             {
-                roundClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
+                roundClubs = Tournament.association.GetContinentalAssociation().GetContinentalClubs(roundClubs);
                 roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method.HasFlag(RecuperationMethod.Worst)));
             }
             if(method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition))
             {
-                List<Club> internationalClubs = Session.Instance.Game.kernel.LocalisationTournament(this.Tournament).GetContinentalAssociation().GetContinentalClubs(roundClubs);
+                List<Club> internationalClubs = this.Tournament.association.GetContinentalAssociation().GetContinentalClubs(roundClubs);
                 foreach (Club c in internationalClubs)
                 {
                     roundClubs.Remove(c);

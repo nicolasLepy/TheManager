@@ -25,8 +25,8 @@ namespace tm.Comparators
 
         public int CompareTournament(Match x, Match y)
         {
-            ILocalisation localisationX = Session.Instance.Game.kernel.LocalisationTournament(x.Tournament);
-            ILocalisation localisationY = Session.Instance.Game.kernel.LocalisationTournament(y.Tournament);
+            ILocalisation localisationX = x.Tournament.association;
+            ILocalisation localisationY = y.Tournament.association;
             int res = localisationX.Name().CompareTo(localisationY.Name());
             if(res == 0)
             {

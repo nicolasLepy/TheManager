@@ -610,7 +610,7 @@ namespace tm
                 Club upperTeam = clubReserve.GetTeamAbove();
                 //TODO: Two reserves in the same league
                 Club upperReserve = upperTeam;// clubReserve.FannionClub.reserves[reserveCount - 1];
-                Association baseAssociation = Session.Instance.Game.kernel.LocalisationTournament(baseTournament);
+                Association baseAssociation = baseTournament.association;
                 Tournament tournamentAbove = baseAssociation.LeagueAbove(baseTournament).Tournament();
 
                 Tournament up = upperReserve.Championship;
@@ -864,7 +864,7 @@ namespace tm
             int index = 0;
             int regularRelegationCount = 0;
 
-            QualificationTarget bottomTournament = Session.Instance.Game.kernel.LocalisationTournament(from).LeagueBelow(from);
+            QualificationTarget bottomTournament = from.association.LeagueBelow(from);
             if (automaticallyRelegatedReserves.Count > 0 && regularRelegationPlaces > 0 && bottomTournament != null)
             {
                 while (!limitReached)

@@ -381,8 +381,15 @@ namespace TheManager_GUI.views
             if (hostGrid != null)
             {
                 hostGrid.Children.Clear();
-                ViewUtils.AddElementToGrid(hostGrid, mapControl, 0, 0, hostGrid.ColumnDefinitions.Count, hostGrid.RowDefinitions.Count);
-                if(mapType == MapType.INTERNATIONAL)
+                try
+                {
+                    ViewUtils.AddElementToGrid(hostGrid, mapControl, 0, 0, hostGrid.ColumnDefinitions.Count, hostGrid.RowDefinitions.Count);
+                }catch(Exception e)
+                {
+                    Console.WriteLine("Can't display the map");
+                    (mapControl.Parent as Grid).Children.Remove(hostGrid);
+                }
+                if (mapType == MapType.INTERNATIONAL)
                 {
                     ViewUtils.AddElementToGrid(hostGrid, CreateLegend(), 0, 0);
                 }

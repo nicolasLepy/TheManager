@@ -273,7 +273,7 @@ namespace tm
             res = shortName;
             foreach(Tournament c in Session.Instance.Game.kernel.Competitions)
             {
-                if(association.IsDirectConnected(Session.Instance.Game.kernel.LocalisationTournament(c)) && c.isChampionship && c.previousEditions.ContainsKey(year))
+                if(association.IsDirectConnected(c.association) && c.isChampionship && c.previousEditions.ContainsKey(year))
                 {
                     if (c.previousEditions[year].rounds[0].clubs.Contains(this))
                     {

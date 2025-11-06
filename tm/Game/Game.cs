@@ -663,7 +663,7 @@ namespace tm
             foreach (Tournament c in _kernel.Competitions)
             {
                 int i = 0;
-                Association ta = _kernel.LocalisationTournament(c);
+                Association ta = c.association;
                 foreach (Round t in c.rounds)
                 {
                     if(!Utils.DISABLE_FINANCIAL_SANCTIONS)
@@ -712,7 +712,7 @@ namespace tm
                 bool isFirstLevelChampionship = c.level == 1 && c.isChampionship && (ta.parent == null || ta.parent.Leagues().Count == 0);
                 if (isFirstLevelChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime().AddDays(-1), _date))
                 {
-                    Association association = kernel.LocalisationTournament(c);
+                    Association association = c.association;
                     //and ctry != null => association.isStateAssociation ? (if needed, probably not)
                     if (c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
                     {
@@ -739,7 +739,7 @@ namespace tm
 
                 if (isFirstLevelChampionship && Utils.CompareDatesWithoutYear(c.seasonBeginning.ConvertToDateTime(), _date))
                 {
-                    Association association = kernel.LocalisationTournament(c);
+                    Association association = c.association;
                     if(c.remainingYears == 1)// && ctry.CountAdministrativeRetrogradations() > 0)
                     {
                         if(!Utils.DISABLE_ADMINISTRATIVE_RETROGRADATIONS)

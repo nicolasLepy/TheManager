@@ -204,7 +204,7 @@ namespace TheManager_GUI
             int zoomLevel;
             List<MapClub> mapClubs = new List<MapClub>();
 
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            Association association = tournament.association;
             if (association.isStateAssociation)
             {
                 zoomLevel = (association.ClosestStateAssociation().localisation as Country).ShapeNumber;
@@ -642,8 +642,13 @@ namespace TheManager_GUI
 
 
                     int year = arc.Key;
-                    KeyValuePair<string, List<string>> statsKvp = new KeyValuePair<string, List<string>>(year.ToString(), new List<string>() { Utils.Logo(winner), winner.name });
-                    if(runnerup != null)
+                    KeyValuePair<string, List<string>> statsKvp = new KeyValuePair<string, List<string>>(year.ToString(), new List<string>());
+                    if(winner != null)
+                    {
+                        statsKvp.Value.Add(Utils.Logo(winner));
+                        statsKvp.Value.Add(winner.name);
+                    }
+                    if (runnerup != null)
                     {
                         statsKvp.Value.Add(Utils.Logo(runnerup));
                         statsKvp.Value.Add(runnerup.name);
@@ -653,7 +658,10 @@ namespace TheManager_GUI
                         statsKvp.Value.Add(Utils.Logo(third));
                         statsKvp.Value.Add(third.name);
                     }
-                    stats.Add(statsKvp);
+                    if(statsKvp.Value.Count > 0)
+                    {
+                        stats.Add(statsKvp);
+                    }
                 }
             }
 

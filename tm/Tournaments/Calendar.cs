@@ -522,7 +522,7 @@ namespace tm
         {
             Tournament champH = home.Championship;
             Tournament champA = away.Championship;
-            QualificationTarget champAAbove = Session.Instance.Game.kernel.LocalisationTournament(champA).LeagueAbove(champA);
+            QualificationTarget champAAbove = champA.association.LeagueAbove(champA);
             bool twoLevelsGap = champAAbove != null && champAAbove.IsBelow(new QualificationTournament(champH));
             if ((champH != null && champA != null) && twoLevelsGap)
             {
@@ -755,7 +755,7 @@ namespace tm
                 Console.WriteLine("Date: " + round.Tournament.rounds[round.Tournament.rounds.IndexOf(round) - 1].matches[0].day.ToString());
             }
             List<Match> res = new List<Match>();
-            Association localisationTournament = Session.Instance.Game.kernel.LocalisationTournament(round.Tournament);
+            Association localisationTournament = round.Tournament.association;
 
             List<Club>[] hats = new List<Club>[] { new List<Club>(), new List<Club>() };
 

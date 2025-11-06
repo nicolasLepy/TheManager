@@ -127,7 +127,7 @@ namespace tm
 
         public override int GetAssociationLevel()
         {
-            Association tAssociation = Session.Instance.Game.kernel.LocalisationTournament(_tournament);
+            Association tAssociation = _tournament.association;
             return Session.Instance.Game.kernel.worldAssociation.GetLevelOfAssociation(tAssociation, 0);
         }
 

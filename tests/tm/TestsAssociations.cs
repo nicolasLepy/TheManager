@@ -103,7 +103,7 @@ namespace tests.tm
                         haveUltraMarine = haveUltraMarine || new List<string>() { "Saint Pierre et Miquelon", "Guadeloupe", "Martinique", "Guyane", "Réunion", "Mayotte", "Nouvelle-Calédonie" }.Contains(c.Association().name);
 
                         // Pas de L2 en tour régionaux
-                        Assert.IsTrue(Session.Instance.Game.kernel.LocalisationTournament(c.Championship) != association || c.Championship.level > 2);
+                        Assert.IsTrue(c.Championship.association != association || c.Championship.level > 2);
 
                         if(!haveUltraMarine)
                         {

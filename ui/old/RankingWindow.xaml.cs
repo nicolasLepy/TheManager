@@ -155,7 +155,7 @@ namespace TheManager_GUI
                 StackPanel spLine = new StackPanel();
                 spLine.Orientation = Orientation.Horizontal;
                 spLine.Children.Add(ViewUtils.CreateLabel(rank.ToString(), "StyleLabel2", -1, 30, null, null, true));
-                spLine.Children.Add(ViewUtils.CreateFlag(Session.Instance.Game.kernel.LocalisationTournament(ctr.Championship).ClosestStateAssociation().localisation as Country, 20, 13));
+                spLine.Children.Add(ViewUtils.CreateFlag(ctr.Championship.association.ClosestStateAssociation().localisation as Country, 20, 13));
                 spLine.Children.Add(ViewUtils.CreateLabel(ctr.name, "StyleLabel2", -1, 220, null, null, true));
                 spLine.Children.Add(ViewUtils.CreateLabel(ctr.ClubYearCoefficient(-5).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));
                 spLine.Children.Add(ViewUtils.CreateLabel(ctr.ClubYearCoefficient(-4).ToString("0.00"), "StyleLabel2Center", 10, 35, null, null, false));

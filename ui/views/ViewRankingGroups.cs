@@ -86,7 +86,7 @@ namespace TheManager_GUI.Views
             Grid grid = new Grid();
             InitColumns(grid);
 
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(_tournament) as Association;
+            Association association = _tournament.association;
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             double fontSize = (double)Application.Current.FindResource(StyleDefinition.fontSizeRegular);

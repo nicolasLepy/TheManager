@@ -129,7 +129,7 @@ namespace tm.Algorithms
 
         public List<List<RecoverTeams>> StructureFromPool(int winners, List<RecoverTeams> pool)
         {
-
+            return new List<List<RecoverTeams>>();
         }
 
         public CupStructureResult CreateStructure(Association association, CupStructure constraints)
@@ -230,7 +230,7 @@ namespace tm.Algorithms
             {
                 throw new Exception("Too few dates available");
             }
-            Tournament emptyCup = new Tournament(cupId, cupName, "", new GameDay(association.resetWeek, false, 0, 0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null, structure);
+            Tournament emptyCup = new Tournament(cupId, cupName, "", association, new GameDay(association.resetWeek, false, 0, 0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null, structure);
             for (int i = 0; i < roundsCount; i++)
             {
                 Hour hour = new Hour() { Hours = 20, Minutes = 0 };

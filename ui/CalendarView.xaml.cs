@@ -66,7 +66,7 @@ namespace TheManager_GUI
                 List<Tournament> dayTournaments = new List<Tournament>();
                 foreach (Tournament t in Session.Instance.Game.kernel.Competitions)
                 {
-                    if (t.IsInternational() || Session.Instance.Game.club.association.IsDirectConnected(Session.Instance.Game.kernel.LocalisationTournament(t)))
+                    if (t.IsInternational() || Session.Instance.Game.club.association.IsDirectConnected(t.association))
                     {
                         foreach (Round r in t.rounds)
                         {

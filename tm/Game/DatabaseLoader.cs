@@ -912,7 +912,7 @@ namespace tm
 
         private CupStructure ExtractCupStructure(Tournament tournament)
         {
-            Association a = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            Association a = tournament.association;
             bool allowReserves = true;
             bool includeChildAssociations = false;
             List<List<RecoverTeams>> constraints = new List<List<RecoverTeams>>();
@@ -935,7 +935,7 @@ namespace tm
                         constraints[i].Add(rt);
                     }
                     Round rtr = rt.Source as Round;
-                    if(rtr != null && a.GetAllChilds().Contains(Session.Instance.Game.kernel.LocalisationTournament(rtr.Tournament)))
+                    if(rtr != null && a.GetAllChilds().Contains(rtr.Tournament.association))
                     {
                         includeChildAssociations = true;
                     }
@@ -957,6 +957,20 @@ namespace tm
                 {
                     foreach (XElement e2 in e.Descendants("Competition"))
                     {
+
+                        Association association;
+                        ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
+                        //Continental tournaments are stored by their association
+                        if (localisation as Continent != null)
+                        {
+                            association = _kernel.Localisation2Association(localisation);
+                        }
+                        else
+                        {
+                            association = (localisation as Country).GetCountryAssociation();
+                        }
+
+
                         string name = e2.Attribute("nom").Value;
                         string shortName = e2.Attribute("nomCourt").Value;
                         string logo = e2.Attribute("logo").Value;
@@ -970,7 +984,6 @@ namespace tm
                             tournamentStatus = String2ClubStatus(e2.Attribute("status").Value);
                         }
                         int level = int.Parse(e2.Attribute("niveau").Value);
-                        ILocalisation localisation = _kernel.String2Localisation(e2.Attribute("localisation").Value);
                         GameDay debut = String2GameDay(seasonBeginning);
                         int periodicity = 1;
                         if (e2.Attribute("periodicity") != null)
@@ -987,7 +1000,7 @@ namespace tm
                         Color color = new Color(byte.Parse(colorStr[0]), byte.Parse(colorStr[1]), byte.Parse(colorStr[2]));
 
                         Console.WriteLine(name);
-                        Tournament tournament = new Tournament(id, name, logo, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, null, null);
+                        Tournament tournament = new Tournament(id, name, logo, association, debut, shortName, isChampionship, level, periodicity, remainingYears, color, tournamentStatus, null, null);
                         if (tournamentRuleStr != null)
                         {
                             TournamentRule tRule;
@@ -1006,16 +1019,7 @@ namespace tm
 
                         tournament.InitializeQualificationsNextYearsLists(e2.Descendants("Tour").Count());
 
-                        //Continental tournaments are stored by their association
-                        if(localisation as Continent != null)
-                        {
-                            _kernel.Localisation2Association(localisation).tournaments.Add(tournament);
-                        }
-                        else
-                        {
-                            //localisation.Tournaments().Add(tournament);
-                            (localisation as Country).GetCountryAssociation().tournaments.Add(tournament);
-                        }
+                        association.tournaments.Add(tournament);
                     }
                 }
             }
@@ -1594,11 +1598,7 @@ namespace tm
         {
             bool res = true;
             int total = 0;
-            Association a = Session.Instance.Game.kernel.LocalisationTournament(tournament);
-            if(tournament.name == "Coupe de la Ligue")
-            {
-                Console.WriteLine("ok");
-            }
+            Association a = tournament.association;
             foreach(Round r in tournament.rounds)
             {
                 foreach(RecoverTeams rt in r.recuperedTeams)
@@ -1611,7 +1611,7 @@ namespace tm
                     }
                     else
                     {
-                        res = res && Session.Instance.Game.kernel.LocalisationTournament(rtr.Tournament).IsDirectConnected(a);
+                        res = res && rtr.Tournament.association.IsDirectConnected(a);
                     }
                 }
             }
@@ -1689,7 +1689,7 @@ namespace tm
                 {
                     if (cityClub.city == null)
                     {
-                        Country country = cityClub.Championship != null ? (Session.Instance.Game.kernel.LocalisationTournament(cityClub.Championship) as Association).localisation as Country : _kernel.world.continents[1].countries[0];
+                        Country country = cityClub.Championship != null ? cityClub.Championship.association.localisation as Country : _kernel.world.continents[1].countries[0];
                         if(country == _kernel.world.continents[1].countries[0])
                         {
                         }

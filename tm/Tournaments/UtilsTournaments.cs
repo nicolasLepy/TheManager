@@ -124,7 +124,7 @@ namespace tm.Tournaments
 
         public static List<GameDay> GetDatesForExtraRound(Tournament tournament, HashSet<Tournament> leaguesConcerned)
         {
-            Association association = Session.Instance.Game.kernel.LocalisationTournament(tournament);
+            Association association = tournament.association;
             int beginTournament = tournament.seasonBeginning.WeekNumber;
             int beginRounds = tournament.rounds.First().programmation.initialisation.WeekNumber;
             List<GameDay> dates = new List<GameDay>();

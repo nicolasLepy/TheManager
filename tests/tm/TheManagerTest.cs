@@ -63,7 +63,7 @@ namespace tests.tm
                 }
                 foreach (Tournament c in Session.Instance.Game.kernel.Competitions)
                 {
-                    if (c.isChampionship && !activeAssociations.Contains(Session.Instance.Game.kernel.LocalisationTournament(c)))
+                    if (c.isChampionship && !activeAssociations.Contains(c.association))
                     {
                         c.DisableTournament();
                         Console.WriteLine(String.Format("Disable {0}", c.name));
@@ -213,23 +213,23 @@ namespace tests.tm
             france.associations.Add(bfc);
             france.associations.Add(nord);
 
-            Tournament wt1 = new Tournament(1, "WT1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament wc1 = new Tournament(2, "WC1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament et1 = new Tournament(3, "ET1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament ec1 = new Tournament(4, "EC1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament ft1 = new Tournament(5, "FT1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament fc1 = new Tournament(6, "FL1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament fc2 = new Tournament(11, "FL2", "", null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament st1 = new Tournament(7, "ST1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament sc1 = new Tournament(8, "S_LIGA1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament sc2 = new Tournament(14, "S_LIGA2", "", null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament bt1 = new Tournament(9, "BC1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament bc1 = new Tournament(10, "B_R1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament bc2 = new Tournament(12, "B_R2", "", null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament bc3 = new Tournament(13, "B_R3", "", null, "", true, 3, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament nt1 = new Tournament(14, "NC1", "", null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament nr1 = new Tournament(15, "N_R1", "", null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
-            Tournament nr2 = new Tournament(15, "N_R2", "", null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament wt1 = new Tournament(1, "WT1", "", world, null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament wc1 = new Tournament(2, "WC1", "", world, null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament et1 = new Tournament(3, "ET1", "", europe, null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament ec1 = new Tournament(4, "EC1", "", europe, null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament ft1 = new Tournament(5, "FT1", "", france, null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament fc1 = new Tournament(6, "FL1", "", france, null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament fc2 = new Tournament(11, "FL2", "", france, null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament st1 = new Tournament(7, "ST1", "", spain, null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament sc1 = new Tournament(8, "S_LIGA1", "", spain, null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament sc2 = new Tournament(14, "S_LIGA2", "", spain, null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament bt1 = new Tournament(9, "BC1", "", bfc, null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament bc1 = new Tournament(10, "B_R1", "", bfc, null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament bc2 = new Tournament(12, "B_R2", "", bfc, null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament bc3 = new Tournament(13, "B_R3", "", bfc, null, "", true, 3, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament nt1 = new Tournament(14, "NC1", "", nord, null, "", false, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament nr1 = new Tournament(15, "N_R1", "", nord, null, "", true, 1, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
+            Tournament nr2 = new Tournament(15, "N_R2", "", nord, null, "", true, 2, 1, 0, new Color(200, 0, 0), ClubStatus.Professional, null, null);
 
             world.tournaments.Add(wt1);
             world.tournaments.Add(wc1);

@@ -183,7 +183,8 @@ namespace tm
             QualificationTarget below = null;
             if(!_tournaments.Contains(tournament))
             {
-                throw new Exception(String.Format("The tournament {0} is not holded by the association {1}", tournament.name, name));
+                //TODO: Past tournaments are not directly registered as a tournament of the association
+                //throw new Exception(String.Format("The tournament {0} is not holded by the association {1}", tournament.name, name));
             }
             Tournament belowInAssociation = this.League(tournament.level + 1);
             if(belowInAssociation != null)
@@ -213,7 +214,8 @@ namespace tm
             QualificationTarget above = null;
             if (!_tournaments.Contains(tournament))
             {
-                throw new Exception(String.Format("The tournament {0} is not holded by the association {1}", tournament.name, name));
+                //TODO: Past tournaments are not directly registered as a tournament of the association
+                //throw new Exception(String.Format("The tournament {0} is not holded by the association {1}", tournament.name, name));
             }
             Tournament aboveInAssociation = this.League(tournament.level - 1);
             if (aboveInAssociation != null)

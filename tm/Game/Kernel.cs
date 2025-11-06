@@ -294,8 +294,8 @@ namespace tm
             {
                 if (c.isChampionship && (c.IsBelow(new QualificationTournament(clubChampionship)) || c.IsSameLevel(new QualificationTournament(clubChampionship))))
                 {
-                    Association a = LocalisationTournament(clubChampionship);
-                    if (c.level == 1 || (LocalisationTournament(c).IsDirectConnected(a) && c.level <= 2))
+                    Association a = clubChampionship.association;
+                    if (c.level == 1 || (c.association.IsDirectConnected(a) && c.level <= 2))
                     {
                         players.AddRange(MakeTransferList(c));
                     }
