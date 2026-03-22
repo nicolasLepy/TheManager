@@ -36,7 +36,7 @@ namespace tm
     }
 
     [Flags]
-    public enum RecuperationMethod
+    public enum RecuperationMethod //=> RetrieveFlags
     {
         Randomly=1, //Select teams randomly
         Best=2, //Select the best teams
@@ -44,7 +44,7 @@ namespace tm
         QualifiedForInternationalCompetition=8, //Select only teams qualified for international tournaments
         NotQualifiedForInternationalCompetition=16, //Select only teams not qualified for international tournaments
         StatusPro=32, //Select only pro teams
-        AllTeams=64 //(to combine with another flag) All teams from the league must be selected in the tournament
+        AllTeams=64 //(to combine with another flag) All teams from the league must be selected in the tournament. USED ONLY TO BUILD TOURNAMENT STRUCTURE
     }
 
     public enum Tiebreaker

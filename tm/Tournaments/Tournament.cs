@@ -1012,7 +1012,15 @@ namespace tm
             }
             _extraRounds = extraRounds;
 
-            for (int i = extraRounds; i < result.structure.Count; i++)
+            if(extraRounds < 0)
+            {
+                for(int i = 0; i < Math.Abs(extraRounds); i++)
+                {
+                    rounds[i].recuperedTeams.Clear();
+                }
+            }
+
+            for (int i = Math.Abs(extraRounds); i < result.structure.Count; i++)
             {
                 rounds[i].recuperedTeams.Clear();
                 rounds[i].recuperedTeams.AddRange(result.structure[i]);
@@ -1133,15 +1141,15 @@ namespace tm
             }
             int[] teamsFromOutsideLeagueSystem = new int[_rounds.Count];
 
-            if (idRoundPivot == -1 && parent == null && leagueCupLike) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
+            /*if (idRoundPivot == -1 && parent == null && leagueCupLike) //Regional cup (not regional paths of a national cup) are updated following league cup algorithm
             {
                 CupAdapter adapter = new CupAdapter();
                 CupAdapterResult adaptation = adapter.AdaptLeagueCup(this);
                 WriteCupAdapterResult(adaptation);
-            }
-            else if(idRoundPivot == -1 && parent == null && _cupStructure != null)
+            }*/
+            if(idRoundPivot == -1 && parent == null && _cupStructure != null)
             {
-                CupCreator adapter = new CupCreator(Session.Instance.Game.kernel);
+                CupCreator adapter = new CupCreator();
                 CupStructureResult structure = adapter.CreateStructure(association, _cupStructure);
                 WriteCupStrutureResult(structure);
             }

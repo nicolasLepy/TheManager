@@ -943,7 +943,8 @@ namespace tm
                 }
             }
 
-            return new CupStructure(allowReserves, includeChildAssociations, constraints, pool, 1);
+            bool noExtraRound = false; //TODO
+            return new CupStructure(allowReserves, includeChildAssociations, constraints, pool, 1, noExtraRound);
         }
 
         public void LoadTournaments()
@@ -1840,6 +1841,18 @@ namespace tm
 
         }
 
+        public string NameOfCup(Association association)
+        {
+            string tournamentName = association.name;
+            string acr = "de ";
+            if (new char[] { 'E', 'A', 'I', 'O', 'U' }.Contains(tournamentName[0]))
+            {
+                acr = "d'";
+            }
+            string cupName = "Coupe " + acr + tournamentName;
+            return cupName;
+        }
+
         public void GenerateCup(Association association, bool reservesAllowed, bool allowTeamsOfChildAssociations)
         {
             bool noCup = true;
@@ -1858,15 +1871,22 @@ namespace tm
             if (noCup && association.Tournaments().Count > 0 && totalTeams > 1)
             {
                 Utils.Debug(string.Format("[{0}] Generate cup", association.name));
-                CupCreator creator = new CupCreator(_kernel);
+                CupCreator creator = new CupCreator();
 
                 int winnerPrize = association.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? association.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
-                string cupName = creator.NameOfCup(association);
+                string cupName = NameOfCup(association);
                 int cupLevel = association.Cups().Count + 1;
-                CupStructure constraints = new CupStructure(reservesAllowed, allowTeamsOfChildAssociations, new List<List<RecoverTeams>>(), CreateTeamsSourcePool(association, allowTeamsOfChildAssociations), 1);
+                CupStructure constraints = new CupStructure(reservesAllowed, allowTeamsOfChildAssociations, new List<List<RecoverTeams>>(), CreateTeamsSourcePool(association, allowTeamsOfChildAssociations), 1, false);
                 CupStructureResult structure = creator.CreateStructure(association, constraints);
                 List<GameDay> availableDates = association.GetAvailableCalendarDates(true, 1, structure.leaguesRepresented.ToList(), true, false);
                 Tournament cup = creator.CreateEmptyTournament(_kernel.NextIdTournament(), cupName, cupLevel, association, structure.roundsCount, structure.teamsByRound, availableDates, winnerPrize, constraints);
+                foreach(Round round in cup.rounds)
+                {
+                    if(round.Id == -1)
+                    {
+                        round.Id = _kernel.NextIdRound();
+                    }
+                }
                 association.Tournaments().Add(cup);
                 cup.WriteCupStrutureResult(structure);
             }
