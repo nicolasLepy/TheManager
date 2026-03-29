@@ -170,7 +170,7 @@ namespace tm
         /// <param name="methode"></param>
         /// <param name="onlyFirstTeams"></param>
         /// <returns></returns>
-        /*public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, Association associationFilter)
+        /*public List<Club> RetrieveTeams(int number, RetrieveFlags method, bool onlyFirstTeams, Association associationFilter)
         {
             List<NationalTeam> nationalsTeams = new List<NationalTeam>();
             foreach(Club c in Session.Instance.Game.kernel.Clubs)
@@ -185,15 +185,15 @@ namespace tm
                 }
             }
             List<Club> res = new List<Club>();
-            if (method == RecuperationMethod.Best)
+            if (method == RetrieveFlags.Best)
             {
                 nationalsTeams.Sort(new NationsFifaRankingComparator());
             }
-            else if (method == RecuperationMethod.Worst)
+            else if (method == RetrieveFlags.Worst)
             {
                 nationalsTeams.Sort(new NationsFifaRankingComparator(true));
             }
-            else if (method == RecuperationMethod.Randomly)
+            else if (method == RetrieveFlags.Randomly)
             {
                 nationalsTeams = Utils.ShuffleList<NationalTeam>(nationalsTeams);
             }

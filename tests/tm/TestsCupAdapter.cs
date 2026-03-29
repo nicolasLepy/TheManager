@@ -26,7 +26,7 @@ namespace tests.tm
                 int newTeams = 0;
                 foreach (RecoverTeams rt in res.qualifications[i])
                 {
-                    newTeams += rt.Source.RetrieveTeams(rt.Number, rt.Method, false, null).Count;
+                    newTeams += rt.Source.RetrieveTeams(rt.Number, rt.Flags, false, null).Count;
                 }
                 teams = teams + newTeams;
                 Assert.AreEqual(teams, expectedTeamsByRound[i]);

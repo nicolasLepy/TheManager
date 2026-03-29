@@ -16,11 +16,11 @@ namespace tm.Algorithms
     public class CupQualification
     {
         public int teams { get; set; }
-        public RecuperationMethod method { get; set; }
+        public RetrieveFlags method { get; set; }
         public int indexRound { get; set; }
         public Tournament tournament { get; set; }
 
-        public CupQualification(int teams, RecuperationMethod method, int indexRound, Tournament tournament)
+        public CupQualification(int teams, RetrieveFlags method, int indexRound, Tournament tournament)
         {
             this.teams = teams;
             this.method = method;
@@ -98,7 +98,7 @@ namespace tm.Algorithms
         private bool Constrained(RecoverTeams rt)
         {
             bool res = false;
-            if(rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition))
+            if(rt.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
             {
                 res = true;
             }
@@ -110,7 +110,7 @@ namespace tm.Algorithms
             List<RecoverTeams> res = new List<RecoverTeams>();
             foreach(RecoverTeams q in qualifications)
             {
-                if(q.Source == qualification.Source && q.Method != qualification.Method)
+                if(q.Source == qualification.Source && q.Flags != qualification.Flags)
                 {
                     res.Add(q);
                 }
@@ -130,16 +130,16 @@ namespace tm.Algorithms
                 teams += Math.Min(availableTeams, ot.Number);
             }
             Console.WriteLine("Other qualifications : {0} teams", teams);
-            if(rt.Method.HasFlag(RecuperationMethod.AllTeams))
+            if(rt.Flags.HasFlag(RetrieveFlags.AllTeams))
             {
                 availableTeams = availableTeams - teams;
             }
 
-            if (rt.Method.HasFlag(RecuperationMethod.AllTeams) || rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro))
+            if (rt.Flags.HasFlag(RetrieveFlags.AllTeams) || rt.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.StatusPro))
             {
                 count = availableTeams;
             }
-            Console.WriteLine("[Method : {0}] {1}->{2}", rt.Method, rt.Number, count);
+            Console.WriteLine("[Method : {0}] {1}->{2}", rt.Flags, rt.Number, count);
             return count;
 
         }
@@ -148,7 +148,7 @@ namespace tm.Algorithms
         {
             return rt.Number;
             int res;
-            if(rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro))
+            if(rt.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.StatusPro))
             {
                 res = rt.Available(onlyFirstTeams, association);
             }
@@ -174,7 +174,7 @@ namespace tm.Algorithms
             List<RecoverTeams> apps = new List<RecoverTeams>();
             foreach (RecoverTeams rt in recoverTeams)
             {
-                apps.Add(new RecoverTeams(rt.Source, rt.Number, rt.Method));
+                apps.Add(new RecoverTeams(rt.Source, rt.Number, rt.Flags));
             }
             apps.Sort((a, b) => (Session.Instance.Game.kernel.worldAssociation.TournamentLevel((a.Source as Round).Tournament) - Session.Instance.Game.kernel.worldAssociation.TournamentLevel((b.Source as Round).Tournament)) * (selectWorstTeams ? -1 : 1));
             List<RecoverTeams> best = new List<RecoverTeams>();
@@ -187,13 +187,13 @@ namespace tm.Algorithms
             int i = 0;
             while (currentCount < count && i < apps.Count)
             {
-                RecuperationMethod appRecuperationMethod = apps[i].Method;
+                RetrieveFlags appRecuperationMethod = apps[i].Flags;
                 int appTeamsCount = TeamsCount(apps[i], onlyFirstTeams, association);
                 int teamsToTake = appTeamsCount < (count - currentCount) ? appTeamsCount : (count - currentCount);
                 Utils.Debug("Récupère " + teamsToTake + " équipes de Ligue " + (apps[i].Source as Round).Tournament.name + " (actuellement " + currentCount + " sur " + count + ")");
 
                 best.Add(new RecoverTeams(apps[i].Source, teamsToTake, appRecuperationMethod));
-                worst[i] = new RecoverTeams(worst[i].Source, appTeamsCount - teamsToTake, worst[i].Method);
+                worst[i] = new RecoverTeams(worst[i].Source, appTeamsCount - teamsToTake, worst[i].Flags);
                 currentCount += teamsToTake;
                 i += 1;
             }
@@ -207,9 +207,9 @@ namespace tm.Algorithms
                 {
                     if (rt.Number > 0 && rt.Source == worstTeams[j].Source)
                     {
-                        RecuperationMethod rm = rt.Method;
-                        rm = rm &= ~RecuperationMethod.Best; //Remove Best property
-                        rm = rm | RecuperationMethod.Worst; //Add Worst property
+                        RetrieveFlags rm = rt.Flags;
+                        rm = rm &= ~RetrieveFlags.Best; //Remove Best property
+                        rm = rm | RetrieveFlags.Worst; //Add Worst property
                         worstTeams[j] = new RecoverTeams(worstTeams[j].Source, worstTeams[j].Number, rm);
                     }
                 }
@@ -228,7 +228,7 @@ namespace tm.Algorithms
                 {
                     List<RecoverTeams> flatten = Utils.Flatten(recoverTeams);
                     int newCount = TeamsCountNew(recoverTeams[i][j], flatten, filterOnlyFirstTeams, filterAssociation);
-                    RecoverTeams rt = new RecoverTeams(recoverTeams[i][j].Source, newCount, recoverTeams[i][j].Method);
+                    RecoverTeams rt = new RecoverTeams(recoverTeams[i][j].Source, newCount, recoverTeams[i][j].Flags);
                     recoverTeams[i][j] = rt;
                 }
             }
@@ -272,9 +272,9 @@ namespace tm.Algorithms
             {
                 for(int i = 0; i < lrt.Count; i++)
                 {
-                    if (lrt[i].Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || lrt[i].Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || lrt[i].Method.HasFlag(RecuperationMethod.StatusPro))
+                    if (lrt[i].Flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition) || lrt[i].Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) || lrt[i].Flags.HasFlag(RetrieveFlags.StatusPro))
                     {
-                        lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i], onlyFirstTeams, association), lrt[i].Method);
+                        lrt[i] = new RecoverTeams(lrt[i].Source, TeamsCount(lrt[i], onlyFirstTeams, association), lrt[i].Flags);
                     }
                 }
             }*/
@@ -397,7 +397,7 @@ namespace tm.Algorithms
             {
                 foreach (RecoverTeams rt in r.baseRecuperedTeams)
                 {
-                    if (rt.Method == RecuperationMethod.QualifiedForInternationalCompetition || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionWorst || rt.Method == RecuperationMethod.NotQualifiedForInternationalCompetitionBest)
+                    if (rt.Flags == RetrieveFlags.QualifiedForInternationalCompetition || rt.Flags == RetrieveFlags.NotQualifiedForInternationalCompetitionWorst || rt.Flags == RetrieveFlags.NotQualifiedForInternationalCompetitionBest)
                     {
                         leagueCupLike = leagueCupLike && true;
                     }
@@ -486,11 +486,11 @@ namespace tm.Algorithms
                             RecoverTeams otherRecoverTeams = GetOtherRecoverTeamsOfRound(rt);
                             if (otherRecoverTeams.Source != null)
                             {
-                                clubsCount = otherRecoverTeams.Method == RecuperationMethod.Worst ? -rt.Number : Math.Max(0, clubsCount - otherRecoverTeams.Number);
+                                clubsCount = otherRecoverTeams.Flags == RetrieveFlags.Worst ? -rt.Number : Math.Max(0, clubsCount - otherRecoverTeams.Number);
                             }
                             else
                             {
-                                if (rt.Method == RecuperationMethod.Best)
+                                if (rt.Flags == RetrieveFlags.Best)
                                 {
                                     clubsCount = -clubsCount;
                                 }
@@ -576,14 +576,14 @@ namespace tm.Algorithms
                                 {
                                     ok = true;
                                     int teams = swapped.Number + t.Number;
-                                    if (t.Method == RecuperationMethod.Worst)
+                                    if (t.Flags == RetrieveFlags.Worst)
                                     {
-                                        rLca.recuperedTeams[rLca.recuperedTeams.Count - 1] = new RecoverTeams(swapped.Source, teams, swapped.Method);
+                                        rLca.recuperedTeams[rLca.recuperedTeams.Count - 1] = new RecoverTeams(swapped.Source, teams, swapped.Flags);
                                         rLca.recuperedTeams.RemoveAt(i);
                                     }
-                                    else if (swapped.Method == RecuperationMethod.Worst)
+                                    else if (swapped.Flags == RetrieveFlags.Worst)
                                     {
-                                        rLca.recuperedTeams[i] = new RecoverTeams(t.Source, teams, t.Method);
+                                        rLca.recuperedTeams[i] = new RecoverTeams(t.Source, teams, t.Flags);
                                         rLca.recuperedTeams.RemoveAt(rLca.recuperedTeams.Count - 1);
                                     }
                                 }
@@ -687,7 +687,7 @@ namespace tm.Algorithms
                                     int teamsToAddFromLeague = (int)Math.Round(leagueCupApparitions[k].teams * ratio); //Le nombre d'équipes à prendre dans la ligue est calculé en fonction du nombre d'équipes nécessaire au tour
                                     if (leagueCupApparitions[k].apparitionRound == i)
                                     {
-                                        RecoverTeams newRt = new RecoverTeams(leagueCupApparitions[k].tournament.rounds[0], teamsToAddFromLeague, leagueCupApparitions[k].isBestTeams ? RecuperationMethod.Best : RecuperationMethod.Worst);
+                                        RecoverTeams newRt = new RecoverTeams(leagueCupApparitions[k].tournament.rounds[0], teamsToAddFromLeague, leagueCupApparitions[k].isBestTeams ? RetrieveFlags.Best : RetrieveFlags.Worst);
                                         _rounds[delRoundId].recuperedTeams.Add(newRt);
                                         currentTeamsAdded += teamsToAddFromLeague;
                                         newRecoverTeams.Add(newRt);
@@ -718,7 +718,7 @@ namespace tm.Algorithms
                                     LeagueCupApparition lc = null;
                                     foreach (LeagueCupApparition lca in leagueCupApparitions)
                                     {
-                                        if (lca.tournament == (rt.Source as Round).Tournament && lca.isBestTeams == (rt.Method == RecuperationMethod.Best))
+                                        if (lca.tournament == (rt.Source as Round).Tournament && lca.isBestTeams == (rt.Flags == RetrieveFlags.Best))
                                         {
                                             lc = lca;
                                         }
@@ -757,7 +757,7 @@ namespace tm.Algorithms
                 Console.WriteLine("= " + r.name + " =");
                 foreach (RecoverTeams rt in r.recuperedTeams)
                 {
-                    Console.WriteLine(rt.Source.ToString() + " - " + rt.Number + " - " + rt.Method);
+                    Console.WriteLine(rt.Source.ToString() + " - " + rt.Number + " - " + rt.Flags);
                 }
             }
         }
@@ -777,8 +777,8 @@ namespace tm.Algorithms
                 Console.WriteLine("Cloturé le " + rounds[i].programmation.end.WeekNumber + " " + rounds[i].programmation.end.MidWeekGame);
                 foreach (RecoverTeams rt in recoverTeams)
                 {
-                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Method, rounds[i].rules.Contains(Rule.OnlyFirstTeams), this.association).Count;
-                    Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + totalAdmTeamsCount + " - " + rt.Method);
+                    int totalAdmTeamsCount = rt.Source.RetrieveTeams(-1, rt.Flags, rounds[i].rules.Contains(Rule.OnlyFirstTeams), this.association).Count;
+                    Console.WriteLine("+ " + (rt.Source as Round).Tournament.name + " - " + rt.Number + "/" + totalAdmTeamsCount + " - " + rt.Flags);
                 }
                 Console.WriteLine(cupTeams + " équipes pour " + (cupTeams / 2) + " matchs");
                 cupTeams /= 2;

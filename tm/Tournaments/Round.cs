@@ -36,7 +36,7 @@ namespace tm
     }
 
     [Flags]
-    public enum RecuperationMethod //=> RetrieveFlags
+    public enum RetrieveFlags
     {
         Randomly=1, //Select teams randomly
         Best=2, //Select the best teams
@@ -64,27 +64,27 @@ namespace tm
         [DataMember]
         public int Number { get; set; }
         [DataMember]
-        public RecuperationMethod Method { get; set; }
-        public RecoverTeams(IRecoverableTeams source, int number, RecuperationMethod method)
+        public RetrieveFlags Flags { get; set; }
+        public RecoverTeams(IRecoverableTeams source, int number, RetrieveFlags method)
         {
             Source = source;
             Number = number;
-            Method = method;
+            Flags = method;
         }
 
         public bool Equals(RecoverTeams other)
         {
-            return this.Source == other.Source && this.Number == other.Number && this.Method == other.Method;
+            return this.Source == other.Source && this.Number == other.Number && this.Flags == other.Flags;
         }
 
         public RecoverTeams Clone()
         {
-            return new RecoverTeams(Source, Number, Method);
+            return new RecoverTeams(Source, Number, Flags);
         }
 
         public int Available(bool onlyFirstTeams, Association filter)
         {
-            return this.Source.RetrieveTeams(-1, Method, onlyFirstTeams, filter).Count;
+            return this.Source.RetrieveTeams(-1, Flags, onlyFirstTeams, filter).Count;
         }
 
         public override String ToString()
@@ -94,7 +94,7 @@ namespace tm
             {
                 source = String.Format("{0} ({1})", (Source as Round).Tournament.name, Source.ToString());
             }
-            return String.Format("[RecoverTeam {0} teams from {1} ({2})]", Number, source, Method);
+            return String.Format("[RecoverTeam {0} teams from {1} ({2})]", Number, source, Flags);
         }
     }
 
@@ -763,7 +763,7 @@ namespace tm
                 {
                     teamsToGrab = re.Source.CountWithoutReserves();
                 }
-                List<Club> selected = re.Source.RetrieveTeams(teamsToGrab, re.Method, rules.Contains(Rule.OnlyFirstTeams), Tournament.association);
+                List<Club> selected = re.Source.RetrieveTeams(teamsToGrab, re.Flags, rules.Contains(Rule.OnlyFirstTeams), Tournament.association);
                 foreach (Club c in selected)
                 {
                     if(_clubs.Contains(c))
@@ -832,7 +832,7 @@ namespace tm
         /// <returns>Matches of game day j</returns>
         public abstract List<Match> GamesDay(int journey);
 
-        public List<Club> RetrieveTeams(int number, RecuperationMethod method, bool onlyFirstTeams, Association associationFilter)
+        public List<Club> RetrieveTeams(int number, RetrieveFlags method, bool onlyFirstTeams, Association associationFilter)
         {
             List<Club> roundClubs = new List<Club>(_clubs);
 
@@ -870,33 +870,33 @@ namespace tm
                 }
             }
 
-            if(method.HasFlag(RecuperationMethod.Randomly))
+            if(method.HasFlag(RetrieveFlags.Randomly))
             {
                 roundClubs = Utils.ShuffleList<Club>(roundClubs);
             }
-            if (method.HasFlag(RecuperationMethod.Best))
+            if (method.HasFlag(RetrieveFlags.Best))
             {
                 roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING));
             }
-            if(method.HasFlag(RecuperationMethod.Worst))
+            if(method.HasFlag(RetrieveFlags.Worst))
             {
                 roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, true));
             }
-            if(method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition))
+            if(method.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
             {
                 roundClubs = Tournament.association.GetContinentalAssociation().GetContinentalClubs(roundClubs);
-                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method.HasFlag(RecuperationMethod.Worst)));
+                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method.HasFlag(RetrieveFlags.Worst)));
             }
-            if(method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition))
+            if(method.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition))
             {
                 List<Club> internationalClubs = this.Tournament.association.GetContinentalAssociation().GetContinentalClubs(roundClubs);
                 foreach (Club c in internationalClubs)
                 {
                     roundClubs.Remove(c);
                 }
-                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method.HasFlag(RecuperationMethod.Worst)));
+                roundClubs.Sort(new ClubComparator(ClubAttribute.PAST_RANKING, method.HasFlag(RetrieveFlags.Worst)));
             }
-            if(method.HasFlag(RecuperationMethod.StatusPro))
+            if(method.HasFlag(RetrieveFlags.StatusPro))
             {
                 List<Club> pro = new List<Club>();
                 foreach (Club c in roundClubs)

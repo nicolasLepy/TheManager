@@ -925,7 +925,7 @@ namespace tm
                 allowReserves = allowReserves && !r.rules.Contains(Rule.OnlyFirstTeams);
                 foreach(RecoverTeams rt in r.recuperedTeams)
                 {
-                    //bool requestAllTeams = rt.Method.HasFlag(RecuperationMethod.AllTeams) || rt.Method.HasFlag(RecuperationMethod.NotQualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.QualifiedForInternationalCompetition) || rt.Method.HasFlag(RecuperationMethod.StatusPro);
+                    //bool requestAllTeams = rt.Flags.HasFlag(RetrieveFlags.AllTeams) || rt.Flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.StatusPro);
                     if (i == 0)
                     {
                         pool.Add(rt);
@@ -1216,12 +1216,12 @@ namespace tm
                                     Round r = comp.rounds[tourIndex];
                                     source = r;
                                 }
-                                RecuperationMethod method = RecuperationMethod.Randomly;
+                                RetrieveFlags method = RetrieveFlags.Randomly;
                                 string[] tokens = e4.Attribute("methode").Value.Split(" ");
 
                                 for(int i = 0; i < tokens.Length; i++)
                                 {
-                                    RecuperationMethod parsed = ParseRecuperationMethod(tokens[i]);
+                                    RetrieveFlags parsed = ParseRetrieveFlags(tokens[i]);
                                     method = i == 0 ? parsed : method | parsed;
                                 }
                                 round.recuperedTeams.Add(new RecoverTeams(source, number, method));
@@ -1381,31 +1381,31 @@ namespace tm
             return t;
         }
 
-        private RecuperationMethod ParseRecuperationMethod(string token)
+        private RetrieveFlags ParseRetrieveFlags(string token)
         {
-            RecuperationMethod method;
+            RetrieveFlags method;
             switch (token)
             {
                 case "meilleurs":
-                    method = RecuperationMethod.Best;
+                    method = RetrieveFlags.Best;
                     break;
                 case "pires":
-                    method = RecuperationMethod.Worst;
+                    method = RetrieveFlags.Worst;
                     break;
                 case "aleatoire":
-                    method = RecuperationMethod.Randomly;
+                    method = RetrieveFlags.Randomly;
                     break;
                 case "international":
-                    method = RecuperationMethod.QualifiedForInternationalCompetition;
+                    method = RetrieveFlags.QualifiedForInternationalCompetition;
                     break;
                 case "notinternational":
-                    method = RecuperationMethod.NotQualifiedForInternationalCompetition | RecuperationMethod.Best;
+                    method = RetrieveFlags.NotQualifiedForInternationalCompetition | RetrieveFlags.Best;
                     break;
                 case "pro":
-                    method = RecuperationMethod.StatusPro;
+                    method = RetrieveFlags.StatusPro;
                     break;
                 case "all":
-                    method = RecuperationMethod.AllTeams;
+                    method = RetrieveFlags.AllTeams;
                     break;
                 default:
                     throw new Exception("Method not recognized");
@@ -1504,7 +1504,7 @@ namespace tm
                                 if (IsTournamentRegional(rtrt))
                                 {
                                     Tournament newTarget = SearchTournament(a.Leagues(), rtrt);
-                                    RecoverTeams rt2 = new RecoverTeams(newTarget.rounds[0], rt.Number, rt.Method);
+                                    RecoverTeams rt2 = new RecoverTeams(newTarget.rounds[0], rt.Number, rt.Flags);
                                     round.baseRecuperedTeams[i] = rt2;
                                 }
                             }
@@ -1519,7 +1519,7 @@ namespace tm
                                 if (IsTournamentRegional(rtrt))
                                 {
                                     Tournament newTarget = SearchTournament(a.Leagues(), rtrt);
-                                    RecoverTeams rt2 = new RecoverTeams(newTarget.rounds[0], rt.Number, rt.Method);
+                                    RecoverTeams rt2 = new RecoverTeams(newTarget.rounds[0], rt.Number, rt.Flags);
                                     round.recuperedTeams[i] = rt2;
                                 }
                             }
@@ -1836,7 +1836,7 @@ namespace tm
             }
             foreach(Tournament t in lt)
             {
-                pool.Add(new RecoverTeams(t.rounds[0], -1, RecuperationMethod.AllTeams));
+                pool.Add(new RecoverTeams(t.rounds[0], -1, RetrieveFlags.AllTeams));
             }
             return pool;
 

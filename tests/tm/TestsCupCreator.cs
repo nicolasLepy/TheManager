@@ -29,7 +29,7 @@ namespace tests.tm
                 int newTeams = 0;
                 foreach (RecoverTeams rt in res.structure[i])
                 {
-                    List<Club> roundTeams = rt.Source.RetrieveTeams(rt.Number, rt.Method, false, null);
+                    List<Club> roundTeams = rt.Source.RetrieveTeams(rt.Number, rt.Flags, false, null);
                     newTeams += roundTeams.Count;
                     foreach(Club c in roundTeams)
                     {
@@ -73,8 +73,8 @@ namespace tests.tm
             Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
 
             List<RecoverTeams> pool = new List<RecoverTeams>();
-            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 12, RecuperationMethod.Best));
+            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 12, RetrieveFlags.Best));
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
                 new List<RecoverTeams>(),
@@ -107,9 +107,9 @@ namespace tests.tm
             Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
 
             List<RecoverTeams> pool = new List<RecoverTeams>();
-            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RecuperationMethod.Best | RecuperationMethod.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 20, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RetrieveFlags.Best | RetrieveFlags.AllTeams));
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
                 new List<RecoverTeams>(),
@@ -147,10 +147,10 @@ namespace tests.tm
 
             List<RecoverTeams> pool = new List<RecoverTeams>();
             //TODO: Teams count is ignored (put null, -1 or Infinity)
-            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RecuperationMethod.Best)); //No extra round allowed, so only 6 teams from N2 will be drawn
+            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 20, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RetrieveFlags.Best)); //No extra round allowed, so only 6 teams from N2 will be drawn
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
             };
@@ -182,10 +182,10 @@ namespace tests.tm
 
             List<RecoverTeams> pool = new List<RecoverTeams>();
             //TODO: Teams count is ignored (put null, -1 or Infinity)
-            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RecuperationMethod.Best | RecuperationMethod.AllTeams));
-            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RecuperationMethod.Best)); //Difference with Case2 : extra round allowed, so the 30 teams from N2 must be drawn
+            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 20, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RetrieveFlags.Best | RetrieveFlags.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RetrieveFlags.Best)); //Difference with Case2 : extra round allowed, so the 30 teams from N2 must be drawn
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
             };
@@ -212,23 +212,23 @@ namespace tests.tm
         public void TestCupCase3()
         {
             InitGame("ui", "database_france_light", new List<string>() { "France" });
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
                 new List<RecoverTeams>(),
-                new List<RecoverTeams>(){new RecoverTeams(fr.League(3).rounds[0], 4, RecuperationMethod.Best)},
+                new List<RecoverTeams>(){new RecoverTeams(fr.League(3).rounds[0], 4, RetrieveFlags.Best)},
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
-            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RecuperationMethod.Best));
+            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RetrieveFlags.Best));
             CupStructure structure = new CupStructure(false, true, constaints, pool, 5, true, 2);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
-            List<int> expectedTeamsByRound = new List<int>() { 20, 10 };
+            List<int> expectedTeamsByRound = new List<int>() { 12, 10 };
             List<Club> expectedTeams = new List<Club>();
             Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
             expectedTeamsByLeague[fr.League(3)] = 4;
-            expectedTeamsByLeague[fr.League(4)] = 30;
+            expectedTeamsByLeague[fr.League(4)] = 12;
             CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
 
         }
@@ -247,10 +247,10 @@ namespace tests.tm
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
                 new List<RecoverTeams>(),
-                new List<RecoverTeams>(){new RecoverTeams(fr.League(2).rounds[0], 4, RecuperationMethod.Best)},
+                new List<RecoverTeams>(){new RecoverTeams(fr.League(2).rounds[0], 4, RetrieveFlags.Best)},
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
-            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RecuperationMethod.Best));
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RetrieveFlags.Best));
             CupStructure structure = new CupStructure(false, true, constaints, pool, 10, true, 2);
             CupStructureResult res = creator.CreateStructure(aFr, structure);
 
@@ -277,12 +277,12 @@ namespace tests.tm
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
                 new List<RecoverTeams>(),
-                new List<RecoverTeams>(){new RecoverTeams(fr.League(3).rounds[0], 6, RecuperationMethod.Best)},
-                new List<RecoverTeams>(){new RecoverTeams(fr.League(2).rounds[0], 4, RecuperationMethod.Best)},
+                new List<RecoverTeams>(){new RecoverTeams(fr.League(3).rounds[0], 6, RetrieveFlags.Best)},
+                new List<RecoverTeams>(){new RecoverTeams(fr.League(2).rounds[0], 4, RetrieveFlags.Best)},
                 new List<RecoverTeams>(),
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
-            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 1000, RecuperationMethod.Best));
+            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 1000, RetrieveFlags.Best));
             CupStructure structure = new CupStructure(false, true, constaints, pool, 4, true, 4);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
