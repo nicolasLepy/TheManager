@@ -51,7 +51,14 @@ namespace tm.Algorithms
         /// </summary>
         public int winners { get; set; }
 
-        public CupStructure(bool allowReserves, bool includeChildAssociations, List<List<RecoverTeams>> constraints, List<RecoverTeams> teams, int winners, bool noExtraRound)
+        /// <summary>
+        /// Force the tournament to have this number of rounds
+        /// null if noExtraRound is False
+        /// must be non null if noExtraRound is True
+        /// </summary>
+        public int? numberOfRounds { get; set; }
+
+        public CupStructure(bool allowReserves, bool includeChildAssociations, List<List<RecoverTeams>> constraints, List<RecoverTeams> teams, int winners, bool noExtraRound, int? numberOfRounds)
         {
             this.allowReserves = allowReserves;
             this.includeChildAssociations = includeChildAssociations;
@@ -59,6 +66,15 @@ namespace tm.Algorithms
             this.teams = teams;
             this.winners = winners;
             this.noExtraRound = noExtraRound;
+            this.numberOfRounds = numberOfRounds;
+            if (noExtraRound && this.numberOfRounds == null)
+            {
+                throw new Exception("numberOfRounds must be specified if noExtraRound is not allowed");
+            }
+            if(!noExtraRound && this.numberOfRounds != null)
+            {
+                throw new Exception("numberOfRounds is specified but noExtraRound is False");
+            }
         }
     }
 
@@ -121,12 +137,71 @@ namespace tm.Algorithms
 
 
         /// <summary>
+        /// Subsample the teams pool to obtain a number of teams that is equal to sampleSize
+        /// </summary>
+        /// <param name="pool"></param>
+        /// <param name="association"></param>
+        /// <param name="noExtraRound"></param>
+        /// <param name="allowReserves"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        private List<RecoverTeams> SamplePool(List<RecoverTeams> pool, int sampleSize, Association association, bool allowReserves)
+        {
+            pool = new List<RecoverTeams>(pool);
+
+            int maxTeams = 0;
+            foreach (RecoverTeams source in pool)
+            {
+                maxTeams += source.Number; //TODO: Split constrained teams (with AllTeams?) and optional teams
+            }
+
+            List<RecoverTeams> sampledPool = new List<RecoverTeams>();
+
+            if (sampleSize != maxTeams)
+            {
+                int teamsToSample = sampleSize;
+                List<RecoverTeams> optionals = new List<RecoverTeams>();
+                foreach (RecoverTeams rt in pool)
+                {
+                    if (!rt.Method.HasFlag(RecuperationMethod.AllTeams))
+                    {
+                        optionals.Add(rt);
+                    }
+                    else
+                    {
+                        teamsToSample -= rt.Number;
+                        sampledPool.Add(rt);
+                    }
+                }
+                if (teamsToSample < 0)
+                {
+                    throw new Exception("Too many undeletable teams but can't create an extra-round");
+                }
+                //Convert RecoverTeams to LeagueCupApparition
+                List<LeagueCupApparition> lca = new List<LeagueCupApparition>();
+                optionals.Sort((x, y) => association.TournamentLevel((x.Source as Round).Tournament) - association.TournamentLevel((y.Source as Round).Tournament));
+                foreach (RecoverTeams rt in optionals)
+                {
+                    lca.Add(new LeagueCupApparition(rt.Available(!allowReserves, association), -1, (rt.Source as Round).Tournament));
+                }
+                //Sampling teams
+                lca = UtilsTournaments.SampleTeams(lca, teamsToSample);
+                //Convert LeagueCupApparition to RecoverTeams
+                for(int i = 0; i < lca.Count; i++)
+                {
+                    sampledPool.Add(new RecoverTeams(optionals[i].Source, lca[i].teams, optionals[i].Method));
+                }
+            }
+            return sampledPool;
+        }
+
+        /// <summary>
         /// Create a simple tournament structure from a list of teams.
         /// </summary>
         /// <param name="pool">List of teams</param>
         /// <param name="expectedWinners">Expected games in the last round</param>
         /// <returns>Bracket structure</returns>
-        public CupStructureResult StructureFromPool(List<RecoverTeams> pool, int expectedWinners, Association association, bool noExtraRound, bool allowReserves)
+        public CupStructureResult StructureFromPool(List<RecoverTeams> pool, int expectedWinners, Association association)
         {
             pool = new List<RecoverTeams>(pool);
             List<List<RecoverTeams>> structure = new List<List<RecoverTeams>>();
@@ -160,81 +235,35 @@ namespace tm.Algorithms
             }
             int indexRound = 0;
 
-            if (!noExtraRound)
+            int preliRoundTeams = (maxTeams - j) * 2;
+            if (j != maxTeams)
             {
-                int preliRoundTeams = (maxTeams - j) * 2;
-                if (j != maxTeams)
-                {
-                    roundCount++;
-                }
-                //Prelimiary round
-                if (j != maxTeams)
-                {
-                    structure.Add(new List<RecoverTeams>());
-                    int currentAddedTeams = 0;
-                    teamsByRound.Add(preliRoundTeams);
-                    while (currentAddedTeams < preliRoundTeams)
-                    {
-                        KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
-                        int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams - currentAddedTeams;
-                        RecuperationMethod recuperationMethod = (teamsToAdd == lowerTournament.Value ? RecuperationMethod.Best : RecuperationMethod.Worst) | RecuperationMethod.AllTeams;
-                        RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, recuperationMethod);
-                        structure[indexRound].Add(rt);
-                        currentAddedTeams += teamsToAdd;
-                        if (currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)
-                        {
-                            teamsByTournaments[teamsByTournaments.Count - 1] = new KeyValuePair<Tournament, int>(lowerTournament.Key, lowerTournament.Value - teamsToAdd);
-                        }
-                        else
-                        {
-                            teamsByTournaments.RemoveAt(teamsByTournaments.Count - 1);
-                        }
-                    }
-                    indexRound++;
-                }
+                roundCount++;
             }
-            else
+            //Prelimiary round
+            if (j != maxTeams)
             {
-                if(j != maxTeams)
+                structure.Add(new List<RecoverTeams>());
+                int currentAddedTeams = 0;
+                teamsByRound.Add(preliRoundTeams);
+                while (currentAddedTeams < preliRoundTeams)
                 {
-                    int teamsToSample = j;
-                    List<RecoverTeams> removable = new List<RecoverTeams>();
-                    foreach(RecoverTeams rt in pool)
+                    KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
+                    int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams - currentAddedTeams;
+                    RecuperationMethod recuperationMethod = (teamsToAdd == lowerTournament.Value ? RecuperationMethod.Best : RecuperationMethod.Worst) | RecuperationMethod.AllTeams;
+                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, recuperationMethod);
+                    structure[indexRound].Add(rt);
+                    currentAddedTeams += teamsToAdd;
+                    if (currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)
                     {
-                        if (!rt.Method.HasFlag(RecuperationMethod.AllTeams))
-                        {
-                            removable.Add(rt);
-                        }
-                        else
-                        {
-                            teamsToSample -= rt.Number;
-                        }
+                        teamsByTournaments[teamsByTournaments.Count - 1] = new KeyValuePair<Tournament, int>(lowerTournament.Key, lowerTournament.Value - teamsToAdd);
                     }
-                    if(teamsToSample < 0)
+                    else
                     {
-                        throw new Exception("Too many undeletable teams but can't create an extra-round");
-                    }
-                    //Convert RecoverTeams to LeagueCupApparition
-                    List<LeagueCupApparition> lca = new List<LeagueCupApparition>();
-                    removable.Sort((x, y) => association.TournamentLevel((x.Source as Round).Tournament) - association.TournamentLevel((y.Source as Round).Tournament));
-                    foreach (RecoverTeams rt in removable)
-                    {
-                        lca.Add(new LeagueCupApparition(rt.Available(!allowReserves, association), -1, (rt.Source as Round).Tournament));
-                    }
-                    //Sampling teams
-                    lca = UtilsTournaments.SampleTeams(lca, teamsToSample);
-                    //Convert LeagueCupApparition to teamsByTournaments
-                    foreach (LeagueCupApparition lc in lca)
-                    {
-                        for(int i = 0; i < teamsByTournaments.Count; i++)
-                        {
-                            if (teamsByTournaments[i].Key == lc.tournament)
-                            {
-                                teamsByTournaments[i] = new KeyValuePair<Tournament, int>(lc.tournament, lc.teams);
-                            }
-                        }
+                        teamsByTournaments.RemoveAt(teamsByTournaments.Count - 1);
                     }
                 }
+                indexRound++;
             }
 
             // Calculating rounds
@@ -326,7 +355,6 @@ namespace tm.Algorithms
                 }
             }
 
-            int roundCount = 0;
             int n = constraints.winners;
 
             //Calculating rounds
@@ -359,6 +387,7 @@ namespace tm.Algorithms
                 n = n - newTeams;
                 n = n * 2;
             }
+
             CupStructureResult baseStructure = new CupStructureResult()
             {
                 structure = structure,
@@ -366,7 +395,6 @@ namespace tm.Algorithms
                 teamsByRound = teamsByRound,
                 leaguesRepresented = new HashSet<Tournament>(tournamentsIncluded)
             };
-
 
             //Preprocess pool
             List<RecoverTeams> pool = new List<RecoverTeams>();
@@ -376,79 +404,20 @@ namespace tm.Algorithms
                 int teamsAvailable = flagRemainingTeams.ContainsKey(t) ? flagRemainingTeams[t] : rt.Number; 
                 pool.Add(new RecoverTeams(rt.Source, rt.Number, rt.Method));
             }
-            
 
-            CupStructureResult headerStructure = StructureFromPool(constraints.teams, n, association, constraints.noExtraRound, constraints.allowReserves);
+            List<RecoverTeams> sampledPool;
+            if (constraints.noExtraRound)
+            {
+                int remainingRounds = constraints.numberOfRounds.Value - structure.Count;
+                int teamsToSample = (int)(n * (Math.Pow(2, remainingRounds)));
+                sampledPool = SamplePool(constraints.teams, teamsToSample, association, constraints.allowReserves);
+            }
+            else
+            {
+                sampledPool = constraints.teams;
+            }
+            CupStructureResult headerStructure = StructureFromPool(sampledPool, n, association);
             return Merge(baseStructure, headerStructure);
-
-            /*int roundCount = 0;
-            int j = constraints.winners;
-            while ((j * 2) <= totalTeams)
-            {
-                j *= 2;
-                roundCount++;
-            }
-            int preliRoundTeams = (totalTeams - j) * 2;
-            if (j != totalTeams)
-            {
-                roundCount++;
-            }
-
-            // Calculating rounds
-
-            int indexRound = 0;
-            //Prelimiary round
-            if (j != totalTeams)
-            {
-                structure.Add(new List<RecoverTeams>());
-                teamsByRound.Add(preliRoundTeams);
-                int currentAddedTeams = 0;
-                while (currentAddedTeams < preliRoundTeams)
-                {
-                    KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
-                    int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams - currentAddedTeams;
-                    RecuperationMethod recuperationMethod = (teamsToAdd == lowerTournament.Value ? RecuperationMethod.Best : RecuperationMethod.Worst) | RecuperationMethod.AllTeams;
-                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, recuperationMethod);
-                    structure[indexRound].Add(rt);
-                    currentAddedTeams += teamsToAdd;
-                    if (currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)
-                    {
-                        teamsByTournaments[teamsByTournaments.Count - 1] = new KeyValuePair<Tournament, int>(lowerTournament.Key, lowerTournament.Value - teamsToAdd);
-                    }
-                    else
-                    {
-                        teamsByTournaments.RemoveAt(teamsByTournaments.Count - 1);
-                    }
-                }
-                indexRound++;
-            }
-            while (j != 1)
-            {
-                //First final round : add not added teams
-                structure.Add(new List<RecoverTeams>());
-                teamsByRound.Add(j);
-                foreach (KeyValuePair<Tournament, int> kvp in teamsByTournaments)
-                {
-                    RecuperationMethod method = RecuperationMethod.Best;
-                    if (tournamentsMethod[kvp.Key].HasFlag(RecuperationMethod.AllTeams))
-                    {
-                        method = method | RecuperationMethod.AllTeams;
-                    }
-                    RecoverTeams rt = new RecoverTeams(kvp.Key.rounds[0], kvp.Value, method);
-                    structure[indexRound].Add(rt);
-                }
-                teamsByTournaments.Clear();
-                indexRound++;
-                j /= 2;
-            }*/
-
-            return new CupStructureResult()
-            {
-                structure = structure,
-                roundsCount = structure.Count,
-                teamsByRound = teamsByRound,
-                leaguesRepresented = new HashSet<Tournament>(tournamentsIncluded)
-            };
         }
 
         /// <summary>
@@ -473,7 +442,8 @@ namespace tm.Algorithms
             };
         }
 
-        //TODO: Probably need to replace this by CreateCupStructure after (create empty tournament from CupResultStructure) ?
+        //TODO: Probably need to replace this by a CreateCupStructure function after (create empty tournament from CupResultStructure) ?
+        //Because CupCreator is not responsible to create the Tournament structure, rounds ids, names...
         public Tournament CreateEmptyTournament(int cupId, string cupName, int cupLevel, Association association, int roundsCount, List<int> teamsByRound, List<GameDay> availableDates, int winnerPrize, CupStructure structure)
         {
             if (roundsCount > availableDates.Count)

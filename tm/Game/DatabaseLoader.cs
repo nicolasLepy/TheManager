@@ -944,7 +944,8 @@ namespace tm
             }
 
             bool noExtraRound = false; //TODO
-            return new CupStructure(allowReserves, includeChildAssociations, constraints, pool, 1, noExtraRound);
+            int? numberOfRounds = null; //TODO
+            return new CupStructure(allowReserves, includeChildAssociations, constraints, pool, 1, noExtraRound, numberOfRounds);
         }
 
         public void LoadTournaments()
@@ -1876,7 +1877,7 @@ namespace tm
                 int winnerPrize = association.FirstDivisionChampionship().rounds[0].prizes.Count > 0 ? association.FirstDivisionChampionship().rounds[0].prizes[0].Amount / 40 : 0;
                 string cupName = NameOfCup(association);
                 int cupLevel = association.Cups().Count + 1;
-                CupStructure constraints = new CupStructure(reservesAllowed, allowTeamsOfChildAssociations, new List<List<RecoverTeams>>(), CreateTeamsSourcePool(association, allowTeamsOfChildAssociations), 1, false);
+                CupStructure constraints = new CupStructure(reservesAllowed, allowTeamsOfChildAssociations, new List<List<RecoverTeams>>(), CreateTeamsSourcePool(association, allowTeamsOfChildAssociations), 1, false, null);
                 CupStructureResult structure = creator.CreateStructure(association, constraints);
                 List<GameDay> availableDates = association.GetAvailableCalendarDates(true, 1, structure.leaguesRepresented.ToList(), true, false);
                 Tournament cup = creator.CreateEmptyTournament(_kernel.NextIdTournament(), cupName, cupLevel, association, structure.roundsCount, structure.teamsByRound, availableDates, winnerPrize, constraints);

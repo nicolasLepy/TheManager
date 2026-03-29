@@ -84,7 +84,7 @@ namespace tests.tm
                 new List<RecoverTeams>()
             };
             int winners = 1;
-            CupStructure structure = new CupStructure(false, true, constaints, pool, winners, false);
+            CupStructure structure = new CupStructure(false, true, constaints, pool, winners, false, null);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
             List<int> expectedTeamsByRound = new List<int>() { 32, 16, 8, 4, 2 };
@@ -120,7 +120,7 @@ namespace tests.tm
                 new List<RecoverTeams>()
             };
             int winners = 1;
-            CupStructure structure = new CupStructure(false, true, constaints, pool, winners, false);
+            CupStructure structure = new CupStructure(false, true, constaints, pool, winners, false, null);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
             List<int> expectedTeamsByRound = new List<int>() { 52, 32, 16, 8, 4, 2 };
@@ -154,7 +154,7 @@ namespace tests.tm
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
             };
-            CupStructure structure = new CupStructure(false, true, constaints, pool, 1, true);
+            CupStructure structure = new CupStructure(false, true, constaints, pool, 1, true, 6);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
             List<int> expectedTeamsByRound = new List<int>() { 64, 32, 16, 8, 4, 2 };
@@ -167,6 +167,41 @@ namespace tests.tm
             expectedTeamsByLeague[fr.League(2)] = 20;
             expectedTeamsByLeague[fr.League(3)] = 18;
             expectedTeamsByLeague[fr.League(4)] = 6;
+            CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
+        }
+
+        /// <summary>
+        /// Basic cup - Not constrained to draw all teams
+        /// </summary>
+        [TestMethod]
+        public void TestCupCase2b()
+        {
+            InitGame("ui", "database_france_light", new List<string>() { "France" });
+            CupCreator creator = new CupCreator(true);
+            Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
+
+            List<RecoverTeams> pool = new List<RecoverTeams>();
+            //TODO: Teams count is ignored (put null, -1 or Infinity)
+            pool.Add(new RecoverTeams(fr.League(1).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 20, RecuperationMethod.Best | RecuperationMethod.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RecuperationMethod.Best | RecuperationMethod.AllTeams));
+            pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RecuperationMethod.Best)); //Difference with Case2 : extra round allowed, so the 30 teams from N2 must be drawn
+            List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
+            {
+            };
+            CupStructure structure = new CupStructure(false, true, constaints, pool, 1, false, null);
+            CupStructureResult res = creator.CreateStructure(fr, structure);
+
+            List<int> expectedTeamsByRound = new List<int>() { 48, 64, 32, 16, 8, 4, 2 };
+            List<Club> expectedTeams = new List<Club>();
+            expectedTeams.AddRange(fr.League(1).rounds[0].clubs);
+            expectedTeams.AddRange(fr.League(2).rounds[0].clubs);
+            expectedTeams.AddRange(fr.League(3).rounds[0].clubs);
+            Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
+            expectedTeamsByLeague[fr.League(1)] = 20;
+            expectedTeamsByLeague[fr.League(2)] = 20;
+            expectedTeamsByLeague[fr.League(3)] = 18;
+            expectedTeamsByLeague[fr.League(4)] = 30;
             CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
         }
 
@@ -186,7 +221,7 @@ namespace tests.tm
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
             pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RecuperationMethod.Best));
-            CupStructure structure = new CupStructure(false, true, constaints, pool, 5, true);
+            CupStructure structure = new CupStructure(false, true, constaints, pool, 5, true, 2);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
             List<int> expectedTeamsByRound = new List<int>() { 20, 10 };
@@ -216,7 +251,7 @@ namespace tests.tm
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
             pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RecuperationMethod.Best));
-            CupStructure structure = new CupStructure(false, true, constaints, pool, 10, true);
+            CupStructure structure = new CupStructure(false, true, constaints, pool, 10, true, 2);
             CupStructureResult res = creator.CreateStructure(aFr, structure);
 
             List<int> expectedTeamsByRound = new List<int>() { 4, 20};
@@ -248,7 +283,7 @@ namespace tests.tm
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
             pool.Add(new RecoverTeams(fr.League(4).rounds[0], 1000, RecuperationMethod.Best));
-            CupStructure structure = new CupStructure(false, true, constaints, pool, 4, true);
+            CupStructure structure = new CupStructure(false, true, constaints, pool, 4, true, 4);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
             List<int> expectedTeamsByRound = new List<int>() { 36, 24, 16, 8 };
