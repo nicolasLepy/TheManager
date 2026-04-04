@@ -1,4 +1,5 @@
-﻿using FluentNHibernate.Testing.Values;
+﻿using FluentNHibernate;
+using FluentNHibernate.Testing.Values;
 using MathNet.Numerics.RootFinding;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,78 @@ using static tm.Tournament;
 
 namespace tm.Algorithms
 {
+
+    public struct TeamCount
+    {
+
+        public static int AllTeams = -1;
+
+        private readonly int _int;
+
+        public TeamCount(int value)
+        {
+            if(value < -1)
+            {
+                throw new InvalidOperationException("cannot create a TeamCount with a negative value");
+            }
+            _int = value;
+        }
+
+        public static explicit operator int(TeamCount @this)
+        {
+            if(@this._int == AllTeams)
+            {
+                throw new InvalidOperationException("cannot implicity convert AllTeams to integer");
+            }
+            return @this._int;
+        }
+
+        public static implicit operator TeamCount(int other)
+        {
+            if(other < 0)
+            {
+                throw new InvalidOperationException("Cannot implicit convert a negative value to TeamCount");
+            }
+            return new TeamCount(other);
+        }
+
+        public static bool operator ==(TeamCount a, TeamCount b)
+        {
+            return a._int == b._int;
+        }
+
+        public static bool operator !=(TeamCount a, TeamCount b)
+        {
+            return a._int != b._int;
+        }
+
+        public static TeamCount operator+(TeamCount a, TeamCount b)
+        {
+            if(a == AllTeams || b == AllTeams)
+            {
+                throw new InvalidOperationException();
+            }
+            return a._int + b._int;
+        }
+
+        public static TeamCount operator-(TeamCount a, TeamCount b)
+        {
+            if(a == AllTeams || b == AllTeams)
+            {
+                throw new InvalidOperationException();
+            }
+            return a._int - b._int;
+        }
+
+        public static TeamCount operator-(TeamCount a)
+        {
+            if(a == AllTeams)
+            {
+                throw new InvalidOperationException();
+            }
+            return -a;
+        }
+    }
 
     public struct CupStructureResult
     {
@@ -135,6 +208,44 @@ namespace tm.Algorithms
             return res;
         }
 
+        private int FindEquivalentSource(List<RecoverTeams> pool, RecoverTeams item)
+        {
+            RetrieveFlags[] specialFlags = new RetrieveFlags[] { RetrieveFlags.QualifiedForInternationalCompetition, RetrieveFlags.QualifiedForInternationalCompetition, RetrieveFlags.StatusPro };
+            int idx = -1;
+            for(int i = 0; i < pool.Count; i++)
+            {
+                RecoverTeams rt = pool[i];
+                bool match = false;
+                if (rt.Source == item.Source)
+                {
+                    match = true;
+                    foreach(RetrieveFlags flag in specialFlags)
+                    {
+                        match = match && rt.Flags.HasFlag(flag) == item.Flags.HasFlag(flag);
+                    }
+                }
+                if (match)
+                {
+                    idx = i;
+                }
+            }
+            return idx;
+        }
+
+        private void RemoveTeamsFromPool(List<RecoverTeams> pool, RecoverTeams source, int number)
+        {
+            int match = FindEquivalentSource(pool, source);
+            if(match == -1)
+            {
+                throw new Exception(String.Format("{0} not found in the pool", source.ToString()));
+            }
+            if (pool[match].Number - number < 0)
+            {
+                throw new Exception(String.Format("Can't remove {0} teams of {1} from the pool (only {2} teams remaining)", number, source.ToString(), pool[match].Number));
+            }
+            pool[match] = new RecoverTeams(pool[match].Source, pool[match].Number - number, pool[match].Flags);
+        }
+
 
         /// <summary>
         /// Subsample the teams pool to obtain a number of teams that is equal to sampleSize
@@ -167,14 +278,17 @@ namespace tm.Algorithms
                 List<RecoverTeams> optionals = new List<RecoverTeams>();
                 foreach (RecoverTeams rt in pool)
                 {
-                    if (!rt.Flags.HasFlag(RetrieveFlags.AllTeams))
+                    if(rt.Number > 0)
                     {
-                        optionals.Add(rt);
-                    }
-                    else
-                    {
-                        teamsToSample -= rt.Number;
-                        sampledPool.Add(rt);
+                        if (!rt.Flags.HasFlag(RetrieveFlags.AllTeams))
+                        {
+                            optionals.Add(rt);
+                        }
+                        else
+                        {
+                            teamsToSample -= rt.Number;
+                            sampledPool.Add(rt);
+                        }
                     }
                 }
                 if (teamsToSample < 0)
@@ -199,22 +313,50 @@ namespace tm.Algorithms
             return sampledPool;
         }
 
+        public RetrieveFlags FlagsOfSource(Dictionary<IRecoverableTeams, RetrieveFlags> flagsBySource, IRecoverableTeams source)
+        {
+            RetrieveFlags ret = new RetrieveFlags();
+            if (flagsBySource.ContainsKey(source) && flagsBySource[source].HasFlag(RetrieveFlags.StatusPro))
+            {
+                ret |= RetrieveFlags.StatusPro;
+            }
+            if (flagsBySource.ContainsKey(source) && flagsBySource[source].HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
+            {
+                ret |= RetrieveFlags.QualifiedForInternationalCompetition;
+            }
+            if (flagsBySource.ContainsKey(source) && flagsBySource[source].HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition))
+            {
+                ret |= RetrieveFlags.NotQualifiedForInternationalCompetition;
+            }
+            return ret;
+        }
+
         /// <summary>
         /// Create a simple tournament structure from a list of teams.
         /// </summary>
         /// <param name="pool">List of teams</param>
         /// <param name="expectedWinners">Expected games in the last round</param>
         /// <returns>Bracket structure</returns>
-        public CupStructureResult StructureFromPool(List<RecoverTeams> pool, int expectedWinners, Association association)
+        public CupStructureResult StructureFromPool(List<RecoverTeams> basePool, int expectedWinners, Association association)
         {
-            if(expectedWinners < 1)
+            //TODO: teamsByTournaments -> basePool peut avoir plusieurs fois la même source -> partir de RecoverTeams
+            if (expectedWinners < 1)
             {
                 throw new Exception("expectedWinners must be at least equal to 1.");
             }
-            pool = new List<RecoverTeams>(pool);
+
+            List<RecoverTeams> pool = new List<RecoverTeams>();
+            foreach(RecoverTeams bprt in basePool)
+            {
+                if(bprt.Number > 0)
+                {
+                    pool.Add(bprt);
+                }
+            }
             List<List<RecoverTeams>> structure = new List<List<RecoverTeams>>();
             Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
             List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
+            Dictionary<IRecoverableTeams, RetrieveFlags> flagsBySource = new Dictionary<IRecoverableTeams, RetrieveFlags>();
             int maxTeams = 0;
             List<int> teamsByRound = new List<int>();
             foreach (RecoverTeams source in pool)
@@ -229,6 +371,7 @@ namespace tm.Algorithms
                 teamsByLevel[tournamentLevel] += teamsCount;
                 teamsByTournaments.Add(new KeyValuePair<Tournament, int>(tSource, teamsCount));
                 maxTeams += teamsCount;
+                flagsBySource[source.Source] = source.Flags;
             }
 
             teamsByTournaments.Sort((x, y) => association.TournamentLevel(x.Key) - association.TournamentLevel(y.Key));
@@ -259,6 +402,7 @@ namespace tm.Algorithms
                     KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
                     int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams - currentAddedTeams;
                     RetrieveFlags flags = (teamsToAdd == lowerTournament.Value ? RetrieveFlags.Best : RetrieveFlags.Worst) | RetrieveFlags.AllTeams;
+                    flags |= FlagsOfSource(flagsBySource, lowerTournament.Key.rounds[0]);
                     RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, flags);
                     structure[indexRound].Add(rt);
                     currentAddedTeams += teamsToAdd;
@@ -274,16 +418,17 @@ namespace tm.Algorithms
                 indexRound++;
             }
 
+
             // Calculating rounds
 
-            while (j != 1)
+            while (j != expectedWinners)
             {
                 //First final round : add not added teams
                 structure.Add(new List<RecoverTeams>());
                 teamsByRound.Add(j);
                 foreach (KeyValuePair<Tournament, int> kvp in teamsByTournaments)
                 {
-                    RetrieveFlags method = RetrieveFlags.Best;
+                    RetrieveFlags method = RetrieveFlags.Best | FlagsOfSource(flagsBySource, kvp.Key.rounds[0]);
                     RecoverTeams rt = new RecoverTeams(kvp.Key.rounds[0], kvp.Value, method);
                     structure[indexRound].Add(rt);
                 }
@@ -303,13 +448,21 @@ namespace tm.Algorithms
 
         public CupStructureResult CreateStructure(Association association, CupStructure constraints)
         {
-            //TODO: constraints.teams: declare all teams. Teams extracted from constrains will be removed and the remainings teams will be append to the header structure.
-            //TODO: AllTeams flags for each league is described in the teams list.
-            Console.WriteLine("[Create Structure] {0}", association.name);
             List<List<RecoverTeams>> structure = new List<List<RecoverTeams>>();
             List<int> teamsByRound = new List<int>();
 
             //Precomputing totals
+
+            List<RecoverTeams> pool = new List<RecoverTeams>(constraints.teams);
+            for (int i = 0; i < pool.Count; i++)
+            {
+                RecoverTeams source = pool[i];
+                int teamsAvailable = source.Available(!constraints.allowReserves, association);
+                if (source.Flags.HasFlag(RetrieveFlags.AllTeams))
+                {
+                    pool[i] = new RecoverTeams(source.Source, teamsAvailable, source.Flags);
+                }
+            }
 
             List<RecoverTeams> allSources = new List<RecoverTeams>(constraints.teams);
             foreach (List<RecoverTeams> rt in constraints.constraints)
@@ -341,8 +494,9 @@ namespace tm.Algorithms
             List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
             int maxTeams = 0;
             List<Tournament> tournamentsIncluded = new List<Tournament>();
-            foreach(RecoverTeams source in allSources)
+            for(int i = 0; i < allSources.Count; i++)
             {
+                RecoverTeams source = allSources[i];
                 int teamsAvailable = source.Available(!constraints.allowReserves, association);
                 Tournament tSource = (source.Source as Round).Tournament;
                 int tournamentLevel = association.TournamentLevel(tSource);
@@ -381,24 +535,39 @@ namespace tm.Algorithms
             {
                 structure.Add(new List<RecoverTeams>());
                 int newTeams = 0;
-                foreach(RecoverTeams sourceRec in roundsConstraints[i])
+                List<RecoverTeams> structureRound = new List<RecoverTeams>();
+                for(int j = 0; j < roundsConstraints[i].Count; j++)
                 {
+                    RecoverTeams sourceRec = roundsConstraints[i][j];
                     Tournament tSource = (sourceRec.Source as Round).Tournament;
-                    int number = sourceRec.Available(!constraints.allowReserves, association);
+                    int number = sourceRec.Flags.HasFlag(RetrieveFlags.AllTeams) ? sourceRec.Available(!constraints.allowReserves, association) : sourceRec.Number;
                     RecoverTeams rtn = new RecoverTeams(sourceRec.Source, number, sourceRec.Flags);
-                    structure[i].Add(rtn);
+                    structureRound.Add(rtn);
                     newTeams += number;
-                    if (flagRemainingTeams.ContainsKey(tSource))
+                }
+                //These constraints are impossible (too many teams). They are pushed to the previous round (or to the pool)
+                if (((n * 2) - newTeams) < 1)
+                {
+                    newTeams = 0;
+                    if(i < lastRoundWithConstraint)
                     {
-                        flagRemainingTeams[tSource] -= number;
+                        roundsConstraints[i + 1].AddRange(roundsConstraints[i]);
                     }
-                    //teamsByLevel[(sourceRec.Source as Round).Tournament.level] -= number;
+                }
+                else //Constraints ok: they are incorporated into the structure
+                {
+                    structure[i] = structureRound;
+                    foreach(RecoverTeams sourceRec in structureRound)
+                    {
+                        RemoveTeamsFromPool(pool, sourceRec, sourceRec.Number);
+                    }
                 }
                 n = (n * 2) - newTeams;
                 teamsByRound.Add(n);
-
             }
 
+            structure.Reverse();
+            teamsByRound.Reverse();
             CupStructureResult baseStructure = new CupStructureResult()
             {
                 structure = structure,
@@ -407,26 +576,18 @@ namespace tm.Algorithms
                 leaguesRepresented = new HashSet<Tournament>(tournamentsIncluded)
             };
 
-            //Preprocess pool
-            
-            List<RecoverTeams> pool = new List<RecoverTeams>();
-            foreach(RecoverTeams rt in constraints.teams)
-            {
-                Tournament t = (rt.Source as Round).Tournament;
-                int teamsAvailable = flagRemainingTeams.ContainsKey(t) ? flagRemainingTeams[t] : rt.Number; 
-                pool.Add(new RecoverTeams(rt.Source, rt.Number, rt.Flags));
-            }
 
             List<RecoverTeams> sampledPool;
             if (constraints.noExtraRound)
             {
                 int remainingRounds = constraints.numberOfRounds.Value - structure.Count;
                 int teamsToSample = (int)(n * (Math.Pow(2, remainingRounds)));
-                sampledPool = SamplePool(constraints.teams, teamsToSample, association, constraints.allowReserves);
+                //TODO: Problème : ignore le nombre d'équipes dans la pool et tire uniquement en fonction de l'ordre et du nombre d'équipes à sampler
+                sampledPool = SamplePool(pool, teamsToSample, association, constraints.allowReserves);
             }
             else
             {
-                sampledPool = constraints.teams;
+                sampledPool = pool;
             }
             CupStructureResult headerStructure = StructureFromPool(sampledPool, n, association);
             return Merge(baseStructure, headerStructure);
@@ -443,7 +604,16 @@ namespace tm.Algorithms
             List<List<RecoverTeams>> structure = new List<List<RecoverTeams>>(headerStructure.structure);
             structure.AddRange(baseStructure.structure);
             List<int> teamsByRound = new List<int>(headerStructure.teamsByRound);
-            teamsByRound.AddRange(baseStructure.teamsByRound);
+            int teamsCount = headerStructure.roundsCount == 0 ? 0 : (headerStructure.teamsByRound.Last() / 2);
+            for(int i = 0; i < baseStructure.roundsCount; i++)
+            {
+                foreach(RecoverTeams rt in baseStructure.structure[i])
+                {
+                    teamsCount += rt.Number;
+                }
+                teamsByRound.Add(teamsCount);
+                teamsCount /= 2;
+            }
 
             return new CupStructureResult()
             {

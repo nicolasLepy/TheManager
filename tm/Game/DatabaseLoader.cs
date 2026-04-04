@@ -910,6 +910,108 @@ namespace tm
             return value;
         }
 
+        private RetrieveFlags OnlySpecialFlags(RetrieveFlags flags)
+        {
+            RetrieveFlags res = flags;
+            if (res.HasFlag(RetrieveFlags.Best))
+            {
+                res &= ~RetrieveFlags.Best;
+            }
+            if (res.HasFlag(RetrieveFlags.Worst))
+            {
+                res &= ~RetrieveFlags.Worst;
+            }
+            if (res.HasFlag(RetrieveFlags.AllTeams))
+            {
+                res &= ~RetrieveFlags.AllTeams;
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// Format a pool to be CupCreator ready. 
+        /// </summary>
+        /// <param name="pool"></param>
+        /// <returns></returns>
+        private List<RecoverTeams> FormatPool(List<RecoverTeams> pool)
+        {
+            List<RecoverTeams> res = new List<RecoverTeams>();
+            foreach(RecoverTeams rt in pool)
+            {
+                RecoverTeams reference = default(RecoverTeams);
+                int idxRef = -1;
+                for(int i = 0; i < res.Count; i++)
+                {
+                    bool match = res[i].Source == rt.Source && OnlySpecialFlags(res[i].Flags) == OnlySpecialFlags(rt.Flags);
+                    reference = match ? res[i] : reference;
+                    idxRef = match ? i : idxRef;
+                }
+
+                RecoverTeams item = new RecoverTeams(rt);
+                //Only for CDL : Special Flag so AllTeams
+                if(!reference.Equals(default(RecoverTeams)))
+                {
+                    RetrieveFlags flags = reference.Flags;
+                    if(
+                        item.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) ||
+                        item.Flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition) ||
+                        item.Flags.HasFlag(RetrieveFlags.StatusPro))
+                    {
+                        flags |= RetrieveFlags.AllTeams;
+                        item = new RecoverTeams(item.Source, item.Number, flags);
+                    }
+                }
+                if(idxRef == -1)
+                {
+                    RetrieveFlags flags = item.Flags;
+                    if (flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
+                    {
+                        flags |= RetrieveFlags.AllTeams;
+                        //flags &= ~RetrieveFlags.QualifiedForInternationalCompetition;
+                    }
+                    if (flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition))
+                    {
+                        flags |= RetrieveFlags.AllTeams;
+                        //flags &= ~RetrieveFlags.NotQualifiedForInternationalCompetition;
+                    }
+                    if (flags.HasFlag(RetrieveFlags.StatusPro))
+                    {
+                        flags |= RetrieveFlags.AllTeams;
+                    }
+                    item = new RecoverTeams(item.Source, item.Number, flags);
+                    res.Add(item);
+                }
+                else
+                {
+                    res[idxRef] = item;
+                }
+            }
+            return res;
+        }
+
+        private RetrieveFlags FormatFlags(RetrieveFlags flags)
+        {
+            RetrieveFlags res = new RetrieveFlags() | flags;
+            if (flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
+            {
+                res |= RetrieveFlags.AllTeams;
+            }
+            if (flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition))
+            {
+                res |= RetrieveFlags.AllTeams;
+            }
+            if (flags.HasFlag(RetrieveFlags.StatusPro))
+            {
+                res |= RetrieveFlags.AllTeams;
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// TODO: To delete (must be described in xml)
+        /// </summary>
+        /// <param name="tournament"></param>
+        /// <returns></returns>
         private CupStructure ExtractCupStructure(Tournament tournament)
         {
             Association a = tournament.association;
@@ -926,13 +1028,11 @@ namespace tm
                 foreach(RecoverTeams rt in r.recuperedTeams)
                 {
                     //bool requestAllTeams = rt.Flags.HasFlag(RetrieveFlags.AllTeams) || rt.Flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) || rt.Flags.HasFlag(RetrieveFlags.StatusPro);
-                    if (i == 0)
+                    RecoverTeams nrt = new RecoverTeams(rt.Source, rt.Number, FormatFlags(rt.Flags));
+                    pool.Add(nrt);
+                    if (i != 0)
                     {
-                        pool.Add(rt);
-                    }
-                    else
-                    {
-                        constraints[i].Add(rt);
+                        constraints[i].Add(nrt);
                     }
                     Round rtr = rt.Source as Round;
                     if(rtr != null && a.GetAllChilds().Contains(rtr.Tournament.association))
@@ -942,6 +1042,7 @@ namespace tm
 
                 }
             }
+            pool = FormatPool(pool);
 
             bool noExtraRound = false; //TODO
             int? numberOfRounds = null; //TODO

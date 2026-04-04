@@ -72,6 +72,13 @@ namespace tm
             Flags = method;
         }
 
+        public RecoverTeams(RecoverTeams reference)
+        {
+            Source = reference.Source;
+            Number = reference.Number;
+            Flags = reference.Flags;
+        }
+
         public bool Equals(RecoverTeams other)
         {
             return this.Source == other.Source && this.Number == other.Number && this.Flags == other.Flags;

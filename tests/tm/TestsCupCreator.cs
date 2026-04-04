@@ -220,6 +220,7 @@ namespace tests.tm
                 new List<RecoverTeams>(){new RecoverTeams(fr.League(3).rounds[0], 4, RetrieveFlags.Best)},
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 4, RetrieveFlags.Best));
             pool.Add(new RecoverTeams(fr.League(4).rounds[0], 30, RetrieveFlags.Best));
             CupStructure structure = new CupStructure(false, true, constaints, pool, 5, true, 2);
             CupStructureResult res = creator.CreateStructure(fr, structure);
@@ -250,6 +251,7 @@ namespace tests.tm
                 new List<RecoverTeams>(){new RecoverTeams(fr.League(2).rounds[0], 4, RetrieveFlags.Best)},
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 4, RetrieveFlags.Best));
             pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RetrieveFlags.Best));
             CupStructure structure = new CupStructure(false, true, constaints, pool, 10, true, 2);
             CupStructureResult res = creator.CreateStructure(aFr, structure);
@@ -262,7 +264,6 @@ namespace tests.tm
             CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
 
         }
-
 
         /// <summary>
         /// Test regional path cup with multiple entries
@@ -282,6 +283,8 @@ namespace tests.tm
                 new List<RecoverTeams>(),
             };
             List<RecoverTeams> pool = new List<RecoverTeams>();
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 4, RetrieveFlags.Best));
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 6, RetrieveFlags.Best));
             pool.Add(new RecoverTeams(fr.League(4).rounds[0], 1000, RetrieveFlags.Best));
             CupStructure structure = new CupStructure(false, true, constaints, pool, 4, true, 4);
             CupStructureResult res = creator.CreateStructure(fr, structure);
@@ -302,7 +305,7 @@ namespace tests.tm
         public void TestLeagueCupCase1()
         {
             InitGame("ui", "database_france_light", new List<string>() { "France" });
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
             Tournament leagueCup = fr.Cup(2);
             Assert.AreEqual(leagueCup.name, "Coupe de la Ligue");
@@ -324,19 +327,20 @@ namespace tests.tm
         {
             InitGame("ui", "database_france_light", new List<string>() { "France" });
             Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
+            List<Club> expectedTeams = new List<Club>();
             Tournament l3 = fr.League(3);
             for (int i = 0; i < 15; i++)
             {
                 l3.rounds[0].clubs[i].ChangeStatus(ClubStatus.Professional);
+                expectedTeams.Add(l3.rounds[0].clubs[i]);
             }
 
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Tournament leagueCup = fr.Cup(2);
             Assert.AreEqual(leagueCup.name, "Coupe de la Ligue");
 
             CupStructureResult res = creator.CreateStructure(fr, leagueCup.cupStructure);
             List<int> expectedTeamsByRound = new List<int>() { 22, 24, 12, 20, 16, 8, 4, 2 };
-            List<Club> expectedTeams = new List<Club>();
             expectedTeams.AddRange(fr.League(1).rounds[0].clubs);
             expectedTeams.AddRange(fr.League(2).rounds[0].clubs);
             Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
@@ -361,7 +365,7 @@ namespace tests.tm
                 c.ChangeStatus(ClubStatus.SemiProfessional);
             }
 
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Tournament leagueCup = fr.Cup(2);
             Assert.AreEqual(leagueCup.name, "Coupe de la Ligue");
 
@@ -370,7 +374,10 @@ namespace tests.tm
             List<Club> expectedTeams = new List<Club>();
             expectedTeams.AddRange(fr.League(1).rounds[0].clubs);
             expectedTeams.AddRange(fr.League(2).rounds[0].clubs);
-            CheckCupStructure(res, expectedTeamsByRound, null, expectedTeams);
+            Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
+            expectedTeamsByLeague[fr.League(1)] = 20;
+            expectedTeamsByLeague[fr.League(2)] = 20;
+            CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
         }
 
         /// <summary>
@@ -399,7 +406,7 @@ namespace tests.tm
                 }
             }
 
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Tournament leagueCup = fr.Cup(2);
             Assert.AreEqual(leagueCup.name, "Coupe de la Ligue");
 
@@ -408,7 +415,10 @@ namespace tests.tm
             List<Club> expectedTeams = new List<Club>();
             expectedTeams.AddRange(fr.League(1).rounds[0].clubs);
             expectedTeams.AddRange(fr.League(2).rounds[0].clubs);
-            CheckCupStructure(res, expectedTeamsByRound, null, expectedTeams);
+            Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
+            expectedTeamsByLeague[fr.League(1)] = 20;
+            expectedTeamsByLeague[fr.League(2)] = 20;
+            CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
         }
 
         /// <summary>
@@ -437,7 +447,7 @@ namespace tests.tm
                 }
             }
 
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Tournament leagueCup = fr.Cup(2);
             Assert.AreEqual(leagueCup.name, "Coupe de la Ligue");
 
@@ -446,7 +456,10 @@ namespace tests.tm
             List<Club> expectedTeams = new List<Club>();
             expectedTeams.AddRange(fr.League(1).rounds[0].clubs);
             expectedTeams.AddRange(fr.League(2).rounds[0].clubs);
-            CheckCupStructure(res, expectedTeamsByRound, null, expectedTeams);
+            Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
+            expectedTeamsByLeague[fr.League(1)] = 20;
+            expectedTeamsByLeague[fr.League(2)] = 20;
+            CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
         }
 
         /// <summary>
@@ -461,7 +474,7 @@ namespace tests.tm
             Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
             Tournament l2 = fr.League(2);
 
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Tournament leagueCup = fr.Cup(2);
             Assert.AreEqual(leagueCup.name, "Coupe de la Ligue");
 
@@ -474,7 +487,10 @@ namespace tests.tm
             List<Club> expectedTeams = new List<Club>();
             expectedTeams.AddRange(fr.League(1).rounds[0].clubs);
             expectedTeams.AddRange(fr.League(2).rounds[0].clubs);
-            CheckCupStructure(res, expectedTeamsByRound, null, expectedTeams);
+            Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
+            expectedTeamsByLeague[fr.League(1)] = 20;
+            expectedTeamsByLeague[fr.League(2)] = 20;
+            CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
         }
 
         private HashSet<Club> GetContinentalClubs(Association a)
