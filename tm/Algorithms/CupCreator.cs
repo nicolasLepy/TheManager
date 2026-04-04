@@ -313,7 +313,7 @@ namespace tm.Algorithms
             return sampledPool;
         }
 
-        public RetrieveFlags FlagsOfSource(Dictionary<IRecoverableTeams, RetrieveFlags> flagsBySource, IRecoverableTeams source)
+        /*public RetrieveFlags FlagsOfSource(Dictionary<IRecoverableTeams, RetrieveFlags> flagsBySource, IRecoverableTeams source)
         {
             RetrieveFlags ret = new RetrieveFlags();
             if (flagsBySource.ContainsKey(source) && flagsBySource[source].HasFlag(RetrieveFlags.StatusPro))
@@ -329,6 +329,24 @@ namespace tm.Algorithms
                 ret |= RetrieveFlags.NotQualifiedForInternationalCompetition;
             }
             return ret;
+        }*/
+
+        public RetrieveFlags FlagsOfSource(RecoverTeams source)
+        {
+            RetrieveFlags ret = new RetrieveFlags();
+            if (source.Flags.HasFlag(RetrieveFlags.StatusPro))
+            {
+                ret |= RetrieveFlags.StatusPro;
+            }
+            if (source.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
+            {
+                ret |= RetrieveFlags.QualifiedForInternationalCompetition;
+            }
+            if (source.Flags.HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition))
+            {
+                ret |= RetrieveFlags.NotQualifiedForInternationalCompetition;
+            }
+            return ret;
         }
 
         /// <summary>
@@ -339,7 +357,6 @@ namespace tm.Algorithms
         /// <returns>Bracket structure</returns>
         public CupStructureResult StructureFromPool(List<RecoverTeams> basePool, int expectedWinners, Association association)
         {
-            //TODO: teamsByTournaments -> basePool peut avoir plusieurs fois la même source -> partir de RecoverTeams
             if (expectedWinners < 1)
             {
                 throw new Exception("expectedWinners must be at least equal to 1.");
@@ -354,28 +371,17 @@ namespace tm.Algorithms
                 }
             }
             List<List<RecoverTeams>> structure = new List<List<RecoverTeams>>();
-            Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
-            List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
-            Dictionary<IRecoverableTeams, RetrieveFlags> flagsBySource = new Dictionary<IRecoverableTeams, RetrieveFlags>();
+            List<KeyValuePair<RecoverTeams, int>> teamsBySources = new List<KeyValuePair<RecoverTeams, int>>();
             int maxTeams = 0;
             List<int> teamsByRound = new List<int>();
             foreach (RecoverTeams source in pool)
             {
-                Tournament tSource = (source.Source as Round).Tournament;
-                int tournamentLevel = association.TournamentLevel(tSource);
-                if (!teamsByLevel.ContainsKey(tournamentLevel))
-                {
-                    teamsByLevel.Add(tournamentLevel, 0);
-                }
                 int teamsCount = source.Number;
-                teamsByLevel[tournamentLevel] += teamsCount;
-                teamsByTournaments.Add(new KeyValuePair<Tournament, int>(tSource, teamsCount));
                 maxTeams += teamsCount;
-                flagsBySource[source.Source] = source.Flags;
+                teamsBySources.Add(new KeyValuePair<RecoverTeams, int>(source, teamsCount));
             }
 
-            teamsByTournaments.Sort((x, y) => association.TournamentLevel(x.Key) - association.TournamentLevel(y.Key));
-
+            teamsBySources.Sort((x, y) => association.TournamentLevel((x.Key.Source as Round).Tournament) - association.TournamentLevel((y.Key.Source as Round).Tournament));
 
             int roundCount = 0;
             int j = expectedWinners;
@@ -399,20 +405,20 @@ namespace tm.Algorithms
                 teamsByRound.Add(preliRoundTeams);
                 while (currentAddedTeams < preliRoundTeams)
                 {
-                    KeyValuePair<Tournament, int> lowerTournament = teamsByTournaments[teamsByTournaments.Count - 1];
+                    KeyValuePair<RecoverTeams, int> lowerTournament = teamsBySources[teamsBySources.Count - 1];
                     int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams - currentAddedTeams;
                     RetrieveFlags flags = (teamsToAdd == lowerTournament.Value ? RetrieveFlags.Best : RetrieveFlags.Worst) | RetrieveFlags.AllTeams;
-                    flags |= FlagsOfSource(flagsBySource, lowerTournament.Key.rounds[0]);
-                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.rounds[0], teamsToAdd, flags);
+                    flags |= FlagsOfSource(lowerTournament.Key);
+                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.Source, teamsToAdd, flags);
                     structure[indexRound].Add(rt);
                     currentAddedTeams += teamsToAdd;
                     if (currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)
                     {
-                        teamsByTournaments[teamsByTournaments.Count - 1] = new KeyValuePair<Tournament, int>(lowerTournament.Key, lowerTournament.Value - teamsToAdd);
+                        teamsBySources[teamsBySources.Count - 1] = new KeyValuePair<RecoverTeams, int>(lowerTournament.Key, lowerTournament.Value - teamsToAdd);
                     }
                     else
                     {
-                        teamsByTournaments.RemoveAt(teamsByTournaments.Count - 1);
+                        teamsBySources.RemoveAt(teamsBySources.Count - 1);
                     }
                 }
                 indexRound++;
@@ -426,13 +432,13 @@ namespace tm.Algorithms
                 //First final round : add not added teams
                 structure.Add(new List<RecoverTeams>());
                 teamsByRound.Add(j);
-                foreach (KeyValuePair<Tournament, int> kvp in teamsByTournaments)
+                foreach (KeyValuePair<RecoverTeams, int> kvp in teamsBySources)
                 {
-                    RetrieveFlags method = RetrieveFlags.Best | FlagsOfSource(flagsBySource, kvp.Key.rounds[0]);
-                    RecoverTeams rt = new RecoverTeams(kvp.Key.rounds[0], kvp.Value, method);
+                    RetrieveFlags method = RetrieveFlags.Best | FlagsOfSource(kvp.Key);
+                    RecoverTeams rt = new RecoverTeams(kvp.Key.Source, kvp.Value, method);
                     structure[indexRound].Add(rt);
                 }
-                teamsByTournaments.Clear();
+                teamsBySources.Clear();
                 indexRound++;
                 j /= 2;
             }
