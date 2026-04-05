@@ -6,6 +6,47 @@ using System.Threading.Tasks;
 
 namespace tm
 {
+
+    /// <summary>
+    /// Represent 
+    /// </summary>
+    public class DummyExternalSource : IRecoverableTeams
+    {
+
+        private int count;
+        public DummyExternalSource(int count)
+        {
+            this.count = count;
+        }
+
+        public int CountWithoutReserves()
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Club> RetrieveTeams(int number, RetrieveFlags method, bool onlyFirstTeams, Association associationFilter)
+        {
+            List<Club> res = new List<Club>();
+            if (number == -1)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    res.Add(null);
+                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+            return res;
+        }
+
+        public bool IsDummy()
+        {
+            return true;
+        }
+    }
+
     public interface IRecoverableTeams
     {
         /// <summary>
@@ -18,5 +59,6 @@ namespace tm
         /// <returns></returns>
         List<Club> RetrieveTeams(int number, RetrieveFlags method, bool onlyFirstTeams, Association associationFilter);
         int CountWithoutReserves();
+        bool IsDummy();
     }
 }

@@ -1049,6 +1049,117 @@ namespace tm
             return new CupStructure(allowReserves, includeChildAssociations, constraints, pool, 1, noExtraRound, numberOfRounds);
         }
 
+        private RetrieveFlags ParseTokenRetrieveFlag(string token)
+        {
+            RetrieveFlags flag = new RetrieveFlags();
+            if (token == "not-international")
+            {
+                flag = RetrieveFlags.NotQualifiedForInternationalCompetition;
+            }
+            else if (token == "international")
+            {
+                flag = RetrieveFlags.QualifiedForInternationalCompetition;
+            }
+            else if (token == "pro")
+            {
+                flag = RetrieveFlags.StatusPro;
+            }
+            else if (token == "best")
+            {
+                flag = RetrieveFlags.Best;
+            }
+            else if (token == "worst")
+            {
+                flag = RetrieveFlags.Worst;
+            }
+            return flag;
+        }
+
+        private List<RetrieveFlags> ReadRetrieveFlags(string value)
+        {
+            List<RetrieveFlags> flags = new List<RetrieveFlags>();
+            string[] tokens = value.Split(' ');
+            foreach(string token in tokens)
+            {
+                flags.Add(ParseTokenRetrieveFlag(token));
+            }
+            return flags;
+        }
+
+        private List<RecoverTeams> ReadRecoverTeam(XElement node)
+        {
+            List<RecoverTeams> res = new List<RecoverTeams>();
+            string attributeFlags = node.Attribute("flag") != null ? node.Attribute("flag").Value : "";
+            string attributeCount = node.Attribute("count") != null ? node.Attribute("count").Value : "";
+            string attributeTournament = node.Attribute("from").Value;
+            string attributeRound = node.Attribute("round").Value;
+            Tournament tournament = _kernel.String2Tournament(attributeTournament);
+
+            IRecoverableTeams source;
+            int number = 1;
+            List<RetrieveFlags> flags = ReadRetrieveFlags(attributeFlags);
+            if(attributeCount == "all")
+            {
+                for(int i = 0; i < flags.Count; i++)
+                {
+                    flags[i] = flags[i] | RetrieveFlags.AllTeams;
+                }
+            }
+            else
+            {
+                number = int.Parse(attributeCount);
+            }
+            foreach(RetrieveFlags flag in flags)
+            {
+                res.Add(new RecoverTeams(tournament.rounds[int.Parse(attributeRound)], number, flag));
+
+            }
+            return res;
+        }
+
+        public CupStructure ReadCupStructure(Tournament tournament, XElement root)
+        {
+            bool allowReserves = root.Attribute("allowReserves") != null && root.Attribute("allowReserves").Value == "true";
+            bool noExtraRounds = root.Attribute("noExtraRounds") != null && root.Attribute("noExtraRounds").Value == "true";
+            int winners = root.Attribute("winners") != null ? int.Parse(root.Attribute("winners").Value) : 1;
+            int? numberOfRounds = root.Attribute("rounds") != null ? int.Parse(root.Attribute("rounds").Value) : null;
+            List<List<RecoverTeams>> constraints = new List<List<RecoverTeams>>();
+            for(int i = 0; i < tournament.rounds.Count; i++)
+            {
+                constraints.Add(new List<RecoverTeams>());
+            }
+            List<RecoverTeams> teams = new List<RecoverTeams>();
+            foreach(XElement nodeTeams in root.Elements("Teams"))
+            {
+                teams.AddRange(ReadRecoverTeam(nodeTeams));
+            }
+            XElement nodeConstraints = root.Descendants("Constraints").FirstOrDefault();
+            if(nodeConstraints != null)
+            {
+                foreach (XElement nodeRound in nodeConstraints.Descendants("Round"))
+                {
+                    string attributeRoundName = nodeRound.Attribute("name").Value;
+                    int roundIndex = -1;
+                    for(int i = 0; i <tournament.rounds.Count; i++)
+                    {
+                        roundIndex = (tournament.rounds[i].name == attributeRoundName) ? i : roundIndex;
+                    }
+                    if(roundIndex == -1)
+                    {
+                        throw new Exception(String.Format("Can't find round {0} in {1}", attributeRoundName, tournament.name));
+                    }
+                    List<RecoverTeams> constraintsRound = new List<RecoverTeams>();
+                    foreach (XElement nodeTeams in nodeRound.Elements("Teams"))
+                    {
+                        constraintsRound.AddRange(ReadRecoverTeam(nodeTeams));
+                    }
+                    constraints[roundIndex] = constraintsRound;
+                }
+            }
+            return new CupStructure(allowReserves, false, constraints, teams, winners, noExtraRounds, numberOfRounds);
+        }
+
+
         public void LoadTournaments()
         {
             SetStartClubId();
@@ -1453,12 +1564,19 @@ namespace tm
                             }
                             roundIndex++;
                         }
+                        List<XElement> nodesStructure = e2.Descendants("Structure").ToList();
+                        if(nodesStructure.Count > 1)
+                        {
+                            throw new Exception(String.Format("More than 1 structure description found in {0}", c.name));
+                        }
+                        if (nodesStructure.Count == 1)
+                        {
+                            XElement root = nodesStructure.First();
+                            c.cupStructure = ReadCupStructure(c, root);
+                        }
                     }
                 }
-                //PostProcessTournaments();
-
             }
-
         }
 
         private bool IsTournamentRegional(Tournament t)
@@ -1515,10 +1633,78 @@ namespace tm
             return method;
         }
 
-    /// <summary>
-    /// Post process loaded tournaments and create regional tournaments instances for league systems relying on multiple regional structure
-    /// </summary>
-    public void PostProcessTournaments()
+        private bool IsPowerOf2(int x)
+        {
+            return (x != 0) && (x & (x - 1)) == 0;
+        }
+
+        private string NameOfRound(List<int> teamsByRound, int indexRound)
+        {
+            int teams = teamsByRound[indexRound];
+            int nextTeams = (indexRound + 1) < teamsByRound.Count ? teamsByRound[indexRound + 1] : -1;
+            bool finalPhase = IsPowerOf2(teams) && (nextTeams == teams / 2);
+            string res = finalPhase ? String.Format("Round of {0}", teams) : String.Format("Round {0}", indexRound + 1);
+            if (indexRound == teamsByRound.Count - 1 && teams == 2)
+            {
+                res = "Final";
+            }
+            else if (finalPhase && teams == 4)
+            {
+                res = "Semifinals";
+            }
+            else if (finalPhase && teams == 8)
+            {
+                res = "Quarterfinals";
+            }
+            return res;
+        }
+
+        public Tournament CreateEmptyTournament(int cupId, string cupName, int cupLevel, Association association, int roundsCount, List<int> teamsByRound, List<GameDay> availableDates, int winnerPrize, CupStructure structure)
+        {
+            if (roundsCount > availableDates.Count)
+            {
+                throw new Exception("Too few dates available");
+            }
+            Tournament emptyCup = new Tournament(cupId, cupName, "", association, new GameDay(association.resetWeek, false, 0, 0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null, structure);
+            for (int i = 0; i < roundsCount; i++)
+            {
+                Hour hour = new Hour() { Hours = 20, Minutes = 0 };
+                int weekIndex = (availableDates.Count / roundsCount) * i;
+                string name = NameOfRound(teamsByRound, i);
+                GameDay gameDate = new GameDay(availableDates[weekIndex].WeekNumber, true, 0, 0);
+                GameDay beginDate = new GameDay((availableDates[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
+                GameDay endDate = new GameDay((availableDates[weekIndex].WeekNumber + 2) % 52, false, 0, 0);
+                Round round = new KnockoutRound(_kernel.NextIdRound(), name, emptyCup, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
+
+                round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
+                if (!structure.allowReserves)
+                {
+                    round.rules.Add(Rule.OnlyFirstTeams);
+                }
+                if (roundsCount - i > 1)
+                {
+                    round.qualifications.Add(new Qualification(1, i + 1, new QualificationTournament(emptyCup), false, 1));
+                }
+
+                emptyCup.rounds.Add(round);
+            }
+
+            int maxPrize = winnerPrize;
+            for (int i = roundsCount - 1; i >= 0; i--)
+            {
+                emptyCup.rounds[i].prizes.Add(new Prize(1, maxPrize));
+                maxPrize /= 2;
+            }
+            emptyCup.InitializeQualificationsNextYearsLists();
+
+            return emptyCup;
+        }
+
+
+        /// <summary>
+        /// Post process loaded tournaments and create regional tournaments instances for league systems relying on multiple regional structure
+        /// </summary>
+        public void PostProcessTournaments()
         {
             foreach(Association a in _kernel.GetAllAssociations())
             {
@@ -1725,14 +1911,56 @@ namespace tm
             return res;
         }
 
+        /// <summary>
+        /// Create DummyExternalSource sources in constraints to represents teams entering in this tournaments from other tournaments (like regional paths)
+        /// </summary>
+        /// <param name="tournament"></param>
+        private void CreateDummySourcesCupStructure(Tournament tournament)
+        {
+            int[] dummySourcesByRounds = new int[tournament.rounds.Count];
+            foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
+            {
+                if(t != tournament)
+                {
+                    foreach(Round r in t.rounds)
+                    {
+                        foreach(Qualification q in r.qualifications)
+                        {
+                            if(q.target.Tournament() == tournament && (r as KnockoutRound) != null)
+                            {
+                                dummySourcesByRounds[q.roundId]++;
+                            }
+                        }
+                    }
+                }
+            }
+            for(int i = 0; i < dummySourcesByRounds.Length; i++)
+            {
+                if (dummySourcesByRounds[i] > 0)
+                {
+                    DummyExternalSource des = new DummyExternalSource(dummySourcesByRounds[i]);
+                    tournament.cupStructure.teams.Add(new RecoverTeams(des, dummySourcesByRounds[i], RetrieveFlags.AllTeams));
+                    if(i > 0)
+                    {
+                        tournament.cupStructure.constraints[i].Add(new RecoverTeams(des, dummySourcesByRounds[i], RetrieveFlags.AllTeams));
+                    }
+                }
+            }
+        }
+
         public void InitTournaments()
         {
             foreach(Tournament t in Session.Instance.Game.kernel.Competitions)
             {
-                if (!t.isChampionship && IsNationalCup(t))
+                if (!t.isChampionship && IsNationalCup(t) && t.cupStructure == null)
                 {
                     Utils.Debug("[{0}] Extract cup structure", t.name);
                     t.cupStructure = ExtractCupStructure(t);
+                }
+
+                if (t.cupStructure != null)
+                {
+                    CreateDummySourcesCupStructure(t);
                 }
 
                 //TODO: remove this in the reset fonction (reset function to adapt to the first initialization)
@@ -1981,14 +2209,7 @@ namespace tm
                 CupStructure constraints = new CupStructure(reservesAllowed, allowTeamsOfChildAssociations, new List<List<RecoverTeams>>(), CreateTeamsSourcePool(association, allowTeamsOfChildAssociations), 1, false, null);
                 CupStructureResult structure = creator.CreateStructure(association, constraints);
                 List<GameDay> availableDates = association.GetAvailableCalendarDates(true, 1, structure.leaguesRepresented.ToList(), true, false);
-                Tournament cup = creator.CreateEmptyTournament(_kernel.NextIdTournament(), cupName, cupLevel, association, structure.roundsCount, structure.teamsByRound, availableDates, winnerPrize, constraints);
-                foreach(Round round in cup.rounds)
-                {
-                    if(round.Id == -1)
-                    {
-                        round.Id = _kernel.NextIdRound();
-                    }
-                }
+                Tournament cup = CreateEmptyTournament(_kernel.NextIdTournament(), cupName, cupLevel, association, structure.roundsCount, structure.teamsByRound, availableDates, winnerPrize, constraints);
                 association.Tournaments().Add(cup);
                 cup.WriteCupStrutureResult(structure);
             }

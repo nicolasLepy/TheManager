@@ -59,6 +59,7 @@ namespace tm
     [DataContract]
     public struct RecoverTeams : IEquatable<RecoverTeams>
     {
+
         [DataMember]
         public IRecoverableTeams Source { get; set; }
         [DataMember]
@@ -968,6 +969,11 @@ namespace tm
         public override string ToString()
         {
             return _name;
+        }
+
+        public bool IsDummy()
+        {
+            return false;
         }
     }
 }

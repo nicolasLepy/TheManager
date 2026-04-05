@@ -83,6 +83,25 @@ namespace tm.Algorithms
             }
             return -a;
         }
+
+        public override bool Equals(object o)
+        {
+            if(o == null || !o.GetType().Equals(this.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                TeamCount other = (TeamCount)o;
+                return other._int == this._int;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return _int;
+        }
+
     }
 
     public struct CupStructureResult
@@ -159,53 +178,6 @@ namespace tm.Algorithms
         public CupCreator(bool debug = false)
         {
             this.debug = debug;
-        }
-
-        /// <summary>
-        /// Count teams of a round excluding reserves
-        /// </summary>
-        /// <param name="r">Count teams of this round</param>
-        /// <param name="association">Filter with a particular association</param>
-        private int CountTeamsWithoutReserves(Round r, Association association)
-        {
-            int total = 0;
-            foreach (Club c in r.clubs)
-            {
-                if (c as ReserveClub == null)
-                {
-                    if (association == null || association.ContainsAssociation(c.Association()))
-                    {
-                        total++;
-                    }
-                }
-            }
-            return total;
-        }
-
-        private bool IsPowerOf2(int x)
-        {
-            return (x != 0) && (x & (x - 1)) == 0;
-        }
-
-        private string NameOfRound(List<int> teamsByRound, int indexRound)
-        {
-            int teams = teamsByRound[indexRound];
-            int nextTeams = (indexRound + 1) < teamsByRound.Count ? teamsByRound[indexRound + 1] : -1;
-            bool finalPhase = IsPowerOf2(teams) && (nextTeams == teams / 2);
-            string res = finalPhase ? String.Format("Round of {0}", teams) : String.Format("Round {0}", indexRound+1);
-            if (indexRound == teamsByRound.Count - 1 && teams == 2)
-            {
-                res = "Final";
-            }
-            else if (finalPhase && teams == 4)
-            {
-                res = "Semifinals";
-            }
-            else if (finalPhase && teams == 8)
-            {
-                res = "Quarterfinals";
-            }
-            return res;
         }
 
         private int FindEquivalentSource(List<RecoverTeams> pool, RecoverTeams item)
@@ -297,7 +269,7 @@ namespace tm.Algorithms
                 }
                 //Convert RecoverTeams to LeagueCupApparition
                 List<LeagueCupApparition> lca = new List<LeagueCupApparition>();
-                optionals.Sort((x, y) => association.TournamentLevel((x.Source as Round).Tournament) - association.TournamentLevel((y.Source as Round).Tournament));
+                optionals.Sort((x, y) => CompareRecoverTeams(x, y, association));
                 foreach (RecoverTeams rt in optionals)
                 {
                     lca.Add(new LeagueCupApparition(rt.Available(!allowReserves, association), -1, (rt.Source as Round).Tournament));
@@ -312,24 +284,6 @@ namespace tm.Algorithms
             }
             return sampledPool;
         }
-
-        /*public RetrieveFlags FlagsOfSource(Dictionary<IRecoverableTeams, RetrieveFlags> flagsBySource, IRecoverableTeams source)
-        {
-            RetrieveFlags ret = new RetrieveFlags();
-            if (flagsBySource.ContainsKey(source) && flagsBySource[source].HasFlag(RetrieveFlags.StatusPro))
-            {
-                ret |= RetrieveFlags.StatusPro;
-            }
-            if (flagsBySource.ContainsKey(source) && flagsBySource[source].HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
-            {
-                ret |= RetrieveFlags.QualifiedForInternationalCompetition;
-            }
-            if (flagsBySource.ContainsKey(source) && flagsBySource[source].HasFlag(RetrieveFlags.NotQualifiedForInternationalCompetition))
-            {
-                ret |= RetrieveFlags.NotQualifiedForInternationalCompetition;
-            }
-            return ret;
-        }*/
 
         public RetrieveFlags FlagsOfSource(RecoverTeams source)
         {
@@ -347,6 +301,43 @@ namespace tm.Algorithms
                 ret |= RetrieveFlags.NotQualifiedForInternationalCompetition;
             }
             return ret;
+        }
+
+
+        private int CompareRecoverTeams(RecoverTeams x, RecoverTeams y, Association association)
+        {
+            int res = 0;
+            if (x.Source.IsDummy() && !y.Source.IsDummy())
+            {
+                res = -1;
+            }
+            else if (!x.Source.IsDummy() && y.Source.IsDummy())
+            {
+                res = 1;
+            }
+            else if (x.Source.IsDummy() && y.Source.IsDummy())
+            {
+                res = 0;
+            }
+            else
+            {
+                int levelX = association.TournamentLevel((x.Source as Round).Tournament);
+                int levelY = association.TournamentLevel((y.Source as Round).Tournament);
+                res = levelX - levelY;
+                if (res == 0)
+                {
+                    if (x.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) && !y.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
+                    {
+                        res = -1;
+                    }
+                    if (y.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition) && !x.Flags.HasFlag(RetrieveFlags.QualifiedForInternationalCompetition))
+                    {
+                        res = 1;
+                    }
+                }
+            }
+
+            return res;
         }
 
         /// <summary>
@@ -381,7 +372,12 @@ namespace tm.Algorithms
                 teamsBySources.Add(new KeyValuePair<RecoverTeams, int>(source, teamsCount));
             }
 
-            teamsBySources.Sort((x, y) => association.TournamentLevel((x.Key.Source as Round).Tournament) - association.TournamentLevel((y.Key.Source as Round).Tournament));
+            if(maxTeams < expectedWinners * 2)
+            {
+                throw new Exception("Too few teams available to create the cup structure");
+            }
+
+            teamsBySources.Sort((x, y) => CompareRecoverTeams(x.Key, y.Key, association));
 
             int roundCount = 0;
             int j = expectedWinners;
@@ -409,8 +405,11 @@ namespace tm.Algorithms
                     int teamsToAdd = (currentAddedTeams + lowerTournament.Value) < preliRoundTeams ? lowerTournament.Value : preliRoundTeams - currentAddedTeams;
                     RetrieveFlags flags = (teamsToAdd == lowerTournament.Value ? RetrieveFlags.Best : RetrieveFlags.Worst) | RetrieveFlags.AllTeams;
                     flags |= FlagsOfSource(lowerTournament.Key);
-                    RecoverTeams rt = new RecoverTeams(lowerTournament.Key.Source, teamsToAdd, flags);
-                    structure[indexRound].Add(rt);
+                    if (!lowerTournament.Key.Source.IsDummy())
+                    {
+                        RecoverTeams rt = new RecoverTeams(lowerTournament.Key.Source, teamsToAdd, flags);
+                        structure[indexRound].Add(rt);
+                    }
                     currentAddedTeams += teamsToAdd;
                     if (currentAddedTeams == preliRoundTeams && teamsToAdd < lowerTournament.Value)
                     {
@@ -434,9 +433,12 @@ namespace tm.Algorithms
                 teamsByRound.Add(j);
                 foreach (KeyValuePair<RecoverTeams, int> kvp in teamsBySources)
                 {
-                    RetrieveFlags method = RetrieveFlags.Best | FlagsOfSource(kvp.Key);
-                    RecoverTeams rt = new RecoverTeams(kvp.Key.Source, kvp.Value, method);
-                    structure[indexRound].Add(rt);
+                    if (!kvp.Key.Source.IsDummy())
+                    {
+                        RetrieveFlags method = RetrieveFlags.Best | FlagsOfSource(kvp.Key);
+                        RecoverTeams rt = new RecoverTeams(kvp.Key.Source, kvp.Value, method);
+                        structure[indexRound].Add(rt);
+                    }
                 }
                 teamsBySources.Clear();
                 indexRound++;
@@ -450,6 +452,16 @@ namespace tm.Algorithms
                 teamsByRound = teamsByRound,
                 leaguesRepresented = null
             };
+        }
+
+        private int CountTeams(List<RecoverTeams> pool)
+        {
+            int res = 0;
+            foreach(RecoverTeams rt in pool)
+            {
+                res += rt.Number;
+            }
+            return res;
         }
 
         public CupStructureResult CreateStructure(Association association, CupStructure constraints)
@@ -477,14 +489,14 @@ namespace tm.Algorithms
             }
 
             // Dict Tournament => each team of the league must be included in the tournament
-            Dictionary<Tournament, bool> flagAllTeamsMustBeIncluded = new Dictionary<Tournament, bool>();
+            /*Dictionary<Tournament, bool> flagAllTeamsMustBeIncluded = new Dictionary<Tournament, bool>();
             foreach(RecoverTeams source in allSources)
             {
                 Tournament sourceT = (source.Source as Round).Tournament;
                 bool flag = flagAllTeamsMustBeIncluded.ContainsKey(sourceT) ? flagAllTeamsMustBeIncluded[sourceT] : false;
                 flag = flag || source.Flags.HasFlag(RetrieveFlags.AllTeams);
                 flagAllTeamsMustBeIncluded[sourceT] = flag;
-            }
+            }*/
             /*// Dict Tournament => teams from this league enters at differents stage of the tournament
             Dictionary<Tournament, bool> flagMultipleSources = new Dictionary<Tournament, bool>();
             foreach(RecoverTeams source in ...)
@@ -496,34 +508,39 @@ namespace tm.Algorithms
             Dictionary<Tournament, bool> flagBestWorst = new Dictionary<Tournament, bool>();*/
 
             //TODO: Not sure this will give accurates results (probably more teams than existing)
-            Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
-            List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
+            //But not used so this block could be removed
+            //Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
+            //List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
             int maxTeams = 0;
             List<Tournament> tournamentsIncluded = new List<Tournament>();
             for(int i = 0; i < allSources.Count; i++)
             {
                 RecoverTeams source = allSources[i];
+                Round roundSource = source.Source as Round;
                 int teamsAvailable = source.Available(!constraints.allowReserves, association);
-                Tournament tSource = (source.Source as Round).Tournament;
-                int tournamentLevel = association.TournamentLevel(tSource);
+                if(roundSource != null)
+                {
+                    Tournament tSource = roundSource.Tournament;
+                    tournamentsIncluded.Add(tSource);
+                }
+                /*int tournamentLevel = association.TournamentLevel(tSource);
                 if (!teamsByLevel.ContainsKey(tournamentLevel))
                 {
                     teamsByLevel.Add(tournamentLevel, 0);
                 }
                 teamsByLevel[tournamentLevel] += teamsAvailable;
-                teamsByTournaments.Add(new KeyValuePair<Tournament, int>(tSource, teamsAvailable));
+                teamsByTournaments.Add(new KeyValuePair<Tournament, int>(tSource, teamsAvailable));*/
                 maxTeams += teamsAvailable;
-                tournamentsIncluded.Add(tSource);
             }
-            teamsByTournaments.Sort((x, y) => association.TournamentLevel(x.Key) - association.TournamentLevel(y.Key));
-            Dictionary<Tournament, int> flagRemainingTeams = new Dictionary<Tournament, int>();
+            //teamsByTournaments.Sort((x, y) => association.TournamentLevel(x.Key) - association.TournamentLevel(y.Key));
+            /*Dictionary<Tournament, int> flagRemainingTeams = new Dictionary<Tournament, int>();
             foreach(KeyValuePair<Tournament, int> teamsKvp in teamsByTournaments)
             {
                 if (flagAllTeamsMustBeIncluded[teamsKvp.Key])
                 {
                     flagRemainingTeams[teamsKvp.Key] = teamsKvp.Value;
                 }
-            }
+            }*/
 
             int n = constraints.winners;
 
@@ -545,10 +562,12 @@ namespace tm.Algorithms
                 for(int j = 0; j < roundsConstraints[i].Count; j++)
                 {
                     RecoverTeams sourceRec = roundsConstraints[i][j];
-                    Tournament tSource = (sourceRec.Source as Round).Tournament;
                     int number = sourceRec.Flags.HasFlag(RetrieveFlags.AllTeams) ? sourceRec.Available(!constraints.allowReserves, association) : sourceRec.Number;
-                    RecoverTeams rtn = new RecoverTeams(sourceRec.Source, number, sourceRec.Flags);
-                    structureRound.Add(rtn);
+                    if (!sourceRec.Source.IsDummy())
+                    {
+                        RecoverTeams rtn = new RecoverTeams(sourceRec.Source, number, sourceRec.Flags);
+                        structureRound.Add(rtn);
+                    }
                     newTeams += number;
                 }
                 //These constraints are impossible (too many teams). They are pushed to the previous round (or to the pool)
@@ -566,6 +585,7 @@ namespace tm.Algorithms
                     foreach(RecoverTeams sourceRec in structureRound)
                     {
                         RemoveTeamsFromPool(pool, sourceRec, sourceRec.Number);
+                        maxTeams -= sourceRec.Number;
                     }
                 }
                 n = (n * 2) - newTeams;
@@ -582,7 +602,6 @@ namespace tm.Algorithms
                 leaguesRepresented = new HashSet<Tournament>(tournamentsIncluded)
             };
 
-
             List<RecoverTeams> sampledPool;
             if (constraints.noExtraRound)
             {
@@ -597,6 +616,45 @@ namespace tm.Algorithms
             }
             CupStructureResult headerStructure = StructureFromPool(sampledPool, n, association);
             return Merge(baseStructure, headerStructure);
+        }
+
+        private int CountDummyTeams(List<RecoverTeams> pool)
+        {
+            int res = 0;
+            foreach(RecoverTeams rt in pool)
+            {
+                if (rt.Source.IsDummy())
+                {
+                    res += rt.Available(false, null);
+                }
+            }
+            return res;
+        }
+
+        private List<RecoverTeams> ExtractDummyTeams(List<RecoverTeams> pool)
+        {
+            List<RecoverTeams> result = new List<RecoverTeams>();
+            foreach(RecoverTeams rt in pool)
+            {
+                if (rt.Source.IsDummy())
+                {
+                    result.Add(rt);
+                }
+            }
+            return result;
+        }
+
+        private List<RecoverTeams> RemoveDummyTeams(List<RecoverTeams> pool)
+        {
+            List<RecoverTeams> res = new List<RecoverTeams>();
+            foreach(RecoverTeams rt in pool)
+            {
+                if (!rt.Source.IsDummy())
+                {
+                    res.Add(rt);
+                }
+            }
+            return res;
         }
 
         /// <summary>
@@ -629,49 +687,5 @@ namespace tm.Algorithms
                 leaguesRepresented = baseStructure.leaguesRepresented
             };
         }
-
-        //TODO: Probably need to replace this by a CreateCupStructure function after (create empty tournament from CupResultStructure) ?
-        //Because CupCreator is not responsible to create the Tournament structure, rounds ids, names...
-        public Tournament CreateEmptyTournament(int cupId, string cupName, int cupLevel, Association association, int roundsCount, List<int> teamsByRound, List<GameDay> availableDates, int winnerPrize, CupStructure structure)
-        {
-            if (roundsCount > availableDates.Count)
-            {
-                throw new Exception("Too few dates available");
-            }
-            Tournament emptyCup = new Tournament(cupId, cupName, "", association, new GameDay(association.resetWeek, false, 0, 0), cupName, false, cupLevel, 1, 1, new Color(200, 0, 0), ClubStatus.Professional, null, structure);
-            for (int i = 0; i < roundsCount; i++)
-            {
-                Hour hour = new Hour() { Hours = 20, Minutes = 0 };
-                int weekIndex = (availableDates.Count / roundsCount) * i;
-                string name = NameOfRound(teamsByRound, i);
-                GameDay gameDate = new GameDay(availableDates[weekIndex].WeekNumber, true, 0, 0);
-                GameDay beginDate = new GameDay((availableDates[weekIndex].WeekNumber - 1) % 52, true, 0, 0);
-                GameDay endDate = new GameDay((availableDates[weekIndex].WeekNumber + 2) % 52, false, 0, 0);
-                Round round = new KnockoutRound(-1, name, emptyCup, hour, new List<GameDay> { gameDate }, new List<TvOffset>(), 1, beginDate, endDate, RandomDrawingMethod.Random, false, 2);
-
-                round.rules.Add(Rule.AtHomeIfTwoLevelDifference);
-                if (!structure.allowReserves)
-                {
-                    round.rules.Add(Rule.OnlyFirstTeams);
-                }
-                if (roundsCount - i > 1)
-                {
-                    round.qualifications.Add(new Qualification(1, i + 1, new QualificationTournament(emptyCup), false, 1));
-                }
-
-                emptyCup.rounds.Add(round);
-            }
-
-            int maxPrize = winnerPrize;
-            for (int i = roundsCount - 1; i >= 0; i--)
-            {
-                emptyCup.rounds[i].prizes.Add(new Prize(1, maxPrize));
-                maxPrize /= 2;
-            }
-            emptyCup.InitializeQualificationsNextYearsLists();
-
-            return emptyCup;
-        }
-
     }
 }

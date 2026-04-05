@@ -1486,5 +1486,10 @@ namespace tm
             return availableDates;
         }
 
+        public bool IsDummy()
+        {
+            return false;
+        }
+
     }
 }
