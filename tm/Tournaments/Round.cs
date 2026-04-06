@@ -56,6 +56,145 @@ namespace tm
         Discipline
     }
 
+
+    public struct TeamCount
+    {
+
+        public static int AllTeams = -1;
+
+        private readonly int _int;
+
+        public TeamCount(int value)
+        {
+            if (value < -1)
+            {
+                throw new InvalidOperationException("cannot create a TeamCount with a negative value");
+            }
+            _int = value;
+        }
+
+        public static explicit operator int(TeamCount @this)
+        {
+            if (@this._int == AllTeams)
+            {
+                throw new InvalidOperationException("cannot implicity convert AllTeams to integer");
+            }
+            return @this._int;
+        }
+
+        public static implicit operator TeamCount(int other)
+        {
+            if (other < 0 && other != AllTeams)
+            {
+                throw new InvalidOperationException("Cannot implicit convert a negative value to TeamCount");
+            }
+            return new TeamCount(other);
+        }
+
+        public static bool operator ==(TeamCount a, TeamCount b)
+        {
+            return a._int == b._int;
+        }
+
+        public static bool operator !=(TeamCount a, TeamCount b)
+        {
+            return a._int != b._int;
+        }
+
+        public static TeamCount operator +(TeamCount a, TeamCount b)
+        {
+            if (a == AllTeams || b == AllTeams)
+            {
+                throw new InvalidOperationException();
+            }
+            return a._int + b._int;
+        }
+
+        /*public static TeamCount operator +(TeamCount a, int b)
+        {
+            if (a == AllTeams || b == AllTeams)
+            {
+                throw new InvalidOperationException();
+            }
+            return a._int + b;
+        }*/
+
+        public static TeamCount operator -(TeamCount a, TeamCount b)
+        {
+            if (a == AllTeams || b == AllTeams)
+            {
+                throw new InvalidOperationException();
+            }
+            return a._int - b._int;
+        }
+
+        public static TeamCount operator -(TeamCount a)
+        {
+            if (a == AllTeams)
+            {
+                throw new InvalidOperationException();
+            }
+            return -a;
+        }
+
+        public static bool operator >(TeamCount a, TeamCount b)
+        {
+            if (a.Equals(AllTeams) && b.Equals(AllTeams))
+            {
+                return false;
+            }
+            else if (a.Equals(AllTeams) || b.Equals(AllTeams))
+            {
+                throw new InvalidOperationException();
+            }
+            else
+            {
+                return a.getInt() > b.getInt();
+            }
+        }
+
+        public static bool operator <(TeamCount a, TeamCount b)
+        {
+            if (a.Equals(AllTeams) && b.Equals(AllTeams))
+            {
+                return false;
+            }
+            else if (a.Equals(AllTeams) || b.Equals(AllTeams))
+            {
+                throw new InvalidOperationException();
+            }
+            else
+            {
+                return a.getInt() < b.getInt();
+            }
+        }
+
+        public override bool Equals(object o)
+        {
+            if (o == null || !o.GetType().Equals(this.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                TeamCount other = (TeamCount)o;
+                return other._int == this._int;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return _int;
+        }
+
+        public int getInt()
+        {
+            return _int;
+        }
+
+    }
+
+
     [DataContract]
     public struct RecoverTeams : IEquatable<RecoverTeams>
     {

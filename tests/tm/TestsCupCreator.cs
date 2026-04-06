@@ -239,10 +239,10 @@ namespace tests.tm
         /// But there is too few teams on the pool so some of them are added to the second round
         /// </summary>
         [TestMethod]
-        public void TestCupCase4()
+        public void TestCupCase4a()
         {
             InitGame("ui", "database_france_light", new List<string>() { "France" });
-            CupCreator creator = new CupCreator();
+            CupCreator creator = new CupCreator(true);
             Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
             List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
             {
@@ -255,11 +255,43 @@ namespace tests.tm
             CupStructure structure = new CupStructure(false, true, constaints, pool, 10, true, 2);
             CupStructureResult res = creator.CreateStructure(fr, structure);
 
-            List<int> expectedTeamsByRound = new List<int>() { 4, 20};
+            // List<int> expectedTeamsByRound = new List<int>() { 4, 20};
+            List<int> expectedTeamsByRound = new List<int>() { 20 };
             List<Club> expectedTeams = new List<Club>();
             Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
             expectedTeamsByLeague[fr.League(2)] = 4;
-            expectedTeamsByLeague[fr.League(3)] = 18;
+            expectedTeamsByLeague[fr.League(3)] = 16;  //18
+            CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
+
+        }
+
+        /// <summary>
+        /// Test regional path cup - More than one game in the last round.
+        /// But there is too few teams on the pool so some of them are added to the second round
+        /// </summary>
+        [TestMethod]
+        public void TestCupCase4b()
+        {
+            InitGame("ui", "database_france_light", new List<string>() { "France" });
+            CupCreator creator = new CupCreator(true);
+            Association fr = Session.Instance.Game.kernel.String2Country("France").GetCountryAssociation();
+            List<List<RecoverTeams>> constaints = new List<List<RecoverTeams>>
+            {
+                new List<RecoverTeams>(),
+                new List<RecoverTeams>(),
+                new List<RecoverTeams>(){new RecoverTeams(fr.League(2).rounds[0], 4, RetrieveFlags.Best)},
+            };
+            List<RecoverTeams> pool = new List<RecoverTeams>();
+            pool.Add(new RecoverTeams(fr.League(2).rounds[0], 4, RetrieveFlags.Best));
+            pool.Add(new RecoverTeams(fr.League(3).rounds[0], 18, RetrieveFlags.Best));
+            CupStructure structure = new CupStructure(false, true, constaints, pool, 5, true, 3);
+            CupStructureResult res = creator.CreateStructure(fr, structure);
+
+            List<int> expectedTeamsByRound = new List<int>() { 12, 10 };
+            List<Club> expectedTeams = new List<Club>();
+            Dictionary<Tournament, int> expectedTeamsByLeague = new Dictionary<Tournament, int>();
+            expectedTeamsByLeague[fr.League(2)] = 4;
+            expectedTeamsByLeague[fr.League(3)] = 12;
             CheckCupStructure(res, expectedTeamsByRound, expectedTeamsByLeague, expectedTeams);
 
         }

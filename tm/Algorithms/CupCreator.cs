@@ -13,97 +13,6 @@ using static tm.Tournament;
 namespace tm.Algorithms
 {
 
-    public struct TeamCount
-    {
-
-        public static int AllTeams = -1;
-
-        private readonly int _int;
-
-        public TeamCount(int value)
-        {
-            if(value < -1)
-            {
-                throw new InvalidOperationException("cannot create a TeamCount with a negative value");
-            }
-            _int = value;
-        }
-
-        public static explicit operator int(TeamCount @this)
-        {
-            if(@this._int == AllTeams)
-            {
-                throw new InvalidOperationException("cannot implicity convert AllTeams to integer");
-            }
-            return @this._int;
-        }
-
-        public static implicit operator TeamCount(int other)
-        {
-            if(other < 0)
-            {
-                throw new InvalidOperationException("Cannot implicit convert a negative value to TeamCount");
-            }
-            return new TeamCount(other);
-        }
-
-        public static bool operator ==(TeamCount a, TeamCount b)
-        {
-            return a._int == b._int;
-        }
-
-        public static bool operator !=(TeamCount a, TeamCount b)
-        {
-            return a._int != b._int;
-        }
-
-        public static TeamCount operator+(TeamCount a, TeamCount b)
-        {
-            if(a == AllTeams || b == AllTeams)
-            {
-                throw new InvalidOperationException();
-            }
-            return a._int + b._int;
-        }
-
-        public static TeamCount operator-(TeamCount a, TeamCount b)
-        {
-            if(a == AllTeams || b == AllTeams)
-            {
-                throw new InvalidOperationException();
-            }
-            return a._int - b._int;
-        }
-
-        public static TeamCount operator-(TeamCount a)
-        {
-            if(a == AllTeams)
-            {
-                throw new InvalidOperationException();
-            }
-            return -a;
-        }
-
-        public override bool Equals(object o)
-        {
-            if(o == null || !o.GetType().Equals(this.GetType()))
-            {
-                return false;
-            }
-            else
-            {
-                TeamCount other = (TeamCount)o;
-                return other._int == this._int;
-            }
-        }
-
-        public override int GetHashCode()
-        {
-            return _int;
-        }
-
-    }
-
     public struct CupStructureResult
     {
         public List<List<RecoverTeams>> structure { get; set; }
@@ -272,7 +181,7 @@ namespace tm.Algorithms
                 optionals.Sort((x, y) => CompareRecoverTeams(x, y, association));
                 foreach (RecoverTeams rt in optionals)
                 {
-                    lca.Add(new LeagueCupApparition(rt.Available(!allowReserves, association), -1, (rt.Source as Round).Tournament));
+                    lca.Add(new LeagueCupApparition(rt.Flags.HasFlag(RetrieveFlags.AllTeams) ? rt.Available(!allowReserves, association) : rt.Number, -1, (rt.Source as Round).Tournament));
                 }
                 //Sampling teams
                 lca = UtilsTournaments.SampleTeams(lca, teamsToSample);
@@ -464,8 +373,89 @@ namespace tm.Algorithms
             return res;
         }
 
+        private List<List<RecoverTeams>> Copy(List<List<RecoverTeams>> list)
+        {
+            List<List<RecoverTeams>> copy = new List<List<RecoverTeams>>();
+            foreach (List<RecoverTeams> rt in list)
+            {
+                copy.Add(new List<RecoverTeams>(rt));
+            }
+            return copy;
+        }
+
+        /// <summary>
+        /// Go backward to a tournament structure and return false if there aren't enough teams available. Otherwise, return true
+        /// </summary>
+        /// <returns></returns>
+        private bool Backward(int maxTeamsAvailable, int n, List<List<RecoverTeams>> constraints, int lastRoundWithConstraint, int numberOfRounds, bool allowReserves, Association association)
+        {
+            constraints = Copy(constraints);
+            List<List<RecoverTeams>> structure = new List<List<RecoverTeams>>();
+
+            for (int i = 0; i <= lastRoundWithConstraint; i++)
+            {
+                structure.Add(new List<RecoverTeams>());
+                int newTeams = 0;
+                List<RecoverTeams> structureRound = new List<RecoverTeams>();
+                for (int j = 0; j < constraints[i].Count; j++)
+                {
+                    RecoverTeams sourceRec = constraints[i][j];
+                    int number = sourceRec.Flags.HasFlag(RetrieveFlags.AllTeams) ? sourceRec.Available(!allowReserves, association) : sourceRec.Number;
+                    newTeams += number;
+                    if (!sourceRec.Source.IsDummy())
+                    {
+                        RecoverTeams rtn = new RecoverTeams(sourceRec.Source, number, sourceRec.Flags);
+                        structureRound.Add(rtn);
+                    }
+                }
+                //These constraints are impossible (too many teams). They are pushed to the previous round (or to the pool)
+                if (((n * 2) - newTeams) < 1)
+                {
+                    newTeams = 0;
+                    if (i < lastRoundWithConstraint)
+                    {
+                        constraints[i + 1].AddRange(constraints[i]);
+                    }
+                }
+                else //Constraints ok: they are incorporated into the structure
+                {
+                    structure[i] = structureRound;
+                    foreach (RecoverTeams sourceRec in structureRound)
+                    {
+                        maxTeamsAvailable -= sourceRec.Number;
+                    }
+                }
+                n = (n * 2) - newTeams;
+            }
+
+            int remainingRounds = numberOfRounds - structure.Count;
+            int teamsToSample = (int)(n * (Math.Pow(2, remainingRounds)));
+
+            return teamsToSample <= maxTeamsAvailable;
+
+        }
+
+        private CupStructure Copy(CupStructure structure)
+        {
+            List<List<RecoverTeams>> constraints = Copy(structure.constraints);
+            List<RecoverTeams> teams = new List<RecoverTeams>(structure.teams);
+            return new CupStructure(structure.allowReserves, structure.includeChildAssociations, constraints, teams, structure.winners, structure.noExtraRound, structure.numberOfRounds);
+        }
+
+        private int GetLastRoundWithConstraint(List<List<RecoverTeams>> constraints)
+        {
+            int lastRoundWithConstraint = -1;
+            for (int i = 0; i < constraints.Count; i++)
+            {
+                lastRoundWithConstraint = constraints[i].Count > 0 ? i : lastRoundWithConstraint;
+            }
+            return lastRoundWithConstraint;
+
+        }
+
         public CupStructureResult CreateStructure(Association association, CupStructure constraints)
         {
+            constraints = Copy(constraints);
             List<List<RecoverTeams>> structure = new List<List<RecoverTeams>>();
             List<int> teamsByRound = new List<int>();
 
@@ -482,78 +472,50 @@ namespace tm.Algorithms
                 }
             }
 
-            List<RecoverTeams> allSources = new List<RecoverTeams>(constraints.teams);
-            foreach (List<RecoverTeams> rt in constraints.constraints)
-            {
-                allSources.AddRange(rt);
-            }
-
-            // Dict Tournament => each team of the league must be included in the tournament
-            /*Dictionary<Tournament, bool> flagAllTeamsMustBeIncluded = new Dictionary<Tournament, bool>();
-            foreach(RecoverTeams source in allSources)
-            {
-                Tournament sourceT = (source.Source as Round).Tournament;
-                bool flag = flagAllTeamsMustBeIncluded.ContainsKey(sourceT) ? flagAllTeamsMustBeIncluded[sourceT] : false;
-                flag = flag || source.Flags.HasFlag(RetrieveFlags.AllTeams);
-                flagAllTeamsMustBeIncluded[sourceT] = flag;
-            }*/
-            /*// Dict Tournament => teams from this league enters at differents stage of the tournament
-            Dictionary<Tournament, bool> flagMultipleSources = new Dictionary<Tournament, bool>();
-            foreach(RecoverTeams source in ...)
-            {
-                Tournament sourceT = (source.Source as Round).Tournament;
-                bool flag = flagMultipleSources.ContainsKey(sourceT) ? true : false;
-                flagMultipleSources[sourceT] = flag;
-            }
-            Dictionary<Tournament, bool> flagBestWorst = new Dictionary<Tournament, bool>();*/
-
-            //TODO: Not sure this will give accurates results (probably more teams than existing)
-            //But not used so this block could be removed
-            //Dictionary<int, int> teamsByLevel = new Dictionary<int, int>();
-            //List<KeyValuePair<Tournament, int>> teamsByTournaments = new List<KeyValuePair<Tournament, int>>();
             int maxTeams = 0;
             List<Tournament> tournamentsIncluded = new List<Tournament>();
-            for(int i = 0; i < allSources.Count; i++)
+            for(int i = 0; i < constraints.teams.Count; i++)
             {
-                RecoverTeams source = allSources[i];
+                RecoverTeams source = constraints.teams[i];
                 Round roundSource = source.Source as Round;
-                int teamsAvailable = source.Available(!constraints.allowReserves, association);
+                int teamsAvailable = source.Flags.HasFlag(RetrieveFlags.AllTeams) ? source.Available(!constraints.allowReserves, association) : source.Number;
                 if(roundSource != null)
                 {
                     Tournament tSource = roundSource.Tournament;
                     tournamentsIncluded.Add(tSource);
                 }
-                /*int tournamentLevel = association.TournamentLevel(tSource);
-                if (!teamsByLevel.ContainsKey(tournamentLevel))
-                {
-                    teamsByLevel.Add(tournamentLevel, 0);
-                }
-                teamsByLevel[tournamentLevel] += teamsAvailable;
-                teamsByTournaments.Add(new KeyValuePair<Tournament, int>(tSource, teamsAvailable));*/
                 maxTeams += teamsAvailable;
             }
-            //teamsByTournaments.Sort((x, y) => association.TournamentLevel(x.Key) - association.TournamentLevel(y.Key));
-            /*Dictionary<Tournament, int> flagRemainingTeams = new Dictionary<Tournament, int>();
-            foreach(KeyValuePair<Tournament, int> teamsKvp in teamsByTournaments)
-            {
-                if (flagAllTeamsMustBeIncluded[teamsKvp.Key])
-                {
-                    flagRemainingTeams[teamsKvp.Key] = teamsKvp.Value;
-                }
-            }*/
 
             int n = constraints.winners;
 
             //Calculating rounds
-            List <List<RecoverTeams>> roundsConstraints = new List<List<RecoverTeams>>(constraints.constraints);
+            List<List<RecoverTeams>> roundsConstraints = new List<List<RecoverTeams>>(constraints.constraints);
             roundsConstraints.Reverse();
 
-            int lastRoundWithConstraint = -1;
-            for(int i = 0; i < roundsConstraints.Count; i++)
+            int lastRoundWithConstraint = GetLastRoundWithConstraint(roundsConstraints);
+
+            if (constraints.noExtraRound)
             {
-                lastRoundWithConstraint = roundsConstraints[i].Count > 0 ? i : lastRoundWithConstraint;
+                while (!Backward(maxTeams, n, roundsConstraints, lastRoundWithConstraint, constraints.numberOfRounds.Value, constraints.allowReserves, association))
+                {
+                    if(constraints.numberOfRounds == 1)
+                    {
+                        throw new Exception("Unable to remove another round");
+                    }
+                    //TODO: To avoid removing a round, why not push some teams from pool as a constraint to the first round with constraints ?
+
+                    //Remove a round
+                    constraints.numberOfRounds -= 1;
+                    //Remove the first round (roundsConstraints is reversed)
+                    roundsConstraints.RemoveAt(roundsConstraints.Count - 1);
+                    //Deleted roundsConstraints (at place 0) will remain in the pool. But these teams could be dropped out if we must sample teams. Mark them to be kept ?
+                    roundsConstraints[roundsConstraints.Count-1].Clear();
+                    lastRoundWithConstraint = GetLastRoundWithConstraint(roundsConstraints);
+                }
             }
 
+            //Backward phase. Same implementation as this.Backward() but commit to the structure. Possible factorize.
             for (int i = 0; i <= lastRoundWithConstraint; i++)
             {
                 structure.Add(new List<RecoverTeams>());
@@ -607,7 +569,7 @@ namespace tm.Algorithms
             {
                 int remainingRounds = constraints.numberOfRounds.Value - structure.Count;
                 int teamsToSample = (int)(n * (Math.Pow(2, remainingRounds)));
-                //TODO: Problème : ignore le nombre d'équipes dans la pool et tire uniquement en fonction de l'ordre et du nombre d'équipes à sampler
+                //TODO: Sometimes, some teams must be sampled. Mark them (how? /remove them before calling SamplePool?)
                 sampledPool = SamplePool(pool, teamsToSample, association, constraints.allowReserves);
             }
             else
